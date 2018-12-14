@@ -23,7 +23,8 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
- *      \brief      Script use to update unsubcribe contact to prospect mailing list
+ *      \brief      Script use to update unsubcribe status of an email
+ *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
 if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
@@ -75,37 +76,50 @@ if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
 
 if (! empty($tag) && ($unsuscrib=='1'))
 {
-	// Update status of mail in recipient mailing list table
-	$statut='3';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
-	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
 
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
-
-	// Update status communication of thirdparty prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
-	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
-
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
-
-    // Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
-	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
-
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
-
-
-	$sql = "SELECT mc.email";
-	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.tag='".$db->escape($tag)."'";
+	$sql = "SELECT mc.email, m.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
 	$obj = $db->fetch_object($resql);
+
+	if (empty($obj->email))
+	{
+		print 'Email not found. No need to unsubscribe.';
+		exit;
+	}
+
+	// Update status of mail in recipient mailing list table
+	$statut='3';
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
+
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+
+	/*
+	// Update status communication of thirdparty prospect (old usage)
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
+
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+
+    // Update status communication of contact prospect (old usage)
+	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
+
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+	*/
+
+	// Update status communication of email (new usage)
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$obj->entity.", '".$obj->email."')";
+
+	$resql=$db->query($sql);
+	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
+
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 

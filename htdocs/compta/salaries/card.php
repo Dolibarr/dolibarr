@@ -63,7 +63,7 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
 
 if ($cancel)
 {
-	header("Location: index.php");
+	header("Location: list.php");
 	exit;
 }
 
@@ -139,7 +139,7 @@ if ($action == 'add' && empty($cancel))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -174,7 +174,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/salaries/list.php');
 				exit;
 			}
 			else
@@ -365,7 +365,7 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 

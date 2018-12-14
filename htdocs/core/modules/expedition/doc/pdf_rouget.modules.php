@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
@@ -147,7 +147,6 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->posxpuht=$this->page_largeur - $this->marge_droite;
 
 		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {	// Show also the prices
-
 			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 96;
 			$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 68;
@@ -732,14 +731,13 @@ class pdf_rouget extends ModelePdfExpedition
         	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
         }
 
-		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {
-
+		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT))
+		{
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
 	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
-
 		}
 
 		if (empty($conf->global->SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME))

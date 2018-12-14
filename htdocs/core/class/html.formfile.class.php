@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
@@ -132,6 +132,7 @@ class FormFile
 
 			if ($maxmin > 0)
 			{
+				// MAX_FILE_SIZE doit précéder le champ input de type file
 				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
@@ -1017,7 +1018,7 @@ class FormFile
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticket','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1218,9 +1219,13 @@ class FormFile
 							if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							//print $file['path'].'/'.$minifile.'<br>';
 
-							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 0, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
-							if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-							print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+							if (empty($urlforhref)) {
+								$urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							} else {
+								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+							}
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
@@ -1505,6 +1510,11 @@ class FormFile
 			include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$object_instance=new ExpenseReport($this->db);
 		}
+		else if ($modulepart == 'holiday')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+			$object_instance=new Holiday($this->db);
+		}
 
 		foreach($filearray as $key => $file)
 		{
@@ -1534,7 +1544,8 @@ class FormFile
 				if ($modulepart == 'project')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 				if ($modulepart == 'fichinter')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 				if ($modulepart == 'user')              { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
-				if ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
+				if ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+				if ($modulepart == 'holiday')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
 				if (! $id && ! $ref) continue;
 				$found=0;
@@ -1632,7 +1643,7 @@ class FormFile
 	 */
 	private function _formAjaxFileUpload($object)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		// PHP post_max_size
 		$post_max_size				= ini_get('post_max_size');

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
  * Copyright (C) 2005       Davoleau Brice          <brice.davoleau@gmail.com>
  * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -65,7 +65,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
 	 */
-	private $MAP_ID = array(
+	protected $MAP_ID = array(
 		'product'      => 0,
 		'supplier'     => 1,
 		'customer'     => 2,
@@ -97,7 +97,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_CAT_FK = array(
+	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
 		'customer' => 'soc',
 		'supplier' => 'soc',
@@ -114,7 +114,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_CAT_TABLE = array(
+	protected $MAP_CAT_TABLE = array(
 		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
@@ -131,7 +131,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_OBJ_CLASS = array(
+	protected $MAP_OBJ_CLASS = array(
 		'product'  => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
@@ -148,7 +148,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_OBJ_TABLE = array(
+	protected $MAP_OBJ_TABLE = array(
 		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'societe',
@@ -944,7 +944,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	private function load_motherof()
+	protected function load_motherof()
 	{
         // phpcs:enable
 		global $conf;
@@ -1004,7 +1004,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
@@ -1024,6 +1024,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['label'] = ! empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = ! empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
+				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$i++;
 			}
 		}
@@ -1535,7 +1536,7 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) $forced_color='categtextblack';
 		}
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'&backtopage='.urlencode($_SERVER['PHP_SELF']).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
 		$linkend='</a>';
 
 		$picto='category';

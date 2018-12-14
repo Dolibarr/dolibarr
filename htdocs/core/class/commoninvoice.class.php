@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -364,11 +364,11 @@ abstract class CommonInvoice extends CommonObject
 			if ($this->element != 'invoice_supplier')
 			{
 				if (empty($this->thirdparty)) $this->fetch_thirdparty();	// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
-				$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
+				$maxref = $this->getNextNumRef($this->thirdparty,'last');
 
 				// If there is no invoice into the reset range and not already dispatched, we can delete
 				// If invoice to delete is last one and not already dispatched, we can delete
-				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxfacnumber != '' && $maxfacnumber != $this->ref) return -2;
+				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxref != '' && $maxref != $this->ref) return -2;
 
 				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
 				// ...

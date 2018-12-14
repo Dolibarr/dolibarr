@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
@@ -2063,10 +2063,6 @@ else
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
 
-			// Trick to not show product entries
-			$savproductenabled=$conf->product->enabled;
-			if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $conf->product->enabled = 0;
-
 			// Form to add new line
 	   		if ($action != 'editline')
 			{
@@ -2078,9 +2074,6 @@ else
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
-
-			// Restore correct setup
-			$conf->product->enabled = $savproductenabled;
 
 			print '</table>';
 			print '</div>';

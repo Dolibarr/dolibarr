@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
@@ -623,11 +623,11 @@ if ($step == 2 && $datatoexport)
         }
    		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
-		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("SourceExample").':</b> '.$objexport->array_export_examplevalues[0][$code].'<br>';
 		}
     	if (! empty($objexport->array_export_TypeFields[0][$code]))
 		{
-		    $htmltext.=$langs->trans("Type").': <b>'.$objexport->array_export_TypeFields[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
 		}
 
 		if (isset($array_selected[$code]) && $array_selected[$code])

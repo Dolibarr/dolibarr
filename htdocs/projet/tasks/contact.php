@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,7 +326,7 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_end();
 
 		/*
-		 * Lignes de contacts
+		 * Lines of contacts
 		 */
 /*
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
@@ -340,16 +340,15 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add a new contact line
-		 * Non affiche en mode modification de ligne
 		 */
 		print '<table class="noborder" width="100%">';
 
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Source").'</td>';
+			print '<td>'.$langs->trans("Nature").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("TaskContact").'</td>';
+			print '<td>'.$langs->trans("Users").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
@@ -507,7 +506,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
-					print img_delete();
+					print img_picto($langs->trans('Unlink'), 'unlink');
 					print '</a>';
 				}
 				print '</td>';

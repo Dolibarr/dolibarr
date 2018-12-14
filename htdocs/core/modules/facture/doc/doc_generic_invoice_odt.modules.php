@@ -1,24 +1,24 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<ely@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018		Frédéric France		<frederic.france@netlogic.fr>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
@@ -300,20 +300,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Recipient name
-				$contactobject=null;
-				if (! empty($usecontact))
-				{
+				$contactobject = null;
+				if (! empty($usecontact)) {
 					// On peut utiliser le nom de la societe du contact
-					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
+					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
+						$socobject = $object->contact;
 					else {
-			                        $socobject = $object->thirdparty;
-                        			// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
-                        			$contactobject = $object->contact;
-                    			}
-				}
-				else
-				{
-					$socobject=$object->thirdparty;
+						$socobject = $object->thirdparty;
+						// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
+				} else {
+					$socobject = $object->thirdparty;
 				}
 
 				// Fetch info for linked propal

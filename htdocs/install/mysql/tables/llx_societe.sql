@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 -- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>

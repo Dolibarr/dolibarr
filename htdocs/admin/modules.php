@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -41,6 +41,7 @@ $langs->loadLangs(array("errors","admin","modulebuilder"));
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
 $action=GETPOST('action','alpha');
+//var_dump($_POST);exit;
 $value=GETPOST('value', 'alpha');
 $page_y=GETPOST('page_y','int');
 $search_keyword=GETPOST('search_keyword','alpha');
@@ -700,7 +701,10 @@ if ($mode == 'common')
         	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
         		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
-        		else print $langs->trans("Required");
+        		else {
+        			print img_picto($langs->trans("Required"),'switch_on');
+        			print $langs->trans("Required");
+        		}
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
@@ -1010,8 +1014,39 @@ if ($mode == 'deploy')
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
-			print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+
+			print $langs->trans("YouCanSubmitFile");
+
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
+			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp*1;
+			if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
+			if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
+			if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
+			// Now $max and $maxphp are in Kb
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max,$maxphp);
+
+			if ($maxmin > 0)
+			{
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					jQuery("#fileinstall").on("change", function() {
+						if(this.files[0].size > '.($maxmin*1024).'){
+							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							this.value = "";
+						};
+					});
+				});
+				</script>'."\n";
+				// MAX_FILE_SIZE doit précéder le champ input de type file
+				print '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
+			}
+
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
+
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+
 			print '</form>';
 
 			print '<br>';

@@ -1,11 +1,10 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
 MessageKO=Nachrichtenseite für abgebrochene Zahlung
-Notify_FICHINTER_ADD_CONTACT=Kontakt zu Einsatz hinzugefügt
-Notify_FICHINTER_VALIDATE=Eingriff freigegeben
-Notify_FICHINTER_SENTBYMAIL=Service per E-Mail versendet
 Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
 Notify_FICHEINTER_VALIDATE=Eingriff freigegeben
+Notify_FICHINTER_ADD_CONTACT=Kontakt zu Einsatz hinzugefügt
+Notify_FICHINTER_SENTBYMAIL=Service per E-Mail versendet
 TotalSizeOfAttachedFiles=Gesamtgrösse der angehängten Dateien/Dokumente
 MaxSize=Maximalgrösse
 ChooseYourDemoProfil=Bitte wählen Sie das Demo-Profil das Ihrem Einsatzgebiet am ehesten entspricht
@@ -15,7 +14,6 @@ FeaturesSupported=Unterstützte Funktionen
 SizeUnitfoot=Fuss
 EnableGDLibraryDesc=Für den Einsatz dieser Option installieren, bzw. aktivieren Sie bitte die GD-Library.
 ProfIdShortDesc=<b>Prof ID %s</b> dient zur Speicherung landesabhängiger Geschäftspartnerdaten. <br> Für das Land <b>%s</b> ist dies beispielsweise Code <b>%s</b>.
-EMailTextInterventionAddedContact=Ein neuer Einsatz %s wurde ihnen zugeteilt.
 EMailTextInterventionValidated=Service %s wurde freigegeben
 NewSizeAfterCropping=Neue Grösse nach dem Zuschneiden
 DefineNewAreaToPick=Definieren Sie einen neuen Bereich innerhalb des Bildes (Klicken Sie mit der linken Maustaste auf das Bild und halten Sie bis zur gegenüberligenden Ecke)

@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
- * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -610,9 +610,9 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  This prefix is valid in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with one root dir or two instances
-     *  in virtual servers.
+     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
+     *  between multi-instances, even when having two instances with one root dir or two instances in virtual servers.
+     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
@@ -621,11 +621,15 @@ if (! function_exists('dol_getprefix'))
     {
 		global $conf;
 
-		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
-		if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+		// If prefix is for email
+		if ($mode == 'email')
 		{
-			if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-			else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+			{
+				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+			}
+			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
 
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
@@ -634,7 +638,7 @@ if (! function_exists('dol_getprefix'))
 			// Use this for a "readable" cookie name
 			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-		else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 	}
 }
 
@@ -2662,6 +2666,20 @@ function dol_print_ip($ip,$mode=0)
 }
 
 /**
+ * Return the IP of remote user.
+ * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
+ * Then HTTP_CLIENT_IP if defined (rare)
+ * Then REMOTE_ADDR (not way to be modified by user but may be wrong if using proxy)
+ *
+ * @return	string		Ip of remote user.
+ */
+function getUserRemoteIP()
+{
+	$ip = empty($_SERVER['HTTP_X_FORWARDED_FOR'])? (empty($_SERVER['HTTP_CLIENT_IP'])?(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']):$_SERVER['HTTP_CLIENT_IP']) : $_SERVER['HTTP_X_FORWARDED_FOR'];
+	return $ip;
+}
+
+/**
  * 	Return a country code from IP. Empty string if not found.
  *
  * 	@param	string	$ip			IP
@@ -2704,7 +2722,7 @@ function dol_user_country()
 	$ret='';
 	if (! empty($conf->geoipmaxmind->enabled))
 	{
-		$ip=$_SERVER["REMOTE_ADDR"];
+		$ip=getUserRemoteIP();
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
@@ -2837,221 +2855,54 @@ function isValidPhone($phone)
  * @param   string		$stringencoding		Encoding of string
  * @return  int								Length of string
  */
-function dol_strlen($string,$stringencoding='UTF-8')
+function dol_strlen($string, $stringencoding='UTF-8')
 {
 	if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
 	else return strlen($string);
 }
 
 /**
- * Make a substring. Works even in mbstring module is not enabled.
+ * Make a substring. Works even if mbstring module is not enabled for better compatibility.
  *
  * @param	string	$string				String to scan
  * @param	string	$start				Start position
- * @param	int		$length				Length
+ * @param	int		$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
  * @param   string	$stringencoding		Page code used for input string encoding
+ * @param	int		$trunconbytes		1=Length is max of bytes instead of max of characters
  * @return  string						substring
  */
-function dol_substr($string,$start,$length,$stringencoding='')
+function dol_substr($string, $start, $length, $stringencoding='', $trunconbytes=0)
 {
 	global $langs;
 
 	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
 
 	$ret='';
-	if (function_exists('mb_substr'))
+	if (empty($trunconbytes))
 	{
-		$ret=mb_substr($string,$start,$length,$stringencoding);
+		if (function_exists('mb_substr'))
+		{
+			$ret=mb_substr($string, $start, $length, $stringencoding);
+		}
+		else
+		{
+			$ret=substr($string, $start, $length);
+		}
 	}
 	else
 	{
-		$ret=substr($string,$start,$length);
+		if (function_exists('mb_strcut'))
+		{
+			$ret=mb_strcut($string, $start, $length, $stringencoding);
+		}
+		else
+		{
+			$ret=substr($string, $start, $length);
+		}
 	}
 	return $ret;
 }
 
-
-/**
- *  Show a javascript graph.
- *  Do not use this function anymore. Use DolGraph class instead.
- *
- *  @param		string	$htmlid			Html id name
- *  @param		int		$width			Width in pixel
- *  @param		int		$height			Height in pixel
- *  @param		array	$data			Data array
- *  @param		int		$showlegend		1 to show legend, 0 otherwise
- *  @param		string	$type			Type of graph ('pie', 'barline')
- *  @param		int		$showpercent	Show percent (with type='pie' only)
- *  @param		string	$url			Param to add an url to click values
- *  @param		int		$combineother	0=No combine, 0.05=Combine if lower than 5%
- *  @param      int     $shownographyet Show graph to say there is not enough data
- *  @return		void
- *  @deprecated
- *  @see DolGraph
- */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05,$shownographyet=0)
-{
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
-	global $conf,$langs;
-	global $theme_datacolor;    // To have var kept when function is called several times
-
-	if ($shownographyet)
-	{
-		print '<div class="nographyet" style="width:'.$width.'px;height:'.$height.'px;"></div>';
-		print '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
-		return;
-	}
-
-	if (empty($conf->use_javascript_ajax)) return;
-	$jsgraphlib='flot';
-	$datacolor=array();
-
-	// Load colors of theme into $datacolor array
-	$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
-	if (is_readable($color_file))
-	{
-		include_once $color_file;
-		if (isset($theme_datacolor))
-		{
-			$datacolor=array();
-			foreach($theme_datacolor as $val)
-			{
-				$datacolor[]="#".sprintf("%02x",$val[0]).sprintf("%02x",$val[1]).sprintf("%02x",$val[2]);
-			}
-		}
-	}
-	print '<div id="'.$htmlid.'" style="width:'.$width.'px;height:'.$height.'px;"></div>';
-
-	// We use Flot js lib
-	if ($jsgraphlib == 'flot')
-	{
-		if ($type == 'pie')
-		{
-			// data is   array('series'=>array(serie1,serie2,...),
-			//                 'seriestype'=>array('bar','line',...),
-			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-			// serieX is array('label'=>'label', data=>val)
-			print '
-			<script type="text/javascript">
-			$(function () {
-				var data = '.json_encode($data['series']).';
-
-				function plotWithOptions() {
-					$.plot($("#'.$htmlid.'"), data,
-					{
-						series: {
-							pie: {
-								show: true,
-								radius: 0.8,';
-			if ($combineother)
-			{
-				print '
-								combine: {
-								 	threshold: '.$combineother.'
-								},';
-			}
-			print '
-								label: {
-									show: true,
-									radius: 0.9,
-									formatter: function(label, series) {
-										var percent=Math.round(series.percent);
-										var number=series.data[0][1];
-										return \'';
-										print '<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
-										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'">';
-										print '\'+'.($showlegend?'number':'label+\' \'+number');
-										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
-										print '+\'';
-										if ($url) print '</a>';
-										print '</div>\';
-									},
-									background: {
-										opacity: 0.0,
-										color: \'#000000\'
-									},
-								}
-							}
-						},
-						zoom: {
-							interactive: true
-						},
-						pan: {
-							interactive: true
-						},';
-						if (count($datacolor))
-						{
-							print 'colors: '.(! empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor)).',';
-						}
-						print 'legend: {show: '.($showlegend?'true':'false').', position: \'ne\' }
-					});
-				}
-				plotWithOptions();
-			});
-			</script>';
-		}
-		else if ($type == 'barline')
-		{
-			// data is   array('series'=>array(serie1,serie2,...),
-			//                 'seriestype'=>array('bar','line',...),
-			//                 'seriescolor'=>array(0=>'#999999',1=>'#999999',...)
-			//                 'xlabel'=>array(0=>labelx1,1=>labelx2,...));
-			// serieX is array('label'=>'label', data=>array(0=>y1,1=>y2,...)) with same nb of value than into xlabel
-			print '
-			<script type="text/javascript">
-			$(function () {
-				var data = [';
-				$i=0; $outputserie=0;
-				foreach($data['series'] as $serie)
-				{
-					if ($data['seriestype'][$i]=='line') { $i++; continue; };
-					if ($outputserie > 0) print ',';
-					print '{ bars: { stack: 0, show: true, barWidth: 0.9, align: \'center\' }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
-					$outputserie++; $i++;
-				}
-				if ($outputserie) print ', ';
-				//print '];
-				//var datalines = [';
-				$i=0; $outputserie=0;
-				foreach($data['series'] as $serie)
-				{
-					if (empty($data['seriestype'][$i]) || $data['seriestype'][$i]=='bar') { $i++; continue; };
-					if ($outputserie > 0) print ',';
-					print '{ lines: { show: true }, label: \''.dol_escape_js($serie['label']).'\', data: '.json_encode($serie['data']).'}'."\n";
-					$outputserie++; $i++;
-				}
-				print '];
-				var dataticks = '.json_encode($data['xlabel']).'
-
-				function plotWithOptions() {
-					$.plot(jQuery("#'.$htmlid.'"), data,
-					{
-						series: {
-							stack: 0
-						},
-						zoom: {
-							interactive: true
-						},
-						pan: {
-							interactive: true
-						},';
-						if (count($datacolor))
-						{
-							print 'colors: '.json_encode($datacolor).',';
-						}
-						print 'legend: {show: '.($showlegend?'true':'false').'},
-						xaxis: {ticks: dataticks}
-					});
-				}
-				plotWithOptions();
-			});
-			</script>';
-		}
-		else print 'BadValueForParameterType';
-	}
-}
 
 /**
  *	Truncate a string to a particular length adding '...' if string larger than length.
@@ -3063,7 +2914,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
- *  @param  int     $display            Trunc is use to display and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
+ *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
@@ -3159,7 +3010,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
-				'skype','twitter','facebook'
+				'jabber','skype','twitter','facebook'
 			)
 		)) {
 			$fakey = $pictowithoutext;
@@ -3242,9 +3093,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
-			} elseif ($pictowithoutext == 'play') {
+			}
+			elseif ($pictowithoutext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'jabber') {
+				$fakey = 'fa-comment-o';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
@@ -4203,10 +4058,10 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 	if ($picto == 'setup') $picto='title_generic.png';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
 	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
-	$return.= '<td class="nobordernopadding" valign="middle">';
-	$return.= '<div class="titre">'.$titre.'</div>';
+	$return.= '<td class="nobordernopadding valignmiddle">';
+	$return.= '<div class="titre inline-block">'.$titre.'</div>';
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
 	{
@@ -4265,7 +4120,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
+	print '<table border="0" class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into load_fiche_tire
 
 	// Left
 	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
@@ -4965,7 +4820,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	{
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
-		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
 		{
 			$vatratecleaned = $reg[1];
 			$vatratecode = $reg[2];
@@ -5894,7 +5749,7 @@ function dol_textishtml($msg,$option=0)
  *
  *  @param	string	$text1		Text 1
  *  @param	string	$text2		Text 2
- *  @param  bool	$forxml     false=Use <br>, true=Use <br />
+ *  @param  bool	$forxml     false=Use <br> instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
  *  @return	string				Text 1 + new line + Text2
  *  @see    dol_textishtml
  */
@@ -5946,7 +5801,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		'__USER_FIRSTNAME__' => (string) $user->firstname,
 		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
+		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
 		)
 			);
 	}
@@ -6011,6 +5866,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
 			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
 
+			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+
 			if (is_object($object) && $object->element == 'shipping')
 			{
 				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
@@ -6024,7 +5883,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-			// TODO Use this ?
+			// TODO Remove this
 			$msgishtml = 0;
 
 			$birthday = dol_print_date($object->birth,'day');
@@ -6135,6 +5994,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
+
+			if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = '';
+			if (! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'commande')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = '';
+			if (! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'facture')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 		}
 	}
 	if (empty($exclude) || ! in_array('objectamount', $exclude))
@@ -6195,15 +6070,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		));
 	}
 
-	if (empty($exclude) || ! in_array('system', $exclude))
-	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
-		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
-	}
 	if (! empty($conf->multicompany->enabled))
 	{
 		$substitutionarray=array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
+	}
+	if (empty($exclude) || ! in_array('system', $exclude))
+	{
+		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
 	return $substitutionarray;
@@ -6782,10 +6657,12 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
 	if ($key == '') return '';
 
 	// Check in cache
-	if (isset($cache_codes[$tablename][$key]))	// Can be defined to 0 or ''
+	if (isset($cache_codes[$tablename][$key][$fieldid]))	// Can be defined to 0 or ''
 	{
-		return $cache_codes[$tablename][$key];   // Found in cache
+		return $cache_codes[$tablename][$key][$fieldid];   // Found in cache
 	}
+
+	dol_syslog('dol_getIdFromCode (value not found into cache)', LOG_DEBUG);
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
@@ -6793,15 +6670,14 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
 	if (! empty($entityfilter))
 		$sql.= " AND entity IN (" . getEntity($tablename) . ")";
 
-	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($obj) $cache_codes[$tablename][$key]=$obj->valuetoget;
-		else $cache_codes[$tablename][$key]='';
+		if ($obj) $cache_codes[$tablename][$key][$fieldid]=$obj->valuetoget;
+		else $cache_codes[$tablename][$key][$fieldid]='';
 		$db->free($resql);
-		return $cache_codes[$tablename][$key];
+		return $cache_codes[$tablename][$key][$fieldid];
 	}
 	else
 	{
@@ -6889,8 +6765,6 @@ function picto_from_langcode($codelang, $moreatt = '')
 
 	if (empty($codelang)) return '';
 
-	if (empty($codelang)) return '';
-
 	if ($codelang == 'auto')
 	{
 		return '<span class="fa fa-globe"></span>';
@@ -6912,6 +6786,215 @@ function picto_from_langcode($codelang, $moreatt = '')
 	}
 
 	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
+}
+
+/**
+ * Return default language from country code
+ *
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
+ * @return	string					Value of locale like 'en_US', 'fr_FR', ...
+ */
+function getLanguageCodeFromCountryCode($countrycode)
+{
+	global $mysoc;
+
+	if (strtoupper($countrycode) == 'MQ') return 'fr_CA';
+	if (strtoupper($countrycode) == 'SE') return 'sv_SE';	// se_SE is Sami/Sweden, and we want in priority sv_SE for SE country
+	if (strtoupper($countrycode) == 'CH')
+	{
+		if ($mysoc->country_code == 'FR') return 'fr_CH';
+		if ($mysoc->country_code == 'DE') return 'de_CH';
+	}
+
+	// Locale list taken from:
+	// http://stackoverflow.com/questions/3191664/
+	// list-of-all-locales-and-their-short-codes
+	$locales = array(
+		'af-ZA',
+		'am-ET',
+		'ar-AE',
+		'ar-BH',
+		'ar-DZ',
+		'ar-EG',
+		'ar-IQ',
+		'ar-JO',
+		'ar-KW',
+		'ar-LB',
+		'ar-LY',
+		'ar-MA',
+		'ar-OM',
+		'ar-QA',
+		'ar-SA',
+		'ar-SY',
+		'ar-TN',
+		'ar-YE',
+		'as-IN',
+		'ba-RU',
+		'be-BY',
+		'bg-BG',
+		'bn-BD',
+		'bn-IN',
+		'bo-CN',
+		'br-FR',
+		'ca-ES',
+		'co-FR',
+		'cs-CZ',
+		'cy-GB',
+		'da-DK',
+		'de-AT',
+		'de-CH',
+		'de-DE',
+		'de-LI',
+		'de-LU',
+		'dv-MV',
+		'el-GR',
+		'en-AU',
+		'en-BZ',
+		'en-CA',
+		'en-GB',
+		'en-IE',
+		'en-IN',
+		'en-JM',
+		'en-MY',
+		'en-NZ',
+		'en-PH',
+		'en-SG',
+		'en-TT',
+		'en-US',
+		'en-ZA',
+		'en-ZW',
+		'es-AR',
+		'es-BO',
+		'es-CL',
+		'es-CO',
+		'es-CR',
+		'es-DO',
+		'es-EC',
+		'es-ES',
+		'es-GT',
+		'es-HN',
+		'es-MX',
+		'es-NI',
+		'es-PA',
+		'es-PE',
+		'es-PR',
+		'es-PY',
+		'es-SV',
+		'es-US',
+		'es-UY',
+		'es-VE',
+		'et-EE',
+		'eu-ES',
+		'fa-IR',
+		'fi-FI',
+		'fo-FO',
+		'fr-BE',
+		'fr-CA',
+		'fr-CH',
+		'fr-FR',
+		'fr-LU',
+		'fr-MC',
+		'fy-NL',
+		'ga-IE',
+		'gd-GB',
+		'gl-ES',
+		'gu-IN',
+		'he-IL',
+		'hi-IN',
+		'hr-BA',
+		'hr-HR',
+		'hu-HU',
+		'hy-AM',
+		'id-ID',
+		'ig-NG',
+		'ii-CN',
+		'is-IS',
+		'it-CH',
+		'it-IT',
+		'ja-JP',
+		'ka-GE',
+		'kk-KZ',
+		'kl-GL',
+		'km-KH',
+		'kn-IN',
+		'ko-KR',
+		'ky-KG',
+		'lb-LU',
+		'lo-LA',
+		'lt-LT',
+		'lv-LV',
+		'mi-NZ',
+		'mk-MK',
+		'ml-IN',
+		'mn-MN',
+		'mr-IN',
+		'ms-BN',
+		'ms-MY',
+		'mt-MT',
+		'nb-NO',
+		'ne-NP',
+		'nl-BE',
+		'nl-NL',
+		'nn-NO',
+		'oc-FR',
+		'or-IN',
+		'pa-IN',
+		'pl-PL',
+		'ps-AF',
+		'pt-BR',
+		'pt-PT',
+		'rm-CH',
+		'ro-RO',
+		'ru-RU',
+		'rw-RW',
+		'sa-IN',
+		'se-FI',
+		'se-NO',
+		'se-SE',
+		'si-LK',
+		'sk-SK',
+		'sl-SI',
+		'sq-AL',
+		'sv-FI',
+		'sv-SE',
+		'sw-KE',
+		'ta-IN',
+		'te-IN',
+		'th-TH',
+		'tk-TM',
+		'tn-ZA',
+		'tr-TR',
+		'tt-RU',
+		'ug-CN',
+		'uk-UA',
+		'ur-PK',
+		'vi-VN',
+		'wo-SN',
+		'xh-ZA',
+		'yo-NG',
+		'zh-CN',
+		'zh-HK',
+		'zh-MO',
+		'zh-SG',
+		'zh-TW',
+		'zu-ZA',
+	);
+
+	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
+	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
+
+	foreach ($locales as $locale)
+	{
+		$locale_language = locale_get_primary_language($locale);
+		$locale_region = locale_get_region($locale);
+		if (strtoupper($countrycode) == $locale_region)
+		{
+			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+			return strtolower($locale_language).'_'.strtoupper($locale_region);
+		}
+	}
+
+	return null;
 }
 
 /**
@@ -7061,6 +7144,7 @@ function printCommonFooter($zone='private')
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print '<script type="text/javascript" language="javascript">'."\n";
+			print 'jQuery(document).ready(function() {'."\n";
 
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
@@ -7142,6 +7226,8 @@ function printCommonFooter($zone='private')
 					}
 				}
 			}
+
+			print '});'."\n";
 
 			// Google Analytics
 			// TODO Add a hook here
@@ -7288,7 +7374,8 @@ function dol_getmypid()
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '1,3,4') for search into a multiselect string ('1,2')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
@@ -7372,11 +7459,9 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 			else if ($mode == 4)
 			{
 			    $tmparray=explode(',',trim($crit));
-
 			    if (count($tmparray))
 			    {
 			        $listofcodes='';
-
 			        foreach($tmparray as $val)
 			        {
 			            if ($val)
@@ -7385,7 +7470,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 			                $newres .= ' OR '. $field . ' = \'' . $db->escape(trim($val)) . '\'';
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . '\'';
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . ',%\'';
-					$newres .= ')';
+			                $newres .= ')';
 			                $i2++;
 			            }
 			        }

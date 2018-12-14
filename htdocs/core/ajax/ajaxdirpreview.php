@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
@@ -179,7 +179,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -210,6 +210,8 @@ if ($type == 'directory')
     else if ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
     else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
+	// Auto area for holiday
+    else if ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))

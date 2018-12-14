@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -194,7 +194,6 @@ if (empty($reshook))
         $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
         $object->fax			= GETPOST("fax",'alpha');
         $object->jabberid		= GETPOST("jabberid",'alpha');
-		$object->no_email		= GETPOST("no_email",'int');
         $object->priv			= GETPOST("priv",'int');
         $object->note_public	= GETPOST("note_public",'none');
         $object->note_private	= GETPOST("note_private",'none');
@@ -367,7 +366,6 @@ if (empty($reshook))
             $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
             $object->fax			= GETPOST("fax",'alpha');
             $object->jabberid		= GETPOST("jabberid",'alpha');
-			$object->no_email		= GETPOST("no_email",'int');
             $object->priv			= GETPOST("priv",'int');
             $object->note_public	= GETPOST("note_public",'none');
        		$object->note_private	= GETPOST("note_private",'none');
@@ -657,8 +655,21 @@ else
 	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			      {
@@ -666,12 +677,14 @@ else
             }
             print '</tr>';
 
-            // Instant message and no email
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
-
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="skype">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
@@ -925,13 +938,25 @@ else
             }
             print '</tr>';
 
-            // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            // Unsubscribe
+            print '<tr>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			{
@@ -941,6 +966,12 @@ else
 
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber ID
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="jabberid">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
@@ -1159,11 +1190,23 @@ else
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
-        // Instant message and no email
-        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td></tr>';
+        // Unsubscribe opt-out
         if (!empty($conf->mailing->enabled))
         {
-        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+        	//print 'eee'.$object->email;
+        	$noemail = $object->no_email;
+        	if (empty($noemail) && ! empty($object->email))
+        	{
+        		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+        		//print $sql;
+        		$resql=$db->query($sql);
+        		if ($resql)
+        		{
+        			$obj=$db->fetch_object($resql);
+        			$noemail = $obj->nb;
+        		}
+        	}
+        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
