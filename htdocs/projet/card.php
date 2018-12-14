@@ -552,7 +552,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	   	$text=$form->select_company(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		{
-			$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+			$texthelp=$langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
 		}
 		else print $text;
@@ -789,7 +789,7 @@ elseif ($object->id > 0)
 			$text=$form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 			{
-				$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+				$texthelp=$langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
 			}
 			else print $text;
