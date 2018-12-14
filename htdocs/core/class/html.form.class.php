@@ -4896,7 +4896,7 @@ class Form
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
 			{
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses
-				if (empty($conf->global->OVERRIDE_VAT_FOR_EXPENSE_REPORT))	
+				if (empty($conf->global->OVERRIDE_VAT_FOR_EXPENSE_REPORT))
 				{
 					$title=' title="'.$langs->trans('VATIsNotUsed').'"';
 					$disabled=true;
