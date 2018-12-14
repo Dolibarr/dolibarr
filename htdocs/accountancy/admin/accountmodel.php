@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
@@ -44,7 +44,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=31;
 $rowid=GETPOST('rowid','alpha');
@@ -55,8 +55,8 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listoffset=GETPOST('listoffset','alpha');
+$listlimit=GETPOST('listlimit','int')>0?GETPOST('listlimit','int'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'aZ09comma');
@@ -139,13 +139,13 @@ $sourceList=array();
  * Actions
  */
 
-if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
+if (GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter_x','alpha'))
 {
 	$search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
-if (GETPOST('actionadd') || GETPOST('actionmodify'))
+if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
 	$listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
 	$listfieldinsert=explode(',',$tabfieldinsert[$id]);
@@ -235,7 +235,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
 	// Si verif ok et action add, on ajoute la ligne
-	if ($ok && GETPOST('actionadd'))
+	if ($ok && GETPOST('actionadd','alpha'))
 	{
 		if ($tabrowid[$id])
 		{
@@ -247,7 +247,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			{
 				$obj = $db->fetch_object($result);
 				$newid=($obj->newid + 1);
-
 			} else {
 				dol_print_error($db);
 			}
@@ -300,7 +299,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	}
 
 	// Si verif ok et action modify, on modifie la ligne
-	if ($ok && GETPOST('actionmodify'))
+	if ($ok && GETPOST('actionmodify','alpha'))
 	{
 		if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
 		else { $rowidcol="rowid"; }
@@ -341,7 +340,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel'))
+if (GETPOST('actioncancel','alpha'))
 {
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
@@ -560,7 +559,7 @@ if ($id)
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
-		if (GETPOST('actionadd'))
+		if (GETPOST('actionadd','alpha'))
 		{
 			foreach ($fieldlist as $key=>$val)
 			{

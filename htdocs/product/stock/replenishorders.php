@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';
 if (!$sortfield) $sortfield = 'cf.date_creation';
-$page = GETPOST("page");
+$page = GETPOST('page','int') ? GETPOST('page','int') : 0;
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
 

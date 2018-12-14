@@ -46,6 +46,8 @@ class modSocialNetworks extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "interface";
+        // Module position in the family on 2 digits ('01', '10', '20', ...)
+        $this->module_position = '20';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable Social Networks fields into third parties and addresses (skype, twitter, facebook, ...)";

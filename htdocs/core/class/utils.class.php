@@ -213,7 +213,7 @@ class Utils
 		if ($file == 'auto')
 		{
 			$prefix='dump';
-			$ext='.sql';
+			$ext='sql';
 			if (in_array($type, array('mysql', 'mysqli')))  { $prefix='mysqldump'; $ext='sql'; }
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) { $prefix='pg_dump'; $ext='sql'; }
@@ -284,8 +284,9 @@ class Utils
 			}
 
 			$errormsg='';
+			$handle = '';
 
-			// Debut appel methode execution
+			// Start call method to execute dump
 			$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
 			$fullcommandclear=$command." ".$paramclear." 2>&1";
 			if ($compression == 'none') $handle = fopen($outputfile, 'w');
@@ -342,7 +343,6 @@ class Utils
 						elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
 					}
 					pclose($handlein);
-
 				}
 
 

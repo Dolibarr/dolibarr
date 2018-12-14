@@ -47,11 +47,21 @@ if ($action == 'print_file' && $user->rights->printing->read) {
             {
                 $printerfound++;
 
-                $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
+                $subdir='';
                 $module = GETPOST('printer', 'alpha');
-                if ($module =='commande_fournisseur') {
-                    $module = 'fournisseur';
-                    $subdir = 'commande';
+                switch ($module )
+                {
+                    case 'livraison' :
+                        $subdir = 'receipt';
+                        $module = 'expedition';
+                        break;
+                    case 'expedition' :
+                        $subdir = 'sending';
+                        break;
+                    case 'commande_fournisseur' :
+                        $module = 'fournisseur';
+                        $subdir = 'commande';
+                        break;
                 }
                 try {
                     $ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);

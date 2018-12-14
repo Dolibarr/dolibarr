@@ -4,10 +4,10 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -59,6 +59,9 @@ class Adherent extends CommonObject
 
 	public $mesgs;
 
+    /**
+     * @var string login of member
+     */
 	public $login;
 
 	//! Clear password in memory
@@ -68,39 +71,105 @@ class Adherent extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
+    /**
+     * @var string company name
+     * @deprecated
+     */
 	public $societe;
 
 	/**
-	 * @var Societe $company {@type Societe}
+	 * @var string company name
 	 */
 	public $company;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
 
 	/**
 	 * @var string Address
 	 */
 	public $address;
 
-	public $zip;
+    /**
+     * @var string zipcode
+     */
+    public $zip;
+
+    /**
+     * @var string town
+     */
 	public $town;
 
-	public $state_id;              // Id of department
-	public $state_code;            // Code of department
-	public $state;                 // Label of department
+    /**
+     * @var int Id of state
+     */
+    public $state_id;
 
+    /**
+     * @var string Code of state
+     */
+    public $state_code;
+
+    /**
+     * @var string Label of state
+     */
+	public $state;
+
+    /**
+     * @var string email
+     */
 	public $email;
 
-	public $skype;
-	public $twitter;
+    /**
+     * @var string skype account
+     */
+    public $skype;
+
+    /**
+     * @var string twitter account
+     */
+    public $twitter;
+
+    /**
+     * @var string facebook account
+     */
 	public $facebook;
 
+    /**
+     * @var string Phone number
+     */
 	public $phone;
+
+    /**
+     * @var string Private Phone number
+     */
 	public $phone_perso;
+
+    /**
+     * @var string Mobile phone number
+     */
 	public $phone_mobile;
+
+    /**
+     * @var string Fax number
+     */
+    public $fax;
+
+    /**
+     * @var string Function
+     */
+    public $poste;
 
 	public $morphy;
 	public $public;
-	public $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-	public $photo;
+
+    // -1:brouillon, 0:resilie, >=1:valide,paye
+    // def in common object
+    //public $statut;
+
+    public $photo;
 
 	public $datec;
 	public $datem;
@@ -108,20 +177,19 @@ class Adherent extends CommonObject
 
 	public $birth;
 
-	public $note_public;
-	public $note_private;
+    /**
+     * @var int id type member
+     */
+	public $typeid;
 
-	public $typeid;			// Id type adherent
-	public $type;				// Libelle type adherent
+    /**
+     * @var string label type member
+     */
+	public $type;
 	public $need_subscription;
 
 	public $user_id;
 	public $user_login;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-    public $fk_soc;
 
 	public $datefin;	// From member table
 
@@ -134,7 +202,10 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 	public $subscriptions=array();
 
-	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
+    /**
+     * @var Adherent To contains a clone of this when we need to save old properties of object
+     */
+	public $oldcopy;
 
 	/**
 	 * @var int Entity
@@ -572,11 +643,11 @@ class Adherent extends CommonObject
 						$luser->societe_id=$this->societe;
 
 						$luser->birth=$this->birth;
-                                                $luser->address=$this->address;
-                                                $luser->zip=$this->zip;
-                                                $luser->town=$this->town;
-                                                $luser->country_id=$this->country_id;
-                                                $luser->state_id=$this->state_id;
+                        $luser->address=$this->address;
+                        $luser->zip=$this->zip;
+                        $luser->town=$this->town;
+                        $luser->country_id=$this->country_id;
+                        $luser->state_id=$this->state_id;
 
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
@@ -2488,7 +2559,6 @@ class Adherent extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2624,12 +2694,18 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		if (empty($conf->adherent->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}
+		if (empty($conf->global->MEMBER_REMINDER_EMAIL))
 		{
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
-		}*/
+		}
 
 		$now = dol_now();
 		$nbok = 0;
@@ -2716,8 +2792,58 @@ class Adherent extends CommonObject
 							{
 								$nbok++;
 
-								// TODO Add event email sent for member
+								$message = $msg;
+								$sendto = $to;
+								$sendtocc = '';
+								$sendtobcc = '';
+								$actioncode='EMAIL';
+								$extraparams='';
 
+								$actionmsg='';
+								$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
+								if ($message)
+								{
+									$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+									$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+									if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+									$actionmsg = dol_concatdesc($actionmsg, $message);
+								}
+
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+	    						// Insert record of emails sent
+	    						$actioncomm = new ActionComm($this->db);
+
+	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+	    						$actioncomm->code        = 'AC_'.$actioncode;
+	    						$actioncomm->label       = $actionmsg2;
+	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->fk_project  = 0;
+	    						$actioncomm->datep       = $now;
+	    						$actioncomm->datef       = $now;
+	    						$actioncomm->percentage  = -1;   // Not applicable
+	    						$actioncomm->socid       = $adherent->thirdparty->id;
+	    						$actioncomm->contactid   = 0;
+	    						$actioncomm->authorid    = $user->id;   // User saving action
+	    						$actioncomm->userownerid = $user->id;	// Owner of action
+	    						// Fields when action is en email (content should be added into note)
+	    						$actioncomm->email_msgid = $cmail->msgid;
+	    						$actioncomm->email_from  = $from;
+	    						$actioncomm->email_sender= '';
+	    						$actioncomm->email_to    = $to;
+	    						$actioncomm->email_tocc  = $sendtocc;
+	    						$actioncomm->email_tobcc = $sendtobcc;
+	    						$actioncomm->email_subject = $subject;
+	    						$actioncomm->errors_to   = '';
+
+	    						$actioncomm->fk_element  = $adherent->id;
+	    						$actioncomm->elementtype = $adherent->element;
+
+	    						$actioncomm->extraparams = $extraparams;
+
+	    						$actioncomm->create($user);
 							}
 						}
 						else

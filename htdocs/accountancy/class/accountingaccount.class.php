@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2014  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@
  */
 class AccountingAccount extends CommonObject
 {
+	/**
+	 * @var string Name of element
+	 */
 	public $element='accounting_account';
 
 	/**
@@ -60,16 +64,6 @@ class AccountingAccount extends CommonObject
 	public $db;
 
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
 	 * @var int ID
 	 */
 	public $id;
@@ -79,17 +73,39 @@ class AccountingAccount extends CommonObject
 	 */
 	public $rowid;
 
-	public $datec; // Creation date
+	/**
+     * @var string Creation date
+     */
+	public $datec;
 
 	/**
-     * @var int ID
+     * @var string pcg version
      */
 	public $fk_pcg_version;
 
+    /**
+     * @var string pcg type
+     */
 	public $pcg_type;
+
+    /**
+     * @var string pcg subtype
+     */
 	public $pcg_subtype;
+
+    /**
+     * @var string account number
+     */
 	public $account_number;
+
+    /**
+     * @var int ID parent account
+     */
 	public $account_parent;
+
+    /**
+     * @var int ID category account
+     */
 	public $account_category;
 
 	/**
@@ -112,8 +128,10 @@ class AccountingAccount extends CommonObject
      */
     public $fk_user_modif;
 
-    public $active;       // duplicate with status
-
+	/**
+	 * @var int active (duplicate with status)
+	 */
+    public $active;
 
 	/**
 	 * Constructor

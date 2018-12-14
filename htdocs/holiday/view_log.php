@@ -124,7 +124,6 @@ foreach($cp->logs as $logs_CP)
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
-
 }
 
 if ($log_holiday == '2')

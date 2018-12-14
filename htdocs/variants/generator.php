@@ -123,7 +123,6 @@ if ($_POST) {
 		}
 
 		$db->rollback();
-
 	} else {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}

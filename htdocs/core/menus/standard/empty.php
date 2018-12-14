@@ -311,8 +311,6 @@ class MenuManager
 		                    }
 		                    print '</li>'."\n";
 		                }
-
-
 		            }
 		            //var_dump($submenu);
 		            print '</ul>';

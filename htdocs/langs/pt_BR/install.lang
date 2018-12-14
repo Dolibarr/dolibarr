@@ -150,7 +150,6 @@ MigrationDeliveryDetail=Entrega atualizada
 MigrationStockDetail=Atualizar valores do estoque dos produtos
 MigrationMenusDetail=Atualize menus das tabelas dinâmicas
 MigrationDeliveryAddress=Atualizar o endereço de entrega nos envios
-MigrationProjectTaskActors=Migração de dados para a tabela llx_projet_task_actors
 MigrationProjectUserResp=Dados da migração do campo fk_user_resp de llx_projet para llx_element_contact
 MigrationProjectTaskTime=Atualizar tempo gasto em segundos
 MigrationActioncommElement=Atualizar dados nas ações

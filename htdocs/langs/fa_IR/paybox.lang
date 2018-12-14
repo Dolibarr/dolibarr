@@ -3,7 +3,7 @@ PayBoxSetup=راه اندازی ماژول خزانه
 PayBoxDesc=این ماژول صفحات پیشنهاد به اجازه پرداخت در <a href="http://www.paybox.com" target="_blank">خزانه</a> شده توسط مشتریان. این می تواند برای پرداخت رایگان و پرداخت در یک شیء خاص Dolibarr استفاده می شود (فاکتور، سفارش، ...)
 FollowingUrlAreAvailableToMakePayments=از آدرس های زیر در دسترس است به ارائه یک صفحه به مشتریان به پرداخت در اشیاء Dolibarr است
 PaymentForm=فرم پرداخت
-WelcomeOnPaymentPage=در سرویس پرداخت آنلاین ما خوش آمدید
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=این صفحه نمایش به شما اجازه ایجاد پرداخت آنلاین به٪ s.
 ThisIsInformationOnPayment=این اطلاعات در پرداخت به انجام است
 ToComplete=برای تکمیل
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL برای ارائه٪ رابط کار�
 ToOfferALinkForOnlinePaymentOnContractLine=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای قرارداد خط
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای مقدار رایگان
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL برای ارائه٪ رابط کاربری پرداخت آنلاین برای به اشتراک عضو
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=شما همچنین می توانید پارامتر URL <b>و برچسب = <i>مقدار</i></b> را به هر یک از این URL (فقط برای پرداخت رایگان مورد نیاز) برای اضافه کردن خود برچسب توضیحات پرداخت خود اضافه کنید.
-SetupPayBoxToHavePaymentCreatedAutomatically=راه اندازی خزانه خود را با <b>آدرس٪ s را</b> به پرداخت زمانی که توسط خزانه اعتبار به طور خودکار ساخته.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=این صفحه تایید می کند که پرداخت شما ثبت شده است. متشکرم.
-YourPaymentHasNotBeenRecorded=شما پرداخت ثبت شده است نیست و معامله لغو شده است. متشکرم.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=پارامترهای حساب
 UsageParameter=پارامترهای طریقه استفاده
 InformationToFindParameters=کمک برای پیدا کردن٪ شما اطلاعات حساب

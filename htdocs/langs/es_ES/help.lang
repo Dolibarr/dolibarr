@@ -6,7 +6,7 @@ OtherSupport=Otros tipos de asistencia
 ToSeeListOfAvailableRessources=Para contactar/ver los recursos disponibles:
 HelpCenter=Centro de asistencia
 DolibarrHelpCenter=Centro de soporte y ayuda Dolibarr
-ToGoBackToDolibarr=Haga clic <a href="%s">aquí para utilizar Dolibarr</a>
+ToGoBackToDolibarr=De lo contrario, <a href="%s">haga clic aquí para continuar usando Dolibarr</a>.
 TypeOfSupport=Tipo de soporte
 TypeSupportCommunauty=Comunitario (gratuito)
 TypeSupportCommercial=Comercial
@@ -16,11 +16,8 @@ Efficiency=Eficacia
 TypeHelpOnly=Sólamente ayuda
 TypeHelpDev=Ayuda+Desarrollo
 TypeHelpDevForm=Ayuda+Desarrollo+Formación
-ToGetHelpGoOnSparkAngels1=Algunas empresas o independientes ofrecen servicios de apoyo muy rápido (a veces de inmediato) y más eficientes gracias a la capacidad de control remoto de su equipo para ayudar a diagnosticar y resolver sus problemas. Esta asistencia se puede encontrar en la bolsa de asistentes de <b>%s</b>:
-ToGetHelpGoOnSparkAngels3=Para acceder a la búsqueda de <b>asistentes disponibles</b>, haga clic aquí
-ToGetHelpGoOnSparkAngels2=En ocasiones, ningún operador se encuentra disponible en el momento de su búsqueda, no olvide cambiar los criterios de búsqueda indicando "todos los disponibles". Puede, entonces, ponerse en contacto en diferido.
-BackToHelpCenter=Sino, haga clic aquí para <a href="%s"> volver al centro de asistencia</a>.
-LinkToGoldMember=En caso contrario, puede llamar inmediatamente a uno de los asistentes preseleccionados por Dolibarr para su idioma (%s) haciendo clic en su widget (disponibilidad y tarifa máxima actualizadas automáticamente):
+BackToHelpCenter=De lo contrario, <a href="%s">vuelva a la página de inicio del Centro de ayuda</a>.
+LinkToGoldMember=Puede llamar a uno de los formadores preseleccionados por Dolibarr para su idioma (%s) haciendo clic en su Widget (el estado y el precio máximo se actualizan automáticamente):
 PossibleLanguages=Idiomas disponibles
 SubscribeToFoundation=Ayude al proyecto Dolibarr, adhiérase a la asociación Dolibarr
 SeeOfficalSupport=Para obtener soporte oficial Dolibarr en su idioma: <br><b><a href="%s" target="_blank">%s</a></b>

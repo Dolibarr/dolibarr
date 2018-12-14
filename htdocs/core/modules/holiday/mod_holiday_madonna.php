@@ -45,7 +45,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Madonna';
 
@@ -117,10 +117,10 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
+	 *	@param	Object		$holiday	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$contract)
+	function getNextValue($objsoc, $holiday)
 	{
 		global $db,$conf;
 
@@ -143,7 +143,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			return -1;
 		}
 
-		$date=$contract->date_contrat;
+		$date=$holiday->date_debut;
 		$yymm = strftime("%y%m",$date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is

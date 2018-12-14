@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +123,6 @@ echo $this->control->tpl['ajax_selectcountry'];
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>
 	<?php } ?>
-</tr>
-
-<tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['jabberid']; ?>"></td>
 </tr>
 
 <tr>

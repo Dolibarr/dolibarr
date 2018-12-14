@@ -55,7 +55,7 @@ $form = new Form($db);
 
 $object->info($id);
 
-$head = AssetsPrepareHead($object);
+$head = asset_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 

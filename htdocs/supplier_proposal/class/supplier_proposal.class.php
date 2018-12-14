@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
@@ -166,7 +166,11 @@ class SupplierProposal extends CommonObject
     public $specimen;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -1726,7 +1730,6 @@ class SupplierProposal extends CommonObject
                 {
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-
             }
             if ($statut == 4)
             {
@@ -2134,11 +2137,8 @@ class SupplierProposal extends CommonObject
                     $cluser->fetch($obj->fk_user_cloture);
                     $this->user_cloture     = $cluser;
                 }
-
-
             }
             $this->db->free($result);
-
         }
         else
         {
@@ -2712,9 +2712,21 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $id;
 
+	/**
+     * @var int ID
+     */
     public $fk_supplier_proposal;
+
+    /**
+     * @var int ID
+     */
     public $fk_parent_line;
+
     public $desc;          	// Description ligne
+
+    /**
+     * @var int ID
+     */
     public $fk_product;		// Id produit predefini
 
 	/**
@@ -2733,11 +2745,19 @@ class SupplierProposalLine extends CommonObjectLine
     public $tva_tx;
     public $subprice;
     public $remise_percent;
+
+    /**
+     * @var int ID
+     */
     public $fk_remise_except;
 
     public $rang = 0;
 
+    /**
+     * @var int ID
+     */
 	public $fk_fournprice;
+
 	public $pa_ht;
 	public $marge_tx;
 	public $marque_tx;
@@ -2811,7 +2831,11 @@ class SupplierProposalLine extends CommonObjectLine
     public $ref_supplier;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_subprice;
 	public $multicurrency_total_ht;

@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahls
 ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Bezahlseite für frei wählbare Beträge anzubieten
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %s Online-Bezahlseite für Mitgliedsbeiträge
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
-SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie PayBox mit der URL <b>%s</b> ein, um nach Freigabe durch PayBox automatisch eine Zahlung anzulegen.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Hiermit Bestätigen wir, dass die Zahlung ausgeführt wurde. Vielen Dank.
-YourPaymentHasNotBeenRecorded=Ihre Zahlung wurde NICHT aufgezeichnet und die Transaktion wurde storniert. Vielen Dank.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
 InformationToFindParameters=Hilfe für das Finden der %s Kontoinformationen

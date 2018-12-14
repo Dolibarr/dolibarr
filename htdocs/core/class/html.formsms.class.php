@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
@@ -37,32 +38,37 @@ class FormSms
      */
     public $db;
 
-    var $fromname;
-    var $fromsms;
-    var $replytoname;
-    var $replytomail;
-    var $toname;
-    var $tomail;
+    public $fromname;
+    public $fromsms;
+    public $replytoname;
+    public $replytomail;
+    public $toname;
+    public $tomail;
 
-    var $withsubstit;			// Show substitution array
-    var $withfrom;
-    var $withto;
-    var $withtopic;
-    var $withbody;
+    public $withsubstit;			// Show substitution array
+    public $withfrom;
+    public $withto;
+    public $withtopic;
+    public $withbody;
 
-    var $withfromreadonly;
-    var $withreplytoreadonly;
-    var $withtoreadonly;
-    var $withtopicreadonly;
-    var $withcancel;
+    public $withfromreadonly;
+    public $withreplytoreadonly;
+    public $withtoreadonly;
+    public $withtopicreadonly;
+    public $withcancel;
 
-    var $substit=array();
-    var $param=array();
+    public $substit=array();
+    public $param=array();
 
     /**
      * @var string Error code (or message)
      */
     public $error='';
+
+    /**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
 
 
     /**

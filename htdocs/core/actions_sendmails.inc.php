@@ -113,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport', 'contact')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -129,6 +129,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
+		}
+		else if ($object->element == 'contact')
+		{
+			$contact=$object;
+			if ($contact->id > 0) $sendtosocid=$contact->fetch_thirdparty()->id;
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
 
@@ -170,6 +175,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -214,6 +224,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -427,8 +442,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->socid			= $sendtosocid;	   // To link to a company
 						$object->sendtoid		= $sendtoid;	   // To link to contact addresses. This is an array.
 						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-						$object->actionmsg		= $actionmsg;      // Long text
-						$object->actionmsg2		= $actionmsg2;     // Short text
+						$object->actionmsg		= $actionmsg;      // Long text (@TODO Replace this with $message, we already have details of email in dedicated properties)
+						$object->actionmsg2		= $actionmsg2;     // Short text ($langs->transnoentities('MailSentBy')...);
+
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
@@ -438,6 +454,15 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (is_array($sendtouserid) && count($sendtouserid)>0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
 							$object->sendtouserid	= $sendtouserid;
 						}
+
+						$object->email_msgid = $mailfile->msgid;	// @TODO Set msgid into $mailfile after sending
+						$object->email_from = $from;
+						$object->email_subject = $subject;
+						$object->email_to = $sendto;
+						$object->email_tocc = $sendtocc;
+						$object->email_tobcc = $sendtobcc;
+						$object->email_subject = $subject;
+						$object->email_msgid = $mailfile->msgid;
 
 						// Call of triggers
 						if (! empty($trigger_name))
@@ -496,5 +521,4 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}
-
 }

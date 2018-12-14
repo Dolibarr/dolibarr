@@ -271,7 +271,6 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
     		$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
     		$section = $relativepath;
     	}
-
     }
 }
 

@@ -72,7 +72,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 
 	if (! $error)
 	{
-		$result=$object->createCommon($user);
+		$result=$object->create($user);
 		if ($result > 0)
 		{
 			// Creation OK
@@ -127,7 +127,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 
 	if (! $error)
 	{
-		$result=$object->updateCommon($user);
+		$result=$object->update($user);
 		if ($result > 0)
 		{
 			$action='view';
@@ -169,7 +169,7 @@ if ($action == "update_extras" && ! empty($permissiontoadd))
 // Action to delete
 if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 {
-	$result=$object->deleteCommon($user);
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
 		// Delete OK

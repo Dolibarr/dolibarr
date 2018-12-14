@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,28 @@ class FormMail extends Form
 
 	public $fromname;
 	public $frommail;
-	public $replytoname;
+
+    /**
+     * @var string user, company, robot
+     */
+    public $fromtype;
+
+    /**
+     * @var int ID
+     */
+    public $fromid;
+
+    /**
+     * @var string thirdparty etc
+     */
+    public $totype;
+
+    /**
+     * @var int ID
+     */
+    public $toid;
+
+    public $replytoname;
 	public $replytomail;
 	public $toname;
 	public $tomail;
@@ -90,11 +112,6 @@ class FormMail extends Form
 
 	public $withtouser=array();
 	public $withtoccuser=array();
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
 
 	public $lines_model;
 
@@ -325,8 +342,7 @@ class FormMail extends Form
 					$model_id=$this->param["models_id"];
 				}
 
-				// we set -1 if model_id empty
-				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));
+				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);		// If $model_id is empty, preselect the first one
 			}
 
 			// Define list of attached files
@@ -863,6 +879,20 @@ class FormMail extends Form
 				$out.= '<td>'.$langs->trans("MailFile").'</td>';
 
 				$out.= '<td>';
+
+				if ($this->withmaindocfile)	// withmaindocfile is set to 1 or -1 to show the checkbox (-1 = checked or 1 = not checked)
+				{
+					if (GETPOSTISSET('sendmail'))
+					{
+						$this->withmaindocfile = (GETPOST('addmaindocfile', 'alpha') ? -1 : 1);
+					}
+					// If a template was selected, we use setup of template to define if join file checkbox is selected or not.
+					elseif (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					{
+						$this->withmaindocfile = ($arraydefaultmessage->joinfiles ? -1 : 1);
+					}
+				}
+
 				if (! empty($this->withmaindocfile))
 				{
 					if ($this->withmaindocfile == 1)
@@ -871,7 +901,7 @@ class FormMail extends Form
 					}
 					if ($this->withmaindocfile == -1)
 					{
-						$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
+						$out.='<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
 					}
 					$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
 				}
@@ -1388,8 +1418,6 @@ class FormMail extends Form
 				*/
 			}
 		}
-
-		$tmparray['__(AnyTranslationKey)__']="Translation";
 
 		foreach($tmparray as $key => $val)
 		{

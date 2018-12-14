@@ -37,13 +37,17 @@ class Productbatch extends CommonObject
 
 	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
 
-	var $tms='';
-	var $fk_product_stock;
-	var $sellby='';
-	var $eatby='';
-	var $batch='';
-	var $qty;
+	public $tms='';
+	public $fk_product_stock;
+	public $sellby='';
+	public $eatby='';
+	public $batch='';
+	public $qty;
 	public $warehouseid;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
 
 

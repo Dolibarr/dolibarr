@@ -206,7 +206,7 @@ class AccountancyExport
 
 
 	/**
-	 * Function who chose which export to use with the default config
+	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
 	 * @param array		$TData 		data
 	 * @return void
@@ -214,16 +214,17 @@ class AccountancyExport
 	public function export(&$TData)
 	{
 		global $conf, $langs;
+		global $search_date_end;	// Used into /accountancy/tpl/export_journal.tpl.php
 
-
+		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		$type_export = 'general_ledger';
+
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
 			case self::$EXPORT_TYPE_NORMAL :
-				/*$this->exportNormal($TData);
-				break;*/
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
@@ -261,32 +262,6 @@ class AccountancyExport
 		}
 	}
 
-	/**
-	 * Export format : Normal
-	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
-	 */
-	/* Use $EXPORT_TYPE_CONFIGURABLE instead
-	public function exportNormal($objectLines)
-	{
-		global $conf;
-
-		foreach ( $objectLines as $line ) {
-			// Std export
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			print $date . $this->separator;
-			print $line->doc_ref . $this->separator;
-			print length_accountg($line->numero_compte) . $this->separator;
-			print length_accounta($line->subledger_account) . $this->separator;
-			print price($line->debit) . $this->separator;
-			print price($line->credit) . $this->separator;
-			print $line->code_journal . $this->separator;
-			print $this->end_line;
-		}
-	}
-	*/
 
 	/**
 	 * Export format : CEGID
@@ -651,8 +626,28 @@ class AccountancyExport
 	 */
 	public function exportFEC($objectLines)
 	{
-		$separator = ';';
+		$separator = "\t";
 		$end_line = "\n";
+
+		print "JournalCode" . $separator;
+		print "JournalLib" . $separator;
+		print "EcritureNum" . $separator;
+		print "EcritureDate" . $separator;
+		print "CompteNum" . $separator;
+		print "CompteLib" . $separator;
+		print "CompAuxNum" . $separator;
+		print "CompAuxLib" . $separator;
+		print "PieceRef" . $separator;
+		print "PieceDate" . $separator;
+		print "EcritureLib" . $separator;
+		print "Debit" . $separator;
+		print "Credit" . $separator;
+		print "EcritureLet" . $separator;
+		print "DateLet" . $separator;
+		print "ValidDate" . $separator;
+		print "Montantdevise" . $separator;
+		print "Idevise";
+		print $end_line;
 
 		foreach ( $objectLines as $line ) {
 			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
@@ -660,10 +655,10 @@ class AccountancyExport
 			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');
 
 			// FEC:JournalCode
-			print $line->code_journal;
+			print $line->code_journal . $separator;
 
 			// FEC:JournalLib
-			print $line->journal_label;
+			print $line->journal_label . $separator;
 
 			// FEC:EcritureNum
 			print $line->piece_num . $separator;
@@ -693,10 +688,10 @@ class AccountancyExport
 			print $line->label_operation . $separator;
 
 			// FEC:Debit
-			print price($line->debit) . $separator;
+			print price2num($line->debit) . $separator;
 
 			// FEC:Credit
-			print price($line->credit) . $separator;
+			print price2num($line->credit) . $separator;
 
 			// FEC:EcritureLet
 			print $line->lettering_code . $separator;

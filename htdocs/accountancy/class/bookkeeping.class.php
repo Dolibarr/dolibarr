@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2014-2017 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2015-2017 Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +19,9 @@
  */
 
 /**
- *	\file		htdocs/accountancy/class/bookkeeping.class.php
- *	\ingroup	Advanced accountancy
- *	\brief		File of class to manage Ledger (General Ledger and Subledger)
+ * \file        htdocs/accountancy/class/bookkeeping.class.php
+ * \ingroup     Advanced accountancy
+ * \brief       File of class to manage Ledger (General Ledger and Subledger)
  */
 
 // Class
@@ -68,7 +69,15 @@ class BookKeeping extends CommonObject
 
 	public $doc_date;
 	public $date_lim_reglement;
-	public $doc_type;
+
+    /**
+     * @var string doc_type
+     */
+    public $doc_type;
+
+    /**
+     * @var string doc_ref
+     */
 	public $doc_ref;
 
 	/**
@@ -81,12 +90,35 @@ class BookKeeping extends CommonObject
      */
 	public $fk_docdet;
 
-	public $thirdparty_code;
+    /**
+     * @var string thirdparty code
+     */
+    public $thirdparty_code;
+
+    /**
+     * @var string subledger account
+     */
 	public $subledger_account;
+
+    /**
+     * @var string subledger label
+     */
 	public $subledger_label;
+
+    /**
+     * @var string  doc_type
+     */
 	public $numero_compte;
-	public $label_compte;
-	public $label_operation;
+
+    /**
+     * @var string label compte
+     */
+    public $label_compte;
+
+    /**
+     * @var string label operation
+     */
+    public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;
@@ -784,7 +816,8 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -816,6 +849,8 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -831,14 +866,13 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int 			$limit 			Offset limit
+	 * @param int 			$offset 		Offset limit
+	 * @param array 		$filter 		Filter array
+	 * @param string 		$filtermode 	Filter mode (AND or OR)
+	 * @return int 							<0 if KO, >0 if OK
 	 */
     public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
     {
@@ -861,6 +895,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
+		$sql .= " t.lettering_code,";
 		$sql .= " t.montant,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
@@ -896,7 +931,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 		}
-		$sql.= ' WHERE entity IN (' . getEntity('accountancy') . ')';
+		$sql.= ' WHERE t.entity IN (' . getEntity('accountancy') . ')';
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
@@ -913,7 +948,9 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
+			{
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -933,6 +970,7 @@ class BookKeeping extends CommonObject
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
 				$line->sens = $obj->sens;
+				$line->lettering_code = $obj->lettering_code;
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;
@@ -942,6 +980,8 @@ class BookKeeping extends CommonObject
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -949,8 +989,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -1000,8 +1039,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 		}
-		$sql.= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
+		$sql.= ' WHERE entity IN (' . getEntity('accountancy') . ')';
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
@@ -1016,16 +1054,22 @@ class BookKeeping extends CommonObject
 		}
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
+			{
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
+
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -1533,7 +1577,7 @@ class BookKeeping extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 
-			while ( $obj = $this->db->fetch_object($result) ) {
+			while ($obj = $this->db->fetch_object($result)) {
 
 				$line = new BookKeepingLine();
 
@@ -1597,7 +1641,7 @@ class BookKeeping extends CommonObject
 			$this->linesexport = array ();
 
 			$num = $this->db->num_rows($resql);
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -1635,9 +1679,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction     If 0 tmp => real, if 1 real => tmp
-	 * @param  string   $piece_num     Piece num
-	 * @return void
+	 * @param  number   $direction      If 0 tmp => real, if 1 real => tmp
+	 * @param  string   $piece_num      Piece num
+	 * @return int                      int <0 if KO, >0 if OK
 	 */
 	public function transformTransaction($direction=0,$piece_num='')
 	{
@@ -1673,8 +1717,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
-		}
-		if ($direction==1) {
+		} elseif ($direction==1) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
 			$resql = $this->db->query($sql);
 			if (! $resql) {
@@ -1829,7 +1872,6 @@ class BookKeeping extends CommonObject
 			}
 
 			return $obj->label;
-
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);

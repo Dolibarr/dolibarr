@@ -79,14 +79,15 @@ $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Adherent($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('adherent');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -348,8 +349,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>$langs->trans("SendByMail"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -603,6 +604,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="c
 print "</tr>\n";
 
 $i = 0;
+$totalarray=array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -631,6 +633,7 @@ while ($i < min($num, $limit))
 	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 	{
 		print '<td align="center">'.$obj->rowid.'</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Ref
@@ -639,6 +642,7 @@ while ($i < min($num, $limit))
 		print "<td>";
 		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
 		print "</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Civility
 	if (! empty($arrayfields['d.civility']['checked']))
@@ -646,6 +650,7 @@ while ($i < min($num, $limit))
 		print "<td>";
 		print $obj->civility;
 		print "</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Firstname
 	if (! empty($arrayfields['d.firstname']['checked']))
@@ -653,6 +658,7 @@ while ($i < min($num, $limit))
 		print "<td>";
 		print $obj->firstname;
 		print "</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Lastname
 	if (! empty($arrayfields['d.lastname']['checked']))
@@ -660,6 +666,7 @@ while ($i < min($num, $limit))
 		print "<td>";
 		print $obj->lastname;
 		print "</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Company
 	if (! empty($arrayfields['d.company']['checked']))
@@ -672,11 +679,13 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['d.login']['checked']))
 	{
 		print "<td>".$obj->login."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Moral/Physique
 	if (! empty($arrayfields['d.morphy']['checked']))
 	{
 		print "<td>".$memberstatic->getmorphylib($obj->morphy)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Type label
 	if (! empty($arrayfields['t.libelle']['checked']))
@@ -686,6 +695,7 @@ while ($i < min($num, $limit))
 		print '<td class="nowrap">';
 		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Address
 	if (! empty($arrayfields['d.address']['checked']))
@@ -693,6 +703,7 @@ while ($i < min($num, $limit))
 		print '<td class="nocellnopadd">';
 		print $obj->address;
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Zip
 	if (! empty($arrayfields['d.zip']['checked']))
@@ -826,6 +837,36 @@ while ($i < min($num, $limit))
 
 	print "</tr>\n";
 	$i++;
+}
+
+// Show total line
+if (isset($totalarray['pos']))
+{
+	print '<tr class="liste_total">';
+	$i=0;
+	while ($i < $totalarray['nbfield'])
+	{
+		$i++;
+		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		else
+		{
+			if ($i == 1)
+			{
+				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			}
+			else print '<td></td>';
+		}
+	}
+	print '</tr>';
+}
+
+// If no record found
+if ($num == 0)
+{
+	$colspan=1;
+	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 $db->free($resql);
