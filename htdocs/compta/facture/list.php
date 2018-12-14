@@ -12,6 +12,7 @@
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
  * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
+ * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user = GETPOST('search_user','int');
 $search_sale = GETPOST('search_sale','int');
-$search_day		= GETPOST('search_day','int');
+$search_day	= GETPOST('search_day','int');
 $search_month	= GETPOST('search_month','int');
 $search_year	= GETPOST('search_year','int');
 $search_day_lim		= GETPOST('search_day_lim','int');
@@ -450,32 +451,16 @@ if ($search_status != '-1' && $search_status != '')
 	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-	else if ($search_year > 0 && ! empty($search_day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-	$sql.= " AND date_format(f.datef, '%m') = '".$search_month."'";
-}
-else if ($search_year > 0)
-{
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
-}
-if ($search_month_lim > 0)
-{
-	if ($search_year_lim > 0 && empty($search_day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,$search_month_lim,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,$search_month_lim,false))."'";
-	else if ($search_year_lim > 0 && ! empty($search_day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_lim, $search_day_lim, $search_year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_lim, $search_day_lim, $search_year_lim))."'";
-	else
-		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($search_month_lim)."'";
-}
-else if ($search_year_lim > 0)
-{
-	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,12,false))."'";
-}
+
+$sql.= dol_sql_datefilter(
+				"f.datef", 
+				$search_day, $search_month, $search_year
+);
+$sql.= dol_sql_datefilter(
+				"f.date_lim_reglement", 
+				$search_day_lim, $search_month_lim, $search_year_lim
+);
+
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
