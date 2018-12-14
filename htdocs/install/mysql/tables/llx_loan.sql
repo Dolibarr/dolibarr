@@ -28,6 +28,8 @@ create table llx_loan
   fk_bank						integer,
 
   capital						double(24,8) DEFAULT 0 NOT NULL,
+  insurance_amount				double(24,8) DEFAULT 0,
+
   datestart						date,
   dateend						date,
   nbterm						real,
@@ -38,7 +40,6 @@ create table llx_loan
 
   capital_position				double(24,8) DEFAULT 0,		-- If not a new loan, just have the position of capital
   date_position					date,
-  insurance_amount              double(24,8) DEFAULT 0,
   
   paid							smallint default 0 NOT NULL,
 
