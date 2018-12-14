@@ -148,7 +148,7 @@ NothingToDo=Nothing to do
 # upgrade
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customer's orders
-MigrationSupplierOrder=Data migration for supplier's orders
+MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=Data migration for commercial proposals
 MigrationInvoice=Data migration for customer's invoices
 MigrationContract=Data migration for contracts
