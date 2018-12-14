@@ -407,6 +407,12 @@ if (empty($reshook))
        		}
         }
     }
+
+    // Actions to send emails
+	$trigger_name='CONTACT_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromcontact';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -1293,9 +1299,20 @@ else
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
+		if (empty($reshook) && $action!='presend')
 		{
-        	if ($user->rights->societe->contact->creer)
+			if (! empty($object->email))
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			}
+			else
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+			}
+
+			if ($user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
@@ -1324,6 +1341,14 @@ else
         }
 
         print "</div>";
+
+	    // Presend form
+	    $modelmail='contact';
+	    $defaulttopic='Information';
+	    $diroutput = $conf->contact->dir_output;
+	    $trackid = 'con'.$object->id;
+
+	    include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 
