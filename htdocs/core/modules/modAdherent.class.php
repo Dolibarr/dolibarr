@@ -50,7 +50,7 @@ class modAdherent extends DolibarrModules
         $this->numero = 310;
 
         $this->family = "hr";
-        $this->module_position = '20';
+        $this->module_position = '55';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Management of members of a foundation or association";
@@ -324,7 +324,7 @@ class modAdherent extends DolibarrModules
 			'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription'
 		);
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{

@@ -133,6 +133,7 @@ ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website ADD COLUMN maincolor varchar(16);
 ALTER TABLE llx_website ADD COLUMN maincolorbis varchar(16);
 
+ALTER TABLE llx_website_page ADD COLUMN image varchar(255);
 
 CREATE TABLE llx_takepos_floor_tables(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -146,9 +147,13 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
+-- DROP TABLE llx_emailcollector_emailcollectorfilter;
+-- DROP TABLE llx_emailcollector_emailcollectoraction;
+-- DROP TABLE llx_emailcollector_emailcollector;
 
 CREATE TABLE llx_emailcollector_emailcollector(
         -- BEGIN MODULEBUILDER FIELDS
@@ -158,7 +163,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         label varchar(255),
         description text,
         host varchar(255),
-        user varchar(128),
+        login varchar(128),
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
@@ -221,6 +226,6 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcolle
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
 ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);
 
-
-
+ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
 

@@ -334,7 +334,16 @@ class ActionComm extends CommonObject
         $sql.= "fk_element,";
         $sql.= "elementtype,";
         $sql.= "entity,";
-        $sql.= "extraparams";
+        $sql.= "extraparams,";
+		// Fields emails
+        $sql.= "email_msgid,";
+        $sql.= "email_from,";
+        $sql.= "email_sender,";
+        $sql.= "email_to,";
+        $sql.= "email_tocc,";
+        $sql.= "email_tobcc,";
+        $sql.= "email_subject,";
+        $sql.= "errors_to";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -354,7 +363,16 @@ class ActionComm extends CommonObject
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
         $sql.= $conf->entity.",";
-        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null").", ";
+        // Fields emails
+        $sql.= (! empty($this->email_msgid)?"'".$this->db->escape($this->email_msgid)."'":"null").", ";
+        $sql.= (! empty($this->email_from)?"'".$this->db->escape($this->email_from)."'":"null").", ";
+        $sql.= (! empty($this->email_sender)?"'".$this->db->escape($this->email_sender)."'":"null").", ";
+        $sql.= (! empty($this->email_to)?"'".$this->db->escape($this->email_to)."'":"null").", ";
+        $sql.= (! empty($this->email_tocc)?"'".$this->db->escape($this->email_tocc)."'":"null").", ";
+        $sql.= (! empty($this->email_tobcc)?"'".$this->db->escape($this->email_tobcc)."'":"null").", ";
+        $sql.= (! empty($this->email_subject)?"'".$this->db->escape($this->email_subject)."'":"null").", ";
+        $sql.= (! empty($this->errors_to)?"'".$this->db->escape($this->errors_to)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -1274,7 +1292,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>' . $langs->trans('Type') . ':</b> ' . $labeltype;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
-
+		if (! empty($this->note))
+			$tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . $this->note;
 		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1315,10 +1334,10 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+		if ($option == 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
@@ -1691,7 +1710,7 @@ class ActionComm extends CommonObject
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
     		return 0;
     	}
-		
+
     	$now = dol_now();
 
     	dol_syslog(__METHOD__, LOG_DEBUG);

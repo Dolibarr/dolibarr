@@ -65,7 +65,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
 	 */
-	private $MAP_ID = array(
+	protected $MAP_ID = array(
 		'product'      => 0,
 		'supplier'     => 1,
 		'customer'     => 2,
@@ -97,7 +97,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_CAT_FK = array(
+	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
 		'customer' => 'soc',
 		'supplier' => 'soc',
@@ -114,7 +114,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_CAT_TABLE = array(
+	protected $MAP_CAT_TABLE = array(
 		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
@@ -131,7 +131,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_OBJ_CLASS = array(
+	protected $MAP_OBJ_CLASS = array(
 		'product'  => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
@@ -148,7 +148,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	private $MAP_OBJ_TABLE = array(
+	protected $MAP_OBJ_TABLE = array(
 		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'societe',
@@ -944,7 +944,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	private function load_motherof()
+	protected function load_motherof()
 	{
         // phpcs:enable
 		global $conf;
@@ -1536,7 +1536,7 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) $forced_color='categtextblack';
 		}
 
-        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'&backtopage='.urlencode($_SERVER['PHP_SELF']).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';
 		$linkend='</a>';
 
 		$picto='category';

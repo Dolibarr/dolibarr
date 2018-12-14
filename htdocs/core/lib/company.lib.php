@@ -1286,8 +1286,8 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource
- * 		@param	Contact		       $objcon		   Object contact
+ * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket|... to list events linked to an object
+ * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
@@ -1295,11 +1295,10 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
  *      @return	mixed					           Return html part or void if noprint is 1
- *      TODO change function to be able to list event linked to an object.
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep,a.id', $sortorder='DESC')
 {
-    global $user,$conf;
+    global $user, $conf;
     global $form;
 
     global $param;
@@ -1317,8 +1316,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     if (! empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
-        $sql = "SELECT a.id, a.label,";
-        $sql.= " a.datep as dp,";
+	 	if (is_object($objcon) && $objcon->id) {
+			$sql = "SELECT DISTINCT a.id, a.label,";
+		}
+		else
+		{
+			$sql = "SELECT a.id, a.label,";
+		}
+		$sql.= " a.datep as dp,";
         $sql.= " a.datep2 as dp2,";
         $sql.= " a.note, a.percent,";
         $sql.= " a.fk_element, a.elementtype,";
@@ -1327,12 +1332,17 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') $sql.= ", o.ref";
+        else $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+
+        if (is_object($objcon) && $objcon->id) {
+		    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
+	    }
+
+	    if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
         	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
         	$sql.= " ON er.resource_type = 'dolresource'";
@@ -1342,9 +1352,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
@@ -1361,8 +1372,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        //TODO check how ot work with new table actioncomm_resources and multiple contact affectation
-        if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
+        {
+        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
+
+	    // Work with new table actioncomm_resources and multiple contact affectation.
+	    if (is_object($objcon) && $objcon->id)
+	    {
+		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
+			    " AND r.fk_element = " . $objcon->id;
+	    }
+
         // Condition on actioncode
         if (! empty($actioncode))
         {
@@ -1386,6 +1408,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
+
+		//TODO Add limit for thirdparty in  contexte very all result
         $sql.= $db->order($sortfield, $sortorder);
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
@@ -1517,7 +1541,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $contactstatic = new Contact($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
+        if ($objcon && get_class($objcon) == 'Contact' &&
+            (is_null($filterobj) || get_class($filterobj) == 'Societe'))
         {
             $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }

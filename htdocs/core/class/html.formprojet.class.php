@@ -334,7 +334,7 @@ class FormProjets
 		$out='';
 
 		$hideunselectables = false;
-		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		if (empty($projectsListId))
 		{
@@ -346,11 +346,11 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
 		$sql.= ' s.nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
-		$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
+		$sql.= ' '.MAIN_DB_PREFIX.'projet_task as t';
 		$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		$sql.= " AND t.fk_projet = p.rowid";
 		if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
@@ -393,7 +393,7 @@ class FormProjets
 					}
 					else
 					{
-						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED)
 						{
 							$i++;
 							continue;
@@ -411,12 +411,12 @@ class FormProjets
 							if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
 
 							$disabled=0;
-							if ($obj->fk_statut == 0)
+							if ($obj->fk_statut == Project::STATUS_DRAFT)
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Draft");
 							}
-							else if ($obj->fk_statut == 2)
+							else if ($obj->fk_statut == Project::STATUS_CLOSED)
 							{
 								if ($discard_closed == 2) $disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Closed");
@@ -507,7 +507,7 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.label as ref";
 				break;
 			case "facture":
-				$sql = "SELECT t.rowid, t.facnumber as ref";
+				$sql = "SELECT t.rowid, t.ref as ref";
 				break;
 			case "facture_fourn":
 				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";

@@ -20,6 +20,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL om een %s online betalingsgebruikersin
 ToOfferALinkForOnlinePaymentOnContractLine=URL om een %s online betalingsgebruikersinterface aan te bieden voor een contractregel
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een %s online betalingsgebruikersinterface aan te bieden voor een donatie
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL om een %s online betalingsgebruikersinterface aan te bieden voor een ledenabonnement
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=U kunt ook een URL (GET) parameter <b>&tag=<i>waarde</i></b> toevoegen aan elk van deze URL's (enkel nodig voor een donatie) om deze van uw eigen betalingscommentaar te voorzien
 SetupPayBoxToHavePaymentCreatedAutomatically=Stel uw Paybox in met url <b> %s </b> om de betaling automatisch te laten aanmaken na validatie door Paybox.
 YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.

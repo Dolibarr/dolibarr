@@ -59,6 +59,9 @@ class Adherent extends CommonObject
 
 	public $mesgs;
 
+    /**
+     * @var string login of member
+     */
 	public $login;
 
 	//! Clear password in memory
@@ -68,29 +71,70 @@ class Adherent extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
+    /**
+     * @var string company name
+     * @deprecated
+     */
 	public $societe;
 
 	/**
-	 * @var Societe $company {@type Societe}
+	 * @var string company name
 	 */
 	public $company;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
 
 	/**
 	 * @var string Address
 	 */
 	public $address;
 
-	public $zip;
+    /**
+     * @var string zipcode
+     */
+    public $zip;
+
+    /**
+     * @var string town
+     */
 	public $town;
 
-	public $state_id;              // Id of department
-	public $state_code;            // Code of department
-	public $state;                 // Label of department
+    /**
+     * @var int Id of state
+     */
+    public $state_id;
 
+    /**
+     * @var string Code of state
+     */
+    public $state_code;
+
+    /**
+     * @var string Label of state
+     */
+	public $state;
+
+    /**
+     * @var string email
+     */
 	public $email;
 
-	public $skype;
-	public $twitter;
+    /**
+     * @var string skype account
+     */
+    public $skype;
+
+    /**
+     * @var string twitter account
+     */
+    public $twitter;
+
+    /**
+     * @var string facebook account
+     */
 	public $facebook;
 
     /**
@@ -120,8 +164,12 @@ class Adherent extends CommonObject
 
 	public $morphy;
 	public $public;
-	public $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-	public $photo;
+
+    // -1:brouillon, 0:resilie, >=1:valide,paye
+    // def in common object
+    //public $statut;
+
+    public $photo;
 
 	public $datec;
 	public $datem;
@@ -130,20 +178,19 @@ class Adherent extends CommonObject
 	public $gender;
 	public $birth;
 
-	public $note_public;
-	public $note_private;
+    /**
+     * @var int id type member
+     */
+	public $typeid;
 
-	public $typeid;			// Id type adherent
-	public $type;				// Libelle type adherent
+    /**
+     * @var string label type member
+     */
+	public $type;
 	public $need_subscription;
 
 	public $user_id;
 	public $user_login;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-    public $fk_soc;
 
 	public $datefin;	// From member table
 
@@ -156,7 +203,10 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 	public $subscriptions=array();
 
-	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
+    /**
+     * @var Adherent To contains a clone of this when we need to save old properties of object
+     */
+	public $oldcopy;
 
 	/**
 	 * @var int Entity
@@ -597,6 +647,7 @@ class Adherent extends CommonObject
 						$luser->societe_id=$this->societe;
 
 						$luser->birth=$this->birth;
+
 						$luser->address=$this->address;
 						$luser->zip=$this->zip;
 						$luser->town=$this->town;
@@ -2662,7 +2713,7 @@ class Adherent extends CommonObject
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
 		}
-		
+
 		$now = dol_now();
 		$nbok = 0;
 		$nbko = 0;
@@ -2766,9 +2817,9 @@ class Adherent extends CommonObject
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
 									$actionmsg = dol_concatdesc($actionmsg, $message);
 								}
-								
+
 								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-								
+
 	    						// Insert record of emails sent
 	    						$actioncomm = new ActionComm($this->db);
 
@@ -2793,10 +2844,10 @@ class Adherent extends CommonObject
 	    						$actioncomm->email_tobcc = $sendtobcc;
 	    						$actioncomm->email_subject = $subject;
 	    						$actioncomm->errors_to   = '';
-	    						
+
 	    						$actioncomm->fk_element  = $adherent->id;
 	    						$actioncomm->elementtype = $adherent->element;
-	    						
+
 	    						$actioncomm->extraparams = $extraparams;
 
 	    						$actioncomm->create($user);

@@ -57,6 +57,7 @@ $langs->loadLangs(array("admin", "install"));
 $login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
 $pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
 $pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
+$force_install_lockinstall = (int) (! empty($force_install_lockinstall)?$force_install_lockinstall:(GETPOST('installlock','aZ09')?GETPOST('installlock','aZ09'):(empty($argv[8])?'':$argv[8])));
 
 $success=0;
 

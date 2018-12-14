@@ -164,7 +164,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse=preg_replace('/([^a-z0-9])/i','',$codetouse);
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
 		if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse=preg_replace('/([a-z])/i','',$codetouse);
-		// Apply a regex replacement pattern if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
+		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 		{
 			$codetouse=preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/','\1\2\3',$codetouse);

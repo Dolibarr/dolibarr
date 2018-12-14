@@ -728,7 +728,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
-		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enought for them
+		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enougth for them
 		{
 		    // Note:
 		    // bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
@@ -757,7 +757,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 					$content = $account->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					// Key
-					$tmplength = 13;
+					$tmplength = 15;
 					$content = $account->cle_rib;
 				}elseif ($val == 'IBAN' || $val == 'BIC') {
 					// Key
@@ -1347,6 +1347,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
 	}
 
+	if(!empty($ref_prodserv) && !empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){ $ref_prodserv = '<b>'.$ref_prodserv.'</b>'; }
 	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
@@ -1382,7 +1383,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
+		if(!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){
+		    $libelleproduitservice.= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
+		}else{
 		$libelleproduitservice.="__N__".$period;
+		}
 		//print $libelleproduitservice;
 	}
 
@@ -1514,7 +1519,7 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
+function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails=0)
 {
 	global $conf, $hookmanager, $mysoc;
 
@@ -1868,6 +1873,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
 	if (empty($hookmanager)) global $hookmanager;
+	global $conf;
 
 	$reshook=0;
     $result='';

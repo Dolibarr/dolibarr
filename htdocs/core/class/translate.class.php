@@ -189,7 +189,7 @@ class Translate
 
 
 		// Load $this->tab_translate[] from database
-		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
+		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // No translation was never loaded yet, so we load database.
 
 
 		$newdomain = $domain;
@@ -231,7 +231,8 @@ class Translate
 
 			$filelangexists=is_file($file_lang_osencoded);
 
-			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
+			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
+			//print 'Try to read for alt='.$alt.' langofdir='.$langofdir.' domain='.$domain.' newdomain='.$newdomain.' modulename='.$modulename.' this->_tab_loaded[newdomain]='.$this->_tab_loaded[$newdomain].' file_lang='.$file_lang." => filelangexists=".$filelangexists."\n";
 
 			if ($filelangexists)
 			{
@@ -354,12 +355,12 @@ class Translate
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
-		// We already are the reference file. No more files to scan to complete.
+		// We are in the pass of the reference file. No more files to scan to complete.
 		if ($alt == 2)
 		{
-			if ($fileread) $this->_tab_loaded[$newdomain]=1;	// Set domain file as loaded
+			if ($fileread) $this->_tab_loaded[$newdomain]=1;								// Set domain file as found so loaded
 
-			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;           // Set this file as found
+			if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain]=2;	// Set this file as not found
 		}
 
 		// This part is deprecated and replaced with table llx_overwrite_trans
@@ -410,22 +411,18 @@ class Translate
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
 		$newdomain = $domain;
-		$modulename = '';
 
-        // Check cache
-		if (! empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
+		// Check cache
+		if (! empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain 'database'
 		{
 			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
 		}
 
-		$this->_tab_loaded[$newdomain] = 1;   // We want to be sure this function is called once only.
+		$this->_tab_loaded[$newdomain] = 1;   // We want to be sure this function is called once only for domain 'database'
 
         $fileread=0;
-		$langofdir=(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
-
-		// Redefine alt
-		$alt=2;
+		$langofdir=$this->defaultlang;
 
 		if (empty($langofdir))	// This may occurs when load is called without setting the language and without providing a value for forcelangdir
 		{
@@ -434,14 +431,14 @@ class Translate
 		}
 
 		// TODO Move cache read out of loop on dirs or at least filelangexists
-	    $found=false;
+		$found=false;
 
 		// Enable caching of lang file in memory (not by default)
 		$usecachekey='';
 		// Using a memcached server
 		if (! empty($conf->memcached->enabled) && ! empty($conf->global->MEMCACHED_SERVER))
 		{
-			$usecachekey=$newdomain.'_'.$langofdir.'_'.md5($file_lang);    // Should not contains special chars
+			$usecachekey=$newdomain.'_'.$langofdir;    // Should not contains special chars
 		}
 		// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 		else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))

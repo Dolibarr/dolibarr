@@ -41,9 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter = GETPOST("filter",'alpha',3);
-$filtert = GETPOST("filtert","int",3);
-$usergroup = GETPOST("usergroup","int",3);
+$filter = GETPOST("search_filter",'alpha',3)?GETPOST("search_filter",'alpha',3):GETPOST("filter",'alpha',3);
+$filtert = GETPOST("search_filtert","int",3)?GETPOST("search_filtert","int",3):GETPOST("filtert","int",3);
+$usergroup = GETPOST("search_usergroup","int",3)?GETPOST("search_usergroup","int",3):GETPOST("usergroup","int",3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = 0;
@@ -64,7 +64,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("search_socid","int")?GETPOST("search_socid","int"):GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
@@ -79,24 +79,24 @@ if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no per
 
 //$action=GETPOST('action','alpha');
 $action='show_peruser'; //We use 'show_week' mode
-$resourceid=GETPOST("resourceid","int");
+$resourceid=GETPOST("search_resourceid","int")?GETPOST("search_resourceid","int"):GETPOST("resourceid","int");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):date("d");
-$pid=GETPOST("projectid","int",3);
-$status=GETPOST("status",'alpha');
-$type=GETPOST("type",'alpha');
+$pid=GETPOST("search_projectid","int",3)?GETPOST("search_projectid","int",3):GETPOST("projectid","int",3);
+$status=GETPOST("search_status",'alpha')?GETPOST("search_status",'alpha'):GETPOST("status",'alpha');
+$type=GETPOST("search_type",'alpha')?GETPOST("search_type",'alpha'):GETPOST("type",'alpha');
 $maxprint=((GETPOST("maxprint",'int')!='')?GETPOST("maxprint",'int'):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('actioncode','array'))
+if (GETPOST('search_actioncode','array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
+    $actioncode=GETPOST('search_actioncode','array',3);
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode","alpha")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("search_actioncode","alpha",3)?GETPOST("search_actioncode","alpha",3):(GETPOST("search_actioncode","alpha")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
@@ -201,25 +201,25 @@ if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) {
+if ($actioncode || isset($_GET['search_actioncode']) || isset($_POST['search_actioncode'])) {
 	if(is_array($actioncode)) {
-		foreach($actioncode as $str_action) $param.="&actioncode[]=".urlencode($str_action);
-	} else $param.="&actioncode=".urlencode($actioncode);
+		foreach($actioncode as $str_action) $param.="&search_actioncode[]=".urlencode($str_action);
+	} else $param.="&search_actioncode=".urlencode($actioncode);
 }
-if ($resourceid > 0) $param.="&resourceid=".urlencode($resourceid);
-if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".urlencode($status);
-if ($filter)  $param.="&filter=".urlencode($filter);
-if ($filtert) $param.="&filtert=".urlencode($filtert);
-if ($usergroup) $param.="&usergroup=".urlencode($usergroup);
-if ($socid)   $param.="&socid=".urlencode($socid);
-if ($showbirthday) $param.="&showbirthday=1";
-if ($pid)     $param.="&projectid=".urlencode($pid);
-if ($type)   $param.="&type=".urlencode($type);
+if ($resourceid > 0) $param.="&search_resourceid=".urlencode($resourceid);
+if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&search_status=".urlencode($status);
+if ($filter)        $param.="&search_filter=".urlencode($filter);
+if ($filtert)       $param.="&search_filtert=".urlencode($filtert);
+if ($usergroup)     $param.="&search_usergroup=".urlencode($usergroup);
+if ($socid)         $param.="&search_socid=".urlencode($socid);
+if ($showbirthday)  $param.="&search_showbirthday=1";
+if ($pid)           $param.="&search_projectid=".urlencode($pid);
+if ($type)          $param.="&search_type=".urlencode($type);
 if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.urlencode($action);
 if ($begin_h != '') $param.='&begin_h='.urlencode($begin_h);
-if ($end_h != '') $param.='&end_h='.urlencode($end_h);
+if ($end_h != '')   $param.='&end_h='.urlencode($end_h);
 if ($begin_d != '') $param.='&begin_d='.urlencode($begin_d);
-if ($end_d != '') $param.='&end_d='.urlencode($end_d);
+if ($end_d != '')   $param.='&end_d='.urlencode($end_d);
 $param.="&maxprint=".urlencode($maxprint);
 
 
@@ -358,9 +358,23 @@ if ($conf->use_javascript_ajax)
 }
 
 
+$newcardbutton='';
+if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
+{
+	$tmpforcreatebutton=dol_getdate(dol_now(), true);
+
+	$newparam.='&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+
+	//$param='month='.$monthshown.'&year='.$year;
+	$hourminsec='100000';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
 
 $link='';
-print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
+print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
+
 
 
 // Get event in an array

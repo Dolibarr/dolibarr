@@ -52,7 +52,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortfield) $sortfield="f.ref";
 
 
 /*
@@ -66,7 +66,7 @@ $invoicestatic=new Facture($db);
 
 // List of requests
 
-$sql= "SELECT f.facnumber, f.rowid, f.total_ttc,";
+$sql= "SELECT f.ref, f.rowid, f.total_ttc,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande as date_demande,";
 $sql.= " pfd.fk_user_demande";
@@ -138,7 +138,7 @@ if ($resql)
 		// Ref facture
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
-		$invoicestatic->ref=$obj->facnumber;
+		$invoicestatic->ref=$obj->ref;
 		print $invoicestatic->getNomUrl(1,'withdraw');
 		print '</td>';
 

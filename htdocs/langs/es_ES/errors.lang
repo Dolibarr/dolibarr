@@ -89,7 +89,7 @@ ErrorFileIsInfectedWithAVirus=¡El antivirus no ha podido validar este archivo (
 ErrorSpecialCharNotAllowedForField=Los caracteres especiales no son admitidos por el campo "%s"
 ErrorNumRefModel=Hay una referencia en la base de datos (%s) y es incompatible con esta numeración. Elimine la línea o renombre la referencia para activar este módulo.
 ErrorQtyTooLowForThisSupplier=Cantidad insuficiente para este proveedor
-ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created beacuse of too low quantity
+ErrorOrdersNotCreatedQtyTooLow=Algunos pedidos no se han creado debido a una cantidad demasiado baja
 ErrorModuleSetupNotComplete=La configuración del módulo parece incompleta. Vaya a Inicio - Configuración - Módulos para completarla.
 ErrorBadMask=Error en la máscara
 ErrorBadMaskFailedToLocatePosOfSequence=Error, sin número de secuencia en la máscara
@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=El cliente SOAP ha fallado con el error '%s'
 ErrorGlobalVariableUpdater5=Sin variable global seleccionada
 ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
-ErrorOppStatusRequiredIfAmount=Ha indicado un importe estimado para esta oportunidad/lead. Debe indicar también su estado
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Error al cargar el descriptor de clase del módulo %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definición incorrecta de la matriz de menú en el descriptor del módulo (valor incorrecto para la clave fk_menu)
 ErrorSavingChanges=Ha ocurrido un error al guardar los cambios
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=El código de barras del producto %s ya existe 
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Tenga en cuenta también que no es posible utilizar productos virtuales para aumentar/disminuir automáticamente subproductos cuando al menos un subproducto (o subproducto de subproductos) necesita un número de serie/lote.
 ErrorDescRequiredForFreeProductLines=La descripción es obligatoria para las líneas libres
 ErrorAPageWithThisNameOrAliasAlreadyExists=La página/contenedor <strong>%s</strong> tiene el mismo nombre o alias alternativo que el que intenta utilizar
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

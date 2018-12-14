@@ -303,7 +303,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 					foreach($cpts as $i => $cpt)
 					{
-						$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN=0;

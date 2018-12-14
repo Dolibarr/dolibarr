@@ -11,7 +11,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2018 Ferran Marcet	 <fmarcet@2byte.es>
- * Copyright (C) 2017      Charlene Benke	 <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2018 Charlene Benke	 <charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI	 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,9 +175,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 	}
 }
 
-$object = new Propal($db);	// To be passed as parameter of executeHooks that need
-
-
 /*
  * Actions
  */
@@ -258,7 +255,7 @@ $projectstatic=new Project($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('',$langs->trans('Proposal'),$help_url);
+//llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -404,6 +401,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
+
 if ($resql)
 {
 	$objectstatic=new Propal($db);
@@ -424,6 +422,18 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+
+		$id = $obj->rowid;
+
+		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$langs->trans('Proposal'),$help_url);
 
 	$param='&viewstatut='.urlencode($viewstatut);
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -456,7 +466,7 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Closed");
+	if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Close");
 	if (in_array($massaction, array('presend','predelete','closed'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

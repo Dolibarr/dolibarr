@@ -3,7 +3,7 @@ ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
-ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
+ModuleBuilderDesc3=Atrastie / rediģējamie moduļi: <strong> %s </strong>
 ModuleBuilderDesc4=Modulis identificēts kā "rediģējams", kad moduļa saknes direktorijā  atrodas fails <strong> %s </strong>
 NewModule=Jauns modulis
 NewObject=Jauns objekts
@@ -83,17 +83,17 @@ SpecDefDesc=Ievadiet šeit visu dokumentāciju, ko vēlaties iesniegt ar savu mo
 LanguageDefDesc=Ievadiet šos failus, visu valodas faila atslēgu un tulkojumu.
 MenusDefDesc=Šeit definējiet izvēlnes, ko nodrošina jūsu modulis (pēc definīcijas tie ir redzami izvēlnes redaktorā %s)
 PermissionsDefDesc=Šeit definējiet jaunās atļaujas, kuras nodrošina jūsu modulis (pēc definīcijas tie ir redzami noklusējuma atļaujas iestatījumam %s)
-HooksDefDesc=Modu deskriptorā <b> module_parts ['āķi'] </ b> definējiet āķu kontekstu, kuru vēlaties pārvaldīt (konteksta sarakstu var atrast, veicot meklēšanu ar <b> initHooks (</ b> b> "galvenajā kodā). <br> Rediģējiet āķa failu, lai pievienotu savu āķa funkciju kodu (kontaktu funkcijas var atrast, veicot meklēšanu ar kodu <b> executeHooks </ b> ').
+HooksDefDesc=Modu deskriptorā <b> module_parts ['āķi'] </b>definējiet āķu kontekstu, kuru vēlaties pārvaldīt (konteksta sarakstu var atrast, veicot meklēšanu ar <b> initHooks (</b>'galvenajā kodā). <br> Rediģējiet āķa failu, lai pievienotu savu āķa funkciju kodu (kontaktu funkcijas var atrast, veicot meklēšanu ar kodu <b> executeHooks </b> ').
 TriggerDefDesc=Sprūda failā definējiet kodu, kuru vēlaties izpildīt katram notikušajam notikumam.
 SeeIDsInUse=Skatiet jūsu instalācijā izmantotos ID
 SeeReservedIDsRangeHere=Skatiet rezervēto ID diapazonu
 ToolkitForDevelopers=Dolibarr izstrādātāju rīks
-TryToUseTheModuleBuilder=Ja jums ir zināšanas par SQL un PHP, jūs varat izmantot native moduļa veidotāja vedni. <br> Ieslēdziet moduli <strong> %s </ strong> un izmantojiet vedni, noklikšķinot uz <span class = "fa fa-bug"> </ span> augšējā labajā izvēlnē. <br> Brīdinājums: šī ir uzlabotas izstrādātāja funkcija, <b> ne </ b> eksperimentējiet savā ražotnē!
+TryToUseTheModuleBuilder=Ja jums ir zināšanas par SQL un PHP, jūs varat izmantot native moduļa veidotāja vedni. <br> Ieslēdziet moduli <strong> %s </strong> un izmantojiet vedni, noklikšķinot uz <span class="fa fa-bug"></span> augšējā labajā izvēlnē. <br> Brīdinājums: šī ir uzlabotas izstrādātāja funkcija, <b> ne </b> eksperimentējiet savā ražotnē!
 SeeTopRightMenu=Augšējā labajā izvēlnē skatiet <span class="fa fa-bug"></span>
 AddLanguageFile=Pievienot valodas failu
 YouCanUseTranslationKey=Šeit varat izmantot atslēgu, kas ir tulkošanas atslēga, kas tiek atrasta valodas failā (sk. Cilni "Valodas").
 DropTableIfEmpty=(Dzēst tabulu, ja tukša)
-TableDoesNotExists=Tabula %s nepastāv
+TableDoesNotExists=Tabula %s neeksistē
 TableDropped=Tabula %s dzēsta
 InitStructureFromExistingTable=Veidojiet esošās tabulas struktūras masīva virkni
 UseAboutPage=Atspējot par lapu
