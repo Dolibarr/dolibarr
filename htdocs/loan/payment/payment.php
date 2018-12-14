@@ -63,7 +63,7 @@ if($last)
             }
         }
     }
-    
+
 }
 
 if (!empty($line_id))
@@ -77,9 +77,11 @@ if (!empty($line_id))
     }
 }
 
+
 /*
  * Actions
  */
+
 if ($action == 'add_payment')
 {
 	$error=0;
@@ -103,78 +105,77 @@ if ($action == 'add_payment')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-    if (! empty($conf->banque->enabled) && ! GETPOST('accountid', 'int') > 0)
-    {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
-        $error++;
-    }
+	if (! empty($conf->banque->enabled) && ! GETPOST('accountid', 'int') > 0)
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+		$error++;
+	}
 
 	if (! $error)
 	{
 		$paymentid = 0;
 
-        $amount = GETPOST('amount_capital') + GETPOST('amount_insurance') + GETPOST('amount_interest');
-        if ($amount == 0)
-        {
-            setEventMessages($langs->trans('ErrorNoPaymentDefined'), null, 'errors');
-            $error++;
-        }
+		$amount = GETPOST('amount_capital') + GETPOST('amount_insurance') + GETPOST('amount_interest');
+		if ($amount == 0)
+		{
+			setEventMessages($langs->trans('ErrorNoPaymentDefined'), null, 'errors');
+			$error++;
+		}
 
-        if (! $error)
-        {
-    		$db->begin();
+		if (! $error)
+		{
+			$db->begin();
 
-    		// Create a line of payments
-    		$payment = new PaymentLoan($db);
-    		$payment->chid				= $chid;
-    		$payment->datep = $datepaid;
-            $payment->label             = $loan->label;
+			// Create a line of payments
+			$payment = new PaymentLoan($db);
+			$payment->chid				= $chid;
+			$payment->datep = $datepaid;
+			$payment->label             = $loan->label;
 			$payment->amount_capital	= GETPOST('amount_capital');
 			$payment->amount_insurance	= GETPOST('amount_insurance');
 			$payment->amount_interest	= GETPOST('amount_interest');
 			$payment->paymenttype = GETPOST('paymenttype', 'int');
-    		$payment->num_payment		= GETPOST('num_payment');
-    		$payment->note_private      = GETPOST('note_private','none');
-    		$payment->note_public       = GETPOST('note_public','none');
+			$payment->num_payment		= GETPOST('num_payment');
+			$payment->note_private      = GETPOST('note_private','none');
+			$payment->note_public       = GETPOST('note_public','none');
 
-    		if (! $error)
-    		{
-    		    $paymentid = $payment->create($user);
-                if ($paymentid < 0)
-                {
-                    setEventMessages($payment->error, $payment->errors, 'errors');
-                    $error++;
-                }
-    		}
+			if (! $error)
+			{
+				$paymentid = $payment->create($user);
+				if ($paymentid < 0)
+				{
+					setEventMessages($payment->error, $payment->errors, 'errors');
+					$error++;
+				}
+			}
 
-            if (! $error)
-            {
-                $result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
-                if (! $result > 0)
-                {
-                    setEventMessages($payment->error, $payment->errors, 'errors');
-                    $error++;
-                }
-                elseif(isset($line))
-                {
-                    $line->fk_bank = $payment->fk_bank;
-                    $line->update($user);
-                }
-                
-            }
+			if (! $error)
+			{
+				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+				if (! $result > 0)
+				{
+					setEventMessages($payment->error, $payment->errors, 'errors');
+					$error++;
+				}
+				elseif(isset($line))
+				{
+					$line->fk_bank = $payment->fk_bank;
+					$line->update($user);
+				}
+			}
 
-    	    if (! $error)
-            {
-                $db->commit();
-                $loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
-                header('Location: '.$loc);
-                exit;
-            }
-            else
-            {
-                $db->rollback();
-            }
-        }
+			if (! $error)
+			{
+				$db->commit();
+				$loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
+				header('Location: '.$loc);
+				exit;
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
 	}
 
 	$action = 'create';
@@ -274,7 +275,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-    dol_fiche_end();
+	dol_fiche_end();
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
