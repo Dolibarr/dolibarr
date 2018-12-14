@@ -89,7 +89,7 @@ dol_fiche_head($head, 'setup', '', 0, 'user');
 
 print '<br>';
 
-$arrayofsocialnetworks=array('skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook');
+$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook');
 
 foreach($arrayofsocialnetworks as $snkey => $snlabel)
 {

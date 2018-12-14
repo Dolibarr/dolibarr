@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,7 @@ class InterfaceLogevents extends DolibarrTriggers
         $date = dol_now();
 
         // Actions
-        /*if ($action == 'USER_LOGIN')
+        if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -97,7 +97,7 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
-        }*/
+        }
         if ($action == 'USER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

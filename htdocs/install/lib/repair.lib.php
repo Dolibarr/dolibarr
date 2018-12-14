@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin	<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,6 @@ function clean_data_ecm_directories()
 				$resqlupdate=$db->query($sqlupdate);
 				if (! $resqlupdate) dol_print_error($db,'Failed to update');
 			}
-
 		}
 	}
 	else dol_print_error($db,'Failed to run request');

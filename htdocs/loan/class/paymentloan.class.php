@@ -173,7 +173,6 @@ class PaymentLoan extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)

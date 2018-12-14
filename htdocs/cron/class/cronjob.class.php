@@ -1068,8 +1068,9 @@ class Cronjob extends CommonObject
 			// Load langs
 			if (! $error)
 			{
-				$result=$langs->load($this->module_name.'@'.$this->module_name);
-				if ($result < 0)
+				$result=$langs->load($this->module_name);
+				$result=$langs->load($this->module_name.'@'.$this->module_name);	// If this->module_name was an existing language file, this will make nothing
+				if ($result < 0)	// If technical error
 				{
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
 					$this->error = $langs->error;
@@ -1138,14 +1139,17 @@ class Cronjob extends CommonObject
 				$conf->entity = $savcurrententity;
 				return -1;
 			}
+
 			// Load langs
-			$result=$langs->load($this->module_name . '@' . $this->module_name);
-			if ($result<0)
+			$result=$langs->load($this->module_name);
+			$result=$langs->load($this->module_name.'@'.$this->module_name);	// If this->module_name was an existing language file, this will make nothing
+			if ($result < 0)	// If technical error
 			{
 				dol_syslog(get_class($this) . "::run_jobs Cannot load module langs" . $langs->error, LOG_ERR);
 				$conf->entity = $savcurrententity;
 				return -1;
 			}
+
 			dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
 			$params_arr = explode(", ", $this->params);
 			if (!is_array($params_arr))
@@ -1301,7 +1305,7 @@ class Cronjob extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-	    return $this->LibStatut($this->status,$mode);
+	    return $this->LibStatut($this->status, $mode, $this->processing);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1310,43 +1314,47 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	int		$status        	Id statut
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param	int		$processing		0=Not running, 1=Running
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	function LibStatut($status, $mode=0, $processing=0)
 	{
         // phpcs:enable
         global $langs;
 	    $langs->load('users');
 
+	    $moretext = '';
+	    if ($processing) $moretext=' ('.$langs->trans("Running").')';
+
 	    if ($mode == 0)
 	    {
-	        if ($status == 1) return $langs->trans('Enabled');
-	        elseif ($status == 0) return $langs->trans('Disabled');
+	    	if ($status == 1) return $langs->trans('Enabled').$moretext;
+	    	elseif ($status == 0) return $langs->trans('Disabled').$moretext;
 	    }
 	    elseif ($mode == 1)
 	    {
-	        if ($status == 1) return $langs->trans('Enabled');
-	        elseif ($status == 0) return $langs->trans('Disabled');
+	    	if ($status == 1) return $langs->trans('Enabled').$moretext;
+	    	elseif ($status == 0) return $langs->trans('Disabled').$moretext;
 	    }
 	    elseif ($mode == 2)
 	    {
-	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	    	if ($status == 1) return img_picto($langs->trans('Enabled'),'statut'.($processing?'1':'4'),'class="pictostatus"').' '.$langs->trans('Enabled').$moretext;
+	    	elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled').$moretext;
 	    }
 	    elseif ($mode == 3)
 	    {
-	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	    	if ($status == 1) return img_picto($langs->trans('Enabled').$moretext,'statut'.($processing?'1':'4'),'class="pictostatus"');
+	    	elseif ($status == 0) return img_picto($langs->trans('Disabled').$moretext,'statut5','class="pictostatus"');
 	    }
 	    elseif ($mode == 4)
 	    {
-	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	    	if ($status == 1) return img_picto($langs->trans('Enabled').$moretext,'statut'.($processing?'1':'4'),'class="pictostatus"').' '.$langs->trans('Enabled').$moretext;
+	    	elseif ($status == 0) return img_picto($langs->trans('Disabled').$moretext,'statut5','class="pictostatus"').' '.$langs->trans('Disabled').$moretext;
 	    }
 	    elseif ($mode == 5)
 	    {
-	        if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-	        elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	    	if ($status == 1) return $langs->trans('Enabled').$moretext.' '.img_picto($langs->trans('Enabled').$moretext,'statut'.($processing?'1':'4'),'class="pictostatus"');
+	    	elseif ($status == 0) return $langs->trans('Disabled').$moretext.' '.img_picto($langs->trans('Disabled').$moretext,'statut5','class="pictostatus"');
 	    }
 	}
 }

@@ -40,7 +40,7 @@ $idline = GETPOST('idline');
 $desc = GETPOST('desc','alpha');
 $pay = GETPOST('pay');
 
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
 $row = $db->fetch_array ($resql);
 $placeid=$row[0];
@@ -57,6 +57,7 @@ else{
 if ($action == 'valid' && $user->rights->facture->creer){
 	if ($pay=="cash") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
 	else if ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	else if ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 	$now=dol_now();
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -69,7 +70,8 @@ if ($action == 'valid' && $user->rights->facture->creer){
 	$payment->amounts[$invoice->id]=$invoice->total_ttc;
 	if ($pay=="cash") $payment->paiementid=4;
 	else if ($pay=="card") $payment->paiementid=6;
-	$payment->num_paiement=$invoice->facnumber;
+	else if ($pay=="cheque") $payment->paiementid=7;
+	$payment->num_paiement=$invoice->ref;
 	$payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 	$invoice->set_paid($user);
@@ -87,7 +89,7 @@ if (($action=="addline" || $action=="freezone") and $placeid==0)
 		$invoice->pos_source = (string) (empty($place)?'0':$place);
 
 		$placeid=$invoice->create($user);
-		$sql="UPDATE ".MAIN_DB_PREFIX."facture set facnumber='(PROV-POS-".$place.")' where rowid=".$placeid;
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
 		$db->query($sql);
 	}
 }
@@ -115,7 +117,7 @@ if ($action=="deleteline"){
         $row = $db->fetch_array ($resql);
         $deletelineid=$row[0];
         $invoice->deleteline($deletelineid);
-        $invoice->fetch($deletelineid);
+        $invoice->fetch($placeid);
     }
 }
 
@@ -149,7 +151,7 @@ if ($action=="updatereduction"){
 	$invoice->fetch($placeid);
 }
 
-if ($action=="order"){
+if ($action=="order" and $placeid!=0){
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$headerorder='<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th align="left">'.$langs->trans("Label").'</th><th align="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
 	$footerorder='</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
@@ -237,7 +239,7 @@ function Print(id){
 function TakeposPrinting(id){
 	var receipt;
 	$.get("receipt.php?facid="+id, function(data, status){
-        receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');;
+        receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
 			type: "POST",
 			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
@@ -278,8 +280,8 @@ print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbs
     print '</p>';
 //}
 if ($action=="valid"){
-	print '<p style="font-size:120%;" align="center"><b>'.$invoice->facnumber." ".$langs->trans('BillShortStatusValidated').'</b></p>';
-	if ($conf->global->TAKEBOX) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }
 if ($action=="search"){

@@ -227,6 +227,7 @@ if ($action=='activate')
 if ($action=='inactive')
 {
 	$object->status=0;
+	$object->processing=0;
 
 	// Add cron task
 	$result = $object->update($user);
@@ -546,7 +547,6 @@ if (($action=="create") || ($action=="edit"))
 	print "</div>";
 
 	print "</form>\n";
-
 }
 else
 {

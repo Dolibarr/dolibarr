@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Andreu Bisquerra Gaya   <jove@bisquerra.com>
  * Copyright (C) 2012       David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012-2018  Juanjo Menent           <jmenent@2byte.es>
@@ -118,7 +118,6 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 		$originid=$orders_id[0];
 		$_GET['originid']=$orders_id[0];
-
 	}
 	if (isset($_POST['orders_to_invoice']))
 	{
@@ -128,7 +127,6 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 		$originid=$orders_id[0];
 		$_POST['originid']=$orders_id[0];
-
 	}
 
 	$projectid		= GETPOST('projectid','int')?GETPOST('projectid','int'):0;
@@ -138,7 +136,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 	$closeOrders	= GETPOST('autocloseorders') ? true : false;
 
 	// Security check
-	$fieldid = GETPOST('ref','alpha')?'facnumber':'rowid';
+	$fieldid = GETPOST('ref','alpha')?'ref':'rowid';
 	if ($user->societe_id) $socid=$user->societe_id;
 	$result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
@@ -165,7 +163,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 				// Si facture standard
 				$object->socid				= $_POST['socid'];
 				$object->type				= $_POST['type'];
-				$object->number				= $_POST['facnumber'];
+				$object->number				= $_POST['ref'];
 				$object->date				= $datefacture;
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note				= trim($_POST['note']);
@@ -407,7 +405,7 @@ if ($action == 'create' && !$error)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
-	print '<input name="facnumber" type="hidden" value="provisoire">';
+	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
 	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
@@ -531,8 +529,6 @@ if ($action == 'create' && !$error)
 
 	print '</td></tr>';
 	print "</table>\n";
-
-
 }
 
 // Mode liste
@@ -737,7 +733,6 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

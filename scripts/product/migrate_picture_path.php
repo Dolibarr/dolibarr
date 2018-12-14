@@ -140,7 +140,6 @@ function migrate_product_photospath($product)
     				{
     					dol_move($origin.'/'.$file, $destin.'/'.$file);
     				}
-
     			}
     		}
         }

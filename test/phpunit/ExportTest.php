@@ -217,16 +217,16 @@ class ExportTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
-        $sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+        $sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
         $objexport=new Export($db);
         //$objexport->load_arrays($user,$datatoexport);
 
         // Define properties
         $datatoexport='test';
-        $array_selected = array("f.facnumber"=>1, "f.total"=>2, "f.tva"=>3);
-        $array_export_fields = array("f.facnumber"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
-        $array_alias = array("f_facnumber"=>"facnumber", "f_total"=>"total", "f_tva"=>"tva");
+        $array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+        $array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+        $array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
         $objexport->array_export_fields[0]=$array_export_fields;
         $objexport->array_export_alias[0]=$array_alias;
 
@@ -266,18 +266,18 @@ class ExportTest extends PHPUnit_Framework_TestCase
     {
     	global $conf,$user,$langs,$db;
 /*
-    	$sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+    	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
     	$objexport=new Export($db);
     	//$objexport->load_arrays($user,$datatoexport);
 
     	// Define properties
     	$datatoexport='test_filtered';
-    	$array_selected = array("f.facnumber"=>1, "f.total"=>2, "f.tva"=>3);
-    	$array_export_fields = array("f.facnumber"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+    	$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+    	$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
     	$array_filtervalue = array("f.total" => ">100");
     	$array_filtered = array("f.total" => 1);
-    	$array_alias = array("f_facnumber"=>"facnumber", "f_total"=>"total", "f_tva"=>"tva");
+    	$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
     	$objexport->array_export_fields[0]=$array_export_fields;
     	$objexport->array_export_alias[0]=$array_alias;
 

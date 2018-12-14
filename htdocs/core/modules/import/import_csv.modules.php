@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -466,7 +466,6 @@ class ImportCsv extends ModeleImports
                                             }
                                         }
                                     }
-
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {

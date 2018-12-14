@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
@@ -14,6 +14,7 @@
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ if (empty($reshook)) {
 			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
 			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'alpha');
-			$object->address = GETPOST('address', 'alpha');
+			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alpha');
 			$object->town = GETPOST('town', 'alpha');
 			$object->country_id = GETPOST('country_id', 'int');
@@ -341,7 +342,7 @@ if (empty($reshook)) {
 				$object->pass = GETPOST("password",'none');
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
-				$object->address = GETPOST('address', 'alpha');
+				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alpha');
 				$object->town = GETPOST('town', 'alpha');
 				$object->country_id = GETPOST('country_id', 'int');
@@ -448,14 +449,14 @@ if (empty($reshook)) {
 
 				if (!$error && !count($object->errors)) {
 					if (GETPOST('deletephoto') && $object->photo) {
-						$fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
-						$dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
+						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/'.$object->photo;
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
 					if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
-						$dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
+						$dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 
 						dol_mkdir($dir);
 
@@ -696,7 +697,6 @@ if ($action == 'create' || $action == 'adduserldap')
 					}
 					$liste[$key] = $label;
 				}
-
 			}
 			else
 			{
@@ -1417,7 +1417,7 @@ else
 			}
 			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
 			{
-				if ($object->pass) $valuetoshow.= preg_replace('/./i','*',$object->pass);
+				if ($object->pass) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').preg_replace('/./i','*',$object->pass);
 				else
 				{
 					if ($user->admin) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
@@ -2138,7 +2138,16 @@ else
 		   	// Employee
 		   	print '<tr>';
 		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-		   	print $form->selectyesno("employee",$object->employee,1);
+			if ($caneditfield)
+			{
+		   		print $form->selectyesno("employee",$object->employee,1);
+			}else{
+				if ($object->employee){
+					print $langs->trans("Yes");
+				}else{
+					print $langs->trans("No");
+				}
+			}
 		   	print '</td></tr>';
 
 		   	// Hierarchy
@@ -2342,7 +2351,12 @@ else
 			{
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				if ($caneditfield)
+				{
+					print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				}else{
+					print $formother->showColor($object->color, '');
+				}
 				print '</td></tr>';
 			}
 
@@ -2365,7 +2379,12 @@ else
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				if ($caneditfield)
+				{
+					print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				}else{
+					print $form->showCategories( $object->id, 'user', 1 );
+				}
 				print "</td></tr>";
 			}
 
@@ -2448,7 +2467,12 @@ else
 			print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
-				print $object->showOptionals($extrafields,'edit');
+				if ($caneditfield)
+				{
+					print $object->showOptionals($extrafields,'edit');
+				}else{
+					print $object->showOptionals($extrafields,'view');
+				}
 			}
 
 			// Signature
@@ -2497,7 +2521,11 @@ else
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				if($caneditfield){
+					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				}else{
+					print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2507,7 +2535,12 @@ else
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				if($caneditfield)
+				{
+					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				}else{
+					print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2522,21 +2555,36 @@ else
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 			print '<td>';
-			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			if($caneditfield)
+			{
+				print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			}else{
+				print price2num($object->weeklyhours);
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			}else{
+				print dol_print_date($object->dateemployment, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employmentEnd
 			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			}else{
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -2544,7 +2592,12 @@ else
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			if($caneditfield)
+			{
+				echo $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			}else{
+				print dol_print_date($object->birth, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -2593,7 +2646,6 @@ else
 
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close();
 	}
-
 }
 
 if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))

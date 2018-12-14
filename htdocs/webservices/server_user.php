@@ -733,7 +733,6 @@ function setUserPassword($authentication,$shortuser)
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='User not found';
 			}
-
 		}
 		else
 		{

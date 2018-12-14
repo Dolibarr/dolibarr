@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015	   Jean-François Ferry	<jfefe@aternatik.fr>
@@ -152,7 +152,7 @@ if ($action == 'add') {
 		}
 	}
 } elseif ($action == 'createfrommodel') {
-	$newinter = new fichinter($db);
+	$newinter = new Fichinter($db);
 
 	// on récupère les enregistrements
 	$object->fetch($id);
@@ -176,7 +176,7 @@ if ($action == 'add') {
 	// on créer un nouvelle intervention
 	$extrafields = new ExtraFields($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($newinter->table_element);
-	$array_options = $extrafields->getOptionalsFromPost($extralabels);
+	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
 	$newinter->array_options = $array_options;
 
 	$newfichinterid = $newinter->create($user);
@@ -420,7 +420,6 @@ if ($action == 'create') {
 				$i++;
 			}
 			$db->free($result);
-
 		} else
 			print $db->error();
 		print "</table>";
@@ -439,7 +438,6 @@ if ($action == 'create') {
 	}
 	else
 		dol_print_error('', "Error, no invoice ".$object->id);
-
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'title_commercial.png');
 	dol_fiche_head('');
@@ -574,11 +572,9 @@ if ($action == 'create') {
 						print $contratstatic->getNomUrl(0, '', 1);
 					} else
 						print "&nbsp;";
-
 				}
 				print '</td>';
 				print '</tr>';
-
 			}
 			print "</table>";
 			print '</div>';
@@ -775,7 +771,6 @@ if ($action == 'create') {
 			print '</div>';
 		} else
 			print $langs->trans("ErrorRecordNotFound");
-
 	} else {
 		/*
 		 *  List mode
@@ -871,7 +866,7 @@ if ($action == 'create') {
 			print "</tr>\n";
 
 
-// les filtres à faire ensuite
+			// les filtres à faire ensuite
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
@@ -898,8 +893,8 @@ if ($action == 'create') {
 					}
 					if (! empty($conf->projet->enabled)) {
 						print '<td>';
-						if ($objp->fk_project >0) {
-							$projectstatic->fecth($objp->fk_projet);
+						if ($objp->fk_project > 0) {
+							$projectstatic->fetch($objp->fk_projet);
 							print $projectstatic->getNomUrl(1);
 						}
 						print '</td>';

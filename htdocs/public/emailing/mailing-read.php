@@ -86,7 +86,6 @@ if (! empty($tag))
 	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
-
 }
 
 $db->close();

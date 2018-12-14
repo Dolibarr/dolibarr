@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,17 +151,11 @@ class mailing_pomme extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id, $filtersarray=array())
+	function add_to_target($mailing_id)
 	{
         // phpcs:enable
-		// Deprecation warning
-	    if ($filtersarray) {
-		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
-	    }
-
 	    global $conf, $langs;
 		$langs->load("companies");
 

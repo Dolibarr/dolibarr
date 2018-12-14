@@ -38,7 +38,7 @@ if (empty($user->rights->accounting->fiscalyear))
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 

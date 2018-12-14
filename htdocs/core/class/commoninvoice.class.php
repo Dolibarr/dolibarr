@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -329,12 +329,13 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
-	 *  If invoice is draft and has a temporary ref -> yes
+	 *  If invoice is draft and has a temporary ref -> yes (1)
 	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on -> no (0)
 	 *  If invoice is dispatched in bookkeeping -> no (-1)
 	 *  If invoice has a definitive ref, is not last and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
 	 *  If invoice not last in a cycle -> no (-3)
 	 *  If there is payment -> no (-4)
+	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         <=0 if no, >0 if yes
 	 */
@@ -363,11 +364,11 @@ abstract class CommonInvoice extends CommonObject
 			if ($this->element != 'invoice_supplier')
 			{
 				if (empty($this->thirdparty)) $this->fetch_thirdparty();	// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
-				$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
+				$maxref = $this->getNextNumRef($this->thirdparty,'last');
 
 				// If there is no invoice into the reset range and not already dispatched, we can delete
 				// If invoice to delete is last one and not already dispatched, we can delete
-				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxfacnumber != '' && $maxfacnumber != $this->ref) return -2;
+				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxref != '' && $maxref != $this->ref) return -2;
 
 				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
 				// ...
@@ -383,7 +384,7 @@ abstract class CommonInvoice extends CommonObject
 		// Test if there is at least one payment. If yes, refuse to delete.
 		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) return -4;
 
-		return 1;
+		return 2;
 	}
 
 	/**

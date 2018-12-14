@@ -171,7 +171,6 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-
 			}
 			else
 			{
@@ -251,7 +250,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';

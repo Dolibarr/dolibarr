@@ -53,7 +53,6 @@ if($auth->fetch(0, $signature)<=0) {
 if(!empty($hash)) {
 
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
-
 }
 elseif(!empty($newblock)){
 	if($auth->checkBlock($newblock)) {
@@ -65,7 +64,6 @@ elseif(!empty($newblock)){
 	else{
 
 		echo 'blockalreadyadded';
-
 	}
 }
 else{

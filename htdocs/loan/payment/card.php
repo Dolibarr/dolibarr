@@ -61,7 +61,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/index.php");
+		header("Location: ".DOL_URL_ROOT."/loan/list.php");
 		exit;
 	}
 	else

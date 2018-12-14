@@ -64,7 +64,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $offset = $limit * $page;
 if (! $sortfield)
-	$sortfield = "f.datef, f.facnumber, fd.rowid";
+	$sortfield = "f.datef, f.ref, fd.rowid";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
@@ -135,7 +135,6 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 		$account_parent = '';   // Protection to avoid to mass apply it a second time
 	}
-
 }
 
 
@@ -168,7 +167,7 @@ print '<script type="text/javascript">
 /*
  * Customer Invoice lines
  */
-$sql = "SELECT f.rowid as facid, f.facnumber as ref, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql.= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql.= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
@@ -196,7 +195,7 @@ if ($search_lineid) {
     $sql .= natural_search("fd.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= natural_search("f.facnumber", $search_invoice);
+	$sql .= natural_search("f.ref", $search_invoice);
 }
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
@@ -332,8 +331,8 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);

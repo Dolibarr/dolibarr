@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
@@ -215,7 +215,6 @@ if (empty($reshook))
     }
 
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
 }
 
 /*
@@ -257,7 +256,6 @@ if ($id > 0 || ! empty($ref))
 		if ($action == 'cloture')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
-
 		}
 
 		// Call Hook formConfirm
@@ -908,7 +906,6 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 
 				$somethingshown=1;
-
 			}
 			else
 			{

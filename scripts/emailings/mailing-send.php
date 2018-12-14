@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,6 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
 {
-
 }
 
 $user = new User($db);
@@ -329,7 +328,6 @@ if ($resql)
 								if (!empty($conf->global->MAILING_DELAY)) {
 									sleep($conf->global->MAILING_DELAY);
 								}
-
 							}
 						}
 						else

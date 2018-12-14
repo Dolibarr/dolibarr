@@ -150,7 +150,6 @@ if ($action == 'add_payment')
                         $error++;
                     }
                 }
-
             }
 
     	    if (! $error)

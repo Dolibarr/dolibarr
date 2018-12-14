@@ -52,11 +52,11 @@ ActionsOnShipping=Notikumi sūtījumu
 LinkToTrackYourPackage=Saite uz izsekot savu paketi
 ShipmentCreationIsDoneFromOrder=Izveidot jaunu sūtījumu var no pasūtījuma kartiņas.
 ShipmentLine=Sūtījumu līnija
-ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInCustomersOrdersRunning=Produkta daudzums atvērtā klienta pasūtījumā
+ProductQtyInSuppliersOrdersRunning=Produktu daudzums atvērtajos pirkuma pasūtījumos
 ProductQtyInShipmentAlreadySent=Produkta daudzums, kuri sakārtoti pēc piegādātāja pasūtīšanas
 ProductQtyInSuppliersShipmentAlreadyRecevied=Produkta daudzums jau ir saņemts no atvērta piegādātāja pasūtījuma
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas paredzēts piegādei <b> %s </ b>. Pareizu krājumu vai doties atpakaļ, lai izvēlētos citu noliktavu.
 WeightVolShort=Svars / tilp.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
@@ -69,4 +69,4 @@ SumOfProductWeights=Summēt produkta svaru
 
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseFormat= W:%s (Daudz. : %d)

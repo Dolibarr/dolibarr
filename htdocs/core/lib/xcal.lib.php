@@ -263,7 +263,6 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 				$comment ['enddate']		= $enddate;
 				fwrite($calfileh,"COMMENT:" . serialize ($comment) . "\n");
 				*/
-
 			}
 		}
 

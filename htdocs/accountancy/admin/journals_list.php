@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","compta","accountancy"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=35;
 $rowid=GETPOST('rowid','alpha');
@@ -202,7 +202,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			{
 				$obj = $db->fetch_object($result);
 				$newid=($obj->newid + 1);
-
 			} else {
 				dol_print_error($db);
 			}

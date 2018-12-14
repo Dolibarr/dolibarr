@@ -327,7 +327,6 @@ if ($mode == 'setup' && $user->admin)
 
         print '</form>';
     }
-
 }
 
 if ($mode == 'test' && $user->admin)
@@ -352,11 +351,9 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
-
     }
 
     print '</table>';
-
 }
 
 if ($mode == 'userconf' && $user->admin)

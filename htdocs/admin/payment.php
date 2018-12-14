@@ -83,7 +83,6 @@ if ($action == 'setparams')
 	{
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-
 }
 
 
@@ -217,7 +216,6 @@ foreach ($dirmodels as $reldir)
                             print '</td>';
 
                             print "</tr>\n";
-
                         }
                     }
                 }

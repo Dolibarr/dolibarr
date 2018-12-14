@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
@@ -73,11 +73,6 @@ $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (!
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-// Security check
-$socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
@@ -95,6 +90,12 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
+
+// Security check
+$socid='';
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php
@@ -219,19 +220,26 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
-		$result=$object->delete($user);
-		if ($result > 0)
+
+		$isErasable=$object->is_erasable();
+
+		if (($user->rights->fournisseur->facture->supprimer && $isErasable > 0)
+			|| ($user->rights->fournisseur->facture->creer && $isErasable == 1))
 		{
-			header('Location: list.php?restore_lastsearch_values=1');
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
+			$result=$object->delete($user);
+			if ($result > 0)
+			{
+				header('Location: list.php?restore_lastsearch_values=1');
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 
@@ -525,7 +533,6 @@ if (empty($reshook))
 				{
 					$error++;
 				}
-
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT)
 			{
@@ -543,7 +550,6 @@ if (empty($reshook))
 						break;
 					}
 				}
-
 			}
 
 			if (empty($error))
@@ -757,7 +763,6 @@ if (empty($reshook))
 
 						$object->update_price(1);
 					}
-
 				}
 
 				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
@@ -896,6 +901,9 @@ if (empty($reshook))
 								$date_end=$lines[$i]->date_fin_prevue;
 								if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 								if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+
+								// FIXME Missing special_code  into addline and updateline methods
+								$object->special_code = $lines[$i]->special_code;
 
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
@@ -1669,7 +1677,6 @@ if ($action == 'create')
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
-
 		}
 	}
 	else
@@ -2257,7 +2264,6 @@ else
             }
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1);
-
         }
 
         // Confirmation edit (back to draft)
@@ -2293,27 +2299,23 @@ else
                 );
             }
             $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateBill'), $langs->trans('ConfirmUnvalidateBill', $object->ref), 'confirm_edit', $formquestion, 1, 1);
-
 		}
 
 		// Confirmation set paid
 		if ($action == 'paid')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
-
 		}
 
 		// Confirmation de la suppression de la facture fournisseur
 		if ($action == 'delete')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
-
 		}
 		if ($action == 'deletepaiement')
 		{
 			$payment_id = GETPOST('paiement_id');
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
-
 		}
 
 	   	// Confirmation to delete line
@@ -2715,7 +2717,7 @@ else
 
 					$paymentstatic->id=$objp->rowid;
 					$paymentstatic->datepaye=$db->jdate($objp->dp);
-					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
+					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_paiement=$objp->num_paiement;
 					$paymentstatic->payment_code=$objp->payment_code;
 
@@ -3123,9 +3125,9 @@ else
 				}
 
 	            // Delete
-	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
+				$isErasable=$object->is_erasable();
+				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || ($user->rights->fournisseur->facture->creer && $isErasable == 1)))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 	            {
-	            	$isErasable=$object->is_erasable();
 	            	//var_dump($isErasable);
 	            	if ($isErasable == -4) {
 	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';

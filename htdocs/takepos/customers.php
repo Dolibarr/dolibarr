@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
@@ -55,7 +55,7 @@ $_GET['optioncss'] = 'print';
  */
 
 if ($action=="change") {
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where facnumber='(PROV-POS-".$place.")'";
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
     ?>
     <script>
@@ -144,7 +144,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('societe');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('societe','','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(

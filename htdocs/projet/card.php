@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,6 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 		}
-
 	}
 
 	// Build doc
@@ -619,9 +618,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
-
+var_dump($conf->global->PROJECT_USE_TASKS);
 	// Bill time
-	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<tr><td>'.$langs->trans("BillTime").'</td>';
 		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
@@ -856,7 +855,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
@@ -986,7 +985,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td>'.yn($object->bill_time).'</td>';

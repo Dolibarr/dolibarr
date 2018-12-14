@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>

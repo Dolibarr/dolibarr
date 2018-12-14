@@ -206,7 +206,7 @@ class AccountancyExport
 
 
 	/**
-	 * Function who chose which export to use with the default config
+	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
 	 * @param array		$TData 		data
 	 * @return void
@@ -214,16 +214,17 @@ class AccountancyExport
 	public function export(&$TData)
 	{
 		global $conf, $langs;
+		global $search_date_end;	// Used into /accountancy/tpl/export_journal.tpl.php
 
-
+		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		$type_export = 'general_ledger';
+
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
 			case self::$EXPORT_TYPE_NORMAL :
-				/*$this->exportNormal($TData);
-				break;*/
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
@@ -261,32 +262,6 @@ class AccountancyExport
 		}
 	}
 
-	/**
-	 * Export format : Normal
-	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
-	 */
-	/* Use $EXPORT_TYPE_CONFIGURABLE instead
-	public function exportNormal($objectLines)
-	{
-		global $conf;
-
-		foreach ( $objectLines as $line ) {
-			// Std export
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			print $date . $this->separator;
-			print $line->doc_ref . $this->separator;
-			print length_accountg($line->numero_compte) . $this->separator;
-			print length_accounta($line->subledger_account) . $this->separator;
-			print price($line->debit) . $this->separator;
-			print price($line->credit) . $this->separator;
-			print $line->code_journal . $this->separator;
-			print $this->end_line;
-		}
-	}
-	*/
 
 	/**
 	 * Export format : CEGID

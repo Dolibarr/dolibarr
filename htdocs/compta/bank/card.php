@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
@@ -576,7 +576,6 @@ else
 		if ($action == 'delete')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-
 		}
 
 		// Print form confirm
@@ -766,7 +765,6 @@ else
 		}
 
 		print '</div>';
-
 	}
 
 	/* ************************************************************************** */
@@ -1033,7 +1031,6 @@ else
 
 		print '</form>';
 	}
-
 }
 
 // End of page

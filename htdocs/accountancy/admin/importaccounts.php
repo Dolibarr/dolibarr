@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,10 +72,10 @@ if ($_POST["action"] == 'import') {
 
 				$accounting = new AccountingAccount($db);
 
-				$monLabel = GETPOST('label' . $maLigneCochee);
-				$monParentAccount = GETPOST('AccountParent' . $maLigneCochee);
-				$monType = GETPOST('pcgType' . $maLigneCochee);
-				$monSubType = GETPOST('pcgSubType' . $maLigneCochee);
+				$monLabel = (string) GETPOST('label' . $maLigneCochee);
+				$monParentAccount = (string) GETPOST('AccountParent' . $maLigneCochee);
+				$monType = (string) GETPOST('pcgType' . $maLigneCochee);
+				$monSubType = (string) GETPOST('pcgSubType' . $maLigneCochee);
 
 				$accounting->fk_pcg_version = $obj->pcg_version;
 				$accounting->account_number = $maLigneCochee;

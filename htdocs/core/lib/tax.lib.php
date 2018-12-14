@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier		<ywarnier@beeznest.org>
- * Copyright (C) 2011	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -109,7 +109,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$total_tva='total_tva';
     	$paymenttable='paiement';
     	$paymentfacturetable='paiement_facture';
-    	$invoicefieldref='facnumber';
+    	$invoicefieldref='ref';
     }
     if ($direction == 'buy')
     {
@@ -578,7 +578,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $total_tva='total_tva';
         $paymenttable='paiement';
         $paymentfacturetable='paiement_facture';
-        $invoicefieldref='facnumber';
+        $invoicefieldref='ref';
     }
     else
     {
