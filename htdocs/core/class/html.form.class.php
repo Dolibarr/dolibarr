@@ -2058,20 +2058,20 @@ class Form
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
-		
+
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
-		
+
 		if (! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
 		{
 			//Product category
 			$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
 						FROM ".MAIN_DB_PREFIX."categorie_product
-						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
+						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid
 						LIMIT 1
 				) AS categorie_product_id ";
 		}
-		
+
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
 		{
@@ -2181,7 +2181,7 @@ class Form
 		{
 			$sql.= ' GROUP BY'.$selectFields;
 		}
-		
+
 		//Sort by category
 		if(! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
 		{
@@ -2195,7 +2195,7 @@ class Form
 		}
 
 		$sql.= $db->plimit($limit, 0);
-		
+
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -3636,8 +3636,8 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print $langs->trans("NoActiveBankAccountDefined");
-				else print $langs->trans("NoBankAccountFound");
+				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		}
 		else {
