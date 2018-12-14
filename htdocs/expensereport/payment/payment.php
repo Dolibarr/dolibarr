@@ -187,6 +187,20 @@ if ($action == 'create' || empty($action))
 
 	$total = $expensereport->total_ttc;
 
+	// autofill remainder amount
+	if (! empty($conf->use_javascript_ajax))
+		{
+			print "\n".'<script type="text/javascript" language="javascript">';
+			//Add js for AutoFill
+			print ' $(document).ready(function () {';
+			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                            var amount = $(this).data("value");
+							document.getElementById($(this).data(\'rowid\')).value = amount ;
+						});';
+			print '	});'."\n";
+			print '	</script>'."\n";
+		}
+
 	print load_fiche_titre($langs->trans("DoPayment"));
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
@@ -298,7 +312,12 @@ if ($action == 'create' || empty($action))
 		if ($sumpaid < $objp->total_ttc)
 		{
 			$namef = "amount_".$objp->id;
-			print '<input type="text" size="8" name="'.$namef.'">';
+			$nameRemain = "remain_".$objp->id; // autofill remainder amount
+			if (!empty($conf->use_javascript_ajax)) // autofill remainder amount
+					print img_picto("Auto fill",'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+			$remaintopay=$objp->total_ttc - $sumpaid; // autofill remainder amount
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		}
 		else
 		{
