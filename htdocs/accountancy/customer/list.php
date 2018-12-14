@@ -534,10 +534,23 @@ print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")
-		console.log(s+" "+$(this).val());
-		if ($(this).val() == -1) jQuery(".checkforselect"+s).prop("checked", false);
-		else jQuery(".checkforselect"+s).prop("checked", true);
+		if ($(this).val() == -1) jQuery(".checkforselect"+s).attr("checked", false);
+		else jQuery(".checkforselect"+s).attr("checked", true);
 	});
+    jQuery(document).on("keyup", ".select2.select2-container", function (e) {
+        if (e.which == 9 || e.which == 13) {
+            if (e.shiftKey != true) {
+                jQuery(this).closest("tr").next().find("select.codeventil").select2("open");
+            } else {
+                jQuery(this).closest("tr").prev().find("select.codeventil").select2("open");
+            }
+            var source_select = $(this).prev("select");
+            var s=source_select.attr("id").replace("codeventil", "");
+            if (source_select.val() == -1) jQuery(".checkforselect"+s).attr("checked", false);
+            else jQuery(".checkforselect"+s).attr("checked", true);
+            e.preventDefault();
+        }
+    });
 });
 </script>';
 

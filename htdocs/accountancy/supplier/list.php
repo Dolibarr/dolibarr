@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills","compta","accountancy","other","productbatch"));
@@ -197,6 +198,7 @@ if ($massaction == 'ventil') {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
@@ -469,7 +471,17 @@ if ($result) {
 		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">' . $facturefourn_static->getNomUrl(1) . '</td>';
+        print '<td>'. $facturefourn_static->getNomUrl(1) . ' ';
+        $filename=dol_sanitizeFileName($facturefourn_static->ref);
+        $filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($facturefourn_static->id,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($facturefourn_static->ref);
+        $subdir = get_exdir($facturefourn_static->id,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($facturefourn_static->ref);
+        $filelinks = $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
+        if ($formfile->infofiles['nboffiles'] == 0) {
+            print '<a href="'.DOL_URL_ROOT . '/fourn/facture/document.php?facid='.$facturefourn_static->facid.'">+</a>';
+        } else {
+            print $filelinks;
+        }
+		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
 		print $objp->invoice_label;
@@ -540,12 +552,25 @@ if ($result) {
 // Add code to auto check the box when we select an account
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
-	jQuery(".codeventil").change(function() {
-		var s=$(this).attr("id").replace("codeventil", "")
-		console.log(s+" "+$(this).val());
-		if ($(this).val() == -1) jQuery(".checkforselect"+s).prop("checked", false);
-		else jQuery(".checkforselect"+s).prop("checked", true);
-	});
+    jQuery(".codeventil").change(function() {
+        var s=$(this).attr("id").replace("codeventil", "")
+        if ($(this).val() == -1) jQuery(".checkforselect"+s).attr("checked", false);
+        else jQuery(".checkforselect"+s).attr("checked", true);
+    });
+    jQuery(document).on("keyup", ".select2.select2-container", function (e) {
+        if (e.which == 9 || e.which == 13) {
+            if (e.shiftKey != true) {
+                jQuery(this).closest("tr").next().find("select.codeventil").select2("open");
+            } else {
+                jQuery(this).closest("tr").prev().find("select.codeventil").select2("open");
+            }
+            var source_select = $(this).prev("select");
+            var s=source_select.attr("id").replace("codeventil", "");
+            if (source_select.val() == -1) jQuery(".checkforselect"+s).attr("checked", false);
+            else jQuery(".checkforselect"+s).attr("checked", true);
+            e.preventDefault();
+        }
+    });
 });
 </script>';
 
