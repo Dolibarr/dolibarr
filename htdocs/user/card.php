@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2018 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
-				header("Location: index.php?restore_lastsearch_values=1");
+				header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
 				exit;
 			}
 		}
