@@ -282,7 +282,6 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
  * @param      int		$day_date		day date
  * @param      int		$month_date		month date
  * @param      int		$year_date		year date
- 
  * @return     string	$sqldate		sql part of date
  */
 
