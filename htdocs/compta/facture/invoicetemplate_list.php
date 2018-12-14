@@ -500,6 +500,7 @@ if ($resql)
 	{
 		$i=0;
 		$totalarray=array();
+		$relative_stats=array();
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($resql);
@@ -537,6 +538,13 @@ if ($resql)
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total';
 			   $totalarray['val']['f.total'] += $objp->total;
+			   $relative_month_total = 0;
+			   if ($objp->unit_frequency == 'm') {
+				   $relative_month_total = $objp->total / $objp->frequency;
+			   } elseif ($objp->unit_frequency == 'y') {
+				   $relative_month_total = $objp->total / (12 * $objp->frequency);
+			   }
+			   $relative_stats['relative.month.total'] += $relative_month_total;
 			}
 			if (! empty($arrayfields['f.tva']['checked']))
 			{
@@ -544,6 +552,13 @@ if ($resql)
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.tva';
 			   $totalarray['val']['f.tva'] += $objp->total_vat;
+			   $relative_month_total = 0;
+			   if ($objp->unit_frequency == 'm') {
+				   $relative_month_total = $objp->total_vat / $objp->frequency;
+			   } elseif ($objp->unit_frequency == 'y') {
+				   $relative_month_total = $objp->total_vat / (12 * $objp->frequency);
+			   }
+			   $relative_stats['relative.month.tva'] += $relative_month_total;
 			}
 			if (! empty($arrayfields['f.total_ttc']['checked']))
 			{
@@ -551,6 +566,13 @@ if ($resql)
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ttc';
 			   $totalarray['val']['f.total_ttc'] += $objp->total_ttc;
+			   $relative_month_total = 0;
+			   if ($objp->unit_frequency == 'm') {
+				   $relative_month_total = $objp->total_ttc / $objp->frequency;
+			   } elseif ($objp->unit_frequency == 'y') {
+				   $relative_month_total = $objp->total_ttc / (12 * $objp->frequency);
+			   }
+			   $relative_stats['relative.month.total_ttc'] += $relative_month_total;
 			}
 			// Payment term
 			if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
@@ -696,6 +718,20 @@ if ($resql)
 		}
 		print '</tr>';
 	}
+
+	print '<tr class="liste_total">';
+	print '<td>' . $langs->trans("Total") . ' ' . $langs->trans('ByMonth') .'</td><td></td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.total'], 'MT')).'</td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.tva'], 'MT')).'</td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.total_ttc'], 'MT')).'</td>';
+	print '</tr>';
+
+	print '<tr class="liste_total">';
+	print '<td>' . $langs->trans("Total") . ' ' . $langs->trans('ByYear') .'</td><td></td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.total'] * 12, 'MT')).'</td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.tva'] * 12, 'MT')).'</td>';
+	print '<td align="right">'.price(price2num($relative_stats['relative.month.total_ttc'] * 12, 'MT')).'</td>';
+	print '</tr>';
 
 	print "</table>";
 	print "</div>";
