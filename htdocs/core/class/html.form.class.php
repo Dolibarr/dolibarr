@@ -1389,7 +1389,7 @@ class Form
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 *  This also set the number of contacts found into $this->num
 	 *
-	 * @since 9.0 Add afterSelectOptions hook & selectcontacts context.
+	 * @since 9.0 Add afterSelectContactOptions hook
 	 *
 	 *	@param	int			$socid      	Id ot third party or 0 for all or -1 for empty list
 	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
@@ -1418,17 +1418,15 @@ class Form
 
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-        $out='';
+		$out='';
 
-		// Add selectcontacts hook
 		if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager=new HookManager($this->db);
 		}
-		$hookmanager->initHooks(array('selectcontacts'));
 
-		// On recherche les societes
+		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
 		if ($showsoc > 0) $sql.= " , s.nom as company";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
@@ -1523,7 +1521,7 @@ class Form
 				'showsoc'=>$showsoc,
 			);
 
-			$reshook = $hookmanager->executeHooks( 'afterSelectOptions', $parameters, $this, $action );    // Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks( 'afterSelectContactOptions', $parameters, $this, $action );    // Note that $action and $object may have been modified by some hooks
 
 			if ($htmlname != 'none' || $options_only)
 			{
