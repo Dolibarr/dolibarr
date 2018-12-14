@@ -947,6 +947,7 @@ Annual=Annual
 Local=Local
 Remote=Remote
 LocalAndRemote=Local and Remote
+KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assigned to
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft mass delete confirmation
