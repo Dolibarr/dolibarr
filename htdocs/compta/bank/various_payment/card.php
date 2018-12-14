@@ -256,32 +256,32 @@ if ($action == 'create')
 
 	// Date payment
 	print '<tr><td>';
-	print fieldLabel('DatePayment','datep',1).'</td><td>';
+	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
-	print fieldLabel('DateValue','datev',0).'</td><td>';
+	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
 	print $form->selectDate((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
-	print fieldLabel('Label','label',1).'</td><td>';
+	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="label" id="label" class="minwidth300" value="'.($label?$label:$langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
 	print '<tr><td>';
-	print fieldLabel('Sens','sens',1).'</td><td>';
+	print $form->editfieldkey('Sens', 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
     $sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
     print $form->selectarray('sens',$sensarray,$sens);
 	print '</td></tr>';
 
 	// Amount
 	print '<tr><td>';
-	print fieldLabel('Amount','amount',1).'</td><td>';
+	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.$amount.'">';
 	print '</td></tr>';
 
@@ -289,14 +289,14 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
-		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		$form->select_comptes($accountid,"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
-	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements($paymenttype, "paymenttype");
 	print '</td></tr>';
 
@@ -489,12 +489,12 @@ if ($id)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

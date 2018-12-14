@@ -64,7 +64,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $offset = $limit * $page;
 if (! $sortfield)
-	$sortfield = "f.datef, f.facnumber, fd.rowid";
+	$sortfield = "f.datef, f.ref, fd.rowid";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
@@ -167,7 +167,7 @@ print '<script type="text/javascript">
 /*
  * Customer Invoice lines
  */
-$sql = "SELECT f.rowid as facid, f.facnumber as ref, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql.= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql.= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
@@ -184,7 +184,7 @@ $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_factur
 $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
 $sql.= " WHERE fd.fk_code_ventilation > 0";
-$sql.= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
+$sql.= " AND f.entity IN (" . getEntity('invoice', 0) . ")";   // We don't share object for accountancy
 $sql.= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
@@ -195,7 +195,7 @@ if ($search_lineid) {
     $sql .= natural_search("fd.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= natural_search("f.facnumber", $search_invoice);
+	$sql .= natural_search("f.ref", $search_invoice);
 }
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
@@ -245,7 +245,7 @@ if (strlen(trim($search_country))) {
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
-$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";    // We don't share object for accountancy
+$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";    // We don't share object for accountancy
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -331,8 +331,8 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);

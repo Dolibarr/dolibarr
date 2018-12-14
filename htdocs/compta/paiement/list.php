@@ -120,7 +120,7 @@ if (GETPOST("orphelins"))
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -151,7 +151,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;

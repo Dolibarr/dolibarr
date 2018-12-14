@@ -551,17 +551,17 @@ if ($id > 0 || ! empty($ref))
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
 		    // Multicurrency Amount HT
-		    print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+		    print '<tr><td class="titlefieldmiddle">' . $form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0) . '</td>';
 		    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		    print '</tr>';
 
 		    // Multicurrency Amount VAT
-		    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+		    print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0) . '</td>';
 		    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		    print '</tr>';
 
 		    // Multicurrency Amount TTC
-		    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+		    print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0) . '</td>';
 		    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		    print '</tr>';
 		}
@@ -845,7 +845,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				}
 			}
 			print "</div>";
@@ -910,7 +910,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

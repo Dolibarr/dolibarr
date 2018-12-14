@@ -368,7 +368,7 @@ if ($rowid && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
 		}
 	}
 

@@ -180,7 +180,7 @@ class pdf_paiement
 		// number of bill
 		switch ($this->doc_type) {
 			case "client":
-				$sql = "SELECT p.datep as dp, f.facnumber";
+				$sql = "SELECT p.datep as dp, f.ref";
 				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 				$sql.= ", c.code as paiement_code, p.num_paiement";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
@@ -211,7 +211,7 @@ class pdf_paiement
 				$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 				break;
 			case "fourn":
-				$sql = "SELECT p.datep as dp, f.ref as facnumber";
+				$sql = "SELECT p.datep as dp, f.ref as ref";
 				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 				$sql.= ", c.code as paiement_code, p.num_paiement";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
@@ -254,7 +254,7 @@ class pdf_paiement
 			{
 				$objp = $this->db->fetch_object($result);
 
-				$lines[$i][0] = $objp->facnumber;
+				$lines[$i][0] = $objp->ref;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;

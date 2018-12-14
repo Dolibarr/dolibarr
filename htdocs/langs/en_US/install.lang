@@ -148,7 +148,7 @@ NothingToDo=Nothing to do
 # upgrade
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customer's orders
-MigrationSupplierOrder=Data migration for vendor's orders
+MigrationSupplierOrder=Data migration for supplier's orders
 MigrationProposal=Data migration for commercial proposals
 MigrationInvoice=Data migration for customer's invoices
 MigrationContract=Data migration for contracts
@@ -192,7 +192,7 @@ MigrationProjectTaskActors=Data migration for table llx_projet_task_actors
 MigrationProjectUserResp=Data migration field fk_user_resp of llx_projet to llx_element_contact
 MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Update data on actions
-MigrationPaymentMode=Data migration for payment mode
+MigrationPaymentMode=Data migration for payment type
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignment table
 MigrationEventsContact=Migration of events to add event contact into assignment table
