@@ -630,7 +630,7 @@ if (empty($reshook))
 					    $desc = $productsupplier->desc_supplier;
 					} else $desc = $productsupplier->description;
 
-					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
+					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 					$pu_ht = $productsupplier->fourn_pu;
 
