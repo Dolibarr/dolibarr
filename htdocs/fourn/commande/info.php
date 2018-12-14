@@ -187,7 +187,7 @@ if (! empty($conf->agenda->enabled))
     }
     else
     {
-        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 

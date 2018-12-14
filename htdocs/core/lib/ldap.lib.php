@@ -111,16 +111,16 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 	print '<br>';
 	if (! function_exists("ldap_connect"))
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
 	}
 	else if (empty($conf->global->LDAP_SERVER_HOST))
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
 	else if (empty($key) || empty($dn) || empty($objectclass))
 	{
 		$langs->load("errors");
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
 	else
 	{

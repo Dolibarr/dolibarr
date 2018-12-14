@@ -166,18 +166,18 @@ if ($nb) {
 		{
 		if ($mysoc->isInEEC())
 		{
-			print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
-			print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateAll")."</a>\n";
 		}
 	}
 }
 else
 {
-	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
 print "</div>\n";

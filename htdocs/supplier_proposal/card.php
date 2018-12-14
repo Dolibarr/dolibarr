@@ -1777,7 +1777,7 @@ if ($action == 'create')
 				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
-					// else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
+					// else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 				}
 
 				// Edit
@@ -1796,7 +1796,7 @@ if ($action == 'create')
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order

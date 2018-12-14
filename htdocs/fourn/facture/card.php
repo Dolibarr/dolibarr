@@ -3022,9 +3022,9 @@ else
 					else
 					{
 						if ($user->rights->fournisseur->facture->creer) {
-							print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
 						} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-							print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('ReOpen').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('ReOpen').'</span></div>';
 						}
 					}
 				}
@@ -3036,7 +3036,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendMail').'</a></div>';
+					else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 	            // Make payments
@@ -3061,7 +3061,7 @@ else
 					{
 						if ($resteapayer == 0)
 						{
-							print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
 						}
 						else
 						{
@@ -3098,7 +3098,7 @@ else
 	                    }
 	                    else
 	                    {
-	                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+	                        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
 	                        print '>'.$langs->trans('Validate').'</a></div>';
 	                    }
 	                }
@@ -3131,20 +3131,20 @@ else
 	            {
 	            	//var_dump($isErasable);
 	            	if ($isErasable == -4) {
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -3) {	// Should never happen with supplier invoice
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -2) {	// Should never happen with supplier invoice
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -1) {
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable <= 0)	// Any other cases
 	            	{
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
                     else
                     {

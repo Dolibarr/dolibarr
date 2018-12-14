@@ -1111,7 +1111,7 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
 
     if ($object->isVariant()) {
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
 		}
 	} else {
 		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
