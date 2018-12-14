@@ -905,7 +905,7 @@ if (empty($reshook))
 
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
-								
+
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
@@ -2718,7 +2718,7 @@ else
 
 					$paymentstatic->id=$objp->rowid;
 					$paymentstatic->datepaye=$db->jdate($objp->dp);
-					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
+					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_paiement=$objp->num_paiement;
 					$paymentstatic->payment_code=$objp->payment_code;
 

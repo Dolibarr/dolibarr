@@ -32,13 +32,14 @@ ViewPerUser=Vue par utilisateur
 ViewPerType=Vue par type
 AutoActions= Alimentation automatique
 AgendaAutoActionDesc= Définissez ici les événements pour lesquels Dolibarr créera automatiquement une entrée dans l'agenda. Si aucun n'est coché, seules les actions manuelles seront affichées dans l'agenda. Les événements sur les objets (validation, changement de statut, modification) ne seront pas enregistrées.
-AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (Thunderbird, Google calendar, …)
+AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
 ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
-EventRemindersByEmailNotEnabled=Les rappels d'événements par email n'ont pas été activés dans la configuration du module %s.
+EventRemindersByEmailNotEnabled=Les rappels d'événement par email n'ont pas été activés dans la configuration du module %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
 ContractValidatedInDolibarr=Contrat %s validé
+CONTRACT_DELETEInDolibarr=Contrat %s supprimé
 PropalClosedSignedInDolibarr=Proposition %s signée
 PropalClosedRefusedInDolibarr=Proposition %s refusée
 PropalValidatedInDolibarr=Proposition %s validée
@@ -99,8 +100,8 @@ AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtre
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux événements associés au projet <b>PROJECT_ID</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure un événement automatique.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure les événements automatiques.
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé

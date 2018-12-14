@@ -342,8 +342,7 @@ class FormMail extends Form
 					$model_id=$this->param["models_id"];
 				}
 
-				// we set -1 if model_id empty
-				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));
+				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);		// If $model_id is empty, preselect the first one
 			}
 
 			// Define list of attached files
@@ -1419,8 +1418,6 @@ class FormMail extends Form
 				*/
 			}
 		}
-
-		$tmparray['__(AnyTranslationKey)__']="Translation";
 
 		foreach($tmparray as $key => $val)
 		{

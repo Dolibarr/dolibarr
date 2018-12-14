@@ -64,7 +64,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
 	print '<input type="hidden" name="action" value="' . $action . '">';
-	print '<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
+	print '<input type="hidden" name="search_showbirthday" value="' . $showbirthday . '">';
 
 	print '<div class="fichecenter">';
 
@@ -79,7 +79,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
-		print $form->select_dolusers($filtert, 'filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		print '</td></tr>';
@@ -94,7 +94,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
     		print $langs->trans("Resource");
     		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-            print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
+            print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
 
@@ -108,7 +108,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
+        print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
 		print '</td></tr>';
 	}
 
@@ -118,7 +118,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0);
+		print $form->select_company($socid, 'search_socid', '', 'SelectThirdParty', 0, 0, null, 0);
 		print '</td></tr>';
 	}
 
@@ -131,7 +131,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print $formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print $formproject->select_projects($socid?$socid:-1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 
@@ -142,7 +142,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
 		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100');
+		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}
 

@@ -63,7 +63,7 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
 
 if ($cancel)
 {
-	header("Location: index.php");
+	header("Location: list.php");
 	exit;
 }
 
@@ -139,7 +139,7 @@ if ($action == 'add' && empty($cancel))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		}
 		else

@@ -124,7 +124,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-	$datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+	$datepaye = dol_mktime(GETPOST('datephour','int'), GETPOST('datepmin','int'), GETPOST('datepsec','int'), GETPOST('datepmonth','int'), GETPOST('datepday','int'), GETPOST('datepyear','int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -193,7 +193,7 @@ if ($result > 0)
 
 	// Date payment
 	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datehourpicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode

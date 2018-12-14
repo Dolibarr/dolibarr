@@ -61,3 +61,4 @@ ConfirmDeleteCard=Vai tiešām vēlaties izdzēst šo kredītkarti vai debetkart
 CreateCustomerOnStripe=Izveidojiet klientu joslā
 CreateCardOnStripe=Izveidojiet karti joslā
 ShowInStripe=Rādīt joslā
+StripeUserAccountForActions=Lietotāja konts, lai izmantotu dažu e-pasta paziņojumu par joslu notikumiem (Stripe payouts)

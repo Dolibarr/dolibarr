@@ -128,7 +128,7 @@ $permissiondellink = $usercancreate;	// Used by the include of actions_dellink.i
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdonw.inc.php
 
 // Security check
-$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
+$fieldid = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid = $user->societe_id;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
@@ -912,7 +912,7 @@ if (empty($reshook))
 			if (! $error)
 			{
 				$object->socid				= GETPOST('socid','int');
-				$object->number				= $_POST['facnumber'];
+				$object->number				= $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public','none'));
@@ -1093,7 +1093,7 @@ if (empty($reshook))
 			{
 				$object->socid			 = GETPOST('socid','int');
 				$object->type            = $_POST['type'];
-				$object->number          = $_POST['facnumber'];
+				$object->number          = $_POST['ref'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public	 = trim(GETPOST('note_public','none'));
@@ -1144,7 +1144,7 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid				= GETPOST('socid','int');
 				$object->type				= GETPOST('type');
-				$object->number				= $_POST['facnumber'];
+				$object->number				= $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public','none'));
@@ -2718,7 +2718,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
-	print '<input name="facnumber" type="hidden" value="provisoire">';
+	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
@@ -3740,7 +3740,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';

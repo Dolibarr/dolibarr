@@ -261,7 +261,7 @@ class modUser extends DolibarrModules
 			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey','u.datec'=>"DateCreation"
 		);
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
