@@ -1006,14 +1006,11 @@ class FactureRec extends CommonInvoice
 	{
 		global $conf, $langs, $db, $user, $hookmanager;
 
-
 		$error=0;
 		$nb_create=0;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main","bills"));
-
-		$hookmanager->initHooks(array('createrecurringinvoices'));
 
 		$now = dol_now();
 		$tmparray=dol_getdate($now);
@@ -1035,7 +1032,7 @@ class FactureRec extends CommonInvoice
 			'restrictioninvoiceid' => $restrictioninvoiceid,
 			'forcevalidation' => $forcevalidation,
 			);
-		$reshook = $hookmanager->executeHooks('writeSQL', $parameters, $sql); // note that $sql might be modified by hooks
+		$reshook = $hookmanager->executeHooks('beforeCreationOfRecurringInvoices', $parameters, $sql); // note that $sql might be modified by hooks
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -1136,7 +1133,7 @@ class FactureRec extends CommonInvoice
 					'facturerec' => $facturerec,	// it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this,		// it's an object which PHP passes by "reference", so modifiable by hooks.
 					);
-				$reshook = $hookmanager->executeHooks('generatedInvoice', $parameters, $facture);  // note: $facture can be modified by hooks (warning: $facture can be null)
+				$reshook = $hookmanager->executeHooks('afterCreationOfRecurringInvoice', $parameters, $facture);  // note: $facture can be modified by hooks (warning: $facture can be null)
 
 				$i++;
 			}
