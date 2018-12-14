@@ -217,7 +217,7 @@ if (! $error && $massaction == 'confirm_presend')
 					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->statut != Facture::STATUS_VALIDATED)
+				if ($objectclass == 'Facture' && $objectobj->statut == Facture::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;
@@ -1167,6 +1167,67 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 		$db->rollback();
 	}
 	//var_dump($listofobjectthirdparties);exit;
+}
+
+// Generate document foreach object according to model linked to object
+// @TODO : propose model selection
+if (! $error && $massaction == 'generate_doc' && $permtoread)
+{
+	$db->begin();
+
+	$objecttmp=new $objectclass($db);
+	$nbok = 0;
+	foreach($toselect as $toselectid)
+	{
+		$result=$objecttmp->fetch($toselectid);
+		if ($result > 0)
+		{
+			$outputlangs = $langs;
+			$newlang='';
+	
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) $newlang=$objecttmp->thirdparty->default_lang;  // for proposal, order, invoice, ...
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
+			if (! empty($newlang))
+			{
+				$outputlangs = new Translate("",$conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+	
+			// To be sure vars is defined
+			if (empty($hidedetails)) $hidedetails=0;
+			if (empty($hidedesc)) $hidedesc=0;
+			if (empty($hideref)) $hideref=0;
+			if (empty($moreparams)) $moreparams=null;
+			
+			$result= $objecttmp->generateDocument($objecttmp->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
+			if ($result <= 0)
+			{
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+			else $nbok++;
+		}
+		else
+		{
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (! $error)
+	{
+		if ($nbok > 1) setEventMessages($langs->trans("RecordsGenerated", $nbok), null, 'mesgs');
+		else setEventMessages($langs->trans("RecordGenerated", $nbok), null, 'mesgs');
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 $parameters['toselect']=$toselect;

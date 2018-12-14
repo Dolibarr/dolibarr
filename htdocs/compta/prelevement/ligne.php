@@ -261,7 +261,7 @@ if ($id)
 	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";
+	$sql.= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
 	$sql.= " , s.rowid as socid, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";

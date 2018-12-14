@@ -335,11 +335,12 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         if (! empty($conf->projet->enabled))
         {
         	$langs->load("projects");
-        	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        	$morehtmlref.='<br>'.$langs->trans('Project');
         	if ($user->rights->ticket->write)
         	{
         		if ($action != 'classify')
-        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+       			$morehtmlref.=' : ';
        			if ($action == 'classify') {
        				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
        				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

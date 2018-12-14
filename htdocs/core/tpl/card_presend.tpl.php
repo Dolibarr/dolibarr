@@ -140,6 +140,10 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
+	elseif ($object->element == 'contact')
+	{
+		$liste['contact'] = $object->getFullName($langs)." <".$object->email.">";
+	}
 	elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";

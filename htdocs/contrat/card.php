@@ -2063,10 +2063,6 @@ else
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow" width="100%">';	// Array with (n*2)+1 lines
 
-			// Trick to not show product entries
-			$savproductenabled=$conf->product->enabled;
-			if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $conf->product->enabled = 0;
-
 			// Form to add new line
 	   		if ($action != 'editline')
 			{
@@ -2078,9 +2074,6 @@ else
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
-
-			// Restore correct setup
-			$conf->product->enabled = $savproductenabled;
 
 			print '</table>';
 			print '</div>';

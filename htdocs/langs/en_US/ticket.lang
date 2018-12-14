@@ -25,7 +25,7 @@ Permission56001=See tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the thirdparty they depend on)
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 
 TicketDictType=Tickets type
 TicketDictCategory=Tickets categories
@@ -115,14 +115,14 @@ TicketsShowCompanyLogo=Display the logo of the company in the public interface
 TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=Also send notification to main email address
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
-TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the thirdparty they depend on)
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
 TicketsActivatePublicInterface=Activate public interface
 TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
-TicketNotifyTiersAtCreation=Notify thirdparty at creation
+TicketNotifyTiersAtCreation=Notify third party at creation
 
 #
 # Index & list page
@@ -203,7 +203,7 @@ TicketTimeToRead=Time elapsed before read
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents linked to ticket
 ConfirmReOpenTicket=Confirm reopen this ticket ?
-TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s :
+TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
 TicketAssignedToYou=Ticket assigned
 TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
 MarkMessageAsPrivate=Mark message as private
@@ -212,13 +212,13 @@ TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Initial Message
 LinkToAContract=Link to a contract
 TicketPleaseSelectAContract=Select a contract
-UnableToCreateInterIfNoSocid=Can not create an intervention when no third party are defined
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
 TicketMailExchanges=Mail exchanges
 TicketInitialMessageModified=Initial message modified
 TicketMessageSuccesfullyUpdated=Message successfully updated
 TicketChangeStatus=Change status
-TicketConfirmChangeStatus=Confirm the status change : %s ?
-TicketLogStatusChanged=Status changed : %s to %s
+TicketConfirmChangeStatus=Confirm the status change: %s ?
+TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
 
@@ -229,7 +229,7 @@ TicketLogMesgReadBy=Ticket read by %s
 NoLogForThisTicket=No log for this ticket yet
 TicketLogAssignedTo=Ticket assigned to %s
 TicketAssignedButLogActionNotSaved=Ticket assigned but no log saved !
-TicketLogPropertyChanged=Change classification : from %s to %s
+TicketLogPropertyChanged=Change classification: from %s to %s
 TicketLogClosedBy=Ticket closed by %s
 TicketLogProgressSetTo=Progress change to %s percent
 TicketLogReopen=Ticket re-opened
@@ -249,7 +249,7 @@ TicketNewEmailSubjectCustomer=New support ticket
 TicketNewEmailBody=This is an automatic email to confirm you have registered a new ticket.
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
 TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
-TicketNewEmailBodyInfosTrackId=Ticket tracking number : %s
+TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
 TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
@@ -258,15 +258,15 @@ TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. P
 TicketPublicMsgViewLogIn=Please enter ticket tracking ID
 TicketTrackId=Tracking ID
 OneOfTicketTrackId=One of yours tracking ID
-ErrorTicketNotFound=Ticket with tracking ID %s not found !
+ErrorTicketNotFound=Ticket with tracking ID %s not found!
 Subject=Subject
 ViewTicket=View ticket
 ViewMyTicketList=View my ticket list
-ErrorEmailMustExistToCreateTicket=Error : email address not found in our database
+ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
 TicketNewEmailSubjectAdmin=New ticket created
-TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see informations :</p>
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=Access for this area : forbidden
+TicketPublicInterfaceForbidden=Access for this area: forbidden
 
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
@@ -274,8 +274,9 @@ TicketNotificationEmailBody=This is an automatic message to notify you that tick
 TicketNotificationRecipient=Notification recipient
 TicketNotificationLogMessage=Log message
 TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
-TicketNotificationNumberEmailSent=Notification email sent : %s
+TicketNotificationNumberEmailSent=Notification email sent: %s
 
+ActionsOnTicket=Events on ticket
 
 #
 # Boxes

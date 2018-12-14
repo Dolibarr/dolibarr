@@ -68,8 +68,10 @@ class CMailFile
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
 
-	//CSS
-	var $css;
+	/**
+	 * @var string CSS
+	 */
+	public $css;
 	//! Defined css style for body background
 	var $styleCSS;
 	//! Defined background directly in body tag
@@ -381,7 +383,7 @@ class CMailFile
             //$this->message = new Swift_SignedMessage();
             // Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
-			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
+			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
 			$headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
@@ -475,7 +477,7 @@ class CMailFile
 			if (! empty($addr_cc)) $this->message->setCc($this->getArrayAddress($addr_cc));
 			if (! empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
-			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
+			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
 		}
 		else
 		{
@@ -944,7 +946,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return css
+	 * @return string
 	 */
 	function buildCSS()
 	{
@@ -1011,9 +1013,9 @@ class CMailFile
 		if ($trackid)
 		{
 			// References is kept in response and Message-ID is returned into In-Reply-To:
-			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
-			$out.= 'References: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;
-			$out.= 'X-Dolibarr-TRACKID: '.$trackid. $this->eol2;
+			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
+			$out.= 'References: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;
+			$out.= 'X-Dolibarr-TRACKID: ' . $trackid . '@' . $host. $this->eol2;
 		}
 		else
 		{
@@ -1232,7 +1234,7 @@ class CMailFile
 		{
 			foreach ($images_list as $img)
 			{
-				dol_syslog("CMailFile::write_images: i=$i");
+				dol_syslog("CMailFile::write_images: ".$img["name"]);
 
 				$out.= "--" . $this->related_boundary . $this->eol; // always related for an inline image
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;

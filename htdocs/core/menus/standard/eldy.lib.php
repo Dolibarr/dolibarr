@@ -468,6 +468,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
+	//var_dump($tabMenu);
+
 	$newmenu = $menu;
 
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
@@ -523,7 +525,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	 * We update newmenu with entries found into database
 	 * --------------------------------------------------
 	 */
-	if ($mainmenu)
+	if ($mainmenu)	// If this is empty, loading hard coded menu and loading personalised menu will fail
 	{
 		/*
 		 * Menu HOME
@@ -1087,7 +1089,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($nature)
 								{
 									$langs->load('accountancy');
-									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $langs->trans($objp->label), 2, $user->rights->accounting->comptarapport->lire);
+									$journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
+									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 								}
 								$i++;
 							}
@@ -1626,6 +1629,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 		}
 	}
+
+	//var_dump($tabMenu);    //
+	//var_dump($newmenu->liste);
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;

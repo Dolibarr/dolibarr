@@ -25,7 +25,7 @@
  *	\ingroup    stripe
  *	\brief      File Class actionsstripeconnect
  */
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';;
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
 $langs->load("stripe@stripe");
@@ -44,8 +44,8 @@ class ActionsStripeconnect
 	private $config=array();
 
 	// For Hookmanager return
-	var $resprints;
-	var $results=array();
+	public $resprints;
+	public $results=array();
 
 
 	/**

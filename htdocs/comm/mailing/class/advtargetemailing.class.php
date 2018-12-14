@@ -745,7 +745,16 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]= " (t.civility IN ('".$this->db->escape(implode("','",$arrayquery['contact_civility']))."'))";
 			}
 			if ($arrayquery['contact_no_email']!='') {
-				$sqlwhere[]= " (t.no_email='".$this->db->escape($arrayquery['contact_no_email'])."')";
+				$tmpwhere = '';
+				if (! empty($arrayquery['contact_no_email']))
+				{
+					$tmpwhere.= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+				}
+				else
+				{
+					$tmpwhere.= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+				}
+				$sqlwhere[]= $tmpwhere;
 			}
 			if ($arrayquery['contact_update_st_dt']!='') {
 				$sqlwhere[]= " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";

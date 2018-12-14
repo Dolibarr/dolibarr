@@ -48,7 +48,7 @@ $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='248,248,248';    // line pair
 $colorbacklinepair2='246,246,246';    // line pair
-$colorbacklinepairhover='244,244,244';    // line pair
+$colorbacklinepairhover='230,237,244';    // line pair
 $colorbacklinebreak='214,218,220';
 $colorbackbody='248,248,248';
 $colortexttitlenotab='90,90,90';
@@ -1828,6 +1828,14 @@ foreach($mainmenuusedarray as $val)
 		print "}\n";
 	}
 }
+$j=0;
+while ($j++ < 4)
+{
+	$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+	print "div.mainmenu.generic".$j." {\n";
+	print "	background-image: url(".$url.");\n";
+	print "}\n";
+}
 // End of part to add more div class css
 ?>
 
@@ -3323,7 +3331,7 @@ span.dashboardlineko {
     /* border-bottom-width: 0 !important; */
 }
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
-    min-width: 300px;
+    min-width: 275px;
 }
 .tdboxstats {
 	text-align: center;
@@ -4705,7 +4713,7 @@ a span.select2-chosen
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
-    text-align: <?php echo $left; ?>;;
+    text-align: <?php echo $left; ?>;
     opacity: 0.3;
 }
 .select2-container--default .select2-selection--single .select2-selection__placeholder {

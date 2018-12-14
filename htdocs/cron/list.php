@@ -230,6 +230,7 @@ $sql.= " t.params,";
 $sql.= " t.md5params,";
 $sql.= " t.module_name,";
 $sql.= " t.priority,";
+$sql.= " t.processing,";
 $sql.= " t.datelastrun,";
 $sql.= " t.datenextrun,";
 $sql.= " t.dateend,";
@@ -418,10 +419,9 @@ print "</tr>\n";
 if ($num > 0)
 {
 	// Loop on each job
-	$style='pair';
 	$now = dol_now();
 	$i=0;
-	$totalarray=array();
+
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
@@ -434,6 +434,7 @@ if ($num > 0)
 		$object->label = $obj->label;
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
+		$object->processing = $obj->processing;
 
 		print '<tr class="oddeven">';
 

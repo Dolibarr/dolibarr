@@ -346,7 +346,7 @@ if ($object->id > 0)
 	print '</td><td>';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id', 'CRDT');
 	}
 	else
 	{
@@ -1136,7 +1136,7 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
+        $sql = 'SELECT f.rowid as facid, f.ref, f.type, f.amount';
         $sql.= ', f.total as total_ht';
         $sql.= ', f.tva as total_tva';
         $sql.= ', f.total_ttc';
@@ -1147,7 +1147,7 @@ if ($object->id > 0)
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql.= ' GROUP BY f.rowid, f.ref, f.type, f.amount, f.total, f.tva, f.total_ttc,';
 		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid';
 		$sql.= " ORDER BY f.datef DESC, f.datec DESC";
@@ -1176,7 +1176,7 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				$facturestatic->id = $objp->facid;
-				$facturestatic->ref = $objp->facnumber;
+				$facturestatic->ref = $objp->ref;
 				$facturestatic->type = $objp->type;
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;

@@ -128,7 +128,7 @@ $permissiondellink = $usercancreate;	// Used by the include of actions_dellink.i
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdonw.inc.php
 
 // Security check
-$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
+$fieldid = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid = $user->societe_id;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
@@ -912,7 +912,7 @@ if (empty($reshook))
 			if (! $error)
 			{
 				$object->socid				= GETPOST('socid','int');
-				$object->number				= $_POST['facnumber'];
+				$object->number				= $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public','none'));
@@ -1093,7 +1093,7 @@ if (empty($reshook))
 			{
 				$object->socid			 = GETPOST('socid','int');
 				$object->type            = $_POST['type'];
-				$object->number          = $_POST['facnumber'];
+				$object->number          = $_POST['ref'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public	 = trim(GETPOST('note_public','none'));
@@ -1144,7 +1144,7 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid				= GETPOST('socid','int');
 				$object->type				= GETPOST('type');
-				$object->number				= $_POST['facnumber'];
+				$object->number				= $_POST['ref'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim(GETPOST('note_public','none'));
@@ -2718,7 +2718,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
-	print '<input name="facnumber" type="hidden" value="provisoire">';
+	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
@@ -3213,7 +3213,7 @@ if ($action == 'create')
 	if (! empty($conf->multicurrency->enabled))
 	{
 		print '<tr>';
-		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
@@ -3740,7 +3740,7 @@ else if ($id > 0 || ! empty($ref))
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -3915,7 +3915,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Currency','multicurrency_code');
+		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($usercancreate && $action != 'editmulticurrencycode' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -3928,7 +3928,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('CurrencyRate','multicurrency_tx');
+		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 		print '</td>';
 		if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -4014,17 +4014,17 @@ else if ($id > 0 || ! empty($ref))
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 		// Multicurrency Amount HT
-		print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+		print '<tr><td class="titlefieldmiddle">' . $form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0) . '</td>';
 		print '<td class="nowrap amountcard">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0) . '</td>';
 		print '<td class="nowrap amountcard">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0) . '</td>';
 		print '<td class="nowrap amountcard">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 	}

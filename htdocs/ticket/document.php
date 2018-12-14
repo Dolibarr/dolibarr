@@ -119,7 +119,7 @@ if ($object->id)
     $morehtmlref.= $object->subject;
     // Author
     if ($object->fk_user_create > 0) {
-    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  ';
+    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  : ';
 
     	$langs->load("users");
     	$fuser = new User($db);
@@ -127,14 +127,62 @@ if ($object->id)
     	$morehtmlref .= $fuser->getNomUrl(0);
     }
     if (!empty($object->origin_email)) {
-    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' ';
+    	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
     	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
     }
+
+    // Thirdparty
+    if (! empty($conf->societe->enabled))
+    {
+    	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
+    	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+    		$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+    	}*/
+    	$morehtmlref.=' : ';
+    	if ($action == 'editcustomer') {
+    		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
+    	} else {
+    		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+    	}
+    }
+
+    // Project
+    if (! empty($conf->projet->enabled))
+    {
+    	$langs->load("projects");
+    	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+    	if ($user->rights->ticket->write)
+    	{
+    		if ($action != 'classify')
+    			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+    			$morehtmlref.=' : ';
+    			if ($action == 'classify') {
+    				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+    				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+    				$morehtmlref.='<input type="hidden" name="action" value="classin">';
+    				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    				$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+    				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+    				$morehtmlref.='</form>';
+    			} else {
+    				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+    			}
+    	} else {
+    		if (! empty($object->fk_project)) {
+    			$proj = new Project($db);
+    			$proj->fetch($object->fk_project);
+    			$morehtmlref.=$proj->getNomUrl(1);
+    		} else {
+    			$morehtmlref.='';
+    		}
+    	}
+    }
+
     $morehtmlref.='</div>';
 
     $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
     dol_fiche_end();
 
