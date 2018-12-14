@@ -63,7 +63,6 @@ if($last)
             }
         }
     }
-
 }
 
 if (!empty($line_id))
