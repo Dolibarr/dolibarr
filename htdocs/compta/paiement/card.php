@@ -320,7 +320,7 @@ $stripeacc = $stripe->getStripeAccount($object->ext_payment_site);
 
 if (!empty($stripeacc)) $connect=$stripeacc.'/';	
   	$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$object->ext_payment_id;
-			if ($object->payment_site == StripeLive)
+			if ($object->ext_payment_site == StripeLive)
 			{
 				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->ext_payment_id;
 			}
