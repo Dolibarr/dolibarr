@@ -3585,7 +3585,7 @@ class Form
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
-	 * 	@return	void
+	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='',$showcurrency=0)
 	{
@@ -3593,6 +3593,7 @@ class Form
 		global $langs, $conf;
 
 		$langs->load("admin");
+		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -3643,6 +3644,8 @@ class Form
 		else {
 			dol_print_error($this->db);
 		}
+
+		return $num;
 	}
 
 	/**
@@ -3661,8 +3664,8 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$this->select_comptes($selected, $htmlname, 0, '', $addempty);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
+			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 
