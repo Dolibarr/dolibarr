@@ -130,6 +130,7 @@ class mod_reception_beryl extends ModelNumRefReception
 		return $this->prefix.$yymm."-".$num;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -139,6 +140,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 */
 	function reception_get_num($objsoc,$objforref)
 	{
+		// phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
 }

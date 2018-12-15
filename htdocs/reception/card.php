@@ -574,7 +574,6 @@ if (empty($reshook))
 					{
 						$error++;
 					}
-
 			}
 			unset($_POST["lineid"]);
 		}
@@ -616,11 +615,8 @@ if (empty($reshook))
 				$line->fk_product = $lines[$i]->fk_product;
 
 
-
-
 				if ($lines[$i]->fk_product > 0)
 				{
-
 					// single warehouse reception line
 					$stockLocation = "entl".$line_id;
 					$qty = "qtyl".$line_id;
@@ -645,16 +641,11 @@ if (empty($reshook))
 						$line->sellby = strtotime($sellbydate);
 					}
 
-
-
 					if ($line->update($user) < 0)
 					{
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-
-
-
 				}
 				else // Product no predefined
 				{
@@ -713,7 +704,6 @@ if (empty($reshook))
 	$mode='emailfromreception';
 	$trackid='shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 }
 
 
@@ -1191,14 +1181,7 @@ if ($action == 'create')
 
 						}
 						print "</tr>\n";
-
-
-
-
 				}
-
-
-
 
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines)>0)
@@ -1308,7 +1291,6 @@ else if ($id || $ref)
 		if ($action == 'annuler')
 		{
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelReception'),$langs->trans("ConfirmCancelReception",$object->ref),'confirm_cancel','',0,1);
-
 		}
 
 		if (! $formconfirm) {
@@ -1475,7 +1457,6 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-
 		}
 		else
 		{
@@ -1904,23 +1885,22 @@ else if ($id || $ref)
 				{
 					if ($lines[$i]->fk_product > 0)
 					{
-							print '<!-- case edit 1 -->';
-							print '<tr>';
-							// Qty to receive or received
-							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
-							// Warehouse source
-							print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
-							// Batch number managment
-							if($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)){
-								print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
-								print $langs->trans('EatByDate').' : ';
-								print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
-								print $langs->trans('SellByDate').' : ';
-								print $form->select_date($lines[$i]->sellby,'dluo' .$line_id , '', '', 1, "");
-								print '</td>';
-							}
-							print '</tr>';
-
+						print '<!-- case edit 1 -->';
+						print '<tr>';
+						// Qty to receive or received
+						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
+						// Warehouse source
+						print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
+						// Batch number managment
+						if($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)){
+							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
+							print $langs->trans('EatByDate').' : ';
+							print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
+							print $langs->trans('SellByDate').' : ';
+							print $form->select_date($lines[$i]->sellby,'dluo' .$line_id , '', '', 1, "");
+							print '</td>';
+						}
+						print '</tr>';
 					}
 					else
 					{
@@ -1967,7 +1947,6 @@ else if ($id || $ref)
 						$detail ='';
 						if ($lines[$i]->product->status_batch)
 						{
-
 								$detail.= $langs->trans("Batch").': '.$lines[$i]->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby,"day");
@@ -2066,8 +2045,7 @@ else if ($id || $ref)
 		print '<div class="tabsAction">';
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		                                                                                               // modified by hook
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
 

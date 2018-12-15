@@ -619,7 +619,6 @@ class Reception extends CommonObject
 				$this->error=$this->db->error();
 				return -2;
 			}
-
 		}
 
 		// Change status of order to "reception in process"
@@ -1286,6 +1285,7 @@ class Reception extends CommonObject
 			return -2;
 		}
 	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
@@ -1313,6 +1313,7 @@ class Reception extends CommonObject
 			}
 		}
 	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
@@ -1394,7 +1395,6 @@ class Reception extends CommonObject
         $sql.= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
-
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1412,7 +1412,6 @@ class Reception extends CommonObject
         $sql.= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
-
     }
 
 
@@ -1598,6 +1597,7 @@ class Reception extends CommonObject
 		    return -1;
 		}
 	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
@@ -1911,7 +1911,6 @@ class Reception extends CommonObject
 					}
 				}
 			}
-
 
 			if (!$error) {
            		$this->statut=self::STATUS_DRAFT;

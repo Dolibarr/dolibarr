@@ -98,6 +98,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -111,6 +112,7 @@ class pdf_squille extends ModelePdfReception
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+		// phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
 
 		$object->fetch_thirdparty();
@@ -637,7 +639,6 @@ class pdf_squille extends ModelePdfReception
 		{
 		    $object->trueVolume= ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 		    $object->volume_units=$object->size_units * 3;
-
 		}
 
 		if ($totalWeight!='') $totalWeighttoshow=showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
@@ -665,7 +666,6 @@ class pdf_squille extends ModelePdfReception
 
 	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
-
 		}
 
 		// Total Weight
@@ -769,7 +769,6 @@ class pdf_squille extends ModelePdfReception
 				$pdf->SetXY($this->posxtotalht-1, $tab_top+1);
 				$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 2, $outputlangs->transnoentities("TotalHT"),'','C');
 			}
-
 		}
 	}
 
