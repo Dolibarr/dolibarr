@@ -451,18 +451,10 @@ if ($search_status != '-1' && $search_status != '')
 	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
-
-$sql.= dolSqlDateFilter(
-				"f.datef", 
-				$search_day, $search_month, $search_year
-);
-$sql.= dolSqlDateFilter(
-				"f.date_lim_reglement", 
-				$search_day_lim, $search_month_lim, $search_year_lim
-);
-
+$sql.= dolSqlDateFilter("f.datef", $search_day, $search_month, $search_year);
+$sql.= dolSqlDateFilter("f.date_lim_reglement",	$search_day_lim, $search_month_lim, $search_year_lim);
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0)  $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
 	$sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;

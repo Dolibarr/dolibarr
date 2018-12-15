@@ -165,7 +165,6 @@ else
     }
     // Search criteria
     $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
-
     if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";

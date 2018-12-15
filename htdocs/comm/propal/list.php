@@ -329,20 +329,9 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-
-$sql.= dolSqlDateFilter(
-				"p.datep", 
-				$search_day, $search_month, $search_year
-);
-$sql.= dolSqlDateFilter(
-				"p.fin_validite", 
-				$search_dayfin, $search_month_end, $search_yearfin
-);
-$sql.= dolSqlDateFilter(
-				"p.date_livraison", 
-				$search_daydelivery, $search_monthdelivery, $search_yeardelivery
-);
-
+$sql.= dolSqlDateFilter("p.datep", $search_day, $search_month, $search_year);
+$sql.= dolSqlDateFilter("p.fin_validite", $search_dayfin, $search_month_end, $search_yearfin);
+$sql.= dolSqlDateFilter("p.date_livraison", $search_daydelivery, $search_monthdelivery, $search_yeardelivery);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
 {

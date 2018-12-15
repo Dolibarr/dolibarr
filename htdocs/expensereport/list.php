@@ -276,16 +276,9 @@ if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
 if (!empty($search_ref)) $sql.= natural_search('d.ref', $search_ref);
 // Date Start
-$sql.= dolSqlDateFilter(
-				"d.date_debut", 
-				$day_start, $month_start, $year_start
-);
-
+$sql.= dolSqlDateFilter("d.date_debut",	$day_start, $month_start, $year_start);
 // Date End
-$sql.= dolSqlDateFilter(
-				"d.date_fin", 
-				$day_end, $month_end, $year_end
-);
+$sql.= dolSqlDateFilter("d.date_fin", $day_end, $month_end, $year_end);
 
 if ($search_amount_ht != '') $sql.= natural_search('d.total_ht', $search_amount_ht, 1);
 if ($search_amount_ttc != '') $sql.= natural_search('d.total_ttc', $search_amount_ttc, 1);
@@ -527,7 +520,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) 
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
 		print '<input class="flat width25" type="text" maxlength="2" name="day_start" value="'.dol_escape_htmltag($day_start).'">';
 
     	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
@@ -538,7 +531,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) 
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
 		print '<input class="flat width25" type="text" maxlength="2" name="day_end" value="'.dol_escape_htmltag($day_end).'">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);

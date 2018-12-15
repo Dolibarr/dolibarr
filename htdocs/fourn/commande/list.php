@@ -520,23 +520,13 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
 if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db->escape($search_billed);
 if ($search_product_category > 0) $sql.= " AND cp.fk_categorie = ".$search_product_category;
-
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
 	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
-
 if ($search_status != '' && $search_status >= 0)
 	$sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
-
-$sql.= dolSqlDateFilter(
-				"cf.date_commande", 
-				$search_orderday, $search_ordermonth, $search_orderyear
-);
-$sql.= dolSqlDateFilter(
-				"cf.date_livraison", 
-				$search_deliveryday, $search_deliverymonth, $search_deliveryyear
-);
-
+$sql.= dolSqlDateFilter("cf.date_commande",	$search_orderday, $search_ordermonth, $search_orderyear);
+$sql.= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);

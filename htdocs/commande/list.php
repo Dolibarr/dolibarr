@@ -303,17 +303,8 @@ if ($viewstatut <> '')
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
-
-$sql.= dolSqlDateFilter(
-				"c.date_commande", 
-				$search_orderday, $search_ordermonth, $search_orderyear
-);
-
-$sql.= dolSqlDateFilter(
-				"c.date_livraison", 
-				$search_deliveryday, $search_deliverymonth, $search_deliveryyear
-);
-
+$sql.= dolSqlDateFilter("c.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
+$sql.= dolSqlDateFilter("c.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);

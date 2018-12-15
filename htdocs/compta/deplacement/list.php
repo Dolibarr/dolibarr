@@ -105,11 +105,7 @@ if ($search_company)
 {
     $sql .= natural_search('s.nom', $search_company);
 }
-// if ($search_amount)		$sql.=" AND d.km='".$db->escape(price2num(trim($search_amount)))."'";
-
-$sql.= dolSqlDateFilter(
-				"d.dated", $day, $month, $year
-);
+$sql.= dolSqlDateFilter("d.dated", $day, $month, $year);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);

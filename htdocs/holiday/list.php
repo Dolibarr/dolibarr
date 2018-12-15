@@ -189,40 +189,24 @@ if(!empty($search_ref))
 {
     $filter.= " AND cp.rowid = ".(int) $db->escape($search_ref);
 }
-
 // Start date
-$sql.= dolSqlDateFilter(
-				"cp.date_debut", 
-				$search_day_start, $search_month_start, $search_year_start
-);
-
+$filter.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
-$sql.= dolSqlDateFilter(
-				"cp.date_fin", 
-				$search_day_end, $search_month_end, $search_year_end
-);
-
+$filter.= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
-$sql.= dolSqlDateFilter(
-				"cp.date_create", 
-				$search_day_create, $search_month_create, $search_year_create
-);
-
+$filter.= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
 // Employee
 if(!empty($search_employee) && $search_employee != -1) {
     $filter.= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
 }
-
 // Validator
 if(!empty($search_valideur) && $search_valideur != -1) {
     $filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
 }
-
 // Type
 if (!empty($search_type) && $search_type != -1) {
 	$filter.= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
 }
-
 // Status
 if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
