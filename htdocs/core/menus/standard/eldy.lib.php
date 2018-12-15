@@ -143,6 +143,37 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$menu->add('/product/index.php?mainmenu=products&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "products", '', 30, $id, $idsel, $classname);
 	}
 
+	// Projects
+	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
+	'perms'=>(! empty($user->rights->projet->lire)),
+	'module'=>'projet');
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
+		$langs->load("projects");
+
+		$classname="";
+		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
+		else $classname = 'class="tmenu"';
+		$idsel='project';
+
+		$title = $langs->trans("LeadsOrProjects");	// Leads and opportunities by default
+		$showmodel = $showmodep = $showmode;
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			$title = $langs->trans("Projects");
+			$showmodel = 0;
+		}
+		if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {
+			$title = $langs->trans("Leads");
+			$showmodep = 0;
+		}
+
+		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $title, 0, $showmode, $atarget, "project", '', 35, $id, $idsel, $classname);
+		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=openedopp', $langs->trans("ListLeads"), 0, $showmodel & $conf->global->PROJECT_USE_OPPORTUNITIES, $atarget, "project", '', 70, $id, $idsel, $classname);
+		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=notopenedopp', $langs->trans("ListProjects"), 0, $showmodep, $atarget, "project", '', 70, $id, $idsel, $classname);
+	}
+
 	// Commercial
 	$menuqualified=0;
 	if (! empty($conf->propal->enabled)) $menuqualified++;
@@ -236,39 +267,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$idsel='accountancy';
 
 		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("MenuAccountancy"), 0, $showmode, $atarget, "accountancy", '', 54, $id, $idsel, $classname);
-	}
-
-	// Projects
-	$tmpentry = array(
-        'enabled'=>(! empty($conf->projet->enabled)),
-	    'perms'=>(! empty($user->rights->projet->lire)),
-        'module'=>'projet',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("projects");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='project';
-
-		$title = $langs->trans("LeadsOrProjects");	// Leads and opportunities by default
-		$showmodel = $showmodep = $showmode;
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
-			$title = $langs->trans("Projects");
-			$showmodel = 0;
-		}
-		if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {
-			$title = $langs->trans("Leads");
-			$showmodep = 0;
-		}
-
-		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $title, 0, $showmode, $atarget, "project", '', 70, $id, $idsel, $classname);
-		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=openedopp', $langs->trans("ListLeads"), 0, $showmodel & $conf->global->PROJECT_USE_OPPORTUNITIES, $atarget, "project", '', 70, $id, $idsel, $classname);
-		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=notopenedopp', $langs->trans("ListProjects"), 0, $showmodep, $atarget, "project", '', 70, $id, $idsel, $classname);
 	}
 
 	// HRM
@@ -1160,13 +1158,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_balance",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
-                                
+
 				// Files
 				if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 2)
 				{
 					$newmenu->add("/compta/compta-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files",$langs->trans("AccountantFiles"),1,$user->rights->accounting->mouvements->lire);
 				}
-				
+
 				// Reports
 				$langs->load("compta");
 
@@ -1262,8 +1260,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		 */
 		if ($mainmenu == 'bank')
 		{
-		    // Load translation files required by the page
-            $langs->loadLangs(array("withdrawals","banks","bills","categories"));
+			// Load translation files required by the page
+			$langs->loadLangs(array("withdrawals","banks","bills","categories"));
 
 			// Bank-Caisse
 			if (! empty($conf->banque->enabled))
@@ -1278,11 +1276,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/transfer.php",$langs->trans("MenuBankInternalTransfer"),1,$user->rights->banque->transfer);
 			}
 
-            if (! empty($conf->categorie->enabled)) {
-                $langs->load("categories");
-                $newmenu->add("/categories/index.php?type=5",$langs->trans("Rubriques"),1,$user->rights->categorie->creer, '', $mainmenu, 'tags');
-                $newmenu->add("/compta/bank/categ.php",$langs->trans("RubriquesTransactions"),1,$user->rights->categorie->creer, '', $mainmenu, 'tags');
-	    }
+			if (! empty($conf->categorie->enabled))
+			{
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?type=5",$langs->trans("Rubriques"),1,$user->rights->categorie->creer, '', $mainmenu, 'tags');
+				$newmenu->add("/compta/bank/categ.php",$langs->trans("RubriquesTransactions"),1,$user->rights->categorie->creer, '', $mainmenu, 'tags');
+			}
 
 			// Prelevements
 			if (! empty($conf->prelevement->enabled))
@@ -1312,7 +1311,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                     $newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->cheque);
                 }
 			}
-			
+
 			//Cash Control
 			if ($conf->takepos->enabled or $conf->cashdesk->enabled){
 				$newmenu->add("/compta/cashcontrol/cashcontrol.php?action=list",$langs->trans("CashControl"),0,1, '', $mainmenu, 'cashcontrol');
