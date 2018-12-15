@@ -304,11 +304,7 @@ if (empty($reshook))
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 			$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
-
-
 		}
-
-
 
 
 		if ($totalqty > 0)  // There is at least one thing to ship
@@ -391,7 +387,6 @@ if (empty($reshook))
 	        $action='create';
 	    }
 	}
-
 
 	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))
@@ -949,14 +944,13 @@ if ($action == 'create')
 					$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 					$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 					$dispatchLines[$numAsked]=array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'),'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
-
-
 				}
+
 				// with batch module enabled
 				if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg))
 				{
+					$numAsked++;
 
-$numAsked ++;
 					// eat-by date dispatch
 					// $numline=$reg[2] + 1; // line of product
 					$numline = $numAsked;
@@ -969,7 +963,6 @@ $numAsked ++;
 					$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
 					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 					$dispatchLines[$numAsked]=array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'),'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'),'DLC'=> $dDLC,'DLUO'=> $dDLUO,'lot'=> GETPOST($lot, 'alpha'));
-
 				}
 			}
 
@@ -2176,14 +2169,11 @@ else if ($id || $ref)
 
 		print $formfile->showdocuments('reception',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
-
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
 	}
 
 	if ($action == 'presend')
@@ -2296,9 +2286,6 @@ else if ($id || $ref)
 		print $formmail->get_form();
 		dol_fiche_end();
 	}
-
-
-
 }
 
 

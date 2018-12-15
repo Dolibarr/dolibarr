@@ -31,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modReception extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -161,8 +160,8 @@ class modReception extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -181,11 +180,27 @@ class modReception extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Receptions';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("reception","reception","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'ThirdParty','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','d.nom'=>'State','co.label'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_supplier'=>"RefSupplier",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateDeliveryPlanned",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId','ed.comment'=>'Description','ed.qty'=>"Qty",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.weight'=>'ProductWeight','p.weight_units'=>'WeightUnits','p.volume'=>'ProductVolume','p.volume_units'=>'VolumeUnits');
+		$this->export_fields_array[$r]=array(
+			's.rowid'=>"IdCompany",'s.nom'=>'ThirdParty','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
+			'd.nom'=>'State','co.label'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6',
+			'c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_supplier'=>"RefSupplier",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateDeliveryPlanned",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId',
+			'ed.comment'=>'Description','ed.qty'=>"Qty",
+			'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.weight'=>'ProductWeight','p.weight_units'=>'WeightUnits','p.volume'=>'ProductVolume','p.volume_units'=>'VolumeUnits'
+		);
 		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) $this->export_fields_array[$r]+=array('sp.rowid'=>'IdContact','sp.lastname'=>'Lastname','sp.firstname'=>'Firstname','sp.note_public'=>'NotePublic');
 		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_supplier'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Numeric",'c.height'=>"Numeric",'c.width'=>"Numeric",'c.weight'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'ed.qty'=>"Numeric",'d.nom'=>'Text');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company','co.code'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','c.rowid'=>"reception",'c.ref'=>"reception",'c.ref_supplier'=>"reception",'c.fk_soc'=>"reception",'c.date_creation'=>"reception",'c.date_delivery'=>"reception",'c.tracking_number'=>'reception','c.height'=>"reception",'c.width'=>"reception",'c.size'=>'reception','c.size_units'=>'reception','c.weight'=>"reception",'c.weight_units'=>'reception','c.fk_statut'=>"reception",'c.note_public'=>"reception",'ed.rowid'=>'reception_line','ed.comment'=>'reception_line','ed.qty'=>"reception_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product','p.weight'=>'product','p.weight_units'=>'product','p.volume'=>'product','p.volume_units'=>'product');
+		$this->export_TypeFields_array[$r]=array(
+			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
+			'co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text',
+			'c.ref'=>"Text",'c.ref_supplier'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Numeric",'c.height'=>"Numeric",'c.width'=>"Numeric",'c.weight'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",
+			'ed.qty'=>"Numeric",'d.nom'=>'Text'
+		);
+		$this->export_entities_array[$r]=array(
+			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
+			'd.nom'=>'company','co.label'=>'company','co.code'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company',
+			'c.rowid'=>"reception",'c.ref'=>"reception",'c.ref_supplier'=>"reception",'c.fk_soc'=>"reception",'c.date_creation'=>"reception",'c.date_delivery'=>"reception",'c.tracking_number'=>'reception','c.height'=>"reception",'c.width'=>"reception",'c.size'=>'reception','c.size_units'=>'reception','c.weight'=>"reception",'c.weight_units'=>'reception','c.fk_statut'=>"reception",'c.note_public'=>"reception",'ed.rowid'=>'reception_line','ed.comment'=>'reception_line','ed.qty'=>"reception_line",
+			'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product','p.weight'=>'product','p.weight_units'=>'product','p.volume'=>'product','p.volume_units'=>'product'
+		);
 		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) $this->export_entities_array[$r]+=array('sp.rowid'=>'contact','sp.lastname'=>'contact','sp.firstname'=>'contact','sp.note_public'=>'contact');
 		$this->export_dependencies_array[$r]=array('reception_line'=>'ed.rowid','product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT))

@@ -193,12 +193,8 @@ if (empty($reshook))
 							$object->add_object_linked('order_supplier', $value); // add supplier order linked object
 					}
 				}
-
 			}
     		else {
-
-
-
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
     			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
@@ -408,11 +404,7 @@ if (empty($reshook))
     		$error++;
     	}
     }
-
-
 }
-
-
 
 
 /*

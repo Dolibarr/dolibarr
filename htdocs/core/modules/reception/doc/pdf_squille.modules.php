@@ -551,7 +551,7 @@ class pdf_squille extends ModelePdfReception
 				}
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs,$totalOrdered);
+				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs, $totalOrdered);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -589,14 +589,15 @@ class pdf_squille extends ModelePdfReception
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
+	 *	@param	PDF			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
+	 *  @param	int			$totalOrdered	Total ordered
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs,$totalOrdered)
+	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -629,8 +630,6 @@ class pdf_squille extends ModelePdfReception
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
 		$totalToShip=$tmparray['toship'];
-
-
 
 
 		// Set trueVolume and volume_units not currently stored into database
@@ -772,7 +771,6 @@ class pdf_squille extends ModelePdfReception
 			}
 
 		}
-
 	}
 
 	/**
