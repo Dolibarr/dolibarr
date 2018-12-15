@@ -1003,9 +1003,7 @@ if ($action == 'create')
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
-
 					print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
-
                 }
 				if (!empty($conf->productbatch->enabled))
 				{
@@ -1152,9 +1150,8 @@ if ($action == 'create')
 								$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
 								if ($line->fk_product > 0)
 								{
-								    print '<!-- Show warehouse selection -->';
+									print '<!-- Show warehouse selection -->';
 									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0 , 0, $line->fk_product, '', 1);
-
 								}
 							}
 							else
@@ -1164,7 +1161,8 @@ if ($action == 'create')
 							print '</td>';
 						}
 
-						if(!empty($conf->productbatch->enabled) ){
+						if (!empty($conf->productbatch->enabled))
+						{
 							if( !empty($product->status_batch)){
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 								print '<td>';
@@ -1177,8 +1175,6 @@ if ($action == 'create')
 								print '<td colspan="3"></td>';
 
 							}
-
-
 						}
 						print "</tr>\n";
 				}
@@ -1285,8 +1281,8 @@ else if ($id || $ref)
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateReception'),$text,'confirm_valid','',0,1);
-
 		}
+
 		// Confirm cancelation
 		if ($action == 'annuler')
 		{
@@ -1337,7 +1333,8 @@ else if ($id || $ref)
 		// Thirdparty
         $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
         // Project
-        if (! empty($conf->projet->enabled)) {
+        if (! empty($conf->projet->enabled))
+        {
             $langs->load("projects");
             $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
             if (0) {    // Do not change on reception
@@ -1494,7 +1491,6 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-
 		}
 		else
 		{
@@ -1881,7 +1877,7 @@ else if ($id || $ref)
 			{
 				// edit mode
 				print '<td colspan="'.$editColspan.'" align="center"><table class="nobordernopadding">';
-				 if (! empty($conf->stock->enabled))
+				if (! empty($conf->stock->enabled))
 				{
 					if ($lines[$i]->fk_product > 0)
 					{
@@ -1892,7 +1888,8 @@ else if ($id || $ref)
 						// Warehouse source
 						print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
 						// Batch number managment
-						if($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)){
+						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch))
+						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							print $langs->trans('EatByDate').' : ';
 							print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
@@ -2122,7 +2119,6 @@ else if ($id || $ref)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
-
 		}
 
 		print '</div>';

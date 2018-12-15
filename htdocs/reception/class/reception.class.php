@@ -857,14 +857,14 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
 	/**
 	 * 	Delete reception.
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	function delete()
+	function delete(User $user)
 	{
 		global $conf, $langs, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -874,10 +874,11 @@ class Reception extends CommonObject
 
 
 		$this->db->begin();
+
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
 
@@ -901,7 +902,6 @@ class Reception extends CommonObject
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
-
 
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref),'', $obj->eatby, $obj->sellby, $obj->batch);  // Price is set to 0, because we don't want to see WAP changed
 				}
@@ -1014,6 +1014,7 @@ class Reception extends CommonObject
 		}
 
 	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load lines
@@ -1066,10 +1067,10 @@ class Reception extends CommonObject
 			}
 
 			return 1;
-		}else {
+		}
+		else {
 			return -1;
 		}
-
 	}
 
 	/**
@@ -1247,7 +1248,6 @@ class Reception extends CommonObject
 			$this->lines[]=$line;
 			$xnbp++;
 		}
-
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1546,7 +1546,6 @@ class Reception extends CommonObject
 							    $this->errors = $mouvS->errors;
 								$error++; break;
 							}
-
 						}
 						else
 						{
@@ -1561,7 +1560,6 @@ class Reception extends CommonObject
 							    $error++; break;
 							}
 						}
-
 					}
 				}
 				else
@@ -1628,7 +1626,6 @@ class Reception extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror;
@@ -1750,7 +1747,6 @@ class Reception extends CommonObject
 				$commande->fetch($this->origin_id);
 				$commande->setStatus($user,4);
 			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror();
@@ -1866,7 +1862,6 @@ class Reception extends CommonObject
 							    $error++; break;
 							}
 						}
-
 					}
 				}
 				else
@@ -1945,8 +1940,8 @@ class Reception extends CommonObject
 
 		$langs->load("receptions");
 
-		if (! dol_strlen($modele)) {
-
+		if (! dol_strlen($modele))
+		{
 			$modele = 'squille';
 
 			if ($this->modelpdf) {
@@ -1973,9 +1968,7 @@ class Reception extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
-		$tables = array(
-			'reception'
-		);
+		$tables = array('reception');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
