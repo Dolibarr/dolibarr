@@ -147,6 +147,7 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
