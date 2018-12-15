@@ -134,7 +134,7 @@ class ReceptionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+		$sql.= $this->db->order('year','DESC');
 
 		return $this->_getAllByYear($sql);
 	}

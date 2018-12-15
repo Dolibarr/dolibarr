@@ -269,8 +269,6 @@ class Reception extends CommonObject
 					{
 						$error++;
 					}
-
-
 				}
 
 				if (! $error && $this->id && $this->origin_id)
@@ -322,7 +320,6 @@ class Reception extends CommonObject
 						$this->db->rollback();
 						return -1*$error;
 					}
-
 				}
 				else
 				{
@@ -520,7 +517,6 @@ class Reception extends CommonObject
 		// Define new ref
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
-
 
 
 		// Define new ref
@@ -742,8 +738,6 @@ class Reception extends CommonObject
 				$this->error=$langs->trans("ErrorWarehouseRequiredIntoReceptionLine");
 				return -1;
 			}
-
-
 		}
 
 		// extrafields
@@ -797,7 +791,6 @@ class Reception extends CommonObject
 		if (isset($this->note_private)) $this->note=trim($this->note_private);
 		if (isset($this->note_public)) $this->note=trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
-
 
 
 		// Check parameters
@@ -881,7 +874,6 @@ class Reception extends CommonObject
 		$this->error='';
 
 
-
 		$this->db->begin();
 		// Stock control
 		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0)
@@ -913,8 +905,6 @@ class Reception extends CommonObject
 
 
 					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref),'', $obj->eatby, $obj->sellby, $obj->batch);  // Price is set to 0, because we don't want to see WAP changed
-
-
 				}
 			}
 			else
@@ -1327,7 +1317,7 @@ class Reception extends CommonObject
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
      *
-     *  @param  id      $id     only this carrier, all if none
+     *  @param  int      $id     only this carrier, all if none
      *  @return void
      */
     function list_delivery_methods($id='')
@@ -1393,7 +1383,7 @@ class Reception extends CommonObject
     /**
      *  Activate delivery method.
      *
-     *  @param      id      $id     id method to activate
+     *  @param      int      $id     id method to activate
      *
      *  @return void
      */
@@ -1411,7 +1401,7 @@ class Reception extends CommonObject
     /**
      *  DesActivate delivery method.
      *
-     *  @param      id      $id     id method to desactivate
+     *  @param      int      $id     id method to desactivate
      *
      *  @return void
      */
