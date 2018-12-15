@@ -1541,7 +1541,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			{
 				$logouthtmltext.=$langs->trans("Logout").'<br>';
 
-				$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+				$logouttext .='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
 				//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 				$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
 				$logouttext .='</a>';
