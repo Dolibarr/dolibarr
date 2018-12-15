@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com> 
+ * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 
 /**
  *	\file       htdocs/compta/bank/bankentries_list.php
- *	\ingroup    banque
+ *	\ingroup    pos
  *	\brief      List of bank transactions
  */
 
-$res=@include("../main.inc.php");
-if (! $res) $res=@include("../../main.inc.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $id = GETPOST('id','int');
@@ -48,7 +48,7 @@ $arrayfields=array(
     'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
     'b.num_chq'=>array('label'=>$langs->trans("Number"), 'checked'=>1),
-    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),	
+    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
 );
@@ -56,7 +56,7 @@ $arrayfields=array(
 /*
  * View
  */
- 
+
 llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
@@ -86,10 +86,10 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	
+
 	print "<center><h2>";
-	if ($cashcontrol->status==2) print "Cashcontrol ".$cashcontrol->id;
-	else print $langs->trans("Cashcontrol")." - ".$langs->trans("Draft");
+	if ($cashcontrol->status==2) print $langs->trans("CashControl")." ".$cashcontrol->id;
+	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'day')."</h2></center>";
 
 
@@ -199,7 +199,7 @@ if ($resql)
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
         print '<tr class="oddeven">';
-		
+
 		if ($first==""){
 			print '<td>'.$langs->trans("InitialBankBalance").'</td><td></td><td></td><td></td><td align="right">'.price($cashcontrol->opening).'</td></tr>';
 			print '<tr class="oddeven">';
@@ -275,22 +275,23 @@ if ($resql)
 	}
 
 	print "</table>";
-	
+
 	$cash=$cash+$cashcontrol->opening;
 	print "<div style='text-align: right'><h2>".$langs->trans("Cash").": ".price($cash)."<br><br>".$langs->trans("PaymentTypeCB").": ".price($bank)."</h2></div>";
-	
-	
+
+
 	//save totals to DB
 	$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
 	$sql .= "SET";
 	$sql .= " cash='".$cash."'";
     $sql .= ", card='".$bank."'";
-	$sql .= " where rowid=".$id;        
+	$sql .= " where rowid=".$id;
 	$db->query($sql);
 
 	print "</div>";
 
     print '</form>';
+
 	$db->free($resql);
 }
 else

@@ -3712,9 +3712,10 @@ class Product extends CommonObject
      * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
      * @param  int    $maxlength             Maxlength of ref
      * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     * @param  int    $notooltip			 No tooltip
      * @return string                                String with URL
      */
-    public function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1)
+    public function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1, $notooltip=0)
     {
         global $conf, $langs, $hookmanager;
         include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -3775,7 +3776,7 @@ class Product extends CommonObject
         $linkclose='';
         if (empty($notooltip)) {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-                $label=$langs->trans("ShowOrder");
+                $label=$langs->trans("ShowProduct");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
 
@@ -4153,7 +4154,7 @@ class Product extends CommonObject
         }
     }
 
-  
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
@@ -4231,8 +4232,8 @@ class Product extends CommonObject
 
 		return 1;
 	}
-  
-  
+
+
     /**
      *  Load existing information about a serial
      *
