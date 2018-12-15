@@ -233,5 +233,5 @@ DontHavePermissionForCloseProject=You do not have permissions to close the proje
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
-ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Payment of employee wages' must be enabled to define employee hourly rate to have time spent valorized
 NewTaskRefSuggested=Task ref already used, a new task ref is required
