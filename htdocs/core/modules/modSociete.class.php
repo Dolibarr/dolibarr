@@ -480,14 +480,11 @@ class modSociete extends DolibarrModules
 		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.bank'=>"Bank",
 				'sr.code_banque'=>"BankCode",'sr.code_guichet'=>"DeskCode",'sr.number'=>"BankAccountNumber*",
-				'sr.cle_rib'=>"BankAccountNumberKey",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default',
-				'sr.fk_departement'=>"StateId",'sr.fk_pays'=>"CountryCode"
+				'sr.cle_rib'=>"BankAccountNumberKey",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default'
 		);
 
 		$this->import_convertvalue_array[$r]=array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
-				'sr.fk_departement'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cstate.class.php','class'=>'Cstate','method'=>'fetch','dict'=>'DictionaryState'),
-				'sr.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ccountry.class.php','class'=>'Ccountry','method'=>'fetch','dict'=>'DictionaryCountry'),
+				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 		);
 		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.bank'=>"ING",
 				'sr.code_banque'=>"0000", 'sr.code_guichet'=>"1111",'sr.number'=>"3333333333",

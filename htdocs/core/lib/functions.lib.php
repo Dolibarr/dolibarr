@@ -321,13 +321,18 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 					}
 				}
 			}
-			if (! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))	// If there is saved contextpage
+			// If there is saved contextpage, page or limit
+			if ($paramname == 'contextpage' && ! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
 			{
-				if ($paramname == 'contextpage')
-				{
-					$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
-					//var_dump($paramname.' '.$out);
-				}
+				$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
+			}
+			elseif ($paramname == 'page' && ! empty($_SESSION['lastsearch_page_'.$relativepathstring]))
+			{
+				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
+			}
+			elseif ($paramname == 'limit' && ! empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
+			{
+				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
 		}
 		// Else, retreive default values if we are not doing a sort

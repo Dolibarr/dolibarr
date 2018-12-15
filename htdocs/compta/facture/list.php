@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'products'));
+$langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);

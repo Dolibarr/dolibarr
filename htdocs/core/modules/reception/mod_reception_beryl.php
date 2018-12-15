@@ -106,7 +106,7 @@ class mod_reception_beryl extends ModelNumRefReception
 		$sql.= " FROM ".MAIN_DB_PREFIX."reception";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -141,5 +141,4 @@ class mod_reception_beryl extends ModelNumRefReception
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

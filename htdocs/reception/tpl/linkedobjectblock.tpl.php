@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 ?>
 
@@ -34,7 +33,7 @@ $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    
+
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
@@ -73,7 +72,7 @@ if (count($linkedObjectBlock) > 1)
     	<td align="right"></td>
     	<td align="right"></td>
     </tr>
-    <?php  
+    <?php
 }
 ?>
 
