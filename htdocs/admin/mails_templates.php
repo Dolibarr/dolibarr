@@ -75,7 +75,7 @@ $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (empty($sortfield)) $sortfield='label, lang, position';
+if (empty($sortfield)) $sortfield='type_template, lang, position, label';
 if (empty($sortorder)) $sortorder='ASC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -84,10 +84,6 @@ $hookmanager->initHooks(array('emailtemplates'));
 // Name of SQL tables of dictionaries
 $tabname=array();
 $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
-
-// Criteria to sort dictionaries
-$tabsqlsort=array();
-$tabsqlsort[25]="label ASC, lang ASC, position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();

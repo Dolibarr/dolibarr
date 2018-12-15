@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "suppliers"));
+$langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
