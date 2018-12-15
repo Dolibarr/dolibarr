@@ -42,7 +42,7 @@ class ReceptionStats extends Stats
     var $from;
 	var $field;
     var $where;
-    
+
 
     /**
      * Constructor
@@ -55,13 +55,13 @@ class ReceptionStats extends Stats
     function __construct($db, $socid, $mode, $userid=0)
     {
 		global $user, $conf;
-    	
+
 		$this->db = $db;
-        
+
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-        
+		$this->cachefilesuffix = $mode;
+
         $object=new Reception($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";

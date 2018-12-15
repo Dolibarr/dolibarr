@@ -32,7 +32,8 @@ abstract class ModelePdfReception extends CommonDocGenerator
     var $error='';
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
@@ -41,6 +42,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+		// phpcs:enable
 		global $conf;
 
 		$type='reception';

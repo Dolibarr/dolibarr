@@ -406,7 +406,7 @@ class pdf_squille extends ModelePdfReception
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						
+
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 
 						$pageposafter=$pdf->getPage();
@@ -585,6 +585,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -597,6 +598,7 @@ class pdf_squille extends ModelePdfReception
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs,$totalOrdered)
 	{
+		// phpcs:enable
 		global $conf,$mysoc;
 
         $sign=1;
@@ -627,23 +629,23 @@ class pdf_squille extends ModelePdfReception
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
 		$totalToShip=$tmparray['toship'];
-		
-		
-	
-		
+
+
+
+
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth)
 		{
 		    $object->trueVolume= ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 		    $object->volume_units=$object->size_units * 3;
-			
+
 		}
-		
+
 		if ($totalWeight!='') $totalWeighttoshow=showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		if ($totalVolume!='') $totalVolumetoshow=showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
 		if ($object->trueWeight) $totalWeighttoshow=showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
 		if ($object->trueVolume) $totalVolumetoshow=showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
-		
+
     	$pdf->SetFillColor(255,255,255);
     	$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
     	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
@@ -962,7 +964,7 @@ class pdf_squille extends ModelePdfReception
 			// If RECEPTION contact defined, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
-			
+
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -992,7 +994,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
 			$pdf->MultiCell($widthrecbox-2, 4, $carac_client, 0, 'L');
-			
+
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
@@ -1007,8 +1009,8 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient").":", 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
-			
-			
+
+
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B',$default_font_size);
@@ -1027,7 +1029,7 @@ class pdf_squille extends ModelePdfReception
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	PDF		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -1039,6 +1041,4 @@ class pdf_squille extends ModelePdfReception
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'RECEPTION_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

@@ -128,10 +128,8 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$objforref	Reception object
 	 *	@return string      			Next free value
 	 */
-    function reception_get_num($objsoc,$objforref)
-    {
-        return $this->getNextValue($objsoc,$objforref);
-    }
-
+	function reception_get_num($objsoc,$objforref)
+	{
+		return $this->getNextValue($objsoc,$objforref);
+	}
 }
-

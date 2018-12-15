@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->fournisseur->enabled)){ 
+if (! empty($conf->fournisseur->enabled)){
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 }
@@ -140,7 +140,7 @@ if (empty($reshook))
 	    $object->fetch($id);
 	    $result = $object->reOpen();
 	}
-	
+
 	// Confirm back to draft status
 	if ($action == 'modif' && $user->rights->reception->creer)
 	{
@@ -220,7 +220,7 @@ if (empty($reshook))
 	// Create reception
 	if ($action == 'add' && $user->rights->reception->creer)
 	{
-		
+
 		$error = 0;
 		$predef = '';
 
@@ -250,7 +250,7 @@ if (empty($reshook))
 		$objectsrc->fetch($object->origin_id);
 
 
-		
+
 		$object->socid = $objectsrc->socid;
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 		$object->model_pdf = GETPOST('model');
@@ -293,23 +293,23 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			
-			
+
+
 				//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 				//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'int') > 0)
 				$totalqty += GETPOST($qty, 'int');
-			
+
 
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 			$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
-			
-		
+
+
 		}
 
 
-		
+
 
 		if ($totalqty > 0)  // There is at least one thing to ship
 		{
@@ -325,19 +325,19 @@ if (empty($reshook))
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
-				
 
-				
+
+
 				$timeFormat = '%d/%m/%Y';
 
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS))
 				{
 					$ent = "entl".$i;
-					
+
 					$idl = "idl".$i;
-					
+
 					$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
-				
+
 					if ($entrepot_id < 0)
 						$entrepot_id = '';
 					if (!($linesrc->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -346,9 +346,9 @@ if (empty($reshook))
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/','-',$eatby);
 					$sellbydate = str_replace('/','-',$sellby);
-					
-					
-					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate),strtotime($sellbydate), GETPOST($batch, 'alpha'));		
+
+
+					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate),strtotime($sellbydate), GETPOST($batch, 'alpha'));
 					if ($ret < 0)
 					{
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -356,15 +356,15 @@ if (empty($reshook))
 					}
 				}
 			}
-			
-			
+
+
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	        if ($ret < 0) $error++;
 	        if (! $error)
 	        {
 	            $ret=$object->create($user);		// This create reception (like Odoo picking) and line of receptions. Stock movement will when validating reception.
-				
+
 	            if ($ret <= 0)
 	            {
 	                setEventMessages($object->error, $object->errors, 'errors');
@@ -572,14 +572,14 @@ if (empty($reshook))
 		{
 			if ($lines[$i]->id == $line_id)
 			{
-				
+
 					// delete single warehouse line
 					$line->id = $line_id;
 					if (! $error && $line->delete($user) < 0)
 					{
 						$error++;
 					}
-				
+
 			}
 			unset($_POST["lineid"]);
 		}
@@ -620,23 +620,23 @@ if (empty($reshook))
 
 				$line->fk_product = $lines[$i]->fk_product;
 
-				
+
 
 
 				if ($lines[$i]->fk_product > 0)
 				{
-			
+
 					// single warehouse reception line
 					$stockLocation = "entl".$line_id;
 					$qty = "qtyl".$line_id;
 					$comment = "comment".$line_id;
-					
-					
+
+
 					$line->id = $line_id;
 					$line->fk_entrepot = GETPOST($stockLocation, 'int');
 					$line->qty = GETPOST($qty, 'int');
 					$line->comment = GETPOST($comment, 'alpha');
-					
+
 					if(!empty($conf->productbatch->enabled)){
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
@@ -649,17 +649,17 @@ if (empty($reshook))
 						$line->eatby = strtotime($eatbydate);
 						$line->sellby = strtotime($sellbydate);
 					}
-					
-					
-					
+
+
+
 					if ($line->update($user) < 0)
 					{
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-				
-					
-					
+
+
+
 				}
 				else // Product no predefined
 				{
@@ -759,7 +759,7 @@ if ($action == 'create')
     {
 		if($origin == 'supplierorder')$classname = 'CommandeFournisseur';
         else $classname = ucfirst($origin);
-		
+
         $object = new $classname($db);
         if ($object->fetch($origin_id))	// This include the fetch_lines
         {
@@ -949,13 +949,13 @@ if ($action == 'create')
 					$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 					$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 					$dispatchLines[$numAsked]=array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'),'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'));
-				
-					
+
+
 				}
 				// with batch module enabled
 				if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg))
 				{
-					
+
 $numAsked ++;
 					// eat-by date dispatch
 					// $numline=$reg[2] + 1; // line of product
@@ -969,10 +969,10 @@ $numAsked ++;
 					$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
 					$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 					$dispatchLines[$numAsked]=array('prod' => GETPOST($prod, 'int'), 'qty' =>GETPOST($qty), 'ent' =>GETPOST($ent, 'int'), 'pu' =>GETPOST($pu), 'comment' =>GETPOST('comment'),'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'),'DLC'=> $dDLC,'DLUO'=> $dDLUO,'lot'=> GETPOST($lot, 'alpha'));
-					
+
 				}
 			}
-			
+
 
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
@@ -1004,7 +1004,7 @@ $numAsked ++;
 
             // Load receptions already done for same order
             $object->loadReceptions();
-			
+
             if ($numAsked)
             {
                 print '<tr class="liste_titre">';
@@ -1022,7 +1022,7 @@ $numAsked ++;
                 {
 
 					print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
-					
+
                 }
 				if (!empty($conf->productbatch->enabled))
 				{
@@ -1044,7 +1044,7 @@ $numAsked ++;
 						break;
 					}
 				}
-				
+
 
                 // Show product and description
                 $type=$line->product_type?$line->product_type:$line->fk_product_type;
@@ -1055,8 +1055,8 @@ $numAsked ++;
 
                 print '<!-- line '.$line->rowid.' for product -->'."\n";
                 print '<tr class="oddeven">'."\n";
-				
-				
+
+
                 // Product label
                 if ($line->fk_product > 0)  // If predefined product
                 {
@@ -1066,13 +1066,13 @@ $numAsked ++;
 
                     print '<td>';
                     print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					
+
                     // Show product and description
                     $product_static->type=$line->fk_product_type;
                     $product_static->id=$line->fk_product;
                     $product_static->ref=$line->ref;
                     $product_static->status_batch=$line->product_tobatch;
-					
+
                     $text=$product_static->getNomUrl(1);
                     $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
@@ -1106,7 +1106,7 @@ $numAsked ++;
                     print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
                     print "</td>\n";
                 }
-				
+
                 // Qty
                 print '<td align="center">'.$line->qty;
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
@@ -1117,14 +1117,14 @@ $numAsked ++;
 
                 // Qty already received
                 print '<td align="center">';
-								
+
 
                 $quantityDelivered = $object->receptions[$line->id];
                 print $quantityDelivered;
                 print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
                 print '</td>';
 
-              
+
 				if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					$quantityToBeDelivered = 0;
@@ -1134,18 +1134,18 @@ $numAsked ++;
 					$quantityToBeDelivered = $dispatchLines[$indiceAsked]['qty'];
 				}
                 $warehouse_id = $dispatchLines[$indiceAsked]['ent'];
-				
+
 
 				$warehouseObject = null;
 				if ( !empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 				{
 				    print '<!-- Case warehouse already known or product not a predefined product -->';
-					
+
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty=$dispatchLines[$indiceAsked]['qty'];
-					
-					
-					
+
+
+
 						// Quantity to send
 						print '<td align="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -1156,7 +1156,7 @@ $numAsked ++;
 						}
 						else print $langs->trans("NA");
 						print '</td>';
-						
+
 						// Stock
 						if (! empty($conf->stock->enabled))
 						{
@@ -1171,7 +1171,7 @@ $numAsked ++;
 								{
 								    print '<!-- Show warehouse selection -->';
 									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0 , 0, $line->fk_product, '', 1);
-									
+
 								}
 							}
 							else
@@ -1180,7 +1180,7 @@ $numAsked ++;
 							}
 							print '</td>';
 						}
-						
+
 						if(!empty($conf->productbatch->enabled) ){
 							if( !empty($product->status_batch)){
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
@@ -1192,19 +1192,19 @@ $numAsked ++;
 								print '</td>';
 							}else {
 								print '<td colspan="3"></td>';
-								
+
 							}
-							
-							
+
+
 						}
 						print "</tr>\n";
-						
-						
-						
-						
+
+
+
+
 				}
-				
-					
+
+
 
 
 				//Display lines extrafields
@@ -1257,7 +1257,7 @@ else if ($id || $ref)
 	$lines = $object->lines;
 
 	$num_prod = count($lines);
-	
+
 	if ($object->id > 0)
 	{
 		if (!empty($object->origin) && $object->origin_id > 0)
@@ -1273,7 +1273,7 @@ else if ($id || $ref)
 		$soc->fetch($object->socid);
 
 		$res = $object->fetch_optionals($object->id, $extralabels);
-		
+
 		$head=reception_prepare_head($object);
 		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
 
@@ -1355,10 +1355,10 @@ else if ($id || $ref)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
 		$morehtmlref='<div class="refidno">';
 		// Ref customer reception
-		
+
 		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
-		
+
 		// Thirdparty
         $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
         // Project
@@ -1571,7 +1571,7 @@ else if ($id || $ref)
 
 		// Other attributes
 		$cols = 2;
-		
+
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
@@ -1616,7 +1616,7 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Tracking Number
-		
+
 		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber",'tracking_number',$object->tracking_number,$object,$user->rights->reception->creer).'</td><td colspan="3">';
 		print $form->editfieldval("TrackingNumber",'tracking_number',$object->tracking_url,$object,$user->rights->reception->creer,'string',$object->tracking_number);
 		print '</td></tr>';
@@ -1756,9 +1756,9 @@ else if ($id || $ref)
 
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
-		
+
 		$origin = 'commande_fournisseur';
-		
+
 		if ($origin && $origin_id > 0)
 		{
     		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
@@ -1779,7 +1779,7 @@ else if ($id || $ref)
     		$sql.= " AND ed.fk_reception !=".$object->id;
     		//if ($filter) $sql.= $filter;
     		$sql.= " ORDER BY obj.fk_product";
-			
+
     		dol_syslog("get list of reception lines", LOG_DEBUG);
     		$resql = $db->query($sql);
     		if ($resql)
@@ -1828,8 +1828,8 @@ else if ($id || $ref)
 
 				print '<td>';
 
-				
-				
+
+
 				$text=$lines[$i]->product->getNomUrl(1);
 				$text.= ' - '.$label;
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->product->description));
@@ -1857,7 +1857,7 @@ else if ($id || $ref)
 				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 				print "</td>\n";
 			}
-			
+
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td ><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
@@ -1889,7 +1889,7 @@ else if ($id || $ref)
     			            $reception_static->fetch($receptionline_var['reception_id']);
     			            print $reception_static->getNomUrl(1);
     			            print ' - '.$receptionline_var['qty'];
-							
+
     			            $htmltext=$langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($receptionline_var['date_valid'], 'dayhour'));
     			            if (! empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0)
     			            {
@@ -1927,7 +1927,7 @@ else if ($id || $ref)
 								print '</td>';
 							}
 							print '</tr>';
-						
+
 					}
 					else
 					{
@@ -1953,14 +1953,14 @@ else if ($id || $ref)
 				if (! empty($conf->stock->enabled))
 				{
 					print '<td align="left">';
-					
+
 					if ($lines[$i]->fk_entrepot > 0)
 					{
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->fk_entrepot);
 						print $entrepot->getNomUrl(1);
 					}
-					
+
 					print '</td>';
 				}
 
@@ -1974,13 +1974,13 @@ else if ($id || $ref)
 						$detail ='';
 						if ($lines[$i]->product->status_batch)
 						{
-								
+
 								$detail.= $langs->trans("Batch").': '.$lines[$i]->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby,"day");
-								
+
 								$detail.= '<br>';
-							
+
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 						}
 						else
@@ -2006,7 +2006,7 @@ else if ($id || $ref)
 			else print '&nbsp;';
 			print '</td>';
 
-			
+
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td align="center" colspan="2" valign="middle">';
@@ -2130,7 +2130,7 @@ else if ($id || $ref)
 				}
 			}
 
-		
+
 			// Close
 			if ($object->statut == Reception::STATUS_VALIDATED)
 			{
@@ -2173,7 +2173,7 @@ else if ($id || $ref)
 
 		$genallowed=$user->rights->reception->lire;
 		$delallowed=$user->rights->reception->creer;
-		
+
 		print $formfile->showdocuments('reception',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 
@@ -2185,7 +2185,7 @@ else if ($id || $ref)
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	}
-	
+
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);

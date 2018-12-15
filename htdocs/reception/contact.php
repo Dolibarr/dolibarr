@@ -52,14 +52,14 @@ if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
-		
+
     if (!empty($object->origin))
     {
         $origin = $object->origin;
-		
+
         $object->fetch_origin();
 		$typeobject = $object->origin;
-		
+
     }
 
     // Linked documents
@@ -94,7 +94,7 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Reception card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer reception
 	$morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
@@ -206,11 +206,11 @@ if ($id > 0 || ! empty($ref))
         }
     }
 	$morehtmlref.='</div>';
-	
+
 	$object->picto = 'sending';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
     //print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -239,23 +239,23 @@ if ($id > 0 || ! empty($ref))
 	    print "</td>\n";
 	    print '</tr>';
 	}
-	
+
 	print "</table>";
 
-	
+
 	//print '</div>';
 	//print '<div class="fichehalfright">';
 	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	//print '</div>';
 	//print '</div>';
 	print '</div>';
-		
+
 	print '<div class="clearboth"></div>';
-	
-	
+
+
 	dol_fiche_end();
 
 	// Lignes de contacts
@@ -268,7 +268,7 @@ if ($id > 0 || ! empty($ref))
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
-	
+
 
 }
 

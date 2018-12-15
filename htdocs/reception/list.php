@@ -169,7 +169,7 @@ if (empty($reshook))
     	$db->begin();
 		$errors =array();
     	foreach($receptions as $id_reception)
-    	{ 
+    	{
     		$rcp = new Reception($db);
 			 // On ne facture que les réceptions validées
     		if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != 1){
@@ -177,14 +177,14 @@ if (empty($reshook))
 				$error++;
 				continue;
 			}
-					
+
     		$object = new FactureFournisseur($db);
     		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])){
 				$object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
 				if(empty($object->rowid)&&$object->id != null)$object->rowid = $object->id;
 				if(!empty($object->rowid))$object->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
-				
+
 				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
 				{
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value)
@@ -193,12 +193,12 @@ if (empty($reshook))
 							$object->add_object_linked('order_supplier', $value); // add supplier order linked object
 					}
 				}
-				
+
 			}
     		else {
-				
-				
-							
+
+
+
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
     			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
@@ -219,7 +219,7 @@ if (empty($reshook))
     			$object->date = $datefacture;
     			$object->origin    = 'reception';
     			$object->origin_id = $id_reception;
-				
+
 				$rcp->fetchObjectLinked();
 				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
 				{
@@ -228,7 +228,7 @@ if (empty($reshook))
 						$object->linked_objects['order_supplier'] = $value;
 					}
 				}
-				
+
     			$res = $object->create($user);
 				//var_dump($object->error);exit;
     			if($res > 0){
@@ -251,7 +251,7 @@ if (empty($reshook))
 						$error++;
 					}
 				}
-				
+
     			if (! $error)
     			{
 	    			$lines = $rcp->lines;
@@ -332,11 +332,11 @@ if (empty($reshook))
 	    							$lines[$i]->rowid,
 									0,
 									$lines[$i]->ref_supplier
-	    							
+
 	    					);
-							
+
 							$rcp->add_object_linked('facture_fourn_det',$result);
-							
+
 	    					if ($result > 0)
 	    					{
 	    						$lineid=$result;
@@ -366,7 +366,7 @@ if (empty($reshook))
     	// Build doc with all invoices
     	$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
     	$toselect = array();
-		
+
     	if (! $error && $validate_invoices)
     	{
     		$massaction = $action = 'builddoc';
@@ -399,7 +399,7 @@ if (empty($reshook))
     	}
     	else
     	{
-			
+
     		$db->rollback();
     		$action='create';
     		$_GET["origin"]=$_POST["origin"];
@@ -408,7 +408,7 @@ if (empty($reshook))
     		$error++;
     	}
     }
-	
+
 
 }
 
@@ -513,7 +513,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$reception = new Reception($db);
-	
+
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
 	$param='';
@@ -524,12 +524,12 @@ if ($resql)
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
-	if ($search_billed != '' && $search_billed >= 0)$param.= "&amp;search_billed=".$search_billed; 
+	if ($search_billed != '' && $search_billed >= 0)$param.= "&amp;search_billed=".$search_billed;
 	if ($search_town)  $param.= "&amp;search_town=".$search_town;
 	if ($search_zip)  $param.= "&amp;search_zip=".$search_zip;
 	if ($search_state) $param.= "&amp;search_state=".$search_state;
 	if ($viewstatut) $param.= "&amp;viewstatut=".$viewstatut;
-	if ($search_country) $param.= "&amp;search_country=".$search_country; 
+	if ($search_country) $param.= "&amp;search_country=".$search_country;
 	if ($search_type_thirdparty) $param.= "&amp;search_type_thirdparty=".$search_type_thirdparty;
 	if ($search_ref_supplier) $param.= "&amp;search_ref_supplier=".$search_ref_supplier;
 	// Add $param from extra fields
@@ -539,12 +539,12 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
-	
+
+
 	$arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
 );
-	
+
 	if($user->rights->fournisseur->facture->creer)$arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisSupplier");
 	if($massaction == 'createbills') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
@@ -562,7 +562,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-	
+
 	if ($massaction == 'createbills')
 	{
 		//var_dump($_REQUEST);
@@ -610,7 +610,7 @@ if ($resql)
 		print '</div>';
 		print '<br>';
 	}
-	
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -807,7 +807,7 @@ if ($resql)
 
     	$reception->id=$obj->rowid;
     	$reception->ref=$obj->ref;
-		
+
     	$companystatic->id=$obj->socid;
     	$companystatic->ref=$obj->name;
     	$companystatic->name=$obj->name;
@@ -825,7 +825,7 @@ if ($resql)
     		$urlsource=$_SERVER['PHP_SELF'].'?id='.$reception->rowid;
     		print $formfile->getDocumentsLink($reception->element, $filename, $filedir);
     		print "</td>\n";
-			
+
     		if (! $i) $totalarray['nbfield']++;
 		}
 

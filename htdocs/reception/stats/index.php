@@ -276,17 +276,17 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
-		
+
+
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-	
+
 		print '<td align="right">0</td>';
 		/*print '<td align="right">0</td>';
 		print '<td align="right">0</td>';*/
 		print '</tr>';
 	}
-	
+
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center">';
 	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';

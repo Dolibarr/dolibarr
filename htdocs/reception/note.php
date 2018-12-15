@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 	$head=reception_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
 
-    
+
 	// Reception card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -146,13 +146,13 @@ if ($id > 0 || ! empty($ref))
         }
     }
     $morehtmlref.='</div>';
-    
+
     $object->picto = 'sending';
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-    
-    
+
+
     print '<div class="underbanner clearboth"></div>';
-    
+
 	$cssclass='titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
