@@ -426,7 +426,7 @@ if (empty($reshook))
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer)
 	{
-	    $result = $object->delete();
+	    $result = $object->delete($user);
 	    if ($result > 0)
 	    {
 	        header("Location: ".DOL_URL_ROOT.'/reception/index.php');
@@ -567,7 +567,6 @@ if (empty($reshook))
 		{
 			if ($lines[$i]->id == $line_id)
 			{
-
 					// delete single warehouse line
 					$line->id = $line_id;
 					if (! $error && $line->delete($user) < 0)
@@ -1163,7 +1162,8 @@ if ($action == 'create')
 
 						if (!empty($conf->productbatch->enabled))
 						{
-							if( !empty($product->status_batch)){
+							if (!empty($product->status_batch))
+							{
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 								print '<td>';
 								print $form->select_date($dispatchLines[$indiceAsked]['DLC'],'dlc' . $indiceAsked, '', '', 1, "");
@@ -1171,9 +1171,9 @@ if ($action == 'create')
 								print '<td>';
 								print $form->select_date($dispatchLines[$indiceAsked]['DLUO'],'dluo' . $indiceAsked, '', '', 1, "");
 								print '</td>';
-							}else {
+							}
+							else {
 								print '<td colspan="3"></td>';
-
 							}
 						}
 						print "</tr>\n";
@@ -1624,19 +1624,17 @@ else if ($id || $ref)
 
 
 		// Lines of products
-
 		if ($action == 'editline')
 		{
-			print '	<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
+			print '<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
 			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
-			<input type="hidden" name="id" value="' . $object->id . '">
-			';
+			<input type="hidden" name="id" value="' . $object->id . '">';
 		}
 		print '<br>';
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		// #

@@ -862,7 +862,8 @@ class Reception extends CommonObject
 	/**
 	 * 	Delete reception.
 	 *
-	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *	@param	User	$user	Object user
+	 * 	@return	int				>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	function delete(User $user)
 	{
@@ -1012,7 +1013,6 @@ class Reception extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1129,6 +1129,7 @@ class Reception extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return label of a status
 	 *
@@ -1138,6 +1139,7 @@ class Reception extends CommonObject
 	 */
 	function LibStatut($statut,$mode)
 	{
+		// phpcs:enable
 		global $langs;
 
 		if ($mode==0)
@@ -1846,8 +1848,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
-								$error++; break;
-
+								$error++;
+								break;
 							}
 						}
 						else
