@@ -297,8 +297,7 @@ if ($action == "order" and $order_receipt_printer1 != "") {
     ?>
     $.ajax({
         type: "POST",
-        url: 'http://<?php
-        print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
         data: '<?php
         print $headerorder . $order_receipt_printer1 . $footerorder; ?>'
     });
@@ -309,8 +308,7 @@ if ($action == "order" and $order_receipt_printer2 != "") {
     ?>
     $.ajax({
         type: "POST",
-        url: 'http://<?php
-        print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
         data: '<?php
         print $headerorder . $order_receipt_printer2 . $footerorder; ?>'
     });
@@ -340,8 +338,7 @@ if ($action == "temp" and $ticket_printer1 != "") {
     ?>
     $.ajax({
         type: "POST",
-        url: 'http://<?php
-        print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
         data: '<?php
         print $header_soc . $header_ticket . $body_ticket . $ticket_printer1 . $ticket_total . $footer_ticket; ?>'
     });
@@ -368,8 +365,7 @@ function TakeposPrinting(id){
         receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
         $.ajax({
             type: "POST",
-            url: 'http://<?php
-            print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+            url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
             data: receipt
         });
     });
