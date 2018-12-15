@@ -2039,8 +2039,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
-		if (! empty($this->societe))
-			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->societe;
+		if (! empty($this->company))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->company;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
