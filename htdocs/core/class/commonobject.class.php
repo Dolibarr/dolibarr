@@ -1165,6 +1165,9 @@ abstract class CommonObject
 		if($this->element=='shipping' && $this->origin_id != 0) {
 			$id=$this->origin_id;
 			$element='commande';
+        } else if($this->element=='reception' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='order_supplier';
 		} else {
 			$id=$this->id;
 			$element=$this->element;
@@ -1409,6 +1412,7 @@ abstract class CommonObject
         // phpcs:enable
 		if ($this->origin == 'shipping') $this->origin = 'expedition';
 		if ($this->origin == 'delivery') $this->origin = 'livraison';
+        if ($this->origin == 'order_supplier') $this->origin = 'commandeFournisseur';
 
 		$origin = $this->origin;
 
@@ -2917,7 +2921,7 @@ abstract class CommonObject
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
 		if ($origin == 'invoice_template') $origin='facturerec';
-
+    	if ($origin == 'supplierorder') $origin='order_supplier';
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -3580,6 +3584,10 @@ abstract class CommonObject
 			{
 				if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
 				$totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }else if ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
+            {
+                if (empty($totalToShip)) $totalToShip=0;
+                $totalToShip+=$line->qty;   // defined for reception only
 			}
 
 			// Define qty, weight, volume, weight_units, volume_units
@@ -3592,10 +3600,14 @@ abstract class CommonObject
 			}
 
 			$weight = $line->weight ? $line->weight : 0;
+            ($weight==0 && !empty($line->product->weight))? $weight=$line->product->weight: 0;
 			$volume = $line->volume ? $line->volume : 0;
+			($volume==0 && !empty($line->product->volume))? $volume=$line->product->volume: 0;
 
 			$weight_units=$line->weight_units;
+			($weight_units==0 && !empty($line->product->weight_units))? $weight_units=$line->product->weight_units: 0;
 			$volume_units=$line->volume_units;
+			($volume_units==0 && !empty($line->product->volume_units))? $volume_units=$line->product->volume_units: 0;
 
 			$weightUnit=0;
 			$volumeUnit=0;
@@ -4192,6 +4204,11 @@ abstract class CommonObject
 			$productstatic->id = $line->fk_product;
 			$productstatic->ref = $line->ref;
 			$productstatic->type = $line->fk_product_type;
+            if(empty($productstatic->ref)){
+				$line->fetch_product();
+				$productstatic = $line->product;
+			}
+			
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
 			// Dates
@@ -4208,6 +4225,7 @@ abstract class CommonObject
 			}else {
 				$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			}
+			
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end))
 			{

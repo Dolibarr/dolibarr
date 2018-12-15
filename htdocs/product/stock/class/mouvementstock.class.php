@@ -370,6 +370,7 @@ class MouvementStock extends CommonObject
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+			
 			if ($resql)
 			{
 				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
@@ -412,7 +413,7 @@ class MouvementStock extends CommonObject
 					$error = -2;
 				}
 			}
-
+			
 			// Calculate new PMP.
 			$newpmp=0;
 			if (! $error)
@@ -442,7 +443,6 @@ class MouvementStock extends CommonObject
 					$newpmp = $oldpmp;
 				}
 			}
-
 			// Update stock quantity
 			if (! $error)
 			{

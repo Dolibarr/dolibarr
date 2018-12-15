@@ -2902,6 +2902,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 			}
 		}
 
+		$this->deleteObjectLinked();
+
 		if (!$error) {
 			// Supprime ligne
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';

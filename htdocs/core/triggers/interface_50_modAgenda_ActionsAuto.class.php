@@ -403,6 +403,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		} elseif ($action == 'RECEPTION_VALIDATE')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("receptions");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	if (empty($object->actionmsg))
+        	{
+        		$object->actionmsg=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	}
+
+        	// Parameters $object->sendtoid defined by caller
+        	//$object->sendtoid=0;
+        }
+		elseif ($action == 'RECEPTION_SENTBYMAIL')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("receptions");
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            }
+
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
 		{

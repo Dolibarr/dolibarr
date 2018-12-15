@@ -1406,7 +1406,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
     			}
 			}
 
-			// Expeditions
+			// Shipments
 			if (! empty($conf->expedition->enabled))
 			{
 				$langs->load("sendings");
@@ -1419,6 +1419,19 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                     $newmenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
                 }
 				$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
+			}
+
+      // Receptions
+			if (! empty($conf->reception->enabled))
+			{
+				$langs->load("receptions");
+				$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->rights->reception->lire, '', $mainmenu, 'receptions');
+				$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->rights->reception->creer);
+				$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=0", $langs->trans("StatusReceptionDraftShort"), 2, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=1", $langs->trans("StatusReceptionValidatedShort"), 2, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu=="receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=2", $langs->trans("StatusReceptionProcessedShort"), 2, $user->rights->reception->lire);
+				$newmenu->add("/reception/stats/index.php?leftmenu=receptions", $langs->trans("Statistics"), 1, $user->rights->reception->lire);
 			}
 		}
 

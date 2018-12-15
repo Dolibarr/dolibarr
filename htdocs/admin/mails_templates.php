@@ -161,6 +161,7 @@ if ($conf->propal->enabled)            $elementList['propal_send']=$langs->trans
 if ($conf->commande->enabled)          $elementList['order_send']=$langs->trans('MailToSendOrder');
 if ($conf->facture->enabled)           $elementList['facture_send']=$langs->trans('MailToSendInvoice');
 if ($conf->expedition->enabled)        $elementList['shipping_send']=$langs->trans('MailToSendShipment');
+if ($conf->reception->enabled) 		   $elementList['reception_send']=$langs->trans('MailToSendReception');
 if ($conf->ficheinter->enabled)        $elementList['fichinter_send']=$langs->trans('MailToSendIntervention');
 if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send']=$langs->trans('MailToSendSupplierRequestForQuotation');
 if ($conf->fournisseur->enabled)       $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');

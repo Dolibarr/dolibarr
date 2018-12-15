@@ -2364,7 +2364,8 @@ elseif (! empty($object->id))
 				}
 
 				// Ship
-				if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+				
+				if (! empty($conf->stock->enabled) && (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
 				{
 					if (in_array($object->statut, array(3,4,5))) {
 						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
