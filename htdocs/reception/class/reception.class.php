@@ -440,7 +440,7 @@ class Reception extends CommonObject
 				$this->pdf_filename = $file;
 
 				// Tracking url
-				$this->GetUrlTrackingStatus($obj->tracking_number);
+				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
 				 * Thirparty
@@ -1423,7 +1423,7 @@ class Reception extends CommonObject
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function GetUrlTrackingStatus($value='')
+	function getUrlTrackingStatus($value='')
 	{
 		if (! empty($this->shipping_method_id))
 		{

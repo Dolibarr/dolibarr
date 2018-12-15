@@ -305,7 +305,7 @@ class pdf_squille extends ModelePdfReception
 					// Tracking number
 					if (! empty($object->tracking_number))
 					{
-						$object->GetUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus($object->tracking_number);
 						if (! empty($object->tracking_url))
 						{
 							if ($object->reception_method_id > 0)

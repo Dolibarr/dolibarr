@@ -1150,7 +1150,7 @@ if ($action == 'create')
 								if ($line->fk_product > 0)
 								{
 									print '<!-- Show warehouse selection -->';
-									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0 , 0, $line->fk_product, '', 1);
+									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
 								}
 							}
 							else
@@ -1890,9 +1890,9 @@ else if ($id || $ref)
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							print $langs->trans('EatByDate').' : ';
-							print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
+							print $form->select_date($lines[$i]->eatby,'dlc' .$line_id, '', '', 1, ""). '</br>';
 							print $langs->trans('SellByDate').' : ';
-							print $form->select_date($lines[$i]->sellby,'dluo' .$line_id , '', '', 1, "");
+							print $form->select_date($lines[$i]->sellby,'dluo' .$line_id, '', '', 1, "");
 							print '</td>';
 						}
 						print '</tr>';
