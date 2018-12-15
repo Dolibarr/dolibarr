@@ -4,8 +4,8 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
-
-*
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -289,9 +289,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				dol_mkdir($conf->expedition->dir_temp);
 
 
-				// If BILLING contact defined on invoice, we use it
+				// If SHIPMENT contact defined on invoice, we use it
 				$usecontact=false;
-				$arrayidcontact=$object->getIdContact('external','BILLING');
+				$arrayidcontact=$object->getIdContact('external','SHIPPING');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -299,24 +299,27 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 
 				// Recipient name
-				if (! empty($usecontact))
-				{
+				$contactobject = null;
+				if (! empty($usecontact)) {
 					// On peut utiliser le nom de la societe du contact
-					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
-				}
-				else
-				{
-					$socobject=$object->thirdparty;
+					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
+						$socobject = $object->contact;
+					else {
+						$socobject = $object->thirdparty;
+						// if we have a SHIIPPING contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
+				} else {
+					$socobject = $object->thirdparty;
 				}
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
-				'__TOTAL_TTC__' => $object->total_ttc,
-				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+					'__FROM_NAME__' => $this->emetteur->name,
+					'__FROM_EMAIL__' => $this->emetteur->email,
+					'__TOTAL_TTC__' => $object->total_ttc,
+					'__TOTAL_HT__' => $object->total_ht,
+					'__TOTAL_VAT__' => $object->total_vat
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -347,6 +350,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -362,6 +366,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 				catch(OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Make substitutions into odt of user info
@@ -381,8 +386,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of mysoc
@@ -402,8 +408,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of thirdparty
@@ -421,10 +428,34 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
+				if ($usecontact && is_object($contactobject)) {
+					$tmparray=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+					foreach($tmparray as $key=>$value)
+					{
+						try {
+							if (preg_match('/logo$/',$key))	// Image
+							{
+								if (file_exists($value)) $odfHandler->setImage($key, $value);
+								else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
+							}
+							else	// Text
+							{
+								$odfHandler->setVars($key, $value, true, 'UTF-8');
+							}
+						}
+						catch(OdfException $e)
+						{
+                            dol_syslog($e->getMessage(), LOG_INFO);
+						}
+					}
+				}
+
 				// Replace tags of object + external modules
 				$tmparray=$this->get_substitutionarray_shipment($object,$outputlangs);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
@@ -446,6 +477,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -478,9 +510,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -488,7 +522,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						$odfHandler->mergeSegment($listlines);
 					}
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
 					$this->error=$e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -502,8 +536,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -515,16 +550,18 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

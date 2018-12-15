@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,24 +41,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_cyan extends ModelePDFPropales
 {
-	var $db;
-	var $name;
-	var $description;
-	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
-	var $type;
+	public $db;
+	public $name;
+	public $description;
+	public $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
+	public $type;
 
-	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'development';
+	public $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	public $version = 'development';
 
-	var $page_largeur;
-	var $page_hauteur;
-	var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	public $page_largeur;
+	public $page_hauteur;
+	public $format;
+	public $marge_gauche;
+	public	$marge_droite;
+	public	$marge_haute;
+	public	$marge_basse;
 
-	var $emetteur;	// Objet societe qui emet
+	public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -65,7 +66,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -117,6 +118,7 @@ class pdf_cyan extends ModelePDFPropales
 		$this->atleastonediscount=0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Function to build pdf onto disk
      *
@@ -128,8 +130,9 @@ class pdf_cyan extends ModelePDFPropales
      *  @param		int			$hideref			Do not show ref
      *  @return     int             				1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+	  // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -443,7 +446,6 @@ class pdf_cyan extends ModelePDFPropales
 					    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					    $height_note=$posyafter-$tab_top_newpage;
 					    $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
-
 					}
 					else // No pagebreak
 					{
@@ -465,7 +467,6 @@ class pdf_cyan extends ModelePDFPropales
 
 					        $posyafter = $tab_top_newpage;
 					    }
-
 					}
 
 					$tab_height = $tab_height - $height_note;
@@ -745,23 +746,23 @@ class pdf_cyan extends ModelePDFPropales
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
+				$posy=$this->drawTotalTable($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				/*
 				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 				}
 				*/
 
 				// Customer signature area
 				if (empty($conf->global->PROPAL_DISABLE_SIGNATURE))
 				{
-				    $posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
+				    $posy=$this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
 				}
 
 				// Pied de page
@@ -881,11 +882,9 @@ class pdf_cyan extends ModelePDFPropales
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
-
 
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -896,7 +895,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1076,7 +1075,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1182,7 +1181,6 @@ class pdf_cyan extends ModelePDFPropales
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1410,8 +1408,6 @@ class pdf_cyan extends ModelePDFPropales
 		if (empty($hidetop)){
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 		}
-
-
 	}
 
 	/**
@@ -1664,7 +1660,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	private function drawSignatureArea(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1701,8 +1697,8 @@ class pdf_cyan extends ModelePDFPropales
 	 *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
-
+    function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
 	    global $conf, $hookmanager;
 
 	    // Default field style for content
@@ -1888,7 +1884,5 @@ class pdf_cyan extends ModelePDFPropales
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-
 	}
-
 }

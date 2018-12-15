@@ -29,7 +29,6 @@ StockTransfer=Transferencia de acciones
 MassStockTransferShort=Transferencia stock en masa
 StockMovement=Movimiento de valores
 StockMovements=Movimientos de acciones
-LabelMovement=Etiqueta de movimiento
 NumberOfUnit=Número de unidades
 StockTooLow=Stock demasiado bajo
 StockLowerThanLimit=Stock inferior al límite de alerta (%s)

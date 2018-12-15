@@ -173,7 +173,6 @@ class PaymentLoan extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)
@@ -530,6 +529,7 @@ class PaymentLoan extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+		    $this->fk_bank = $id_bank;
 			return 1;
 		}
 		else

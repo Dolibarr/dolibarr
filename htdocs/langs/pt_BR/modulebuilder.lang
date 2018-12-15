@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - modulebuilder
+EnterNameOfModuleDesc=Digite o nome do módulo / aplicativo para criar sem espaços. Use letras maiúsculas para separar palavras (por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
+ModuleBuilderDesc2=Caminho onde os módulos são gerados / editados (primeiro diretório alternativo definido em %s): <strong> %s </ strong>
+ModuleBuilderDesc3=Módulos gerados / editáveis ​​encontrados: <strong> %s </ strong>
+ModuleBuilderDescmenus=Esta guia é dedicada a definir as entradas do menu fornecidas pelo seu módulo.
+ModuleBuilderDescpermissions=Essa guia é dedicada para definir as novas permissões que você deseja fornecer com seu módulo.
+ModuleBuilderDesctriggers=Esta é a visão dos gatilhos fornecidos pelo seu módulo. Para incluir o código executado quando um evento de negócios acionado é iniciado, basta editar esse arquivo.
+ModuleBuilderDeschooks=Esta aba é dedicada aos ganchos.
+ModuleBuilderDescwidgets=Esta aba é dedicada a gerenciar / construir widgets.
+ModuleBuilderDescbuildpackage=Você pode gerar aqui um arquivo de pacote "pronto para distribuir" (um arquivo .zip normalizado) do seu módulo e um arquivo de documentação "pronto para distribuir". Basta clicar no botão para criar o pacote ou arquivo de documentação.
+BuildPackage=Criar pacote / documentação
+BuildDocumentation=Documentação de compilação
+ModuleIsLive=Este módulo foi ativado. Qualquer alteração pode interromper um recurso ativo atual.
+DescriptionLong=Longa descrição
+DescriptorFile=Arquivo descritor do módulo
+ApiClassFile=Arquivo para classe API do PHP
+PageForList=Página PHP para lista de registro
+PageForCreateEditView=Página PHP para criar / editar / visualizar um registro
+PathToModulePackage=Caminho para o zip do pacote de módulo / aplicativo
+PathToModuleDocumentation=Caminho para o arquivo da documentação do módulo / aplicativo
+FileNotYetGenerated=Arquivo ainda não gerado
+DatabaseIndex=Índice do banco de dados
+AddLanguageFile=Adicionar arquivo de idioma

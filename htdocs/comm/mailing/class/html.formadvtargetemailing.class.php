@@ -178,7 +178,6 @@ class FormAdvTargetEmailing extends Form
 				$label = $obj_usr->firstname . " " . $obj_usr->name . " (" . $obj_usr->login . ')';
 
 				$options_array [$obj_usr->rowid] = $label;
-
 			}
 			$this->db->free ( $resql_usr );
 		} else {
@@ -323,7 +322,6 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-
 		}
 		else
 		{
@@ -411,7 +409,6 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-
 		}
 		else
 		{

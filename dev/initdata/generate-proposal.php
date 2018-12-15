@@ -218,6 +218,4 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	{
 		dol_print_error($db,$object->error);
 	}
-
 }
-

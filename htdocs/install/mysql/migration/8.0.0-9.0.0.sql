@@ -54,7 +54,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
-
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(32);
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
 
@@ -68,8 +69,23 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_DELETE','Contract deleted','Executed when a contract is deleted','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention is deleted','Executed when a intervention is deleted','ficheinter',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8002', 'Anparts Selvskab ApS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8003', 'Personlig ejet selvskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8004', 'Iværksætterselvskab IVS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8005', 'Interessentskab I/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8006', 'Holdingselskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8008', 'Kommanditselskab K/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8009', 'SPE-selskab');
+
+ALTER TABLE llx_payment_salary ADD COLUMN ref varchar(30) NULL after rowid;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
+
+ALTER TABLE llx_payment_various ADD COLUMN ref varchar(30) NULL after rowid;
 
 ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
@@ -117,6 +133,7 @@ ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website ADD COLUMN maincolor varchar(16);
 ALTER TABLE llx_website ADD COLUMN maincolorbis varchar(16);
 
+ALTER TABLE llx_website_page ADD COLUMN image varchar(255);
 
 CREATE TABLE llx_takepos_floor_tables(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -130,88 +147,84 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
--- Reception
-
-ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;
-ALTER TABLE llx_commande_fournisseur_dispatch CHANGE comment comment TEXT;
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECEPTION_VALIDATE','Reception validated','Executed when a reception is validated','reception',22);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECEPTION_SENTBYMAIL','Reception sent by mail','Executed when a reception is sent by mail','reception',22);
-
-create table llx_commande_fournisseur_dispatch_extrafields
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
-  fk_object        integer NOT NULL,    -- object id
-  import_key       varchar(14)      	-- import key
-)ENGINE=innodb;
-
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
+UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
-create table llx_reception
-(
-  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
-  ref                   varchar(30)        NOT NULL,
-  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
-  fk_soc                integer            NOT NULL,
-  fk_projet  		integer  DEFAULT NULL,
-  
-  ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
-  ref_supplier          varchar(30),					-- customer number
-  
-  date_creation         datetime,						-- date de creation
-  fk_user_author        integer,						-- author of creation
-  fk_user_modif         integer,						-- author of last change
-  date_valid            datetime,						-- date de validation
-  fk_user_valid         integer,						-- valideur
-  date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
-  date_reception       datetime,						
-  fk_shipping_method    integer,
-  tracking_number       varchar(50),
-  fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
-  billed                smallint    DEFAULT 0,
-  
-  height                float,							-- height
-  width                 float,							-- with
-  size_units            integer,						-- unit of all sizes (height, width, depth)
-  size                  float,							-- depth
-  weight_units          integer,						-- unit of weight
-  weight                float,							-- weight
-  note_private          text,
-  note_public           text,
-  model_pdf             varchar(255),
-  fk_incoterms          integer,						-- for incoterms
-  location_incoterms    varchar(255),					-- for incoterms
-  
-  import_key			varchar(14),
-  extraparams			varchar(255)							-- for other parameters with json format
-)ENGINE=innodb;
+-- DROP TABLE llx_emailcollector_emailcollectorfilter;
+-- DROP TABLE llx_emailcollector_emailcollectoraction;
+-- DROP TABLE llx_emailcollector_emailcollector;
 
-ALTER TABLE llx_reception ADD UNIQUE INDEX idx_reception_uk_ref (ref, entity);
-
-ALTER TABLE llx_reception ADD INDEX idx_reception_fk_soc (fk_soc);
-ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_author (fk_user_author);
-ALTER TABLE llx_reception ADD INDEX idx_reception_fk_user_valid (fk_user_valid);
-ALTER TABLE llx_reception ADD INDEX idx_reception_fk_shipping_method (fk_shipping_method);
-
-ALTER TABLE llx_reception ADD CONSTRAINT fk_reception_fk_soc				FOREIGN KEY (fk_soc)			 REFERENCES llx_societe (rowid);
-ALTER TABLE llx_reception ADD CONSTRAINT fk_reception_fk_user_author		FOREIGN KEY (fk_user_author)	 REFERENCES llx_user (rowid);
-ALTER TABLE llx_reception ADD CONSTRAINT fk_reception_fk_user_valid 		FOREIGN KEY (fk_user_valid)		 REFERENCES llx_user (rowid);
-ALTER TABLE llx_reception ADD CONSTRAINT fk_reception_fk_shipping_method 	FOREIGN KEY (fk_shipping_method) REFERENCES llx_c_shipment_mode (rowid);
-
-create table llx_reception_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
+CREATE TABLE llx_emailcollector_emailcollector(
+        -- BEGIN MODULEBUILDER FIELDS
+        rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+        entity integer DEFAULT 1 NOT NULL,
+        ref varchar(128) NOT NULL,
+        label varchar(255),
+        description text,
+        host varchar(255),
+        login varchar(128),
+        password varchar(128),
+        source_directory varchar(255) NOT NULL,
+        target_directory varchar(255),
+        datelastresult datetime,
+        codelastresult varchar(16),
+        lastresult varchar(255),
+        note_public text,
+        note_private text,
+        date_creation datetime NOT NULL,
+        tms timestamp NOT NULL,
+        fk_user_creat integer NOT NULL,
+        fk_user_modif integer,
+        import_key varchar(14),
+        status integer NOT NULL
+        -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
-ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_object);
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 
-ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_reception (fk_reception);
-ALTER TABLE llx_commande_fournisseur_dispatch ADD CONSTRAINT fk_commande_fournisseur_dispatch_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
 
+CREATE TABLE llx_emailcollector_emailcollectorfilter(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	rulevalue varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+CREATE TABLE llx_emailcollector_emailcollectoraction(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	actionparam varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	position integer DEFAULT 0,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD CONSTRAINT fk_emailcollectorfilter_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcollectoraction_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
+
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);
+
+ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
 

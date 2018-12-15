@@ -78,7 +78,7 @@ class AccountancyCategory // extends CommonObject
 	public $range_account;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Sens of the account:  0: credit - debit, 1: debit - credit
 	 */
 	public $sens;
 
@@ -163,16 +163,17 @@ class AccountancyCategory // extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_accounting_category(";
-		if ($this->rowid > 0) $sql.= "rowid,";
-		$sql.= "code,";
-		$sql.= "label,";
-		$sql.= "range_account,";
-		$sql.= "sens,";
-		$sql.= "category_type,";
-		$sql.= "formula,";
-		$sql.= "position,";
-		$sql.= "fk_country,";
-		$sql.= "active";
+		if ($this->rowid > 0) $sql.= "rowid, ";
+		$sql.= "code, ";
+		$sql.= "label, ";
+		$sql.= "range_account, ";
+		$sql.= "sens, ";
+		$sql.= "category_type, ";
+		$sql.= "formula, ";
+		$sql.= "position, ";
+		$sql.= "fk_country, ";
+		$sql.= "active, ";
+		$sql.= "entity";
 		$sql.= ") VALUES (";
 		if ($this->rowid > 0) $sql.= " ".$this->rowid.",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
@@ -184,6 +185,7 @@ class AccountancyCategory // extends CommonObject
 		$sql.= " ".(! isset($this->position)?'NULL':$this->db->escape($this->position)).",";
 		$sql.= " ".(! isset($this->fk_country)?'NULL':$this->db->escape($this->fk_country)).",";
 		$sql.= " ".(! isset($this->active)?'NULL':$this->db->escape($this->active));
+		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
 		$this->db->begin();
@@ -237,9 +239,8 @@ class AccountancyCategory // extends CommonObject
 	 *  @param		string	$label	Label
 	 *  @return     int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id,$code='',$label='')
+	function fetch($id, $code='', $label='')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.code,";
@@ -253,8 +254,12 @@ class AccountancyCategory // extends CommonObject
 		$sql.= " t.active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
 		if ($id)   $sql.= " WHERE t.rowid = ".$id;
-		elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-		elseif ($label) $sql.= " WHERE t.label = '".$this->db->escape($label)."'";
+		else
+		{
+			$sql.= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
+			if ($code) $sql.= " AND t.code = '".$this->db->escape($code)."'";
+			elseif ($label) $sql.= " AND t.label = '".$this->db->escape($label)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -480,7 +485,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
-		$sql .= " AND aa.entity = = " . $conf->entity . ")";
+		$sql .= " AND aa.entity = " . $conf->entity . ")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
@@ -712,49 +717,76 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int 		$cpt 				Id accounting account
-	 * @param string 	$month 				Specifig month - Can be empty
+	 * @param int|array	$cpt 				Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
-	 * @return integer 						Result in table
+	 * @param int       $month 				Specifig month - Can be empty
+	 * @param int       $year 				Specifig year - Can be empty
+	 * @return integer 						<0 if KO, >= 0 if OK
 	 */
-	public function getResult($cpt, $month, $date_start, $date_end, $sens, $thirdparty_code='nofilter')
+	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code='nofilter', $month=0, $year=0)
 	{
+		global $conf;
+
+		$this->sdc = 0;
+		$this->sdcpermonth = array();
+
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
+		if (is_array($cpt)) $sql.=", t.numero_compte as accountancy_account";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
-		$sql .= " WHERE t.numero_compte = '" . $cpt."'";
-		if (! empty($date_start) && ! empty($date_end))
-			$sql.= " AND t.doc_date >= '".$this->db->idate($date_start)."' AND t.doc_date <= '".$this->db->idate($date_end)."'";
-		if (! empty($month)) {
-			$sql .= " AND MONTH(t.doc_date) = " . $month;
+		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
+		$sql .= " WHERE t.entity = ".$conf->entity;
+		if (is_array($cpt))
+		{
+			$listofaccount='';
+			foreach($cpt as $cptcursor)
+			{
+				if ($listofaccount) $listofaccount.=",";
+				$listofaccount.="'".$cptcursor."'";
+			}
+			$sql .= " AND t.numero_compte IN (" .$listofaccount. ")";
+		}
+		else
+		{
+			$sql .= " AND t.numero_compte = '" . $this->db->escape($cpt) . "'";
+		}
+		if (! empty($date_start) && ! empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
+			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."')";
+		if (! empty($month) && ! empty($year)) {
+			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."')";
 		}
 		if ($thirdparty_code != 'nofilter')
 		{
-			$sql .= " AND thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
+			$sql .= " AND t.thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
+		if (is_array($cpt)) $sql.=" GROUP BY t.numero_compte";
+		//print $sql;
 
-		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $this->db->num_rows($resql);
-			$this->sdc = 0;
-			if ($num) {
+			if ($num)
+			{
 				$obj = $this->db->fetch_object($resql);
 				if ($sens == 1) {
 					$this->sdc = $obj->debit - $obj->credit;
 				} else {
 					$this->sdc = $obj->credit - $obj->debit;
 				}
+				if (is_array($cpt))
+				{
+					$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+				}
 			}
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
+			$this->errors[] = $this->error;
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
-
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -766,7 +798,7 @@ class AccountancyCategory // extends CommonObject
 	 */
 	public function getCats($categorytype=-1)
 	{
-		global $db, $langs, $user, $mysoc, $conf;
+		global $conf, $mysoc;
 
 		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
@@ -775,7 +807,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-		$sql .= " WHERE c.active = 1 ";
+		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = " . $conf->entity;
 		if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
 		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
@@ -823,7 +855,7 @@ class AccountancyCategory // extends CommonObject
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
-		global $mysoc;
+		global $conf, $mysoc;
 		$sql = '';
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
@@ -836,6 +868,7 @@ class AccountancyCategory // extends CommonObject
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
+			$sql .= " AND t.entity = " . $conf->entity;
 			$sql .= " ORDER BY t.account_number";
 		}
 		else
@@ -843,6 +876,7 @@ class AccountancyCategory // extends CommonObject
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
+			$sql .= " AND t.entity = " . $conf->entity;
 			$sql .= " ORDER BY t.account_number";
 		}
 		//echo $sql;
@@ -856,13 +890,12 @@ class AccountancyCategory // extends CommonObject
 			if ($num) {
 				while ($obj = $this->db->fetch_object($resql))
 				{
-					$name_cat = $obj->name_cat;
 					$data[] = array (
 							'id' => $obj->rowid,
 							'account_number' => $obj->account_number,
 							'account_label' => $obj->account_label,
 					);
-					$i ++;
+					$i++;
 				}
 			}
 			return $data;

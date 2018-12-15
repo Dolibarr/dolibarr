@@ -299,7 +299,6 @@ if($calc ==0 || $calc == 1){
 		print '</tr>';
 
 		print '</table>';
-
 	}
 	else
 	{
@@ -322,7 +321,6 @@ if($calc ==0){
 	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
 	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
-
 }
 print '</table>';
 

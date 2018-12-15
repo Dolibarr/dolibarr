@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
@@ -750,6 +750,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
+	$type_export = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
@@ -916,7 +917,7 @@ if (empty($action) || $action == 'view') {
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-	else print '<a class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
+	else print '<a class="butActionRefused classfortooltip" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	print '</div>';
 
 	// TODO Avoid using js. We can use a direct link with $param
@@ -1141,7 +1142,7 @@ $db->close();
  *
  * @param 	string 	$val			Array of val
  * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
- * @return string|unknown
+ * @return 	string					A string label to describe a record into llx_bank_url
  */
 function getSourceDocRef($val, $typerecord)
 {
@@ -1178,7 +1179,7 @@ function getSourceDocRef($val, $typerecord)
 	$sqlmid = '';
 	if ($typerecord == 'payment')
 	{
-		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
+		$sqlmid = 'SELECT payfac.fk_facture as id, f.ref as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=" . $val["paymentid"];
 		$ref = $langs->trans("Invoice");
@@ -1249,7 +1250,8 @@ function getSourceDocRef($val, $typerecord)
 	{
 		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
+		if ($resultmid)
+		{
 			while ($objmid = $db->fetch_object($resultmid))
 			{
 				$ref.=' '.$objmid->ref;
@@ -1258,6 +1260,6 @@ function getSourceDocRef($val, $typerecord)
 		else dol_print_error($db);
 	}
 
-	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 ... i< < than max size of 300
+	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 dots (...) is < than max size of 300
 	return $ref;
 }

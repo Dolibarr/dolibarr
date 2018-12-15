@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -377,7 +377,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 
 	// select2 disabled for smartphones with standard browser.
 	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
-	if ($conf->browser->layout == 'phone') return '';
+	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone') return '';
 
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
@@ -546,7 +546,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- *  @return void
+ *  @return string              html for button on/off
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
 {

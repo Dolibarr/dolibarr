@@ -138,5 +138,4 @@ MembersByNature=Cet écran vous montre des statistiques sur les membres par natu
 MembersByRegion=Cet écran vous montre des statistiques sur les membres par région.
 VATToUseForSubscriptions=Taux de TVA à utiliser pour les abonnements
 NoVatOnSubscription=Pas de TVA pour les abonnements
-MEMBER_PAYONLINE_SENDEMAIL=Courrier électronique à utiliser pour l'alerte par courrier électronique lorsque Dolibarr reçoit une confirmation d'un paiement validé pour un abonnement (Exemple: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produit utilisé pour la ligne d'abonnement en facture: %s

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -87,13 +87,6 @@ class ActionComm extends CommonObject
      * @var string Agenda event label
      */
     public $label;
-
-    /**
-     * @var string
-     * @deprecated Use $label
-     * @see label
-     */
-    public $libelle;
 
     public $datec;			// Date creation record (datec)
     public $datem;			// Date modification record (tms)
@@ -341,7 +334,16 @@ class ActionComm extends CommonObject
         $sql.= "fk_element,";
         $sql.= "elementtype,";
         $sql.= "entity,";
-        $sql.= "extraparams";
+        $sql.= "extraparams,";
+		// Fields emails
+        $sql.= "email_msgid,";
+        $sql.= "email_from,";
+        $sql.= "email_sender,";
+        $sql.= "email_to,";
+        $sql.= "email_tocc,";
+        $sql.= "email_tobcc,";
+        $sql.= "email_subject,";
+        $sql.= "errors_to";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -351,7 +353,7 @@ class ActionComm extends CommonObject
         $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
-        $sql.= " '".$this->db->escape($this->note)."', ";
+        $sql.= " '".$this->db->escape($this->note_private?$this->note_private:$this->note)."', ";
         $sql.= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid:"null").", ";
         $sql.= (isset($user->id) && $user->id > 0 ? $user->id:"null").", ";
         $sql.= ($userownerid>0 ? $userownerid:"null").", ";
@@ -361,7 +363,16 @@ class ActionComm extends CommonObject
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
         $sql.= $conf->entity.",";
-        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null").", ";
+        // Fields emails
+        $sql.= (! empty($this->email_msgid)?"'".$this->db->escape($this->email_msgid)."'":"null").", ";
+        $sql.= (! empty($this->email_from)?"'".$this->db->escape($this->email_from)."'":"null").", ";
+        $sql.= (! empty($this->email_sender)?"'".$this->db->escape($this->email_sender)."'":"null").", ";
+        $sql.= (! empty($this->email_to)?"'".$this->db->escape($this->email_to)."'":"null").", ";
+        $sql.= (! empty($this->email_tocc)?"'".$this->db->escape($this->email_tocc)."'":"null").", ";
+        $sql.= (! empty($this->email_tobcc)?"'".$this->db->escape($this->email_tobcc)."'":"null").", ";
+        $sql.= (! empty($this->email_subject)?"'".$this->db->escape($this->email_subject)."'":"null").", ";
+        $sql.= (! empty($this->errors_to)?"'".$this->db->escape($this->errors_to)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -408,7 +419,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}
@@ -621,6 +631,7 @@ class ActionComm extends CommonObject
                 $this->datem   				= $this->db->jdate($obj->datem);
 
                 $this->note					= $obj->note;
+                $this->note_private			= $obj->note;
                 $this->percentage			= $obj->percentage;
 
                 $this->authorid             = $obj->fk_user_author;
@@ -870,7 +881,7 @@ class ActionComm extends CommonObject
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->db->escape($this->durationp)."'":"null");	// deprecated
-        $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
+        $sql.= ", note = '".$this->db->escape($this->note_private?$this->note_private:$this->note)."'";
         $sql.= ", fk_project =". ($this->fk_project > 0 ? $this->fk_project:"null");
         $sql.= ", fk_soc =". ($socid > 0 ? $socid:"null");
         $sql.= ", fk_contact =". ($contactid > 0 ? $contactid:"null");
@@ -943,7 +954,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}
@@ -1282,7 +1292,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>' . $langs->trans('Type') . ':</b> ' . $labeltype;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
-
+		if (! empty($this->note))
+			$tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . $this->note;
 		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1323,10 +1334,10 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+		if ($option == 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
@@ -1687,7 +1698,13 @@ class ActionComm extends CommonObject
     	$this->output = '';
 		$this->error='';
 
-    	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
+    	if (empty($conf->agenda->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+		if (empty($conf->global->AGENDA_REMINDER_EMAIL))
     	{
     		$langs->load("agenda");
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));

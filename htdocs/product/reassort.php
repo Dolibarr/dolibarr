@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -127,7 +127,7 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_produc
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $all);
+if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
@@ -317,7 +317,6 @@ if ($resql)
 	        foreach($warehouses_list as &$wh) {
 	            print_liste_field_titre($wh['label'], '', '','','','align="right"');
 	        }
-
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock",$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -381,7 +380,7 @@ if ($resql)
 			print $product->stock_theorique;
 			print '</td>';
 		}
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
         print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy,5,1).'</td>';
 		print '<td></td>';
@@ -395,7 +394,6 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {

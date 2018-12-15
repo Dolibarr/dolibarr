@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +325,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-
     	}
     	$db->free($resql);
     }
@@ -376,7 +375,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-
 		}
 		$db->free($resql);
 	}
@@ -570,7 +568,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 		dol_print_error($db);
 	}
-
 }
 
 

@@ -4,15 +4,16 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class Societe extends CommonObject
 		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1,  'notnull'=>1,  'index'=>1, 'position'=>20),
 		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'datec'			=>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
 		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
 		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
@@ -611,7 +612,6 @@ class Societe extends CommonObject
 				$this->db->rollback();
 				return $result;
 			}
-
 		}
 		else
 		{
@@ -948,6 +948,24 @@ class Societe extends CommonObject
 			// We don't check when update called during a create because verify was already done.
 			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
 			$result = $this->verify();
+
+			// If there is only one error and error is ErrorBadCustomerCodeSyntax and we don't change customer code, we allow the update
+			// So we can update record that were using and old numbering rule.
+			if (is_array($this->errors))
+			{
+				if (in_array('ErrorBadCustomerCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_client == $this->code_client)
+				{
+					if (($key = array_search('ErrorBadCustomerCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (in_array('ErrorBadSupplierCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_fournisseur == $this->code_fournisseur)
+				{
+					if (($key = array_search('ErrorBadSupplierCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (empty($this->errors))	// If there is no more error, we can make like if there is no error at all
+				{
+					$result = 0;
+				}
+			}
 		}
 
 		if ($result >= 0)
@@ -1001,7 +1019,6 @@ class Societe extends CommonObject
 					$sql .=",localtax1_value =".$this->localtax1_value;
 				}
 				else $sql .=",localtax1_value =0.000";
-
 			}
 			else $sql .=",localtax1_value =0.000";
 
@@ -1012,7 +1029,6 @@ class Societe extends CommonObject
 					$sql .=",localtax2_value =".$this->localtax2_value;
 				}
 				else $sql .=",localtax2_value =0.000";
-
 			}
 			else $sql .=",localtax2_value =0.000";
 
@@ -1509,6 +1525,19 @@ class Societe extends CommonObject
 				{
 					$error++;
 					dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+				}
+			}
+
+			// Remove links to subsidiaries companies
+			if (! $error)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+				$sql.= " SET parent = NULL";
+				$sql.= " WHERE parent = " . $id;
+				if (! $this->db->query($sql))
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
 				}
 			}
 
@@ -2098,11 +2127,11 @@ class Societe extends CommonObject
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false) $label.= '<br><b>' . $langs->trans('ProfId5'.$this->country_code) . ':</b> '. $this->idprof5;
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false) $label.= '<br><b>' . $langs->trans('ProfId6'.$this->country_code) . ':</b> '. $this->idprof6;
 		}
-		if (! empty($this->code_client) && $this->client)
+		if (! empty($this->code_client) && ($this->client == 1 || $this->client == 3))
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
-		if (! empty($conf->accounting->enabled) && $this->client)
+		if (! empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3))
 			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. ($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (! empty($conf->accounting->enabled) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
@@ -3177,7 +3206,6 @@ class Societe extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -3776,7 +3804,7 @@ class Societe extends CommonObject
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
-			$sql .= " AND entity IN (".getEntity('facture').")";
+			$sql .= " AND entity IN (".getEntity('invoice').")";
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
@@ -3831,6 +3859,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return		int				Amount in debt for thirdparty
 	 *  @deprecated
+	 *  @see getOutstandingBills()
 	 */
 	function get_OutstandingBill()
 	{

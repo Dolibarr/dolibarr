@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsLibTest extends PHPUnit_Framework_TestCase
+class FunctionsLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -324,6 +324,57 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	    $this->assertEquals('iphone',$tmp['phone']);
     }
 
+
+    /**
+     * testGetLanguageCodeFromCountryCode
+     *
+     * @return void
+     */
+    public function testGetLanguageCodeFromCountryCode()
+    {
+    	global $mysoc;
+
+    	$language = getLanguageCodeFromCountryCode('US');
+    	$this->assertEquals('en_US', $language, 'US');
+
+    	$language = getLanguageCodeFromCountryCode('ES');
+    	$this->assertEquals('es_ES', $language, 'ES');
+
+    	$language = getLanguageCodeFromCountryCode('CL');
+    	$this->assertEquals('es_CL', $language, 'CL');
+
+    	$language = getLanguageCodeFromCountryCode('CA');
+    	$this->assertEquals('en_CA', $language, 'CA');
+
+    	$language = getLanguageCodeFromCountryCode('MQ');
+    	$this->assertEquals('fr_CA', $language);
+
+    	$language = getLanguageCodeFromCountryCode('FR');
+    	$this->assertEquals('fr_FR', $language);
+
+    	$language = getLanguageCodeFromCountryCode('BE');
+    	$this->assertEquals('fr_BE', $language);
+
+    	$mysoc->country_code = 'FR';
+    	$language = getLanguageCodeFromCountryCode('CH');
+    	$this->assertEquals('fr_CH', $language);
+
+    	$mysoc->country_code = 'DE';
+    	$language = getLanguageCodeFromCountryCode('CH');
+    	$this->assertEquals('de_CH', $language);
+
+    	$language = getLanguageCodeFromCountryCode('DE');
+    	$this->assertEquals('de_DE', $language);
+
+    	$language = getLanguageCodeFromCountryCode('SA');
+    	$this->assertEquals('ar_SA', $language);
+
+    	$language = getLanguageCodeFromCountryCode('SE');
+    	$this->assertEquals('sv_SE', $language);
+
+    	$language = getLanguageCodeFromCountryCode('DK');
+    	$this->assertEquals('da_DK', $language);
+    }
 
     /**
      * testDolTextIsHtml

@@ -45,7 +45,7 @@ if (! $user->rights->accounting->bind->write)
     accessforbidden();
 
 // search & action GETPOST
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
@@ -173,7 +173,6 @@ if ($action == 'update') {
 
 				$cpt++;
 			}
-
 		}
 
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');

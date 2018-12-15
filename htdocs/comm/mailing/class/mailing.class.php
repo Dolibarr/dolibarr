@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,7 +362,6 @@ class Mailing extends CommonObject
 							'source_id'=>$obj->source_id,
 							'source_type'=>$obj->source_type);
 						}
-
 					}
 				}
 				else
@@ -373,7 +372,6 @@ class Mailing extends CommonObject
 
 				$mailing_target->add_to_target($object->id, $target_array);
 			}
-
 		}
 
 		unset($object->context['createfromclone']);

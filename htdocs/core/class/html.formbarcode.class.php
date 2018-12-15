@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+/* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -66,7 +66,7 @@ class FormBarCode
 
         $disable = '';
 
-        if ($conf->use_javascript_ajax)
+        if (!empty($conf->use_javascript_ajax))
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
@@ -86,19 +86,29 @@ class FormBarCode
         {
             $disable = 'disabled';
         }
-
-        $select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="post" id="form'.$idForm.'">';
-        $select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        $select_encoder.= '<input type="hidden" name="action" value="update">';
-        $select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
-        $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="coder">';
+        
+        if (!empty($conf->use_javascript_ajax))
+        {
+            $select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
+            $select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $select_encoder.= '<input type="hidden" name="action" value="update">';
+            $select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
+        }
+        
+        $selectname=(!empty($conf->use_javascript_ajax)?'coder':'coder'.$code_id);
+        $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
         $select_encoder.= '<option value="0"'.($selected==0?' selected':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
         $select_encoder.= '<option value="-1" disabled>--------------------</option>';
         foreach($barcodelist as $key => $value)
         {
             $select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected':'').'>'.$value.'</option>';
         }
-        $select_encoder.= '</select></form>';
+        $select_encoder.= '</select>';
+        
+        if (!empty($conf->use_javascript_ajax))
+        {
+            $select_encoder.= '</form>';
+        }
 
         return $select_encoder;
     }

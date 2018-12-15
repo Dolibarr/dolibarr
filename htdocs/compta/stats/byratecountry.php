@@ -281,7 +281,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 } else {
 	$sql.= " AND f.type IN (0,1,2,3,5)";
 }
-$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";
+$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
 $sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
 
 dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
@@ -322,7 +322,6 @@ if ($resql) {
 	}
 	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
-
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -406,7 +405,6 @@ if ($resql2) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
 } else {
 	// $modecompta != 'CREANCES-DETTES'
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an

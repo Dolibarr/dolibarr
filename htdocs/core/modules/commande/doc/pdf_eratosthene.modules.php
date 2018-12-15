@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class pdf_eratosthene extends ModelePDFCommandes
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.3 = array(5, 3)
      */
 	public $phpmin = array(5, 2);
@@ -145,7 +146,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->atleastonediscount=0;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -156,8 +158,9 @@ class pdf_eratosthene extends ModelePDFCommandes
      *  @param		int			$hideref			Do not show ref
      *  @return     int             			    1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
+	    // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -399,7 +402,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 				        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				        $height_note=$posyafter-$tab_top_newpage;
 				        $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
-
 				    }
 				    else // No pagebreak
 				    {
@@ -421,7 +423,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				            $posyafter = $tab_top_newpage;
 				        }
-
 				    }
 
 				    $tab_height = $tab_height - $height_note;
@@ -664,16 +665,16 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				/*
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 				}
 				*/
 
@@ -713,18 +714,16 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 	/**
 	 *  Show payments table
-     *
+   *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
-
 
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -735,7 +734,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -922,7 +921,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 	    global $conf,$mysoc;
 
@@ -1027,7 +1026,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1175,7 +1173,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1185,7 +1183,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf;
 
@@ -1241,8 +1239,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (empty($hidetop)){
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 		}
-
-
 	}
 
 	/**
@@ -1255,7 +1251,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
 	{
 		global $conf,$langs,$hookmanager;
 
@@ -1466,7 +1462,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	private function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
@@ -1479,14 +1475,14 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   	Define Array Column Field
 	 *
 	 *   	@param	object			$object    		common object
-	 *   	@param	outputlangs		$outputlangs    langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *   	@param	Translate		$outputlangs    langs
+	 *      @param	int				$hidedetails	Do not show line details
+	 *      @param	int				$hidedesc		Do not show desc
+	 *      @param	int				$hideref		Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
-
+    public function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
 	    global $conf, $hookmanager;
 
 	    // Default field style for content
@@ -1672,7 +1668,5 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-
 	}
-
 }

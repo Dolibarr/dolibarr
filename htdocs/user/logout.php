@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit         <doli@sydesy.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,12 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 
 global $conf, $langs, $user;
 
-// Appel des triggers
-// TODO @deprecated Remove this. Hook must be used, not this trigger.
-//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-//$interface=new Interfaces($db);
-//$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
-//if ($result < 0) { $error++; }
-// Fin appel triggers
+// Call triggers for the "security events" log
+include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+$interface=new Interfaces($db);
+$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
+if ($result < 0) { $error++; }
+// End call triggers
 
 // Hooks on logout
 $action='';

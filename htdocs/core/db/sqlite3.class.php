@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -260,7 +260,6 @@ class DoliDBSqlite3 extends DoliDB
                     // Pour l'instant les contraintes ne sont pas créées
                     dol_syslog(get_class().'::query line emptied');
                     $line = 'SELECT 0;';
-
                 }
 
                 //if (preg_match('/rowid\s+.*\s+PRIMARY\s+KEY,/i', $line)) {
@@ -445,7 +444,6 @@ class DoliDBSqlite3 extends DoliDB
 
             // dummy statement
             $query="SELECT 0";
-
         } else {
             $query=$this->convertSQLFromMysql($query,$type);
         }

@@ -211,8 +211,6 @@ class PaymentTerm // extends CommonObject
 				$this->type_cdr = $obj->type_cdr;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
-
-
             }
             $this->db->free($resql);
 

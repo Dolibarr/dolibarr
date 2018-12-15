@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2018 Philippe Grand        <philippe.grand@atoo-net.com>
@@ -807,43 +807,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 
 		$posy+=2;
-
-		// Add list of linked orders on shipment
-		// Currently not supported by pdf_writeLinkedObjects, link for delivery to order is done through shipment)
-		if ($object->origin == 'expedition' || $object->origin == 'shipping')
-		{
-			$Yoff=$posy-5;
-
-			include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-			$shipment = new Expedition($this->db);
-			$shipment->fetch($object->origin_id);
-
-		    $origin 	= $shipment->origin;
-			$origin_id 	= $shipment->origin_id;
-
-			if ($conf->$origin->enabled)
-			{
-				$outputlangs->load('orders');
-
-				$classname = ucfirst($origin);
-				$linkedobject = new $classname($this->db);
-				$result=$linkedobject->fetch($origin_id);
-				if ($result >= 0)
-				{
-					$pdf->SetFont('','', $default_font_size - 2);
-					$text=$linkedobject->ref;
-					if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
-					$Yoff = $Yoff+8;
-					$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
-					$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
-					$Yoff = $Yoff+3;
-					$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-					$pdf->MultiCell(60, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date,"day",false,$outputlangs,true), 0, 'R');
-				}
-			}
-
-			$posy=$Yoff;
-		}
 
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);

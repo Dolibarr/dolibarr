@@ -44,6 +44,13 @@ class MouvementStock extends CommonObject
 	public $product_id;
 	public $warehouse_id;
 	public $qty;
+
+	/**
+	 * @var int Type of movement
+	 * 0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 * 2=output (stock decrease), 3=input (stock increase)
+	 * Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
+	 */
 	public $type;
 
 	public $tms = '';
@@ -315,8 +322,8 @@ class MouvementStock extends CommonObject
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
     		        $langs->load("stocks");
-        		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
-        		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
+    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
         		    $this->db->rollback();
         		    return -8;
     		    }
@@ -326,8 +333,8 @@ class MouvementStock extends CommonObject
     		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
     		    {
     		        $langs->load("stocks");
-    		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
-    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
     		        $this->db->rollback();
     		        return -8;
     		    }
@@ -462,7 +469,6 @@ class MouvementStock extends CommonObject
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
-
 			}
 
 			// Update detail stock for batch product
@@ -1001,7 +1007,7 @@ class MouvementStock extends CommonObject
 		$label.= '<br><b>' . $langs->trans('Qty') . ':</b> ' .$this->qty;
 		$label.= '</div>';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
 		$link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
 		$link.= '>';
 		$linkend='</a>';

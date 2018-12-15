@@ -107,7 +107,7 @@ $morehtmlref.='</div>';
 
 $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

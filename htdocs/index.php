@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
@@ -552,7 +552,8 @@ if ($showweather)
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+	
     foreach($valid_dashboardlines as $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
@@ -592,6 +593,8 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    
+    $boxwork .='</div>';
     $boxwork .='</td></tr>';
 }
 else

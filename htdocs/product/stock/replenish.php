@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  *
@@ -114,12 +114,15 @@ if ($action == 'order' && isset($_POST['valid']))
 {
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
+	$errorQty = 0;
     unset($_POST['linecount']);
     if ($linecount > 0)
     {
     	$db->begin();
 
         $suppliers = array();
+		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+		$productsupplier = new ProductFournisseur($db);
         for ($i = 0; $i < $linecount; $i++)
         {
             if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
@@ -129,13 +132,9 @@ if ($action == 'order' && isset($_POST['valid']))
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
                 $qty = GETPOST('tobuy'.$i, 'int');
-                //$desc = GETPOST('desc'.$i, 'alpha');
-                $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
-                $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
-                $sql .= ' WHERE rowid = ' . $supplierpriceid;
-                $resql = $db->query($sql);
-                if ($resql && $db->num_rows($resql) > 0)
+				$idprod=$productsupplier->get_buyprice($supplierpriceid, $qty);
+				$res=$productsupplier->fetch($idprod);
+                if ($res && $idprod > 0)
                 {
                 	if ($qty)
                 	{
@@ -143,33 +142,37 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
-	                    $line->fk_product = $obj->fk_product;
+	                    $line->fk_product = $idprod;
 
-	                    $product = new Product($db);
-	                    $product->fetch($obj->fk_product);
+	                    //$product = new Product($db);
+	                    //$product->fetch($obj->fk_product);
 	                    if (! empty($conf->global->MAIN_MULTILANGS))
 	                    {
-	                        $product->getMultiLangs();
+	                        $productsupplier->getMultiLangs();
 	                    }
-	                    $line->desc = $product->description;
+	                    $line->desc = $productsupplier->description;
                         if (! empty($conf->global->MAIN_MULTILANGS))
                         {
                             // TODO Get desc in language of thirdparty
                         }
 
-	                    $line->tva_tx = $obj->tva_tx;
-	                    $line->subprice = $obj->unitprice;
-	                    $line->total_ht = $obj->unitprice * $qty;
+	                    $line->tva_tx = $productsupplier->vatrate_supplier;
+	                    $line->subprice = $productsupplier->fourn_pu;
+	                    $line->total_ht = $productsupplier->fourn_pu * $qty;
 	                    $tva = $line->tva_tx / 100;
 	                    $line->total_tva = $line->total_ht * $tva;
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $obj->remise_percent;
-	                    $line->ref_fourn = $obj->ref_fourn;
-						$line->type = $product->type;
-						$line->fk_unit = $product->fk_unit;
-	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
+						$line->remise_percent = $productsupplier->remise_percent;
+	                    $line->ref_fourn = $productsupplier->ref_supplier;
+						$line->type = $productsupplier->type;
+						$line->fk_unit = $productsupplier->fk_unit;
+	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
                 	}
                 }
+				elseif ($idprod == -1)
+				{
+					$errorQty++;
+				}
                 else
 				{
                     $error=$db->lasterror();
@@ -249,6 +252,8 @@ if ($action == 'order' && isset($_POST['valid']))
                 $i++;
             }
         }
+
+		if($errorQty) setEventMessages($langs->trans('ErrorOrdersNotCreatedQtyTooLow'), null, 'warnings');
 
         if (! $fail && $id)
         {

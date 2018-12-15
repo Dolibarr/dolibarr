@@ -489,7 +489,6 @@ if ($action == "set")
                 print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
                 $ok = 1 ;
             }
-
         }
     }
 

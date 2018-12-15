@@ -8,9 +8,7 @@ NewCompanyToDolibarr=Derde %s aangemaakt
 ContractValidatedInDolibarr=Contract %s goedgekeurd
 MemberModifiedInDolibarr=Lid %s werd aangepast
 MemberResiliatedInDolibarr=Lid %s verwijderd
-MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
-MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
@@ -30,5 +28,4 @@ AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken 
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
-AgendaExtNb=Kalender nr. %s
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

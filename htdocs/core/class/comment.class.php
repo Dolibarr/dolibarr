@@ -357,10 +357,9 @@ class Comment extends CommonObject
 				}
 				$db->free($resql);
 			} else {
-				$error++; $this->errors[]="Error ".$this->db->lasterror();
+				$this->errors[]="Error ".$this->db->lasterror();
 				return -1;
 			}
-
 		}
 
 		return count($this->comments);

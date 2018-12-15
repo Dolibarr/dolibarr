@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -562,12 +562,11 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 
     print load_fiche_titre($langs->trans("VATBalance"), '', ''); // need to add translation
 
-    $sql1 = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y') as dm";
+    $sql1 = "SELECT SUM(amount) as mm";
     $sql1 .= " FROM " . MAIN_DB_PREFIX . "tva as f";
     $sql1 .= " WHERE f.entity = " . $conf->entity;
     $sql1 .= " AND f.datev >= '" . $db->idate($date_start) . "'";
     $sql1 .= " AND f.datev <= '" . $db->idate($date_end) . "'";
-    $sql1 .= " GROUP BY dm ORDER BY dm ASC";
 
     $result = $db->query($sql1);
     if ($result) {

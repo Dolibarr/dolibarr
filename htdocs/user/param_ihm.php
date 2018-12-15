@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -316,7 +316,6 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-
 }
 else
 {
@@ -388,7 +387,7 @@ else
     print '<div class="tabsAction">';
     if (empty($user->admin) && ! empty($dolibarr_main_demo))
     {
-        print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+        print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
     }
     else
     {
@@ -398,12 +397,11 @@ else
         }
         else
         {
-            print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+            print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
         }
     }
 
     print '</div>';
-
 }
 
 if ($action == 'edit')

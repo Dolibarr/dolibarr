@@ -85,7 +85,7 @@ NbOfOrders=Number of orders
 OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Number of orders by month
-AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
@@ -112,7 +112,7 @@ UserWithApproveOrderGrant=Users granted with "approve orders" permission.
 PaymentOrderRef=Payment of order %s
 CloneOrder=Clone order
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
-DispatchSupplierOrder=Receiving supplier order %s
+DispatchSupplierOrder=Receiving purchase order %s
 FirstApprovalAlreadyDone=First approval already done
 SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
@@ -136,7 +136,7 @@ Error_OrderNotChecked=No orders to invoice selected
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Mail
 OrderByFax=Fax
-OrderByEMail=EMail
+OrderByEMail=Email
 OrderByWWW=Online
 OrderByPhone=Phone
 # Documents models

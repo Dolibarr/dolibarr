@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,13 @@ $colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
+	?>
+	<body class="body bodylogin" style="background-image: url('<?php echo $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND; ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+	<?php } else { ?>
+	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<?php } ?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -127,7 +133,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
@@ -138,7 +144,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Password -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
@@ -172,7 +178,7 @@ if ($captcha) {
 ?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd nowrap none center valignmiddle tdinputlogin">
+	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
 
 	<table class="login_table_securitycode centpercent">
 	<tr class="valignmiddle">

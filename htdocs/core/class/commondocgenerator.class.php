@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne		<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015       	Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016       	Charlie Benke           <charlie@patas-monkey.com>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,10 +244,10 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Contact 		$object        	contact
+	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
-	 * @param   array_key	$array_key	    Name of the key for return array
-	 * @return	array of substitution key->code
+	 * @param   array		$array_key	    Name of the key for return array
+	 * @return	array 						Array of substitution key->code
 	 */
     function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
     {
@@ -582,9 +583,9 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Expedition			$object             Main object to use as data source
+     * @param   Expedition		$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array_key		$array_key	        Name of the key for return array
+     * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
     function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
@@ -807,7 +808,7 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param	PDF		$pdf			Object PDF
+	 * @param	TCPDF	$pdf			Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y		        Ordinate of first point
 	 * @param	float	$l				??
@@ -823,8 +824,8 @@ abstract class CommonDocGenerator
         if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
         $pdf->line($x, $y+$h, $x, $y);
     }
-    
-    
+
+
     /**
      *   	uasort callback function to Sort colums fields
      *
@@ -832,55 +833,54 @@ abstract class CommonDocGenerator
      *   	@param	array			$b    			PDF lines array fields configs
      *      @return	int								Return compare result
      */
-    function columnSort($a, $b) {
-        
+    function columnSort($a, $b)
+    {
         if(empty($a['rank'])){ $a['rank'] = 0; }
         if(empty($b['rank'])){ $b['rank'] = 0; }
         if ($a['rank'] == $b['rank']) {
             return 0;
         }
         return ($a['rank'] > $b['rank']) ? -1 : 1;
-        
     }
-    
+
     /**
      *   	Prepare Array Column Field
      *
-     *   	@param	object			$object    		common object
-     *   	@param	outputlangs		$outputlangs    langs
-     *      @param		int			$hidedetails		Do not show line details
-     *      @param		int			$hidedesc			Do not show desc
-     *      @param		int			$hideref			Do not show ref
+     *   	@param	object			$object				common object
+     *   	@param	Translate		$outputlangs		langs
+     *      @param	int				$hidedetails		Do not show line details
+     *      @param	int				$hidedesc			Do not show desc
+     *      @param	int				$hideref			Do not show ref
      *      @return	null
      */
-    function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
-        
+    function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
         global $conf;
-        
+
         $this->defineColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
-        
-        
+
+
         // Sorting
         uasort ( $this->cols, array( $this, 'columnSort' ) );
-        
+
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
-        
+
         // Array witdh
         $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
-        
+
         // Count flexible column
         $totalDefinedColWidth = 0;
         $countFlexCol = 0;
         foreach ($this->cols as $colKey =>& $colDef)
         {
             if(!$this->getColumnStatus($colKey)) continue; // continue if desable
-            
+
             if(!empty($colDef['scale'])){
                 // In case of column widht is defined by percentage
                 $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
             }
-            
+
             if(empty($colDef['width'])){
                 $countFlexCol++;
             }
@@ -888,7 +888,7 @@ abstract class CommonDocGenerator
                 $totalDefinedColWidth += $colDef['width'];
             }
         }
-        
+
         foreach ($this->cols as $colKey =>& $colDef)
         {
             // setting empty conf with default
@@ -898,7 +898,7 @@ abstract class CommonDocGenerator
             else{
                 $colDef['title'] = $this->defaultTitlesFieldsStyle;
             }
-            
+
             // setting empty conf with default
             if(!empty($colDef['content'])){
                 $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
@@ -906,14 +906,14 @@ abstract class CommonDocGenerator
             else{
                 $colDef['content'] = $this->defaultContentsFieldsStyle;
             }
-            
+
             if($this->getColumnStatus($colKey))
             {
                 // In case of flexible column
                 if(empty($colDef['width'])){
                     $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
                 }
-                
+
                 // Set positions
                 $lastX = $curX;
                 $curX = $lastX - $colDef['width'];
@@ -922,7 +922,7 @@ abstract class CommonDocGenerator
             }
         }
     }
-    
+
     /**
      *   	get column content width from column key
      *
@@ -934,8 +934,8 @@ abstract class CommonDocGenerator
         $colDef = $this->cols[$colKey];
         return  $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
     }
-    
-    
+
+
     /**
      *   	get column content X (abscissa) left position from column key
      *
@@ -947,7 +947,7 @@ abstract class CommonDocGenerator
         $colDef = $this->cols[$colKey];
         return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
     }
-    
+
     /**
      *   	get column position rank from column key
      *
@@ -959,7 +959,7 @@ abstract class CommonDocGenerator
         if(!isset($this->cols[$colKey]['rank'])) return -1;
         return  $this->cols[$colKey]['rank'];
     }
-    
+
     /**
      *   	get column position rank from column key
      *
@@ -973,21 +973,21 @@ abstract class CommonDocGenerator
     {
         // prepare wanted rank
         $rank = -1;
-        
+
         // try to get rank from target column
         if(!empty($targetCol)){
             $rank = $this->getColumnRank($targetCol);
             if($rank>=0 && $insertAfterTarget){ $rank++; }
         }
-        
+
         // get rank from new column definition
         if($rank<0 && !empty($defArray['rank'])){
             $rank = $defArray['rank'];
         }
-        
+
         // error: no rank
         if($rank<0){ return -1; }
-        
+
         foreach ($this->cols as $colKey =>& $colDef)
         {
             if( $rank <= $colDef['rank'])
@@ -995,14 +995,14 @@ abstract class CommonDocGenerator
                 $colDef['rank'] = $colDef['rank'] + 1;
             }
         }
-        
+
         $defArray['rank'] = $rank;
         $this->cols[$newColKey] = $defArray; // array_replace is used to preserve keys
-        
+
         return $rank;
     }
-    
-    
+
+
     /**
      *   	print standard column content
      *
@@ -1015,10 +1015,9 @@ abstract class CommonDocGenerator
     function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
     {
         global $hookmanager;
-        
+
         $parameters=array(
-            'object' => $object,
-            'curY' =>& $curY,
+            'curY' => &$curY,
             'columnText' => $columnText,
             'colKey' => $colKey
         );
@@ -1029,12 +1028,11 @@ abstract class CommonDocGenerator
             if(empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey),$curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->MultiCell( $this->getColumnContentWidth($colKey),2, $columnText,'',$colDef['content']['align']);
+            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey),2,$this->getColumnContentXStart($colKey),$curY, $columnText,'',$colDef['content']['align']);
         }
-        
     }
-    
-    
+
+
     /**
      *   	get column status from column key
      *

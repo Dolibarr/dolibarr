@@ -207,8 +207,6 @@ class Propalmergepdfproduct extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->import_key = $obj->import_key;
-
-
             }
             $this->db->free($resql);
 
@@ -283,11 +281,7 @@ class Propalmergepdfproduct extends CommonObject
 	    			}else {
 	    				$this->lines[$obj->file_name]=$line;
 	    			}
-
-
     			}
-
-
     		}
     		$this->db->free($resql);
 

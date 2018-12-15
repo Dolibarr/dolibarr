@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -69,7 +69,23 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-	    $object->add_photo($upload_dir, $_FILES['userfile']);
+
+        $file = $_FILES['userfile'];
+        if (is_array($file['name']) && count($file['name']) > 0)
+        {
+            foreach ($file['name'] as $i => $name)
+            {
+                if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
+                {
+                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles' ) );
+                    unset($file['name'][$i],$file['type'][$i],$file['tmp_name'][$i],$file['error'][$i],$file['size'][$i]);
+                }
+            }
+        }
+
+        if(!empty($file['tmp_name'])) {
+            $object->add_photo($upload_dir, $file);
+        }
     }
 }
 
@@ -173,7 +189,7 @@ if ($object->id)
 		}
 		else
 		{
-			print '<a class="butActionRefused hideonsmartphone" href="#">';
+			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
 	}

@@ -144,7 +144,7 @@ if ($socid > 0)
     print '<br>';
 
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-    $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+    $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
     $sql.= " sum(d.total_ht) as selling_price,";						// may be negative or positive
     $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";				// always positive
@@ -159,7 +159,7 @@ if ($socid > 0)
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";
     if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-    $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type";
+    $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
     $sql.= $db->order($sortfield,$sortorder);
     // TODO: calculate total to display then restore pagination
     //$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -177,7 +177,7 @@ if ($socid > 0)
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
-    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
+    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.ref","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
     	print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
     	print_liste_field_titre("SoldAmount",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print_liste_field_titre("PurchasedAmount",$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
@@ -203,21 +203,26 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
+    			$sign = '';
+    			if ($objp->type == Facture::TYPE_CREDIT_NOTE){
+    			    $sign = '-';
+    			}
+
     			print '<tr class="oddeven">';
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
-    			$invoicestatic->ref=$objp->facnumber;
+    			$invoicestatic->ref=$objp->ref;
     			print $invoicestatic->getNomUrl(1);
     			print "</td>\n";
     			print "<td align=\"center\">";
     			print dol_print_date($db->jdate($objp->datef),'day')."</td>";
     			print "<td align=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
     			print "<td align=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td align=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+    			print "<td align=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARK_RATES))
-    				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;
