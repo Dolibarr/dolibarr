@@ -1312,6 +1312,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                     $newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->cheque);
                 }
 			}
+			
+			//Cash Control
+			if ($conf->takepos->enabled or $conf->cashdesk->enabled){
+				$newmenu->add("/compta/cashcontrol/cashcontrol.php?action=list",$langs->trans("CashControl"),0,1, '', $mainmenu, 'cashcontrol');
+				$newmenu->add("/compta/cashcontrol/cashcontrol.php?action=list",$langs->trans("List"),1,1);
+				$newmenu->add("/compta/cashcontrol/cashcontrol.php?action=create",$langs->trans("New"),1,1);
+			}
 		}
 
 		/*
