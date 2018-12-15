@@ -18,9 +18,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/card.php
- * \ingroup		Advanced accountancy
- * \brief 		Card of accounting account
+ *  \file       htdocs/accountancy/admin/card.php
+ *  \ingroup    Advanced accountancy
+ *  \brief      Card of accounting account
  */
 
 require '../../main.inc.php';

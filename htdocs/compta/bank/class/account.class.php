@@ -256,7 +256,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * Shows the account number in the appropiate format
+	 * Shows the account number in the appropriate format
 	 *
 	 * @return string
 	 */
@@ -419,7 +419,7 @@ class Account extends CommonObject
 	 */
 	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='', $datev=null)
 	{
-		// Deprecatîon warning
+		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__ . ": using numeric operations is deprecated", LOG_WARNING);
 		}
@@ -430,7 +430,7 @@ class Account extends CommonObject
 
 		$now=dol_now();
 
-		if (is_numeric($oper))    // Clean oper to have a code instead of a rowid
+		if (is_numeric($oper))    // Clean operation to have a code instead of a rowid
 		{
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
 			$sql.= " WHERE id=".$oper;
