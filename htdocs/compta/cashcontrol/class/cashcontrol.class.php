@@ -21,14 +21,57 @@
 /**
  * \file       cashcontrol/class/cashcontrol.class.php
  * \ingroup    bank
- * \brief      This file is CRUD class file (Create/Read/Update/Delete) for bank categories
+ * \brief      This file is CRUD class file (Create/Read/Update/Delete) for cash fence table
  */
 
 /**
- *    Class to manage bank categories
+ *    Class to manage cash fence
  */
 class CashControl // extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'CashControl';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'pos_cash_fence';
+
+	/**
+	 * @var int  Does pos_cash_fence support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var int  Does pos_cash_fence support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * @var string String with name of icon for pos_cash_fence. Must be the part after the 'object_' into object_pos_cash_fence.png
+	 */
+	public $picto = 'bank';
+
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15),
+		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>20),
+		'opening' =>array('type'=>'double(24,8)', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
+		'cash' =>array('type'=>'double(24,8)', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
+		//'card' =>array('type'=>'double(24,8)', 'label'=>'Card', 'enabled'=>1, 'visible'=>1, 'position'=>35),
+		'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>50),
+		'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55),
+		'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+		'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'position'=>70),
+		//'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>40),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
+	);
+
 	public $id;
 	public $opening;
 	public $status;
@@ -38,6 +81,7 @@ class CashControl // extends CommonObject
 	public $day_close;
 	public $posmodule;
 	public $posnumber;
+
 
 
 	/**

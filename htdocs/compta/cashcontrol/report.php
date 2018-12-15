@@ -25,11 +25,11 @@
 
 /**
  *	\file       htdocs/compta/bank/bankentries_list.php
- *	\ingroup    banque
+ *	\ingroup    pos
  *	\brief      List of bank transactions
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

@@ -23,11 +23,11 @@
 
 /**
  *      \file       htdocs/compta/bank/categ.php
- *      \ingroup    compta
+ *      \ingroup    pos
  *      \brief      Page ajout de categories bancaires
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 $langs->loadLangs(array("cashcontrol","install","cashdesk","admin"));
@@ -42,6 +42,18 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
+
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='b.label';
+if (! $sortorder) $sortorder='ASC';
+
 
 /*
  * Add category
@@ -68,8 +80,14 @@ if ($action=="close")
 
 if ($action=="create")
 {
-llxHeader();
-    print load_fiche_titre("Cashcontrol - ".$langs->trans("New"), '', 'title_bank.png');
+	llxHeader();
+
+	$arrayofposavailable=array();
+	if (! empty($conf->cashdesk->enabled)) $arrayofposavailable['cashdesk']=$langs->trans('CashDesk').' (cashdesk)';
+	if (! empty($conf->takepos->enabled))  $arrayofposavailable['takepos']=$langs->trans('TakePOS').' (takepos)';
+	// TODO Add hook here to allow other POS to add themself
+
+	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="start">';
     print '<table class="noborder" width="100%">';
@@ -78,58 +96,12 @@ llxHeader();
     print "</tr>\n";
     print '<tr class="oddeven">';
     print '<td>&nbsp;</td><td><input name="opening" type="text" size="10" value="0"></td>';
-	print '<td>'.$form->selectarray('posmodule', array('0'=>$langs->trans('CashDesk'),'1'=>$langs->trans('TakePOS')),1).'</td>';
+	print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, 1).'</td>';
 	print '<td><input name="posnumber" type="text" size="10" value="0"></td>';
     print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Start").'"></td>';
     print '</tr>';
     print '</table></form>';
 }
-
-
-if ($action=="list")
-{
-llxHeader();
-    print load_fiche_titre("Cashcontrol - ".$langs->trans("List"), '', 'title_bank.png');
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="action" value="start">';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("DateCreationShort").'</td><td colspan="2">'.$langs->trans("DateEnd").'</td><td align=right>'.$langs->trans("Cash").'</td><td align=right>'.$langs->trans("PaymentTypeCB").'</td><td>'.$langs->trans("Status").'</td>';
-    print "</tr>\n";
-
-	$sql = "SELECT *";
-	$sql.= " FROM ";
-	$sql.= MAIN_DB_PREFIX."pos_cash_fence order by rowid DESC";
-	$result = $db->query($sql);
-	if ($result) {
-		$i = 0;
-		$num = $db->num_rows($result);
-
-		while ($i < $num) {
-			print '<tr class="oddeven">';
-			$objp = $db->fetch_object($result);
-			$totalpaye += $objp->amount;
-			print '<td>';
-			print '<a href="cashcontrol.php?action=view&id='.$objp->rowid.'">'.$objp->rowid.'</a>';
-			print '</td><td>'.dol_print_date($objp->date_creation, 'dayhour').'<td><td>'.dol_print_date(strtotime($objp->year_close."-".$objp->month_close."-".$objp->day_close), 'day').'</td>';
-			print '<td align=right>';
-			if ($objp->status==2) print price($objp->cash);
-			print '</td><td align=right>';
-			if ($objp->status==2) price($objp->card);
-			print '</td><td>';
-			if ($objp->status==1) print $langs->trans("Opened");
-			if ($objp->status==2) print $langs->trans("Closed");
-			print '</td></tr>';
-			$i ++;
-		}
-	} else {
-		//no hay
-	}
-
-    print '</table></form>';
-}
-
-
 
 if ($action=="view")
 {
