@@ -88,8 +88,8 @@ if ($resql)
 	$i = 0;
 
 	print "<center><h2>";
-	if ($cashcontrol->status==2) print "Cashcontrol ".$cashcontrol->id;
-	else print $langs->trans("Cashcontrol")." - ".$langs->trans("Draft");
+	if ($cashcontrol->status==2) print $langs->trans("CashControl")." ".$cashcontrol->id;
+	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'day')."</h2></center>";
 
 
