@@ -310,6 +310,7 @@ class Product extends CommonObject
 
     public $oldcopy;
 
+    public $fk_default_warehouse;
     /**
      * @var int ID
      */
@@ -2622,7 +2623,7 @@ class Product extends CommonObject
         }
         $sql.= " WHERE f.rowid = fd.fk_facture";
         $sql.= " AND f.fk_soc = s.rowid";
-        $sql.= " AND f.entity IN (".getEntity('facture').")";
+        $sql.= " AND f.entity IN (".getEntity('invoice').")";
         $sql.= " AND fd.fk_product = ".$this->id;
         if (!$user->rights->societe->client->voir && !$socid) { $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
@@ -2788,7 +2789,7 @@ class Product extends CommonObject
         if ($filteronproducttype >= 0) { $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
         }
         $sql.= " AND f.fk_soc = s.rowid";
-        $sql.= " AND f.entity IN (".getEntity('facture').")";
+        $sql.= " AND f.entity IN (".getEntity('invoice').")";
         if (!$user->rights->societe->client->voir && !$socid) { $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
         if ($socid > 0) {    $sql.= " AND f.fk_soc = $socid";
@@ -4152,84 +4153,86 @@ class Product extends CommonObject
         }
     }
 
+  
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-    /**
-     *    Load value ->stock_theorique of a product. Property this->id must be defined.
-     *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
-     *
-     * @return int             < 0 if KO, > 0 if OK
-     * @see    load_stock(), loadBatchInfo()
-     */
-    function load_virtual_stock()
-    {
-     // phpcs:enable
-        global $conf, $hookmanager, $action;
+	/**
+	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
+	 *
+	 *    @return   int             < 0 if KO, > 0 if OK
+	 *    @see		load_stock(), loadBatchInfo()
+	 */
+	function load_virtual_stock()
+	{
+		// phpcs:enable
+		global $conf, $hookmanager, $action;
 
-        $stock_commande_client=0;
-        $stock_commande_fournisseur=0;
-        $stock_sending_client=0;
-        $stock_reception_fournisseur=0;
+		$stock_commande_client=0;
+		$stock_commande_fournisseur=0;
+		$stock_sending_client=0;
+		$stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled)) {
-            $result=$this->load_stats_commande(0, '1,2', 1);
-            if ($result < 0) { dol_print_error($this->db, $this->error);
-            }
-            $stock_commande_client=$this->stats_commande['qty'];
-        }
-        if (! empty($conf->expedition->enabled)) {
-            $result=$this->load_stats_sending(0, '1,2', 1);
-            if ($result < 0) { dol_print_error($this->db, $this->error);
-            }
-            $stock_sending_client=$this->stats_expedition['qty'];
-        }
-        if (! empty($conf->fournisseur->enabled)) {
-            $result=$this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
-            if ($result < 0) { dol_print_error($this->db, $this->error);
-            }
-            $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
+		if (! empty($conf->commande->enabled))
+		{
+			$result=$this->load_stats_commande(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_client=$this->stats_commande['qty'];
+		}
+		if (! empty($conf->expedition->enabled))
+		{
+			$result=$this->load_stats_sending(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_sending_client=$this->stats_expedition['qty'];
+		}
+		if (! empty($conf->fournisseur->enabled))
+		{
+			$result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-            $result=$this->load_stats_reception(0, '4', 1);
-            if ($result < 0) { dol_print_error($this->db, $this->error);
-            }
-            $stock_reception_fournisseur=$this->stats_reception['qty'];
-        }
+			$result=$this->load_stats_reception(0,'4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_reception_fournisseur=$this->stats_reception['qty'];
+		}
 
-        // Stock decrease mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-            $this->stock_theorique=$this->stock_reel;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client;
-        }
-        // Stock Increase mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+		// Stock decrease mode
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
+			$this->stock_theorique=$this->stock_reel;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client;
+		}
+		// Stock Increase mode
+		 if (! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
-            $this->stock_theorique-=$stock_reception_fournisseur;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
-            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-        }
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+			$this->stock_theorique-=$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
 
-        if (! is_object($hookmanager)) {
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager=new HookManager($this->db);
-        }
-        $hookmanager->initHooks(array('productdao'));
-        $parameters=array('id'=>$this->id);
-        // Note that $action and $object may have been modified by some hooks
-        $reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
-        if ($reshook > 0) { $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
-        }
+		if (! is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters=array('id'=>$this->id);
+		// Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
 
-        return 1;
-    }
-
-
+		return 1;
+	}
+  
+  
     /**
      *  Load existing information about a serial
      *
@@ -4264,7 +4267,6 @@ class Product extends CommonObject
             return array();
         }
     }
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
@@ -4346,7 +4348,6 @@ class Product extends CommonObject
         }
         return false;
     }
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**

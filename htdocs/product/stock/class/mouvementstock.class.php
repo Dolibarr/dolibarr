@@ -322,8 +322,8 @@ class MouvementStock extends CommonObject
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
     		        $langs->load("stocks");
-        		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
-        		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
+    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
         		    $this->db->rollback();
         		    return -8;
     		    }
@@ -333,8 +333,8 @@ class MouvementStock extends CommonObject
     		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
     		    {
     		        $langs->load("stocks");
-    		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
-    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
     		        $this->db->rollback();
     		        return -8;
     		    }
@@ -370,6 +370,7 @@ class MouvementStock extends CommonObject
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+			
 			if ($resql)
 			{
 				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
@@ -412,7 +413,7 @@ class MouvementStock extends CommonObject
 					$error = -2;
 				}
 			}
-
+			
 			// Calculate new PMP.
 			$newpmp=0;
 			if (! $error)
@@ -442,7 +443,6 @@ class MouvementStock extends CommonObject
 					$newpmp = $oldpmp;
 				}
 			}
-
 			// Update stock quantity
 			if (! $error)
 			{

@@ -97,7 +97,7 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -107,7 +107,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid =
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE fd.fk_code_ventilation > 0";
-$sql .= " AND f.entity IN (".getEntity('facture', 0).')';	// We don't share object for accountancy, we use source object sharing
+$sql .= " AND f.entity IN (".getEntity('invoice', 0).')';	// We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non common setup
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
@@ -195,7 +195,7 @@ if ($result) {
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
-		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code;		// close_code = 'replaced' for replacement invoices (not used in most european countries)
@@ -686,11 +686,11 @@ if (empty($action) || $action == 'view') {
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
-		print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
 		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-		else print '<a href="#" class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
+		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	}
 	print '</div>';
 

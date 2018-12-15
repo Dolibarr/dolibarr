@@ -107,7 +107,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock',
- *									'propal', 'supplier_proposal', 'facture', 'facture_fourn', 'payment_various',
+ *									'propal', 'supplier_proposal', 'invoice', 'facture_fourn', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
@@ -321,13 +321,18 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 					}
 				}
 			}
-			if (! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))	// If there is saved contextpage
+			// If there is saved contextpage, page or limit
+			if ($paramname == 'contextpage' && ! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))
 			{
-				if ($paramname == 'contextpage')
-				{
-					$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
-					//var_dump($paramname.' '.$out);
-				}
+				$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
+			}
+			elseif ($paramname == 'page' && ! empty($_SESSION['lastsearch_page_'.$relativepathstring]))
+			{
+				$out = $_SESSION['lastsearch_page_'.$relativepathstring];
+			}
+			elseif ($paramname == 'limit' && ! empty($_SESSION['lastsearch_limit_'.$relativepathstring]))
+			{
+				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
 		}
 		// Else, retreive default values if we are not doing a sort
@@ -3010,7 +3015,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
-				'skype','twitter','facebook'
+				'jabber','skype','twitter','facebook'
 			)
 		)) {
 			$fakey = $pictowithoutext;
@@ -3093,9 +3098,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
-			} elseif ($pictowithoutext == 'play') {
+			}
+			elseif ($pictowithoutext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'jabber') {
+				$fakey = 'fa-comment-o';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
@@ -5743,20 +5752,29 @@ function dol_textishtml($msg,$option=0)
  *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
  *  text1 txt  + text2 txt  => text1 + '\n' + text2
  *
- *  @param	string	$text1		Text 1
- *  @param	string	$text2		Text 2
- *  @param  bool	$forxml     false=Use <br> instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
- *  @return	string				Text 1 + new line + Text2
+ *  @param  string  $text1          Text 1
+ *  @param  string  $text2          Text 2
+ *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
+ *  @param  bool    $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml
  */
-function dol_concatdesc($text1,$text2,$forxml=false)
+function dol_concatdesc($text1,$text2,$forxml=false, $invert=false)
 {
-	$ret='';
-	$ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
-	$ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
-	$ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
-	return $ret;
+        if (!empty($invert))
+        {
+                $tmp = $text1;
+                $text1 = $text2;
+                $text2 = $tmp;
+        }
+        
+        $ret='';
+        $ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
+        $ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
+        $ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
+        return $ret;
 }
+
 
 
 /**

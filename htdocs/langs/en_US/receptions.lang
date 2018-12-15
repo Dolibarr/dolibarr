@@ -1,0 +1,70 @@
+# Dolibarr language file - Source file is en_US - receptions
+RefReception=Ref. reception
+Reception=Reception
+Receptions=Receptions
+AllReceptions=All Receptions
+Reception=Reception
+Receptions=Receptions
+ShowReception=Show Receptions
+Receivings=Delivery Receipts
+ReceptionsArea=Receptions area
+ListOfReceptions=List of receptions
+ReceptionMethod=Reception method
+LastReceptions=Latest %s receptions
+StatisticsOfReceptions=Statistics for receptions
+NbOfReceptions=Number of receptions
+NumberOfReceptionsByMonth=Number of receptions by month
+ReceptionCard=Reception card
+NewReception=New reception
+CreateReception=Create reception
+QtyShipped=Qty shipped
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Qty to ship
+QtyReceived=Qty received
+QtyInOtherReceptions=Qty in other receptions
+KeepToShip=Remain to ship
+OtherReceptionsForSameOrder=Other receptions for this order
+ReceptionsAndReceivingForSameOrder=Receptions and receipts for this order
+ReceptionsToValidate=Receptions to validate
+StatusReceptionCanceled=Canceled
+StatusReceptionDraft=Draft
+StatusReceptionValidated=Validated (products to ship or already shipped)
+StatusReceptionProcessed=Processed
+StatusReceptionDraftShort=Draft
+StatusReceptionValidatedShort=Validated
+StatusReceptionProcessedShort=Processed
+ReceptionSheet=Reception sheet
+ConfirmDeleteReception=Are you sure you want to delete this reception?
+ConfirmValidateReception=Are you sure you want to validate this reception with reference <b>%s</b>?
+ConfirmCancelReception=Are you sure you want to cancel this reception?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
+StatsOnReceptionsOnlyValidated=Statistics conducted on receptions only validated. Date used is date of validation of reception (planed delivery date is not always known).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Date delivery received
+SendReceptionByEMail=Send reception by EMail
+SendReceptionRef=Submission of reception %s
+ActionsOnReception=Events on reception
+LinkToTrackYourPackage=Link to track your package
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the order card.
+ReceptionLine=Reception line
+ProductQtyInCustomersOrdersRunning=Product quantity into open customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open suppliers orders
+ProductQtyInReceptionAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersReceptionAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse. 
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeReception=You must first validate the order before being able to make receptions.
+
+# Reception methods
+# ModelDocument
+DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

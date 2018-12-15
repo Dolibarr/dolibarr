@@ -57,7 +57,7 @@ $number = GETPOST('number');
 $idline = GETPOST('idline');
 $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay');
-$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facture where facnumber='(PROV-POS-" . $place . ")'";
+$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
 $row = $db->fetch_array($resql);
 $placeid = $row[0];
@@ -73,53 +73,49 @@ if (!$placeid) { $placeid = 0; // not necesary
 * Actions
 */
 
-if ($action == 'valid' && $user->rights->facture->creer) {
-    if ($pay == "cash") { $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-    } else
-    if ($pay == "card") { $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-    } else
-    if ($pay == "cheque") { $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
-    }
-    $now = dol_now();
-    $invoice = new Facture($db);
-    $invoice->fetch($placeid);
-    if (!empty($conf->stock->enabled) and $conf->global->CASHDESK_NO_DECREASE_STOCK != "1") { $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
-    } else { $invoice->validate($user);
-    }
+if ($action == 'valid' && $user->rights->facture->creer)
+{
+	if ($pay=="cash") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+	else if ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	else if ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+	$now=dol_now();
+	$invoice = new Facture($db);
+	$invoice->fetch($placeid);
+	if (! empty($conf->stock->enabled) and $conf->global->CASHDESK_NO_DECREASE_STOCK!="1") $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	else $invoice->validate($user);
+	// Add the payment
+	$payment=new Paiement($db);
+	$payment->datepaye=$now;
+	$payment->bank_account=$bankaccount;
+	$payment->amounts[$invoice->id]=$invoice->total_ttc;
+	
+  if ($pay=="cash") $payment->paiementid=4;
+	else if ($pay=="card") $payment->paiementid=6;
+	else if ($pay=="cheque") $payment->paiementid=7;
+	$payment->num_paiement=$invoice->ref;
 
-    // Add the payment
-
-    $payment = new Paiement($db);
-    $payment->datepaye = $now;
-    $payment->bank_account = $bankaccount;
-    $payment->amounts[$invoice->id] = $invoice->total_ttc;
-    if ($pay == "cash") { $payment->paiementid = 4;
-    } else
-    if ($pay == "card") { $payment->paiementid = 6;
-    } else
-    if ($pay == "cheque") { $payment->paiementid = 7;
-    }
-    $payment->num_paiement = $invoice->facnumber;
-    $payment->create($user);
-    $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
-    $invoice->set_paid($user);
+  $payment->create($user);
+	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+	
+  $invoice->set_paid($user);
 }
 
-if (($action == "addline" || $action == "freezone") and $placeid == 0) {
+if (($action=="addline" || $action=="freezone") && $placeid==0)
+{
+	// $place is id of POS, $placeid is id of invoice
+	if ($placeid==0)
+  {
+		$invoice = new Facture($db);
+		$invoice->socid=$conf->global->CASHDESK_ID_THIRDPARTY;
+		$invoice->date=dol_now();
+		$invoice->ref="(PROV-POS)";
+		$invoice->module_source = 'takepos';
+		$invoice->pos_source = (string) (empty($place)?'0':$place);
 
-    // $place is id of POS, $placeid is id of invoice
-
-    if ($placeid == 0) {
-        $invoice = new Facture($db);
-        $invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
-        $invoice->date = dol_now();
-        $invoice->ref = "(PROV-POS)";
-        $invoice->module_source = 'takepos';
-        $invoice->pos_source = (string) (empty($place)?'0':$place);
-        $placeid = $invoice->create($user);
-        $sql = "UPDATE " . MAIN_DB_PREFIX . "facture set facnumber='(PROV-POS-" . $place . ")' where rowid=" . $placeid;
-        $db->query($sql);
-    }
+		$placeid=$invoice->create($user);
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
 }
 
 if ($action == "addline") {
@@ -413,9 +409,25 @@ if ($placeid > 0) {
 }
 
 print '</table>';
-print '<p style="font-size:120%;" align="right"><b>' . $langs->trans('TotalTTC');
 
-if ($conf->global->TAKEPOS_BAR_RESTAURANT) { print " " . $langs->trans('Place') . " " . $place;
+print '<p style="font-size:120%;" align="right"><b>'.$langs->trans('TotalTTC');
+                                            
+if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
+
+print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';
+
+//if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY){
+    $soc = new Societe($db);
+    if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+    else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+    print '<p style="font-size:120%;" align="right">';
+    print $langs->trans("Customer").': '.$soc->name;
+    print '</p>';
+//}
+if ($action=="valid"){
+	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }
 print ': ' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '&nbsp;</b></p>';
 

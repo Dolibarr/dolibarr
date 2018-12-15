@@ -16,7 +16,7 @@
  */
 
 /**
- *    \file     htdocs/ticket/history.php
+ *    \file     htdocs/ticket/agenda.php
  *    \ingroup	ticket
  */
 

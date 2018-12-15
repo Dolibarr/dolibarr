@@ -414,6 +414,15 @@ class FormFile
 					$modellist=ModelePDFExpedition::liste_modeles($this->db);
 				}
 			}
+            elseif ($modulepart == 'reception')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
+					$modellist = ModelePdfReception::liste_modeles($this->db);
+				}
+            }
 			elseif ($modulepart == 'livraison')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;

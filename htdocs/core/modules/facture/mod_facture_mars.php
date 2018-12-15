@@ -99,9 +99,9 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$fayymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber LIKE '".$db->escape($this->prefixinvoice)."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -121,9 +121,9 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$fayymm='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -162,9 +162,9 @@ class mod_facture_mars extends ModeleNumRefFactures
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
 		$resql=$db->query($sql);
@@ -186,9 +186,9 @@ class mod_facture_mars extends ModeleNumRefFactures
     		else $num = sprintf("%04s",$max);
 
             $ref='';
-            $sql = "SELECT facnumber as ref";
+            $sql = "SELECT ref as ref";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
+            $sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);

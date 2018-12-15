@@ -77,14 +77,14 @@ ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
 ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
 
-delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber in ('(PROV)','ErrorBadMask'));
-delete from llx_facture where facnumber in ('(PROV)','ErrorBadMask');
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref in ('(PROV)','ErrorBadMask'));
+delete from llx_facture where ref in ('(PROV)','ErrorBadMask');
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_commande where ref in ('(PROV)','ErrorBadMask');
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_propal where ref in ('(PROV)','ErrorBadMask');
-delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber = '');
-delete from llx_facture where facnumber = '';
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref = '');
+delete from llx_facture where ref = '';
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref = '');
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');

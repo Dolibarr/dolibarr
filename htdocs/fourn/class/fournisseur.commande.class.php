@@ -3146,6 +3146,54 @@ class CommandeFournisseur extends CommonOrder
     	}
     	return 0;
     }
+	
+    /**
+     *	Load array this->receptions of lines of shipments with nb of products sent for each order line
+     *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
+     *
+     *	@param      int		$filtre_statut      Filter on shipment status
+     * 	@return     int                			<0 if KO, Nb of lines found if OK
+     */
+    function loadReceptions($filtre_statut=-1)
+    {
+        $this->receptions = array();
+
+        $sql = 'SELECT cd.rowid, cd.fk_product,';
+        $sql.= ' sum(cfd.qty) as qty';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as cfd,';
+        if ($filtre_statut >= 0) $sql.= ' '.MAIN_DB_PREFIX.'reception as e,';
+        $sql.= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
+        $sql.= ' WHERE';
+        if ($filtre_statut >= 0) $sql.= ' cfd.fk_reception = e.rowid AND';
+        $sql.= ' cfd.fk_commandefourndet = cd.rowid';
+        $sql.= ' AND cd.fk_commande =' .$this->id;
+        if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
+        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
+        $sql.= ' GROUP BY cd.rowid, cd.fk_product';
+        
+
+        dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                empty($this->receptions[$obj->rowid])?$this->receptions[$obj->rowid] = $obj->qty:$this->receptions[$obj->rowid] += $obj->qty;
+                $i++;
+            }
+            $this->db->free();
+			
+            return $num;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
 }
 
 

@@ -201,7 +201,7 @@ if (empty($conf) || ! is_object($conf))
 			<?php if ($can_validate == 1) { ?>
 
 				<!-- <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a> -->
-				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
+				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused classfortooltip"><?php echo $langs->trans('Delete') ?></a>
 
 			<?php } ?>
 		</div>

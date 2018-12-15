@@ -620,14 +620,10 @@ abstract class CommonObject
 		{
 			if ($this->skype) $out.=dol_print_socialnetworks($this->skype,$this->id,$object->id,'skype');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
+			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid,$this->id,$object->id,'jabber');
+			$outdone++;
 			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter,$this->id,$object->id,'twitter');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
 			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook,$this->id,$object->id,'facebook');
 			$outdone++;
 		}
@@ -1169,6 +1165,9 @@ abstract class CommonObject
 		if($this->element=='shipping' && $this->origin_id != 0) {
 			$id=$this->origin_id;
 			$element='commande';
+        } else if($this->element=='reception' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='order_supplier';
 		} else {
 			$id=$this->id;
 			$element=$this->element;
@@ -1413,6 +1412,7 @@ abstract class CommonObject
         // phpcs:enable
 		if ($this->origin == 'shipping') $this->origin = 'expedition';
 		if ($this->origin == 'delivery') $this->origin = 'livraison';
+        if ($this->origin == 'order_supplier') $this->origin = 'commandeFournisseur';
 
 		$origin = $this->origin;
 
@@ -2921,7 +2921,7 @@ abstract class CommonObject
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
 		if ($origin == 'invoice_template') $origin='facturerec';
-
+    	if ($origin == 'supplierorder') $origin='order_supplier';
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -3584,6 +3584,10 @@ abstract class CommonObject
 			{
 				if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
 				$totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }else if ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
+            {
+                if (empty($totalToShip)) $totalToShip=0;
+                $totalToShip+=$line->qty;   // defined for reception only
 			}
 
 			// Define qty, weight, volume, weight_units, volume_units
@@ -3596,10 +3600,14 @@ abstract class CommonObject
 			}
 
 			$weight = $line->weight ? $line->weight : 0;
+            ($weight==0 && !empty($line->product->weight))? $weight=$line->product->weight: 0;
 			$volume = $line->volume ? $line->volume : 0;
+			($volume==0 && !empty($line->product->volume))? $volume=$line->product->volume: 0;
 
 			$weight_units=$line->weight_units;
+			($weight_units==0 && !empty($line->product->weight_units))? $weight_units=$line->product->weight_units: 0;
 			$volume_units=$line->volume_units;
+			($volume_units==0 && !empty($line->product->volume_units))? $volume_units=$line->product->volume_units: 0;
 
 			$weightUnit=0;
 			$volumeUnit=0;
@@ -4196,6 +4204,11 @@ abstract class CommonObject
 			$productstatic->id = $line->fk_product;
 			$productstatic->ref = $line->ref;
 			$productstatic->type = $line->fk_product_type;
+            if(empty($productstatic->ref)){
+				$line->fetch_product();
+				$productstatic = $line->product;
+			}
+			
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
 			// Dates
@@ -4212,6 +4225,7 @@ abstract class CommonObject
 			}else {
 				$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			}
+			
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
@@ -5818,6 +5832,14 @@ abstract class CommonObject
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
 			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+			{
+            			list($class,$classfile)=explode(':',$param_list[0]);
+            			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php',1);
+            			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.$class.'_card.php',1);
+            			$out.='<a class="butActionNew" href="'.$url_path.'?action=create&backtopage='.$_SERVER['PHP_SELF'].'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+            			// TODO Add Javascript code to add input fields contents to new elements urls
+			}
 		}
 		elseif ($type == 'password')
 		{
@@ -6114,13 +6136,13 @@ abstract class CommonObject
 		{
 			$value_arr=explode(',',$value);
 			$value='';
-			if (is_array($value_arr))
+			if (is_array($value_arr) && count($value_arr)>0)
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
 					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}
+				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 			}
-			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 		elseif ($type == 'chkbxlst')
 		{

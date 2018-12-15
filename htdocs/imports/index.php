@@ -96,7 +96,7 @@ if (count($import->array_import_code))
 	//}
 	//else
 	//{
-	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
 	//}
 }
 print '</div>';

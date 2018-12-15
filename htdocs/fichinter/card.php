@@ -1644,7 +1644,7 @@ else if ($id > 0 || ! empty($ref))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 		    	// create intervention model
@@ -1663,7 +1663,7 @@ else if ($id > 0 || ! empty($ref))
 					if ($object->statut < Fichinter::STATUS_BILLED)
 					{
 						if ($user->rights->propal->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
-						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
 					}
 				}
 
@@ -1674,7 +1674,7 @@ else if ($id > 0 || ! empty($ref))
 					if ($object->statut < Fichinter::STATUS_BILLED)
 					{
 						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
-						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
 					}
 
 					if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1

@@ -18,9 +18,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/card.php
- * \ingroup		Advanced accountancy
- * \brief 		Card of accounting account
+ *  \file       htdocs/accountancy/admin/card.php
+ *  \ingroup    Advanced accountancy
+ *  \brief      Card of accounting account
  */
 
 require '../../main.inc.php';
@@ -388,13 +388,13 @@ else if ($id > 0 || $ref) {
 			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
 			} else {
-				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
 			}
 
 			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			} else {
-				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';
 			}
 
 			print '</div>';

@@ -94,6 +94,7 @@ PredefinedMailContentSendSupplierInvoice=__(Labdien)__\n\nLūdzu, pievienojiet r
 PredefinedMailContentSendShipping=__(Labdien)__\n\nLūdzu, pievienojiet piegādi __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Labdien)__\n\nLūdzu, pievienojiet intervenci __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Sveiki)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentUser=__(Labdien,)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=Jūs varat noklikšķināt uz zemāk esošās saites, lai veiktu maksājumu, ja tas vēl nav izdarīts.\n\n%s\n\n
 DemoDesc=Dolibarr ir kompakts ERP / CRM, kas atbalsta vairākus biznesa moduļus. Demonstrācija, kas demonstrē visus moduļus, nav jēga, jo šis scenārijs nekad nenotiek (pieejami vairāki simti). Tātad, ir pieejami vairāki demo profili.

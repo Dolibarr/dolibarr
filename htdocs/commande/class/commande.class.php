@@ -4023,9 +4023,9 @@ class OrderLine extends CommonOrderLine
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	 int  <0 si ko, >0 si ok
 	 */
-	function delete($user=null, $notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$error=0;
 

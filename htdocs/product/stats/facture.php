@@ -147,7 +147,7 @@ if ($id > 0 || ! empty($ref))
         elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.facnumber, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
+            $sql.= " f.ref, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
             $sql.= " d.rowid, d.total_ht as total_ht, d.qty";           // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE f.fk_soc = s.rowid";
-            $sql.= " AND f.entity IN (".getEntity('facture').")";
+            $sql.= " AND f.entity IN (".getEntity('invoice').")";
             $sql.= " AND d.fk_facture = f.rowid";
             $sql.= " AND d.fk_product =".$product->id;
             if (! empty($search_month))
@@ -239,7 +239,7 @@ if ($id > 0 || ! empty($ref))
                         $total_qty+=$objp->qty;
 
                         $invoicestatic->id=$objp->facid;
-						$invoicestatic->ref=$objp->facnumber;
+						$invoicestatic->ref=$objp->ref;
 						$societestatic->fetch($objp->socid);
 						$paiement = $invoicestatic->getSommePaiement();
 

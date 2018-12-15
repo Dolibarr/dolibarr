@@ -19,7 +19,7 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber, entity);
+ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_soc (fk_soc);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_author (fk_user_author);

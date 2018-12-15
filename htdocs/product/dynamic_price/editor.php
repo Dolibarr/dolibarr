@@ -219,7 +219,7 @@ print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
-	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused">'.$langs->trans('Delete').'</span></div>'."\n";
+	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 }
 else
 {

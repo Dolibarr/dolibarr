@@ -37,7 +37,7 @@ $place = GETPOST('place','int');
  * View
  */
 
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
 $row = $db->fetch_array ($resql);
 $placeid=$row[0];

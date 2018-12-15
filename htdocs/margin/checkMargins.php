@@ -49,7 +49,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder = "DESC";
-if (! $sortfield) $sortfield = 'f.facnumber';
+if (! $sortfield) $sortfield = 'f.ref';
 
 $startdate = $enddate = '';
 
@@ -185,16 +185,16 @@ $massactionbutton='';
 
 
 $sql = "SELECT";
-$sql .= " f.facnumber, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
+$sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
 $sql .= " ,d.fk_product";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND f.entity IN (" . getEntity('facture') . ") ";
+$sql .= " AND f.entity IN (" . getEntity('invoice') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
-if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);
+if ($search_ref) $sql.=natural_search('f.ref', $search_ref);
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -249,7 +249,7 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
 	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);

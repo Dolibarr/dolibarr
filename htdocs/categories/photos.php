@@ -189,7 +189,7 @@ if ($object->id)
 		}
 		else
 		{
-			print '<a class="butActionRefused hideonsmartphone" href="#">';
+			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
 	}

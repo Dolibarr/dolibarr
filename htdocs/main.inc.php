@@ -500,6 +500,17 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -568,6 +579,17 @@ if (! defined('NOLOGIN'))
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -604,11 +626,24 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+
+				$user->trigger_mesg=$user->error;
 			}
+
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -648,11 +683,24 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+
+				$user->trigger_mesg=$user->error;
 			}
+
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -684,17 +732,26 @@ if (! defined('NOLOGIN'))
 			    $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 			    //var_dump($relativepathstring);
 
-			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
+			    // We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
 			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
 			    }
-			    // We also save contextpage
 			    if (! empty($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    {
+			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit)
+			    {
+			    	$_SESSION['lastsearch_limit_'.$relativepathstring]=$_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 			    }
 		    }
 
@@ -741,6 +798,17 @@ if (! defined('NOLOGIN'))
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
+		// Call triggers for the "security events" log
+		$user->trigger_mesg = $loginfo;
+		// Call triggers
+		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+		if ($result < 0) {
+			$error++;
+		}
+		// End call triggers
+
 		// Hooks on successfull login
 		$action='';
 		$hookmanager->initHooks(array('login'));
@@ -752,7 +820,7 @@ if (! defined('NOLOGIN'))
 		{
 			$db->rollback();
 			session_destroy();
-			dol_print_error($db,'Error in some hooks afterLogin');
+			dol_print_error($db,'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
 		}
 		else
@@ -1015,7 +1083,7 @@ if (! function_exists("llxHeader"))
 
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title, 1);
+			left_menu('', $help_url, '', '', 1, $title, 1);		// $menumanager is retreived with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1908,7 +1976,8 @@ if (! function_exists("llxFooter"))
 	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
 	{
 		global $conf, $langs, $user, $object;
-		global $delayedhtmlcontent, $contextpage;
+		global $delayedhtmlcontent;
+		global $contextpage, $page, $limit;
 
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1943,8 +2012,16 @@ if (! function_exists("llxFooter"))
 		if (preg_match('/list\.php$/', $relativepathstring))
 		{
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
-			if (! empty($contextpage)) $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+
+			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
+
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
 		}
 
 		// Core error message

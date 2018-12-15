@@ -89,7 +89,7 @@ class box_factures extends ModeleBoxes
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT f.rowid as facid";
-            $sql.= ", f.facnumber, f.type, f.total as total_ht";
+            $sql.= ", f.ref, f.type, f.total as total_ht";
             $sql.= ", f.tva as total_tva";
             $sql.= ", f.total_ttc";
             $sql.= ", f.datef as df";
@@ -103,8 +103,8 @@ class box_factures extends ModeleBoxes
 			$sql.= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            else $sql.= " ORDER BY f.tms DESC, f.facnumber DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -123,7 +123,7 @@ class box_factures extends ModeleBoxes
                     $datem = $db->jdate($objp->tms);
 
                     $facturestatic->id = $objp->facid;
-                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
