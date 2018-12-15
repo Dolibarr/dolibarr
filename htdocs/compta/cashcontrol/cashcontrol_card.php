@@ -38,6 +38,7 @@ $id=GETPOST('id');
 if (!$user->rights->banque->configurer)
   accessforbidden();
 
+$id=GETPOST('id','int');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
@@ -55,15 +56,17 @@ if (! $sortfield) $sortfield='b.label';
 if (! $sortorder) $sortorder='ASC';
 
 
+
 /*
- * Add category
+ * Actions
  */
+
 if ($action=="start")
 {
     $cashcontrol= new CashControl($db);
     $cashcontrol->opening=GETPOST('opening');
-	if (GETPOST('posmodule')==0) $cashcontrol->posmodule="cashdesk";
-	else if (GETPOST('posmodule')==1) $cashcontrol->posmodule="takepos";
+	if (GETPOST('posmodule')=='cashdesk') 		$cashcontrol->posmodule="cashdesk";
+	else if (GETPOST('posmodule')=='takepos') 	$cashcontrol->posmodule="takepos";
 	$cashcontrol->posnumber=GETPOST('posnumber');
     $id=$cashcontrol->create($user);
 	$action="view";
@@ -76,7 +79,6 @@ if ($action=="close")
     $cashcontrol->close($user);
 	$action="view";
 }
-
 
 if ($action=="create")
 {
@@ -92,7 +94,7 @@ if ($action=="create")
     print '<input type="hidden" name="action" value="start">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("InitialBankBalance").'</td><td>'.$langs->trans("Module").'</td><td>'.$langs->trans("CashDesk").' ID</td><td>,</td>';
+    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("InitialBankBalance").'</td><td>'.$langs->trans("Module").'</td><td>'.$langs->trans("CashDesk").' ID</td><td></td>';
     print "</tr>\n";
     print '<tr class="oddeven">';
     print '<td>&nbsp;</td><td><input name="opening" type="text" size="10" value="0"></td>';
@@ -103,7 +105,7 @@ if ($action=="create")
     print '</table></form>';
 }
 
-if ($action=="view")
+if (empty($action) || $action=="view")
 {
 	$cashcontrol= new CashControl($db);
     $cashcontrol->fetch($id);
