@@ -144,7 +144,7 @@ if ($socid > 0)
     print '<br>';
 
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-    $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+    $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
     $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
     $sql.= " sum(d.total_ht) as selling_price,";						// may be negative or positive
     $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";				// always positive
@@ -159,7 +159,7 @@ if ($socid > 0)
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";
     if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-    $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type";
+    $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
     $sql.= $db->order($sortfield,$sortorder);
     // TODO: calculate total to display then restore pagination
     //$sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -177,7 +177,7 @@ if ($socid > 0)
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
-    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
+    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.ref","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
     	print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
     	print_liste_field_titre("SoldAmount",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print_liste_field_titre("PurchasedAmount",$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
@@ -211,7 +211,7 @@ if ($socid > 0)
     			print '<tr class="oddeven">';
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
-    			$invoicestatic->ref=$objp->facnumber;
+    			$invoicestatic->ref=$objp->ref;
     			print $invoicestatic->getNomUrl(1);
     			print "</td>\n";
     			print "<td align=\"center\">";

@@ -414,6 +414,15 @@ class FormFile
 					$modellist=ModelePDFExpedition::liste_modeles($this->db);
 				}
 			}
+            elseif ($modulepart == 'reception')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
+					$modellist = ModelePdfReception::liste_modeles($this->db);
+				}
+            }
 			elseif ($modulepart == 'livraison')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
@@ -1510,6 +1519,11 @@ class FormFile
 			include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$object_instance=new ExpenseReport($this->db);
 		}
+		else if ($modulepart == 'holiday')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+			$object_instance=new Holiday($this->db);
+		}
 
 		foreach($filearray as $key => $file)
 		{
@@ -1539,7 +1553,8 @@ class FormFile
 				if ($modulepart == 'project')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 				if ($modulepart == 'fichinter')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 				if ($modulepart == 'user')              { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
-				if ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
+				if ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+				if ($modulepart == 'holiday')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
 				if (! $id && ! $ref) continue;
 				$found=0;

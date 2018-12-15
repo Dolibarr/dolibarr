@@ -200,6 +200,7 @@ MigrationRemiseEntity=Mettre à jour le champ "entity" de la table "llx_societe_
 MigrationRemiseExceptEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise_except"
 MigrationUserRightsEntity=Mise à jour du champ entity de llx_user_rights
 MigrationUserGroupRightsEntity=Mise à jour du champ entity de llx_usergroup_rights
+MigrationUserPhotoPath=Migration of photo paths for users
 MigrationReloadModule=Rechargement du module %s
 MigrationResetBlockedLog=Réinitialiser le module BlockedLog pour l'algorithme v7
 ShowNotAvailableOptions=Afficher les options non disponibles

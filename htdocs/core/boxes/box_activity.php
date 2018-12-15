@@ -289,7 +289,7 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
-        		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
+        		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
         		$sql.= " AND f.fk_soc = s.rowid";
@@ -371,7 +371,7 @@ class box_activity extends ModeleBoxes
         	if ($refresh) {
         		$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
+        		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
         		$sql.= " AND f.fk_soc = s.rowid";
         		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=0";
         		$sql.= " GROUP BY f.fk_statut";

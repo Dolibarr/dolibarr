@@ -55,7 +55,7 @@ $_GET['optioncss'] = 'print';
  */
 
 if ($action=="change") {
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where facnumber='(PROV-POS-".$place.")'";
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
     ?>
     <script>

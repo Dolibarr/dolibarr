@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 
 restrictedArea($user,'banque');
 
-$langs->load("companies");
+$langs->load("accountancy");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 $date_start =GETPOST('date_start','alpha');
 $date_startDay= GETPOST('date_startday','int');
@@ -88,7 +88,7 @@ $filesarray=array();
 $result=false;
 if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
-    $sql="SELECT rowid as id, facnumber as ref,paye as paid,total_ttc,fk_soc,datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
+    $sql="SELECT rowid as id, ref as ref,paye as paid,total_ttc,fk_soc,datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id,ref, paye as paid, total_ttc, fk_soc,datef as date, 'InvoiceSupplier' as item  FROM ".MAIN_DB_PREFIX."facture_fourn";
@@ -218,98 +218,103 @@ if($result & $action=="dl"){
 /*
  *      View
  */
+
+
+llxHeader('',$title,$help_url);
+
+$h=0;
+$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
+$head[$h][1] = $langs->trans("AccountantFiles");
+$head[$h][2] = 'AccountantFiles';
+dol_fiche_head($head, 'AccountantFiles');
 $form = new Form($db);
 $userstatic=new User($db);
 $title=$langs->trans("ComptaFiles").' - '.$langs->trans("List");
-//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
-$help_url='EN:Module_Accounting|FR:Module_Compatibilite'; //FIXME
-llxHeader('',$title,$help_url);
 print   '<div><form name="searchfiles" action="?action=searchfiles'.$tail.'" method="POST" >'."\n\t\t\t";
-print    '<a>'.$langs->trans("dateStart").': '.$form->select_date($date_start,'date_start',0,0,0,"",1,1,1)."\n</a>";
-print    '<a>'.$langs->trans("dateStop").': '.$form->select_date($date_stop,'date_stop',0,0,0,"",1,1,1)."\n</a>";
-print   '<input class="butAction" type="submit" value="Go" /></form></div>'."\n\t\t";
-if (!empty($date_start) && !empty($date_stop))echo dol_print_date($date_start)." - ".dol_print_date($date_stop);
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-//if (! empty($arrayfields['f.datef']['checked']))
-print_liste_field_titre($arrayfields['date']['label'],$_SERVER["PHP_SELF"],"date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td align="right">'.$langs->trans("Ref").'</td>';
-print '<td>'.$langs->trans("File").'</td>';
-print '<td>'.$langs->trans("Paid").'</td>';
-print '<td align="right">'.$langs->trans("Debit").'</td>';
-print '<td align="right">'.$langs->trans("Credit").'</td>';
-print '<td align="right">'.$langs->trans("Balance").'</td>';
-print '</tr>';
-if ($result)
-{
-    $TData = dol_sort_array($filesarray, 'date', 'ASC');
-        if(empty($TData)) {
-                        print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-        } else {
-                        // Sort array by date ASC to calucalte balance
+print    '<a>'.$langs->trans("ReportPeriod").': '.$form->select_date($date_start,'date_start',0,0,0,"",1,1,1);
+print    ' - '.$form->select_date($date_stop,'date_stop',0,0,0,"",1,1,1)."\n</a>";
+print   '<input class="butAction" type="submit" value="'.$langs->trans("Refresh").'" /></form></div>'."\n\t\t";
+if (!empty($date_start) && !empty($date_stop)){
+    echo dol_print_date($date_start)." - ".dol_print_date($date_stop);
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($arrayfields['date']['label'],$_SERVER["PHP_SELF"],"date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td align="right">'.$langs->trans("Ref").'</td>';
+    print '<td>'.$langs->trans("File").'</td>';
+    print '<td>'.$langs->trans("Paid").'</td>';
+    print '<td align="right">'.$langs->trans("Debit").'</td>';
+    print '<td align="right">'.$langs->trans("Credit").'</td>';
+    print '<td align="right">'.$langs->trans("Balance").'</td>';
+    print '</tr>';
+    if ($result)
+    {
+        $TData = dol_sort_array($filesarray, 'date', 'ASC');
+            if(empty($TData)) {
+                            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
+            } else {
+                            // Sort array by date ASC to calucalte balance
 
-                        $totalDebit = 0;
-                        $totalCredit = 0;
-                        // Balance calculation
-                        $balance = 0;
-                        foreach($TData as &$data1) {
-                                if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
-                                     $data1['amount']=-$data1['amount'];
-                                }
-                                if ($data1['amount']>0){
-                               }else{
-                               }
-                               $balance += $data1['amount'];
-                                $data1['balance'] = $balance;
-                        }
-                // Display array
-                foreach($TData as $data) {
-                        $html_class = '';
-                        //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-                        //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
-                        print '<tr class="oddeven '.$html_class.'">';
-                        print "<td align=\"center\">";
-                        print dol_print_date($data['date'],'day');
-                        print "</td>\n";
-                        print '<td aling="left">'.$data['item'].'</td>';
-                         print '<td aling="left">'.$data['ref'].'</td>';
-                        print '<td> <a href='.$data['link'].">".$data['name']."</a></td>\n";
-                        print '<td aling="left">'.$data['paid'].'</td>';
-                        print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
-                        $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-                        print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
-                        $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
-                        // Balance
-                        print '<td align="right">'.price($data['balance'])."</td>\n";
-                        print "</tr>\n";
-                }
-                print '<tr class="liste_total">';
-                print '<td colspan="5">&nbsp;</td>';
-                print '<td align="right">'.price($totalDebit).'</td>';
-                print '<td align="right">'.price($totalCredit).'</td>';
-                print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-                print '<td></td>';
-                print "</tr>\n";
-                }
-        }
-print "</table>";
-print   '<form name="dl" action="?action=dl" method="POST" >'."\n\t\t\t";
+                            $totalDebit = 0;
+                            $totalCredit = 0;
+                            // Balance calculation
+                            $balance = 0;
+                            foreach($TData as &$data1) {
+                                    if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
+                                         $data1['amount']=-$data1['amount'];
+                                    }
+                                    if ($data1['amount']>0){
+                                   }else{
+                                   }
+                                   $balance += $data1['amount'];
+                                    $data1['balance'] = $balance;
+                            }
+                    // Display array
+                    foreach($TData as $data) {
+                            $html_class = '';
+                            //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+                            //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+                            print '<tr class="oddeven '.$html_class.'">';
+                            print "<td align=\"center\">";
+                            print dol_print_date($data['date'],'day');
+                            print "</td>\n";
+                            print '<td aling="left">'.$data['item'].'</td>';
+                             print '<td aling="left">'.$data['ref'].'</td>';
+                            print '<td> <a href='.$data['link'].">".$data['name']."</a></td>\n";
+                            print '<td aling="left">'.$data['paid'].'</td>';
+                            print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+                            $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+                            print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+                            $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+                            // Balance
+                            print '<td align="right">'.price($data['balance'])."</td>\n";
+                            print "</tr>\n";
+                    }
+                    print '<tr class="liste_total">';
+                    print '<td colspan="5">&nbsp;</td>';
+                    print '<td align="right">'.price($totalDebit).'</td>';
+                    print '<td align="right">'.price($totalCredit).'</td>';
+                    print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+                    print '<td></td>';
+                    print "</tr>\n";
+                    }
+            }
+    print "</table>";
+    print   '<form name="dl" action="?action=dl" method="POST" >'."\n\t\t\t";
 
-print   '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'dayxcard').'" />';
-print   '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
+    print   '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'dayxcard').'" />';
+    print   '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
 
-//print   '<input type="hidden" name="date_stopDay"  value="'.dol_print_date($date_stop, '%d').'" />';
-//print   '<input type="hidden" name="date_stopMonth"  value="'.dol_print_date($date_stop, '%m').'" />';
-//print   '<input type="hidden" name="date_stopYear"  value="'.dol_print_date($date_stop, '%Y').'" />';
+    //print   '<input type="hidden" name="date_stopDay"  value="'.dol_print_date($date_stop, '%d').'" />';
+    //print   '<input type="hidden" name="date_stopMonth"  value="'.dol_print_date($date_stop, '%m').'" />';
+    //print   '<input type="hidden" name="date_stopYear"  value="'.dol_print_date($date_stop, '%Y').'" />';
 
-//print   '<input type="hidden" name="date_startDay"  value="'.dol_print_date($date_start, '%d').'" />';
-//print   '<input type="hidden" name="date_startMonth"  value="'.dol_print_date($date_start, '%m').'" />';
-//print   '<input type="hidden" name="date_startYear"  value="'.dol_print_date($date_start, '%m').'" />';
+    //print   '<input type="hidden" name="date_startDay"  value="'.dol_print_date($date_start, '%d').'" />';
+    //print   '<input type="hidden" name="date_startMonth"  value="'.dol_print_date($date_start, '%m').'" />';
+    //print   '<input type="hidden" name="date_startYear"  value="'.dol_print_date($date_start, '%m').'" />';
 
-
-print   '<input class="butAction" type="submit" value="Download" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
-
+    print   '<input class="butAction" type="submit" value="'.$langs->trans("Download").'" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
+}
 
 
 llxFooter();

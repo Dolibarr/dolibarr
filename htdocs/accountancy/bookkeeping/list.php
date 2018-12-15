@@ -641,7 +641,6 @@ if ($num > 0)
 			$object->id = $line->id;
 			$object->piece_num = $line->piece_num;
 			print $object->getNomUrl(1,'',0,'',1);
-			//print '<a href="./card.php?piece_num=' . $line->piece_num . '&save_lastsearch_values=1">' . $line->piece_num . '</a>';
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

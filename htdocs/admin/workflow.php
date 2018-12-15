@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals"));
+$langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals","receptions"));
 
 if (! $user->admin) accessforbidden();
 
@@ -86,6 +86,8 @@ $workflowcodes=array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal','warning'=>''),
 	// Automatic classification supplier order
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order','warning'=>''),
+	//Automatic classification reception
+	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>30, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -138,6 +140,7 @@ foreach($workflowcodes as $key => $params)
 			if ($reg[1] == 'order') print ' - '.$langs->trans('Order');
 			if ($reg[1] == 'supplier_proposal') print ' - '.$langs->trans('SupplierProposal');
 			if ($reg[1] == 'supplier_order') print ' - '.$langs->trans('SupplierOrder');
+			if ($reg[1] == 'reception') print ' - '.$langs->trans('Reception');
 		}
 		else
 		{

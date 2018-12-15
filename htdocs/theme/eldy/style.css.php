@@ -907,8 +907,9 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    /* min-width: 170px; */
-    width: 170px;
+    min-width: 168px;
+    max-width: 169px;
+    /* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -1373,6 +1374,23 @@ div.secondcolumn div.box {
 	}
 }
 
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1599px)
+{
+    div.fichehalfleft-lg {
+    	float: none;
+    	width: auto;
+    }
+    div.fichehalfright-lg {
+    	float: none;
+    	width: auto;
+    }
+    
+    .fichehalfright-lg .ficheaddleft{
+    	padding-left:0;
+    }
+}
+
 /* For table into table into card */
 div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
@@ -1821,6 +1839,14 @@ foreach($mainmenuusedarray as $val)
 		print "	background-image: url(".$url.");\n";
 		print "}\n";
 	}
+}
+$j=0;
+while ($j++ < 4)
+{
+	$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+	print "div.mainmenu.generic".$j." {\n";
+	print "	background-image: url(".$url.");\n";
+	print "}\n";
 }
 // End of part to add more div class css
 ?>

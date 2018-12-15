@@ -78,16 +78,22 @@ if($action)
 	// Mode of stock increase
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 	|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'
-	|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+	|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'
+	|| $action == 'STOCK_CALCULATE_ON_RECEPTION'
+	|| $action == 'STOCK_CALCULATE_ON_RECEPTION_CLOSE')
 	{
 		//Use variable cause empty(GETPOST()) do not work with php version < 5.4
 		$valdispatch=GETPOST('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER','alpha');
 
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
+		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_RECEPTION", '','chaine',0,'',$conf->entity);
+		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_RECEPTION_CLOSE", '','chaine',0,'',$conf->entity);
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", '','chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_BILL','alpha'),'chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER','alpha'),'chaine',0,'',$conf->entity);
+		if ($action == 'STOCK_CALCULATE_ON_RECEPTION') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_RECEPTION", GETPOST('STOCK_CALCULATE_ON_RECEPTION','alpha'),'chaine',0,'',$conf->entity);
+		if ($action == 'STOCK_CALCULATE_ON_RECEPTION_CLOSE') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_RECEPTION_CLOSE", GETPOST('STOCK_CALCULATE_ON_RECEPTION_CLOSE','alpha'),'chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $valdispatch,'chaine',0,'',$conf->entity);
 		if (empty($valdispatch)) {
 			$res=dolibarr_set_const($db, "SUPPLIER_ORDER_USE_DISPATCH_STATUS", '','chaine',0,'',$conf->entity);
@@ -307,25 +313,58 @@ else
 print "</td>\n</tr>\n";
 $found++;
 
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
-print '<td align="right">';
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->reception->enabled))
 {
-    print "<form method=\"post\" action=\"stock.php\">";
+	print '<tr class="oddeven">';
+	print '<td width="60%">'.$langs->trans("StockOnReception").'</td>';
+	print '<td width="160" align="right">';
+
+	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
-	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1,$disabled);
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_RECEPTION\">";
+	print $form->selectyesno("STOCK_CALCULATE_ON_RECEPTION", $conf->global->STOCK_CALCULATE_ON_RECEPTION, 1, $disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n";
+
+	print "</td>\n</tr>\n";
+	$found++;
+
+
+print '<tr class="oddeven">';
+	print '<td width="60%">'.$langs->trans("StockOnReceptionOnClosing").'</td>';
+	print '<td width="160" align="right">';
+
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_RECEPTION_CLOSE\">";
+	print $form->selectyesno("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE, 1, $disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
+	print "</form>\n";
+
+	print "</td>\n</tr>\n";
+	$found++;
 }
 else
 {
-    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
+	print '<td align="right">';
+	if (! empty($conf->fournisseur->enabled))
+	{
+		print "<form method=\"post\" action=\"stock.php\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER\">";
+		print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1,$disabled);
+		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
+		print "</form>\n";
+	}
+	else
+	{
+		print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name"));
+	}
+	print "</td>\n</tr>\n";
+	$found++;
 }
-print "</td>\n</tr>\n";
-$found++;
 
 /*if (! $found)
 {

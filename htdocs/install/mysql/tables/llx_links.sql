@@ -15,7 +15,7 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 --
--- Actions commerciales
+-- Table to store external URL links to documents
 -- ========================================================================
 
 create table llx_links

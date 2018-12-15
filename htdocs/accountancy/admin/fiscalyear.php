@@ -117,7 +117,7 @@ if ($result)
 	}
 	else
 	{
-		$addbutton = '<a class="butActionRefused" href="#"><span class="valignmiddle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$addbutton = '<a class="butActionRefused classfortooltip" href="#"><span class="valignmiddle" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 
 	$title = $langs->trans('AccountingPeriods');

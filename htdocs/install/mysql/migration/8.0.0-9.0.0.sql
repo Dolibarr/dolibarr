@@ -147,9 +147,13 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
+-- DROP TABLE llx_emailcollector_emailcollectorfilter;
+-- DROP TABLE llx_emailcollector_emailcollectoraction;
+-- DROP TABLE llx_emailcollector_emailcollector;
 
 CREATE TABLE llx_emailcollector_emailcollector(
         -- BEGIN MODULEBUILDER FIELDS
