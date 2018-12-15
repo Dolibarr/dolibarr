@@ -12,6 +12,7 @@
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
  * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
+ * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user = GETPOST('search_user','int');
 $search_sale = GETPOST('search_sale','int');
-$search_day		= GETPOST('search_day','int');
+$search_day	= GETPOST('search_day','int');
 $search_month	= GETPOST('search_month','int');
 $search_year	= GETPOST('search_year','int');
 $search_day_lim		= GETPOST('search_day_lim','int');
@@ -358,7 +359,7 @@ $thirdpartystatic=new Societe($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as id, f.ref as ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
+$sql.= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
 $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
@@ -399,7 +400,7 @@ if ($search_user > 0)
 	$sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE f.fk_soc = s.rowid';
-$sql.= ' AND f.entity IN ('.getEntity('facture').')';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$db->escape($search_product_category);
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -450,34 +451,10 @@ if ($search_status != '-1' && $search_status != '')
 	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-	else if ($search_year > 0 && ! empty($search_day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-	$sql.= " AND date_format(f.datef, '%m') = '".$search_month."'";
-}
-else if ($search_year > 0)
-{
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
-}
-if ($search_month_lim > 0)
-{
-	if ($search_year_lim > 0 && empty($search_day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,$search_month_lim,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,$search_month_lim,false))."'";
-	else if ($search_year_lim > 0 && ! empty($search_day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_lim, $search_day_lim, $search_year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_lim, $search_day_lim, $search_year_lim))."'";
-	else
-		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($search_month_lim)."'";
-}
-else if ($search_year_lim > 0)
-{
-	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,12,false))."'";
-}
+$sql.= dolSqlDateFilter("f.datef", $search_day, $search_month, $search_year);
+$sql.= dolSqlDateFilter("f.date_lim_reglement",	$search_day_lim, $search_month_lim, $search_year_lim);
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_sale > 0)  $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
 	$sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
@@ -595,6 +572,7 @@ if ($resql)
 
 	$arrayofmassactions=array(
 		'validate'=>$langs->trans("Validate"),
+		'generate_doc'=>$langs->trans("Generate"),
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);

@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 9.0.0 or higher.
+-- when current version is 10.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -26,8 +26,6 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
-
-
 
 -- Missing in 9.0
 
@@ -57,3 +55,5 @@ create table llx_mailing_unsubscribe
 )ENGINE=innodb;
 
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
+
+ALTER TABLE llx_adherent ADD gender VARCHAR(10);

@@ -41,8 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->produit->enabled))
+if (!empty($conf->produit->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+}
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -516,7 +517,7 @@ if (empty($reshook))
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement') . ')';
 				$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
 				$sql.= ' AND pf.fk_paiementfourn = p.rowid';
-				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
+				$sql.= ' AND p.entity IN (' . getEntity('invoice').')';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -1222,7 +1223,7 @@ if (empty($reshook))
 				    $desc = $productsupplier->desc_supplier;
 				} else $desc = $productsupplier->description;
 
-				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
+				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
 				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
@@ -1990,7 +1991,7 @@ if ($action == 'create')
 	if (! empty($conf->multicurrency->enabled))
 	{
 		print '<tr>';
-		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
@@ -2519,7 +2520,7 @@ else
 			print '<tr>';
 			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Currency','multicurrency_code');
+			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2536,7 +2537,7 @@ else
 			print '<tr>';
 			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('CurrencyRate','multicurrency_tx');
+			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2614,17 +2615,17 @@ else
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
 			// Multicurrency Amount HT
-			print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+			print '<tr><td class="titlefieldmiddle">' . $form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0) . '</td>';
 			print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount VAT
-			print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+			print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0) . '</td>';
 			print '<td>' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount TTC
-			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+			print '<tr><td height="10">' . $form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0) . '</td>';
 			print '<td>' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 		}
@@ -3021,9 +3022,9 @@ else
 					else
 					{
 						if ($user->rights->fournisseur->facture->creer) {
-							print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
 						} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-							print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('ReOpen').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('ReOpen').'</span></div>';
 						}
 					}
 				}
@@ -3035,7 +3036,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><span class="butActionRefused">'.$langs->trans('SendMail').'</a></div>';
+					else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 	            // Make payments
@@ -3060,7 +3061,7 @@ else
 					{
 						if ($resteapayer == 0)
 						{
-							print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
+							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
 						}
 						else
 						{
@@ -3097,7 +3098,7 @@ else
 	                    }
 	                    else
 	                    {
-	                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+	                        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
 	                        print '>'.$langs->trans('Validate').'</a></div>';
 	                    }
 	                }
@@ -3130,20 +3131,20 @@ else
 	            {
 	            	//var_dump($isErasable);
 	            	if ($isErasable == -4) {
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -3) {	// Should never happen with supplier invoice
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -2) {	// Should never happen with supplier invoice
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable == -1) {
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
 	            	elseif ($isErasable <= 0)	// Any other cases
 	            	{
-	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
 	            	}
                     else
                     {

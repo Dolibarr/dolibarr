@@ -6,7 +6,8 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -519,42 +520,13 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
 if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db->escape($search_billed);
 if ($search_product_category > 0) $sql.= " AND cp.fk_categorie = ".$search_product_category;
-
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
-{
 	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
-}
 if ($search_status != '' && $search_status >= 0)
-{
 	$sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
-}
-if ($search_ordermonth > 0)
-{
-	if ($search_orderyear > 0 && empty($search_orderday))
-		$sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,$search_ordermonth,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,$search_ordermonth,false))."'";
-	else if ($search_orderyear > 0 && ! empty($search_orderday))
-		$sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_ordermonth, $search_orderday, $search_orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_ordermonth, $search_orderday, $search_orderyear))."'";
-	else
-		$sql.= " AND date_format(cf.date_commande, '%m') = '".$db->escape($search_ordermonth)."'";
-}
-else if ($search_orderyear > 0)
-{
-	$sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,12,false))."'";
-}
-if ($search_deliverymonth > 0)
-{
-	if ($search_deliveryyear > 0 && empty($search_deliveryday))
-		$sql.= " AND cf.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,$search_deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,$search_deliverymonth,false))."'";
-	else if ($search_deliveryyear > 0 && ! empty($search_deliveryday))
-		$sql.= " AND cf.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_eliverymonth, $search_deliveryday, $search_deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."'";
-	else
-		$sql.= " AND date_format(cf.date_livraison, '%m') = '".$db->escape($search_deliverymonth)."'";
-}
-else if ($search_deliveryyear > 0)
-{
-	$sql.= " AND cf.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,12,false))."'";
-}
+$sql.= dolSqlDateFilter("cf.date_commande",	$search_orderday, $search_ordermonth, $search_orderyear);
+$sql.= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
@@ -647,6 +619,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);

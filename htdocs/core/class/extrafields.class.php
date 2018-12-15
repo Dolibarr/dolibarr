@@ -1333,7 +1333,58 @@ class ExtraFields
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
-					} else {
+					} else if (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
+						// Pattern for word=$ID$
+						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
+						
+						// Removing space arount =, ( and )
+						$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+						
+						$nbPreg = 1;
+						// While we have parenthesis
+						while ($nbPreg!=0) {
+							// Init des compteurs
+							$nbPregRepl = $nbPregSel = 0;
+							// On retire toutes les parenthèses sans = avant
+							$InfoFieldList[4]=preg_replace( '#([^=])(\([^)^(]*(' . $word .   ')[^)^(]*\))#','$1 $3 ',$InfoFieldList[4],-1,$nbPregRepl);
+							// On retire les espaces autour des = et parenthèses
+							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+							// On retire toutes les parenthèses avec = avant
+							$InfoFieldList[4]=preg_replace(  '#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*(' . $word .   ')[^)^(]*\)#','$1 ',$InfoFieldList[4], -1, $nbPregSel);
+							// On retire les espaces autour des = et parenthèses
+							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+							
+							// Calcul du compteur général pour la boucle
+							$nbPreg = $nbPregRepl + $nbPregSel;
+						}
+						
+						// Si l'on a un AND ou un OR, avant ou après
+						preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
+						while(!empty($matchCondition[0])) {
+							// If the two sides differ but are not empty
+							if (! empty($matchCondition[1]) && ! empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3] ) {
+								// Nobody sain would do that without parentheses
+								$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+							}
+							else {
+								if (! empty($matchCondition[1])) {
+									$boolCond =(( $matchCondition[1] == "AND" )?' AND 1 ':' OR 0 ');
+									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond.$matchCondition[3],$InfoFieldList[4]);
+								}
+								else if (! empty($matchCondition[3])) {
+									$boolCond =(( $matchCondition[3] == "AND" )?' 1 AND ':' 0 OR');
+									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond,$InfoFieldList[4]);
+								}
+								else {
+									$InfoFieldList[4] = 1;
+								}
+							}
+							
+							// Si l'on a un AND ou un OR, avant ou après
+							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
+						}
+					}
+					else {
 						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
 					}
 

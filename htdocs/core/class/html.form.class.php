@@ -18,7 +18,8 @@
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1391,6 +1392,8 @@ class Form
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 *  This also set the number of contacts found into $this->num
 	 *
+	 * @since 9.0 Add afterSelectContactOptions hook
+	 *
 	 *	@param	int			$socid      	Id ot third party or 0 for all or -1 for empty list
 	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
 	 *	@param  string		$htmlname  	    Name of HTML field ('none' for a not editable field)
@@ -1410,7 +1413,7 @@ class Form
 	 */
 	function selectcontacts($socid, $selected='', $htmlname='contactid', $showempty=0, $exclude='', $limitto='', $showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array(), $moreparam='', $htmlid='', $multiple=false)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$hookmanager,$action;
 
 		$langs->load('companies');
 
@@ -1418,9 +1421,15 @@ class Form
 
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-        $out='';
+		$out='';
 
-		// On recherche les societes
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+
+		// We search third parties
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
 		if ($showsoc > 0) $sql.= " , s.nom as company";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
@@ -1505,6 +1514,18 @@ class Form
 				$out.= ($socid != -1) ? ($langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
 				$out.= '</option>';
 			}
+
+			$parameters = array(
+				'socid'=>$socid,
+				'htmlname'=>$htmlname,
+				'resql'=>$resql,
+				'out'=>&$out,
+				'showfunction'=>$showfunction,
+				'showsoc'=>$showsoc,
+			);
+
+			$reshook = $hookmanager->executeHooks( 'afterSelectContactOptions', $parameters, $this, $action );    // Note that $action and $object may have been modified by some hooks
+
 			if ($htmlname != 'none' || $options_only)
 			{
 				$out.= '</select>';
@@ -2037,20 +2058,20 @@ class Form
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
-		
+
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
-		
+
 		if (! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
 		{
 			//Product category
 			$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
 						FROM ".MAIN_DB_PREFIX."categorie_product
-						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
+						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid
 						LIMIT 1
 				) AS categorie_product_id ";
 		}
-		
+
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
 		{
@@ -2143,6 +2164,11 @@ class Form
 				if ($i > 0) $sql.=" AND ";
 				$sql.="(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
 				if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION))
+				{
+					$sql.=" OR p.description LIKE '".$db->escape($prefix.$crit)."%'";
+					if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.description LIKE '".$db->escape($prefix.$crit)."%'";
+				}
 				if (! empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql.=" OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
 				$sql.=")";
 				$i++;
@@ -2155,7 +2181,7 @@ class Form
 		{
 			$sql.= ' GROUP BY'.$selectFields;
 		}
-		
+
 		//Sort by category
 		if(! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
 		{
@@ -2169,7 +2195,7 @@ class Form
 		}
 
 		$sql.= $db->plimit($limit, 0);
-		
+
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -3559,7 +3585,7 @@ class Form
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
-	 * 	@return	void
+	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='',$showcurrency=0)
 	{
@@ -3567,6 +3593,7 @@ class Form
 		global $langs, $conf;
 
 		$langs->load("admin");
+		$num = 0;
 
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -3610,13 +3637,15 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print $langs->trans("NoActiveBankAccountDefined");
-				else print $langs->trans("NoBankAccountFound");
+				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		}
 		else {
 			dol_print_error($this->db);
 		}
+
+		return $num;
 	}
 
 	/**
@@ -3635,8 +3664,8 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$this->select_comptes($selected, $htmlname, 0, '', $addempty);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
+			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
 
@@ -6443,8 +6472,8 @@ class Form
 			$possiblelinks=array(
 				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal').')'),
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande').')'),
-				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
-				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
+				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
@@ -6712,8 +6741,22 @@ class Form
 
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 			// accesskey is for Mac:               CTRL + key for all browsers
-			$previous_ref = $object->ref_previous?'<a accesskey="p" title="'.$langs->trans("KeyboardShortcut").' ALT+p|ALT+SHIFT+p|CTRL+p" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref     = $object->ref_next?'<a accesskey="n" title="'.$langs->trans("KeyboardShortcut").' ALT+n|ALT+SHIFT+n|CTRL+n" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+			$stringforfirstkey = $langs->trans("KeyboardShortcut");
+			if ($conf->browser->name == 'chrome')
+			{
+				$stringforfirstkey .= ' ALT +';
+			}
+			elseif ($conf->browser->name == 'firefox')
+			{
+				$stringforfirstkey .= ' ALT + SHIFT +';
+			}
+			else
+			{
+				$stringforfirstkey .= ' CTL +';
+			}
+
+			$previous_ref = $object->ref_previous?'<a accesskey="p" title="'.$stringforfirstkey.' p" class="classfortooltip" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref     = $object->ref_next?'<a accesskey="n" title="'.$stringforfirstkey.' n" class="classfortooltip" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;

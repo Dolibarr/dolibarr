@@ -4403,7 +4403,7 @@ function migrate_usergroup_rights_entity($db,$langs,$conf)
  * @param	string		$newname	New name (relative to DOL_DATA_ROOT)
  * @return	void
  */
-function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
+function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
 {
     dolibarr_install_syslog("upgrade2::migrate_rename_directories");
 
@@ -4423,70 +4423,65 @@ function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
  * @param	Conf		$conf		Object conf
  * @return	void
  */
-function migrate_delete_old_files($db,$langs,$conf)
+function migrate_delete_old_files($db, $langs, $conf)
 {
-	$result=true;
+    $result = true;
 
-	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+    dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
-	// List of files to delete
-	$filetodeletearray=array(
-		DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
-		DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-		DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
-		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
-		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
-		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+    // List of files to delete
+    $filetodeletearray = array(
+        '/core/triggers/interface_demo.class.php',
+        '/core/menus/barre_left/default.php',
+        '/core/menus/barre_top/default.php',
+        '/core/modules/modComptabiliteExpert.class.php',
+        '/core/modules/modCommercial.class.php',
+        '/core/modules/modProduit.class.php',
+        '/core/modules/modSkype.class.php',
+        '/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+        '/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+        '/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
+        '/core/triggers/interface_modCommande_Ecotax.class.php',
+        '/core/triggers/interface_modCommande_fraisport.class.php',
+        '/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+        '/core/menus/smartphone/iphone.lib.php',
+        '/core/menus/smartphone/iphone_backoffice.php',
+        '/core/menus/smartphone/iphone_frontoffice.php',
+        '/core/menus/standard/auguria_backoffice.php',
+        '/core/menus/standard/auguria_frontoffice.php',
+        '/core/menus/standard/eldy_backoffice.php',
+        '/core/menus/standard/eldy_frontoffice.php',
+        '/core/modules/mailings/contacts2.modules.php',
+        '/core/modules/mailings/contacts3.modules.php',
+        '/core/modules/mailings/contacts4.modules.php',
+        '/core/modules/mailings/framboise.modules.php',
+        '/core/modules/mailings/dolibarr_services_expired.modules.php',
+        '/core/modules/mailings/peche.modules.php',
+        '/core/modules/mailings/poire.modules.php',
+        '/core/modules/mailings/kiwi.modules.php',
+        '/core/modules/facture/pdf_crabe.modules.php',
+        '/core/modules/facture/pdf_oursin.modules.php',
 
-		DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
-		DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
-		DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
-		DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
-		DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
-		DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php',
-		DOL_DOCUMENT_ROOT.'/support/online.php'
+        '/compta/facture/class/api_invoice.class.php',
+        '/commande/class/api_commande.class.php',
+        '/user/class/api_user.class.php',
+        '/product/class/api_product.class.php',
+        '/societe/class/api_contact.class.php',
+        '/societe/class/api_thirdparty.class.php',
+        '/support/online.php',
     );
 
-    foreach ($filetodeletearray as $filetodelete)
-    {
-        //print '<b>'.$filetodelete."</b><br>\n";
-        $result=1;
-        if (file_exists($filetodelete))
-        {
-            $result=dol_delete_file($filetodelete,0,0,0,null,true);
-            if (! $result)
-            {
+    foreach ($filetodeletearray as $filetodelete) {
+        //print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
+        $result = 1;
+        if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
+            $result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
+            if (! $result) {
                 $langs->load("errors");
-                print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
+                print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile", DOL_DOCUMENT_ROOT . $filetodelete);
                 print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
-            }
-            else
-			{
-                //print $langs->trans("FileWasRemoved",$filetodelete);
+            } else {
+                //print $langs->trans("FileWasRemoved", $filetodelete).'<br>';
             }
         }
     }
@@ -4501,27 +4496,24 @@ function migrate_delete_old_files($db,$langs,$conf)
  * @param	Conf		$conf		Object conf
  * @return	void
  */
-function migrate_delete_old_dir($db,$langs,$conf)
+function migrate_delete_old_dir($db, $langs, $conf)
 {
-    $result=true;
+    $result = true;
 
     dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
 
     // List of files to delete
     $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/terre',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/mercure'
+        DOL_DOCUMENT_ROOT.'/core/modules/facture/terre',
+        DOL_DOCUMENT_ROOT.'/core/modules/facture/mercure',
     );
 
-    foreach ($filetodeletearray as $filetodelete)
-    {
+    foreach ($filetodeletearray as $filetodelete) {
         //print '<b>'.$filetodelete."</b><br>\n";
-        if (file_exists($filetodelete))
-        {
-            $result=dol_delete_dir_recursive($filetodelete);
+        if (file_exists($filetodelete)) {
+            $result = dol_delete_dir_recursive($filetodelete);
         }
-        if (! $result)
-        {
+        if (! $result) {
             $langs->load("errors");
             print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
             print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';

@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ if (GETPOST("orphelins"))
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -151,7 +152,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -163,19 +164,7 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($month > 0)
-    {
-        if ($year > 0 && empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-        else if ($year > 0 && ! empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-        else
-        $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
-    }
-    else if ($year > 0)
-    {
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-    }
+    $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
     if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
