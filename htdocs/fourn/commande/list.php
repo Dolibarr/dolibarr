@@ -26,7 +26,7 @@
 /**
  *   \file       htdocs/fourn/commande/list.php
  *   \ingroup    fournisseur
- *   \brief      List of vendor orders
+ *   \brief      List of purchase orders
  */
 
 require '../../main.inc.php';
