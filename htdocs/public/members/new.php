@@ -591,11 +591,14 @@ print '</td></tr>';
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
-print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
+$addrRequired = $conf->global->MEMBER_ADDRESS_REQUIRED ? : 0;
+$addrLabelSuffix = $addrRequired ? ' <FONT COLOR="red">*</FONT>' : '';
+$addrFormAttr = $addrRequired ? ' required' : '';
+print '<tr><td>'.$langs->trans("Address").$addrLabelSuffix.'</td><td>'."\n";
+print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'"'.$addrFormAttr.'>'.dol_escape_htmltag(GETPOST('address')).'</textarea></td></tr>'."\n";
 // Zip / Town
-print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
-print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectcountry_id','state_id'), 6, 1);
+print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').$addrLabelSuffix.'</td><td>';
+print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town','selectcountry_id','state_id'), 6, 1, $addrFormAttr);
 print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode','selectcountry_id','state_id'), 0, 1);
 print '</td></tr>';

@@ -94,6 +94,7 @@ BlankSubscriptionForm=Formulaire d'auto-inscription publique
 BlankSubscriptionFormDesc=Dolibarr peut vous fournir un URL/site web public afin de permettre aux visiteurs externes de faire une demande d'inscription à la fondation. Si un module de paiement est actif, un formulaire de paiement sera également fourni automatiquement.
 EnablePublicSubscriptionForm=Activer le formulaire d'auto-inscription public du site
 ForceMemberType=Forcer le type d'adhérent
+RequireMemberAddress=Adresse obligatoire
 ExportDataset_member_1=Adhérents et adhésions
 ImportDataset_member_1=Adhérents
 LastMembersModified=Les %s derniers adhérents modifiés

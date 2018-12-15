@@ -56,6 +56,7 @@ if ($action == 'update')
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
+	$requireAddr=GETPOST('MEMBER_ADDRESS_REQUIRED');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
@@ -63,6 +64,7 @@ if ($action == 'update')
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
     if ($forcetype < 0) $res=dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE",$conf->entity);
     else                $res=dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE",$forcetype,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "MEMBER_ADDRESS_REQUIRED", $requireAddr,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -180,6 +182,14 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listetype)>1?1:0);
+	print "</td></tr>\n";
+
+	// Address required
+	print '<tr class="oddeven drag" id="trrequireaddr"><td>';
+	print $langs->trans("RequireMemberAddress");
+	print '</td><td width="60" align="right">';
+	$requireAddr = $conf->global->MEMBER_ADDRESS_REQUIRED ? : 0;
+	print $form->selectyesno("MEMBER_ADDRESS_REQUIRED", $requireAddr, 1);
 	print "</td></tr>\n";
 
 	// Amount

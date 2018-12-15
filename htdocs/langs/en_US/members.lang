@@ -94,6 +94,7 @@ BlankSubscriptionForm=Public self-subscription form
 BlankSubscriptionFormDesc=Dolibarr can provide you a public URL/website to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form may also be automatically provided.
 EnablePublicSubscriptionForm=Enable the public website with self-subscription form
 ForceMemberType=Force the member type
+RequireMemberAddress=Require address
 ExportDataset_member_1=Members and subscriptions
 ImportDataset_member_1=Members
 LastMembersModified=Latest %s modified members
