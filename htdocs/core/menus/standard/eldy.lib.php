@@ -1107,8 +1107,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_balance",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
-                                // Files
-				$newmenu->add("/compta/compta-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files",$langs->trans("AccountantFiles"),1,$user->rights->accounting->mouvements->lire);
+                                
+				// Files
+				if (! empty($conf->global->MAIN_FEATURES_LEVEL > 2))
+				{
+					$newmenu->add("/compta/compta-files.php?mainmenu=accountancy&amp;leftmenu=accountancy_files",$langs->trans("AccountantFiles"),1,$user->rights->accounting->mouvements->lire);
+				}
+				
 				// Reports
 				$langs->load("compta");
 
