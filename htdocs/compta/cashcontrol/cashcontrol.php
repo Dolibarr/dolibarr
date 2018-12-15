@@ -27,9 +27,8 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-$res=@include("../main.inc.php");
-if (! $res) $res=@include("../../main.inc.php");
-include_once 'class/cashcontrol.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 $langs->loadLangs(array("cashcontrol","install","cashdesk","admin"));
 
@@ -97,7 +96,7 @@ llxHeader();
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("DateCreationShort").'</td><td colspan="2">'.$langs->trans("DateEnd").'</td><td align=right>'.$langs->trans("Cash").'</td><td align=right>'.$langs->trans("PaymentTypeCB").'</td><td>'.$langs->trans("Status").'</td>';
     print "</tr>\n";
-	
+
 	$sql = "SELECT *";
 	$sql.= " FROM ";
 	$sql.= MAIN_DB_PREFIX."pos_cash_fence order by rowid DESC";
@@ -126,7 +125,7 @@ llxHeader();
 	} else {
 		//no hay
 	}
-	
+
     print '</table></form>';
 }
 
@@ -142,25 +141,25 @@ if ($action=="view")
     print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
-	
+
 	print '<tr><td class="nowrap">';
 	print $langs->trans("Code");
 	print '</td><td colspan="2">';
 	print $id;
 	print '</td></tr>';
-	
+
 	print '<tr><td class="nowrap">';
 	print $langs->trans("DateCreationShort");
 	print '</td><td colspan="2">';
 	print dol_print_date($cashcontrol->date_creation, 'dayhour');
 	print '</td></tr>';
-	
+
 	print '<tr><td class="nowrap">';
 	print $langs->trans("DateEnd");
 	print '</td><td colspan="2">';
 	print dol_print_date(strtotime($cashcontrol->year_close."-".$cashcontrol->month_close."-".$cashcontrol->day_close), 'day');
 	print '</td></tr>';
-	
+
 	print '<tr><td class="nowrap">';
 	print $langs->trans("Status");
 	print '</td><td colspan="2">';
@@ -177,11 +176,11 @@ if ($action=="view")
 	print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td colspan="3">';
 	print price($cashcontrol->opening);
 	print "</td></tr>";
-	
+
 	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td colspan="3">';
 	print $cashcontrol->posnumber;
 	print "</td></tr>";
-	
+
 	print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td colspan="3">';
 	print $cashcontrol->posmodule;
 	print "</td></tr>";
@@ -192,13 +191,15 @@ if ($action=="view")
     print '<div style="clear:both"></div>';
 
     dol_fiche_end();
-	
+
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">' . $langs->trans('PrintTicket') . '</a></div>';
 	if ($cashcontrol->status==1) print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
 	print '</div>';
-	
+
 	print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 }
 
+// End of page
 llxFooter();
+$db->close();

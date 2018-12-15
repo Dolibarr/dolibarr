@@ -2,7 +2,7 @@
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com> 
+ * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class CashControl // extends CommonObject
 	public $day_close;
 	public $posmodule;
 	public $posnumber;
-   
+
 
 	/**
 	 * Constructor
@@ -71,14 +71,14 @@ class CashControl // extends CommonObject
         $sql .= ", status";
 		$sql .= ", date_creation";
 		$sql .= ", posmodule";
-		$sql .= ", posnumber";   
+		$sql .= ", posnumber";
 		$sql .= ") VALUES (";
 		$sql .= $conf->entity;
 		$sql .= ", ".$this->opening;
         $sql .= ",1";
 		$sql .= ", now()";
 		$sql .= ", '".$this->posmodule."'";
-		$sql .= ", '".$this->posnumber."'";        
+		$sql .= ", '".$this->posnumber."'";
 		$sql .= ")";
 
 		$this->db->begin();
@@ -108,10 +108,13 @@ class CashControl // extends CommonObject
 		}
 	}
 
-	
-	
-	
-	
+	/**
+	 * close
+	 *
+	 * @param 	User 		$user		User
+	 * @param 	number 		$notrigger	No trigger
+	 * @return 	int						<0 if KO, >0 if OK
+	 */
 	public function close(User $user, $notrigger = 0)
 	{
 		global $conf;
@@ -123,7 +126,7 @@ class CashControl // extends CommonObject
 		$sql .= "SET";
 		$sql .= " day_close=DAYOFMONTH(NOW())";
 		$sql .= ", month_close=MONTH(NOW())";
-		$sql .= ", year_close=YEAR(NOW())";		
+		$sql .= ", year_close=YEAR(NOW())";
         $sql .= ", status=2";
 		$sql .= " where rowid=".$this->id;
 		$this->db->begin();
@@ -152,16 +155,13 @@ class CashControl // extends CommonObject
 			return $this->id;
 		}
 	}
-	
-	
-	
-	
+
 
 	/**
 	 * Load object in memory from database
 	 *
-	 * @param  int $id Id object
-	 * @return int <0 if KO, >0 if OK
+	 * @param  int 	$id 		Id object
+	 * @return int 				<0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -172,7 +172,7 @@ class CashControl // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."pos_cash_fence";
 		$sql .= " WHERE rowid = ".$id;
 		$sql .= " AND entity = ".$conf->entity;
-		
+
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
