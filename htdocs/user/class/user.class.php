@@ -422,45 +422,9 @@ class User extends CommonObject
 				return -2;
 			}
 
-			// Load user->default_values for user. TODO Save this in memcached ?
-			$sql = "SELECT rowid, entity, type, page, param, value";
-			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
-			$sql.= " WHERE entity IN (".$this->entity.",".$conf->entity.")";
-			$sql.= " AND user_id IN (0, ".$this->id.")";
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				while ($obj = $this->db->fetch_object($resql))
-				{
-					if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
-					{
-						// $obj->page is relative URL with or without params
-						// $obj->type can be 'filters', 'sortorder', 'createform', ...
-						// $obj->param is key or param
-						$pagewithoutquerystring=$obj->page;
-						$pagequeries='';
-						if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
-						{
-							$pagewithoutquerystring=$reg[1];
-							$pagequeries=$reg[2];
-						}
-						$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
-						//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
-					}
-				}
-				// Sort by key, so _noquery_ is last
-				if(!empty($this->default_values)) {
-					foreach($this->default_values as $a => $b)
-					{
-						foreach($b as $c => $d)
-						{
-							krsort($this->default_values[$a][$c]);
-						}
-					}
-				}
-				$this->db->free($resql);
-			}
-			else
+			$result = $this->loadDefaultValues();
+
+			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
 				return -3;
@@ -468,6 +432,62 @@ class User extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 *  Load default value in property ->default_values
+	 *
+	 *  @return int						> 0 if OK, < 0 if KO
+	 */
+	function loadDefaultValues()
+	{
+		global $conf;
+
+		// Load user->default_values for user. TODO Save this in memcached ?
+		$sql = "SELECT rowid, entity, type, page, param, value";
+		$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+		$sql.= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")";	// Entity of user (if defined) + current entity
+		$sql.= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")";							// User 0 (all) + me (if defined)
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
+				{
+					// $obj->page is relative URL with or without params
+					// $obj->type can be 'filters', 'sortorder', 'createform', ...
+					// $obj->param is key or param
+					$pagewithoutquerystring=$obj->page;
+					$pagequeries='';
+					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
+					{
+						$pagewithoutquerystring=$reg[1];
+						$pagequeries=$reg[2];
+					}
+					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
+					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
+				}
+			}
+			// Sort by key, so _noquery_ is last
+			if(!empty($this->default_values)) {
+				foreach($this->default_values as $a => $b)
+				{
+					foreach($b as $c => $d)
+					{
+						krsort($this->default_values[$a][$c]);
+					}
+				}
+			}
+			$this->db->free($resql);
+
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**

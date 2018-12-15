@@ -7150,7 +7150,7 @@ function printCommonFooter($zone='private')
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
 				print "\n";
-				print '/* JS CODE TO ENABLE to enable handler to switch left menu page (menuhider) */'."\n";
+				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
 				print 'jQuery(".menuhider").click(function() {';
 				print '  console.log("We click on .menuhider");'."\n";
 				//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
@@ -7160,9 +7160,9 @@ function printCommonFooter($zone='private')
 			}
 
 			// Management of focus and mandatory for fields
-			if ($action == 'create' || $action == 'edit')
+			if ($action == 'create' || $action == 'edit' || (empty($action) && (preg_match('/new\.php/', $_SERVER["PHP_SELF"]))))
 			{
-				print '/* Code js to manage focus and mandatory form fields */'."\n";
+				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
 				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
@@ -7191,8 +7191,10 @@ function printCommonFooter($zone='private')
 						{
 							foreach($defval as $paramkey => $paramval)
 							{
-								// Add property 'required' on input
+								// Set focus on field
 								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\']").focus();'."\n";		// Not really usefull, but we keep it in case of.
 							}
 						}
 					}
@@ -7221,6 +7223,7 @@ function printCommonFooter($zone='private')
 							{
 								// Add property 'required' on input
 								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								print 'jQuery("textarea[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
 								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
 							}
 						}
