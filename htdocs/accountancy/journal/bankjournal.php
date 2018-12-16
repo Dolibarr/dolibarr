@@ -373,13 +373,7 @@ if ($result) {
 					$paymentloanstatic->fk_loan = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentloanstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
-					$paymentloanstatic->fetch($paymentloanstatic->id);
-					$account_loan_capital = (! empty($paymentloanstatic->account_capital) ? $paymentvariousstatic->account_capital : 'NotDefined');	// NotDefined is a reserved word
-					$account_loan_interest = (! empty($paymentloanstatic->account_interest) ? $paymentvariousstatic->account_interest : 'NotDefined');	// NotDefined is a reserved word
-					$account_loan_insurance = (! empty($paymentloanstatic->account_insurance) ? $paymentvariousstatic->account_insurance : 'NotDefined');	// NotDefined is a reserved word
-					$tabtp[$obj->rowid][$account_capital] += $obj->capital;
-					$tabtp[$obj->rowid][$account_interest] += $obj->interest;
-					$tabtp[$obj->rowid][$account_insurance] += $obj->insurance;
+					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
 					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$accountLinestatic ->getNomUrl(1);
