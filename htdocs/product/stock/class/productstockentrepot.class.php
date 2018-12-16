@@ -157,13 +157,12 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param int    $fk_product Id product
-	 * @param int    $fk_entrepot  Id warehouse
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param int    $id  				Id object
+	 * @param int    $fk_product 		Id product
+	 * @param int    $fk_entrepot  		Id warehouse
+	 * @return int 						<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $fk_product, $fk_entrepot)
+	public function fetch($id, $fk_product=0, $fk_entrepot=0)
 	{
 		if(empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
 
@@ -171,23 +170,22 @@ class ProductStockEntrepot extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-
-
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if(!empty($id)) $sql .= ' WHERE t.rowid = ' . $id;
 		else $sql.= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$numrows = $this->db->num_rows($resql);
-			if ($numrows) {
+			if ($numrows)
+			{
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -198,8 +196,6 @@ class ProductStockEntrepot extends CommonObject
 				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$this->desiredstock = $obj->desiredstock;
 				$this->import_key = $obj->import_key;
-
-
 			}
 
 			// Retreive all extrafield
