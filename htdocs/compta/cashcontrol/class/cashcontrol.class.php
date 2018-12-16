@@ -87,6 +87,9 @@ class CashControl extends CommonObject
 	public $cheque;
 	public $card;
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATE = 1;
+
 
 	/**
 	 * Constructor
@@ -187,21 +190,16 @@ class CashControl extends CommonObject
 	 */
 	public function close(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
-		$sql.= "SET";
-		$sql.= " day_close=DAYOFMONTH(NOW())";
-		$sql.= ", month_close=MONTH(NOW())";
-		$sql.= ", year_close=YEAR(NOW())";
-        $sql.= ", status=2";
-		$sql.= " where rowid=".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
+		$sql.= " SET status = ".self::STATUS_VALIDATED;
+		$sql.= " WHERE rowid=".$this->id;
+
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::close", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -210,6 +208,16 @@ class CashControl extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			$this->context=array('operation'=>'close');
+
+			// Call trigger
+			$result=$this->call_trigger('CASHCONTROL_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
