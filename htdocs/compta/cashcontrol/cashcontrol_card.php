@@ -30,14 +30,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
-$langs->loadLangs(array("cashcontrol","install","cashdesk","admin"));
+$langs->loadLangs(array("cashcontrol","install","cashdesk","admin","banks"));
 
 $action=GETPOST('action','aZ09');
-$id=GETPOST('id');
-
-if (!$user->rights->banque->configurer)
-  accessforbidden();
-
 $id=GETPOST('id','int');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
@@ -55,6 +50,11 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='b.label';
 if (! $sortorder) $sortorder='ASC';
 
+if (! $user->rights->cashdesk->use && ! $user->rights->takepos->use)
+{
+	accessforbidden();
+}
+
 
 
 /*
@@ -63,13 +63,29 @@ if (! $sortorder) $sortorder='ASC';
 
 if ($action=="start")
 {
-    $cashcontrol= new CashControl($db);
-    $cashcontrol->opening=GETPOST('opening');
-	if (GETPOST('posmodule')=='cashdesk') 		$cashcontrol->posmodule="cashdesk";
-	else if (GETPOST('posmodule')=='takepos') 	$cashcontrol->posmodule="takepos";
-	$cashcontrol->posnumber=GETPOST('posnumber');
-    $id=$cashcontrol->create($user);
-	$action="view";
+	$error=0;
+	if (! GETPOST('posmodule','alpha') || GETPOST('posmodule','alpha') == '-1')
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
+		$action='create';
+		$error++;
+	}
+	if (GETPOST('opening','alpha') == '')
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
+		$action='create';
+		$error++;
+	}
+	if (! $error)
+	{
+		$cashcontrol= new CashControl($db);
+	    $cashcontrol->opening=GETPOST('opening');
+		if (GETPOST('posmodule')=='cashdesk') 		$cashcontrol->posmodule="cashdesk";
+		else if (GETPOST('posmodule')=='takepos') 	$cashcontrol->posmodule="takepos";
+		$cashcontrol->posnumber=GETPOST('posnumber');
+	    $id=$cashcontrol->create($user);
+		$action="view";
+	}
 }
 
 if ($action=="close")
@@ -96,12 +112,58 @@ if ($action=="create")
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
     print '<td>'.$langs->trans("CashDesk").' ID</td>';
+    print '<td>'.$langs->trans("Year").'</td>';
+    print '<td>'.$langs->trans("Month").'</td>';
+    print '<td>'.$langs->trans("Day").'</td>';
     print '<td>'.$langs->trans("InitialBankBalance").'</td>';
     print '<td></td>';
     print "</tr>\n";
+
+    $now=dol_now();
+    $syear = dol_print_date($now, "%Y");
+    $smonth = dol_print_date($now, "%m");
+    $sday = dol_print_date($now, "%d");
+
     print '<tr class="oddeven">';
-	print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, 1).'</td>';
+    print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, 1, (count($arrayofposavailable)>1?1:0)).'</td>';
 	print '<td><input name="posnumber" type="text" class="maxwidth50" value="0"></td>';
+	// Year
+	print '<td>';
+	$retstring='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
+
+	for ($year = $syear - 10; $year < $syear + 10 ; $year++)
+	{
+		$retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected':'').'>'.$year.'</option>';
+	}
+	$retstring.="</select>\n";
+	print $retstring;
+	print '</td>';
+	// Month
+	print '<td>';
+	$retstring='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'month" name="'.$prefix.'month">';
+	for ($month = 1 ; $month <= 12 ; $month++)
+	{
+		$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
+		$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
+		$retstring.="</option>";
+	}
+	$retstring.="</select>";
+	print $retstring;
+	print '</td>';
+	// Day
+	print '<td>';
+	$retstring='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
+	if ($emptydate || $set_time == -1)
+	{
+		$retstring.='<option value="0" selected>&nbsp;</option>';
+	}
+	for ($day = 1 ; $day <= 31; $day++)
+	{
+		$retstring.='<option value="'.$day.'"'.($day == $sday ? ' selected':'').'>'.$day.'</option>';
+	}
+	$retstring.="</select>";
+	print $retstring;
+	print '</td>';
 	print '<td><input name="opening" type="text" class="maxwidth100" value=""></td>';
 	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Start").'"></td>';
     print '</tr>';
@@ -119,47 +181,48 @@ if (empty($action) || $action=="view")
 	print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
-	print '<tr><td class="nowrap">';
-	print $langs->trans("Code");
-	print '</td><td colspan="2">';
+	print '<tr><td class="tdfieldcreate nowrap">';
+	print $langs->trans("Ref");
+	print '</td><td>';
 	print $id;
 	print '</td></tr>';
 
-	print '<tr><td class="nowrap">';
-	print $langs->trans("DateCreationShort");
-	print '</td><td colspan="2">';
-	print dol_print_date($cashcontrol->date_creation, 'dayhour');
-	print '</td></tr>';
+	print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td>';
+	print $cashcontrol->posmodule;
+	print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td>';
+	print price($cashcontrol->opening);
+	print "</td></tr>";
 
 	print '<tr><td class="nowrap">';
 	print $langs->trans("DateEnd");
-	print '</td><td colspan="2">';
-	print dol_print_date(strtotime($cashcontrol->year_close."-".$cashcontrol->month_close."-".$cashcontrol->day_close), 'day');
+	print '</td><td>';
+	print $cashcontrol->year_close."-".$cashcontrol->month_close."-".$cashcontrol->day_close;
 	print '</td></tr>';
 
 	print '<tr><td class="nowrap">';
 	print $langs->trans("Status");
-	print '</td><td colspan="2">';
+	print '</td><td>';
 	if ($cashcontrol->status==1) print $langs->trans("Opened");
 	if ($cashcontrol->status==2) print $langs->trans("Closed");
 	print '</td></tr>';
 
 	print '</table>';
     print '</div>';
+
     print '<div class="fichehalfright"><div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
-	print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td colspan="3">';
-	print price($cashcontrol->opening);
-	print "</td></tr>";
+    print '<tr><td class="nowrap">';
+    print $langs->trans("DateCreationShort");
+    print '</td><td>';
+    print dol_print_date($cashcontrol->date_creation, 'dayhour');
+    print '</td></tr>';
 
-	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td colspan="3">';
+	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
 	print $cashcontrol->posnumber;
-	print "</td></tr>";
-
-	print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td colspan="3">';
-	print $cashcontrol->posmodule;
 	print "</td></tr>";
 
 	print "</table>\n";
