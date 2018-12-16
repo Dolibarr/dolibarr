@@ -150,8 +150,6 @@ if ($action=="create" || $action=="start")
 	{
 		// Calculate $initialbalanceforterminal and $theoricalamountforterminal for terminal 0
 		// TODO
-
-
 	}
 
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
