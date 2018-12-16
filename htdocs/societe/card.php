@@ -1037,7 +1037,7 @@ else
         $linkback="";
         print load_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
-        if (! empty($conf->use_javascript_ajax))
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
         {
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
