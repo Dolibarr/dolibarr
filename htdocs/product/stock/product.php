@@ -131,23 +131,18 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 
 		$pse = new ProductStockEntrepot($db);
 		if($pse->fetch(0, $id, GETPOST('fk_entrepot')) > 0) {
-
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
 			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
-
 		} else {
-
 			// Create
 			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
 			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
-
 		}
-
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -161,9 +156,7 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 	$pse = new ProductStockEntrepot($db);
 	$pse->fetch(GETPOST('fk_productstockwarehouse','int'));
 	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
-
 	$action = '';
-
 }
 
 // Set stock limit
@@ -916,7 +909,6 @@ if ($resql)
 			}
 		}
 		$i++;
-
 	}
 }
 else dol_print_error($db);
