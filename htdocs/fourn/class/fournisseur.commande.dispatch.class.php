@@ -187,9 +187,9 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
-		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->fk_reception."'")."";
+		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->db->escape($this->fk_reception)."'")."";
 		$sql.= ")";
-		
+
 		$this->db->begin();
 
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
@@ -211,7 +211,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	            //// End call triggers
 			}
         }
-		
+
 		// Actions on extra fields (by external module or standard code)
 		// TODO le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('commandefournisseurdispatchdao'));
@@ -222,7 +222,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
-				
+
 				if ($result < 0)
 				{
 					$error++;
