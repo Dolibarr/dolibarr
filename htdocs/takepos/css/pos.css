@@ -135,10 +135,10 @@ p.description_content{
 	}
 	div.description{
 		font-size: 15px;
-	}	
+	}
 	.invoice{
 		font-size: 14px;
-	}	
+	}
 }
 
 @media (max-width: 891px) and (min-width: 386px) {
@@ -156,7 +156,7 @@ p.description_content{
 	}
 	.invoice{
 		font-size: 12px;
-	}	
+	}
 }
 
 @media screen and (max-width: 385px){
@@ -174,5 +174,5 @@ p.description_content{
 	}
 	.invoice{
 		font-size: 10px;
-	}	
+	}
 }
