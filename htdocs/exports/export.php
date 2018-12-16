@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
@@ -123,14 +123,14 @@ $entitytolang = array(
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $array_filtervalue=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
-$datatoexport=GETPOST("datatoexport");
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$step=GETPOST("step")?GETPOST("step"):1;
-$export_name=GETPOST("export_name");
-$hexa=GETPOST("hexa");
-$exportmodelid=GETPOST("exportmodelid");
-$field=GETPOST("field");
+$datatoexport=GETPOST("datatoexport","aZ09");
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$step=GETPOST("step","int")?GETPOST("step","int"):1;
+$export_name=GETPOST("export_name","alphanohtml");
+$hexa=GETPOST("hexa","alpha");
+$exportmodelid=GETPOST("exportmodelid","int");
+$field=GETPOST("field","alpa");
 
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
