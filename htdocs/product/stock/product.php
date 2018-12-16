@@ -83,7 +83,7 @@ if ($id > 0 || ! empty($ref))
 
 }
 
-if(empty($id) && !empty($object->id)) $id = $object->id; 
+if(empty($id) && !empty($object->id)) $id = $object->id;
 
 $modulepart='product';
 
@@ -130,7 +130,7 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	if($maj_ok) {
 
 		$pse = new ProductStockEntrepot($db);
-		if($pse->fetch('', $id, GETPOST('fk_entrepot')) > 0) {
+		if($pse->fetch(0, $id, GETPOST('fk_entrepot')) > 0) {
 
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
@@ -159,7 +159,7 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 {
 
 	$pse = new ProductStockEntrepot($db);
-	$pse->fetch(GETPOST('fk_productstockwarehouse'));
+	$pse->fetch(GETPOST('fk_productstockwarehouse','int'));
 	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
 
 	$action = '';
@@ -989,8 +989,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 
 	print "</table>";
 
-	if (!empty($user->rights->produit->creer)){ 
-	    print '</form>'; 
+	if (!empty($user->rights->produit->creer)){
+	    print '</form>';
 	}
 }
 
