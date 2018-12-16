@@ -94,13 +94,16 @@ if ($action=="create")
     print '<input type="hidden" name="action" value="start">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("InitialBankBalance").'</td><td>'.$langs->trans("Module").'</td><td>'.$langs->trans("CashDesk").' ID</td><td></td>';
+    print '<td>'.$langs->trans("Module").'</td>';
+    print '<td>'.$langs->trans("CashDesk").' ID</td>';
+    print '<td>'.$langs->trans("InitialBankBalance").'</td>';
+    print '<td></td>';
     print "</tr>\n";
     print '<tr class="oddeven">';
-    print '<td>&nbsp;</td><td><input name="opening" type="text" size="10" value="0"></td>';
 	print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, 1).'</td>';
-	print '<td><input name="posnumber" type="text" size="10" value="0"></td>';
-    print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Start").'"></td>';
+	print '<td><input name="posnumber" type="text" class="maxwidth50" value="0"></td>';
+	print '<td><input name="opening" type="text" class="maxwidth100" value=""></td>';
+	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Start").'"></td>';
     print '</tr>';
     print '</table></form>';
 }
