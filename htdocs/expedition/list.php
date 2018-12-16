@@ -69,6 +69,8 @@ $pagenext = $page + 1;
 
 $viewstatut=GETPOST('viewstatut');
 
+$object = new Expedition($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
 $extrafields = new ExtraFields($db);
