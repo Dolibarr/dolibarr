@@ -86,7 +86,7 @@ $formproduct=new FormProduct($db);
 llxHeader('',$langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CashDeskSetup").' (SimplePOS)',$linkback,'title_setup');
 print '<br>';
 
 
@@ -95,9 +95,28 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
 
+if (! empty($conf->service->enabled))
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("CashdeskShowServices");
+	print '<td colspan="2">';
+	print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+	print "</td></tr>\n";
+
+	print '</table>';
+
+	print '<br>';
+}
+
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
@@ -106,19 +125,19 @@ print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.cli
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",1);
 	print '</td></tr>';
 
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",1);
 	print '</td></tr>';
 
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",1);
@@ -127,7 +146,7 @@ if (! empty($conf->banque->enabled))
 
 if (! empty($conf->stock->enabled))
 {
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
@@ -144,7 +163,7 @@ if (! empty($conf->stock->enabled))
 
 	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
 
-	
+
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (! $disabled)
@@ -157,15 +176,6 @@ if (! empty($conf->stock->enabled))
 		print $langs->trans("StockDecreaseForPointOfSaleDisabled");
 	}
 	print '</td></tr>';
-}
-
-if (! empty($conf->service->enabled))
-{
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';
-    print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
-    print "</td></tr>\n";
 }
 
 // Use Dolibarr Receipt Printer

@@ -55,19 +55,19 @@ class CashControl extends CommonObject
 	public $picto = 'bank';
 
 	public $fields=array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 		'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
-		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>20),
+		'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>19),
+		'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>20),
+		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
 		'opening' =>array('type'=>'double(24,8)', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
 		'cash' =>array('type'=>'double(24,8)', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
-		//'card' =>array('type'=>'double(24,8)', 'label'=>'Card', 'enabled'=>1, 'visible'=>1, 'position'=>35),
-		'cheque' =>array('type'=>'double(24,8)', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>35),
-		'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>50),
+		'cheque' =>array('type'=>'double(24,8)', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
+		'card' =>array('type'=>'double(24,8)', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
+		'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>50),
 		'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55),
-		'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>60),
-		'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>65),
-		'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>70),
+		'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
@@ -140,6 +140,9 @@ class CashControl extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'pos_cash_fence SET ref = rowid where rowid = '.$this->id;
+			$this->db->query($sql);
 		}
 
 		// Commit or rollback
