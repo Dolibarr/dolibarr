@@ -125,8 +125,8 @@ class CashControl extends CommonObject
 		$sql .= ", ".$this->opening;
         $sql .= ", 0";										// Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
-		$sql .= ", '".$this->posmodule."'";
-		$sql .= ", '".$this->posnumber."'";
+		$sql .= ", '".$this->db->escape($this->posmodule)."'";
+		$sql .= ", '".$this->db->escape($this->posnumber)."'";
 		$sql .= ")";
 
 		$this->db->begin();
