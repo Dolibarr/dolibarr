@@ -907,9 +907,9 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    min-width: 170px;
-    max-wdith: 171px;
-    /* width: 170px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
+    min-width: 168px;
+    max-width: 169px;
+    /* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
