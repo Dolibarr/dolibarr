@@ -107,12 +107,6 @@ if (in_array($modulepart, array('facture_paiement','unpaid')))
  * View
  */
 
-// Define attachment (attachment=true to force choice popup 'open'/'save as')
-$attachment = true;
-if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
-if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-
 // If we have a hash public (hashp), we guess the original_file.
 if (! empty($hashp))
 {
@@ -154,6 +148,12 @@ if (! empty($hashp))
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
 	}
 }
+
+// Define attachment (attachment=true to force choice popup 'open'/'save as')
+$attachment = true;
+if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
+if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
 // Define mime type
 $type = 'application/octet-stream';
