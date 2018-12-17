@@ -1845,6 +1845,7 @@ WithDolTrackingID=Dolibarr Tracking ID found
 WithoutDolTrackingID=Dolibarr Tracking ID not found
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
+ECMAutoTree=Show automatic ECM tree
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
