@@ -141,11 +141,16 @@ elseif ($action=="add")
 
 if ($action=="close")
 {
-	$object->id=$id;
+	$object->fetch($id);
+
     $result = $object->valid($user);
 	if ($result <= 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
+	else
+	{
+		setEventMessages($langs->trans("CashFenceDone"), null);
 	}
 
     $action="view";
@@ -284,6 +289,11 @@ if (empty($action) || $action=="view")
 
     llxHeader('', $langs->trans("CashControl"));
 
+    $head=array();
+    $head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
+    $head[0][1] = $langs->trans("Card");
+    $head[0][2] = 'cashcontrol';
+
     dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'cashcontrol');
 
     $linkback = '<a href="' . DOL_URL_ROOT . '/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
@@ -299,7 +309,7 @@ if (empty($action) || $action=="view")
 	print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
-	print '<tr><td class="tdfieldcreate nowrap">';
+	print '<tr><td class="titlefield nowrap">';
 	print $langs->trans("Ref");
 	print '</td><td>';
 	print $id;
@@ -309,8 +319,8 @@ if (empty($action) || $action=="view")
 	print $object->posmodule;
 	print "</td></tr>";
 
-	print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td>';
-	print price($object->opening);
+	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
+	print $object->posnumber;
 	print "</td></tr>";
 
 	print '<tr><td class="nowrap">';
@@ -326,15 +336,26 @@ if (empty($action) || $action=="view")
 	print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
-    print '<tr><td class="nowrap">';
+    print '<tr><td class="titlefield nowrap">';
     print $langs->trans("DateCreationShort");
     print '</td><td>';
     print dol_print_date($object->date_creation, 'dayhour');
     print '</td></tr>';
 
-	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
-	print $object->posnumber;
+    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td>';
+    print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
+    print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("Cash").'</td><td>';
+	print price($object->cash, 0, $langs, 1, -1, -1, $conf->currency);
 	print "</td></tr>";
+	print '<tr><td valign="middle">'.$langs->trans("Cheque").'</td><td>';
+	print price($object->cheque, 0, $langs, 1, -1, -1, $conf->currency);
+	print "</td></tr>";
+	print '<tr><td valign="middle">'.$langs->trans("Card").'</td><td>';
+	print price($object->card, 0, $langs, 1, -1, -1, $conf->currency);
+	print "</td></tr>";
+
 
 	print "</table>\n";
     print '</div>';
