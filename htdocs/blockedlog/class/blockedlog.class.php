@@ -172,6 +172,10 @@ class BlockedLog
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
+
+		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
+		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || ! empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE']='logCASHCONTROL_VALIDATE';
 	}
 
 	/**
@@ -270,6 +274,17 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+		else if($this->element === 'cashcontrol') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+
+			$object = new CashControl($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
 		else if ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
@@ -351,6 +366,10 @@ class BlockedLog
 		{
 			$this->date_object = $object->dateh;
 		}
+		elseif ($object->element=='cashcontrol')
+		{
+			$this->date_object = $object->date_creation;
+		}
 		else {
 			$this->date_object = $object->date;
 		}
@@ -364,7 +383,12 @@ class BlockedLog
 
 		// Set object_data
 		$this->object_data=new stdClass();
-		$arrayoffieldstoexclude = array('table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','modelpdf','table_element_line','linkedObjectsIds','linkedObjects','fk_delivery_address');
+		$arrayoffieldstoexclude = array(
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf',
+			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
+			'linkedObjectsIds','linkedObjects','fk_delivery_address',
+			'context'
+		);
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();

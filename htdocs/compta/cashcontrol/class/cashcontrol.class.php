@@ -32,7 +32,7 @@ class CashControl extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'CashControl';
+	public $element = 'cashcontrol';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -55,29 +55,29 @@ class CashControl extends CommonObject
 	public $picto = 'bank';
 
 	public $fields=array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
-		'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
-		'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>19),
-		'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>20),
-		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
-		'opening' =>array('type'=>'double(24,8)', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
-		'cash' =>array('type'=>'double(24,8)', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
-		'cheque' =>array('type'=>'double(24,8)', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
-		'card' =>array('type'=>'double(24,8)', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
-		'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>50),
-		'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55),
-		'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
+	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>10),
+	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
+	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
+	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>19),
+	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>20),
+	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
+	'opening' =>array('type'=>'double(24,8)', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
+	'cash' =>array('type'=>'double(24,8)', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
+	'cheque' =>array('type'=>'double(24,8)', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
+	'card' =>array('type'=>'double(24,8)', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
+	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnul'=>1, 'position'=>50),
+	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55),
+	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
+	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
+	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
+	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
 	);
 
 	public $id;
 	public $opening;
 	public $status;
-	public $date_creation;
 	public $year_close;
 	public $month_close;
 	public $day_close;
@@ -86,9 +86,12 @@ class CashControl extends CommonObject
 	public $cash;
 	public $cheque;
 	public $card;
+	public $date_valid;
+	public $date_creation;
+	public $date_modification;
 
 	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATE = 1;
+	const STATUS_VALIDATED = 1;
 
 
 	/**
@@ -125,7 +128,7 @@ class CashControl extends CommonObject
 		$sql .= "entity";
 		//$sql .= ", ref";
 		$sql .= ", opening";
-        $sql .= ", status";
+		$sql .= ", status";
 		$sql .= ", date_creation";
 		$sql .= ", posmodule";
 		$sql .= ", posnumber";
@@ -139,7 +142,7 @@ class CashControl extends CommonObject
 		//$sql .= "'(PROV)', ";
 		$sql .= $conf->entity;
 		$sql .= ", ".($this->opening > 0 ? $this->opening : 0);
-        $sql .= ", 0";										// Draft by default
+		$sql .= ", 0";										// Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
@@ -203,14 +206,14 @@ class CashControl extends CommonObject
 		}
 
 		/*
-		$posmodule = $this->posmodule;
-		if (! empty($user->rights->$posmodule->use))
-		{
-			$this->error='NotEnoughPermissions';
-			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-			return -1;
-		}
-		*/
+		 $posmodule = $this->posmodule;
+		 if (! empty($user->rights->$posmodule->use))
+		 {
+		 $this->error='NotEnoughPermissions';
+		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+		 return -1;
+		 }
+		 */
 
 		$now=dol_now();
 
@@ -231,13 +234,13 @@ class CashControl extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
+			$this->status = self::STATUS_VALIDATED;
+			$this->date_valid = $now;
+			$this->fk_user_valid = $user->id;
 		}
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context=array('date_valid'=>$now);
-
 			// Call trigger
 			$result=$this->call_trigger('CASHCONTROL_VALIDATE', $user);
 			if ($result < 0) $error++;
@@ -260,48 +263,84 @@ class CashControl extends CommonObject
 
 
 	/**
-	 * Load object in memory from database
+	 * Load object in memory from the database
 	 *
-	 * @param  int 	$id 		Id object
-	 * @return int 				<0 if KO, >0 if OK
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = null)
 	{
-		global $conf;
-
-		$sql = "SELECT";
-		$sql .= " *";
-		$sql .= " FROM ".MAIN_DB_PREFIX."pos_cash_fence";
-		$sql .= " WHERE rowid = ".$id;
-		$sql .= " AND entity = ".$conf->entity;
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
-				$this->ref = $obj->id;
-				$this->label = $obj->label;
-				$this->opening = $obj->opening;
-				$this->status = $obj->status;
-				$this->year_close = $obj->year_close;
-				$this->month_close = $obj->month_close;
-				$this->day_close = $obj->day_close;
-				$this->posmodule = $obj->posmodule;
-				$this->posnumber = $obj->posnumber;
-				$this->date_creation = $obj->date_creation;
-				$this->tms = $obj->tms;
-				$this->id=$id;
-			}
-			$this->db->free($resql);
-
-			return 1;
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			return -1;
-		}
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
 	}
 
+
+	/**
+	 *  Return label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
+	 */
+	public function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
+	 */
+	public function LibStatut($status, $mode=0)
+	{
+		// phpcs:enable
+		if (empty($this->labelstatus))
+		{
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelstatus[0] = $langs->trans('Draft');
+			$this->labelstatus[1] = $langs->trans('Closed');
+		}
+
+		if ($mode == 0)
+		{
+			return $this->labelstatus[$status];
+		}
+		elseif ($mode == 1)
+		{
+			return $this->labelstatus[$status];
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 6)
+		{
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+	}
 
 	/**
 	 *    Return clicable link of object (with eventually picto)
@@ -310,7 +349,7 @@ class CashControl extends CommonObject
 	 * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
 	 * @param  int    $maxlength             Maxlength of ref
 	 * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     * @param  int    $notooltip			 No tooltip
+	 * @param  int    $notooltip			 No tooltip
 	 * @return string                                String with URL
 	 */
 	public function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1, $notooltip=0)
