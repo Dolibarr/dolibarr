@@ -135,7 +135,7 @@ if ($action=="close")
 {
     $cashcontrol= new CashControl($db);
 	$cashcontrol->id=$id;
-    $cashcontrol->close($user);
+    $cashcontrol->valid($user);
 	$action="view";
 }
 

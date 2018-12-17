@@ -182,19 +182,43 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 * close
+	 * Validate cash fence
 	 *
 	 * @param 	User 		$user		User
 	 * @param 	number 		$notrigger	No trigger
 	 * @return 	int						<0 if KO, >0 if OK
 	 */
-	public function close(User $user, $notrigger = 0)
+	public function valid(User $user, $notrigger = 0)
 	{
+		global $conf,$langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$error = 0;
+
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED)
+		{
+			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		/*
+		$posmodule = $this->posmodule;
+		if (! empty($user->rights->$posmodule->use))
+		{
+			$this->error='NotEnoughPermissions';
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			return -1;
+		}
+		*/
+
+		$now=dol_now();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
-		$sql.= " SET status = ".self::STATUS_VALIDATED;
+		$sql.= " SET status = ".self::STATUS_VALIDATED.",";
+		$sql.= " date_valid='".$this->db->idate($now)."',";
+		$sql.= " fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -212,10 +236,10 @@ class CashControl extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context=array('operation'=>'close');
+			$this->context=array('date_valid'=>$now);
 
 			// Call trigger
-			$result=$this->call_trigger('CASHCONTROL_MODIFY', $user);
+			$result=$this->call_trigger('CASHCONTROL_VALIDATE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}

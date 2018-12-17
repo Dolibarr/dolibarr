@@ -25,6 +25,7 @@ CREATE TABLE llx_pos_cash_fence(
 	cheque double(24,8) default 0,
 	status INTEGER,
 	date_creation DATETIME NOT NULL,
+	date_valid DATETIME,
 	day_close INTEGER,
 	month_close INTEGER,
 	year_close INTEGER,
