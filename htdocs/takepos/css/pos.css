@@ -30,6 +30,8 @@ button.calcbutton {
 	overflow: visible; /* removes extra width in IE */
 	width:24%;
 	height:24%;
+	font-weight: bold;
+	color: #555555;
 }
 
 button.calcbutton2 {
@@ -43,6 +45,8 @@ button.calcbutton2 {
 	overflow: visible; /* removes extra width in IE */
 	width:24%;
 	height:24%;
+	font-weight: bold;
+	color: #555555;
 }
 
 button.calcbutton3 {
@@ -95,6 +99,11 @@ div.wrapper2{
 	border: 0.1em solid;
 	box-shadow: 3px 3px 2px #888;
 	text-align: center;
+}
+
+button:active{
+    background:black;
+	color: white;
 }
 
 div.description{

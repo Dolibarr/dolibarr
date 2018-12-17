@@ -274,7 +274,7 @@ if ($action == "temp" and $placeid != 0) {
 ?>
 <style>
 .selected {
-    color: red;
+    font-weight: bold;
 }
 .order {
     color: limegreen;
