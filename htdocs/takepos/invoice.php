@@ -402,42 +402,24 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$
 
 print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';
 
-//if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY){
+if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
+{
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
     print '<p style="font-size:120%;" align="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
-//}
-if ($action=="valid"){
+}
+if ($action=="valid")
+{
 	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }
-print ': ' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '&nbsp;</b></p>';
 
-// if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY){
-
-$soc = new Societe($db);
-
-if ($invoice->socid > 0) { $soc->fetch($invoice->socid);
-} else { $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
-}
-print '<p style="font-size:120%;" align="right">';
-print $langs->trans("Customer") . ': ' . $soc->name;
-print '</p>';
-
-// }
-
-if ($action == "valid") {
-    print '<p style="font-size:120%;" align="center"><b>' . $invoice->facnumber . " " . $langs->trans('BillShortStatusValidated') . '</b></p>';
-    if ($conf->global->TAKEPOSCONNECTOR) { print '<center><button type="button" onclick="TakeposPrinting(' . $placeid . ');">' . $langs->trans('PrintTicket') . '</button><center>';
-    } else { print '<center><button type="button" onclick="Print(' . $placeid . ');">' . $langs->trans('PrintTicket') . '</button><center>';
-    }
-}
-
-if ($action == "search") {
+if ($action == "search")
+{
     print '<center>
 	<input type="text" id="search" name="search" onkeyup="Search2();" name="search" style="width:80%;font-size: 150%;" placeholder=' . $langs->trans('Search') . '
 	</center>';
