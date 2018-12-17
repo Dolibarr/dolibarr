@@ -25,8 +25,9 @@
 --
 
 --
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
+-- Do not add comments at the end of the lines, this file is parsed during
+-- the install and all '--' prefixed texts are are removed.
+-- Do not concatenate the values in a single query, for the same reason.
 --
 
 --
@@ -117,8 +118,8 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  4, 419, '', 0, 'Pais Vasco', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  4, 420, '', 0, 'Otros', 1);
 
--- Regions Germany (id country=5) 
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  5, 501, '', 0, 'Deutschland', 1); 
+-- Regions Germany (id country=5)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  5, 501, '', 0, 'Deutschland', 1);
 
 -- Regions Greece (id_country=102)
 INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10201, 102, NULL, NULL, 'Αττική', 1);
@@ -329,5 +330,25 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 -- Regions Panama (id country=178)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  178, 17801, '', 0, 'Panama', 1);
 
--- Regions Panama (id country=227)
+-- Regions United Arab Emirates (rowid country=227)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  227, 22701, '', 0, 'United Arab Emirates', 1);
+
+-- Regions Andorra (rowid country=18)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (34, 34000, 'AD', NULL, 'Andorra');
+
+-- Regions Hungary (rowid country=18)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183100, 'HU31', NULL, 'Northern Hungary');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183200, 'HU32', NULL, 'Northern Great Plain');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183300, 'HU33', NULL, 'Southern Great Plain');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 180100, 'HU1',  NULL, 'Central Hungary');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182100, 'HU21', NULL, 'Central Transdanubia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182200, 'HU22', NULL, 'Western Transdanubia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182300, 'HU23', NULL, 'Southern Transdanubia');
+
+-- Regions Portugal (rowid country=25)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (25, 15001, 'PT', NULL, 'Portugal');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (25, 15002, 'PT9', NULL, 'Azores-Madeira');
+
+-- Regions Slovenia (rowid country=202)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('202', '20203', 'SI03', NULL, 'East Slovenia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('202', '20204', 'SI04', NULL, 'West Slovenia');
