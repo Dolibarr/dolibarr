@@ -1953,13 +1953,14 @@ else
 				        $totalpaid += $objp->amount;
 				        $i++;
 				    }
+				    $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
 
 				    if ($object->paid == 0)
 				    {
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
-				        $remaintopay = $object->total_ttc - $totalpaid;
+				        $remaintopay = price2num($object->total_ttc - $totalpaid);
 
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
 				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td><td></td></tr>';
