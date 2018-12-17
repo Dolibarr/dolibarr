@@ -83,7 +83,12 @@ class CashControl extends CommonObject
 	public $day_close;
 	public $posmodule;
 	public $posnumber;
+	public $cash;
+	public $cheque;
+	public $card;
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATE = 1;
 
 
 	/**
@@ -110,6 +115,11 @@ class CashControl extends CommonObject
 
 		$error = 0;
 
+		// Clean data
+		if (empty($this->cash)) $this->cash=0;
+		if (empty($this->cheque)) $this->cheque=0;
+		if (empty($this->card)) $this->card=0;
+
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."pos_cash_fence (";
 		$sql .= "entity";
@@ -119,14 +129,26 @@ class CashControl extends CommonObject
 		$sql .= ", date_creation";
 		$sql .= ", posmodule";
 		$sql .= ", posnumber";
+		$sql .= ", day_close";
+		$sql .= ", month_close";
+		$sql .= ", year_close";
+		$sql .= ", cash";
+		$sql .= ", cheque";
+		$sql .= ", card";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
 		$sql .= $conf->entity;
-		$sql .= ", ".$this->opening;
+		$sql .= ", ".($this->opening > 0 ? $this->opening : 0);
         $sql .= ", 0";										// Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
+		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
+		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
+		$sql .= ", ".$this->year_close;
+		$sql .= ", ".$this->cash;
+		$sql .= ", ".$this->cheque;
+		$sql .= ", ".$this->card;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -160,29 +182,48 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 * close
+	 * Validate cash fence
 	 *
 	 * @param 	User 		$user		User
 	 * @param 	number 		$notrigger	No trigger
 	 * @return 	int						<0 if KO, >0 if OK
 	 */
-	public function close(User $user, $notrigger = 0)
+	public function valid(User $user, $notrigger = 0)
 	{
-		global $conf;
+		global $conf,$langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
 
+		// Protection
+		if ($this->status == self::STATUS_VALIDATED)
+		{
+			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			return 0;
+		}
+
+		/*
+		$posmodule = $this->posmodule;
+		if (! empty($user->rights->$posmodule->use))
+		{
+			$this->error='NotEnoughPermissions';
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+			return -1;
+		}
+		*/
+
+		$now=dol_now();
+
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
-		$sql.= "SET";
-		$sql.= " day_close=DAYOFMONTH(NOW())";
-		$sql.= ", month_close=MONTH(NOW())";
-		$sql.= ", year_close=YEAR(NOW())";
-        $sql.= ", status=2";
-		$sql.= " where rowid=".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
+		$sql.= " SET status = ".self::STATUS_VALIDATED.",";
+		$sql.= " date_valid='".$this->db->idate($now)."',";
+		$sql.= " fk_user_valid = ".$user->id;
+		$sql.= " WHERE rowid=".$this->id;
+
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::close", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -191,6 +232,16 @@ class CashControl extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			$this->context=array('date_valid'=>$now);
+
+			// Call trigger
+			$result=$this->call_trigger('CASHCONTROL_VALIDATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback

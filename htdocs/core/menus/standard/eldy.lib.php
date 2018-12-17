@@ -1315,9 +1315,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			// Cash Control
 			if (! empty($conf->takepos->enabled) || ! empty($conf->cashdesk->enabled))
 			{
-				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("POS"),0,1, '', $mainmenu, 'cashcontrol');
-				$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create",$langs->trans("NewCashFence"),1,1);
-				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("List"),1,1);
+				$permtomakecashfence = ($user->rights->cashdesk->use ||$user->rights->takepos->use);
+				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("POS"),0,$permtomakecashfence, '', $mainmenu, 'cashcontrol');
+				$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create",$langs->trans("NewCashFence"),1,$permtomakecashfence);
+				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list",$langs->trans("List"),1,$permtomakecashfence);
 			}
 		}
 
