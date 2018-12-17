@@ -282,6 +282,7 @@ class Reception extends CommonObject
 
 				// Actions on extra fields (by external module or standard code)
 				// TODO le hook fait double emploi avec le trigger !!
+				$action='add';
 				$hookmanager->initHooks(array('receptiondao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -534,7 +535,7 @@ class Reception extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception SET";
-		$sql.= " ref='".$numref."'";
+		$sql.= " ref='".$this->db->escape($numref)."'";
 		$sql.= ", fk_statut = 1";
 		$sql.= ", date_valid = '".$this->db->idate($now)."'";
 		$sql.= ", fk_user_valid = ".$user->id;
@@ -563,8 +564,6 @@ class Reception extends CommonObject
 			$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 			$sql.= " WHERE ed.fk_reception = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_commandefourndet";
-
-
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1366,7 +1365,7 @@ class Reception extends CommonObject
         if ($id=='')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
+            $sql.=" VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
             $resql = $this->db->query($sql);
         }
         else
