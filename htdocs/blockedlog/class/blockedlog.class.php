@@ -172,6 +172,10 @@ class BlockedLog
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
+
+		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
+		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || ! empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE']='logCASHCONTROL_VALIDATE';
 	}
 
 	/**

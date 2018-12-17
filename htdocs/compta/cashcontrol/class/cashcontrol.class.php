@@ -88,7 +88,7 @@ class CashControl extends CommonObject
 	public $card;
 
 	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATE = 1;
+	const STATUS_VALIDATED = 1;
 
 
 	/**
@@ -302,6 +302,70 @@ class CashControl extends CommonObject
 		}
 	}
 
+	/**
+	 *  Return label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
+	 */
+	public function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
+	 */
+	public function LibStatut($status, $mode=0)
+	{
+		// phpcs:enable
+		if (empty($this->labelstatus))
+		{
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelstatus[0] = $langs->trans('Draft');
+			$this->labelstatus[1] = $langs->trans('Closed');
+		}
+
+		if ($mode == 0)
+		{
+			return $this->labelstatus[$status];
+		}
+		elseif ($mode == 1)
+		{
+			return $this->labelstatus[$status];
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 6)
+		{
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut6', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut0', '', false, 0, 0, '', 'valignmiddle');
+		}
+	}
 
 	/**
 	 *    Return clicable link of object (with eventually picto)

@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 
 $langs->loadLangs(array("cashcontrol","install","cashdesk","admin","banks"));
 
-$action=GETPOST('action','aZ09');
 $id=GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action','aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
@@ -47,9 +48,10 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='b.label';
+if (! $sortfield) $sortfield='rowid';
 if (! $sortorder) $sortorder='ASC';
 
+// Security check
 if (! $user->rights->cashdesk->use && ! $user->rights->takepos->use)
 {
 	accessforbidden();
@@ -62,8 +64,14 @@ if (! empty($conf->cashdesk->enabled)) $arrayofposavailable['cashdesk']=$langs->
 if (! empty($conf->takepos->enabled))  $arrayofposavailable['takepos']=$langs->trans('TakePOS').' (takepos)';
 // TODO Add hook here to allow other POS to add themself
 
-$cashcontrol= new CashControl($db);
+$object= new CashControl($db);
+$extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('cashcontrolcard','globalcard'));
 
 
 /*
@@ -111,21 +119,21 @@ elseif ($action=="add")
 		}
 		else
 		{
-			$cashcontrol->$key = price2num(GETPOST($key,'alpha'));
+			$object->$key = price2num(GETPOST($key,'alpha'));
 		}
 	}
 
 	if (! $error)
 	{
-		$cashcontrol->day_close = GETPOST('closeday', 'int');
-		$cashcontrol->month_close = GETPOST('closemonth', 'int');
-		$cashcontrol->year_close = GETPOST('closeyear', 'int');
+		$object->day_close = GETPOST('closeday', 'int');
+		$object->month_close = GETPOST('closemonth', 'int');
+		$object->year_close = GETPOST('closeyear', 'int');
 
-	    $cashcontrol->opening=price2num(GETPOST('opening','alpha'));
-	    $cashcontrol->posmodule=GETPOST('posmodule','alpha');
-		$cashcontrol->posnumber=GETPOST('posnumber','alpha');
+	    $object->opening=price2num(GETPOST('opening','alpha'));
+	    $object->posmodule=GETPOST('posmodule','alpha');
+		$object->posnumber=GETPOST('posnumber','alpha');
 
-	    $id=$cashcontrol->create($user);
+	    $id=$object->create($user);
 
 	    $action="view";
 	}
@@ -133,11 +141,23 @@ elseif ($action=="add")
 
 if ($action=="close")
 {
-    $cashcontrol= new CashControl($db);
-	$cashcontrol->id=$id;
-    $cashcontrol->valid($user);
-	$action="view";
+	$object->id=$id;
+    $result = $object->valid($user);
+	if ($result <= 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+    $action="view";
 }
+
+
+
+/*
+ * View
+ */
+
+$form=new Form($db);
 
 if ($action=="create" || $action=="start")
 {
@@ -260,10 +280,20 @@ if ($action=="create" || $action=="start")
 
 if (empty($action) || $action=="view")
 {
-	$cashcontrol= new CashControl($db);
-    $cashcontrol->fetch($id);
-	llxHeader();
-    print load_fiche_titre($langs->trans("CashControl"), '', 'title_bank.png');
+    $object->fetch($id);
+
+    llxHeader('', $langs->trans("CashControl"));
+
+    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'cashcontrol');
+
+    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+
+    $morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
+
+
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
+
     print '<div class="fichecenter">';
     print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -276,24 +306,17 @@ if (empty($action) || $action=="view")
 	print '</td></tr>';
 
 	print '<tr><td valign="middle">'.$langs->trans("Module").'</td><td>';
-	print $cashcontrol->posmodule;
+	print $object->posmodule;
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td>';
-	print price($cashcontrol->opening);
+	print price($object->opening);
 	print "</td></tr>";
 
 	print '<tr><td class="nowrap">';
-	print $langs->trans("DateEnd");
+	print $langs->trans("Period");
 	print '</td><td>';
-	print $cashcontrol->year_close."-".$cashcontrol->month_close."-".$cashcontrol->day_close;
-	print '</td></tr>';
-
-	print '<tr><td class="nowrap">';
-	print $langs->trans("Status");
-	print '</td><td>';
-	if ($cashcontrol->status==1) print $langs->trans("Opened");
-	if ($cashcontrol->status==2) print $langs->trans("Closed");
+	print $object->year_close."-".$object->month_close."-".$object->day_close;
 	print '</td></tr>';
 
 	print '</table>';
@@ -306,11 +329,11 @@ if (empty($action) || $action=="view")
     print '<tr><td class="nowrap">';
     print $langs->trans("DateCreationShort");
     print '</td><td>';
-    print dol_print_date($cashcontrol->date_creation, 'dayhour');
+    print dol_print_date($object->date_creation, 'dayhour');
     print '</td></tr>';
 
 	print '<tr><td valign="middle">'.$langs->trans("CashDesk").' ID</td><td>';
-	print $cashcontrol->posnumber;
+	print $object->posnumber;
 	print "</td></tr>";
 
 	print "</table>\n";
@@ -322,7 +345,10 @@ if (empty($action) || $action=="view")
 
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">' . $langs->trans('PrintTicket') . '</a></div>';
-	if ($cashcontrol->status==1) print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
+	if ($object->status == CashControl::STATUS_DRAFT)
+	{
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
+	}
 	print '</div>';
 
 	print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
