@@ -572,8 +572,10 @@ class AccountancyExport
 
 			if (empty($line->subledger_account)) {
 				print length_accountg($line->numero_compte) . $separator;
+				print $line->label_compte . $separator;
 			} else {
 				print length_accounta($line->subledger_account) . $separator;
+				print $line->subledger_label . $separator;
 			}
 
 			print $line->doc_ref . $separator;
@@ -581,6 +583,7 @@ class AccountancyExport
 			print price($line->credit) . $separator;
 			print price($line->montant) . $separator;
 			print $line->sens . $separator;
+			print $line->lettering_code . $separator;
 			print $line->code_journal;
 			print $end_line;
 		}
