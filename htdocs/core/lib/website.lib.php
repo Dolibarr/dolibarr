@@ -741,15 +741,9 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 
 	dol_delete_file($filewrapper);
-	$wrappercontent = '<?php'."\n";
-	$wrappercontent.= "// BEGIN PHP File generated to provide a wrapper.php - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$wrappercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-	$wrappercontent.= '$original_file=str_replace("../","/", GETPOST("file","alpha"));'."\n";
-	$wrappercontent.= 'if ($_GET["modulepart"] == "mycompany" && preg_match(\'/^\/?logos\//\', $original_file)) readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));'."\n";
-	$wrappercontent.= "else print 'Bad value for modulepart or file';\n";
-	$wrappercontent.= 'if (is_object($db)) $db->close();'."\n";
-	$wrappercontent.= '// END PHP ?>'."\n";
+
+	$wrappercontent=file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+
 	$result2 = file_put_contents($filewrapper, $wrappercontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));

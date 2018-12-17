@@ -653,7 +653,7 @@ if ($action == 'addcontainer')
 		$sample = GETPOST('sample','alpha');
 		if (empty($sample)) $sample='empty';
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/page-sample-'.$sample.'.html';
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.$sample.'.html';
 
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
 		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
@@ -1956,7 +1956,7 @@ if (! GETPOST('hide_websitemenu'))
 				print $formconfirm;
 			}
 
-			if ($pageid > 0)
+			if ($pageid > 0 && $atleastonepage)		// pageid can be set without pages, if homepage of site is set and all page were removed
 			{
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
@@ -2034,7 +2034,7 @@ if (! GETPOST('hide_websitemenu'))
 
 		print '<div class="websitetools">';
 
-		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 		{
 			$realpage=$urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
@@ -2749,7 +2749,7 @@ print "</form>\n";
 
 if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 {
-	if ($pageid > 0)
+	if ($pageid > 0 && $atleastonepage)
 	{
 		// $filejs
 		// $filecss
