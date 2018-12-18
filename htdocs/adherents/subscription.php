@@ -1019,6 +1019,7 @@ if ($rowid > 0)
 				$customercode = $tmpcompany->get_codeclient($tmpcompany,0);
 				$formquestion[]=array('label' => $langs->trans("CustomerCode"), 'type' => 'text', 'name' => 'customercode', 'value' => $customercode, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"');
 			}
+			// @TODO Add other extrafields mandatory for thirdparty creation
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
