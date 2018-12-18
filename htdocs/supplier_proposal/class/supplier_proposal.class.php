@@ -2157,7 +2157,7 @@ class SupplierProposal extends CommonObject
                 $response->nbtodo++;
                 if ($mode == 'opened')
                 {
-                    $datelimit = $this->db->jdate($obj->datefin);
+                    $datelimit = $this->db->jdate($obj->datec);
                     if ($datelimit < ($now - $delay_warning))
                     {
                         $response->nbtodolate++;

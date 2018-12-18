@@ -343,9 +343,6 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
-			$this->supplierproposal=new stdClass();
-			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
-			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
 			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
@@ -361,9 +358,6 @@ class Conf
     			$this->supplier_invoice->enabled=1;
     			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
     			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
-    			$this->supplierproposal=new stdClass();
-    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
-    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			}
 		}
 
@@ -571,6 +565,12 @@ class Conf
 		    $this->expensereport->approve->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS)?$this->global->MAIN_DELAY_EXPENSEREPORTS:0)*24*60*60;
 		    $this->expensereport->payment		= new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
+		}
+		if (isset($this->supplier_proposal)) {
+			$this->supplier_proposal->cloture	= new stdClass();
+			$this->supplier_proposal->cloture->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_PROPOSALS_TO_CLOSE)?$this->global->MAIN_DELAY_SUPPLIER_PROPOSALS_TO_CLOSE:0)*24*60*60;
+			$this->supplier_proposal->facturation	= new stdClass();
+			$this->supplier_proposal->facturation->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_PROPOSALS_TO_BILL)?$this->global->MAIN_DELAY_SUPPLIER_PROPOSALS_TO_BILL:0)*24*60*60;
 		}
 
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))

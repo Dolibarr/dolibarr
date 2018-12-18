@@ -3879,6 +3879,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;
