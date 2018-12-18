@@ -1990,7 +1990,7 @@ div.login_block {
 	vertical-align: middle;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	width: 228px;
-	height: 43px;
+	height: 45px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>

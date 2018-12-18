@@ -1074,9 +1074,12 @@ select.selectarrowonleft option {
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
-     }
-     input[type=text], input[type=password] {
+    }
+    input[type=text], input[type=password] {
 		max-width: 180px;
+	}
+    .vmenu .searchform input {
+		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
 	}
 
     .hideonsmartphone { display: none; }

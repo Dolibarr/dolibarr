@@ -190,7 +190,7 @@ class box_services_contracts extends ModeleBoxes
 					}
 
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $s,
 					'asis' => 1
                     );
@@ -200,7 +200,7 @@ class box_services_contracts extends ModeleBoxes
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $thirdpartytmp->getNomUrl(1),
 					'asis' => 1
                     );
