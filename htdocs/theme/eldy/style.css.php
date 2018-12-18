@@ -71,7 +71,7 @@ if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSI
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (!empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
 if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If theme was forced on URL
