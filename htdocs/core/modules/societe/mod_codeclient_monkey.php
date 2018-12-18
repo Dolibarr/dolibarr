@@ -105,7 +105,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
-		return $this->prefixcustomer.'0901-0001<br>'.$this->prefixsupplier.'0901-0001';
+		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
 
 
@@ -161,8 +161,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$date	= dol_now();
 		$yymm	= strftime("%y%m",$date);
 
-		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		if ($max >= (pow(10, 5) - 1)) $num=$max+1;	// If counter > 99999, we do not format on 5 chars, we take number as it is
+		else $num = sprintf("%05s",$max+1);
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
