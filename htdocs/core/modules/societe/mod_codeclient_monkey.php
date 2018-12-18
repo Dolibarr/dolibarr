@@ -120,19 +120,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		global $db, $conf, $mc;
 
-		$return='000001';
-
 		$field='';
-        $where='';
         $prefix = '';
 		if ($type == 0) {
 			$field = 'code_client';
             $prefix = $this->prefixcustomer;
-			//$where = ' AND client in (1,2)';
 		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
             $prefix = $this->prefixsupplier;
-			//$where = ' AND fournisseur = 1';
 		} else {
             return -1;
         }
