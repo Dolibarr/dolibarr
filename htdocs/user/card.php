@@ -610,7 +610,7 @@ if (empty($reshook)) {
 	$trigger_name='USER_SENTBYMAIL';
 	$paramname='id';    // Name of param key to open the card
 	$mode='emailfromuser';
-	$trackid='use'.$object->id;
+	$trackid='use'.$id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -1247,9 +1247,9 @@ else
 		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 		{
 			$object->getrights();
-			if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 		}
-
+		
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid))

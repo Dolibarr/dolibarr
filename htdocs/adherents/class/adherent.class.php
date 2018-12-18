@@ -702,13 +702,14 @@ class Adherent extends CommonObject
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
-						$lthirdparty->country_id=$this->country_id;
 						//$lthirdparty->phone_mobile=$this->phone_mobile;
 
-						$result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
+						$result=$lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update');	// Use sync to 0 to avoid cyclic updates
+
 						if ($result < 0)
 						{
 							$this->error=$lthirdparty->error;
+							$this->errors=$lthirdparty->errors;
 							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
 							$error++;
 						}

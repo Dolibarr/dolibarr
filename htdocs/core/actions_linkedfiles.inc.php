@@ -217,11 +217,14 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 			            {
 			            	// Define if we have to generate thumbs or not
 			            	$generatethumbs = 1;
-			            	if (GETPOST('section_dir')) $generatethumbs=0;
+			            	// When we rename a file from the file manager in ecm, we must not regenerate thumbs (not a problem, we do pass here)
+			            	// When we rename a file from the website module, we must not regenerate thumbs (module = medias in such a case)
+			            	// but when we rename from a tab "Documents", we must regenerate thumbs
+			            	if (GETPOST('modulepart') == 'medias') $generatethumbs=0;
 
 			            	if ($generatethumbs)
 			            	{
-				            	if ($object->id)
+			            		if ($object->id)
 				            	{
 				                	$object->addThumbs($destpath);
 				            	}

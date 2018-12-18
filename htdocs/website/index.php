@@ -2540,7 +2540,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	print '<tr><td>';
 	$htmlhelp=$langs->trans("WEBSITE_IMAGEDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'imagetooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
@@ -2606,7 +2606,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'aliastooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
@@ -2636,8 +2636,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 
 	print '<tr><td class="tdhtmlheader tdtop">';
-	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp =$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
+	$htmlhelp.=$langs->trans("Example").' :<br>';
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
