@@ -359,7 +359,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from templae
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
@@ -862,6 +862,7 @@ if ($rowid > 0)
 				$customercode = $tmpcompany->get_codeclient($tmpcompany,0);
 				$formquestion[]=array('label' => $langs->trans("CustomerCode"), 'type' => 'text', 'name' => 'customercode', 'value' => $customercode, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"');
 			}
+			// @TODO Add other extrafields mandatory for thirdparty creation
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
