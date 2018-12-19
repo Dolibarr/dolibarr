@@ -1440,7 +1440,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		// Il doit au moins y avoir la ligne de prix initial.
     		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-    		$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
+    		$object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
 
     		$result = $db->query($sql);
     		$num = $db->num_rows($result);
