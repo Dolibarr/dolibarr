@@ -42,3 +42,4 @@ Place=Lugar
 TakeposConnectorNecesary='TakePOS Connector' required
 OrderPrinters=Impresoras de pedidos
 SearchProduct=Buscar producto
+Receipt=Comprobante

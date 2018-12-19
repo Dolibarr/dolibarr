@@ -42,3 +42,4 @@ Place=Marché
 TakeposConnectorNecesary='TakePOS Connector' required
 OrderPrinters=Commande imprimantes
 SearchProduct=Rechercher un produit
+Receipt=Le reçu
