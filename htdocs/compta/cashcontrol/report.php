@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/compta/bank/bankentries_list.php
+ *	\file       htdocs/compta/cashcontrol/report.php
  *	\ingroup    pos
  *	\brief      List of bank transactions
  */
@@ -53,34 +53,67 @@ $arrayfields=array(
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
 );
 
+$syear  = $cashcontrol->year_close;
+$smonth = $cashcontrol->month_close;
+$sday   = $cashcontrol->day_close;
+
+$posmodule = $cashcontrol->posmodule;
+$terminalid = $cashcontrol->posnumber;
+
+
 /*
  * View
  */
 
 llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
 
-$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
+/*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " f.module_source, f.facnumber as facnumber";
 $sql.= " FROM ";
-if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+//if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'payment'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON bu.url_id = f.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND f.module_source='$cashcontrol->posmodule'";
-$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-
-$sql.=" AND b.datec>'".$cashcontrol->date_creation."'";
-if ($cashcontrol->date_close>0) $sql.=" AND b.datec<'".$cashcontrol->date_close."'";
-$sql.=" AND (b.fk_account=";
-$sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-$sql.=" or b.fk_account=";
-$sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+// Define filter on invoice
+$sql.= " AND f.module_source = '".$db->escape($cashcontrol->posmodule)."'";
+$sql.= " AND f.pos_source = '".$db->escape($cashcontrol->posnumber)."'";
+$sql.= " AND f.entity IN (".getEntity('facture').")";
+// Define filter on data
+if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+else dol_print_error('', 'Year not defined');
+// Define filter on bank account
+$sql.=" AND (b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $sql.=")";
+*/
+$sql = "SELECT f.facnumber, pf.amount as total, cp.code";
+$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
+$sql.= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
+$sql.= " AND f.module_source = '".$db->escape($posmodule)."'";
+$sql.= " AND f.pos_source = '".$db->escape($terminalid)."'";
+$sql.= " AND f.paye = 1";
+$sql.= " AND p.entity IN (".getEntity('facture').")";
+/*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
+elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
+elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
+else
+{
+	dol_print_error('Value for key = '.$key.' not supported');
+	exit;
+}*/
+if ($syear && ! $smonth)              $sql.= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+elseif ($syear && $smonth && ! $sday) $sql.= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+elseif ($syear && $smonth && $sday)   $sql.= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+else dol_print_error('', 'Year not defined');
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -90,7 +123,7 @@ if ($resql)
 	print "<center><h2>";
 	if ($cashcontrol->status==2) print $langs->trans("CashControl")." ".$cashcontrol->id;
 	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
-	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'day')."</h2></center>";
+	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour')."</h2></center>";
 
 
     print '<div class="div-table-responsive">';
@@ -111,6 +144,7 @@ if ($resql)
 
 	// Loop on each record
 	$sign = 1;
+	$first='yes';
 
     $totalarray=array();
     while ($i < min($num,$limit))
@@ -149,40 +183,6 @@ if ($resql)
             else dol_print_error($db);
 
             $balancecalculated=true;
-
-            // Output a line with start balance
-            if ($user->rights->banque->consolidate && $action == 'reconcile')
-            {
-            	$tmpnbfieldbeforebalance=0;
-            	$tmpnbfieldafterbalance=0;
-            	$balancefieldfound=false;
-            	foreach($arrayfields as $key => $val)
-            	{
-            		if ($key == 'balancebefore' || $key == 'balance')
-            		{
-            			$balancefieldfound=true;
-            			continue;
-            		}
-           			if (! empty($arrayfields[$key]['checked']))
-           			{
-           				if (! $balancefieldfound) $tmpnbfieldbeforebalance++;
-           				else $tmpnbfieldafterbalance++;
-           			}
-            	}
-
-            	print '<tr class="oddeven trforbreak">';
-            	if ($tmpnbfieldbeforebalance)
-            	{
-            		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
-            		print '</td>';
-            	}
-				print '<td align="right">';
-            	print price(price2num($balance, 'MT'), 1, $langs);
-				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
-				print '</td>';
-            	print '</tr>';
-            }
         }
 
         $balance = price2num($balance + ($sign * $objp->amount),'MT');
@@ -200,13 +200,18 @@ if ($resql)
         }
         print '<tr class="oddeven">';
 
-		if ($first==""){
-			print '<td>'.$langs->trans("InitialBankBalance").'</td><td></td><td></td><td></td><td align="right">'.price($cashcontrol->opening).'</td></tr>';
+		if ($first == "yes")
+		{
 			print '<tr class="oddeven">';
-			$first="no";
+			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
+			print '<td></td><td></td><td></td><td align="right">'.price($cashcontrol->opening).'</td>';
+			print '</tr>';
+			$first = "no";
 		}
 
-        // Ref
+		print '<tr class="oddeven">';
+
+		// Ref
         print '<td align="left" class="nowrap">';
         print $objp->facnumber;
         print '</td>';
@@ -222,8 +227,9 @@ if ($resql)
     	// Bank account
         print '<td align="right" class="nowrap">';
 		print $bankaccount->getNomUrl(1);
-		if ($sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->rowid) $cash+=$objp->amount;
-		if ($sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->rowid) $bank+=$objp->amount;
+		if ($sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
+		if ($sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
+		if ($sql.=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
@@ -277,16 +283,21 @@ if ($resql)
 	print "</table>";
 
 	$cash=$cash+$cashcontrol->opening;
-	print "<div style='text-align: right'><h2>".$langs->trans("Cash").": ".price($cash)."<br><br>".$langs->trans("PaymentTypeCB").": ".price($bank)."</h2></div>";
-
+	print "<div style='text-align: right'><h2>";
+	print $langs->trans("Cash").": ".price($cash)."<br><br>";
+	print $langs->trans("PaymentTypeCB").": ".price($bank)."<br><br>";
+	print $langs->trans("PaymentTypeCheque").": ".price($cheque)."<br><br>";
+	print "</h2></div>";
 
 	//save totals to DB
+	/*
 	$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
 	$sql .= "SET";
 	$sql .= " cash='".$cash."'";
     $sql .= ", card='".$bank."'";
 	$sql .= " where rowid=".$id;
 	$db->query($sql);
+	*/
 
 	print "</div>";
 
