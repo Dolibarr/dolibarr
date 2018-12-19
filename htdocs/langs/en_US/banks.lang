@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
-MenuBankCash=Bank | Cash
+MenuBankCash=Banks | Cash
 MenuVariousPayment=Miscellaneous payments
 MenuNewVariousPayment=New Miscellaneous payment
 BankName=Bank name
@@ -164,6 +164,6 @@ AddVariousPayment=Add miscellaneous payments
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
-AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation
+AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
 CashControl=POS cash fence
 NewCashFence=New cash fence
