@@ -120,15 +120,25 @@ class MyObject extends CommonObject
      * @var string label
      */
     public $label;
-
+    
+    /**
+     * @var string amount
+     */
 	public $amount;
 
 	/**
 	 * @var int Status
 	 */
 	public $status;
-
+    
+	/**
+     * @var string date_creation
+     */
 	public $date_creation;
+	
+	/**
+     * @var string tms
+     */
 	public $tms;
 
 	/**
@@ -140,7 +150,10 @@ class MyObject extends CommonObject
      * @var int ID
      */
 	public $fk_user_modif;
-
+    
+	/**
+     * @var string import_key
+     */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
