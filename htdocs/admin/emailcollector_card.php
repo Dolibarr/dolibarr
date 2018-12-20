@@ -391,9 +391,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		if ($object->user > 0 && $object->password > 0)
+		if (!empty($object->user) && !empty($object->password))
 		{
-			$connection = imap_open($connectstringsource, !empty($object->user), !empty($object->password));
+			$connection = imap_open($connectstringsource, $object->user, $object->password);
 		}
 		else
 		{
