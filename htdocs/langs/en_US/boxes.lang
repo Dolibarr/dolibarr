@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLoginInformation=Login Information
-BoxLastRssInfos=Rss information
-BoxLastProducts=Latest %s products/services
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
 BoxProductsAlertStock=Stock alerts for products
 BoxLastProductsInContract=Latest %s contracted products/services
-BoxLastSupplierBills=Latest vendor invoices
-BoxLastCustomerBills=Latest customer invoices
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
 BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
 BoxLastProposals=Latest commercial proposals
@@ -26,8 +26,8 @@ BoxTitleLastSuppliers=Latest %s recorded suppliers
 BoxTitleLastModifiedSuppliers=Vendors: last %s modified
 BoxTitleLastModifiedCustomers=Customers: last %s modified
 BoxTitleLastCustomersOrProspects=Latest %s customers or prospects
-BoxTitleLastCustomerBills=Latest %s customer invoices
-BoxTitleLastSupplierBills=Latest %s vendor invoices
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
 BoxTitleLastModifiedProspects=Prospects: last %s modified
 BoxTitleLastModifiedMembers=Latest %s members
 BoxTitleLastFicheInter=Latest %s modified interventions
