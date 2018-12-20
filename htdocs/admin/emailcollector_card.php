@@ -393,7 +393,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if ($object->user > 0 && $object->password > 0)
 		{
-			$connection = imap_open($connectstringsource, $object->user, $object->password);
+			$connection = imap_open($connectstringsource, !empty($object->user), !empty($object->password));
 		}
 		else
 		{
