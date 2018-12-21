@@ -444,11 +444,11 @@ function encodedecode_dbpassconf($level=0)
  * Return a generated password using default module
  *
  * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		string		$replaceambiguouschars	Discard ambigous characters. For example array('I').
+ * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
  * @return		string								New value for password
  * @see dol_hash
  */
-function getRandomPassword($generic=false, $replaceambiguouschars=array())
+function getRandomPassword($generic=false, $replaceambiguouschars=null)
 {
 	global $db,$conf,$langs,$user;
 
