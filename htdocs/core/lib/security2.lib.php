@@ -443,11 +443,12 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @return		string						New value for password
+ * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
+ * @param		string		$replaceambiguouschars	Discard ambigous characters. For example array('I').
+ * @return		string								New value for password
  * @see dol_hash
  */
-function getRandomPassword($generic=false)
+function getRandomPassword($generic=false, $replaceambiguouschars=array())
 {
 	global $db,$conf,$langs,$user;
 
@@ -506,6 +507,14 @@ function getRandomPassword($generic=false)
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);
+	}
+
+	// Do we have to discard some alphabetic characters ?
+	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0)
+	{
+		$numbers = "ABCDEF";
+		$max = strlen($numbers) - 1;
+		$generated_password=str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
 	}
 
 	return $generated_password;
