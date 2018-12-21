@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018        Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,7 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start; $prevquarter=$q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -230,7 +231,7 @@ else if ($modecompta=="BOOKKEEPINGCOLLECTED")
 
 
 }
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
@@ -321,7 +322,6 @@ if ($resql) {
 	}
 	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
-
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -405,7 +405,6 @@ if ($resql2) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
 } else {
 	// $modecompta != 'CREANCES-DETTES'
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
@@ -414,7 +413,6 @@ print "</table>\n";
 	print '<br>'.$langs->trans("TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant") . '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

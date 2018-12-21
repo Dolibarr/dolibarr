@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -254,8 +254,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -326,5 +326,6 @@ $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+// End of page
 llxFooter();
 $db->close();

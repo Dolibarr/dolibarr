@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Pierre-Henry Favre  <phf@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ class modMultiCurrency extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "technic";
 		// Module position in the family
-		$this->module_position = 40;
+		$this->module_position = '40';
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
@@ -88,7 +88,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 0); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicurrency");
 

@@ -68,6 +68,8 @@ class ContactTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -207,7 +209,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';
-		
+
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Contact::update error');

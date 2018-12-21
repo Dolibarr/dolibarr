@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","cron","bills"));
+$langs->loadLangs(array("admin","cron","bills","members"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
@@ -62,15 +62,16 @@ $securitykey = GETPOST('securitykey','alpha');
 
 $diroutputmassaction=$conf->cronjob->dir_output . '/temp/massgeneration/'.$user->id;
 
+$object = new Cronjob($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('cronjob');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
-$object = new Cronjob($db);
 
 
 /*
@@ -191,7 +192,7 @@ if (empty($reshook))
 				$result = 0;
 				if ($massaction == 'disable') $result = $tmpcron->setStatut(Cronjob::STATUS_DISABLED);
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
-				else dol_print_error($db, 'Bad value for massaction');
+				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
 			}
 			else
@@ -229,6 +230,7 @@ $sql.= " t.params,";
 $sql.= " t.md5params,";
 $sql.= " t.module_name,";
 $sql.= " t.priority,";
+$sql.= " t.processing,";
 $sql.= " t.datelastrun,";
 $sql.= " t.datenextrun,";
 $sql.= " t.dateend,";
@@ -242,6 +244,7 @@ $sql.= " t.status,";
 $sql.= " t.fk_user_author,";
 $sql.= " t.fk_user_mod,";
 $sql.= " t.note,";
+$sql.= " t.maxrun,";
 $sql.= " t.nbrun,";
 $sql.= " t.libname,";
 $sql.= " t.test";
@@ -252,12 +255,12 @@ if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
-		$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+		$sql.= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 	}
 }
 $sqlwhere = array();
 if (!empty($module_name)) {
-	$sqlwhere[]='(t.module_name='.$module_name.')';
+	$sqlwhere[]='(t.module_name='.$db->escape($module_name).')';
 }
 if (count($sqlwhere)>0) {
 	$sql.= " WHERE ".implode(' AND ',$sqlwhere);
@@ -355,7 +358,7 @@ else
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 
 
-print $langs->trans('CronInfo').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
 
 $text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
@@ -416,10 +419,9 @@ print "</tr>\n";
 if ($num > 0)
 {
 	// Loop on each job
-	$style='pair';
 	$now = dol_now();
 	$i=0;
-	$totalarray=array();
+
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
@@ -432,6 +434,7 @@ if ($num > 0)
 		$object->label = $obj->label;
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
+		$object->processing = $obj->processing;
 
 		print '<tr class="oddeven">';
 
@@ -519,9 +522,15 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {
+		if (!empty($obj->datenextrun)) {
+			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) print '<span class="opacitymedium">';
-			print dol_print_date($db->jdate($obj->datenextrun),'dayhour');
+			print dol_print_date($datenextrun,'dayhoursec');
+			if ($obj->status == Cronjob::STATUS_ENABLED)
+			{
+				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
+				elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			}
 			if (empty($obj->status)) print '</span>';
 		}
 		print '</td>';

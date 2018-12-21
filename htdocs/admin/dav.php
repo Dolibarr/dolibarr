@@ -143,6 +143,6 @@ $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'Web
 $message.='<br>';
 print $message;
 
-
+// End of page
 llxFooter();
 $db->close();

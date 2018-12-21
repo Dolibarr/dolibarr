@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,11 @@ class box_external_rss extends ModeleBoxes
     var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
@@ -194,6 +198,5 @@ class box_external_rss extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -263,5 +263,6 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -38,6 +38,12 @@ source_file = htdocs/langs/en_US/bills.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.blockedlog]
+file_filter = htdocs/langs/<lang>/blockedlog.lang
+source_file = htdocs/langs/en_US/blockedlog.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.bookmarks]
 file_filter = htdocs/langs/<lang>/bookmarks.lang
 source_file = htdocs/langs/en_US/bookmarks.lang

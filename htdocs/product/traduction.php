@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
@@ -276,7 +276,6 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($action != 'add')
 {
@@ -354,5 +353,6 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -22,10 +22,10 @@
  *	\brief      Page to create a new survey (date selection)
  */
 
-require_once('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
@@ -564,6 +564,6 @@ print '</form>'."\n";
 print '<br><br><br><br>'."\n";
 print '</div></div>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

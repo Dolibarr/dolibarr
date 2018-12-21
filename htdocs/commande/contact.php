@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -214,5 +214,6 @@ if ($id > 0 || ! empty($ref))
 }
 
 
+// End of page
 llxFooter();
 $db->close();

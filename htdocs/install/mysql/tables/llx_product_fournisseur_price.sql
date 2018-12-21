@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ create table llx_product_fournisseur_price
   fk_product			integer,
   fk_soc				integer,
   ref_fourn				varchar(30),
+  desc_fourn            text,
   fk_availability		integer,	   
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,

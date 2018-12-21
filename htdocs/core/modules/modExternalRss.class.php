@@ -135,5 +135,4 @@ class modExternalRss extends DolibarrModules
 
 		return $this->_remove($sql,$options);
     }
-
 }

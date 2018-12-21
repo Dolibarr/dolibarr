@@ -357,5 +357,6 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '</form>';
 }
 
+// End of page
 llxFooter();
 $db->close();

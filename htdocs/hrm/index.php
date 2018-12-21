@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *		\brief      Home page for HRM area.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -221,7 +221,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->statut=$obj->statut;
 
                 print '<tr class="oddeven">';
-                print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
+                print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
@@ -236,7 +236,6 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 $i++;
             }
-
         }
         else
         {
@@ -300,7 +299,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->photo=$obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
@@ -309,7 +308,6 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -373,7 +371,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->photo=$obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
@@ -382,7 +380,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -397,8 +394,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 print '</div></div></div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

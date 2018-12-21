@@ -97,7 +97,8 @@ class Proposals extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @return  array                       Array of order objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -215,7 +216,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function getLines($id) {
+    function getLines($id)
+    {
 	  if(! DolibarrApiAccess::$user->rights->propal->lire) {
 		  	throw new RestException(401);
 		  }
@@ -381,7 +383,8 @@ class Proposals extends DolibarrApi
      * @throws 401
      * @throws 404
 	 */
-	function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		}
@@ -415,7 +418,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
@@ -487,7 +491,6 @@ class Proposals extends DolibarrApi
 				'message' => 'Commercial Proposal deleted'
 			)
 		);
-
 	}
 
 	/**
@@ -697,29 +700,29 @@ class Proposals extends DolibarrApi
 			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");
 			$propal[$field] = $data[$field];
-
 		}
 		return $propal;
 	}
 
 
-	/**
-	 * Clean sensible object datas
-	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
-	 */
-	function _cleanObjectDatas($object) {
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object)
+    {
 
-		$object = parent::_cleanObjectDatas($object);
+        $object = parent::_cleanObjectDatas($object);
 
-        	unset($object->note);
-		unset($object->name);
-		unset($object->lastname);
-		unset($object->firstname);
-		unset($object->civility_id);
-		unset($object->address);
+        unset($object->note);
+        unset($object->name);
+        unset($object->lastname);
+        unset($object->firstname);
+        unset($object->civility_id);
+        unset($object->address);
 
-		return $object;
-	}
+        return $object;
+    }
 }

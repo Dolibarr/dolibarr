@@ -105,6 +105,11 @@ function ticket_prepare_head($object)
     // History
     $head[$h][0] = DOL_URL_ROOT.'/ticket/history.php?track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans('Events');
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+    	$head[$h][1].= '/';
+    	$head[$h][1].= $langs->trans("Agenda");
+    }
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 
@@ -155,9 +160,9 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
 
     	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode('thumbs/' . $mysoc->logo_small);
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
     	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode($mysoc->logo);
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/'.$mysoc->logo);
     		$width = 128;
     	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
     		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
@@ -169,21 +174,4 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     }
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
-}
-
-/**
- * Show footer for new member
- *
- * @return void
- */
-function llxFooterTicket()
-{
-    print '</div>';
-
-    printCommonFooter('public');
-
-    dol_htmloutput_events();
-
-    print "</body>\n";
-    print "</html>\n";
 }

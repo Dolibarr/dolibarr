@@ -25,8 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("ftp");
+$langs->loadLangs(array("admin", "ftp"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -309,6 +308,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

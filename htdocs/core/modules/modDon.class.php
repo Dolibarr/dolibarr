@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,7 +140,6 @@ class modDon extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
 	}
 
 

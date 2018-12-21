@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -177,7 +177,6 @@ if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();
-
 }
 
 

@@ -1,5 +1,6 @@
 <?php
-/*  Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ $langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
 if (GETPOST('btn_view_ticket')) {
@@ -112,8 +113,8 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
     }
 
-    if ($error) {
-        setEventMessage($object->errors, 'errors');
+    if ($error || $errors) {
+        setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
     }
 }
@@ -145,10 +146,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
     if ($display_ticket) {
         // Confirmation close
         if ($action == 'close') {
-            $ret = $form->form_confirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
-            if ($ret == 'html') {
-                print '<br>';
-            }
+            print $form->form_confirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
         }
 
         print '<div id="form_view_ticket">';

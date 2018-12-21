@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@ class modService extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 53;
 
 		$this->family = "products";
-		$this->module_position = 30;
+		$this->module_position = '30';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Service management";
@@ -62,9 +62,12 @@ class modService extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/product/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
@@ -252,7 +255,7 @@ class modService extends DolibarrModules
 		if (! empty($conf->barcode->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.barcode'=>'BarCode'));
 		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
         // Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{

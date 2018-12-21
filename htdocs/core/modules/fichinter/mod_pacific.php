@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,10 +30,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
-	var $prefix='FI';
-	var $error='';
-	var $nom = 'pacific';
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public $prefix='FI';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='pacific';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='pacific';
 
 
 	/**
@@ -142,6 +162,4 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }
-

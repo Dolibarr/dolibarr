@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,7 @@ $langs->load("modulebuilder");
     		var required = jQuery("#required");
     		var alwayseditable = jQuery("#alwayseditable");
     		var list = jQuery("#list");
+            var totalizable = jQuery("#totalizable");
     		<?php
     		if((GETPOST('type','alpha') != "select") &&  (GETPOST('type','alpha') != "sellist"))
     		{
@@ -156,6 +158,8 @@ $param=$extrafields->attributes[$elementtype]['param'][$attrname];
 $perms=$extrafields->attributes[$elementtype]['perms'][$attrname];
 $langfile=$extrafields->attributes[$elementtype]['langfile'][$attrname];
 $list=$extrafields->attributes[$elementtype]['list'][$attrname];
+$totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
+$help=$extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
@@ -176,7 +180,7 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($t
 }
 ?>
 <!-- Label -->
-<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
+<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
 <!-- Type -->
@@ -248,12 +252,16 @@ else
 <tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
+</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
+<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
+<!-- Help tooltip -->
+<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 <?php if ($conf->multicompany->enabled) { ?>
+	<!-- Multicompany entity -->
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- Visibility -->
-<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 </table>
 
 <?php dol_fiche_end(); ?>

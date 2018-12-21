@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ if ($resql)
 		$companystatic->canvas=$obj->canvas;
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="nowraponall">';
         print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
@@ -286,6 +286,6 @@ if ($canreadperms)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

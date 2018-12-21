@@ -18,8 +18,7 @@
 /**
  *     	\file       htdocs/public/website/index.php
  *		\ingroup    website
- *		\brief      Page to output pages
- *		\author	    Laurent Destailleur
+ *		\brief      Wrapper to output pages when website is powered by Dolibarr instead of a native web server
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -34,13 +33,17 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -55,87 +58,91 @@ $accessallowed = 1;
 $type='';
 
 
-/*
- * View
- */
+if (empty($pageid))
+{
+	require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
+	$object=new Website($db);
+	$object->fetch(0, $websitekey);
+
+	if (empty($object->id))
+	{
+		if (empty($pageid))
+		{
+			// Return header 404
+			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+
+			include DOL_DOCUMENT_ROOT.'/public/error-404.php';
+			exit;
+		}
+	}
+
+	$objectpage=new WebsitePage($db);
+
+	if ($pageref)
+	{
+		$result=$objectpage->fetch(0, $object->id, $pageref);
+		if ($result > 0)
+		{
+			$pageid = $objectpage->id;
+		}
+		elseif($result == 0)
+		{
+			// Page not found from ref=pageurl, we try using alternative alias
+			$result=$objectpage->fetch(0, $object->id, null, $pageref);
+			if ($result > 0)
+			{
+				$pageid = $objectpage->id;
+			}
+		}
+	}
+	else
+	{
+		if ($object->fk_default_home > 0)
+		{
+			$result=$objectpage->fetch($object->fk_default_home);
+			if ($result > 0)
+			{
+				$pageid = $objectpage->id;
+			}
+		}
+
+		if (empty($pageid))
+		{
+			$array=$objectpage->fetchAll($object->id);
+			if (is_array($array) && count($array) > 0)
+			{
+				$firstrep=reset($array);
+				$pageid=$firstrep->id;
+			}
+		}
+	}
+}
+if (empty($pageid))
+{
+	// Return header 404
+	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+
+	$langs->load("website");
+
+	if (! GETPOSTISSET('pageref')) print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
+
+	include DOL_DOCUMENT_ROOT.'/public/error-404.php';
+	exit;
+}
 
 $appli=constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
+
+
+/*
+ * View
+ */
+
 //print 'Directory with '.$appli.' websites.<br>';
 
-if (empty($pageid))
-{
-    require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-
-    $object=new Website($db);
-    $object->fetch(0, $websitekey);
-
-	if (empty($object->id))
-    {
-        if (empty($pageid))
-        {
-            // Return header 404
-            header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-
-            include DOL_DOCUMENT_ROOT.'/public/error-404.php';
-            exit;
-        }
-    }
-
-    $objectpage=new WebsitePage($db);
-
-    if ($pageref)
-    {
-    	$result=$objectpage->fetch(0, $object->id, $pageref);
-    	if ($result > 0)
-	    {
-	        $pageid = $objectpage->id;
-	    }
-	    elseif($result == 0)
-	    {
-	    	// Page not found from ref=pageurl, we try using alternative alias
-	    	$result=$objectpage->fetch(0, $object->id, null, $pageref);
-	    	if ($result > 0)
-	    	{
-	    		$pageid = $objectpage->id;
-	    	}
-	    }
-    }
-    else
-    {
-	    if ($object->fk_default_home > 0)
-	    {
-	        $result=$objectpage->fetch($object->fk_default_home);
-	        if ($result > 0)
-	        {
-	            $pageid = $objectpage->id;
-	        }
-	    }
-
-	    if (empty($pageid))
-	    {
-	        $array=$objectpage->fetchAll($object->id);
-	        if (is_array($array) && count($array) > 0)
-	        {
-	            $firstrep=reset($array);
-	            $pageid=$firstrep->id;
-	        }
-	    }
-    }
-}
-if (empty($pageid))
-{
-    // Return header 404
-    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-
-    $langs->load("website");
-    print $langs->trans("PreviewOfSiteNotYetAvailable");
-
-    include DOL_DOCUMENT_ROOT.'/public/error-404.php';
-    exit;
-}
 
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
@@ -203,4 +210,3 @@ print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html
 include_once $original_file_osencoded;		// Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
 if (is_object($db)) $db->close();
-

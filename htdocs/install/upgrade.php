@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,10 +66,7 @@ $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'',3):(empty($argv
 $dirmodule=((GETPOST("dirmodule",'alpha',3) && GETPOST("dirmodule",'alpha',3) != 'ignoredbversion'))?GETPOST("dirmodule",'alpha',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
 $ignoredbversion=(GETPOST('ignoredbversion','alpha',3)=='ignoredbversion')?GETPOST('ignoredbversion','alpha',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "other", "errors"));
 
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
@@ -300,7 +297,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             		{
             			if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
             			{
-            				print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+            				print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
             			}
             		}
             	}

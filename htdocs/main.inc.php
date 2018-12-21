@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -68,6 +68,22 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 	}
 }
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+/**
+ * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
+ *
+ * @param       string      $val        Value
+ * @param       string      $type       1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
+ * @return      int                     >0 if there is an injection, 0 if none
+ * @deprecated                          use testSqlAndScriptInject
+ * @see testSqlAndScriptInject($val, $type)
+ */
+function test_sql_and_script_inject($val, $type)
+{
+    // phpcs:enable
+    return testSqlAndScriptInject($val, $type);
+}
+
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
@@ -75,7 +91,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
-function test_sql_and_script_inject($val, $type)
+function testSqlAndScriptInject($val, $type)
 {
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
@@ -158,7 +174,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 	}
 	else
 	{
-		return (test_sql_and_script_inject($var, $type) <= 0);
+		return (testSqlAndScriptInject($var, $type) <= 0);
 	}
 }
 
@@ -256,8 +272,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	$conf->browser->os=$tmp['browseros'];
 	$conf->browser->version=$tmp['browserversion'];
 	$conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
-	$conf->browser->phone=$tmp['phone'];	   // TODO deprecated, use ->layout
-	$conf->browser->tablet=$tmp['tablet'];	   // TODO deprecated, use ->layout
 	//var_dump($conf->browser);
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
@@ -486,7 +500,7 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
+				// Call trigger for the "security events" log
 				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
 				// Call of triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -565,7 +579,7 @@ if (! defined('NOLOGIN'))
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
+				// Call trigger for the "security events" log
 				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
 				// Call of triggers
 				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -613,18 +627,16 @@ if (! defined('NOLOGIN'))
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
 				$user->trigger_mesg=$user->error;
 			}
 
-			// Call triggers
+			// Call triggers for the "security events" log
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
@@ -672,19 +684,16 @@ if (! defined('NOLOGIN'))
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
 				$user->trigger_mesg=$user->error;
 			}
 
-			// TODO @deprecated Remove this. Hook must be used, not this trigger.
-			// Call triggers
+			// Call triggers for the "security events" log
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
@@ -723,17 +732,26 @@ if (! defined('NOLOGIN'))
 			    $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 			    //var_dump($relativepathstring);
 
-			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
+			    // We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
 			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
 			    }
-			    // We also save contextpage
 			    if (! empty($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    {
+			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit)
+			    {
+			    	$_SESSION['lastsearch_limit_'.$relativepathstring]=$_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 			    }
 		    }
 
@@ -780,7 +798,7 @@ if (! defined('NOLOGIN'))
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
-		// TODO @deprecated Remove this. Hook must be used, not this trigger.
+		// Call triggers for the "security events" log
 		$user->trigger_mesg = $loginfo;
 		// Call triggers
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -802,7 +820,7 @@ if (! defined('NOLOGIN'))
 		{
 			$db->rollback();
 			session_destroy();
-			dol_print_error($db,'Error in some hooks afterLogin (or old trigger USER_LOGIN)');
+			dol_print_error($db,'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
 		}
 		else
@@ -900,7 +918,6 @@ if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea'
 	$conf->theme='eldy';
 	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
 }
-//var_dump($conf->browser->phone);
 
 if (! defined('NOREQUIRETRAN'))
 {
@@ -988,7 +1005,7 @@ else
 	define('ROWS_9',8);
 }
 
-$heightforframes=48;
+$heightforframes=50;
 
 // Init menu manager
 if (! defined('NOREQUIREMENU'))
@@ -1066,7 +1083,7 @@ if (! function_exists("llxHeader"))
 
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title, 1);
+			left_menu('', $help_url, '', '', 1, $title, 1);		// $menumanager is retreived with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1170,12 +1187,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
+
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
+
 		// Displays meta
 		print '<meta charset="UTF-8">'."\n";
 		print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";	// Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";		// Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
+
 		// Favicon
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
@@ -1183,6 +1203,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
+
+		// Auto refresh page
+		if (GETPOST('autorefresh','int') > 0) print '<meta http-equiv="refresh" content="'.GETPOST('autorefresh','int').'">';
 
 		// Displays title
 		$appli=constant('DOL_APPLICATION_TITLE');
@@ -1357,7 +1380,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";	// We include full because we need the support of containerCssClass
             }
-        }
+            if (! defined('DISABLE_MULTISELECT'))     // jQuery plugin "mutiselect" to select with checkboxes
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+            }
+		}
 
         if (! $disablejs && ! empty($conf->use_javascript_ajax))
         {
@@ -1423,7 +1450,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                     }
                     else
                     {
-                        if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
                         print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
                     }
                 }
@@ -1453,7 +1479,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
  * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									                   For other external page: http://server/url
+ * 						                    For other external page: http://server/url
  *  @return		void
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $helppagename='')
@@ -1568,7 +1594,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 
 		// Link to print main content area
-		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
+		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone')
 		{
 			$qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
@@ -1653,7 +1679,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									         		       For other external page: http://server/url
+ * 									         	For other external page: http://server/url
  *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
@@ -1732,7 +1758,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		// Define $bookmarks
 		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 		{
-			include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
 
 			$bookmarks=printBookmarksList($db, $langs);
@@ -1793,9 +1819,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= '?title=';
 			$bugbaseurl.= urlencode("Bug: ");
 			$bugbaseurl.= '&body=';
-			// TODO use .github/ISSUE_TEMPLATE.md to generate?
-			$bugbaseurl .= urlencode("# Bug\n");
-			$bugbaseurl .= urlencode("\n");
+			$bugbaseurl.= urlencode("# Bug\n");
+			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Environment\n");
 			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
 			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
@@ -1951,7 +1976,8 @@ if (! function_exists("llxFooter"))
 	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
 	{
 		global $conf, $langs, $user, $object;
-		global $delayedhtmlcontent, $contextpage;
+		global $delayedhtmlcontent;
+		global $contextpage, $page, $limit;
 
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1986,8 +2012,16 @@ if (! function_exists("llxFooter"))
 		if (preg_match('/list\.php$/', $relativepathstring))
 		{
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
-			if (! empty($contextpage)) $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+
+			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
+
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
 		}
 
 		// Core error message
@@ -2071,4 +2105,3 @@ if (! function_exists("llxFooter"))
 		print "</html>\n";
 	}
 }
-

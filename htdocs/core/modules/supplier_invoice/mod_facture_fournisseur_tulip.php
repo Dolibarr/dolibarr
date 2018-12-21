@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
@@ -36,9 +36,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
 */
 class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Tulip';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Tulip';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Tulip';
 
 
     /**
@@ -48,10 +67,10 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
-		$langs->load("bills");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","admin"));
 
 		$form = new Form($this->db);
 
@@ -72,13 +91,17 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask");
-		//$texte.= ' ('.$langs->trans("InvoiceStandard").')';
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')';
 		$texte.= ':</td>';
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->SUPPLIER_INVOICE_TULIP_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
+		$texte.= '</tr>';
+		
+		// Parametrage du prefix des avoirs
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->SUPPLIER_CREDIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
 		$texte.= '</tr>';
 
 		if ($conf->global->MAIN_FEATURE_LEVEL >= 2)
@@ -88,10 +111,6 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
     		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
     		$texte.= '</tr>';
 
-    		// Parametrage du prefix des avoirs
-    		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-    		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->SUPPLIER_CREDIT_TULIP_MASK.'">',$tooltip,1,1).'</td>';
-    		$texte.= '</tr>';
 
     		// Parametrage du prefix des acomptes
     		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';

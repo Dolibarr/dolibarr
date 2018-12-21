@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -287,7 +287,6 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
 
         return $mesg;
     }
-
 }
 
 /**
@@ -401,7 +400,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	    $urllogo=$urlwithroot."/viewimage.php?modulepart=mycompany&file=".$mysoc->logo;
+	    $urllogo=$urlwithroot."/viewimage.php?modulepart=mycompany&file=".urlencode('logos/'.$mysoc->logo);
 	    $nvpstr = $nvpstr . "&LOGOIMG=" . urlencode($urllogo);
     }
     if (! empty($conf->global->PAYPAL_BRANDNAME))

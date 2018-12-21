@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,11 +256,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add',1,1);
+    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add',1,1);
+    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
 	// Label

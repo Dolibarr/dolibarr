@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -37,15 +37,8 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 
-// For bittorent link, we don't need to load/check we are into a login session
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent')
-{
-	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
 // For direct external download link, we don't need to load/check we are into a login session
-if (isset($_GET["hashp"]))
+if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
 	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
 	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
@@ -64,13 +57,17 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -110,12 +107,6 @@ if (in_array($modulepart, array('facture_paiement','unpaid')))
  * View
  */
 
-// Define attachment (attachment=true to force choice popup 'open'/'save as')
-$attachment = true;
-if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
-if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-
 // If we have a hash public (hashp), we guess the original_file.
 if (! empty($hashp))
 {
@@ -125,8 +116,14 @@ if (! empty($hashp))
 	if ($result > 0)
 	{
 		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
-		$moduleparttocheck = $tmp[0];
-		if ($modulepart)	// Not required for link using public hashp
+		// filepath can be 'users/X' or 'X/propale/PR11111'
+		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+		{
+			$tmp = explode('/', $tmp[1], 2);
+		}
+		$moduleparttocheck = $tmp[0];	// moduleparttocheck is first part of path
+
+		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
 		{
 			if ($moduleparttocheck == $modulepart)
 			{
@@ -151,6 +148,12 @@ if (! empty($hashp))
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
 	}
 }
+
+// Define attachment (attachment=true to force choice popup 'open'/'save as')
+$attachment = true;
+if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
+if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
 // Define mime type
 $type = 'application/octet-stream';

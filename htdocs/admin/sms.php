@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,12 +48,12 @@ $action=GETPOST('action','aZ09');
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS",   $_POST["MAIN_DISABLE_ALL_SMS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", $_POST["MAIN_DISABLE_ALL_SMS"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SMS_SENDMODE",      $_POST["MAIN_SMS_SENDMODE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", $_POST["MAIN_SMS_SENDMODE"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM",     $_POST["MAIN_MAIL_SMS_FROM"],'chaine',0,'',$conf->entity);
-	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", $_POST["MAIN_MAIL_SMS_FROM"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO", $_POST["MAIN_MAIL_AUTOCOPY_TO"], 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -169,21 +169,21 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	// Disable	
+	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
 	print '</td></tr>';
 
-	// Separator	
+	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
-	// Method	
+	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
-	// From	
+	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
@@ -213,20 +213,20 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	// Disable	
+	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
 
-	// Separator	
+	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
-	// Method	
+	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
-	// From	
+	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
@@ -331,7 +331,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

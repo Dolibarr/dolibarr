@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta'));
+$langs->loadLangs(array('bills', 'compta', 'companies'));
 
 // Security check
 $facid	= GETPOST('facid','int');
@@ -74,6 +74,8 @@ if (! $sortfield) $sortfield="p.rowid";
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $extrafields = new ExtraFields($db);
+
+$arrayfields=array();
 
 
 /*
@@ -131,7 +133,7 @@ else
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
-    $sql.= " s.rowid as socid, s.nom as name";
+    $sql.= " s.rowid as socid, s.nom as name, s.email";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 	// Add fields from hooks
@@ -209,8 +211,8 @@ if ($resql)
     $i = 0;
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
     $param.=(GETPOST("orphelins")?"&orphelins=1":"");
     $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
     $param.=($search_company?"&search_company=".urlencode($search_company):"");
@@ -296,23 +298,28 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
+        $paymentstatic->id=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
+
         print '<tr class="oddeven">';
 
         print '<td>';
-        $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+        $dateformatforpayment = 'day';
+        if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
 
         // Thirdparty
         print '<td>';
-        if ($objp->socid)
+        if ($objp->socid > 0)
         {
             $companystatic->id=$objp->socid;
             $companystatic->name=$objp->name;
+            $companystatic->email=$objp->email;
+
             print $companystatic->getNomUrl(1,'',24);
         }
         else print '&nbsp;';
@@ -371,5 +378,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

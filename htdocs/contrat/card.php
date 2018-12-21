@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  *       \brief      Page of a contract
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
@@ -565,7 +566,7 @@ if (empty($reshook))
 			$info_bits=0;
 			if ($tva_npr) $info_bits |= 0x01;
 
-			if($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 				$result = -1 ;
@@ -1242,7 +1243,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
-	$form->select_date($datecontrat,'',0,0,'',"contrat");
+	print $form->selectDate($datecontrat, '', 0, 0, '', "contrat");
 	print "</td></tr>";
 
 	// Project
@@ -1317,8 +1318,10 @@ else
 	{
 		$object->fetch_thirdparty();
 
-		$result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
-		if ($result < 0) dol_print_error($db,$object->error);
+		$result=$object->fetch_lines(); // This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
+		if ($result < 0) {
+            dol_print_error($db,$object->error);
+        }
 
 		$nbofservices=count($object->lines);
 
@@ -1333,56 +1336,54 @@ else
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 0;
+        $hselected = 0;
+        $formconfirm = '';
 
-		dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
 
-		/*
-         * Confirmation de la suppression du contrat
-         */
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
+        if ($action == 'delete') {
+            //Confirmation de la suppression du contrat
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
+        } elseif ($action == 'valid') {
+            //Confirmation de la validation
+            $ref = substr($object->ref, 1, 4);
+            if ($ref == 'PROV' && !empty($modCodeContract->code_auto)) {
+                $numref = $object->getNextNumRef($object->thirdparty);
+            } else {
+                $numref = $object->ref;
+            }
+            $text = $langs->trans('ConfirmValidateContract',$numref);
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
+        } elseif ($action == 'close') {
+            // Confirmation de la fermeture
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+        } elseif ($action == 'activate') {
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
+        } elseif ($action == 'clone') {
+            // Clone confirmation
+            $formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+        }
 
-		}
 
-		/*
-         * Confirmation de la validation
-         */
-		if ($action == 'valid')
-		{
-			$ref = substr($object->ref, 1, 4);
-			if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
-			{
-				$numref = $object->getNextNumRef($object->thirdparty);
-			}
-			else
-			{
-				$numref = $object->ref;
-			}
+        // Call Hook formConfirm
+        $parameters = array(
+            'id' => $id,
+            //'lineid' => $lineid,
+        );
+        // Note that $action and $object may have been modified by hook
+        $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
+        if (empty($reshook)) {
+            $formconfirm .= $hookmanager->resPrint;
+        } elseif ($reshook > 0) {
+            $formconfirm = $hookmanager->resPrint;
+        }
 
-			$text=$langs->trans('ConfirmValidateContract',$numref);
+        // Print form confirm
+        print $formconfirm;
 
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
-
-		}
-
-		/*
-         * Confirmation de la fermeture
-         */
-		if ($action == 'close')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
-
-		}
-		if ($action == 'activate')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
-
-		}
-
-		/*
+        /*
          *   Contrat
          */
 		if (! empty($object->brouillon) && $user->rights->contrat->creer)
@@ -1390,12 +1391,6 @@ else
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setremise">';
-		}
-
-		// Clone confirmation
-		if ($action == 'clone') {
-			$formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
-			print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
 		// Contract card
@@ -1421,6 +1416,7 @@ else
 		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -1515,7 +1511,7 @@ else
 		}
 
 
-		$colorb='666666';
+		$colorb = '666666';
 
 		$arrayothercontracts=$object->getListOfContracts('others');
 
@@ -1781,9 +1777,9 @@ else
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
-					$form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
+					print $form->selectDate($db->jdate($objp->date_debut), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_debut)>0?0:1), "update");
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-					$form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
+					print $form->selectDate($db->jdate($objp->date_fin), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_fin)>0?0:1), "update");
 					print '</td>';
 					print '</tr>';
 
@@ -1966,10 +1962,10 @@ else
 
 				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-				print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
+				print $form->selectDate($dateactstart, '', $usehm, $usehm, '', "active", 1, 0);
 				print '</td>';
 				print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
-				print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
+				print $form->selectDate($dateactend, "end", $usehm, $usehm, '', "active", 1, 0);
 				print '</td>';
 				print '<td class="center nohover">';
 				print '</td>';
@@ -2027,7 +2023,7 @@ else
 					if ($objp->statut == 4)
 					{
 						print $langs->trans("DateEndReal").' ';
-						print $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
+						print $form->selectDate($dateactend, "end", $usehm, $usehm, ($objp->date_fin_reelle>0?0:1), "closeline", 1, 1);
 					}
 				}
 				print '</td>';

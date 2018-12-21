@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 
 require '../../main.inc.php';
 
-$langs->load("admin");
-$langs->load("user");
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("install","user","admin"));
 
 
 if (!$user->admin)
@@ -249,7 +248,6 @@ if ($resql)
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

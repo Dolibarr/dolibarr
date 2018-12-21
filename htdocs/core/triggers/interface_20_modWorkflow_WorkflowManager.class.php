@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
@@ -32,9 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 class InterfaceWorkflowManager extends DolibarrTriggers
 {
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
+
 	public $family = 'core';
 	public $description = "Triggers of this module allows to manage workflows";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
@@ -309,5 +318,4 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         return 0;
     }
-
 }

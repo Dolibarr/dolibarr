@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/paiement_charge.php
- *		\ingroup    tax
- *		\brief      Page to add payment of a tax
+ *      \file       htdocs/compta/paiement_charge.php
+ *      \ingroup    tax
+ *      \brief      Page to add payment of a tax
  */
 
 require '../main.inc.php';
@@ -147,7 +147,6 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
             }
         }
 	}
-
 }
 
 
@@ -226,7 +225,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 

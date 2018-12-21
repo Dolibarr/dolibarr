@@ -333,10 +333,8 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</div>';
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

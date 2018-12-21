@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,10 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class PropaleStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
     var $socid;
     var $userid;

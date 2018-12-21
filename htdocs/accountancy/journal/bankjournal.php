@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger     <jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
- * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
@@ -147,12 +148,16 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
+$accountLinestatic=new AccountLine($db);
+
+$accountingaccount = new AccountingAccount($db);
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
+
 
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -370,7 +375,8 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
+					$accountLinestatic->fetch($links[$key]['url_id']);
+					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$accountLinestatic ->getNomUrl(1);
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
@@ -459,7 +465,11 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $langs->trans("Bank");
+
+					$accountingaccount->fetch(null, $k, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
+					$bookkeeping->label_operation = $reflabel;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
@@ -515,6 +525,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'bank';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_bank"];
+						$bookkeeping->label_operation = $reflabel;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
@@ -528,22 +539,30 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_expensereport') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
@@ -553,27 +572,37 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_donation') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
 						} else {
 							if ($tabtype[$key] == 'unknown')	// Unknown transaction, we will use a waiting account for thirdparty.
 							{
@@ -581,7 +610,9 @@ if (! $error && $action == 'writebookkeeping') {
 								$bookkeeping->subledger_account = '';
 								$bookkeeping->subledger_label = '';
 								$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-								$bookkeeping->label_compte = '';
+
+								$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE, true);
+								$bookkeeping->label_compte = $accountingaccount->label;
 							}
 						}
 						$bookkeeping->label_operation = $reflabel;
@@ -719,6 +750,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
+	$type_export = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
@@ -850,7 +882,8 @@ if (empty($action) || $action == 'view') {
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+    $period = $form->selectDate($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0);
+    $period .= ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -858,7 +891,7 @@ if (empty($action) || $action == 'view') {
 
 
 	// Test that setup is complete
-	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE fk_accountancy_journal IS NULL';
+	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE fk_accountancy_journal IS NULL AND clos=0';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1109,7 +1142,7 @@ $db->close();
  *
  * @param 	string 	$val			Array of val
  * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
- * @return string|unknown
+ * @return 	string					A string label to describe a record into llx_bank_url
  */
 function getSourceDocRef($val, $typerecord)
 {
@@ -1217,7 +1250,8 @@ function getSourceDocRef($val, $typerecord)
 	{
 		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
+		if ($resultmid)
+		{
 			while ($objmid = $db->fetch_object($resultmid))
 			{
 				$ref.=' '.$objmid->ref;
@@ -1226,6 +1260,6 @@ function getSourceDocRef($val, $typerecord)
 		else dol_print_error($db);
 	}
 
-	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 ... i< < than max size of 300
+	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 dots (...) is < than max size of 300
 	return $ref;
 }

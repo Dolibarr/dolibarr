@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,9 +41,9 @@ class FormAdmin
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
@@ -55,11 +55,13 @@ class FormAdmin
 	 *      @param      int			$showwarning    Show a warning if language is not complete
 	 *      @param		int			$disabled		Disable edit of select
 	 *      @param		string		$morecss		Add more css styles
-	 *      @param      int         $showcode       Add language code into label
+	 *      @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
+	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *      @return		string						Return HTML select string with list of languages
-	 */
-	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0)
+     */
+	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0, $forcecombo=0)
 	{
+		// phpcs:enable
 		global $langs;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
@@ -87,8 +89,9 @@ class FormAdmin
 
 		foreach ($langs_available as $key => $value)
 		{
-		    $valuetoshow=$value;
-		    if ($showcode) $valuetoshow=$key.' - '.$value;
+			$valuetoshow=$value;
+			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
+			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
 
 			if ($filter && is_array($filter))
 			{
@@ -109,12 +112,16 @@ class FormAdmin
 		$out.= '</select>';
 
 		// Make select dynamic
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $out.= ajax_combobox($htmlname);
+		if (! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out.= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *    Return list of available menus (eldy_backoffice, ...)
      *
@@ -126,6 +133,7 @@ class FormAdmin
      */
     function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {
+		// phpcs:enable
         global $langs,$conf;
 
         // Clean parameters
@@ -204,6 +212,7 @@ class FormAdmin
 		print '</select>';
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return combo list of available menu families
      *
@@ -214,6 +223,7 @@ class FormAdmin
      */
     function select_menu_families($selected, $htmlname, $dirmenuarray)
     {
+		// phpcs:enable
 		global $langs,$conf;
 
         //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
@@ -275,6 +285,7 @@ class FormAdmin
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return a HTML select list of timezones
      *
@@ -284,6 +295,7 @@ class FormAdmin
      */
     function select_timezone($selected,$htmlname)
     {
+		// phpcs:enable
 		global $langs,$conf;
 
         print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -327,17 +339,19 @@ class FormAdmin
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
+	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *    	@param      string	$selected       Paper format pre-selected
-	 *    	@param      string	$htmlname       Name of HTML select field
-	 * 		@param		string	$filter			Value to filter on code
-	 * 		@param		int		$showempty		Add empty value
-	 * 		@return		string					Return HTML output
+	 *  @param      string	$selected       Paper format pre-selected
+	 *  @param      string	$htmlname       Name of HTML select field
+	 * 	@param		string	$filter			Value to filter on code
+	 * 	@param		int		$showempty		Add empty value
+	 * 	@return		string					Return HTML output
 	 */
 	function select_paper_format($selected='',$htmlname='paperformat_id',$filter=0,$showempty=0)
 	{
+		// phpcs:enable
 		global $langs;
 
 		$langs->load("dict");

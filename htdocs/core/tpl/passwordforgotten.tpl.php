@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,8 @@ if (empty($conf) || ! is_object($conf))
 }
 
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -42,10 +44,17 @@ $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag(
 $titleofpage=$langs->trans('SendNewPassword');
 
 print top_htmlhead('', $titleofpage);
+
+
+$colorbackhmenu1='60,70,100';      // topmenu
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -57,7 +66,7 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div class="login_center center">
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
@@ -88,17 +97,17 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
-<table summary="Login pass" class="centpercent">
+<div class="tagtable centpercent" title="Login pass" >
 
 <!-- Login -->
-<tr>
-<td valign="bottom" class="nowrap center">
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
-</td>
-</tr>
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+</div>
+</div>
 
 <?php
 if (! empty($morelogincontent)) {
@@ -125,10 +134,11 @@ if (! empty($morelogincontent)) {
 		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
 	?>
 	<!-- Captcha -->
-	<tr>
-	<td class="tdtop nowrap none center">
+	<div class="trinputlogin">
+	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
 	<td>
 	<!-- <span class="span-icon-security"> -->
 	<span class="nofa">
@@ -139,12 +149,12 @@ if (! empty($morelogincontent)) {
 	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
-	</td></tr>
+	</div></div>
 <?php } ?>
 
-</table>
+</div>
 
-</div> <!-- end div login right -->
+</div> <!-- end div login_right -->
 
 </div> <!-- end div login_line1 -->
 
@@ -155,7 +165,7 @@ if (! empty($morelogincontent)) {
 <br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
-<div align="center" style="margin-top: 8px;">
+<div align="center" style="margin-top: 15px;">
 	<?php
 	$moreparam='';
 	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
@@ -163,7 +173,7 @@ if (! empty($morelogincontent)) {
 	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
 	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
-	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
 	?>
 </div>
 
@@ -174,7 +184,7 @@ if (! empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
+<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>

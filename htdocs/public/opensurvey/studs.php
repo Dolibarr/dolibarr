@@ -24,11 +24,11 @@
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-require_once('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Init vars
@@ -95,7 +95,7 @@ if (GETPOST('ajoutcomment','alpha'))
 }
 
 // Add vote
-if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrom, boutonp_x for firefox
+if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrome, boutonp_x for firefox
 {
 	if (!$canbemodified) accessforbidden();
 
@@ -160,9 +160,12 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 					if ($email) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-						$body = $langs->trans('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true));
+						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
-						$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body);
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						//var_dump($body);exit;
+
+						$cmailfile=new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
 						$result=$cmailfile->sendfile();
 					}
 				}

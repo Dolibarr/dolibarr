@@ -1,15 +1,16 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Ferran Marcet		 <fmarcet@2byte.es>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2011  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013  Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -624,7 +625,11 @@ if (empty($reshook))
 				{
 					$label = $productsupplier->label;
 
-					$desc = $productsupplier->description;
+					// if we use supplier description of the products
+					if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					    $desc = $productsupplier->desc_supplier;
+					} else $desc = $productsupplier->description;
+
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 					$pu_ht = $productsupplier->fourn_pu;
@@ -788,7 +793,7 @@ if (empty($reshook))
 	}
 
 	// Mise a jour d'une ligne dans la demande de prix
-	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
+	else if ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
 
 		// Define info_bits
 		$info_bits = 0;
@@ -914,7 +919,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
+	else if ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1129,9 +1134,9 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
+		print $form->selectDate($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
 	} else {
-		$form->select_date($datedelivery ? $datedelivery : -1, 'liv_', '', '', '', "addask", 1, 1);
+		print $form->selectDate($datedelivery ? $datedelivery : -1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
 
@@ -1298,7 +1303,6 @@ if ($action == 'create')
 
 		print '</table>';
 	}
-
 } else {
 	/*
 	 * Show object in view mode
@@ -1368,12 +1372,11 @@ if ($action == 'create')
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 	}
 
-	if (! $formconfirm) {
-		$parameters = array('lineid' => $lineid);
-		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	}
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -1389,6 +1392,7 @@ if ($action == 'create')
 	//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1487,7 +1491,7 @@ if ($action == 'create')
 		print '<form name="editdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		$form->select_date($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
+		print $form->selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
@@ -1686,7 +1690,7 @@ if ($action == 'create')
 
 	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
-	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id . '">
 	';

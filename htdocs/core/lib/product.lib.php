@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  *
@@ -190,8 +190,9 @@ function product_prepare_head($object)
 function productlot_prepare_head($object)
 {
     global $db, $langs, $conf, $user;
-    $langs->load("products");
-    $langs->load("productbatch");
+
+    // Load translation files required by the page
+    $langs->loadLangs(array("products","productbatch"));
 
     $h = 0;
     $head = array();
@@ -200,7 +201,7 @@ function productlot_prepare_head($object)
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
 	$h++;
-	
+
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +44,7 @@ if (! empty($conf->paypal->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("paybox");
-$langs->load("paypal");
-$langs->load("stripe");
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 if (! empty($conf->paypal->enabled))
 {
@@ -148,8 +141,13 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
         $sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
     }
 
+    // Send warning of error to administrator
     if ($sendemail)
     {
+    	$companylangs = new Translate('', $conf);
+    	$companylangs->setDefaultLang($mysoc->default_lang);
+    	$companylangs->loadLangs(array('main','members','bills','paypal','paybox'));
+
         $from=$conf->global->MAILING_EMAIL_FROM;
         $sendto=$sendemail;
 
@@ -167,16 +165,21 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	else $appli.=" ".DOL_VERSION;
 
     	$urlback=$_SERVER["REQUEST_URI"];
-    	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
+    	$topic='['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
     	$content="";
-    	$content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
-    	$content.="\n";
-    	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-    	$content.=$langs->transnoentitiesnoconv("OnlinePaymentSystem").': '.$paymentmethod."<br>\n";
-    	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+    	$content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
+
+    	$content.="<br><br>\n";
+    	$content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+    	$content.="<br>\n";
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+
+    	$ishtml=dol_textishtml($content);	// May contain urls
+
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-    	$mailfile = new CMailFile($topic, $sendto, $from, $content);
+    	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 
     	$result=$mailfile->sendfile();
     	if ($result)
@@ -219,12 +222,12 @@ else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
 	$width=150;
 }
 // Output html code for logo

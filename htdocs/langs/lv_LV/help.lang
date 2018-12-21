@@ -6,21 +6,18 @@ OtherSupport=Cits atbalsts
 ToSeeListOfAvailableRessources=Lai sazinātos / skatītu pieejamos resursus:
 HelpCenter=Palīdzības centrs
 DolibarrHelpCenter=Dolibarr palīdzības un atbalsta centrs
-ToGoBackToDolibarr=Pretējā gadījumā, klikšķiniet <a href="%s">šeit, lai izmantotu Dolibarr</a>
-TypeOfSupport=Atbalsta avots
+ToGoBackToDolibarr=Pretējā gadījumā <a href="%s"> noklikšķiniet šeit, lai turpinātu Dolibarr lietošanu </a>.
+TypeOfSupport=Atbalsta veids
 TypeSupportCommunauty=Kopiena (bezmaksas)
 TypeSupportCommercial=Komerciāli
 TypeOfHelp=Veids
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=Jums vajadzīga palīdzība vai atbalsts?
 Efficiency=Efektivitāte
 TypeHelpOnly=Tikai palīdzība
 TypeHelpDev=Palīdzība + uzlabošana
-TypeHelpDevForm=Palīdzība + uzlabošana + veidošana
-ToGetHelpGoOnSparkAngels1=Daži uzņēmumi var nodrošināt ātru (dažkārt tūlītēju) un efektīvāku tiešsaistes atbalstu, veicot kontroli pār datoru. Šādus palīgus var atrast <b>%s</b> tīmekļa vietnē:
-ToGetHelpGoOnSparkAngels3=Jūs varat arī doties uz sarakstu ar visiem pieejamajiem treneri Dolibarr, šajā klikšķi uz pogas
-ToGetHelpGoOnSparkAngels2=Dažreiz nav uzņēmums pieejams brīdī, kad jūs veicat meklēšanu, tāpēc mainiet filtru, lai meklētu "visas pieejamības". Jums būs iespēja sūtīt vairāk pieprasījumu.
-BackToHelpCenter=Pretējā gadījumā, klikšķiniet šeit, lai dotos <a href="%s">atpakaļ uz palīdzības centra mājas lapu</a> .
-LinkToGoldMember=Jūs varat zvanīt vienu no autobusa izraudzītās Dolibarr jūsu valodā (%s), noklikšķinot uz savu logrīku (statuss un maksimālo cenu tiek atjauninātas automātiski):
+TypeHelpDevForm=Palīdzība + attīstība + apmācība
+BackToHelpCenter=Pretējā gadījumā <a href="%s"> atveriet palīdzības centra sākumlapu </a>.
+LinkToGoldMember=Jūs varat piezvanīt uz vienu no Dolibarr izvēlētām instruktoru valodām (%s), noklikšķinot uz tās logrīka (statuss un maksimālā cena tiek automātiski atjaunināta):
 PossibleLanguages=Atbalstītās valodas
-SubscribeToFoundation=Palīdzi Dolibarr projektam, piesakies fondam
+SubscribeToFoundation=Palīdziet Dolibarr projektam, abonējiet fondu
 SeeOfficalSupport=Oficiālaiā Dolibarr palīdzība jūsu valodā: <br><b><a href="%s" target="_blank">%s</a></b>

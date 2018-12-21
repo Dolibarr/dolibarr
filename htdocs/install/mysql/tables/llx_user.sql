@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007-2013 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -49,11 +49,21 @@ create table llx_user
   fk_country        integer        DEFAULT 0,
   birth             date,						-- birthday
   job				varchar(128),
-  skype             varchar(255),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
   email             varchar(255),
+  
+  jabberid			varchar(255),
+  skype				varchar(255),
+  twitter			varchar(255),                        		--
+  facebook			varchar(255),                        		--
+  instagram                varchar(255),                        		--
+  snapchat                 varchar(255),                        		--
+  googleplus               varchar(255),                        		--
+  youtube                  varchar(255),                        		--
+  whatsapp                 varchar(255),                        		--
+  
   signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
   module_comm       smallint DEFAULT 1,
@@ -84,6 +94,7 @@ create table llx_user
   salary			double(24,8),				-- denormalized value coming from llx_user_employment
   salaryextra		double(24,8),				-- denormalized value coming from llx_user_employment
   dateemployment	date,						-- denormalized value coming from llx_user_employment
+  dateemploymentend	date,						-- denormalized value coming from llx_user_employment
   weeklyhours		double(16,8),				-- denormalized value coming from llx_user_employment
 
   import_key        varchar(14),				-- import key

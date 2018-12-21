@@ -58,9 +58,9 @@ class pdf_standard extends ModelePDFProduct
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -68,15 +68,46 @@ class pdf_standard extends ModelePDFProduct
      */
 	public $version = 'dolibarr';
 
+    /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
+    /**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+
+    /**
+     * @var array format
+     */
     public $format;
+
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-    public $emetteur;	// Objet societe qui emet
+    /**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -88,8 +119,8 @@ class pdf_standard extends ModelePDFProduct
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "standard";
@@ -117,6 +148,7 @@ class pdf_standard extends ModelePDFProduct
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -130,19 +162,15 @@ class pdf_standard extends ModelePDFProduct
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("orders");
-		$outputlangs->load("deliveries");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
 		$nblignes = count($object->lines);
 
@@ -195,6 +223,7 @@ class pdf_standard extends ModelePDFProduct
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
 
                 if (class_exists('TCPDF'))
                 {
@@ -688,11 +717,9 @@ class pdf_standard extends ModelePDFProduct
 	{
 	    global $conf,$langs,$hookmanager;
 
-	    $outputlangs->load("main");
-	    $outputlangs->load("bills");
-	    $outputlangs->load("propal");
-	    $outputlangs->load("companies");
-	    $outputlangs->load("orders");
+	    // Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders"));
+
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 	    if ($object->type == 1) $titlekey='ServiceSheet';
@@ -841,6 +868,4 @@ class pdf_standard extends ModelePDFProduct
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 	    return pdf_pagefoot($pdf,$outputlangs,'PRODUCT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

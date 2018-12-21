@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2017	   Olivier Geffroy      <jeff@jeffinfo.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$calcmode=$langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
@@ -133,7 +134,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$calcmode=$langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPINGCOLLECTED">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
@@ -146,7 +147,7 @@ else if ($modecompta=="BOOKKEEPING")
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCATotalSaleJournal");
 	$builddate=dol_now();
@@ -629,6 +630,6 @@ print '</div>';
 
  */
 
+// End of page
 llxFooter();
-
 $db->close();

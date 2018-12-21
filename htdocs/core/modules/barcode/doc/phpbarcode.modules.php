@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to inc
  */
 class modPhpbarcode extends ModeleBarCode
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error='';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -109,7 +117,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
      */
 	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -150,7 +158,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
 	 */
 	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -167,6 +175,4 @@ class modPhpbarcode extends ModeleBarCode
 
 		return $result;
 	}
-
 }
-

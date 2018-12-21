@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,10 @@
  *		\brief      Page to list services in contracts
  */
 
-require ("../main.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'contracts', 'companies'));
@@ -83,7 +84,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('contratdet');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Security check
 $contratid = GETPOST('id','int');
@@ -197,7 +198,7 @@ $now=dol_now();
 $form=new Form($db);
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
-$sql.= " s.rowid as socid, s.nom as name,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -455,7 +456,7 @@ if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 	print $form->selectarray('filter_opouvertureprevue',$arrayofoperators,$filter_opouvertureprevue,1);
 	print ' ';
 	$filter_dateouvertureprevue=dol_mktime(0,0,0,$opouvertureprevuemonth,$opouvertureprevueday,$opouvertureprevueyear);
-	print $form->select_date($filter_dateouvertureprevue,'opouvertureprevue',0,0,1,'',1,0,1);
+	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
 if (! empty($arrayfields['cd.date_ouverture']['checked']))
@@ -465,7 +466,7 @@ if (! empty($arrayfields['cd.date_ouverture']['checked']))
 	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print $form->select_date($filter_date1,'op1',0,0,1,'',1,0,1);
+	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
 if (! empty($arrayfields['cd.date_fin_validite']['checked']))
@@ -475,7 +476,7 @@ if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print $form->select_date($filter_date2,'op2',0,0,1,'',1,0,1);
+	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
 if (! empty($arrayfields['cd.date_cloture']['checked']))
@@ -485,7 +486,7 @@ if (! empty($arrayfields['cd.date_cloture']['checked']))
 	print $form->selectarray('filter_opcloture',$arrayofoperators,$filter_opcloture,1);
 	print ' ';
 	$filter_date_cloture=dol_mktime(0,0,0,$opcloturemonth,$opclotureday,$opclotureyear);
-	print $form->select_date($filter_date_cloture,'opcloture',0,0,1,'',1,0,1);
+	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
 // Extra fields
@@ -540,6 +541,11 @@ while ($i < min($num,$limit))
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
 
+	$companystatic->id=$obj->socid;
+	$companystatic->name=$obj->name;
+	$companystatic->email=$obj->email;
+	$companystatic->client=$obj->client;
+	$companystatic->fournisseur=$obj->fournisseur;
 
 	print '<tr class="oddeven">';
 
@@ -555,7 +561,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['p.description']['checked']))
 	{
 		print '<td>';
-		if ($obj->pid)
+		if ($obj->pid > 0)
 		{
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
@@ -625,9 +631,6 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td>';
-		$companystatic->id=$obj->socid;
-		$companystatic->name=$obj->name;
-		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;

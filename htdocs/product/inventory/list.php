@@ -59,7 +59,7 @@ $diroutputmassaction=$conf->inventory->dir_output . '/temp/massgeneration/'.$use
 $hookmanager->initHooks(array('inventorylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('inventory');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -525,7 +525,7 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 
 	// Show list of available documents

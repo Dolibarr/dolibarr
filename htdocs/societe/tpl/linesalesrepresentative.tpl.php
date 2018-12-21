@@ -23,10 +23,10 @@ if (empty($conf) || ! is_object($conf))
 }
 
 // Sale representative
-print '<tr><td>';
+print '<tr><td class="titlefield">';
 print $langs->trans('SalesRepresentatives');
 print '</td>';
-print '<td colspan="3">';
+print '<td>';
 
 $listsalesrepresentatives=$object->getSalesRepresentatives($user);
 $nbofsalesrepresentative=count($listsalesrepresentatives);

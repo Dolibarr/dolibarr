@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2015	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
  *
@@ -202,6 +202,6 @@ print "</form>\n";
 
 print "<br>";
 
+// End of page
 llxFooter();
-
 $db->close();

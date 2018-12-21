@@ -25,7 +25,7 @@
  *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
  */
 
-require("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -289,6 +289,9 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+
 if (!empty($sql_select))
 {
 	$sql = $sql_select;
@@ -358,7 +361,7 @@ if ($sql_select)
 {
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
-	
+
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
@@ -381,7 +384,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
     print '<td class="liste_titre nowrap center">'; // date
-    print $formother->select_month($month?$month:-1,'month',1);
+    print $formother->select_month($month?$month:-1, 'month', 1, 0, 'valignmiddle');
     $formother->select_year($year?$year:-1,'year',1, 20, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -551,7 +554,6 @@ if ($sql_select)
 				{
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
-
 			} else {
 
 				if (! empty($objp->label) || ! empty($objp->description))
@@ -650,6 +652,6 @@ else {
 
 print "</form>";
 
+// End of page
 llxFooter();
-
 $db->close();

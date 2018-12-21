@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -521,7 +521,6 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
-
 			}
 
 			$db->free($resql);
@@ -580,7 +579,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -884,6 +882,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

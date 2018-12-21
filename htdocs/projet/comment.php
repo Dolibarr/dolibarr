@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$id=$object->id;
 	}
 }
@@ -183,6 +184,6 @@ print '<br>';
 // Include comment tpl view
 include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
 
-
+// End of page
 llxFooter();
 $db->close();

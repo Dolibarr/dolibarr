@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,6 +195,8 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/ExpenseReportTest.php';
         $suite->addTestSuite('ExpenseReportTest');
+        require_once dirname(__FILE__).'/LoanTest.php';
+        $suite->addTestSuite('LoanTest');
 
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
@@ -250,4 +252,3 @@ class AllTests
         return $suite;
     }
 }
-

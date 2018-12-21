@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class modBanque extends DolibarrModules
 		$this->numero = 85;
 
 		$this->family = "financial";
-		$this->module_position = 510;
+		$this->module_position = '51';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
@@ -86,49 +86,49 @@ class modBanque extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 111; // id de la permission
-		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
+		$this->rights[$r][1] = 'Read bank account and transactions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 112; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
 		$this->rights[$r][0] = 113; // id de la permission
-		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // libelle de la permission
+		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
 		$this->rights[$r][0] = 114; // id de la permission
-		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // libelle de la permission
+		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
 		$this->rights[$r][0] = 115; // id de la permission
-		$this->rights[$r][1] = 'Exporter transactions et releves'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporter transactions et releves';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 116; // id de la permission
-		$this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
+		$this->rights[$r][1] = 'Virements entre comptes';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
 		$this->rights[$r][0] = 117; // id de la permission
-		$this->rights[$r][1] = 'Gerer les envois de cheques'; // libelle de la permission
+		$this->rights[$r][1] = 'Gerer les envois de cheques';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cheque';
@@ -199,7 +199,6 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
 		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
-
 	}
 
 

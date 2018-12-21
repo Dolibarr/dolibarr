@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2014	Juanjo Menent 		<jmenent@2byte.es>
- * Copyright (C) 2014	    Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 {
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
@@ -134,7 +135,7 @@ if ($calc==2) 	// Invoice for goods, payment for services
 {
     $calcmode=$langs->trans("CalcModeLT2Debt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
@@ -298,7 +299,6 @@ if($calc ==0 || $calc == 1){
 		print '</tr>';
 
 		print '</table>';
-
 	}
 	else
 	{
@@ -321,9 +321,9 @@ if($calc ==0){
 	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
 	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
-
 }
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

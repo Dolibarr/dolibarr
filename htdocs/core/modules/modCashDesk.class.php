@@ -46,7 +46,7 @@ class modCashDesk extends DolibarrModules
 		$this->rights_class = 'cashdesk';
 
 		$this->family = "portal";
-		$this->module_position = 10;
+		$this->module_position = '55';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "CashDesk module";
@@ -64,9 +64,10 @@ class modCashDesk extends DolibarrModules
 		$this->config_page_url = array("cashdesk.php@cashdesk");
 
 		// Dependencies
+		$this->hidden = false;			            // A condition to hide module
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog');	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			    // List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')
@@ -80,7 +81,6 @@ class modCashDesk extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'cashdesk';
 		$r=0;
 
 		$r++;
@@ -97,7 +97,7 @@ class modCashDesk extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
 									'type'=>'top',			// This is a Top menu entry
-									'titre'=>'CashDeskMenu',
+									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

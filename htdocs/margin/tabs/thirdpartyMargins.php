@@ -26,10 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+$langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -206,6 +203,11 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
+    			$sign = '';
+    			if ($objp->type == Facture::TYPE_CREDIT_NOTE){
+    			    $sign = '-';
+    			}
+
     			print '<tr class="oddeven">';
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
@@ -216,11 +218,11 @@ if ($socid > 0)
     			print dol_print_date($db->jdate($objp->datef),'day')."</td>";
     			print "<td align=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
     			print "<td align=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td align=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+    			print "<td align=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARK_RATES))
-    				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;
@@ -282,5 +284,6 @@ print '
     </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();
