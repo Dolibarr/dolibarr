@@ -164,5 +164,4 @@ AddVariousPayment=添加杂项付款
 SEPAMandate=SEPA授权
 YourSEPAMandate=您的SEPA授权
 FindYourSEPAMandate=这是您的SEPA授权，授权我们公司向您的银行直接扣款。返回签名（扫描签名文档）或通过邮件发送给
-BankAccountReleveModule=Module Bank statement
-AutoReportLastAccountStatement=Automatic report account stament
+AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation
