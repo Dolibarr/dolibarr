@@ -1054,7 +1054,7 @@ SetupDescription3=<a href="%s"> %s -> %s </a> <br> Grundlæggende parametre, der
 SetupDescription4=<a href="%s"> %s -> %s </a> <br> Dolibarr ERP / CRM er en samling af mange moduler / applikationer, alle mere eller mindre uafhængige. Modulerne, der er relevante for dine behov, skal aktiveres og konfigureres. Nye emner / valgmuligheder tilføjes til menuer med aktivering af et modul.
 SetupDescription5=Andre opsætningsmenuposter indeholder valgfrie parametre.
 LogEvents=Sikkerhed revision arrangementer
-Audit=Security events
+Audit=Sikkerhedshændelser
 InfoDolibarr=Om Dolibarr
 InfoBrowser=Om Browser
 InfoOS=Om OS
@@ -1829,7 +1829,7 @@ MailboxTargetDirectory=Mailbox target directory
 EmailcollectorOperations=Operations to do by collector
 CollectNow=Collect now
 DateLastResult=Date last collect
-LastResult=Last result
+LastResult=Sidste resultat
 EmailCollectorConfirmCollectTitle=Email collect confirmation
 EmailCollectorConfirmCollect=Do you want to run the collect for this collector now ?
 NoNewEmailToProcess=No new email (matching filters) to process

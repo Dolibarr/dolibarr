@@ -164,5 +164,4 @@ AddVariousPayment=Tilføj diverse betalinger
 SEPAMandate=SEPA mandat
 YourSEPAMandate=Dit SEPA mandat
 FindYourSEPAMandate=Dette er dit SEPA-mandat til at give vores firma tilladelse til at foretage en direkte debitering til din bank. Ret det underskrevet (scan af det underskrevne dokument) eller send det pr. Mail til
-BankAccountReleveModule=Module Bank statement
-AutoReportLastAccountStatement=Automatic report account stament
+AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation
