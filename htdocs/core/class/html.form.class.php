@@ -4002,6 +4002,7 @@ class Form
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+									options += "&token=" + encodeURIComponent('.$_SESSION['newtoken'].')
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
