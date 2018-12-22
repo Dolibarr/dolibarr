@@ -237,7 +237,7 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 * Clone and object into another one
+	 * Clone an object into another one
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
@@ -570,9 +570,9 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+	 *	Load the info information in the object 
 	 *
-	 *	@param  int		$id       Id of order
+	 *	@param  int		$id       Id of object
 	 *	@return	void
 	 */
 	public function info($id)
@@ -636,7 +636,7 @@ class MyObject extends CommonObject
 
 	/**
 	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
+	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
