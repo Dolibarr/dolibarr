@@ -3991,7 +3991,7 @@ class Form
                     closeOnEscape: false,
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
-                        	var options="";
+                        	var options = "token='.urlencode($_SESSION['newtoken']).'";
                         	var inputok = '.json_encode($inputok).';
                          	var pageyes = "'.dol_escape_js(! empty($pageyes)?$pageyes:'').'";
                          	if (inputok.length>0) {
@@ -4002,7 +4002,6 @@ class Form
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-									options += "&token=" + encodeURIComponent('.$_SESSION['newtoken'].')
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
@@ -4011,7 +4010,7 @@ class Form
                             $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities("No")).'": function() {
-                        	var options = "";
+                        	var options = "token='.urlencode($_SESSION['newtoken']).'";
                          	var inputko = '.json_encode($inputko).';
                          	var pageno="'.dol_escape_js(! empty($pageno)?$pageno:'').'";
                          	if (inputko.length>0) {
