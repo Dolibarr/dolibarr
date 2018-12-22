@@ -120,7 +120,7 @@ class MyObject extends CommonObject
      * @var string label
      */
     public $label;
-    
+
     /**
      * @var string amount
      */
@@ -130,12 +130,12 @@ class MyObject extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
-    
+
 	/**
      * @var string date_creation
      */
 	public $date_creation;
-	
+
 	/**
      * @var string tms
      */
@@ -150,7 +150,7 @@ class MyObject extends CommonObject
      * @var int ID
      */
 	public $fk_user_modif;
-    
+
 	/**
      * @var string import_key
      */
@@ -570,7 +570,7 @@ class MyObject extends CommonObject
 	}
 
 	/**
-	 *	Load the info information in the object 
+	 *	Load the info information in the object
 	 *
 	 *	@param  int		$id       Id of object
 	 *	@return	void
