@@ -330,7 +330,7 @@ PaperFormatCAP6=Biçim P6 Kanada
 #### Expense report categories ####
 ExpAutoCat=Araba
 ExpCycloCat=Moped
-ExpMotoCat=Motorbike
+ExpMotoCat=Motosiklet
 ExpAuto3CV=3 CV
 ExpAuto4CV=4 CV
 ExpAuto5CV=5 CV

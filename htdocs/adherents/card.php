@@ -94,7 +94,7 @@ if ($id > 0)
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id)
 	{
-		// $ User is the user who edits, $ object->user_id is the id of the related user in the edited member
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser=((($user->id == $object->user_id) && $user->rights->user->self->creer)
 				|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
 		$caneditpassworduser=((($user->id == $object->user_id) && $user->rights->user->self->password)
@@ -268,7 +268,7 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
-		// Test si le login existe deja
+		// Check if the login already exists
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {

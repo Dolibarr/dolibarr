@@ -618,7 +618,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
-var_dump($conf->global->PROJECT_USE_TASKS);
+
 	// Bill time
 	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{

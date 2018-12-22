@@ -306,7 +306,7 @@ DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Socio
 DemandReasonTypeSRC_EMPLOYEE=Empleado
 DemandReasonTypeSRC_SPONSORING=Patrocinador
-DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+DemandReasonTypeSRC_SRC_CUSTOMER=Contacto entrante de un cliente
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

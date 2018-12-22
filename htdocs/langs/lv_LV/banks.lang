@@ -164,5 +164,4 @@ AddVariousPayment=Pievienot dažādus maksājumus
 SEPAMandate=SEPA mandāts
 YourSEPAMandate=Jūsu SEPA mandāts
 FindYourSEPAMandate=Tas ir jūsu SEPA mandāts, lai pilnvarotu mūsu uzņēmumu veikt tiešā debeta pasūtījumu savai bankai. Atgriezt to parakstu (skenēt parakstīto dokumentu) vai nosūtīt pa pastu uz
-BankAccountReleveModule=Module Bank statement
-AutoReportLastAccountStatement=Automatic report account stament
+AutoReportLastAccountStatement=Automātiski aizpildiet lauku "Bankas izziņu numurs" ar pēdējo paziņojuma numuru, veicot saskaņošanu
