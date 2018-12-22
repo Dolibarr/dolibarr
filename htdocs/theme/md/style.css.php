@@ -851,9 +851,6 @@ select.flat.selectlimit {
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #505;
 }
-.fa-trash, .fa-crop, .fa-pencil {
-	font-size: 1.4em;
-}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
@@ -1265,7 +1262,6 @@ div.login_block {
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
-	font-weight: normal !important;
 }
 
 
@@ -2028,7 +2024,6 @@ div.login_block_other { padding-top: 3px; }
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;
-	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	color: #888 !important;
