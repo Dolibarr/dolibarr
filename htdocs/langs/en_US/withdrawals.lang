@@ -102,6 +102,9 @@ SEPARCUR=SEPA CUR
 SEPAFRST=SEPA FRST
 ExecutionDate=Execution date
 CreateForSepa=Create direct debit file
+ICS=Creditor Identifier CI
+END_TO_END="EndToEndId" SEPA XML tag - Unique id assigned per transaction
+USTRD="Unstructured" SEPA XML tag
 
 ### Notifications
 InfoCreditSubject=Payment of direct debit payment order %s by the bank
