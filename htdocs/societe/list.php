@@ -5,11 +5,11 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
- * Copyright (C) 2017       Rui Strecht      		<rui.strecht@aliartalentos.com>
- * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
- * Copyright (C) 2018       Nicolas ZABOURI      	<info@inovea-conseil.com>
+ * Copyright (C) 2016-2018  Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2016       Ferran Marcet      	    <fmarcet@2byte.es>
+ * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -401,7 +401,7 @@ if ($search_region)        $sql.= natural_search("region.nom",$search_region);
 if ($search_country && $search_country != '-1')       $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
 if ($search_email)         $sql.= natural_search("s.email",$search_email);
 if (strlen($search_phone)) $sql.= natural_search("s.phone", $search_phone);
-if (strlen($search_fax)) $sql.= natural_search("s.phone", $search_fax);
+if (strlen($search_fax))   $sql.= natural_search("s.fax", $search_fax);
 if ($search_url)           $sql.= natural_search("s.url",$search_url);
 if (strlen($search_idprof1)) $sql.= natural_search("s.siren",$search_idprof1);
 if (strlen($search_idprof2)) $sql.= natural_search("s.siret",$search_idprof2);
