@@ -149,7 +149,7 @@ if (empty($reshook)) {
 		if ($id <> $user->id) {
 			$object = new User($db);
 			$object->fetch($id);
-			$result = $object->delete();
+			$result = $object->delete($user);
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
@@ -1249,7 +1249,7 @@ else
 			$object->getrights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 		}
-		
+
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid))

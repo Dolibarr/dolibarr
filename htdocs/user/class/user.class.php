@@ -1005,13 +1005,14 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Delete the user
+	 *  Delete the user
 	 *
-	 * 		@return		int		<0 if KO, >0 if OK
+	 *	@param		User	$user	User than delete
+	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function delete()
+	function delete(User $user)
 	{
-		global $user,$conf,$langs;
+		global $conf,$langs;
 
 		$error=0;
 
