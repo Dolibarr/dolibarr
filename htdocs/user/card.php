@@ -145,15 +145,25 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
+	{
+		if ($id <> $user->id)
+		{
+			if (! GETPOSTISSET('token'))
+			{
+				print 'Error, token required for this critical operation';
+				exit;
+			}
+
 			$object = new User($db);
 			$object->fetch($id);
+
 			$result = $object->delete($user);
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
+				setEventMessages($langs->trans("RecordDeleted"), null);
 				header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
 				exit;
 			}
