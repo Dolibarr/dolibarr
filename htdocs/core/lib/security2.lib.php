@@ -514,7 +514,14 @@ function getRandomPassword($generic=false, $replaceambiguouschars=null)
 	{
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
-		$generated_password=str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
+		if (function_exists('random_int'))	// Cryptographic random
+		{
+			$generated_password=str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
+		}
+		else
+		{
+			$generated_password=str_replace($replaceambiguouschars, $numbers{mt_rand(0, $max)}, $generated_password);
+		}
 	}
 
 	return $generated_password;
