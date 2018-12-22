@@ -110,7 +110,7 @@ if (empty($reshook)) {
 		if ($caneditperms)
 		{
 			$object->fetch($id);
-			$object->delete();
+			$object->delete($user);
 			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 			exit;
 		}

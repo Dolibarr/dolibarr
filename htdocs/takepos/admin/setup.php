@@ -152,7 +152,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3) AND s.status = 1',1,0,1,array(),0);
+print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1,3) AND s.status = 1', 1, 0, 0, array(), 0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
@@ -188,7 +188,8 @@ if (! empty($conf->stock->enabled))
 	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
 	       $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
 	    }
-	    print $langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch');
+	    print $langs->trans("Yes").'<br>';
+	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
 	}
 	print '</td></tr>';
 
@@ -204,7 +205,7 @@ if (! empty($conf->stock->enabled))
 	}
 	else
 	{
-		print $langs->trans("StockDecreaseForPointOfSaleDisabled");
+		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
 }

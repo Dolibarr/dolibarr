@@ -302,7 +302,7 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		return $this->useraccount->delete($id);
+		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
 	/**

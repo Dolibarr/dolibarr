@@ -2541,9 +2541,10 @@ class Form
 	 *	@param	array	$ajaxoptions	Options for ajax_autocompleter
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
+	 *  @param	string	$morecss		More CSS
 	 *	@return	void
 	 */
-	function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0)
+	function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0, $morecss='')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2568,7 +2569,7 @@ class Form
 		}
 		else
 		{
-			print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss);
 		}
 	}
 
@@ -2586,9 +2587,10 @@ class Form
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
+	 *  @param	string	$morecss		Add more CSS
 	 *  @return array           		Array of keys for json
 	 */
-	function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0)
+	function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0,$morecss='')
 	{
         // phpcs:enable
 		global $langs,$conf,$db;
@@ -2643,7 +2645,7 @@ class Form
 			$num = $this->db->num_rows($result);
 
 			//$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-			$out.='<select class="flat maxwidthonsmartphone" id="'.$htmlname.'" name="'.$htmlname.'">';
+			$out.='<select class="flat maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 			if (! $selected) $out.='<option value="0" selected>&nbsp;</option>';
 			else $out.='<option value="0">&nbsp;</option>';
 
@@ -3989,7 +3991,7 @@ class Form
                     closeOnEscape: false,
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
-                        	var options="";
+                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
                         	var inputok = '.json_encode($inputok).';
                          	var pageyes = "'.dol_escape_js(! empty($pageyes)?$pageyes:'').'";
                          	if (inputok.length>0) {
@@ -4008,7 +4010,7 @@ class Form
                             $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities("No")).'": function() {
-                        	var options = "";
+                        	var options = "&token='.urlencode($_SESSION['newtoken']).'";
                          	var inputko = '.json_encode($inputko).';
                          	var pageno="'.dol_escape_js(! empty($pageno)?$pageno:'').'";
                          	if (inputko.length>0) {
@@ -4047,7 +4049,7 @@ class Form
 			if (empty($disableformtag)) $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
 			$formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
-			if (empty($disableformtag)) $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+			$formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
 			$formconfirm.= '<table width="100%" class="valid">'."\n";
 

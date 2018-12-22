@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -28,6 +30,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 $langs->loadLangs(array("cashcontrol","install","cashdesk","admin","banks"));
@@ -38,7 +41,10 @@ $action=GETPOST('action','aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
+$now=dol_now();
+$syear = (GETPOSTISSET('closeyear')?GETPOST('closeyear', 'int'):dol_print_date($now, "%Y"));
+$smonth = (GETPOSTISSET('closemonth')?GETPOST('closemonth', 'int'):dol_print_date($now, "%m"));
+$sday = (GETPOSTISSET('closeday')?GETPOST('closeday', 'int'):dol_print_date($now, "%d"));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -78,6 +84,16 @@ $hookmanager->initHooks(array('cashcontrolcard','globalcard'));
  * Actions
  */
 
+if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+{
+	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
+}
+
+
+if (GETPOST('cancel'))
+{
+	$action = 'create';
+}
 if ($action=="start")
 {
 	$error=0;
@@ -102,13 +118,13 @@ if ($action=="start")
 }
 elseif ($action=="add")
 {
-	$error=0;
 	if (GETPOST('opening','alpha') == '')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
 		$action='start';
 		$error++;
 	}
+	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
 		if (GETPOST($key,'alpha') == '')
@@ -133,9 +149,20 @@ elseif ($action=="add")
 	    $object->posmodule=GETPOST('posmodule','alpha');
 		$object->posnumber=GETPOST('posnumber','alpha');
 
-	    $id=$object->create($user);
+		$db->begin();
 
-	    $action="view";
+		$id=$object->create($user);
+
+		if ($id > 0)
+		{
+			$db->commit();
+			$action="view";
+		}
+		else
+		{
+			$db->rollback;
+			$action="view";
+		}
 	}
 }
 
@@ -171,16 +198,86 @@ if ($action=="create" || $action=="start")
 	$initialbalanceforterminal=array();
 	$theoricalamountforterminal=array();
 
-	if (GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
+	if (GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '-1')
 	{
-		// Calculate $initialbalanceforterminal and $theoricalamountforterminal for terminal 0
-		// TODO
+		$posmodule = GETPOST('posmodule','alpha');
+		$terminalid = GETPOST('posnumber','alpha');
+
+		// Calculate $initialbalanceforterminal for terminal 0
+		foreach($arrayofpaymentmode as $key => $val)
+		{
+			if ($key != 'cash')
+			{
+				$initialbalanceforterminal[$terminalid][$key] = 0;
+				continue;
+			}
+
+			// Get the bank account dedicated to this point of sale module/terminal
+			$bankid = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;			// This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
+			// Hook to get the good bank id according to posmodule and posnumber.
+			// @TODO add hook here
+
+			$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
+			$sql.= " WHERE fk_account = ".$bankid;
+			if ($syear && ! $smonth)              $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
+			elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, $smonth))."'";
+			elseif ($syear && $smonth && $sday)   $sql.= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
+			else dol_print_error('', 'Year not defined');
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj) $initialbalanceforterminal[$terminalid][$key] = $obj->total;
+			}
+			else dol_print_error($db);
+		}
+
+		// Calculate $theoricalamountforterminal for terminal 0
+		foreach($arrayofpaymentmode as $key => $val)
+		{
+			/*$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
+			$sql.= " WHERE fk_account = ".$bankid;*/
+
+			$sql = "SELECT SUM(pf.amount) as total";
+			$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
+			$sql.= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
+			$sql.= " AND f.module_source = '".$db->escape($posmodule)."'";
+			$sql.= " AND f.pos_source = '".$db->escape($terminalid)."'";
+			$sql.= " AND f.paye = 1";
+			$sql.= " AND p.entity IN (".getEntity('facture').")";
+			if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
+			elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
+			elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
+			else
+			{
+				dol_print_error('Value for key = '.$key.' not supported');
+				exit;
+			}
+			if ($syear && ! $smonth)              $sql.= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+			elseif ($syear && $smonth && ! $sday) $sql.= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+			elseif ($syear && $smonth && $sday)   $sql.= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+			else dol_print_error('', 'Year not defined');
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$theoricalamountforterminal[$terminalid][$key] = $initialbalanceforterminal[$terminalid][$key];
+
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$theoricalamountforterminal[$terminalid][$key] = price2num($theoricalamountforterminal[$terminalid][$key] + $obj->total);
+				}
+			}
+			else dol_print_error($db);
+		}
 	}
 
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
+    if ($action == 'start' && GETPOST('posnumber','int') != '' && GETPOST('posnumber','int') != '' && GETPOST('posnumber','int') != '-1')
     {
 	    print '<input type="hidden" name="action" value="add">';
     }
@@ -198,10 +295,6 @@ if ($action=="create" || $action=="start")
     print '<td></td>';
     print "</tr>\n";
 
-    $now=dol_now();
-    $syear = (GETPOSTISSET('closeyear')?GETPOST('closeyear', 'int'):dol_print_date($now, "%Y"));
-    $smonth = (GETPOSTISSET('closemonth')?GETPOST('closemonth', 'int'):dol_print_date($now, "%m"));
-    $sday = (GETPOSTISSET('closeday')?GETPOST('closeday', 'int'):dol_print_date($now, "%d"));
 	$disabled=0;
 	$prefix='close';
 
@@ -242,6 +335,7 @@ if ($action=="create" || $action=="start")
 	$retstring.="</select>";
 	print $retstring;
 	print '</td>';
+	// Button Start
 	print '<td>';
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
 	{
@@ -256,28 +350,81 @@ if ($action=="create" || $action=="start")
 
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
 	{
+		$posmodule = GETPOST('posmodule','alpha');
+		$terminalid = GETPOST('posnumber','alpha');
+
+		print '<br>';
+
 		print '<table class="noborder" width="100%">';
+
 		print '<tr class="liste_titre">';
-		print '<td align="center">'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td></td>';
+		print '<td align="center">'.$langs->trans("InitialBankBalance");
+		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+		print '</td>';
+		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
+		print $langs->trans("AmountAtEndOfPeriod");
+		print '</td>';
+		print '<td></td>';
+		print '</tr>';
+
+		print '<tr class="liste_titre">';
+		print '<td></td>';
+		print '<td align="center">'.$langs->trans("Cash");
+		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+		print '</td>';
+		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-			print '<td align="center">'.$langs->trans($val).'<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount").'</td>';
+			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>'.$langs->trans($val);
+			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+			print '</td>';
+			$i++;
 		}
 		print '<td></td>';
 		print '</tr>';
+
 		print '<tr>';
 		// Initial amount
-		print '<td align="center"><input name="opening" type="text" class="maxwidth100" value="'.price($initialbalanceforterminal[0]).'"></td>';
+		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
+		print '<td align="center">';
+		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
+		print '</td>';
+		// Amount per payment type
+		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
-			print '<td align="center">';
-			print price($theoricalamountforterminal[0][$key]).'<br>';
-			print '<input name="'.$key.'" type="text" class="maxwidth100" value="'.GETPOST($key,'alpha').'">';
+			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+			print price($theoricalamountforterminal[$terminalid][$key]).'<br>';
 			print '</td>';
+			$i++;
 		}
-
-		print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Save").'"></td>';
+		// Save
+		print '<td align="center"></td>';
 		print '</tr>';
+
+		print '<tr>';
+		print '<td>'.$langs->trans("RealAmount").'</td>';
+		// Initial amount
+		print '<td align="center">';
+		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening')?price2num(GETPOST('opening','alpha')):price($initialbalanceforterminal[$terminalid]['cash'])).'">';
+		print '</td>';
+		// Amount per payment type
+		$i=0;
+		foreach($arrayofpaymentmode as $key => $val)
+		{
+			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+			print '<input name="'.$key.'" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key,'alpha').'">';
+			print '</td>';
+			$i++;
+		}
+		// Save
+		print '<td align="center">';
+		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+		print '</td>';
+		print '</tr>';
+
 		print '</form>';
 	}
     print '</form>';
@@ -342,7 +489,7 @@ if (empty($action) || $action=="view")
     print dol_print_date($object->date_creation, 'dayhour');
     print '</td></tr>';
 
-    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").'</td><td>';
+    print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
     print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
     print "</td></tr>";
 

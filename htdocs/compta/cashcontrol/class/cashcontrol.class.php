@@ -52,7 +52,7 @@ class CashControl extends CommonObject
 	/**
 	 * @var string String with name of icon for pos_cash_fence. Must be the part after the 'object_' into object_pos_cash_fence.png
 	 */
-	public $picto = 'bank';
+	public $picto = 'account';
 
 	public $fields=array(
 	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>10),
@@ -141,7 +141,7 @@ class CashControl extends CommonObject
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
 		$sql .= $conf->entity;
-		$sql .= ", ".($this->opening > 0 ? $this->opening : 0);
+		$sql .= ", ".(is_numeric($this->opening) ? $this->opening : 0);
 		$sql .= ", 0";										// Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
