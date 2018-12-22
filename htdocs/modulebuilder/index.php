@@ -1576,7 +1576,8 @@ elseif (! empty($module))
 						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
 						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
 						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
-						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
+						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
+						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
@@ -1594,6 +1595,7 @@ elseif (! empty($module))
 						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 2);
 						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 2);
 						$realpathtolib      = dol_buildpath($pathtolib, 0, 2);
+						$realpathtoobjlib   = dol_buildpath($pathtoobjlib, 0, 2);
 						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
 						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 2);
 
@@ -1613,6 +1615,9 @@ elseif (! empty($module))
 
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtolib?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForObjLib").' : <strong>'.($realpathtoobjlib?'':'<strike>').$pathtoobjlib.($realpathtoobjlib?'':'</strike>').'</strong>';
+						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoobjlib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
 						//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
