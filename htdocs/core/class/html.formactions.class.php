@@ -243,7 +243,7 @@ class FormActions
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
-					print '<td>'.$ref.'</td>';
+					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
