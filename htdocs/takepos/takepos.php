@@ -66,6 +66,7 @@ var categories = JSON.parse( '<?php echo json_encode($categories);?>' );
 var currentcat;
 var pageproducts=0;
 var pagecategories=0;
+var pageactions=0;
 var place="<?php echo $place;?>";
 var editaction="qty";
 var editnumber="";
@@ -310,6 +311,23 @@ function OpenDrawer(){
 		});
 }
 
+function MoreActions(totalactions){
+	if (pageactions==0){
+		pageactions=1;
+		for (i = 0; i <= totalactions; i++){
+			if (i<9) $("#action"+i).hide();
+			else $("#action"+i).show();
+		}
+	}
+	else if (pageactions==1){
+		pageactions=0;
+		for (i = 0; i <= totalactions; i++){ 
+			if (i<9) $("#action"+i).show();
+			else $("#action"+i).hide();
+		}
+	}		
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -367,9 +385,9 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 		'action'=>'TakeposPrintingOrder();');
 	}
 	//add temp ticket button
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS){
-		$menus[$r++]=array('title'=>$langs->trans("Temporary ticket"),
-		'action'=>'TakeposPrintingTemp();');
+	if ($conf->global->TAKEPOS_BAR_RESTAURANT){
+		if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
+		else $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'Print(placeid);');
 	}
 }
 
@@ -380,8 +398,16 @@ if ($conf->global->TAKEPOSCONNECTOR){
 ?>
 <div style="position:absolute; top:1%; left:65.5%; height:37%; width:32.5%;">
 <?php
+$i = 0;
 foreach($menus as $menu) {
-    echo '<button type="button" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	$i++;
+	if (count($menus)>9 and $i==9)
+	{
+		echo '<button type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
+		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	}
+    else if ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	else echo '<button type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 }
 ?>
 </div>

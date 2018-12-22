@@ -208,69 +208,6 @@ if ($action == "order" and $placeid != 0) {
     $invoice->fetch($placeid);
 }
 
-// temporary ticket feature
-
-if ($action == "temp" and $placeid != 0) {
-    include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
-    // issues with special characters with jPosBoxprinting ->javascript, stringCleanCharts() temporarily fix them until to find a more elegant solution.
-
-    function stringCleanCharts($text)
-    {
-        $utf8 = array(
-        '/[áàâãªä]/u' => 'a',
-        '/[ÁÀÂÃÄ]/u' => 'A',
-        '/[ÍÌÎÏ]/u' => 'I',
-        '/[íìîï]/u' => 'i',
-        '/[éèêë]/u' => 'e',
-        '/[ÉÈÊË]/u' => 'E',
-        '/[óòôõºö]/u' => 'o',
-        '/[ÓÒÔÕÖ]/u' => 'O',
-        '/[úùûü]/u' => 'u',
-        '/[ÚÙÛÜ]/u' => 'U',
-        '/ç/' => 'c',
-        '/Ç/' => 'C',
-        '/ñ/' => 'n',
-        '/Ñ/' => 'N',
-        '/–/' => '-',
-        '/[’‘‹›‚\']/u' => ' ',
-        '/[“”«»„]/u' => ' ',
-        '/ /' => ' ',
-        );
-        return preg_replace(array_keys($utf8), array_values($utf8), $text);
-    }
-
-    $mysocname = stringCleanCharts($mysoc->name);
-    $mysocaddress = stringCleanCharts($mysoc->address);
-    $mysoctown = stringCleanCharts($mysoc->town);
-    $mysoczip = stringCleanCharts($mysoc->zip);
-    $mysocphone = stringCleanCharts($mysoc->phone);
-    $mysocurl = stringCleanCharts($mysoc->url);
-    $header_soc = '<html><center><font size="4"><b>' . $mysocname . '</b><br>' . $mysocaddress . '<br>' . $mysoczip . ' ' . $mysoctown . '</font></center><br>' . $langs->trans("Phone") . ': ' . $mysocphone . '<br>' . $mysocurl;
-    $header_ticket = '<br><br>' . $langs->trans("Temporary ticket") . '<br>' . $langs->trans("date") . ':<br>' . dol_print_date(dol_now(), 'dayhour') . '<br>' . $langs->trans('Place') . ' ' . $place . '<br><br><br><div width="100%" style="border-top-style: double;"></div>';
-    $body_ticket = '<table width="100%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="left">' . $langs->trans("Qty") . '</th><th align="left">' . $langs->trans("Price") . '</th><th align="left">' . $langs->trans("TotalTTC") . '</th></tr></thead>';
-    $footer_ticket = '<br><br>' . $langs->trans("Cashier") . ': ' . $user->firstname . '<br><center>' . $langs->trans("Thanks for your coming !") . '</center></html>';
-    $ticket_printer1 = "";
-    $catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
-    foreach($invoice->lines as $line)
-    {
-        if ($line->special_code == "3") { continue;
-        }
-        $c = new Categorie($db);
-        $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
-        $result = array_intersect($catsprinter1, $existing);
-        $count = count($result);
-        if ($count > 0) {
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
-            $db->query($sql);
-            $ticket_printer1.= '<tbody><tr><td align="left">' . $line->product_label . '</td><td align="left">' . $line->qty . '</td><td align="left">' . $line->total_ttc / $line->qty . '</td><td align="left">' . $line->total_ttc . '</td></tr></tbody>';
-            $ticket_total = '</table><div width="100%" style="border-top-style: double;"></div><table align="right"><tr><th>' . $langs->trans("TotalHT") . ': ' . price($invoice->total_ht, 1, '', 1, -1, -1, $conf->currency) . '</th></tr><tr><th>' . $langs->trans("TotalVAT") . ': ' . price($invoice->total_tva, 1, '', 1, -1, -1, $conf->currency) . '</th></tr><tr><th>' . $langs->trans("TotalTTC") . ': ' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</th></tr></tbody></table>';
-        }
-    }
-
-    $invoice->fetch($placeid);
-}
-
 ?>
 <style>
 .selected {
@@ -283,6 +220,7 @@ if ($action == "temp" and $placeid != 0) {
 <script language="javascript">
 var selectedline=0;
 var selectedtext="";
+var placeid=<?php echo $placeid;?>;
 $(document).ready(function(){
     $('table tbody tr').click(function(){
         $('table tbody tr').removeClass("selected");
