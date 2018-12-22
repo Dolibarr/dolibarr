@@ -350,7 +350,7 @@ if (empty($reshook)) {
 				$object->accountancy_code = GETPOST("accountancy_code",'alpha');
 				$object->openid = GETPOST("openid",'alpha');
 				$object->fk_user = GETPOST("fk_user",'int') > 0 ? GETPOST("fk_user",'int') : 0;
-				$object->employee = GETPOST('employee','alphanothtml');
+				$object->employee = GETPOST('employee','int');
 
 				$object->thm = GETPOST("thm",'alphanohtml') != '' ? GETPOST("thm",'alphanohtml') : '';
 				$object->tjm = GETPOST("tjm",'alphanohtml') != '' ? GETPOST("tjm",'alphanohtml') : '';
