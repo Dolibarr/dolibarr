@@ -6274,7 +6274,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $wit
  *
  * @param	string	$firstname		Firstname
  * @param	string	$lastname		Lastname
- * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
  * @return	string					Firstname + lastname or Lastname + firstname
  */
 function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
@@ -6284,15 +6284,19 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
 	$ret='';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?1:0);
-	if ($nameorder && ((string) $nameorder != '2'))
+	if ($nameorder && $nameorder != 2 && $nameorder != 3)
 	{
 		$ret.=$firstname;
 		if ($firstname && $lastname) $ret.=' ';
 		$ret.=$lastname;
 	}
-	else if ($nameorder == 2)
+	else if ($nameorder == 2 || $nameorder == 3)
 	{
 	   $ret.=$firstname;
+	   if (empty($ret) && $nameorder == 3)
+	   {
+	   		$ret.=$lastname;
+	   }
 	}
 	else
 	{

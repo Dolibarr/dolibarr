@@ -2243,7 +2243,7 @@ class User extends CommonObject
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
-	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
+	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'firstelselast'=Show firstname or lastname if not defined, 'login'=Show login
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
@@ -2360,7 +2360,7 @@ class User extends CommonObject
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle usertext'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' '.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
-			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+			else $result.=$this->getFullName($langs,'',($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
 		$result.=(($option == 'nolink')?'':$linkend);

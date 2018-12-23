@@ -462,7 +462,7 @@ abstract class CommonObject
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -4208,7 +4208,7 @@ abstract class CommonObject
 				$line->fetch_product();
 				$productstatic = $line->product;
 			}
-			
+
 			$this->tpl['label'].= $productstatic->getNomUrl(1);
 			$this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
 			// Dates
@@ -4225,7 +4225,7 @@ abstract class CommonObject
 			}else {
 				$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			}
-			
+
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
