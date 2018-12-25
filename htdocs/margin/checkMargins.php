@@ -143,7 +143,7 @@ $title = $langs->trans("Margins");
 
 llxHeader('', $title);
 
-// print_fiche_titre($text);
+// print load_fiche_titre($text);
 
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;

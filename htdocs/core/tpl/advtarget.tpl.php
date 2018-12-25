@@ -47,7 +47,7 @@ print '<script type="text/javascript" language="javascript">
 </script>';
 
 
-		print_fiche_titre($langs->trans("AdvTgtTitle"));
+		print load_fiche_titre($langs->trans("AdvTgtTitle"));
 
 		print '<div class="tabBar">' . "\n";
 		print '<form name="find_customer" id="find_customer" action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '"  method="POST">' . "\n";

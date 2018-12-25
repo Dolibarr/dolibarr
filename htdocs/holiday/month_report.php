@@ -54,7 +54,7 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print_fiche_titre($langs->trans('MenuReportMonth'));
+print load_fiche_titre($langs->trans('MenuReportMonth'));
 
 $html = new Form($db);
 $formother = new FormOther($db);
