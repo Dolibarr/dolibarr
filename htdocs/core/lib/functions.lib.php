@@ -40,48 +40,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
 
 /**
- * Function to return value of a static property when class
- * name is dynamically defined (not hard coded).
- * This is because $myclass::$myvar works from PHP 5.3.0+ only
- *
- * @param	string 	$class		Class name
- * @param 	string 	$member		Name of property
- * @return 	mixed				Return value of static property
- * @deprecated Dolibarr now requires 5.3.0+, use $class::$property syntax
- * @see https://php.net/manual/language.oop5.static.php
- */
-function getStaticMember($class, $member)
-{
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
-	// This part is deprecated. Uncomment if for php 5.2.*, and comment next isset class::member
-	/*if (version_compare(phpversion(), '5.3.0', '<'))
-	{
-		if (is_object($class)) $class = get_class($class);
-		$classObj = new ReflectionClass($class);
-		$result = null;
-
-		$found=0;
-		foreach($classObj->getStaticProperties() as $prop => $value)
-		{
-			if ($prop == $member)
-			{
-				$result = $value;
-				$found++;
-				break;
-			}
-		}
-
-		if ($found) return $result;
-	}*/
-
-	if (isset($class::$member)) return $class::$member;
-	dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
-	return null;
-}
-
-
-/**
  * Return a DoliDB instance (database handler).
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
