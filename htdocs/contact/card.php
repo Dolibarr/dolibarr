@@ -682,7 +682,7 @@ else
             	// Jabber
             	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
             	{
-            		print '<tr><td><label for="skype">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Jabber','jabberid', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
             	}
             	// Skype
@@ -968,7 +968,7 @@ else
             	// Jabber ID
             	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
             	{
-            		print '<tr><td><label for="jabberid">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<tr><td><label for="jabberid">'.$form->editfieldkey('Jabber','jabberid', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
             	}
             	// Skype
