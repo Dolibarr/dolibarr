@@ -32,7 +32,7 @@ $langs = $GLOBALS['langs'];
 $langs->load('ticket');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 echo '<br>';
-print_titre($langs->trans('RelatedTickets'));
+print load_fiche_titre($langs->trans('RelatedTickets'));
 ?>
 <table class="noborder" width="100%">
 <tr class="liste_titre">
