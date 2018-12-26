@@ -52,6 +52,10 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	$search_statut="";
 }
 
+// Define value to know what current user can do on users
+$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+
+
 
 /*
  * View
@@ -62,12 +66,7 @@ $form = new Form($db);
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')','','',0,0,$arrayofjs,$arrayofcss);
-
-$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
-
-print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', $morehtmlright);
-
+llxHeader('',$langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
 // Load hierarchy of users
@@ -138,9 +137,30 @@ foreach($fulltree as $key => $val)
 
 //var_dump($data);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+$title = $langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView");
 
-$param="search_statut=".$search_statut;
+$param="search_statut=".urlencode($search_statut);
+
+$newcardbutton='';
+if ($canadduser)
+{
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle">'.$langs->trans('NewUser').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
+$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
+
+print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
+
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print '<table class="liste nohover" width="100%">';
 

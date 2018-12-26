@@ -1503,12 +1503,12 @@ class User extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
-		$sql.= ", employee = ".$this->employee;
+		$sql.= ", employee = ".(int) $this->employee;
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", birth=".(strval($this->birth)!='' ? "'".$this->db->idate($this->birth)."'" : 'null');
-		if (! empty($user->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
+		if (! empty($user->admin)) $sql.= ", admin = ".(int) $this->admin;	// admin flag can be set/unset only by an admin user
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
