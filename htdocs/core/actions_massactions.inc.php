@@ -423,6 +423,8 @@ if (! $error && $massaction == 'confirm_presend')
 							// Insert logs into agenda
 							foreach($listofqualifiedobj as $objid => $objectobj)
 							{
+								dol_syslog("Try to insert email event into agenda for objid=".$objid." => objectobj=".get_class($objectobj));
+
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
