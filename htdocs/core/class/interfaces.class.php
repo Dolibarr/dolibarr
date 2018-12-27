@@ -86,7 +86,7 @@ class Interfaces
             global $db;
             $user = new User($db);
         }
-        dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
+        //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
 
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
