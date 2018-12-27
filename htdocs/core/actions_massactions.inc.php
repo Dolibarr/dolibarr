@@ -423,6 +423,8 @@ if (! $error && $massaction == 'confirm_presend')
 							// Insert logs into agenda
 							foreach($listofqualifiedobj as $objid => $objectobj)
 							{
+								dol_syslog("Try to insert email event into agenda for objid=".$objid." => objectobj=".get_class($objectobj));
+
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
@@ -1184,7 +1186,7 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
 		{
 			$outputlangs = $langs;
 			$newlang='';
-	
+
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) $newlang=$objecttmp->thirdparty->default_lang;  // for proposal, order, invoice, ...
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
@@ -1193,13 +1195,13 @@ if (! $error && $massaction == 'generate_doc' && $permtoread)
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-	
+
 			// To be sure vars is defined
 			if (empty($hidedetails)) $hidedetails=0;
 			if (empty($hidedesc)) $hidedesc=0;
 			if (empty($hideref)) $hideref=0;
 			if (empty($moreparams)) $moreparams=null;
-			
+
 			$result= $objecttmp->generateDocument($objecttmp->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
 			if ($result <= 0)
