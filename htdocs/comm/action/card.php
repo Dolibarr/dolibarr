@@ -432,8 +432,8 @@ if ($action == 'update')
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
-		$object->note        = GETPOST("note");
-		$object->pnote       = GETPOST("note");
+		$object->note        = GETPOST("note","none");	// deprecated
+		$object->note_private= GETPOST("note","none");
 		$object->fk_element	 = GETPOST("fk_element");
 		$object->elementtype = GETPOST("elementtype");
 
