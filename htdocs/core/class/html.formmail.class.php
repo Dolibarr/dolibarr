@@ -684,7 +684,7 @@ class FormMail extends Form
 				$out.= "</td></tr>\n";
 			}
 
-			// withoptiononeemailperrecipient
+			// With option one email per recipient
 			if (! empty($this->withoptiononeemailperrecipient))
 			{
 				$out.= '<tr><td class="minwidth200">';
@@ -779,7 +779,7 @@ class FormMail extends Form
 
 			// Topic
 			if (! empty($this->withtopic)) {
-				$out .= $this->getHtmlForTopic();
+				$out .= $this->getHtmlForTopic($arraydefaultmessage, $helpforsubstitution);
 			}
 
 			// Attached files
@@ -1096,11 +1096,14 @@ class FormMail extends Form
 	/**
 	 * get Html For Topic of message
 	 *
-	 * @return string html
+	 * @param	array	$arraydefaultmessage		Array with message template content
+	 * @param	string	$helpforsubstitution		Help string for substitution
+	 * @return 	string 								Text for topic
 	 */
-	public function getHtmlForTopic()
+	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
 		global $conf, $langs, $form;
+
 		$defaulttopic = GETPOST('subject','none');
 		if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
