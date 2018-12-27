@@ -43,63 +43,74 @@ class ExpenseReport extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='expensereport';
+    
+	/**
+	 * @var int    Name of subtable line
+	 */
+    public $table_element_line = 'expensereport_det';
+    
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+    public $fk_element = 'fk_expensereport';
+    
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+    public $picto = 'trip';
 
-    var $table_element_line = 'expensereport_det';
-    var $fk_element = 'fk_expensereport';
-    var $picto = 'trip';
-
-    var $lines=array();
+    public $lines=array();
 
     public $date_debut;
 
     public $date_fin;
 
-    var $status;
-    var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
-    var $fk_c_paiement;
-    var $paid;
+    public $status;
+    public $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    public $fk_c_paiement;
+    public $paid;
 
-    var $user_author_infos;
-    var $user_validator_infos;
+    public $user_author_infos;
+    public $user_validator_infos;
 
-    var $fk_typepayment;
-	var $num_payment;
-    var $code_paiement;
-    var $code_statut;
+    public $fk_typepayment;
+	public $num_payment;
+    public $code_paiement;
+    public $code_statut;
 
     // ACTIONS
 
     // Create
-    var $date_create;
-    var $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
+    public $date_create;
+    public $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
     // Update
-	var $date_modif;
-    var $fk_user_modif;
+	public $date_modif;
+    public $fk_user_modif;
 
     // Refus
-    var $date_refuse;
-    var $detail_refuse;
-    var $fk_user_refuse;
+    public $date_refuse;
+    public $detail_refuse;
+    public $fk_user_refuse;
 
     // Annulation
-    var $date_cancel;
-    var $detail_cancel;
-    var $fk_user_cancel;
+    public $date_cancel;
+    public $detail_cancel;
+    public $fk_user_cancel;
 
-    var $fk_user_validator;	// User that is defined to approve
+    public $fk_user_validator;	// User that is defined to approve
 
     // Validation
-    var $date_valid;		// User making validation
-    var $fk_user_valid;
-    var $user_valid_infos;
+    public $date_valid;		// User making validation
+    public $fk_user_valid;
+    public $user_valid_infos;
 
     // Approve
-    var $date_approve;
-    var $fk_user_approve;	// User that has approved
+    public $date_approve;
+    public $fk_user_approve;	// User that has approved
 
     // Paiement
-    var $user_paid_infos;
+    public $user_paid_infos;
 
     /*
         END ACTIONS
