@@ -6257,7 +6257,7 @@ class Form
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array(
 			'morehtmlright' => $morehtmlright,
-		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
+		    'compatibleImportElementsList' => &$compatibleImportElementsList,
 		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
@@ -6434,6 +6434,7 @@ class Form
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
 		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
 		if (empty($reshook))
 		{
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
@@ -6466,9 +6467,11 @@ class Form
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
 
-					print '<br><form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
+					print '<br>';
+					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
 					print '<input type="hidden" name="action" value="addlink">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<input type="hidden" name="addlink" value="'.$key.'">';
 					print '<table class="noborder">';
 					print '<tr class="liste_titre">';
