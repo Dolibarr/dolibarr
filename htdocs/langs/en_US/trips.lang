@@ -140,6 +140,7 @@ OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
+ErrorExpenseNotDraft=Error expense is not in draft mode
 
 ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
