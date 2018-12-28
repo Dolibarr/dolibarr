@@ -1777,7 +1777,7 @@ abstract class CommonObject
 			if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
 			$sql .= ' WHERE rowid='.$this->id;
 
 			if ($this->db->query($sql))
@@ -1962,7 +1962,7 @@ abstract class CommonObject
 			if (get_class($this) == 'Fournisseur') $fieldname = 'cond_reglement_supplier';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
 			$sql .= ' WHERE rowid='.$this->id;
 
 			if ($this->db->query($sql))
