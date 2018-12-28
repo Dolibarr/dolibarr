@@ -7,7 +7,8 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018 	   Philippe Grand 		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,24 +42,83 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_cyan extends ModelePDFPropales
 {
-	public $db;
-	public $name;
-	public $description;
-	public $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
-	public $type;
-
-	public $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
+	
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
 	public $version = 'development';
-
-	public $page_largeur;
-	public $page_hauteur;
-	public $format;
+	
+	/**
+     * @var int page width
+     */
+    public $page_largeur;
+	
+	/**
+     * @var int page height
+     */
+    public $page_hauteur;
+	
+	/**
+     * @var array() page format
+     */
+    public $format;
+	
+	/**
+     * @var int left margin width
+     */
 	public $marge_gauche;
-	public	$marge_droite;
-	public	$marge_haute;
-	public	$marge_basse;
+	
+	/**
+     * @var int right margin width
+     */
+	public $marge_droite;
+	
+	/**
+     * @var int top margin width
+     */
+	public $marge_haute;
+	
+	/**
+     * @var int bottom margin width
+     */
+	public $marge_basse;
 
-	public $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -138,13 +198,9 @@ class pdf_cyan extends ModelePDFPropales
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("products");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal" ));
 
 		$nblignes = count($object->lines);
 
@@ -1422,11 +1478,9 @@ class pdf_cyan extends ModelePDFPropales
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
-
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("companies");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "companies", "bills", "propal"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
