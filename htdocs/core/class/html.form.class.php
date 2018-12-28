@@ -4296,9 +4296,10 @@ class Form
 	 *    @param    string	$htmlname    	Name of select html field
 	 *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
 	 *    @param    int     $active         Active or not, -1 = all
+	 *    @param   int     $addempty       1=Add empty entry
 	 *    @return	void
 	 */
-	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1)
+	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1, $addempty=0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4307,7 +4308,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$this->select_types_paiements($selected,$htmlname,$filtertype,0,0,0,0,$active);
+			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
