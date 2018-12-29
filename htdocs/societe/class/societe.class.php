@@ -3079,12 +3079,13 @@ class Societe extends CommonObject
 	/**
 	 *  Create a third party into database from a member object
 	 *
-	 *  @param	Adherent	$member		Object member
-	 * 	@param	string	$socname		Name of third party to force
-	 *	@param	string	$socalias	Alias name of third party to force
-	 *  @return int					<0 if KO, id of created account if OK
+	 *  @param	Adherent	$member			Object member
+	 * 	@param	string		$socname		Name of third party to force
+	 *	@param	string		$socalias		Alias name of third party to force
+	 *  @param	string		$customercode	Customer code
+	 *  @return int							<0 if KO, id of created account if OK
 	 */
-	function create_from_member(Adherent $member, $socname='', $socalias='')
+	function create_from_member(Adherent $member, $socname='', $socalias='', $customercode='')
 	{
 		global $user,$langs;
 
@@ -3107,7 +3108,7 @@ class Societe extends CommonObject
 		$this->skype=$member->skype;
 
 		$this->client = 1;				// A member is a customer by default
-		$this->code_client = -1;
+		$this->code_client = ($customercode?$customercode:-1);
 		$this->code_fournisseur = -1;
 
 		$this->db->begin();
