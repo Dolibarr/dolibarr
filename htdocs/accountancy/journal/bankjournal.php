@@ -573,35 +573,35 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
-							$accountingaccount->fetch($k, null, true);
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_donation') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
-							$accountingaccount->fetch($k, null, true);
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
-							$accountingaccount->fetch($k, null, true);
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
-							$accountingaccount->fetch($k, null, true);
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
-							$accountingaccount->fetch($k, null, true);
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else {
 							if ($tabtype[$key] == 'unknown')	// Unknown transaction, we will use a waiting account for thirdparty.
