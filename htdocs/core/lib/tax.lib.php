@@ -109,7 +109,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$total_tva='total_tva';
     	$paymenttable='paiement';
     	$paymentfacturetable='paiement_facture';
-    	$invoicefieldref='facnumber';
+    	$invoicefieldref='ref';
     }
     if ($direction == 'buy')
     {
@@ -578,7 +578,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $total_tva='total_tva';
         $paymenttable='paiement';
         $paymentfacturetable='paiement_facture';
-        $invoicefieldref='facnumber';
+        $invoicefieldref='ref';
     }
     else
     {

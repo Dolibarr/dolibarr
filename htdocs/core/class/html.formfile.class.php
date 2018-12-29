@@ -307,8 +307,10 @@ class FormFile
 			return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
 		}
 
-		// Add entity in $param
-		$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+		// Add entity in $param if not already exists
+		if (!preg_match('/entity\=[0-9]+/', $param)) {
+			$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+		}
 
 		$printer=0;
 		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport','livraison')))	// The direct print feature is implemented only for such elements
@@ -414,6 +416,15 @@ class FormFile
 					$modellist=ModelePDFExpedition::liste_modeles($this->db);
 				}
 			}
+            elseif ($modulepart == 'reception')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
+					$modellist = ModelePdfReception::liste_modeles($this->db);
+				}
+            }
 			elseif ($modulepart == 'livraison')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;

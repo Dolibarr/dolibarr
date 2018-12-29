@@ -25,6 +25,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
 //require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 //require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -136,7 +137,7 @@ class CommandeFournisseurDispatch extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $hookmanager;
 		$error=0;
 
 		// Clean parameters
@@ -150,6 +151,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (isset($this->comment)) $this->comment=trim($this->comment);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
+		if(empty($this->datec)) $this->datec = dol_now();
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -167,7 +170,10 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= "status,";
 		$sql.= "batch,";
 		$sql.= "eatby,";
-		$sql.= "sellby";
+		$sql.= "sellby,";
+		$sql.= "fk_reception";
+
+
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->fk_commande)?'NULL':"'".$this->db->escape($this->fk_commande)."'").",";
 		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
@@ -180,7 +186,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->db->escape($this->status)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'")."";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
+		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->db->escape($this->fk_reception)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -202,6 +209,24 @@ class CommandeFournisseurDispatch extends CommonObject
 	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
 	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
+			}
+        }
+
+		// Actions on extra fields (by external module or standard code)
+		// TODO le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('commandefournisseurdispatchdao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
         }
 
@@ -249,7 +274,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " t.tms,";
 		$sql.= " t.batch,";
 		$sql.= " t.eatby,";
-		$sql.= " t.sellby";
+		$sql.= " t.sellby,";
+		$sql.= " t.fk_reception";
 
 
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -349,14 +375,21 @@ class CommandeFournisseurDispatch extends CommonObject
 
 		if (! $error)
 		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				if(empty($this->id) && !empty($this->rowid))$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            $result=$this->call_trigger('LINERECEPTION_UPDATE',$user);
+	            if ($result < 0) $error++;
 	            //// End call triggers
 			 }
 		}

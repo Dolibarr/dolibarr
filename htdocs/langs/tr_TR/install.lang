@@ -208,5 +208,5 @@ HideNotAvailableOptions=Hide unavailable options
 ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.
 YouTryInstallDisabledByDirLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (directory renamed with .lock suffix).<br>
 YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (by the existence of a lock file <strong>install.lock</strong> in the dolibarr documents directory).<br>
-ClickHereToGoToApp=Click here to go to your application
+ClickHereToGoToApp=Uygulamanıza gitmek için buraya tıklayın
 ClickOnLinkOrRemoveManualy=Click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.

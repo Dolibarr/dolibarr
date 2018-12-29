@@ -423,6 +423,8 @@ if (! $error && $massaction == 'confirm_presend')
 							// Insert logs into agenda
 							foreach($listofqualifiedobj as $objid => $objectobj)
 							{
+								dol_syslog("Try to insert email event into agenda for objid=".$objid." => objectobj=".get_class($objectobj));
+
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
@@ -448,14 +450,14 @@ if (! $error && $massaction == 'confirm_presend')
 								$objectobj->elementtype	= $objectobj->element;
 
 								$triggername = strtoupper(get_class($objectobj)) .'_SENTBYMAIL';
-								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
-								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
-								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
+								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYMAIL';
+								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYMAIL';
+								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYMAIL';
 								if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYMAIL';
-								if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
+								if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYMAIL';
 								if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
-								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
-								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
+								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYMAIL';
+								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 
 								if (! empty($triggername))
 								{
@@ -1167,6 +1169,67 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 		$db->rollback();
 	}
 	//var_dump($listofobjectthirdparties);exit;
+}
+
+// Generate document foreach object according to model linked to object
+// @TODO : propose model selection
+if (! $error && $massaction == 'generate_doc' && $permtoread)
+{
+	$db->begin();
+
+	$objecttmp=new $objectclass($db);
+	$nbok = 0;
+	foreach($toselect as $toselectid)
+	{
+		$result=$objecttmp->fetch($toselectid);
+		if ($result > 0)
+		{
+			$outputlangs = $langs;
+			$newlang='';
+
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) $newlang=$objecttmp->thirdparty->default_lang;  // for proposal, order, invoice, ...
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) $newlang=$objecttmp->default_lang;                  // for thirdparty
+			if (! empty($newlang))
+			{
+				$outputlangs = new Translate("",$conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
+			// To be sure vars is defined
+			if (empty($hidedetails)) $hidedetails=0;
+			if (empty($hidedesc)) $hidedesc=0;
+			if (empty($hideref)) $hideref=0;
+			if (empty($moreparams)) $moreparams=null;
+
+			$result= $objecttmp->generateDocument($objecttmp->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
+			if ($result <= 0)
+			{
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+			else $nbok++;
+		}
+		else
+		{
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (! $error)
+	{
+		if ($nbok > 1) setEventMessages($langs->trans("RecordsGenerated", $nbok), null, 'mesgs');
+		else setEventMessages($langs->trans("RecordGenerated", $nbok), null, 'mesgs');
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 $parameters['toselect']=$toselect;

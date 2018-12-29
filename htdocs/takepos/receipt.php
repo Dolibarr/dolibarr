@@ -32,7 +32,7 @@ top_httphead('text/html');
 $facid=GETPOST('facid','int');
 $place=GETPOST('place','int');
 if ($place>0){
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
     $row = $db->fetch_array ($resql);
     $facid=$row[0];
@@ -46,12 +46,14 @@ $object->fetch($facid);
 <body>
 <center>
 <font size="4">
-<?php echo $mysoc->name; ?>
+<?php echo '<b>'.$mysoc->name.'</b>';?>
 </font>
 </center>
 <br>
 <p align="left">
-<?php print dol_nl2br(dol_format_address($mysoc)); ?>
+<?php print dol_nl2br(dol_format_address($mysoc)).'<br>'.$langs->trans("Phone").': '.$mysoc->phone;
+ ?>
+
 </p>
 <p align="right">
 <?php
@@ -62,11 +64,12 @@ print $object->ref;
 </p>
 <br>
 
-<table width="100%">
+<table width="100%" style="border-top-style: double;">
     <thead>
 	<tr>
         <th align="center"><?php print $langs->trans("Label"); ?></th>
         <th align="right"><?php print $langs->trans("Qty"); ?></th>
+        <th align="right"><?php print $langs->trans("Price"); ?></th>
         <th align="right"><?php print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
@@ -78,6 +81,7 @@ print $object->ref;
     <tr>
         <td><?php echo $line->product_label;?></td>
         <td align="right"><?php echo $line->qty;?></td>
+        <td align="right"><?php echo $line->total_ttc/$line->qty;?></td>
         <td align="right"><?php echo price($line->total_ttc);?></td>
     </tr>
     <?php
@@ -98,6 +102,15 @@ print $object->ref;
     <th align="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td align="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
+<div style="border-top-style: double;">
+<br>
+<br>
+<br>
+<?php
+echo $langs->trans("Cashier: ");
+echo $user->firstname.'<br>'.$mysoc->url.'<br>';
+echo '<center>'.$langs->trans("Thanks for your coming !").'</center>';
+?>
 
 <script type="text/javascript">
     window.print();

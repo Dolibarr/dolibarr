@@ -243,13 +243,13 @@ class FormActions
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
-					print '<td>'.$ref.'</td>';
+					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
 	        		{
 	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
-	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
+	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
 	        		}
 	        		print '</td>';
 					// Type

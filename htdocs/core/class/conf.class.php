@@ -458,7 +458,11 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
-			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+			if(empty($this->reception->enabled))$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+			else {
+				$this->global->STOCK_CALCULATE_ON_RECEPTION=1;
+				$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE=0;
+			}
 		}
 
 		// conf->currency

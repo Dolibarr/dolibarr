@@ -622,8 +622,8 @@ class FormCompany
 								runJsCodeForEvent'.$htmlname.'(values);
 							}
 						});
-						/* Clean contact */
-						$("div#s2id_contactid>a>span").html(\'\');
+
+						$(this).trigger("blur");
 					});
 
 					// Function used to execute events when search_htmlname change

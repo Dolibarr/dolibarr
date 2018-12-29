@@ -604,7 +604,7 @@ class Expedition extends CommonObject
 				if ($this->statut == 0) $this->brouillon = 1;
 
 				// Tracking url
-				$this->GetUrlTrackingStatus($obj->tracking_number);
+				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
 				 * Thirparty
@@ -1937,16 +1937,14 @@ class Expedition extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function GetUrlTrackingStatus($value='')
+	function getUrlTrackingStatus($value='')
 	{
-        // phpcs:enable
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";

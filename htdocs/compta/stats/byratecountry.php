@@ -281,7 +281,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 } else {
 	$sql.= " AND f.type IN (0,1,2,3,5)";
 }
-$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";
+$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
 $sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
 
 dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);

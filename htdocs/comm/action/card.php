@@ -432,8 +432,8 @@ if ($action == 'update')
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
-		$object->note        = GETPOST("note");
-		$object->pnote       = GETPOST("note");
+		$object->note        = GETPOST("note","none");	// deprecated
+		$object->note_private= GETPOST("note","none");
 		$object->fk_element	 = GETPOST("fk_element");
 		$object->elementtype = GETPOST("elementtype");
 
@@ -1658,7 +1658,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
 
 			if ($user->rights->agenda->allactions->create ||
@@ -1668,7 +1668,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			if ($user->rights->agenda->allactions->delete ||
@@ -1678,7 +1678,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}
 		}
 	}

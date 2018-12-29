@@ -3,6 +3,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
 		// Load traductions files requiredby by page
-		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict", "bills", "banks"));
 
 		$nblignes = count($object->lines);
 
@@ -257,8 +258,10 @@ class pdf_standard extends ModeleExpenseReport
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 12;	// Height reserved to output the footer (value include bottom margin)
-                $pdf->SetAutoPageBreak(1,0);
+		        $heightforfooter = $this->marge_basse + 12;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
+
+	            $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -462,30 +465,37 @@ class pdf_standard extends ModeleExpenseReport
 
             	// Show total area box
 				$posy=$bottomlasttab+5;
-				$pdf->SetXY(100, $posy);
-				$pdf->MultiCell(60, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
-				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'R');
+				$posy_start_of_totals = $posy;
+				$pdf->SetXY(130, $posy);
+				$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
+				$pdf->SetXY(180, $posy);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ht), 1, 'R');
 				$pdf->SetFillColor(248,248,248);
 
 				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 				{
 				    // TODO Show vat amout per tax level
 					$posy+=5;
-					$pdf->SetXY(100, $posy);
+					$pdf->SetXY(130, $posy);
 					$pdf->SetTextColor(0,0,60);
-					$pdf->MultiCell(60, 5, $outputlangs->transnoentities("TotalVAT"), 1,'L');
-					$pdf->SetXY(160, $posy);
-					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_tva),1, 'R');
+					$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalVAT"), 1,'L');
+					$pdf->SetXY(180, $posy);
+					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_tva),1, 'R');
 				}
 
 				$posy+=5;
-				$pdf->SetXY(100, $posy);
+				$pdf->SetXY(130, $posy);
 				$pdf->SetFont('','B', 10);
 				$pdf->SetTextColor(0,0,60);
-				$pdf->MultiCell(60, 5, $outputlangs->transnoentities("TotalTTC"), 1,'L');
-				$pdf->SetXY(160, $posy);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ttc),1, 'R');
+				$pdf->MultiCell(70, 5, $outputlangs->transnoentities("TotalTTC"), 1,'L');
+				$pdf->SetXY(180, $posy);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ttc),1, 'R');
+
+				// show payments zone
+				$sumPayments = $object->getSumPayments();
+				if ($sumPayments > 0 && empty($conf->global->PDF_EXPENSEREPORT_NO_PAYMENT_DETAILS)) {
+					$posy=$this->tablePayments($pdf, $object, $posy_start_of_totals, $outputlangs);
+				}
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -531,7 +541,7 @@ class pdf_standard extends ModeleExpenseReport
      * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
      * @return  void
      */
-	private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails=0)
+    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails=0)
 	{
         global $conf;
         $pdf->SetFont('','', $default_font_size - 1);
@@ -924,6 +934,118 @@ class pdf_standard extends ModeleExpenseReport
 		}
 
 		$pdf->SetTextColor(0,0,0);
+	}
+
+	/**
+	 *  Show payments table
+	 *
+	 *  @param	PDF			$pdf           Object PDF
+	 *  @param  Object		$object         Object invoice
+	 *  @param  int			$posy           Position y in PDF
+	 *  @param  Translate	$outputlangs    Object langs for output
+	 *  @return int             			<0 if KO, >0 if OK
+	 */
+	private function tablePayments(&$pdf, $object, $posy, $outputlangs)
+	{
+		global $conf;
+
+		$sign=1;
+		$tab3_posx = $this->marge_gauche;
+		$tab3_top = $posy;
+		$tab3_width = 88;
+		$tab3_height = 5;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		$title=$outputlangs->transnoentities("PaymentsAlreadyDone");
+		$pdf->SetFont('','', $default_font_size - 2);
+		$pdf->SetXY($tab3_posx, $tab3_top - 4);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->MultiCell(60, 3, $title, 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width+2, $tab3_top); // Top border line of table title
+
+		$pdf->SetXY($tab3_posx, $tab3_top+1);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Date"), 0, 'L', 0);
+		$pdf->SetXY($tab3_posx+19, $tab3_top+1); // Old value 17
+		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
+		$pdf->SetXY($tab3_posx+35, $tab3_top+1);
+		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		if (! empty($conf->banque->enabled)) {
+			$pdf->SetXY($tab3_posx+65, $tab3_top+1);
+			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
+		}
+		$pdf->line($tab3_posx, $tab3_top+$tab3_height, $tab3_posx+$tab3_width+2, $tab3_top+$tab3_height); // Bottom border line of table title
+
+		$y=0;
+
+		// Loop on each payment
+		// TODO create method on expensereport class to get payments
+		// Payments already done (from payment on this expensereport)
+		$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
+		$sql.= "c.code as p_code, c.libelle as payment_type,";
+		$sql.= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
+		$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
+		$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
+		$sql.= " WHERE e.rowid = '".$object->id."'";
+		$sql.= " AND p.fk_expensereport = e.rowid";
+		$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
+		$sql.= " ORDER BY dp";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num) {
+				$y+=$tab3_height;
+				$row = $this->db->fetch_object($resql);
+
+				$pdf->SetXY($tab3_posx, $tab3_top+$y+1);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->dp),'day',false,$outputlangs,true), 0, 'L', 0);
+				$pdf->SetXY($tab3_posx+17, $tab3_top+$y+1);
+				$pdf->MultiCell(15, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx+35, $tab3_top+$y+1);
+				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort" . $row->p_code);
+
+				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
+				if (! empty($conf->banque->enabled)) {
+					$pdf->SetXY($tab3_posx+65, $tab3_top+$y+1);
+					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', 0);
+				}
+
+				$pdf->line($tab3_posx, $tab3_top+$y+$tab3_height, $tab3_posx+$tab3_width+2, $tab3_top+$y+$tab3_height); // Bottom line border of table
+				$totalpaid += $row->amount;
+				$i++;
+			}
+			if ($num > 0 && $object->paid == 0)
+			{
+				$y+=$tab3_height;
+				
+				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
+				$pdf->MultiCell(15, 3, price($totalpaid), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
+				$pdf->MultiCell(30, 4, $outputlangs->trans("AlreadyPaid"), 0, 'L', 0);
+				$y+=$tab3_height-2;
+				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
+				$pdf->MultiCell(15, 3, price($object->total_ttc), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
+				$pdf->MultiCell(30, 4, $outputlangs->trans("AmountExpected"), 0, 'L', 0);
+				$y+=$tab3_height-2;
+				$remaintopay = $object->total_ttc - $totalpaid;
+				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
+				$pdf->MultiCell(15, 3, price($remaintopay), 0, 'R', 0);
+				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
+				$pdf->MultiCell(30, 4, $outputlangs->trans("RemainderToPay"), 0, 'L', 0);
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
 	}
 
 	/**

@@ -2,6 +2,17 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 10.0.0 compared to 9.0.0 *****
+For Users:
+
+For Developers:
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* GetUrlTrackingStatus were renamed into getUrlTrackingStatus
+
 
 ***** ChangeLog for 9.0.0 compared to 8.0.0 *****
 For Users:

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tools must be used by experienced users or developers. It gives you utilities to build or edit your own module (Documentation for alternative <a href="%s" target="_blank">manual development is here</a>).
+ModuleBuilderDesc=This tool must be used by only by experienced users or developers. It gives you utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
@@ -12,8 +12,8 @@ ObjectKey=Nesne anahtarı
 ModuleInitialized=Module initialized
 FilesForObjectInitialized=Yeni nesne '%s' için dosyalar başlatıldı
 FilesForObjectUpdated=Files for object '%s' updated (.sql files and .class.php file)
-ModuleBuilderDescdescription=Enter here all general information that describe your module.
-ModuleBuilderDescspecifications=You can enter here a long text to describe the specifications of your module that is not already structured into other tabs. So you have within easy reach all the rules to develop. Also this text content will be included into the generated documentation (see last tab). You can use Markdown format, but it is recommanded to use Asciidoc format (Comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
+ModuleBuilderDescdescription=Modülünüzü tanımlayan tüm genel bilgileri buraya girin
+ModuleBuilderDescspecifications=You can enter here a detailed description of the specifications of your module that is not already structured into other tabs. So you have within easy reach all the rules to develop. Also this text content will be included into the generated documentation (see last tab). You can use Markdown format, but it is recommended to use Asciidoc format (comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown).
 ModuleBuilderDescobjects=Define here the objects you want to manage with your module. A CRUD DAO class, SQL files, page to list record of objects, to create/edit/view a record and an API will be generated.
 ModuleBuilderDescmenus=This tab is dedicated to define menu entries provided by your module.
 ModuleBuilderDescpermissions=This tab is dedicated to define the new permissions you want to provide with your module.
@@ -21,12 +21,12 @@ ModuleBuilderDesctriggers=This is the view of triggers provided by your module. 
 ModuleBuilderDeschooks=This tab is dedicated to hooks.
 ModuleBuilderDescwidgets=This tab is dedicated to manage/build widgets.
 ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module and a "ready to distribute" documentation file. Just click on button to build the package or documentation file.
-EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All files of module but also structured data and documentation will be definitly lost !
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All files related to object will be definitly lost !
+EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: ALL files of module AND structured data and documentation will be deleted!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All files related to object will be deleted!
 DangerZone=Tehlikeli bölge
 BuildPackage=Build package/documentation
 BuildDocumentation=Dökümantasyon oluşturun
-ModuleIsNotActive=This module was not activated yet. Go into %s to make it live or click here:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here:
 ModuleIsLive=This module has been activated. Any change on it may break a current active feature.
 DescriptionLong=Uzun açıklama
 EditorName=Editörün adı
@@ -34,7 +34,7 @@ EditorUrl=Editörün URL'si
 DescriptorFile=Modülün tanımlayıcı dosyası
 ClassFile=PHP DAO CRUD sınıfı için dosya
 ApiClassFile=PHP API sınıfı için dosya
-PageForList=PHP page for list of record
+PageForList=Kayıt listesi için PHP sayfası
 PageForCreateEditView=PHP page to create/edit/view a record
 PageForAgendaTab=Etkinlik sekmesi için PHP sayfası
 PageForDocumentTab=Belge sekmesi için PHP sayfası
@@ -47,7 +47,7 @@ RegenerateClassAndSql=Erase and regenerate class and sql files
 RegenerateMissingFiles=Eksik dosyaları oluştur
 SpecificationFile=File with business rules
 LanguageFile=Dil için dosya
-ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong> ? This will change code in PHP class but also remove column from table definition of object.
+ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
 NotNull=Not NULL
 NotNullDesc=1=Set database to NOT NULL. -1=Allow null values and force value to NULL if empty ('' or 0).
 SearchAll='Tümünü ara' için kullanılır
@@ -66,19 +66,19 @@ PageForLib=PHP kütüphaneleri için dosya
 SqlFileExtraFields=Tamamlayıcı nitelikler için Sql dosyası
 SqlFileKey=Anahtarlar için Sql dosyası
 AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
-UseAsciiDocFormat=You can use Markdown format, but it is recommanded to use Asciidoc format (Comparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
+UseAsciiDocFormat=You can use Markdown format, but it is recommended to use Asciidoc format (omparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 IsAMeasure=Is a measure
 DirScanned=Taranan dizin
 NoTrigger=No trigger
 NoWidget=No widget
 GoToApiExplorer=Go to API explorer
-ListOfMenusEntries=Menü girişlerinin listesi
+ListOfMenusEntries=Menü kayıtlarının listesi
 ListOfPermissionsDefined=Tanımlanan izinlerin listesi
-SeeExamples=See examples here
+SeeExamples=Burada örneklere bakın
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing)
-IsAMeasureDesc=Can the value of field be cumulated to get a total into list ? (Examples: 1 or 0)
-SearchAllDesc=Is the field used to make a search from the quick search tool ? (Examples: 1 or 0)
+IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
+SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
 LanguageDefDesc=Enter in this files, all the key and the translation for each language file.
 MenusDefDesc=Define here the menus provided by your module (once defined, they are visible into the menu editor %s)
@@ -88,14 +88,15 @@ TriggerDefDesc=Define in the trigger file the code you want to execute for each 
 SeeIDsInUse=See IDs in use in your installation
 SeeReservedIDsRangeHere=See range of reserved IDs
 ToolkitForDevelopers=Toolkit for Dolibarr developers
-TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
-AddLanguageFile=Add language file
+AddLanguageFile=Dil dosyası ekle
 YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
 DropTableIfEmpty=(Delete table if empty)
 TableDoesNotExists=The table %s does not exists
 TableDropped=Table %s deleted
 InitStructureFromExistingTable=Build the structure array string of an existing table
-UseAboutPage=Disallow the about page
-UseDocFolder=Disallow the documentation folder
+UseAboutPage=Hakkında sayfasını devre dışı bırak
+UseDocFolder=Dökümantasyon klasörünü devre dışı bırak
 UseSpecificReadme=Use a specific ReadMe
+RealPathOfModule=Modülün gerçek yolu

@@ -309,8 +309,8 @@ class vCard
     function getVCard()
     {
         $text = "BEGIN:VCARD\r\n";
-        //$text.= "VERSION:3.0\r\n";
-        $text.= "VERSION:2.1\r\n";
+        $text.= "VERSION:3.0\r\n";
+        //$text.= "VERSION:2.1\r\n";
         foreach($this->properties as $key => $value)
         {
             $text.= "$key:$value\r\n";

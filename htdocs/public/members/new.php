@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2001-2002	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2012		J. Fernando Lagrange    <fernando@demo-tic.org>
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2001-2002  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,8 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 $extrafields = new ExtraFields($db);
 
 $object = new Adherent($db);
+
+$user->loadDefaultValues();
 
 
 /**
@@ -232,6 +235,7 @@ if ($action == 'add')
         $adh->public      = $public;
         $adh->firstname   = $_POST["firstname"];
         $adh->lastname    = $_POST["lastname"];
+        $adh->gender      = $_POST["gender"];
         $adh->civility_id = $_POST["civility_id"];
         $adh->societe     = $_POST["societe"];
         $adh->address     = $_POST["address"];
@@ -580,6 +584,12 @@ print $formcompany->select_civility(GETPOST('civility_id'),'civility_id').'</td>
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+// Gender
+print '<tr><td>'.$langs->trans("Gender").'</td>';
+print '<td>';
+$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+print '</td></tr>';
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address

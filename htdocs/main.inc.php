@@ -366,31 +366,34 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
-	// roulement des jetons car cree a chaque appel
+	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 
 	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
+// Check token
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token','alpha')) // Note, offender can still send request by GET
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
 	{
 		print "Access refused by CSRF protection in main.inc.php. Token not provided.\n";
 		print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
 		die;
 	}
-	if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
+
+	//if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
+	//{
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
 	{
-		if (GETPOST('token', 'alpha') != $_SESSION['token'])
-		{
-			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action','aZ09').", _POST['token']=".GETPOST('token','alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
-			//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-			unset($_POST);
-		}
+		dol_syslog("Invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action','aZ09').", _GET|POST['token']=".GETPOST('token','alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
+		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
+		unset($_POST);
+		unset($_GET['confirm']);
 	}
+	//}
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -500,6 +503,17 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -568,6 +582,17 @@ if (! defined('NOLOGIN'))
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -604,11 +629,24 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+
+				$user->trigger_mesg=$user->error;
 			}
+
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -648,11 +686,24 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+
+				$user->trigger_mesg=$user->error;
 			}
+
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -684,17 +735,26 @@ if (! defined('NOLOGIN'))
 			    $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 			    //var_dump($relativepathstring);
 
-			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
+			    // We click on a link that leave a page we have to save search criteria, contextpage, limit and page. We save them from tmp to no tmp
 			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
 			    }
-			    // We also save contextpage
 			    if (! empty($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]))
 			    {
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    {
+			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			    }
+			    if (! empty($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] != $conf->liste_limit)
+			    {
+			    	$_SESSION['lastsearch_limit_'.$relativepathstring]=$_SESSION['lastsearch_limit_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 			    }
 		    }
 
@@ -741,6 +801,17 @@ if (! defined('NOLOGIN'))
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
+		// Call triggers for the "security events" log
+		$user->trigger_mesg = $loginfo;
+		// Call triggers
+		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+		if ($result < 0) {
+			$error++;
+		}
+		// End call triggers
+
 		// Hooks on successfull login
 		$action='';
 		$hookmanager->initHooks(array('login'));
@@ -752,7 +823,7 @@ if (! defined('NOLOGIN'))
 		{
 			$db->rollback();
 			session_destroy();
-			dol_print_error($db,'Error in some hooks afterLogin');
+			dol_print_error($db,'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
 		}
 		else
@@ -1015,7 +1086,7 @@ if (! function_exists("llxHeader"))
 
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title, 1);
+			left_menu('', $help_url, '', '', 1, $title, 1);		// $menumanager is retreived with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1191,7 +1262,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! defined('DISABLE_FONT_AWSOME'))
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1473,7 +1545,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			{
 				$logouthtmltext.=$langs->trans("Logout").'<br>';
 
-				$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+				$logouttext .='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
 				//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 				$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
 				$logouttext .='</a>';
@@ -1539,7 +1611,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 			$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-print atoplogin"></span>';
+			$text.='<span class="fas fa-print atoplogin"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 		}
@@ -1908,7 +1980,8 @@ if (! function_exists("llxFooter"))
 	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
 	{
 		global $conf, $langs, $user, $object;
-		global $delayedhtmlcontent, $contextpage;
+		global $delayedhtmlcontent;
+		global $contextpage, $page, $limit;
 
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1943,8 +2016,16 @@ if (! function_exists("llxFooter"))
 		if (preg_match('/list\.php$/', $relativepathstring))
 		{
 			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
-			if (! empty($contextpage)) $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
+
+			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
+
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_page_'.$relativepathstring]);
+			unset($_SESSION['lastsearch_limit_'.$relativepathstring]);
 		}
 
 		// Core error message

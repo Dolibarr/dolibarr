@@ -46,7 +46,7 @@ DateDeliveryPlanned=Planned date of delivery
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
 DateReceived=Date delivery received
-SendShippingByEMail=Send shipment by EMail
+SendShippingByEMail=Send shipment by email
 SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Events on shipment
 LinkToTrackYourPackage=Link to track your package
@@ -55,7 +55,7 @@ ShipmentLine=Shipment line
 ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
 ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase order already received
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
@@ -69,4 +69,4 @@ SumOfProductWeights=Sum of product weights
 
 # warehouse details
 DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseFormat= W:%s (Qty: %d)

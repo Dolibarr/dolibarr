@@ -366,7 +366,7 @@ if ($action == 'addcontainer')
 				$urltograb.='/';
 			}
 			$pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
-	
+
 			$urltograbdirwithoutslash = dirname($urltograb.'.');
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
 			// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
@@ -653,7 +653,7 @@ if ($action == 'addcontainer')
 		$sample = GETPOST('sample','alpha');
 		if (empty($sample)) $sample='empty';
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/page-sample-'.$sample.'.html';
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.$sample.'.html';
 
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
 		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
@@ -869,14 +869,14 @@ if ($action == 'updatecss')
 		$filemaster=$pathofwebsite.'/master.inc.php';
 
 		dol_syslog("Save master file ".$filemaster);
-		
+
 		dol_mkdir($pathofwebsite);
 
 		// Now generate the master.inc.php page
 		$result = dolSaveMasterFile($filemaster);
 		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 
-		
+
 		// Html header file
 		$htmlheadercontent ='';
 
@@ -1472,8 +1472,15 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	{
 		if (! $error)
 		{
-			setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
-			setEventMessages($langs->trans("YouCanCreatePageOrImportTemplate"), null, 'warnings');
+			if (empty($websitekey) || $websitekey == '-1')
+			{
+				setEventMessages($langs->trans("NoWebSiteCreateOneFirst"), null, 'warnings');
+			}
+			else
+			{
+				setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+				setEventMessages($langs->trans("YouCanCreatePageOrImportTemplate"), null, 'warnings');
+			}
 		}
 	}
 }
@@ -1666,11 +1673,10 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource')
 
 if (! GETPOST('hide_websitemenu'))
 {
-//var_dump($objectpage);exit;
-print '<div class="centpercent websitebar">';
+	//var_dump($objectpage);exit;
+	print '<div class="centpercent websitebar">';
 
-if (count($object->records) > 0)	// There is at least one web site
-{
+
 	// ***** Part for web sites
 	print '<!-- Bar for website -->';
 	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
@@ -1713,12 +1719,15 @@ if (count($object->records) > 0)	// There is at least one web site
 		if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
 	}
 
-
-	$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+	$array=array();
+	if ($object->id > 0)
+	{
+		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+	}
 	if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 	$atleastonepage=(is_array($array) && count($array) > 0);
 
-	if ($websitekey && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+	if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 	{
 		$disabled='';
 		if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
@@ -1828,7 +1837,7 @@ if (count($object->records) > 0)	// There is at least one web site
 
 	// Toolbar for pages
 
-	if ($websitekey && ! in_array($action, array('editcss','editmenu','importsite')))
+	if ($websitekey && $websitekey != '-1' && ! in_array($action, array('editcss','editmenu','importsite')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
@@ -1947,7 +1956,7 @@ if (count($object->records) > 0)	// There is at least one web site
 				print $formconfirm;
 			}
 
-			if ($pageid > 0)
+			if ($pageid > 0 && $atleastonepage)		// pageid can be set without pages, if homepage of site is set and all page were removed
 			{
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
@@ -2025,7 +2034,7 @@ if (count($object->records) > 0)	// There is at least one web site
 
 		print '<div class="websitetools">';
 
-		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 		{
 			$realpage=$urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
@@ -2125,17 +2134,8 @@ if (count($object->records) > 0)	// There is at least one web site
 			}
 		}
 	}
-}
-else
-{
-	print '<div class="websiteselection">';
-	$langs->load("errors");
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '<div>';
-	$action='';
-}
 
-print '</div>';	// end current websitebar
+	print '</div>';	// end current websitebar
 }
 
 
@@ -2540,7 +2540,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	print '<tr><td>';
 	$htmlhelp=$langs->trans("WEBSITE_IMAGEDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'imagetooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
@@ -2606,7 +2606,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'aliastooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
@@ -2636,8 +2636,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 
 	print '<tr><td class="tdhtmlheader tdtop">';
-	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp =$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
+	$htmlhelp.=$langs->trans("Example").' :<br>';
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
@@ -2743,12 +2743,13 @@ if ($action == 'editsource')
 	$doleditor->Create(0, '', false);
 }*/
 
-print "</div>\n</form>\n";
+print "</div>\n";
+print "</form>\n";
 
 
 if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 {
-	if ($pageid > 0)
+	if ($pageid > 0 && $atleastonepage)
 	{
 		// $filejs
 		// $filecss
@@ -2874,8 +2875,16 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 	}
 	else
 	{
-		print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</center><br><br><br>';
-		print '<div class="center"><div class="logo_setup"></div></div>';
+		if (empty($websitekey) || $websitekey == '-1')
+		{
+			print '<br><br><div class="center">'.$langs->trans("NoWebSiteCreateOneFirst").'</center><br><br><br>';
+			print '<div class="center"><div class="logo_setup"></div></div>';
+		}
+		else
+		{
+			print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</center><br><br><br>';
+			print '<div class="center"><div class="logo_setup"></div></div>';
+		}
 	}
 }
 

@@ -194,7 +194,6 @@ if (empty($reshook))
         $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
         $object->fax			= GETPOST("fax",'alpha');
         $object->jabberid		= GETPOST("jabberid",'alpha');
-		$object->no_email		= GETPOST("no_email",'int');
         $object->priv			= GETPOST("priv",'int');
         $object->note_public	= GETPOST("note_public",'none');
         $object->note_private	= GETPOST("note_private",'none');
@@ -227,7 +226,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array');
+				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -367,7 +366,6 @@ if (empty($reshook))
             $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
             $object->fax			= GETPOST("fax",'alpha');
             $object->jabberid		= GETPOST("jabberid",'alpha');
-			$object->no_email		= GETPOST("no_email",'int');
             $object->priv			= GETPOST("priv",'int');
             $object->note_public	= GETPOST("note_public",'none');
        		$object->note_private	= GETPOST("note_private",'none');
@@ -383,10 +381,10 @@ if (empty($reshook))
 				// First we delete all categories association
 				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_contact';
 				$sql .= ' WHERE fk_socpeople = ' . $object->id;
-				$db->query( $sql );
+				$db->query($sql);
 
 				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array');
+				$categories = GETPOST('contcats', 'array');
 				$object->setCategories($categories);
 
                 $object->old_lastname='';
@@ -409,6 +407,12 @@ if (empty($reshook))
        		}
         }
     }
+
+    // Actions to send emails
+	$trigger_name='CONTACT_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromcontact';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -651,8 +655,21 @@ else
 	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			      {
@@ -660,28 +677,30 @@ else
             }
             print '</tr>';
 
-            // Instant message and no email
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
-
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="skype">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
-            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             	}
             	// Twitter
             	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
             	{
-            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
             	}
             	// Facebook
             	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
             	{
-            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
             	}
             }
@@ -694,10 +713,9 @@ else
 
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
-				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
-					null, '90%' );
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
 
@@ -919,13 +937,25 @@ else
             }
             print '</tr>';
 
-            // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            // Unsubscribe
+            print '<tr>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			{
@@ -935,22 +965,28 @@ else
 
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber ID
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="jabberid">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
-            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             	}
             	// Twitter
             	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
             	{
-            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
             	}
             	// Facebook
             	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
             	{
-            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
             	}
             }
@@ -980,16 +1016,16 @@ else
             print '</td></tr>';
 
 			// Categories
-			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td>';
+			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td>';
 				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
-				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, 'contact' );
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, 'contact');
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				print $form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				print "</td></tr>";
 			}
 
@@ -1101,10 +1137,10 @@ else
             $password=$generated_password;
 
             // Create a form array
-            $formquestion=array(
-            array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
-            //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
+            $formquestion = array(
+                array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+                array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
+                //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
             if (! empty($conf->societe->enabled))
@@ -1153,11 +1189,23 @@ else
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
-        // Instant message and no email
-        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td></tr>';
+        // Unsubscribe opt-out
         if (!empty($conf->mailing->enabled))
         {
-        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+        	//print 'eee'.$object->email;
+        	$noemail = $object->no_email;
+        	if (empty($noemail) && ! empty($object->email))
+        	{
+        		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+        		//print $sql;
+        		$resql=$db->query($sql);
+        		if ($resql)
+        		{
+        			$obj=$db->fetch_object($resql);
+        			$noemail = $obj->nb;
+        		}
+        	}
+        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
@@ -1176,7 +1224,7 @@ else
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
 			print '<td colspan="3">';
-			print $form->showCategories( $object->id, 'contact', 1 );
+			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
 
@@ -1250,9 +1298,20 @@ else
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
+		if (empty($reshook) && $action!='presend')
 		{
-        	if ($user->rights->societe->contact->creer)
+			if (! empty($object->email))
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			}
+			else
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+			}
+
+			if ($user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
@@ -1281,6 +1340,14 @@ else
         }
 
         print "</div>";
+
+	    // Presend form
+	    $modelmail='contact';
+	    $defaulttopic='Information';
+	    $diroutput = $conf->contact->dir_output;
+	    $trackid = 'con'.$object->id;
+
+	    include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2018 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,67 +189,24 @@ if(!empty($search_ref))
 {
     $filter.= " AND cp.rowid = ".(int) $db->escape($search_ref);
 }
-
 // Start date
-if($search_year_start > 0) {
-    if($search_month_start > 0) {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($search_year_start,$search_month_start,1))."' AND '".$db->idate(dol_get_last_day($search_year_start,$search_month_start,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$search_year_start-$search_month_start'";
-    } else {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($search_year_start,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_start,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y') = '$search_year_start'";
-    }
-} else {
-    if($search_month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($search_month_start)."'";
-    }
-}
-
+$filter.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
-if($search_year_end > 0) {
-    if($search_month_end > 0) {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($search_year_end,$search_month_end,1))."' AND '".$db->idate(dol_get_last_day($search_year_end,$search_month_end,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$search_year_end-$search_month_end'";
-    } else {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($search_year_end,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_end,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y') = '$search_year_end'";
-    }
-} else {
-    if($search_month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($search_month_end)."'";
-    }
-}
-
+$filter.= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
-if($search_year_create > 0) {
-    if($search_month_create > 0) {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($search_year_create,$search_month_create,1))."' AND '".$db->idate(dol_get_last_day($search_year_create,$search_month_create,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$search_year_create-$search_month_create'";
-    } else {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($search_year_create,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_create,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y') = '$search_year_create'";
-    }
-} else {
-    if($search_month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($search_month_create)."'";
-    }
-}
-
+$filter.= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
 // Employee
 if(!empty($search_employee) && $search_employee != -1) {
     $filter.= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
 }
-
 // Validator
 if(!empty($search_valideur) && $search_valideur != -1) {
     $filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
 }
-
 // Type
 if (!empty($search_type) && $search_type != -1) {
 	$filter.= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
 }
-
 // Status
 if(!empty($search_statut) && $search_statut != -1) {
     $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
