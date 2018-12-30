@@ -61,9 +61,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
-if ($action == 'setobject')
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
-	if (dolibarr_set_const($db, GETPOST('value', 'alpha'), GETPOST('status', 'alpha'),'chaine',0,'',$conf->entity) > 0)
+	$code=$reg[1];
+  if (dolibarr_del_const($db, $code, 0) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -186,51 +187,36 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
 print '<td align="center">';
-if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE))
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE&status=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
 }
-else
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE&status=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td align="center">';
-if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX))
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_ORIGIN_TX&status=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
 }
-else
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_ORIGIN_TX&status=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a>';
 print '</td></tr>';
 
 //Online payment with currency on document
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useCurrency").'</td>';
 print '<td align="center">';
-if (!empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT))
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT&status=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
 }
-else
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT&status=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a>';
 print '</td></tr>';
 
 /* TODO uncomment when the functionality will integrated
