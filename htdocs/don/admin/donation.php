@@ -359,13 +359,13 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+	print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
-  print '<td align="center">';
+	print '<td align="center">';
 if ($conf->use_javascript_ajax) {
   print ajax_constantonoff('DONATION_ART200');
 } else {
@@ -376,7 +376,7 @@ if ($conf->use_javascript_ajax) {
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
-  print '<td align="center">';
+	print '<td align="center">';
 if ($conf->use_javascript_ajax) {
   print ajax_constantonoff('DONATION_ART238');
 } else {
@@ -387,7 +387,7 @@ if ($conf->use_javascript_ajax) {
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
-  print '<td align="center">';
+	print '<td align="center">';
 if ($conf->use_javascript_ajax) {
   print ajax_constantonoff('DONATION_ART885');
 } else {
