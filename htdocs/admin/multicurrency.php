@@ -61,10 +61,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if ($action == 'setobject')
 {
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, 0) > 0)
+	if (dolibarr_set_const($db, GETPOST('value', 'alpha'), GETPOST('status', 'alpha'),'chaine',0,'',$conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -181,30 +180,57 @@ dol_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurren
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">'.$langs->trans("Value").'</td>'."\n";
+print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
-print '<td align="right">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE">';
-print $form->selectyesno("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE",$conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
+print '<td align="center">';
+if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE&status=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE&status=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
-print '<td align="right">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_MULTICURRENCY_USE_ORIGIN_TX">';
-print $form->selectyesno("MULTICURRENCY_USE_ORIGIN_TX",$conf->global->MULTICURRENCY_USE_ORIGIN_TX,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
+print '<td align="center">';
+if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_ORIGIN_TX&status=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_ORIGIN_TX&status=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a>';
+print '</td></tr>';
+
+//Online payment with currency on document
+print '<tr class="oddeven">';
+print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useCurrency").'</td>';
+print '<td align="center">';
+if (!empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT&status=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setobject&value=MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT&status=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a>';
 print '</td></tr>';
 
 /* TODO uncomment when the functionality will integrated
