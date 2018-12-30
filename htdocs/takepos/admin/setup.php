@@ -39,9 +39,38 @@ if (!$user->admin) accessforbidden();
 
 $langs->loadLangs(array("admin", "cashdesk"));
 
+
 /*
- * Actions
+ * Action
  */
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+{
+    $code=$reg[1];
+    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+{
+    $code=$reg[1];
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
 if (GETPOST('action','alpha') == 'set')
 {
 	$db->begin();
@@ -89,32 +118,38 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)',$linkback,'title_setup');
 print '<br>';
 
-
 // Mode
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set">';
-
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 print "</tr>\n";
 
 if (! empty($conf->service->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
-	print '<td colspan="2">';
-	print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+  print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('CASHDESK_SERVICES');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("CASHDESK_SERVICES", $arrval, $conf->global->CASHDESK_SERVICES);
+}
 	print "</td></tr>\n";
 }
 
 // Use Takepos printing
 print '<tr class="oddeven"><td>';
 print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-print '<td colspan="2">';
-print $form->selectyesno("TAKEPOSCONNECTOR",$conf->global->TAKEPOSCONNECTOR,1);
+print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('TAKEPOSCONNECTOR');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("TAKEPOSCONNECTOR", $arrval, $conf->global->TAKEPOSCONNECTOR);
+}
 print "</td></tr>\n";
 
 if ($conf->global->TAKEPOSCONNECTOR){
@@ -128,15 +163,25 @@ if ($conf->global->TAKEPOSCONNECTOR){
 // Bar Restaurant mode
 print '<tr class="oddeven"><td>';
 print 'Bar Restaurant';
-print '<td colspan="2">';
-print $form->selectyesno("TAKEPOS_BAR_RESTAURANT",$conf->global->TAKEPOS_BAR_RESTAURANT,1);
+print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('TAKEPOS_BAR_RESTAURANT');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("TAKEPOS_BAR_RESTAURANT", $arrval, $conf->global->TAKEPOS_BAR_RESTAURANT);
+}
+
 print "</td></tr>\n";
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS",$conf->global->TAKEPOS_ORDER_PRINTERS,1);
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('TAKEPOS_ORDER_PRINTERS');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("TAKEPOS_ORDER_PRINTERS", $arrval, $conf->global->TAKEPOS_ORDER_PRINTERS);
+}
 	print '</td></tr>';
 }
 
@@ -144,6 +189,9 @@ print '</table>';
 
 print '<br>';
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
