@@ -5038,8 +5038,6 @@ abstract class CommonObject
 						$new_array_options[$key] = price2num($this->array_options[$key]);
 						break;
 					case 'date':
-						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
-						break;
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
 						if (! is_int($this->array_options[$key])) {
