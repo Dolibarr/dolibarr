@@ -371,7 +371,7 @@ if ($conf->use_javascript_ajax) {
 } else {
   $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
   print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
-}  
+}
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
