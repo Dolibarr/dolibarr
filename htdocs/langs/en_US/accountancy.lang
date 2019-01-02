@@ -47,6 +47,7 @@ MainAccountForCustomersNotDefined=Main accounting account for customers not defi
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
 
 AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -64,6 +65,7 @@ AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
+AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
@@ -148,6 +150,7 @@ ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)

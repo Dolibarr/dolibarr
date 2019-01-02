@@ -949,7 +949,7 @@ if (! $variants) {
 
 	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 		print '<br><br>';
-		print_titre($langs->trans('AddNewProductStockWarehouse'));
+		print load_fiche_titre($langs->trans('AddNewProductStockWarehouse'));
 
 		if (!empty($user->rights->produit->creer)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';

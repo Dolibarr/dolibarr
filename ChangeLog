@@ -132,6 +132,71 @@ Following changes may create regressions for some external modules, but were nec
 * Remove the no more used and deprecated dol_print_graph function
 
 
+***** ChangeLog for 8.0.4 compared to 8.0.3 *****
+FIX: #10030 better german chart
+FIX: #10036
+FIX: #10080 Supplier translations are in english
+FIX: #10183 using backport of fix done in 9.0
+FIX: #10218 Bad redirection after deleting a user or group
+FIX: #3234
+FIX: #6580
+FIX: #8741
+FIX: #9629 #9625
+FIX: #9971
+FIX: avoid Class 'AdherentType' not found
+FIX: Can relaunch install on v8
+FIX: Can't create a thirdparty from member if customer code is mandatory.
+FIX: Can't delete a line of minimal stock per warehouse
+FIX: check if "entity" is already defined in "$param"
+FIX: contact/address tab issue when changing company
+FIX: contact/adress tab: when changing company ajax combo, the first contact change is not taken into account
+FIX: CVE-2018-19799
+FIX: CVE-2018-19992
+FIX: CVE-2018-19993
+FIX: CVE-2018-19994
+FIX: CVE-2018-19995 and CVE-2018-19998
+FIX: Error reported when creation of thirdparty from member fails
+FIX: export only prices of the current entity !
+FIX: Extrafields on shipment module
+FIX: filter on product category doesn't work
+FIX: form actions: select_type_actions could be too small + bad $db init
+FIX: form actions: select_type_actions could be too small + bad  init
+FIX: fourn payment modes musn't be available on customer docs
+FIX: Function updatePrice with wrong parameters
+FIX: hidden extrafield
+FIX: if qty is 0
+FIX: If we change customer/supplier rule we can't edit old thirdparty.
+FIX: lang not loaded
+FIX: Lines are not inserted correctly if VAT have code
+FIX: marge sign
+FIX: Method setValid not found
+FIX: Migration do not create not used table
+FIX: missing action "edit" for the hook
+FIX: missing field "visible"
+FIX: Missing last month on vat report per month
+FIX: mode is only customer in stats fichinter
+FIX: OppStatusShort doesn't exists
+FIX: Remote ip detection was wrong with proxy (example: cloudflare)
+FIX: Removed not use table
+FIX: Replenishment with option STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE
+FIX: responsive
+FIX: Same on customer card
+FIX: same on lines
+FIX: screen size fall
+FIX: Select first mail model by default
+FIX: slow SQL query on creating a new supplier invoice
+FIX: sql query performance on list_qualified_avoir_supplier_invoices.
+FIX: supplier order list keep socid
+FIX: Same on customer card
+FIX: same on lines
+FIX: screen size fall
+FIX: Select first mail model by default
+FIX: slow SQL query on creating a new supplier invoice
+FIX: sql query performance on list_qualified_avoir_supplier_invoices.
+FIX: supplier order list keep socid
+FIX: Vendor translations are in english
+FIX: Warning: count()
+FIX: We want to be able to send PDF of paid invoices
 
 ***** ChangeLog for 8.0.3 compared to 8.0.2 *****
 FIX: #9161
