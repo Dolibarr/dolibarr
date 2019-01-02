@@ -2333,6 +2333,7 @@ if ($action == 'createsite')
 
 	if (GETPOST('WEBSITE_REF'))         $siteref=GETPOST('WEBSITE_REF','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION')) $sitedesc=GETPOST('WEBSITE_DESCRIPTION','alpha');
+	if (GETPOST('WEBSITE_VIRTUALHOST')) $sitevhost=GETPOST('WEBSITE_VIRTUALHOST','alpha');
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('Ref');
@@ -2354,7 +2355,7 @@ if ($action == 'createsite')
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'tooltipvirtual');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_VIRTUALHOST" value="'.dol_escape_htmltag($sitevhost).'">';
 	print '</td></tr>';
 
 
