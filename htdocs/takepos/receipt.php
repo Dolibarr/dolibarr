@@ -51,9 +51,14 @@ $object->fetch($facid);
 </center>
 <br>
 <p align="left">
-<?php print dol_nl2br(dol_format_address($mysoc)).'<br>'.$langs->trans("Phone").': '.$mysoc->phone;
- ?>
-
+<?php
+$substitutionarray=getCommonSubstitutionArray($langs);
+if (! empty($conf->global->TAKEPOS_HEADER))
+{
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER,$substitutionarray);
+	echo $newfreetext;
+}
+?>
 </p>
 <p align="right">
 <?php
@@ -107,9 +112,12 @@ print $object->ref;
 <br>
 <br>
 <?php
-echo $langs->trans("Cashier: ");
-echo $user->firstname.'<br>'.$mysoc->url.'<br>';
-echo '<center>'.$langs->trans("Thanks for your coming !").'</center>';
+$substitutionarray=getCommonSubstitutionArray($langs);
+if (! empty($conf->global->TAKEPOS_FOOTER))
+{
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER,$substitutionarray);
+	echo $newfreetext;
+}
 ?>
 
 <script type="text/javascript">

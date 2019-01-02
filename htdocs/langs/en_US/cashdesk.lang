@@ -44,3 +44,5 @@ OrderPrinters=Order printers
 SearchProduct=Search product
 Receipt=Receipt
 AmountAtEndOfPeriod=Amount at end of period (day, month or year)
+Header=Header
+Footer=Footer

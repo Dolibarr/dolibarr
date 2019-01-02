@@ -1212,7 +1212,7 @@ class ActionsTicket
         $this->viewTicketOriginalMessage($user, $action);
 
         if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-            print_titre($langs->trans('TicketMailExchanges'));
+            print load_fiche_titre($langs->trans('TicketMailExchanges'));
 
             print '<table class="border" style="width:100%;">';
 

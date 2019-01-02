@@ -408,7 +408,7 @@ if (! empty($id) || ! empty($ref))
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 
 		if ($action == 'add') {
 			$prodattr_all = $prodattr->fetchAll();

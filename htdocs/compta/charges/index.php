@@ -463,7 +463,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
         print "<br>";
 
-        print_fiche_titre( $langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+        print load_fiche_titre( $langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, s.fk_bank, u.salary as current_salary,";
 		$sql.= " pct.code as payment_code,";
