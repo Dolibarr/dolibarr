@@ -371,8 +371,8 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 					$sqlmid = 'SELECT pl.amount_capital, pl.amount_insurance, pl.amount_interest, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest';
-					$sqlmid.= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl RIGHT JOIN '.MAIN_DB_PREFIX.'loan as l ON l.rowid = pl.fk_loan';
-					$sqlmid.= ' WHERE pl.fk_bank = '.$obj->rowid;
+					$sqlmid.= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl, '.MAIN_DB_PREFIX.'loan as l';
+					$sqlmid.= ' WHERE l.rowid = pl.fk_loan AND pl.fk_bank = '.$obj->rowid;
 
 					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 					$resultmid = $db->query($sqlmid);
