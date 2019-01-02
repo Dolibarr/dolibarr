@@ -205,7 +205,7 @@ if ($result < 0)
 	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
-$filters=natural_search(array('u.firstname','u.lastname'), $search_name);
+if(!empty($search_name)) $filters=natural_search(array('u.firstname','u.lastname'), $search_name);
 
 $listUsers = $holiday->fetchUsers(false,true,$filters);
 if (is_numeric($listUsers) && $listUsers < 0)
