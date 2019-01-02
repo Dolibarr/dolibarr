@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
@@ -56,9 +56,10 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other","compta","banks","bills","donations","loan","accountancy","trips","salaries","hrm"));
+$langs->loadLangs(array("companies","other","compta","banks","bills","donations","loan","accountancy","trips","salaries","hrm","members"));
 
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
@@ -149,6 +150,7 @@ $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
 $accountLinestatic=new AccountLine($db);
+$paymentsubscriptionstatic = new Subscription($db);
 
 $accountingaccount = new AccountingAccount($db);
 
@@ -167,12 +169,13 @@ if ($result) {
 	//print $sql;
 
 	// Variables
-	$account_supplier = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined');	// NotDefined is a reserved word
-	$account_customer = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined');	// NotDefined is a reserved word
-	$account_employee = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined');	// NotDefined is a reserved word
-	$account_pay_vat = (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : 'NotDefined');	// NotDefined is a reserved word
-	$account_pay_donation = (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : 'NotDefined');	// NotDefined is a reserved word
-	$account_transfer = (! empty($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) ? $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH : 'NotDefined');	// NotDefined is a reserved word
+	$account_supplier			= (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined');	// NotDefined is a reserved word
+	$account_customer			= (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined');	// NotDefined is a reserved word
+	$account_employee			= (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined');	// NotDefined is a reserved word
+	$account_pay_vat			= (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : 'NotDefined');	// NotDefined is a reserved word
+	$account_pay_donation		= (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : 'NotDefined');	// NotDefined is a reserved word
+	$account_pay_subscription	= (! empty($conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT) ? $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT : 'NotDefined');	// NotDefined is a reserved word
+	$account_transfer			= (! empty($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) ? $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH : 'NotDefined');	// NotDefined is a reserved word
 
 	$tabcompany = array();
 	$tabuser = array();
@@ -263,7 +266,7 @@ if ($result) {
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
 
-				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_loan', 'payment_salary', 'payment_various')))
+				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various')))
 				{
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
@@ -341,6 +344,14 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
+				} else if ($links[$key]['type'] == 'member') {
+					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
+					$paymentsubscriptionstatic->ref = $links[$key]['url_id'];
+					$paymentsubscriptionstatic->label = $links[$key]['label'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsubscriptionstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["paymentsubscriptionid"] = $paymentsubscriptionstatic->id;
+					$paymentsubscriptionstatic->fetch($paymentsubscriptionstatic->id);
+					$tabtp[$obj->rowid][$account_pay_subscription] += $obj->amount;
 				} else if ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
@@ -581,6 +592,13 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch($k, null, true);
+							$bookkeeping->label_compte = $accountingaccount->label;
+						} else if ($tabtype[$key] == 'member') {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+							$bookkeeping->numero_compte = $k;
+
+							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else if ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
@@ -1027,11 +1045,13 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
-					if ($tabtype[$key] == 'payment') $account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-					if ($tabtype[$key] == 'payment_supplier') $account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-					if ($tabtype[$key] == 'payment_expensereport') $account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-					if ($tabtype[$key] == 'payment_salary') $account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-					if ($tabtype[$key] == 'payment_vat') $account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+					if ($tabtype[$key] == 'payment')				$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+					if ($tabtype[$key] == 'payment_supplier')		$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+					if ($tabtype[$key] == 'payment_expensereport')	$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					if ($tabtype[$key] == 'payment_salary')			$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+
 					$accounttoshow = length_accounta($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
@@ -1051,11 +1071,12 @@ if (empty($action) || $action == 'view') {
 						{
 							// We will refuse writing
 							$errorstring='UnknownAccountForThirdpartyBlocking';
-							if ($tabtype[$key] == 'payment') $errorstring='MainAccountForCustomersNotDefined';
-							if ($tabtype[$key] == 'payment_supplier') $errorstring='MainAccountForSuppliersNotDefined';
-							if ($tabtype[$key] == 'payment_expensereport') $errorstring='MainAccountForUsersNotDefined';
-							if ($tabtype[$key] == 'payment_salary') $errorstring='MainAccountForUsersNotDefined';
-							if ($tabtype[$key] == 'payment_vat') $errorstring='MainAccountForVatPaymentNotDefined';
+							if ($tabtype[$key] == 'payment')				$errorstring='MainAccountForCustomersNotDefined';
+							if ($tabtype[$key] == 'payment_supplier')		$errorstring='MainAccountForSuppliersNotDefined';
+							if ($tabtype[$key] == 'payment_expensereport')	$errorstring='MainAccountForUsersNotDefined';
+							if ($tabtype[$key] == 'payment_salary')			$errorstring='MainAccountForUsersNotDefined';
+							if ($tabtype[$key] == 'payment_vat')			$errorstring='MainAccountForVatPaymentNotDefined';
+							if ($tabtype[$key] == 'member')					$errorstring='MainAccountForSubscriptionPaymentNotDefined';
 							print '<span class="error">'.$langs->trans($errorstring).'</span>';
 						}
 					}

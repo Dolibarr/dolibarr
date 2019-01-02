@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,13 @@ if ($conf->accounting->enabled)
 	if (! empty($conf->don->enabled))
 	{
 	    $step++;
-	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDonation", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDonationAccounts").'</strong>');
+	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDonation", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	    print "<br>\n";
+	}
+	if (! empty($conf->adherents->enabled))
+	{
+	    $step++;
+	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescSubscription", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	    print "<br>\n";
 	}*/
 
