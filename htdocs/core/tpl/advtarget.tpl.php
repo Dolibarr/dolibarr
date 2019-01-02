@@ -47,7 +47,7 @@ print '<script type="text/javascript" language="javascript">
 </script>';
 
 
-		print_fiche_titre($langs->trans("AdvTgtTitle"));
+		print load_fiche_titre($langs->trans("AdvTgtTitle"));
 
 		print '<div class="tabBar">' . "\n";
 		print '<form name="find_customer" id="find_customer" action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '"  method="POST">' . "\n";
@@ -520,7 +520,7 @@ print '<script type="text/javascript" language="javascript">
 
 		print '<form action="' . $_SERVER['PHP_SELF'] . '?action=clear&id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
+		print load_fiche_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre" align="right"><input type="submit" class="button" value="' . $langs->trans("TargetsReset") . '"></td>';
