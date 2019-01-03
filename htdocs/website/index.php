@@ -1857,7 +1857,7 @@ if (! GETPOST('hide_websitemenu'))
 		if ($action != 'addcontainer')
 		{
 			$out='';
-			$out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
+			$out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300"'.(($atleastonepage && $action != 'editsource')?'':' disabled="disabled"').'>';
 			if ($atleastonepage)
 			{
 				if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
@@ -1893,7 +1893,7 @@ if (! GETPOST('hide_websitemenu'))
 		}
 
 		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-		print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($atleastonepage && $action != 'editsource')?'':' disabled="disabled"').'>';
 
 
 		// Print nav arrows
