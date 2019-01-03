@@ -1356,7 +1356,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+
+	    // Work with new table actioncomm_resources and multiple contact affectation.
+	    if (is_object($objcon) && $objcon->id)
+	    {
+		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
+			    " AND r.fk_element = " . $objcon->id;
+	    }
+        elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
@@ -1378,13 +1385,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-
-	    // Work with new table actioncomm_resources and multiple contact affectation.
-	    if (is_object($objcon) && $objcon->id)
-	    {
-		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
-			    " AND r.fk_element = " . $objcon->id;
-	    }
 
         // Condition on actioncode
         if (! empty($actioncode))
