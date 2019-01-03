@@ -286,7 +286,7 @@ if ($resql)
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash)."<br><br>";
 	print $langs->trans("PaymentTypeCB").": ".price($bank)."<br><br>";
-	print $langs->trans("PaymentTypeCheque").": ".price($cheque)."<br><br>";
+	print $langs->trans("PaymentTypeCHQ").": ".price($cheque)."<br><br>";
 	print "</h2></div>";
 
 	//save totals to DB
