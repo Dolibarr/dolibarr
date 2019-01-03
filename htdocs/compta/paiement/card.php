@@ -311,19 +311,19 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 // External link
-if (!empty($object->ext_payment_id) && !empty($object->ext_payment_site) ) { 
+if (!empty($object->ext_payment_id) && !empty($object->ext_payment_site) ) {
 
-$stripe=new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($object->ext_payment_site);
+	$stripe=new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($object->ext_payment_site);
 
-if (!empty($stripeacc)) $connect=$stripeacc.'/';	
+	if (!empty($stripeacc)) $connect=$stripeacc.'/';
   	$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$object->ext_payment_id;
-			if ($object->ext_payment_site == StripeLive)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->ext_payment_id;
-			}
+	if ($object->ext_payment_site == 'StripeLive')
+	{
+		$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->ext_payment_id;
+	}
       
-print '<tr><td>'.$langs->trans('Source').' '.$object->ext_payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->ext_payment_id.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans('Source').' '.$object->ext_payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->ext_payment_id.'</a></td></tr>';
 }
 
 print '</table>';
