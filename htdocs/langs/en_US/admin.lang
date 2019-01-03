@@ -1846,6 +1846,7 @@ WithoutDolTrackingID=Dolibarr Tracking ID not found
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>VALUE:abc<br>REGEX:SUBJECT:([^\s]*)<br>REGEX:BODY:My company name is\s([^\s]*)
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
