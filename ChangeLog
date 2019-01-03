@@ -78,7 +78,7 @@ NEW: tag odt line_product_ref_fourn for supplier doc lines
 NEW: The binding step in accountancy has a country filter with autocompletion
 NEW: Top menu is always on screen with MD theme.
 NEW: Withdraw request massaction can include already partially paid invoices
-
+NEW: Option "Simplify interface for blind persons"
 
 For developers:
 NEW: Add lib for multiselect with checkboxes
