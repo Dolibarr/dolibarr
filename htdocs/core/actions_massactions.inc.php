@@ -681,7 +681,6 @@ if ($massaction == 'confirm_createbills')
 			}
 
 			$id = $objecttmp->id; // For builddoc action
-			$object = $objecttmp;
 
 			// Builddoc
 			$donotredirect = 1;

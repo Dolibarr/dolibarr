@@ -102,6 +102,7 @@ if (! $sortorder) $sortorder='DESC';
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'orderlist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Commande($db);
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
