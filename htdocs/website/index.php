@@ -24,6 +24,8 @@
 define('NOSCANPOSTFORINJECTION',1);
 define('NOSTYLECHECK',1);
 
+header('X-XSS-Protection:0');
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
