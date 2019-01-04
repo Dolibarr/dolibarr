@@ -910,6 +910,7 @@ if ($action == 'updatecss')
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$csscontent.= "ob_start();\n";
+		$csscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 		$csscontent.= "header('Content-type: text/css');\n";
 		$csscontent.= "// END PHP ?>\n";
 
@@ -942,6 +943,7 @@ if ($action == 'updatecss')
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$jscontent.= "ob_start();\n";
+		$jscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 		$jscontent.= "header('Content-type: application/javascript');\n";
 		$jscontent.= "// END PHP ?>\n";
 
@@ -974,6 +976,7 @@ if ($action == 'updatecss')
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $robotcontent.= "ob_start();\n";
+		$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 	    $robotcontent.= "header('Content-type: text/css');\n";
 	    $robotcontent.= "// END PHP ?>\n";*/
 
@@ -1000,20 +1003,21 @@ if ($action == 'updatecss')
 		// Css file
 		$htaccesscontent ='';
 
-		/*$robotcontent.= "<?php // BEGIN PHP\n";
-    	 $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-    	 $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
-    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    	 $robotcontent.= "ob_start();\n";
-    	 $robotcontent.= "header('Content-type: text/css');\n";
-    	 $robotcontent.= "// END PHP ?>\n";*/
+		/*$htaccesscontent.= "<?php // BEGIN PHP\n";
+    	$htaccesscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+    	$htaccesscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+    	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+    	$htaccesscontent.= "ob_start();\n";
+		$htaccesscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+    	$htaccesscontent.= "header('Content-type: text/css');\n";
+    	$htaccesscontent.= "// END PHP ?>\n";*/
 
 		$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
 
-		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	 $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-    	 $robotcontent.= "// END PHP ?>"."\n";*/
+		/*$htaccesscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    	$htaccesscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	$htaccesscontent.= "// END PHP ?>"."\n";*/
 
 		dol_syslog("Save file htaccess into ".$filehtaccess);
 
