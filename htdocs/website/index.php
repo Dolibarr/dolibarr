@@ -1857,7 +1857,14 @@ if (! GETPOST('hide_websitemenu'))
 		if ($action != 'addcontainer')
 		{
 			$out='';
-			$out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300"'.(($atleastonepage && $action != 'editsource')?'':' disabled="disabled"').'>';
+			if ($atleastonepage && $action != 'editsource')
+			{
+			    $out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
+			}
+			else
+			{
+			    $out.='<select name="pageidbis" id="pageid" class="minwidth200 maxwidth300" disabled="disabled">';
+			}
 			if ($atleastonepage)
 			{
 				if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
@@ -1884,7 +1891,15 @@ if (! GETPOST('hide_websitemenu'))
 			}
 			else $out.='<option value="-1">&nbsp;</option>';
 			$out.='</select>';
-			$out.=ajax_combobox('pageid');
+			if ($atleastonepage && $action != 'editsource')
+			{
+			    $out.=ajax_combobox('pageid');
+			}
+			else
+			{
+    			$out.='<input type="hidden" name="pageid" value="'.$pageid.'">';
+    			$out.=ajax_combobox('pageid');
+			}
 			print $out;
 		}
 		else
