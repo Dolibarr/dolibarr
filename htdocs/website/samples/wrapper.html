@@ -1,11 +1,12 @@
 <?php
-// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of wrapper example.
+// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of wrapper.html sample.
 $websitekey=basename(dirname(__FILE__));
 if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
+include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $hashp=GETPOST('hashp','aZ09');
-$modulepart=GETPOST('modulepart','alpha');
+$modulepart=GETPOST('modulepart','aZ09');
 $entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 $original_file=GETPOST("file","alpha");
 
@@ -54,16 +55,25 @@ if (! empty($hashp))
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'alpha')?true:false;
-if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment",'none')?true:false;
+if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) $attachment=false;
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
+if (GETPOST('type','none')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
 $original_file=str_replace("../","/", $original_file);
+
+// Cache or not
+if (GETPOST("cache",'none') || image_format_supported($original_file) >= 0)
+{
+    // Important: Following code is to avoid page request by browser and PHP CPU at
+    // each Dolibarr page access.
+    header('Cache-Control: max-age=3600, public, must-revalidate');
+    header('Pragma: cache');       // This is to avoid having Pragma: no-cache
+}
 
 // Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
@@ -110,15 +120,13 @@ else
 
 	// Permissions are ok and file found, so we return it
 	//top_httphead($type);
+	header('Content-Type: '.$type);
 	header('Content-Description: File Transfer');
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 	else header('Content-Disposition: inline; filename="'.$filename.'"');
 	header('Content-Length: ' . dol_filesize($fullpath_original_file));
-	// Ajout directives pour resoudre bug IE
-	header('Cache-Control: Public, must-revalidate');
-	header('Pragma: public');
 
 	readfile($fullpath_original_file_osencoded);
 }
