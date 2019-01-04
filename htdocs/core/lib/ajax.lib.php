@@ -400,6 +400,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
+	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
