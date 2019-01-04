@@ -181,6 +181,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 

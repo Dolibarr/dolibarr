@@ -24,6 +24,8 @@
 define('NOSCANPOSTFORINJECTION',1);
 define('NOSTYLECHECK',1);
 
+header('X-XSS-Protection:0');
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -910,6 +912,7 @@ if ($action == 'updatecss')
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$csscontent.= "ob_start();\n";
+		$csscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 		$csscontent.= "header('Content-type: text/css');\n";
 		$csscontent.= "// END PHP ?>\n";
 
@@ -942,6 +945,7 @@ if ($action == 'updatecss')
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$jscontent.= "ob_start();\n";
+		$jscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 		$jscontent.= "header('Content-type: application/javascript');\n";
 		$jscontent.= "// END PHP ?>\n";
 
@@ -974,6 +978,7 @@ if ($action == 'updatecss')
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $robotcontent.= "ob_start();\n";
+		$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
 	    $robotcontent.= "header('Content-type: text/css');\n";
 	    $robotcontent.= "// END PHP ?>\n";*/
 
@@ -1000,20 +1005,21 @@ if ($action == 'updatecss')
 		// Css file
 		$htaccesscontent ='';
 
-		/*$robotcontent.= "<?php // BEGIN PHP\n";
-    	 $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-    	 $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
-    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    	 $robotcontent.= "ob_start();\n";
-    	 $robotcontent.= "header('Content-type: text/css');\n";
-    	 $robotcontent.= "// END PHP ?>\n";*/
+		/*$htaccesscontent.= "<?php // BEGIN PHP\n";
+    	$htaccesscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+    	$htaccesscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+    	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+    	$htaccesscontent.= "ob_start();\n";
+		$htaccesscontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+    	$htaccesscontent.= "header('Content-type: text/css');\n";
+    	$htaccesscontent.= "// END PHP ?>\n";*/
 
 		$htaccesscontent.= GETPOST('WEBSITE_HTACCESS', 'none');
 
-		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	 $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-    	 $robotcontent.= "// END PHP ?>"."\n";*/
+		/*$htaccesscontent.= "\n".'<?php // BEGIN PHP'."\n";
+    	$htaccesscontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+    	$htaccesscontent.= "// END PHP ?>"."\n";*/
 
 		dol_syslog("Save file htaccess into ".$filehtaccess);
 
@@ -1857,7 +1863,14 @@ if (! GETPOST('hide_websitemenu'))
 		if ($action != 'addcontainer')
 		{
 			$out='';
-			$out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
+			if ($atleastonepage && $action != 'editsource')
+			{
+			    $out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
+			}
+			else
+			{
+			    $out.='<select name="pageidbis" id="pageid" class="minwidth200 maxwidth300" disabled="disabled">';
+			}
 			if ($atleastonepage)
 			{
 				if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
@@ -1884,7 +1897,15 @@ if (! GETPOST('hide_websitemenu'))
 			}
 			else $out.='<option value="-1">&nbsp;</option>';
 			$out.='</select>';
-			$out.=ajax_combobox('pageid');
+			if ($atleastonepage && $action != 'editsource')
+			{
+			    $out.=ajax_combobox('pageid');
+			}
+			else
+			{
+    			$out.='<input type="hidden" name="pageid" value="'.$pageid.'">';
+    			$out.=ajax_combobox('pageid');
+			}
 			print $out;
 		}
 		else
@@ -1893,7 +1914,7 @@ if (! GETPOST('hide_websitemenu'))
 		}
 
 		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-		print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($atleastonepage && $action != 'editsource')?'':' disabled="disabled"').'>';
 
 
 		// Print nav arrows

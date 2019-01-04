@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -33,7 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
-$langs->loadLangs(array("cashcontrol","install","cashdesk","admin","banks"));
+$langs->loadLangs(array("install","cashdesk","admin","banks"));
 
 $id=GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -84,16 +82,23 @@ $hookmanager->initHooks(array('cashcontrolcard','globalcard'));
  * Actions
  */
 
+$permissiontoadd = ($user->rights->cashdesk->use || $user->rights->takepos->use);
+$permissiontodelete = ($user->rights->cashdesk->use || $user->rights->takepos->use) || ($permissiontoadd && $object->status == 0);
+if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
+$backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php',1);
+$triggermodname = 'CACHCONTROL_MODIFY';	// Name of trigger action code to execute when we modify record
+
 if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
 {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
 
 
-if (GETPOST('cancel'))
+if (GETPOST('cancel','alpha'))
 {
 	$action = 'create';
 }
+
 if ($action=="start")
 {
 	$error=0;
@@ -127,7 +132,7 @@ elseif ($action=="add")
 	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
-		if (GETPOST($key,'alpha') == '')
+		if (GETPOST($key.'_amount','alpha') == '')
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
 			$action='start';
@@ -135,7 +140,7 @@ elseif ($action=="add")
 		}
 		else
 		{
-			$object->$key = price2num(GETPOST($key,'alpha'));
+			$object->$key = price2num(GETPOST($key.'_amount','alpha'));
 		}
 	}
 
@@ -183,6 +188,32 @@ if ($action=="close")
     $action="view";
 }
 
+// Action to delete
+if ($action == 'confirm_delete' && ! empty($permissiontodelete))
+{
+    $object->fetch($id);
+
+    if (! ($object->id > 0))
+    {
+        dol_print_error('', 'Error, object must be fetched before being deleted');
+        exit;
+    }
+
+    $result=$object->delete($user);
+    var_dump($result);
+    if ($result > 0)
+    {
+        // Delete OK
+        setEventMessages("RecordDeleted", null, 'mesgs');
+        header("Location: ".$backurlforlist);
+        exit;
+    }
+    else
+    {
+        if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+        else setEventMessages($object->error, null, 'errors');
+    }
+}
 
 
 /*
@@ -414,7 +445,7 @@ if ($action=="create" || $action=="start")
 		foreach($arrayofpaymentmode as $key => $val)
 		{
 			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
-			print '<input name="'.$key.'" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key,'alpha').'">';
+			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key.'_amount','alpha').'">';
 			print '</td>';
 			$i++;
 		}
@@ -493,16 +524,12 @@ if (empty($action) || $action=="view")
     print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
     print "</td></tr>";
 
-	print '<tr><td valign="middle">'.$langs->trans("Cash").'</td><td>';
-	print price($object->cash, 0, $langs, 1, -1, -1, $conf->currency);
-	print "</td></tr>";
-	print '<tr><td valign="middle">'.$langs->trans("Cheque").'</td><td>';
-	print price($object->cheque, 0, $langs, 1, -1, -1, $conf->currency);
-	print "</td></tr>";
-	print '<tr><td valign="middle">'.$langs->trans("Card").'</td><td>';
-	print price($object->card, 0, $langs, 1, -1, -1, $conf->currency);
-	print "</td></tr>";
-
+    foreach($arrayofpaymentmode as $key => $val)
+    {
+        print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
+    	print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
+    	print "</td></tr>";
+    }
 
 	print "</table>\n";
     print '</div>';
@@ -516,6 +543,8 @@ if (empty($action) || $action=="view")
 	if ($object->status == CashControl::STATUS_DRAFT)
 	{
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
+
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=confirm_delete">' . $langs->trans('Delete') . '</a></div>';
 	}
 	print '</div>';
 
