@@ -533,6 +533,10 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->origin    = 'commande';
 			$objecttmp->origin_id = $id_order;
 
+      // Replicate extrafields
+      $cmd->fetch_optionals($id_order);
+      $objecttmp->array_options = $cmd->array_options;
+
 			$res = $objecttmp->create($user);
 
 			if($res > 0) $nb_bills_created++;
@@ -682,6 +686,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error && $validate_invoices)
 	{
 		$massaction = $action = 'builddoc';
+    $savobject = $object;
 		foreach($TAllFact as &$objecttmp)
 		{
 			$result = $objecttmp->validate($user);
@@ -698,10 +703,12 @@ if ($massaction == 'confirm_createbills')
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
 			$permissioncreate=$user->rights->facture->creer;
+      $object = $objecttmp;
 			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 		}
 
 		$massaction = $action = 'confirm_createbills';
+    $object = $savobject;
 	}
 
 	if (! $error)
