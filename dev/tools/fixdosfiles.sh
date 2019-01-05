@@ -24,7 +24,7 @@ fi
 # To convert
 if [ "x$1" = "xfix" ]
 then
-	for fic in `find . \( -iname "functions" -o -iname "*.md" -o -iname "*.html" -o -iname "*.htm" -o -iname "*.php" -o -iname "*.sh" -o -iname "*.cml" -o -iname "*.css" -o -iname "*.js" -o -iname "*.lang" -o -iname "*.pl" -o -iname "*.sql" -o -iname "*.txt" -o -iname "*.xml" -o -iname "*.pml" \) -exec file "{}" + | grep CRLF | awk -F':' '{ print $1 }' `
+	for fic in `find . \( -iname "functions" -o -iname "*.md" -o -iname "*.html" -o -iname "*.htm" -o -iname "*.php" -o -iname "*.sh" -o -iname "*.cml" -o -iname "*.css" -o -iname "*.js" -o -iname "*.lang" -o -iname "*.pl" -o -iname "*.sql" -o -iname "*.txt" -o -iname "*.xml" -o -iname "*.pml" \) -exec file "{}" + | grep -v 'documents\/website' | grep CRLF | awk -F':' '{ print $1 }' `
 	do
 		echo "Fix file $fic"
 		dos2unix "$fic"
