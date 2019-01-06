@@ -3,6 +3,39 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 7.0.5 compared to 7.0.4 *****
+FIX: #3234
+FIX: #6580
+FIX: #8741
+FIX: #9934
+FIX: avoid Class 'AdherentType' not found
+FIX: Can't create a thirdparty from member if customer code is mandatory.
+FIX: Can't generate invoice pdf
+FIX: contact/adress tab: when changing company ajax combo, the first contact change is not taken into account
+FIX: Error generating ODT when option to use contact on doc on
+FIX: Error reported when creation of thirdparty from member fails
+FIX: filter on product category doesn't work
+FIX: form actions: select_type_actions could be too small + bad  init
+FIX: fourn payment modes musn't be available on customer docs
+FIX: Function updatePrice with wrong parameters
+FIX: If we change customer/supplier rule we can't edit old thirdparty.
+FIX: Interface regression for bind people. Fix option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: Lines are not inserted correctly if VAT have code
+FIX: OppStatusShort doesn't exists
+FIX: pdf typhon: order reference duplicate
+FIX: propal pdf: missing parenthesis for customs code
+FIX: Same on customer card
+FIX: same on lines
+FIX: Select first mail model by default
+FIX: sql query performance on list_qualified_avoir_supplier_invoices.
+FIX: task time screen: last fix was overkill
+FIX: task time screen: prevent users with access to all project from assigning to tasks they're not allowed to do
+FIX: use discount with multicurrency
+FIX: Variable name
+FIX: We want to be able to send PDF of paid invoices
+FIX: When delete a product, llx_product_association rows are not deleted
+FIX: wrong occurence number of contract on contact card, we must only count externals
+
 ***** ChangeLog for 7.0.4 compared to 7.0.3 *****
 FIX: #8984 button create expense report
 FIX: #9032

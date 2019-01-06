@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+*  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
+*
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -192,7 +193,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+					$tmparray[] = str_replace(","," ",$thirdparty->name).' <'.$thirdparty->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{

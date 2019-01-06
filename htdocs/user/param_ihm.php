@@ -142,6 +142,12 @@ if (empty($reshook)) {
 				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
 			}
 
+			if (GETPOST('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 1;
+			} else {
+			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
+			}
+
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
