@@ -397,3 +397,4 @@ file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
+
