@@ -201,7 +201,6 @@ UseUnits=Définir une unité de mesure pour la quantité lors de la commande, l'
 IsNotADir=n'est pas un répertoire
 BarcodeDescDATAMATRIX=Codebarre de type Datamatrix
 BarcodeDescQRCODE=Codebarre de type QRcode
-WithdrawalsSetup=Configuration du module Ordres de paiement de débit direct
 SendingsAbility=Fiches d'expédition de soutien pour les livraisons aux clients
 FCKeditorForMail=Création / édition WYSIWIG pour tous les courriers (sauf Outils-> eMailing)
 NotTopTreeMenuPersonalized=Menus personnalisés non liés à une entrée de menu supérieure
