@@ -4519,37 +4519,49 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * Output a dimension with best unit
  *
  * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit of dimension (0, -3, ...)
+ * @param   int         $unit           Unit of dimension (Example: 0=kg, -3=g, 98=ounce, 99=pound, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
- * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
+ * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
  * @return  string                      String to show dimensions
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-	if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6))
+	if (($forceunitoutput == 'no' && $dimension < 1/10000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -6))
 	{
 		$dimension = $dimension * 1000000;
 		$unit = $unit - 6;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
+	elseif (($forceunitoutput == 'no' && $dimension < 1/10 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
 	{
 		$dimension = $dimension * 1000;
 		$unit = $unit - 3;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
+	elseif (($forceunitoutput == 'no' && $dimension > 100000000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
 	{
 		$dimension = $dimension / 1000000;
 		$unit = $unit + 6;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension > 100000) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
+	elseif (($forceunitoutput == 'no' && $dimension > 100000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
 	{
 		$dimension = $dimension / 1000;
 		$unit = $unit + 3;
 	}
+	// Special case when we want output unit into pound or ounce
+	/* TODO
+	if ($unit < 90 && $type == 'weight' && is_numeric($forceunitoutput) && (($forceunitoutput == 98) || ($forceunitoutput == 99))
+	{
+	    $dimension = // convert dimension from standard unit into ounce or pound
+	    $unit = $forceunitoutput;
+	}
+	if ($unit > 90 && $type == 'weight' && is_numeric($forceunitoutput) && $forceunitoutput < 90)
+	{
+	    $dimension = // convert dimension from standard unit into ounce or pound
+	    $unit = $forceunitoutput;
+	}*/
 
 	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
 
