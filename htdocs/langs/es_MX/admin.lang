@@ -125,7 +125,6 @@ Module770Name=Reporte de gastos
 DictionaryCanton=Estado/Provincia
 DictionaryAccountancyJournal=Diarios de contabilidad
 Upgrade=Actualizar
-CompanyName=Nombre
 LDAPFieldFirstName=Nombre(s)
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>

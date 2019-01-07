@@ -71,7 +71,6 @@ CatSupLinks=Ligações entre fornecedores e tags / categorias
 CatCusLinks=Relação/links entre clientes / perspectivas e tags / categorias
 CatProdLinks=Relação/links entre produtos / serviços e tags / categorias
 CatProJectLinks=Links entre projetos e tags/categorias
-DeleteFromCat=Remover de tags / categoria
 ExtraFieldsCategories=atributos complementares
 CategoriesSetup=Configuração Tags / categorias
 CategorieRecursiv=Fazer a ligação com os pais tag/categoria automaticamente

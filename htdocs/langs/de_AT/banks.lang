@@ -23,7 +23,6 @@ BankAccountDomiciliation=Konto-Adresse
 LabelBankCashAccount=Bank- oder Kassabezeichnung
 BankType0=Sparkonto\n
 BankType2=Kassa
-Account=Kontonummer
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
 StatusAccountClosed=geschlossen
 WithdrawalPayment=Widerrufsrecht Zahlung
