@@ -228,6 +228,7 @@ if ($action=="create" || $action=="start")
 
 	$initialbalanceforterminal=array();
 	$theoricalamountforterminal=array();
+	$theoricalnbofinvoiceforterminal=array();
 
 	if (GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '-1')
 	{
@@ -269,8 +270,7 @@ if ($action=="create" || $action=="start")
 		{
 			/*$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
 			$sql.= " WHERE fk_account = ".$bankid;*/
-
-			$sql = "SELECT SUM(pf.amount) as total";
+			$sql = "SELECT SUM(pf.amount) as total, COUNT(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
 			$sql.= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 			$sql.= " AND f.module_source = '".$db->escape($posmodule)."'";
@@ -299,6 +299,7 @@ if ($action=="create" || $action=="start")
 				if ($obj)
 				{
 					$theoricalamountforterminal[$terminalid][$key] = price2num($theoricalamountforterminal[$terminalid][$key] + $obj->total);
+					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
 			}
 			else dol_print_error($db);
@@ -413,6 +414,24 @@ if ($action=="create" || $action=="start")
 			$i++;
 		}
 		print '<td></td>';
+		print '</tr>';
+
+		print '<tr>';
+		// Initial amount
+		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
+		print '<td align="center">';
+		print '</td>';
+		// Amount per payment type
+		$i=0;
+		foreach($arrayofpaymentmode as $key => $val)
+		{
+		    print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
+		    print $theoricalnbofinvoiceforterminal[$terminalid][$key];
+		    print '</td>';
+		    $i++;
+		}
+		// Save
+		print '<td align="center"></td>';
 		print '</tr>';
 
 		print '<tr>';
