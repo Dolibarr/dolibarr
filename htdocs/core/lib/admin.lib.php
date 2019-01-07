@@ -235,7 +235,7 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
         $newsql=$sql;
 
         // Replace __+MAX_table__ with max of table
-        while (preg_match('/__\+MAX_([A-Za-z_]+)__/i',$newsql,$reg))
+        while (preg_match('/__\+MAX_([A-Za-z0-9_]+)__/i',$newsql,$reg))
         {
             $table=$reg[1];
             if (! isset($listofmaxrowid[$table]))
