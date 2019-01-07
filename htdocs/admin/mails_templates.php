@@ -607,11 +607,11 @@ if ($resql)
     $i = 0;
 
     $param = '&id='.$id;
-    if ($search_label)             $param.= '&search_label='.urlencode($search_label);
-    if ($search_lang > 0)          $param.= '&search_lang='.urlencode($search_lang);
-    if ($search_type_template > 0) $param.= '&search_type_template='.urlencode($search_type_template);
-    if ($search_fk_user > 0)       $param.= '&search_fk_user='.urlencode($search_fk_user);
-    if ($search_topic)             $param.= '&search_topic='.urlencode($search_topic);
+    if ($search_label)                 $param.= '&search_label='.urlencode($search_label);
+    if ($search_lang > 0)              $param.= '&search_lang='.urlencode($search_lang);
+    if ($search_type_template != '-1') $param.= '&search_type_template='.urlencode($search_type_template);
+    if ($search_fk_user > 0)           $param.= '&search_fk_user='.urlencode($search_fk_user);
+    if ($search_topic)                 $param.= '&search_topic='.urlencode($search_topic);
 
     $paramwithsearch = $param;
     if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
