@@ -1858,4 +1858,4 @@ ConfirmUnactivation=Confirm module reset
 OnMobileOnly=On small screen (smartphone) only
 DisableProspectCustomerType=Disable the "Prospect + Customer" third party type (so third party must be Prospect or Customer but can't be both)
 MAIN_OPTIMIZEFORTEXTBROWSER=Simplify interface for blind person
-MAIN_OPTIMIZEFORTEXTBROWSERDesc=Enable this option if you are a blind person, or use application from a text browser like lynx or links.
+MAIN_OPTIMIZEFORTEXTBROWSERDesc=Enable this option if you are a blind person, or if you use the application from a text browser like Lynx or Links.
