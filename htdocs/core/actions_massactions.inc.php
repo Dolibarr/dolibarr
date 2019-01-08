@@ -516,7 +516,9 @@ if ($massaction == 'confirm_createbills')
 		$objecttmp = new Facture($db);
 		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 		else {
-
+			// Load extrafields of order
+			$cmd->fetch_optionals();
+			
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = Facture::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -533,9 +535,7 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->origin    = 'commande';
 			$objecttmp->origin_id = $id_order;
 
-      // Replicate extrafields
-      $cmd->fetch_optionals($id_order);
-      $objecttmp->array_options = $cmd->array_options;
+			$objecttmp->array_options = $cmd->array_options;	// Copy extrafields
 
 			$res = $objecttmp->create($user);
 
