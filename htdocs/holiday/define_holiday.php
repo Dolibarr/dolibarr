@@ -357,7 +357,7 @@ else
         print '<td>';
         if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
         print '</td>';
-        
+
         // Button modify
         print '<td>';
         if (! empty($user->rights->holiday->define_holiday))	// Allowed to set the balance of any user
