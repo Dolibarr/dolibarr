@@ -735,7 +735,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		    // desk = code guichet (FR), used only when $usedetailedbban = 1
 		    // number = account number
 		    // key = check control key used only when $usedetailedbban = 1
-    		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+6);
+    		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+7);
 
 
 			foreach ($account->getFieldsToShow() as $val)
@@ -745,15 +745,15 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 				if ($val == 'BankCode') {
 					// Bank code
-					$tmplength = 18;
+					$tmplength = 24;
 					$content = $account->code_banque;
 				} elseif ($val == 'DeskCode') {
 					// Desk
-					$tmplength = 18;
+					$tmplength = 24;
 					$content = $account->code_guichet;
 				} elseif ($val == 'BankAccountNumber') {
 					// Number
-					$tmplength = 24;
+					$tmplength = 36;
 					$content = $account->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					// Key
