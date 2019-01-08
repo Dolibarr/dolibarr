@@ -686,7 +686,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error && $validate_invoices)
 	{
 		$massaction = $action = 'builddoc';
-    $savobject = $object;
+
 		foreach($TAllFact as &$objecttmp)
 		{
 			$result = $objecttmp->validate($user);
@@ -703,12 +703,15 @@ if ($massaction == 'confirm_createbills')
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
 			$permissioncreate=$user->rights->facture->creer;
-      $object = $objecttmp;
+
+			// Call action to build doc
+			$savobject = $object;
+      			$object = $objecttmp;
 			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+			$object = $savobject;
 		}
 
 		$massaction = $action = 'confirm_createbills';
-    $object = $savobject;
 	}
 
 	if (! $error)
