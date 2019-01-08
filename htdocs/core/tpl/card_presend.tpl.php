@@ -167,6 +167,21 @@ if ($action == 'presend')
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
 
+	// Find the good contact adress
+	$custcontact = '';
+	$contactarr = array();
+	$contactarr = $object->liste_contact(- 1, 'external');
+
+	if (is_array($contactarr) && count($contactarr) > 0) {
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contactstatic = new Contact($db);
+
+		foreach ($contactarr as $contact) {
+            $contactstatic->fetch($contact['id']);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+		}
+	}
+
 	// Tableau des substitutions
 	$formmail->substit = $substitutionarray;
 

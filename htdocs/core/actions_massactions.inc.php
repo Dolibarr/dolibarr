@@ -63,6 +63,7 @@ if (! $error && $massaction == 'confirm_presend')
 	$resaction = '';
 	$nbsent = 0;
 	$nbignored = 0;
+	$langs->load("main");
 	$langs->load("mails");
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 

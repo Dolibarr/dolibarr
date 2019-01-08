@@ -791,7 +791,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	$user->fetch_clicktodial(); // lecture des infos de clicktodial du user
     }
 
-
     $contactstatic = new Contact($db);
 
     $extralabels=$extrafields->fetch_name_optionals_label($contactstatic->table_element);
@@ -802,7 +801,6 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
     'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>40, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0,1), 1=>$contactstatic->LibStatut(1,1))),
     );
-
     // Definition of fields for list
     $arrayfields=array(
     't.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'position'=>1),
@@ -868,7 +866,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    //if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print "\n".'<table class="tagtable liste">'."\n";
@@ -948,6 +946,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+    
     print '</tr>'."\n";
 
     $i = -1;
@@ -1049,14 +1048,16 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '</a> &nbsp; ';
             }
 
-            // Edit
+            // Edit & massaction checkbox
             if ($user->rights->societe->contact->creer)
             {
                 print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a>';
+                
+                print '<input id="'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').' style="margin-left:13px;margin-right:9px;"></td>';
             }
-
+            
             print '</td>';
 
             print "</tr>\n";
