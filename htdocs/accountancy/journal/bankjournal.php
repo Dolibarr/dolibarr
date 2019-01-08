@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -369,6 +370,18 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentloanstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
+					$sqlmid = 'SELECT pl.amount_capital, pl.amount_insurance, pl.amount_interest, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest';
+					$sqlmid.= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl, '.MAIN_DB_PREFIX.'loan as l';
+					$sqlmid.= ' WHERE l.rowid = pl.fk_loan AND pl.fk_bank = '.$obj->rowid;
+
+					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+					$resultmid = $db->query($sqlmid);
+					if ($resultmid) {
+						$objmid = $db->fetch_object($resultmid);
+						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] -= $objmid->amount_capital;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] -= $objmid->amount_insurance;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] -= $objmid->amount_interest;
+					}
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
