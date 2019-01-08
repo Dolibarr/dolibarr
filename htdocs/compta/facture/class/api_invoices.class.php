@@ -454,7 +454,7 @@ class Invoices extends DolibarrApi
              }
         }
 
-        if($this->invoice->update($id, DolibarrApiAccess::$user))
+        if($this->invoice->update(DolibarrApiAccess::$user))
             return $this->get($id);
 
         return false;
