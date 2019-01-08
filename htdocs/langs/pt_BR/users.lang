@@ -24,7 +24,6 @@ ConfirmEnableUser=Tem certeza que deseja ativar o usuário <b>%s</b>?
 ConfirmReinitPassword=Tem certeza que deseja gerar uma nova senha para o usuário <b>%s</b>?
 ConfirmSendNewPassword=Tem certeza que deseja gerar e enviar uma nova senha para o usuário <b>%s</b>?
 NewUser=Novo usuário
-CreateUser=Criar usuário
 LoginNotDefined=O usuário não está definido
 NameNotDefined=O nome não está definido
 ListOfUsers=Lista de usuário

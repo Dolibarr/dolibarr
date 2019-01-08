@@ -115,11 +115,10 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
-	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
+	print '<td align="right">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
 	// Current balance
-
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td align="right" class="nowrap">'.price($solde).'</td>';
@@ -133,7 +132,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 
 	// Remainder to pay in future
-  $sqls = array();
+	$sqls = array();
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
@@ -142,9 +141,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-  $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
-  $sql.= " ORDER BY dlr ASC";
-  $sqls[] = $sql;
+	$sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+	$sql.= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
 
 	// Supplier invoices
 	$sql = " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
@@ -153,51 +152,51 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql.= " WHERE ff.entity = ".$conf->entity;
 	$sql.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-  $sql.= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
-  $sql.= " ORDER BY dlr ASC";
-  $sqls[] = $sql;
+	$sql.= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+	$sql.= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
 
 	// Social contributions
 	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
-  $sql.= ", cs.fk_account";
+	$sql.= ", cs.fk_account";
 	$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql.= " WHERE cs.entity = ".$conf->entity;
 	$sql.= " AND cs.paye = 0";	// Not paid
-  $sql.= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
+	$sql.= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
 	$sql.= " ORDER BY dlr ASC";
-  $sqls[] = $sql;
+	$sqls[] = $sql;
 
-  // others sql
-  $parameters = array();
-  $reshook = $hookmanager->executeHooks('addMoreSQL', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-  if(empty($reshook) and isset($hookmanager->resArray['sql'])){
-    $sqls[] = $hookmanager->resArray['sql'];
-  }
+	// others sql
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreSQL', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if(empty($reshook) and isset($hookmanager->resArray['sql'])){
+		$sqls[] = $hookmanager->resArray['sql'];
+	}
 
 	$error=0;
 	$tab_sqlobjOrder=array();
 	$tab_sqlobj=array();
 
-  foreach($sqls as $sql){
-    $resql = $db->query($sql);
-    if($resql){
-      while($sqlobj = $db->fetch_object($resql)){
-        $tab_sqlobj[] = $sqlobj;
-        $tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
-      }
-      $db->free($resql);
-    }else{
-      $error++;
-    }
-  }
+	foreach($sqls as $sql){
+		$resql = $db->query($sql);
+		if($resql){
+			while($sqlobj = $db->fetch_object($resql)){
+				$tab_sqlobj[] = $sqlobj;
+				$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
+			}
+			$db->free($resql);
+			}else{
+			$error++;
+		}
+	}
 
 	// Sort array
 	if (! $error)
 	{
 		array_multisort($tab_sqlobjOrder,$tab_sqlobj);
 
-		//Apply distinct filter
+		// Apply distinct filter
 		foreach ($tab_sqlobj as $key=>$value) {
 			$tab_sqlobj[$key] = "'" . serialize($value) . "'";
 		}
@@ -262,13 +261,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
-      $parameters = array('obj' => $obj);
-      $reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-      if(empty($reshook)){
-        $ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : '';
-        $refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : '';
-        $paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : 0;
-      }
+			$parameters = array('obj' => $obj);
+			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if(empty($reshook)){
+				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : '';
+				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : '';
+				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : 0;
+			}
 
 			$total_ttc = $obj->total_ttc;
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
@@ -307,7 +306,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
 	}
 
-  // solde
+	// solde
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';

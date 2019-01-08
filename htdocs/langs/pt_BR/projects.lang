@@ -22,7 +22,6 @@ ConfirmDeleteATask=Você tem certeza que deseja excluir esta tarefa?
 OpenedProjects=Projetos em andamento
 OpenedTasks=Tarefas em andamento
 ShowProject=Mostrar projeto
-ShowTask=Mostrar tarefa
 NoProject=Nenhum Projeto Definido
 TimeSpent=Dispêndio de tempo
 TimeSpentByUser=Tempo gasto por usuário

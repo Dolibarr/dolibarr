@@ -1341,6 +1341,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
         if (is_object($objcon) && $objcon->id) {
 		    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
+		    $sql.= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . $objcon->id;
 	    }
 
 	    if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -1379,13 +1380,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
 
-	    // Work with new table actioncomm_resources and multiple contact affectation.
-	    if (is_object($objcon) && $objcon->id)
-	    {
-		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
-			    " AND r.fk_element = " . $objcon->id;
-	    }
-
         // Condition on actioncode
         if (! empty($actioncode))
         {
@@ -1410,7 +1404,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
 
-		//TODO Add limit for thirdparty in  contexte very all result
+		//TODO Add limit in nb of results
         $sql.= $db->order($sortfield, $sortorder);
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);

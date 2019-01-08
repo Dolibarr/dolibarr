@@ -383,8 +383,10 @@ if ($result)
     		print '</td>';
 		}
 
-		// Multicompany
-		print '<td></td>';
+		if (! empty($conf->multicompany->enabled) && !$user->entity)
+		{
+		    print '<td></td>';
+		}
 
 		// Actions
 		print '<td align="center">';

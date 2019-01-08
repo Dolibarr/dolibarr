@@ -433,7 +433,7 @@ if (empty($reshook))
 		}
 
 		$typeid=GETPOST("typeid",'int');
-		$civility_id=GETPOST("civility_id",'int');
+		$civility_id=GETPOST("civility_id",'alpha');
 		$lastname=GETPOST("lastname",'alpha');
 		$firstname=GETPOST("firstname",'alpha');
 		$gender=GETPOST("gender",'alpha');
