@@ -82,6 +82,16 @@ $modules=array(
 						'img' => 'bill'
 				)
 		),
+		'supplier_proposal' => array(
+				array(
+						'code' => 'MAIN_DELAY_SUPPLIER_PROPOSALS_TO_CLOSE',
+						'img' => 'supplier_proposal'
+				),
+				array(
+						'code' => 'MAIN_DELAY_SUPPLIER_PROPOSALS_TO_BILL',
+						'img' => 'supplier_proposal'
+				)
+		),
 		'service' => array(
 				array(
 						'code' => 'MAIN_DELAY_NOT_ACTIVATED_SERVICES',
