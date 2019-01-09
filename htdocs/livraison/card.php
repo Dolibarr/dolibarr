@@ -2,10 +2,10 @@
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015			  Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,9 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
+$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
-$langs->load("sendings");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
@@ -77,9 +75,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard','globalcard'));
 
+
 /*
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -193,27 +193,22 @@ elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 // Update extrafields
 if ($action == 'update_extras')
 {
+	$object->oldcopy = dol_clone($object);
+
 	// Fill array 'array_options' with data from update form
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 	if ($ret < 0) $error++;
 
 	if (! $error)
 	{
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('livraisondao'));
-		$parameters = array('id' => $object->id);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook)) {
-			$result = $object->insertExtraFields();
-			if ($result < 0)
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
-		} else if ($reshook < 0)
+		// Actions on extra fields
+		$result = $object->insertExtraFields('DELIVERY_MODIFY');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
+		}
 	}
 
 	if ($error)
@@ -246,13 +241,19 @@ if ($action == 'update_extras_line')
 			$error++;
 		}
 	}
-
 }
+
+
+// Actions to build doc
+$upload_dir = $conf->expedition->dir_output.'/receipt';
+$permissioncreate = $user->rights->expedition->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 /*
  * Build document
  */
+/*
 if ($action == 'builddoc')	// En get ou en post
 {
 	// Save last template used to generate document
@@ -288,7 +289,9 @@ elseif ($action == 'remove_file')
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
+*/
 
+include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 /*
  *	View
@@ -353,7 +356,6 @@ else
 			{
 				$expedition_id = GETPOST("expid");
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
-
 			}
 
 			/*
@@ -362,7 +364,6 @@ else
 			if ($action == 'valid')
 			{
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
-
 			}
 
 
@@ -503,7 +504,7 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
+				print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
@@ -521,7 +522,7 @@ else
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
 		        print '<td><td align="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livaison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
@@ -571,7 +572,7 @@ else
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id, $expeditionExtrafieldLabels) > 0) {
+				if ($expedition->fetch_optionals($object->origin_id) > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -583,7 +584,7 @@ else
 			print '</div>';
 
 			/*
-			 * Lignes produits
+			 * Products lines
 			 */
 
 			$num_prod = count($object->lines);
@@ -601,11 +602,8 @@ else
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num_prod)
 			{
-
-
 				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{
@@ -674,16 +672,16 @@ else
 					$colspan=2;
 					$mode = ($object->statut == 0) ? 'edit' : 'view';
 					$line = new LivraisonLigne($db);
-					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
+					$line->fetch_optionals($object->lines[$i]->id);
 					if ($action = 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
 						$expeditionLineExtrafields = new Extrafields($db);
 						$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);
-						$srcLine->fetch_optionals($expedition->lines[$i]->id,$expeditionLineExtrafieldLabels);
+						$srcLine->fetch_optionals($expedition->lines[$i]->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					}
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>'class="oddeven"', 'colspan'=>$colspan),$i);
 					print '</tr>';
 				}
 
@@ -781,6 +779,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

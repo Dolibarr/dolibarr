@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("projects");
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -162,6 +162,7 @@ if (empty($reshook))
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -262,6 +263,7 @@ if (empty($reshook))
 			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount','alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -331,7 +333,6 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 		}
-
 	}
 
 	// Build doc
@@ -445,6 +446,13 @@ if (empty($reshook))
 			$comefromclone=true;
 		}
 	}
+
+	// Actions to send emails
+	$trigger_name='PROJECT_SENTBYMAIL';
+	$paramname='id';
+	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
+	$trackid='proj'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -463,6 +471,17 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("",$title,$help_url);
 
+$titleboth=$langs->trans("LeadsOrProjects");
+$titlenew = $langs->trans("NewLeadOrProject");	// Leads and opportunities by default
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
+{
+	$titleboth=$langs->trans("Projects");
+	$titlenew = $langs->trans("NewProject");
+}
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+	$titleboth=$langs->trans("Leads");
+	$titlenew = $langs->trans("NewLead");
+}
 
 if ($action == 'create' && $user->rights->projet->creer)
 {
@@ -473,7 +492,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-	print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+	print load_fiche_titre($titlenew, '', 'title_project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -533,7 +552,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	   	$text=$form->select_company(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		{
-			$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+			$texthelp=$langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
 		}
 		else print $text;
@@ -560,12 +579,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_start?$date_start:''), 'projectstart', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_end?$date_end:-1), 'projectend', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -600,6 +619,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
 
+	// Bill time
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<tr><td>'.$langs->trans("BillTime").'</td>';
+		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
+		print '</tr>';
+	}
+
 	if ($conf->categorie->enabled) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -613,7 +640,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -661,7 +688,7 @@ elseif ($object->id > 0)
      * Show or edit
      */
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	// To verify role of users
 	$userAccess = $object->restrictedProjectArea($user,'read');
@@ -737,7 +764,7 @@ elseif ($object->id > 0)
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
+		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
@@ -762,7 +789,7 @@ elseif ($object->id > 0)
 			$text=$form->select_company($object->thirdparty->id, 'socid', $filteronlist, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 			{
-				$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+				$texthelp=$langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
 			}
 			else print $text;
@@ -805,7 +832,7 @@ elseif ($object->id > 0)
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_start?$object->date_start:-1, 'projectstart', 0, 0, 0, '', 1, 0);
 		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
 		if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -813,7 +840,7 @@ elseif ($object->id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_end?$object->date_end:-1, 'projectend', 0, 0, 0, '', 1, 0);
 		print '</td></tr>';
 
 		// Budget
@@ -826,6 +853,14 @@ elseif ($object->id > 0)
 		print '<td>';
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
+
+		// Bill time
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
+			print '</tr>';
+		}
 
 		// Tags-Categories
 		if ($conf->categorie->enabled)
@@ -845,7 +880,7 @@ elseif ($object->id > 0)
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -949,6 +984,14 @@ elseif ($object->id > 0)
 		print nl2br($object->description);
 		print '</td></tr>';
 
+		// Bill time
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td>'.yn($object->bill_time).'</td>';
+			print '</tr>';
+		}
+
 		// Categories
 		if($conf->categorie->enabled) {
 			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -1023,7 +1066,7 @@ elseif ($object->id > 0)
                         if (parseFloat(oldpercent) != 100) { jQuery("#opp_percent").val(oldpercent); }
                         else { jQuery("#opp_percent").val(defaultpercent); }
                     }
-                    else 
+                    else
                     {
                     	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
                     	{
@@ -1049,7 +1092,7 @@ elseif ($object->id > 0)
 																							  // modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "edit" )
+		if ($action != "edit" && $action != 'presend' )
 		{
 
 			// Create event
@@ -1060,6 +1103,12 @@ elseif ($object->id > 0)
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a></div>';
 			}*/
 
+			// Send
+			if ($object->statut != 2)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+			}
+
 		// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
 			{
@@ -1069,7 +1118,7 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
 				}
 			}
 
@@ -1082,7 +1131,7 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
 				}
 			}
 
@@ -1095,7 +1144,7 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
 				}
 			}
 
@@ -1108,7 +1157,7 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
 				}
 			}
 
@@ -1176,7 +1225,7 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
 				}
 			}
 
@@ -1189,13 +1238,17 @@ elseif ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
 				}
 			}
 		 }
 	}
 
 	print "</div>";
+
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	if ($action != 'presend')
 	{
@@ -1229,6 +1282,14 @@ elseif ($object->id > 0)
 		print '</div></div></div>';
 	}
 
+	// Presend form
+	$modelmail='project';
+	$defaulttopic='SendProjectRef';
+	$diroutput = $conf->projet->dir_output;
+	$trackid = 'proj'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
 	// Hook to add more things on page
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
@@ -1238,6 +1299,6 @@ else
 	print $langs->trans("RecordNotFound");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -3,10 +3,11 @@
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +29,12 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->don->enabled)) $langs->load("donations");
 if (! empty($conf->loan->enabled)) $langs->load("loan");
@@ -62,6 +61,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
 /*
  * Actions
  */
+
 if ($cancel)
 {
     if ($backtopage)
@@ -99,8 +99,10 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} else {
-		setEventMessage('Missing ids','errors');
+	}
+	else
+	{
+		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
 
@@ -108,10 +110,23 @@ if ($user->rights->banque->modifier && $action == "update")
 {
 	$error=0;
 
-	$ac = new Account($db);
-	$ac->fetch($id);
+	$acline = new AccountLine($db);
+	$acline->fetch($rowid);
 
-	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
+	$acsource = new Account($db);
+	$acsource->fetch($id);
+
+	$actarget = new Account($db);
+	if (GETPOST('accountid','int') > 0 && ! $acline->rappro && ! $acline->getVentilExportCompta())	// We ask to change bank account
+	{
+		$actarget->fetch(GETPOST('accountid','int'));
+	}
+	else
+	{
+		$actarget->fetch($id);
+	}
+
+	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value','alpha') != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -119,16 +134,6 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if (! $error)
 	{
-		// Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
-		$conciliated=0;
-		$sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$objp = $db->fetch_object($result);
-			$conciliated=$objp->rappro;
-		}
-
 		$db->begin();
 
 		$amount = price2num($_POST['amount']);
@@ -142,15 +147,15 @@ if ($user->rights->banque->modifier && $action == "update")
 		if (isset($_POST['banque']))     $sql.=" banque='".$db->escape($_POST["banque"])."',";
 		if (isset($_POST['emetteur']))   $sql.=" emetteur='".$db->escape($_POST["emetteur"])."',";
 		// Blocked when conciliated
-		if (! $conciliated)
+		if (! $acline->rappro)
 		{
 			if (isset($_POST['label']))      $sql.=" label='".$db->escape($_POST["label"])."',";
 			if (isset($_POST['amount']))     $sql.=" amount='".$amount."',";
 			if (isset($_POST['dateomonth'])) $sql.=" dateo = '".$db->idate($dateop)."',";
 			if (isset($_POST['datevmonth'])) $sql.=" datev = '".$db->idate($dateval)."',";
 		}
-		$sql.= " fk_account = ".$id;
-		$sql.= " WHERE rowid = ".$rowid;
+		$sql.= " fk_account = ".$actarget->id;
+		$sql.= " WHERE rowid = ".$acline->id;
 
 		$result = $db->query($sql);
 		if (! $result)
@@ -282,7 +287,7 @@ if ($result)
         $account = $acct->id;
 
         $bankline = new AccountLine($db);
-        $bankline->fetch($rowid,$ref);
+        $bankline->fetch($rowid, $ref);
 
         $links=$acct->get_url($rowid);
         $bankline->load_previous_next_ref('','rowid');
@@ -311,21 +316,19 @@ if ($result)
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("Ref")."</td>";
-        print '<td>';
-        print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
-        print '</td>';
-        print '</tr>';
-        */
-
         $i++;
 
         // Bank account
         print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
-        print $acct->getNomUrl(1,'transactions','reflabel');
+        if (! $objp->rappro && ! $bankline->getVentilExportCompta())
+        {
+        	print $form->select_comptes($acct->id, 'accountid', 0, '', 0);
+        }
+        else
+        {
+        	print $acct->getNomUrl(1,'transactions','reflabel');
+        }
         print '</td>';
         print '</tr>';
 
@@ -448,7 +451,6 @@ if ($result)
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
-
             }
             print '</td>';
         }
@@ -495,7 +497,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -519,7 +521,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -594,7 +596,7 @@ if ($result)
             $langs->load('categories');
 
             // Bank line
-            print '<tr><td class="toptd">' . fieldLabel('RubriquesTransactions', 'custcats') . '</td><td>';
+            print '<tr><td class="toptd">' . $form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0) . '</td><td>';
             $cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
             print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
             print "</td></tr>";
@@ -679,13 +681,12 @@ if ($result)
 
 			print '</form>';
         }
-
     }
 
     $db->free($result);
 }
 else dol_print_error($db);
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 {
 	if ($result > 0)
 	{
-		// Creation user
+		// Creation of thirdparty
 		$company = new Societe($db);
 		$result=$company->create_from_member($object, GETPOST('companyname', 'alpha'), GETPOST('companyalias', 'alpha'), GETPOST('customercode', 'alpha'));
 
@@ -203,8 +204,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
     $langs->load("banks");
 
-    $result=$object->fetch($rowid);
-    $result=$adht->fetch($object->typeid);
+    $result = $object->fetch($rowid);
+    $result = $adht->fetch($object->typeid);
 
     // Subscription informations
     $datesubscription=0;
@@ -222,7 +223,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     {
         $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
     }
-    $subscription=price2num(GETPOST("subscription",'alpha'));	// Amount of subscription
+    $amount=price2num(GETPOST("subscription",'alpha'));	// Amount of subscription
     $label=$_POST["label"];
 
     // Payment informations
@@ -233,6 +234,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     $emetteur_banque=$_POST["chqbank"];
     $option=$_POST["paymentsave"];
     if (empty($option)) $option='none';
+    $sendalsoemail=GETPOST("sendmail",'alpha');
 
     // Check parameters
     if (! $datesubscription)
@@ -263,8 +265,6 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         $action='addsubscription';
     }
 
-    $amount = price2num(GETPOST("subscription",'alpha'));
-
     // Check if a payment is mandatory or not
     if (! $error && $adht->subscription)	// Member type need subscriptions
     {
@@ -292,6 +292,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 }
                 if ($errmsg)
                 {
+                	$error++;
         			setEventMessages($errmsg, null, 'errors');
         			$error++;
                 	$action='addsubscription';
@@ -300,12 +301,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         }
     }
 
+    // Record the subscription then complementary actions
     if (! $error && $action=='subscription')
     {
         $db->begin();
 
         // Create subscription
-        $crowid=$object->subscription($datesubscription, $subscription, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+        $crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
         if ($crowid <= 0)
         {
             $error++;
@@ -315,233 +317,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
         if (! $error)
         {
-            // Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
-            if ($option == 'bankdirect' && $accountid)
-            {
-                require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-                $acct=new Account($db);
-                $result=$acct->fetch($accountid);
-
-                $dateop=$paymentdate;
-
-                $insertid=$acct->addline($dateop, $operation, $label, $subscription, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
-                if ($insertid > 0)
-                {
-                    $inserturlid=$acct->add_url_line($insertid, $object->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $object->getFullname($langs), 'member');
-                    if ($inserturlid > 0)
-                    {
-                        // Update table subscription
-                        $sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
-                        $sql.=" WHERE rowid=".$crowid;
-
-                        dol_syslog("subscription::subscription", LOG_DEBUG);
-                        $resql = $db->query($sql);
-                        if (! $resql)
-                        {
-                            $error++;
-                            $errmsg=$db->lasterror();
-        					setEventMessages($errmsg, null, 'errors');
-                        }
-                    }
-                    else
-					{
-                        $error++;
-                        $errmsg=$acct->error;
-                        $errmsgs=$acct->errors;
-        				setEventMessages($errmsg, $errmsgs, 'errors');
-					}
-                }
-                else
-				{
-                    $error++;
-                    $errmsg=$acct->error;
-                    $errmsgs=$acct->errors;
-        			setEventMessages($errmsg, $errmsgs, 'errors');
-				}
-            }
-
-            // If option choosed, we create invoice
-            if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly')
-            {
-                require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-                require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
-
-                $invoice=new Facture($db);
-                $customer=new Societe($db);
-
-                if (! $error)
-                {
-                	if (! ($object->fk_soc > 0))
-                	{
-                		$langs->load("errors");
-                		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
-        				setEventMessages($errmsg, null, 'errors');
-                		$error++;
-                	}
-                }
-                if (! $error)
-                {
-	                $result=$customer->fetch($object->fk_soc);
-	                if ($result <= 0)
-	                {
-	                    $errmsg=$customer->error;
-	                    $errmsgs=$acct->errors;
-        				setEventMessages($errmsg, $errmsgs, 'errors');
-	                    $error++;
-	                }
-                }
-
-                if (! $error)
-                {
-	                // Create draft invoice
-	                $invoice->type= Facture::TYPE_STANDARD;
-	                $invoice->cond_reglement_id=$customer->cond_reglement_id;
-	                if (empty($invoice->cond_reglement_id))
-	                {
-	                    $paymenttermstatic=new PaymentTerm($db);
-	                    $invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
-	                    if (empty($invoice->cond_reglement_id))
-	                    {
-	                        $error++;
-	                        $errmsg='ErrorNoPaymentTermRECEPFound';
-        					setEventMessages($errmsg, null, 'errors');
-	                    }
-	                }
-	                $invoice->socid=$object->fk_soc;
-	                $invoice->date=$datesubscription;
-
-	                // Possibility to add external linked objects with hooks
-	                $invoice->linked_objects['subscription'] = $crowid;
-	                if (! empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects']))
-	                {
-	                    $invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
-	                }
-
-	                $result=$invoice->create($user);
-	                if ($result <= 0)
-	                {
-	                    $errmsg=$invoice->error;
-	                    $errmsgs=$invoice->errors;
-        				setEventMessages($errmsg, $errmsgs, 'errors');
-	                    $error++;
-	                }
-                }
-
-                if (! $error)
-                {
-	                // Add line to draft invoice
-	                $idprodsubscription=0;
-			        if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled))) $idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
-
-	                $vattouse=0;
-	                if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
-	                {
-	                	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
-	                }
-	                //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-	                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$subscription,1);
-	                if ($result <= 0)
-	                {
-	                    $errmsg=$invoice->error;
-        				setEventMessages($errmsg, null, 'errors');
-	                    $error++;
-	                }
-                }
-
-                if (! $error)
-                {
-	                // Validate invoice
-	                $result=$invoice->validate($user);
-   	                if ($result <= 0)
-	                {
-	                    $errmsg=$invoice->error;
-	                    $errmsgs=$invoice->errors;
-        				setEventMessages($errmsg, $errmsgs, 'errors');
-	                    $error++;
-	                }
-                }
-
-                // Add payment onto invoice
-                if ($option == 'bankviainvoice' && $accountid)
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-                    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-                    require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-
-                    $amounts[$invoice->id] = price2num($subscription);
-                    $paiement = new Paiement($db);
-                    $paiement->datepaye     = $paymentdate;
-                    $paiement->amounts      = $amounts;
-                    $paiement->paiementid   = dol_getIdFromCode($db,$operation,'c_paiement','code','id',1);
-                    $paiement->num_paiement = $num_chq;
-                    $paiement->note         = $label;
-
-                    if (! $error)
-                    {
-	                    // Create payment line for invoice
-                    	$paiement_id = $paiement->create($user);
-                        if (! $paiement_id > 0)
-                        {
-                            $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
-        					setEventMessages($errmsg, $errmsgs, 'errors');
-                            $error++;
-                        }
-                    }
-
-                    if (! $error)
-                    {
-                    	// Add transaction into bank account
-                        $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
-                        if (! ($bank_line_id > 0))
-                        {
-                            $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
-	                        setEventMessages($paiement->error, $paiement->errors, 'errors');
-                            $error++;
-                        }
-                    }
-
-                    if (! $error)
-                    {
-                        // Update fk_bank into subscription table
-                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
-                        $sql.= ' WHERE rowid='.$crowid;
-
-	                    $result = $db->query($sql);
-                        if (! $result)
-                        {
-                            $error++;
-                        }
-                    }
-
-                    if (! $error)
-                    {
-                        // Set invoice as paid
-                    	$invoice->set_paid($user);
-                    }
-
-                    if (! $error)
-                    {
-						// Define output language
-						$outputlangs = $langs;
-						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-							$newlang = $_REQUEST['lang_id'];
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-							$newlang = $customer->default_lang;
-						if (! empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-						}
-                    	// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-
-	                    $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                    }
-                }
-            }
+        	$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque);
+			if ($result < 0)
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			else
+			{
+				// If an invoice was created, it is into $object->invoice
+			}
         }
 
         if (! $error)
@@ -554,23 +339,84 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             $action = 'addsubscription';
         }
 
+        if (! $error)
+        {
+        	setEventMessages("SubscriptionRecorded", null, 'mesgs');
+        }
+
         // Send email
         if (! $error)
         {
             // Send confirmation Email
-            if ($object->email && $_POST["sendmail"])
+            if ($object->email && $sendalsoemail)
             {
-                $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-                $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            	$subject = '';
+            	$msg= '';
 
-                $result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+            	// Send subscription email
+            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            	$formmail=new FormMail($db);
+            	// Set output language
+            	$outputlangs = new Translate('', $conf);
+            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
+            	$outputlangs->loadLangs(array("main", "members"));
+
+            	// Get email content from template
+            	$arraydefaultmessage=null;
+            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            	{
+            		$subject = $arraydefaultmessage->topic;
+            		$msg     = $arraydefaultmessage->content;
+            	}
+
+            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
+
+                // Attach a file ?
+                $file='';
+                $listofpaths=array();
+                $listofnames=array();
+                $listofmimes=array();
+                if (is_object($object->invoice))
+                {
+                	$invoicediroutput = $conf->facture->dir_output;
+                	$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+                	$file = $fileparams['fullname'];
+
+                	$listofpaths=array($file);
+                	$listofnames=array(basename($file));
+                	$listofmimes=array(dol_mimetype($file));
+                }
+
+                $moreinheader='X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1, '', $moreinheader);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
-        			setEventMessages($errmsg, null, 'errors');
+                	setEventMessages($object->error, $object->errors, 'errors');
+                }
+                else
+                {
+                	setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
                 }
             }
+            else
+            {
+            	setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');
+            }
+        }
 
+        // Clean some POST vars
+        if (! $error)
+        {
             $_POST["subscription"]='';
             $_POST["accountid"]='';
             $_POST["operation"]='';
@@ -809,7 +655,7 @@ if ($rowid > 0)
             print '<div class="tabsAction">';
 
             if ($object->statut > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
-            else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
+            else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 
             print '</div>';
         }
@@ -934,7 +780,7 @@ if ($rowid > 0)
 
         print load_fiche_titre($langs->trans("NewCotisation"));
 
-        // Define default choice to select
+        // Define default choice for complementary actions
         $bankdirect=0;        // 1 means option by default is write to bank direct with no invoice
         $invoiceonly=0;		  // 1 means option by default is invoice only
         $bankviainvoice=0;    // 1 means option by default is write to bank via invoice
@@ -945,11 +791,11 @@ if ($rowid > 0)
         	if (GETPOST('paymentsave') == 'bankviainvoice') $bankviainvoice=1;
         }
         else
-       {
+        {
         	if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $bankviainvoice=1;
-       		else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
+        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
         	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $invoiceonly=1;
-       }
+        }
 
         print "\n\n<!-- Form add subscription -->\n";
 
@@ -1057,17 +903,13 @@ if ($rowid > 0)
         }
         if (! $datefrom)
         {
-            if ($object->datefin > 0)
+        	$datefrom=$object->datevalid;
+        	if ($object->datefin > 0)
             {
                 $datefrom=dol_time_plus_duree($object->datefin,1,'d');
             }
-            else
-			{
-                //$datefrom=dol_now();
-				$datefrom=$object->datevalid;
-            }
         }
-        print $form->select_date($datefrom,'','','','',"subscription",1,1,1);
+        print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
         print "</td></tr>";
 
         // Date end subscription
@@ -1080,7 +922,7 @@ if ($rowid > 0)
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        print $form->select_date($dateto,'end','','','',"subscription",1,0,1);
+        print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
         print "</td></tr>";
 
         if ($adht->subscription)
@@ -1181,7 +1023,7 @@ if ($rowid > 0)
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'subscription',1,1,1);
+                print $form->selectDate(isset($paymentdate)?$paymentdate:-1, 'payment', 0, 0, 1, 'subscription', 1, 1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
@@ -1214,10 +1056,36 @@ if ($rowid > 0)
             $adht = new AdherentType($db);
             $adht->fetch($object->typeid);
 
-            $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-            $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            // Send subscription email
+            $subject = '';
+            $msg= '';
 
-            $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail')?GETPOST('sendmail'):(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked':'')).'>';
+            // Send subscription email
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            $formmail=new FormMail($db);
+            // Set output language
+            $outputlangs = new Translate('', $conf);
+            $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            // Load traductions files requiredby by page
+            $outputlangs->loadLangs(array("main", "members"));
+            // Get email content from template
+            $arraydefaultmessage=null;
+            $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            {
+            	$subject = $arraydefaultmessage->topic;
+            	$msg     = $arraydefaultmessage->content;
+            }
+
+            $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
+
+            $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail','alpha')?' checked':(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked':'')).'>';
             $helpcontent='';
             $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
             $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
@@ -1227,7 +1095,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print $form->textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
         }
         print '</td></tr>';
         print '</tbody>';
@@ -1255,7 +1123,6 @@ else
     print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -204,7 +204,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles varchar(255) DEFAULT '1';
 ALTER TABLE llx_c_email_templates MODIFY COLUMN content mediumtext;
 
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendingAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,1,0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null);
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
@@ -467,10 +467,13 @@ ALTER TABLE llx_extrafields ADD COLUMN enabled varchar(255) DEFAULT '1';
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
-UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
-UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list <> 3;		
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list <> 3;		
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 1 WHERE list::integer = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list::integer <> 3;		
 
-ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1 USING list::integer;
 --VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
 
 ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
@@ -713,6 +716,12 @@ create table llx_facture_rec_extrafields
 
 
 ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
+-- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+
+-- drop very old table (bad name)
+DROP TABLE llx_c_accountancy_category;
+
 
 UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
 UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');

@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2017  Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2013-2016  Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016  Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014       Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta","bills","other","accountancy","errors"));
 
 $id_journal = GETPOST('id_journal', 'int');
@@ -68,6 +70,8 @@ $parameters=array();
 
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
 
+$accountingaccount = new AccountingAccount($db);
+
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
@@ -93,7 +97,7 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -103,7 +107,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid =
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE fd.fk_code_ventilation > 0";
-$sql .= " AND f.entity IN (".getEntity('facture', 0).')';	// We don't share object for accountancy, we use source object sharing
+$sql .= " AND f.entity IN (".getEntity('invoice', 0).')';	// We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non common setup
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
@@ -191,7 +195,7 @@ if ($result) {
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
-		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code;		// close_code = 'replaced' for replacement invoices (not used in most european countries)
@@ -315,8 +319,12 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-					$bookkeeping->subledger_label = '';    // TODO To complete
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+
+					$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
@@ -357,7 +365,6 @@ if ($action == 'writebookkeeping') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				//if ($mt) {
 					// get compte id and label
-					$accountingaccount = new AccountingAccount($db);
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -371,6 +378,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $accountingaccount->label;
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -430,6 +438,10 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
+
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -488,7 +500,6 @@ if ($action == 'writebookkeeping') {
 				break;  // Break in the foreach
 			}
 		}
-
 	}
 
 	$tabpay = $tabfac;
@@ -532,10 +543,11 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'exportcsv') {
-
+if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
+	$type_export = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);
@@ -647,7 +659,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("SellsJournal"));
 
-	$nom = $langs->trans("SellsJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("SellsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -659,7 +671,8 @@ if (empty($action) || $action == 'view') {
 		$description .= $langs->trans("DepositsAreIncluded");
 
 	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+    $period = $form->selectDate($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0);
+    $period .= ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -671,13 +684,13 @@ if (empty($action) || $action == 'view') {
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
-		print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
 		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
-		else print '<a href="#" class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
+		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	}
 	print '</div>';
 

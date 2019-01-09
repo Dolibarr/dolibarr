@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 
 
 /*
@@ -105,13 +105,10 @@ if ($result)
     print_liste_field_titre("Phone");
     print "</tr>\n";
 
-    $var=True;
     $i = 0;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-
-
 
         print '<tr class="oddeven">';
 
@@ -126,14 +123,12 @@ if ($result)
     }
     print "</table>";
     $db->free($result);
-
 }
 else
 {
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

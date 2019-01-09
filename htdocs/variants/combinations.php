@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016	Marcos García	      <marcosgdf@gmail.com>
- * Copyright (C) 2017	Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2016   Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017   Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018   Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-$langs->load("products");
-$langs->load("other");
+$langs->loadLangs(array("products", "other"));
 
-$var = false;
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
 $ref = GETPOST('ref');
@@ -71,7 +70,7 @@ if ($cancel) {
     unset($_SESSION['addvariant_'.$object->id]);
 }
 
-if (! $object->isProduct()) {
+if (! $object->isProduct() && ! $object->isService()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
@@ -104,7 +103,7 @@ if ($_POST) {
         $features = $_SESSION['addvariant_'.$object->id];
 
 		if (!$features) {
-			setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 		}
 		else
 		{
@@ -147,7 +146,7 @@ if ($_POST) {
 				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans('RecordSaved'));
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 					unset($_SESSION['addvariant_'.$object->id]);
 
 					$db->commit();
@@ -211,12 +210,10 @@ if ($_POST) {
 			} else {
 				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			}
-
 		} else {
 			$db->commit();
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		}
-
 	}
 	elseif ($valueid > 0) {
 
@@ -230,7 +227,7 @@ if ($_POST) {
 		$prodcomb->variation_weight = $weight_impact;
 
 		if ($prodcomb->update($user) > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			exit();
 		} else {
@@ -250,13 +247,13 @@ if ($action === 'confirm_deletecombination') {
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
 			$db->commit();
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
 			exit();
 		}
 
 		$db->rollback();
-		setEventMessage($langs->trans('ProductCombinationAlreadyUsed'), 'errors');
+		setEventMessages($langs->trans('ProductCombinationAlreadyUsed'), null, 'errors');
 		$action = '';
 	}
 } elseif ($action === 'edit') {
@@ -284,14 +281,12 @@ if ($action === 'confirm_deletecombination') {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				exit();
 			} else {
-				setEventMessage($langs->trans('ErrorCopyProductCombinations'), 'errors');
+				setEventMessages($langs->trans('ErrorCopyProductCombinations'), null, 'errors');
 			}
 		}
-
 	} else {
-		setEventMessage($langs->trans('ErrorDestinationProductNotFound'), 'errors');
+		setEventMessages($langs->trans('ErrorDestinationProductNotFound'), null, 'errors');
 	}
-
 }
 
 
@@ -319,6 +314,66 @@ if (! empty($id) || ! empty($ref))
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
+
+    // TVA
+    print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+    $positiverates='';
+    if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+    if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+    if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+    if (empty($positiverates)) $positiverates='0';
+    echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+    /*
+    if ($object->default_vat_code)
+    {
+        print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
+    }
+    else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
+    print '</td></tr>';
+
+    // Price
+    print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+    // Price minimum
+    print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price_min) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+	// Weight
+	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	if ($object->weight != '')
+	{
+		print $object->weight." ".measuring_units_string($object->weight_units,"weight");
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print "</td></tr>\n";
+
+
+
+
+	print "</table>\n";
+
+	print '</div>';
+	print '<div style="clear:both"></div>';
+
 	dol_fiche_end();
 
 
@@ -327,12 +382,33 @@ if (! empty($id) || ! empty($ref))
 
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
+			//print dol_fiche_head();
+			$features = $_SESSION['addvariant_'.$object->id];
+			//First, sanitize
+			print '<div id="parttoaddvariant">';
+			if (! empty($features)) {
+				foreach ($features as $feature) {
+
+					$explode = explode(':', $feature);
+
+					if ($prodattr->fetch($explode[0]) < 0) {
+						continue;
+					}
+
+					if ($prodattr_val->fetch($explode[1]) < 0) {
+						continue;
+					}
+
+					print '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
+				}
+			}
+			print '</div>';
+			print '<br><br>';
+			//print dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
-
-		print '<div id="parttoaddvariant"></div>';
-		print_fiche_titre($title);
+		print load_fiche_titre($title);
 
 		if ($action == 'add') {
 			$prodattr_all = $prodattr->fetchAll();
@@ -346,8 +422,8 @@ if (! empty($id) || ! empty($ref))
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
 			}
-                
-		?>
+
+			?>
 
 		<script type="text/javascript">
 
@@ -429,7 +505,7 @@ if (! empty($id) || ! empty($ref))
                 if($valueid > 0) {
                     print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
                 }
-                    
+
 		print dol_fiche_head();
 
 		?>
@@ -523,12 +599,13 @@ if (! empty($id) || ! empty($ref))
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
 			</tr>
-			<tr>
-				<td><label for="weight_impact"><?php echo $langs->trans('WeightImpact') ?></label></td>
-				<td><input type="text" id="weight_impact" name="weight_impact" value="<?php echo price($weight_impact) ?>"></td>
-			</tr>
-		</table>
-		<?php
+<?php   	if ($object->isProduct()) {
+				print '<tr>';
+				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
+				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
+				print '</tr>';
+			}
+			print '</table>';
 		}
 
 		print dol_fiche_end();
@@ -613,11 +690,13 @@ if (! empty($id) || ! empty($ref))
 		print '<div class="tabsAction">';
 
 		print '	<div class="inline-block divButAction">';
-		if ($productCombinations) {
-		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
-		}
 
 		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+
+		if ($productCombinations)
+		{
+			print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
+		}
 
 		// Too much bugged page.
 		/*
@@ -678,7 +757,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
-				<td class="liste_titre right"><?php echo $langs->trans('WeightImpact') ?></td>
+                <?php if ($object->isProduct()) print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>'; ?>
 				<td class="liste_titre center"><?php echo $langs->trans('OnSell') ?></td>
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
@@ -714,7 +793,7 @@ if (! empty($id) || ! empty($ref))
     					} ?>
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
-    				<td class="right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
+                    <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
     				<td class="right">
@@ -752,7 +831,6 @@ if (! empty($id) || ! empty($ref))
 	// not found
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

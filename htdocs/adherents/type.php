@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
@@ -42,7 +42,7 @@ $backtopage = GETPOST('backtopage','alpha');
 $search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
 $search_email		= GETPOST('search_email','alpha');
-$type				= GETPOST('type','alpha');
+$type				= GETPOST('type','intcomma');
 $status				= GETPOST('status','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -59,8 +59,8 @@ if (! $sortfield) {  $sortfield="d.lastname"; }
 $label=GETPOST("label","alpha");
 $subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
-$comment=GETPOST("comment");
-$mail_valid=GETPOST("mail_valid");
+$comment=GETPOST("comment",'alphanohtml');
+$mail_valid=GETPOST("mail_valid",'none');
 
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
@@ -228,6 +228,14 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
+		$newcardbutton='';
+		if ($user->rights->adherent->configurer)
+		{
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMemberType').'</span>';
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -237,7 +245,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -309,7 +317,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("subscription",1,1);
@@ -332,7 +340,7 @@ if ($action == 'create')
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -361,7 +369,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		/*
 		 * Confirmation suppression
@@ -479,6 +487,9 @@ if ($rowid > 0)
 		{
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
+
+		$sql.= " ".$db->order($sortfield,$sortorder);
+
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -486,9 +497,13 @@ if ($rowid > 0)
 			$resql = $db->query($sql);
 		    if ($resql) $nbtotalofrecords = $db->num_rows($result);
 		    else dol_print_error($db);
+		    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		    {
+		    	$page = 0;
+		    	$offset = 0;
+		    }
 		}
-		// Add order and limit
-		$sql.= " ".$db->order($sortfield,$sortorder);
+
 		$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 		$resql = $db->query($sql);
@@ -679,7 +694,6 @@ if ($rowid > 0)
 		{
 		    dol_print_error($db);
 		}
-
 	}
 
 	/* ************************************************************************** */
@@ -692,7 +706,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$head = member_type_prepare_head($object);
 
@@ -730,7 +744,7 @@ if ($rowid > 0)
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 		    print $object->showOptionals($extrafields,'edit');
 		}
@@ -738,7 +752,7 @@ if ($rowid > 0)
 		print '</table>';
 
 		// Extra field
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
@@ -772,7 +786,6 @@ if ($rowid > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL','1');
-define('NOREQUIREMENU','1');
-define('NOREQUIREHTML','1');
-define('NOREQUIREAJAX','1');
-define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';

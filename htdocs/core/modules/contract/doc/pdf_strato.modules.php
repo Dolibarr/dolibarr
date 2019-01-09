@@ -1,11 +1,12 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013       Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,21 +40,72 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class pdf_strato extends ModelePDFContract
 {
-	var $db;
-	var $name;
-	var $description;
-	var $type;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-	var $page_largeur;
-	var $page_hauteur;
-	var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+
+	/**
+     * @var string document type
+     */
+    public $type;
+
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
 
 	/**
 	 * Issuer
@@ -108,7 +160,8 @@ class pdf_strato extends ModelePDFContract
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		CommonObject	$object				Id of object to generate
@@ -121,16 +174,15 @@ class pdf_strato extends ModelePDFContract
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$hookmanager,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("contracts");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
 		if ($conf->contrat->dir_output)
 		{
@@ -186,7 +238,7 @@ class pdf_strato extends ModelePDFContract
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -216,16 +268,14 @@ class pdf_strato extends ModelePDFContract
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$tab_top = 88;
+					$tab_top -= 2;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -233,12 +283,7 @@ class pdf_strato extends ModelePDFContract
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
-					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
-				}
-				else
-				{
-					$height_note=0;
 				}
 
 				$iniY = $tab_top + 7;
@@ -326,7 +371,7 @@ class pdf_strato extends ModelePDFContract
 							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txtpredefinedservice, dol_concatdesc($txt, $desc)), 0, 1, 0);
 							$pageposafter=$pdf->getPage();
 							$posyafter=$pdf->GetY();
-							
+
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 							{
 								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
@@ -350,7 +395,7 @@ class pdf_strato extends ModelePDFContract
 
 						$nexY = $pdf->GetY() + 2;
 						$pageposafter=$pdf->getPage();
-						
+
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -379,7 +424,7 @@ class pdf_strato extends ModelePDFContract
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 						}
-						
+
 						if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 						{
 							if ($pagenb == 1)
@@ -403,16 +448,16 @@ class pdf_strato extends ModelePDFContract
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-					$this->_tab_signature($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
+					$this->tabSignature($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
 					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 				else
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-					$this->_tab_signature($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
+					$this->tabSignature($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
 					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
-				
+
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -502,7 +547,16 @@ class pdf_strato extends ModelePDFContract
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3);	// Rect prend une longueur en 3eme param et 4eme param
 	}
 
-	function _tab_signature(&$pdf, $tab_top, $tab_height, $outputlangs) {
+    /**
+     * Show footer signature of page
+     * @param   PDF         $pdf            Object PDF
+     * @param   int         $tab_top        tab height position
+     * @param   int         $tab_height     tab height
+     * @param   Translate   $outputlangs    Object language for output
+     * @return void
+     */
+	private function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
+    {
 		$pdf->SetDrawColor(128,128,128);
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
 		$posy = $tab_top + $tab_height + 3 + 3;
@@ -532,12 +586,11 @@ class pdf_strato extends ModelePDFContract
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("contract");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
@@ -620,7 +673,7 @@ class pdf_strato extends ModelePDFContract
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;
@@ -715,6 +768,4 @@ class pdf_strato extends ModelePDFContract
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'CONTRACT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

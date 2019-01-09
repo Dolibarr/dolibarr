@@ -109,9 +109,16 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	    if (empty($conf->global->SYSLOG_FILE)) $tmp=DOL_DATA_ROOT.'/dolibarr.log';
 	    else $tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
 
-	    if (! empty($conf->global->SYSLOG_FILE_ONEPERSESSION))	// file depend on session name that is same for all user, not per user value of the session id
+	    if (! empty($conf->global->SYSLOG_FILE_ONEPERSESSION))
 	    {
-	        $suffixinfilename = '_'.session_name();
+	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1)	// file depend on session key name (Note that session name is same for all users and is not a per user value)
+	    	{
+	        	$suffixinfilename .= '_'.session_name();
+	    	}
+	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2)	// file depend on session value sor per user
+	    	{
+	    		$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+	    	}
 	    }
 
 	    return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
@@ -166,7 +173,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
-			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S").$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
+			$message = strftime("%Y-%m-%d %H:%M:%S", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));

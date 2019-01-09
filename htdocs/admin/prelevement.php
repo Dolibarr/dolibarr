@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("admin");
-$langs->load("withdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","withdrawals"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -78,6 +78,16 @@ if ($action == "set")
     if (GETPOST("PRELEVEMENT_USER") > 0)
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
+    {
+        $res = dolibarr_set_const($db, "END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
+    {
+        $res = dolibarr_set_const($db, "USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
 
@@ -221,6 +231,18 @@ print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER'
 print '</td>';
 print '</tr>';
 
+//EntToEnd
+print '<tr class="pair"><td>'.$langs->trans("END_TO_END").'</td>';
+print '<td align="left">';
+print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->END_TO_END.'" size="15" ></td>';
+print '</td></tr>';
+
+//USTRD
+print '<tr class="pair"><td>'.$langs->trans("USTRD").'</td>';
+print '<td align="left">';
+print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->USTRD.'" size="15" ></td>';
+print '</td></tr>';
+
 print '</table>';
 print '<br>';
 
@@ -274,7 +296,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -411,13 +432,12 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (".getEntity('facture').")";
+    $sql.= " WHERE entity IN (".getEntity('invoice').")";
 
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        $var = true;
         $i = 0;
         while ($i < $num)
         {
@@ -445,7 +465,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var = false;
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
@@ -491,7 +510,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	{
 	    $num = $db->num_rows($resql);
 	    $i = 0;
-	    $var = false;
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
@@ -513,5 +531,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 }
 */
 
+// End of page
 llxFooter();
 $db->close();

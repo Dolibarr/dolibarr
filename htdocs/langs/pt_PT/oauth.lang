@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Configuração de Oauth
-OAuthServices=Serviços OAuth
+OAuthServices=Serviços de OAuth
 ManualTokenGeneration=Geração manual de token
 TokenManager=Gestor de token
 IsTokenGenerated=O token foi gerado?

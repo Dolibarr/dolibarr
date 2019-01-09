@@ -25,7 +25,7 @@
  *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
  */
 
-require("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -39,7 +39,7 @@ $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
 
 // Sort & Order fields
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -68,15 +68,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $thirdTypeSelect = GETPOST("third_select_id");
 $type_element = GETPOST('type_element')?GETPOST('type_element'):'';
 
-
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("propal");
-$langs->load("interventions");
-$langs->load("contracts");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -207,13 +200,13 @@ if ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
 	$where.= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
-	$doc_number='f.facnumber';
+	$doc_number='f.ref';
 	$thirdTypeSelect='customer';
 }
 if ($type_element == 'propal')
@@ -282,7 +275,7 @@ if ($type_element == 'supplier_order')
 	$thirdTypeSelect='supplier';
 }
 if ($type_element == 'contract')
-{ 	// Supplier : Show products from orders.
+{ 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
 	$documentstaticline=new ContratLigne($db);
@@ -369,7 +362,6 @@ if ($sql_select)
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
 
-	$var=true;
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
@@ -392,7 +384,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
     print '<td class="liste_titre nowrap center">'; // date
-    print $formother->select_month($month?$month:-1,'month',1);
+    print $formother->select_month($month?$month:-1, 'month', 1, 0, 'valignmiddle');
     $formother->select_year($year?$year:-1,'year',1, 20, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -435,7 +427,6 @@ if ($sql_select)
 		$documentstatic->paye=$objp->paid;
 
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
-
 
 		print '<tr class="oddeven">';
 		print '<td class="nobordernopadding nowrap" width="100">';
@@ -509,6 +500,7 @@ if ($sql_select)
 			print img_object($langs->trans("ShowReduc"),'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+			elseif ($objp->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			?>
@@ -527,6 +519,12 @@ if ($sql_select)
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+				}
+				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
 				}
 				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
@@ -556,7 +554,6 @@ if ($sql_select)
 				{
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
-
 			} else {
 
 				if (! empty($objp->label) || ! empty($objp->description))
@@ -639,7 +636,7 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre('Quantity',$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
+	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
 
 	print "</table>";
 }
@@ -648,13 +645,13 @@ else {
 
     print '<table class="liste" width="100%">'."\n";
 
-	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";
 }
 
 print "</form>";
 
+// End of page
 llxFooter();
-
 $db->close();

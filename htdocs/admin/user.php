@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'members', 'users'));
 if (! $user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
@@ -338,5 +337,6 @@ print "<br>";
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

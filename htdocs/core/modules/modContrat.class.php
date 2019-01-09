@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ class modContrat extends DolibarrModules
 		$this->numero = 54;
 
 		$this->family = "crm";
+		$this->module_position = '35';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des contrats de services";
@@ -55,7 +56,6 @@ class modContrat extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='contract';
 
 		// Data directories to create when module is enabled
@@ -71,28 +71,28 @@ class modContrat extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r][0] = "CONTRACT_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_contract_serpis";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des contrats';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "CONTRACT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "strato";
 		$this->const[$r][3] = 'Name of PDF model of contract';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "CONTRACT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/contracts";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_contracts.php','enabledbydefaulton'=>'Home'),
@@ -103,7 +103,7 @@ class modContrat extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'contrat';
 		$r=0;
-		
+
 		$r++;
 		$this->rights[$r][0] = 161;
 		$this->rights[$r][1] = 'Lire les contrats';
@@ -146,12 +146,12 @@ class modContrat extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$langs->load("contracts");
@@ -223,7 +223,7 @@ class modContrat extends DolibarrModules
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/contracts/template_contract.odt';
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/contracts';
 		$dest=$dirodt.'/template_contract.odt';
-		
+
 		if (file_exists($src) && ! file_exists($dest))
 		{
 		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -236,12 +236,12 @@ class modContrat extends DolibarrModules
 		        return 0;
 		    }
 		}
-		
+
 		$sql = array(
 		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'contract' AND entity = ".$conf->entity,
 		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','contract',".$conf->entity.")"
 		);
-		
+
 		return $this->_init($sql,$options);
 	}
 }

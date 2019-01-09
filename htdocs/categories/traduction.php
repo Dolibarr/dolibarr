@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("categories");
-$langs->load("languages");
+// Load translation files required by the page
+$langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
@@ -269,7 +269,6 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($action != 'add')
 {
@@ -334,5 +333,6 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
-
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupperms';   // To manage different context of search
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -60,8 +60,7 @@ $object->fetch($id);
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('groupcard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('groupperms','globalcard'));
 
 
 /**
@@ -191,7 +190,7 @@ if ($object->id > 0)
     	dol_print_error($db);
     }
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -232,7 +231,14 @@ if ($object->id > 0)
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    if ($caneditperms) print '<td width="24">&nbsp</td>';
+    if ($caneditperms)
+    {
+    	print '<td align="center" class="nowrap">';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+    	print '/';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+    	print '</td>';
+    }
     print '<td align="center" width="24">&nbsp;</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
@@ -343,5 +349,6 @@ if ($object->id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -28,7 +28,7 @@ if (empty($conf) || ! is_object($conf))
 ?>
 
 <!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
-<!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
+<!-- Doc of fileTree plugin at https://www.abeautifulsite.net/jquery-file-tree -->
 
 <?php
 
@@ -38,15 +38,18 @@ if (empty($module)) $module='ecm';
 
 $permtoadd = 0;
 $permtoupload = 0;
+$showroot = 0;
 if ($module == 'ecm')
 {
 	$permtoadd = $user->rights->ecm->setup;
 	$permtoupload = $user->rights->ecm->upload;
+	$showroot = 0;
 }
 if ($module == 'medias')
 {
 	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$showroot = 1;
 }
 
 
@@ -69,29 +72,25 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-//if (preg_match('/\/ecm/', $_SERVER['PHP_SELF'])) {
-//if ($module == 'ecm') {
-
-	if ($permtoadd)
-	{
-	    print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($website?'&website='.$website:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-	    print '</a>';
-	}
-	else
-	{
-	    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-	    print '</a>';
-	}
-	if ($module == 'ecm')
-	{
-		$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-		print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-		print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
-		print '</a>';
-	}
-//}
+if ($permtoadd)
+{
+	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey?'&website='.$websitekey:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '</a>';
+}
+else
+{
+    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '</a>';
+}
+if ($module == 'ecm')
+{
+	$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+	print '</a>';
+}
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -112,7 +111,7 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
-	$sectiondir=GETPOST('file','alpha');
+	$sectiondir=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
@@ -144,11 +143,13 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
+	$langs->load("ecm");
+
 	print '<table width="100%" class="liste noborderbottom">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
+    print '<th class="liste_titre" align="left">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 
@@ -159,18 +160,26 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
-        print '<tr><td colspan="6">';
+    	// Show the link to "Root"
+    	if ($showroot)
+    	{
+    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">'.$langs->trans("Root").'</a></div></td></tr>';
+    	}
 
-    	// Show filemanager tree (will be filled by call of ajax enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
+
+
+    	print '<tr><td>';
+
+    	// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 	    print '<div id="filetree" class="ecmfiletree"></div>';
 
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
 	    print '</td></tr>';
     }
-    else
+    else	// Show filtree when ajax is disabled (rare)
     {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
+        print '<tr><td style="padding-left: 20px">';
 
         $_POST['modulepart'] = $module;
         $_POST['openeddir'] = GETPOST('openeddir');
@@ -179,6 +188,9 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
         // Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
         print '<div id="filetree" class="ecmfiletree">';
 
+        // Variables that may be defined:
+        // $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
+        // $_POST['dir']
         $mode='noajax';
         if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
         include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirtree.php';
@@ -204,7 +216,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 $mode='noajax';
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
-include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';	// Show content of a directory on right side
 
 
 // End right panel
@@ -217,7 +229,15 @@ include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 
 
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) // Show filtree when ajax is enabled
+{
+	//var_dump($modulepart);
+	// Variables that may be defined:
+	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
+	// $_POST['dir']
+	// $_POST['section_dir'], $_POST['section_id'], $_POST['token'], $_POST['max_file_size'], $_POST['sendit']
+	if (GETPOST('section_dir','alpha')) { $preopened=GETPOST('section_dir','alpha'); }
+
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 

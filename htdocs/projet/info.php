@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 /**
  *      \file       htdocs/projet/info.php
- *      \ingroup    commande
- *		\brief      Page with info on project
+ *      \ingroup    project
+ *		\brief      Page with events on project
  */
 
 require '../main.inc.php';
@@ -28,12 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+// Load translation files required by the page
 $langs->load("projects");
 
 $id     = GETPOST('id','int');
 $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
@@ -49,15 +50,14 @@ $pagenext = $page + 1;
 
 if (GETPOST('actioncode','array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
-    if (! count($actioncode)) $actioncode='0';
+	$actioncode=GETPOST('actioncode','array',3);
+	if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
-
 
 // Security check
 $id = GETPOST("id",'int');
@@ -70,7 +70,7 @@ if (!$user->rights->projet->lire)	accessforbidden();
 
 
 /*
- *	Actions
+ * Actions
  */
 
 $parameters=array('id'=>$socid);
@@ -80,8 +80,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
-    $actioncode='';
-    $search_agenda_label='';
+	$actioncode='';
+	$search_agenda_label='';
 }
 
 
@@ -163,11 +163,13 @@ if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        $morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        $morehtmlcenter.='<span class="fa fa-plus-circle valignmiddle"></span>';
+        $morehtmlcenter.='</a>';
     }
     else
     {
-        $morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 
@@ -189,6 +191,6 @@ if (!empty($object->id))
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

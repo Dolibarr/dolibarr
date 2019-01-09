@@ -25,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin)
@@ -68,8 +69,6 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-$var=true;
-
 print '<table summary="bookmarklist" class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -82,5 +81,6 @@ print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf-
 print '</td></tr>';
 print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
+// End of page
 llxFooter();
 $db->close();

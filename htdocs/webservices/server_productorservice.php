@@ -25,14 +25,14 @@
 
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
@@ -425,7 +425,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
             	//Get extrafield values
-            	$product->fetch_optionals($product->id,$extralabels);
+            	$product->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
@@ -570,7 +570,7 @@ function createProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
@@ -617,7 +617,6 @@ function createProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -739,7 +738,7 @@ function updateProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
@@ -806,7 +805,6 @@ function updateProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -1048,11 +1046,11 @@ function getProductsForCategory($authentication,$id,$lang='')
 				$res  = $db->query($sql);
 				if ($res)
 				{
+					$iProduct = 0;
 					while ($rec = $db->fetch_array($res))
 					{
 						$obj = new Product($db);
 						$obj->fetch($rec['fk_'.$field]);
-						$iProduct = 0;
 						if($obj->status > 0 )
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
@@ -1096,7 +1094,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
-							$obj->fetch_optionals($obj->id,$extralabels);
+							$obj->fetch_optionals();
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{
@@ -1105,7 +1103,6 @@ function getProductsForCategory($authentication,$id,$lang='')
 
 							$iProduct++;
 						}
-
 					}
 
 					// Retour
@@ -1113,14 +1110,12 @@ function getProductsForCategory($authentication,$id,$lang='')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'products'=> $products
 					);
-
 				}
 				else
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
-
 				}
 			}
 			else

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-$langs->load("orders");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -479,6 +479,6 @@ if (! empty($conf->commande->enabled))
 print '</div></div></div>';
 
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -15,3 +15,4 @@ THMDescription=Bu değer, eğer proje modülü kullanılıyorsa kullanıcılar t
 TJMDescription=Bu değer yalnızca bilgi amaçlı olup hiçbir hesaplamada kulanılmaz
 LastSalaries=Son %s maaş ödemeleri
 AllSalaries=Tüm maaş ödemeleri
+SalariesStatistics=Statistiques salaires

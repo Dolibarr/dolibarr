@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -42,10 +42,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -83,7 +81,7 @@ $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 $search_status=GETPOST('search_status','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -110,7 +108,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('facture_rec');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
@@ -192,7 +190,6 @@ if (empty($reshook))
     $permtodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
-
 }
 
 
@@ -225,7 +222,7 @@ if (! $user->rights->societe->client->voir && ! $socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql.= " WHERE f.fk_soc = s.rowid";
-$sql.= ' AND f.entity IN ('.getEntity('facture').')';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 if (! $user->rights->societe->client->voir && ! $socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
@@ -273,14 +270,20 @@ else if ($search_year_date_when > 0)
 	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when,12,false))."'";
 }
 
+$sql.= $db->order($sortfield, $sortorder);
+
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
-$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
 $resql = $db->query($sql);
@@ -419,19 +422,19 @@ if ($resql)
 	// Date invoice
 	if (! empty($arrayfields['f.date_last_gen']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
 	// Date next generation
 	if (! empty($arrayfields['f.date_when']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
-		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
+		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
 	// Extra fields
@@ -599,15 +602,17 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 				print '<td align="center">';
+				print '<div class="nowraponall">';
 				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				if (! $invoicerectmp->isMaxNbGenReached())
 				{
-					if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+					if (! $objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
 				}
 				else
 				{
 					print img_info($langs->trans("MaxNumberOfGenerationReached"));
 				}
+				print '</div>';
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
@@ -647,7 +652,7 @@ if ($resql)
 				}
 				else
 				{
-					print $langs->trans("DateIsNotEnough");
+					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
 			}
 			else
@@ -703,6 +708,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

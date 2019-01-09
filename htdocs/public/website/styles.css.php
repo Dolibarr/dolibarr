@@ -21,25 +21,29 @@
  *		\brief      Page to output style page. Called with <link rel="stylesheet" href="styles.css.php?websiteid=123" type="text/css" />
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
-define("NOLOGIN",1);
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
+if (! defined('NOLOGIN'))        define("NOLOGIN",1);
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
 /**
  * Header empty
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -81,7 +85,7 @@ if (empty($pageid))
     $objectpage=new WebsitePage($db);
     $array=$objectpage->fetchAll($object->id);
 
-    if (count($array) > 0)
+    if (is_array($array) && count($array) > 0)
     {
         $firstrep=reset($array);
         $pageid=$firstrep->id;
@@ -145,4 +149,3 @@ require_once $original_file_osencoded;
 
 
 if (is_object($db)) $db->close();
-

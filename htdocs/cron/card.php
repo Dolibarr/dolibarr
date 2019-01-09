@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <florian.henry@open-concpt.pro>
- * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
+ * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron', 'members'));
 
 if (!$user->rights->cron->create) accessforbidden();
 
@@ -227,6 +227,7 @@ if ($action=='activate')
 if ($action=='inactive')
 {
 	$object->status=0;
+	$object->processing=0;
 
 	// Add cron task
 	$result = $object->update($user);
@@ -251,7 +252,7 @@ if ($action=='inactive')
 $form = new Form($db);
 $formCron = new FormCron($db);
 
-llxHeader('',$langs->trans("CronAdd"));
+llxHeader('',$langs->trans("CronTask"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
@@ -470,11 +471,11 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronDtStart')."</td><td>";
 	if(!empty($object->datestart))
 	{
-	    $form->select_date($object->datestart,'datestart',1,1,'',"cronform");
+        print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	}
 	else
 	{
-	    $form->select_date('','datestart',1,1,'',"cronform");
+        print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -484,10 +485,10 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)){
-	    $form->select_date($object->dateend,'dateend',1,1,'',"cronform");
+        print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	}
 	else{
-	    $form->select_date(-1,'dateend',1,1,1,"cronform");
+        print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -524,11 +525,11 @@ if (($action=="create") || ($action=="edit"))
 	print "</td><td>";
 	if(!empty($object->datenextrun))
 	{
-	    $form->select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
+        print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
 	}
 	else
 	{
-	    $form->select_date(-1,'datenextrun',1,1,'',"cronform");
+        print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform");
 	}
 	print "</td>";
     print "<td>";
@@ -546,7 +547,6 @@ if (($action=="create") || ($action=="edit"))
 	print "</div>";
 
 	print "</form>\n";
-
 }
 else
 {
@@ -680,13 +680,14 @@ else
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
-	//print '<strong>';
 	if (! $object->status) print $langs->trans("Disabled");
 	elseif (!empty($object->datenextrun)) { print img_picto('','object_calendarday').' '.dol_print_date($object->datenextrun,'dayhoursec');}
-	else {print $langs->trans('CronNone');}
-	//print '</strong>';
-	if ($object->maxnbrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("Finished"));
-	if ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	else { print $langs->trans('CronNone'); }
+	if ($object->status == Cronjob::STATUS_ENABLED)
+	{
+		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
+		elseif ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	}
 	print "</td></tr>";
 
 	print '</table>';
@@ -710,7 +711,9 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
+	if ($object->lastresult) print '<span class="error">';
 	print $object->lastresult;
+	if ($object->lastresult) print '</span>';
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -726,25 +729,25 @@ else
 
 	print "\n\n<div class=\"tabsAction\">\n";
 	if (! $user->rights->cron->create) {
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 	}
 
 	if ((empty($user->rights->cron->execute)))
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
 	}
 	else if (empty($object->status))
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	}
 	else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
 	if (! $user->rights->cron->create) {
-	    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
+	    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	} else {
 	    if (empty($object->status)) {
 	        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';

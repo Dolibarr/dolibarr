@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,18 @@
  *       \ingroup    expensereport
  *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
  */
-include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 /**
  *  Classe permettant la gestion des stats des expensereports et notes de frais
  */
 class ExpenseReportStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
     var $socid;
     var $userid;

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -45,7 +44,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 
 
 /*
@@ -192,7 +191,6 @@ if ($result)
 
             $i++;
         }
-
     }
     else
     {
@@ -205,7 +203,6 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

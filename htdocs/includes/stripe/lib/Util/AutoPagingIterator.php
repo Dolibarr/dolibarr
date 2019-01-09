@@ -7,7 +7,7 @@ class AutoPagingIterator implements \Iterator
     private $lastId = null;
     private $page = null;
     private $pageOffset = 0;
-    private $params = array();
+    private $params = [];
 
     public function __construct($collection, $params)
     {
@@ -42,8 +42,8 @@ class AutoPagingIterator implements \Iterator
             $this->pageOffset += count($this->page->data);
             if ($this->page['has_more']) {
                 $this->params = array_merge(
-                    $this->params ? $this->params : array(),
-                    array('starting_after' => $this->lastId)
+                    $this->params ?: [],
+                    ['starting_after' => $this->lastId]
                 );
                 $this->page = $this->page->all($this->params);
             } else {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Charlie Benke		<charlie@patas-monkey.com>
 
  *
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/fichinter/class/fichinter.class.php';
 
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
+// Load translation files required by the page
 $langs->load("interventions");
 
 // Security check
@@ -142,13 +143,11 @@ if ($resql)
 
         print '</td></tr>';
     }
-    $var=true;
     $bool=false;
     foreach ($listofstatus as $status)
     {
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
@@ -197,10 +196,8 @@ if (! empty($conf->ficheinter->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -247,10 +244,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -318,10 +313,8 @@ if (! empty($conf->ficheinter->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';

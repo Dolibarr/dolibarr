@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
 $id=GETPOST('id');
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check
@@ -74,5 +75,6 @@ if ($object->fetch($id) >= 0)
 	dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

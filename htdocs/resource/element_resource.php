@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013		Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,7 @@
  */
 
 
-$res=0;
-$res=@include("../main.inc.php");                               // For root directory
-if (! $res) $res=@include("../../main.inc.php");        // For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
@@ -36,10 +32,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("other");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');
@@ -96,7 +90,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 	else
 	{
 		$objstat = fetchObjectByElement($element_id, $element);
-
+		$objstat->element = $element; // For externals module, we need to keep @xx
 		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
 	}
 	if (! $error && $res > 0)
@@ -468,7 +462,6 @@ else
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
 				{
 					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-
 				}
 				else
 				{
@@ -479,6 +472,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

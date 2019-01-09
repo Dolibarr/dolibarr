@@ -1,11 +1,13 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta', 'companies'));
 
 // Security check
 $facid	= GETPOST('facid','int');
@@ -59,7 +61,7 @@ $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be 
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -73,6 +75,8 @@ if (! $sortfield) $sortfield="p.rowid";
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $extrafields = new ExtraFields($db);
+
+$arrayfields=array();
 
 
 /*
@@ -117,7 +121,7 @@ if (GETPOST("orphelins"))
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -130,7 +134,7 @@ else
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
-    $sql.= " s.rowid as socid, s.nom as name";
+    $sql.= " s.rowid as socid, s.nom as name, s.email";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 	// Add fields from hooks
@@ -138,7 +142,7 @@ else
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (" . getEntity('c_paiement') . ")";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
@@ -148,7 +152,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -160,19 +164,7 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($month > 0)
-    {
-        if ($year > 0 && empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-        else if ($year > 0 && ! empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-        else
-        $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
-    }
-    else if ($year > 0)
-    {
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-    }
+    $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
     if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
@@ -191,6 +183,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -203,8 +200,8 @@ if ($resql)
     $i = 0;
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
     $param.=(GETPOST("orphelins")?"&orphelins=1":"");
     $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
     $param.=($search_company?"&search_company=".urlencode($search_company):"");
@@ -229,21 +226,21 @@ if ($resql)
     // Lines for filters fields
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
     print '<td class="liste_titre" align="center">';
-    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+    print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
+    print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
     print '</td>';
     print '<td class="liste_titre">';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
+    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
     print '</td>';
     if (! empty($conf->banque->enabled))
     {
@@ -252,7 +249,7 @@ if ($resql)
 	    print '</td>';
     }
     print '<td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+    print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -278,7 +275,7 @@ if ($resql)
     print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
-    $parameters=array();
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
@@ -290,23 +287,28 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
+        $paymentstatic->id=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
+
         print '<tr class="oddeven">';
 
         print '<td>';
-        $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+        $dateformatforpayment = 'day';
+        if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
 
         // Thirdparty
         print '<td>';
-        if ($objp->socid)
+        if ($objp->socid > 0)
         {
             $companystatic->id=$objp->socid;
             $companystatic->name=$objp->name;
+            $companystatic->email=$objp->email;
+
             print $companystatic->getNomUrl(1,'',24);
         }
         else print '&nbsp;';
@@ -365,5 +367,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

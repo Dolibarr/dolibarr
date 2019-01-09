@@ -2,8 +2,10 @@
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015           Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018           Ferran Marcet	     <fmarcet@2byte.es>
+ * Copyright (C) 2018           Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +27,7 @@
  *		\brief      list of expense reports
  */
 
-require "../main.inc.php";
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -34,15 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -75,6 +77,8 @@ $search_amount_ttc = GETPOST('search_amount_ttc','alpha');
 $search_status = (GETPOST('search_status','intcomma')!=''?GETPOST('search_status','intcomma'):GETPOST('statut','intcomma'));
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
+$day_start    = GETPOST("day_start","int");
+$day_end      = GETPOST("day_end","int");
 $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
 $optioncss    = GETPOST('optioncss','alpha');
@@ -82,16 +86,14 @@ $optioncss    = GETPOST('optioncss','alpha');
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ExpenseReport($db);
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('expensereport');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 
 // List of fields to search into when doing a "search in all"
@@ -159,8 +161,10 @@ if (empty($reshook))
 	    $search_status="";
 	    $month_start="";
 	    $year_start="";
+		$day ="";
 	    $month_end="";
 	    $year_end="";
+	    $day_end = "";
 	    $toselect='';
 	    $search_array_options=array();
 	}
@@ -272,34 +276,10 @@ if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
 if (!empty($search_ref)) $sql.= natural_search('d.ref', $search_ref);
 // Date Start
-if ($month_start > 0)
-{
-    if ($year_start > 0 && empty($day))
-    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,false))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,false))."'";
-    else if ($year_start > 0 && ! empty($day))
-    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_start, $day, $year_start))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_start, $day, $year_start))."'";
-    else
-    $sql.= " AND date_format(d.date_debut, '%m') = '".$month_start."'";
-}
-else if ($year_start > 0)
-{
-	$sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,false))."' AND '".$db->idate(dol_get_last_day($year_start,12,false))."'";
-}
-// Date Start
-if ($month_end > 0)
-{
-    if ($year_end > 0 && empty($day))
-    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,false))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,false))."'";
-    else if ($year_end > 0 && ! empty($day))
-    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_end, $day, $year_end))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_end, $day, $year_end))."'";
-    else
-    $sql.= " AND date_format(d.date_fin, '%m') = '".$month_end."'";
-}
-else if ($year_end > 0)
-{
-	$sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,false))."' AND '".$db->idate(dol_get_last_day($year_end,12,false))."'";
-}
-// Amount
+$sql.= dolSqlDateFilter("d.date_debut",	$day_start, $month_start, $year_start);
+// Date End
+$sql.= dolSqlDateFilter("d.date_fin", $day_end, $month_end, $year_end);
+
 if ($search_amount_ht != '') $sql.= natural_search('d.total_ht', $search_amount_ht, 1);
 if ($search_amount_ttc != '') $sql.= natural_search('d.total_ttc', $search_amount_ttc, 1);
 // User
@@ -328,7 +308,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
+
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -354,6 +340,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
@@ -376,7 +363,7 @@ if ($resql)
 	if ($id > 0)		// For user tab
 	{
 		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
 		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
@@ -464,7 +451,16 @@ if ($resql)
 	else
 	{
 		$title = $langs->trans("ListTripsAndExpenses");
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$newcardbutton='';
+		if ($user->rights->expensereport->creer)
+		{
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewTrip').'</span>';
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 	}
 
 	$topicmail="SendExpenseReport";
@@ -476,7 +472,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
 	$moreforfilter='';
@@ -524,7 +520,10 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
+		print '<input class="flat width25" type="text" maxlength="2" name="day_start" value="'.dol_escape_htmltag($day_start).'">';
+
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
     	$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
     	print '</td>';
 	}
@@ -532,7 +531,9 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
+		print '<input class="flat width25" type="text" maxlength="2" name="day_end" value="'.dol_escape_htmltag($day_end).'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
     	print '</td>';
     }
@@ -613,7 +614,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['d.date_create']['checked'])) print_liste_field_titre($arrayfields['d.date_create']['label'],$_SERVER["PHP_SELF"],"d.date_create","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -632,7 +633,6 @@ if ($resql)
 	if ($num > 0)
 	{
         $i=0;
-    	$var=true;
     	$totalarray=array();
  	    while ($i < min($num,$limit))
 		{
@@ -829,22 +829,18 @@ if ($resql)
 
 	if (empty($id))
 	{
-		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-		{
-		    // Show list of available documents
-		    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		    $urlsource.=str_replace('&amp;','&',$param);
+		$hidegeneratedfilelistifempty=1;
+		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		    $filedir=$diroutputmassaction;
-		    $genallowed=$user->rights->expensereport->lire;
-		    $delallowed=$user->rights->expensereport->creer;
+		// Show list of available documents
+		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+		$urlsource.=str_replace('&amp;','&',$param);
 
-		    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-		}
-		else
-		{
-		    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-		}
+		$filedir=$diroutputmassaction;
+		$genallowed=$user->rights->expensereport->lire;
+		$delallowed=$user->rights->expensereport->creer;
+
+		print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 	}
 }
 else
@@ -852,7 +848,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

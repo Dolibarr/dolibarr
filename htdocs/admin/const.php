@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin)
@@ -313,7 +314,6 @@ if ($conf->use_javascript_ajax)
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

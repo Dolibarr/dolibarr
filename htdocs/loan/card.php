@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -32,9 +32,8 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","loan"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -136,6 +135,7 @@ if (empty($reshook))
 				$object->note_private 			= GETPOST('note_private','none');
 				$object->note_public 			= GETPOST('note_public','none');
 				$object->fk_project 			= GETPOST('projectid','int');
+				$object->insurance_amount       = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -149,7 +149,7 @@ if (empty($reshook))
 				if ($id <= 0)
 				{
 					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
+					setEventMessages($object->db->lastqueryerror, $object->errors, 'errors');
 					$action = 'create';
 				}
 			}
@@ -182,8 +182,8 @@ if (empty($reshook))
 				$object->datestart	= $datestart;
 				$object->dateend	= $dateend;
 				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm");
-				$object->rate		= GETPOST("rate");
+				$object->nbterm		= GETPOST("nbterm",'int');
+				$object->rate		= price2num(GETPOST("rate",'alpha'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -239,7 +239,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -265,7 +265,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'" autofocus="autofocus"></td></tr>';
 
 	// Bank account
 	if (! empty($conf->banque->enabled))
@@ -287,13 +287,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
+	print $form->selectDate($datestart?$datestart:-1,'start','','','','add',1,1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
+	print $form->selectDate($dateend?$dateend:-1,'end','','','','add',1,1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -302,13 +302,16 @@ if ($action == 'create')
 	// Rate
 	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
+	// insurance amount
+	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
+	
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
 		$formproject=new FormProjets($db);
 
 		// Projet associe
-		$langs->load("projects");
+		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
@@ -341,19 +344,19 @@ if ($action == 'create')
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital')?GETPOST('accountancy_account_capital'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_CAPITAL, 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance')?GETPOST('accountancy_account_insurance'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_INSURANCE, 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest')?GETPOST('accountancy_account_interest'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_INTEREST, 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
 	}
 	else // For external software
@@ -435,7 +438,7 @@ if ($id > 0)
 
 		// Loan card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
 		// Ref loan
@@ -444,7 +447,7 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$langs->load("projects");
+			$langs->loadLangs(array("projects"));
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->loan->write)
 			{
@@ -496,13 +499,25 @@ if ($id > 0)
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 		}
+		
+		// Insurance
+		if ($action == 'edit')
+		{
+		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
+		    print '<input name="insurance_amount" size="10" value="' . $object->insurance_amount . '"></td></tr>';
+		    print '</td></tr>';
+		}
+		else
+		{
+		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+		}
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart")."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -515,7 +530,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -676,7 +691,7 @@ if ($id > 0)
 		$sql.= " p.amount_capital, p.amount_insurance, p.amount_interest,";
 		$sql.= " c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
 		$sql.= " WHERE p.fk_loan = ".$id;
 		$sql.= " AND p.fk_loan = l.rowid";
@@ -692,17 +707,16 @@ if ($id > 0)
 			$total_insurance = 0;
 			$total_interest = 0;
 			$total_capital = 0;
-			print '<table class="noborder paymenttable">';
+			print '<table class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td align="right">'.$langs->trans("Insurance").'</td>';
 			print '<td align="right">'.$langs->trans("Interest").'</td>';
-	  		print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
-	  		print '</tr>';
+			print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
+			print '</tr>';
 
-			$var=True;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
@@ -711,9 +725,9 @@ if ($id > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td align="right">'.price($objp->amount_insurance, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -729,7 +743,9 @@ if ($id > 0)
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" align="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td align="right"><b>'.price($staytopay, 0, $langs, 0, 0, -1, $conf->currency).'</b></td></tr>';
+				print '<td align="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
+				print '</td></tr>';
 			}
 			print "</table>";
 			$db->free($resql);
@@ -769,9 +785,9 @@ if ($id > 0)
 				print '<div class="tabsAction">';
 
 				// Edit
-				if ($user->rights->loan->write)
+				if ($object->paid == 0 && $user->rights->loan->write)
 				{
-					print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
+					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 				}
@@ -779,7 +795,7 @@ if ($id > 0)
 				// Emit payment
 				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a>';
 				}
 
 				// Classify 'paid'
@@ -789,7 +805,7 @@ if ($id > 0)
 				}
 
 				// Delete
-				if ($user->rights->loan->delete)
+				if ($object->paid == 0 && $user->rights->loan->delete)
 				{
 					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
@@ -805,6 +821,6 @@ if ($id > 0)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

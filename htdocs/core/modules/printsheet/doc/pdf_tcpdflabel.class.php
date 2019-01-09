@@ -50,7 +50,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					'fontsize' => 8,
 					'stretchtext' => 4
 	);
-	
+
 	// set style for 2d barcode
 	private $_style2d = array(
 					'border' => false,
@@ -61,24 +61,25 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					'module_width' => 1, // width of a single module in points
 					'module_height' => 1 // height of a single module in points
 	);
-	
+
 	private $_align2d = 'N';
-	
+
 	private $_xres = 0.4;
-	
+
 	/**
 	 * write barcode to pdf
-	 * 
+	 *
 	 * @param PDF	  $pdf		  PDF reference
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
-	 * @param int	  $x		   x position in user units 
+	 * @param int	  $x		   x position in user units
 	 * @param int	  $y		   y position in user units
 	 * @param int	  $w		   width in user units
 	 * @param int	  $h		   height in user units
-	 */	   
-	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h) 
+	 * @return void
+	 */
+	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)
 	{
 		if ($is2d) {
 			$pdf->write2DBarcode($code, $encoding, $x, $y, $w, $h, $this->_style2d, $this->_align2d);
@@ -86,7 +87,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			$pdf->write1DBarcode($code, $encoding, $x, $y, $w, $h, $this->_xres, $this->_style1d);
 		}
 	}
-	
+
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
@@ -95,10 +96,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param) 
+	function addSticker(&$pdf,$outputlangs,$param)
 	{
 		global $mysoc,$conf;
-		
+
 		$textleft = $param['textleft'];
 		$header = $param['textheader'];
 		$footer = $param['textfooter'];
@@ -106,8 +107,8 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$code = $param['code'];
 		$encoding = $param['encoding'];
 		$is2d = $param['is2d'];
-		
-		
+
+
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -132,7 +133,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 		}
 
-		$xleft = 2; 
+		$xleft = 2;
 		$ytop = 2;
 
 		// Top
@@ -154,7 +155,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$heighttouse = $maxheighttouse;
 		$logoHeight = $heighttouse;
 		$logoWidth = $heighttouse;
-		
+
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
 		// Center
@@ -162,7 +163,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			// Output left area
 			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
-			else if ($code && !empty($encoding)) 
+			else if ($code && !empty($encoding))
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
@@ -177,7 +178,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%') )	 // left part logo/barcode right part text
 			{
 				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, 0);
-				else if ($code && !empty($encoding)) 
+				else if ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
@@ -187,7 +188,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			else if (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, 0);
-				else if ($code && !empty($encoding)) 
+				else if ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
@@ -203,7 +204,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 				} else {
 					$pdf->SetXY($_PosX+$xleft+$logoWidth+1, $_PosY+$ytop);
 					$pdf->MultiCell($widthtouse-$logoWidth1-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-				}				
+				}
 			}
 			else if ($textright == '%LOGO%')  // right part logo left part text/barcode
 			{
@@ -214,7 +215,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 				} else {
 					$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
-				}				
+				}
 			}
 			else	// text on halft left and text on half right
 			{
@@ -228,7 +229,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, 0, $logoHeight);
-			else if ($code && !empty($encoding)) 
+			else if ($code && !empty($encoding))
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
@@ -265,6 +266,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -277,6 +279,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 */
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;
@@ -296,10 +299,8 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("admin");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "admin"));
 
 		$title=$outputlangs->transnoentities('Labels');
 		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);

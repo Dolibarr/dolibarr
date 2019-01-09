@@ -165,10 +165,10 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 $result=strpos($filecontent,'"');
                 if ($result)
                 {
-                    $result=! strpos($filecontent,'["');
+                	$result=(! strpos($filecontent,'["') && ! strpos($filecontent,'{"'));
                 }
                 print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-                $this->assertTrue($result===false, 'Found double quote that is not [" (used for json content) into '.$file.'. Bad.');
+                $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
 
                 $result=strpos($filecontent,'int(');
                 print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
@@ -185,24 +185,21 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
-
                 }
                 elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
                 {
                     // Test for data files only
-
                 }
                 else
                 {
                     if (preg_match('/\.key\.sql$/',$file))
                     {
                         // Test for key files only
-
                     }
                     else
                     {
                         // Test for non key files only
-                        $result=(strpos($filecontent,'KEY ') && strpos($filecontent,'PRIMARY KEY ') == 0);
+                        $result=(strpos($filecontent,'KEY ') && strpos($filecontent,'PRIMARY KEY') == 0);
                         print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
                         $this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
 
@@ -249,5 +246,4 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
 
         return;
     }
-
 }

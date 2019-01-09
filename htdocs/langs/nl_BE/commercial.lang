@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - commercial
 ConfirmDeleteAction=Bent u zeker dat u dit event wil verwijderen?
-ActionOnCompany=Gerelateerd bedrijf
-ActionOnContact=Gerelateerd contact
 ThirdPartiesOfSaleRepresentative=Derden met vertegenwoordiger
 SaleRepresentativesOfThirdParty=Vertegenwoordigers van derden
 LastDoneTasks=Laatste %s gedane acties

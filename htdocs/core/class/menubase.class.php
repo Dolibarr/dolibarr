@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +29,49 @@
  */
 class Menubase
 {
-    public $db;							// To store db handler
-    public $error;							// To return error code (or message)
-    public $errors=array();				// To return several error codes (or messages)
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    public $id;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $menu_handler;
     public $module;
     public $type;
     public $mainmenu;
+
+    /**
+     * @var int ID
+     */
     public $fk_menu;
+
+    /**
+     * @var string fk_mainmenu
+     */
     public $fk_mainmenu;
+
+    /**
+     * @var string fk_leftmenu
+     */
     public $fk_leftmenu;
+
+    /**
+     * @var int position
+     */
     public $position;
     public $url;
     public $target;
@@ -84,10 +115,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
+        $this->fk_menu = (int) $this->fk_menu;          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -95,7 +126,7 @@ class Menubase
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
-        $this->position=trim($this->position);
+        if (empty($this->position)) $this->position=0;
         if (! $this->level) $this->level=0;
 
         // Check parameters
@@ -124,58 +155,86 @@ class Menubase
           else dol_print_error($this->db);
         }
 
-        // Insert request
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
-        $sql.= "menu_handler,";
-        $sql.= "entity,";
-        $sql.= "module,";
-        $sql.= "type,";
-        $sql.= "mainmenu,";
-        $sql.= "leftmenu,";
-        $sql.= "fk_menu,";
-        $sql.= "fk_mainmenu,";
-        $sql.= "fk_leftmenu,";
-        $sql.= "position,";
-        $sql.= "url,";
-        $sql.= "target,";
-        $sql.= "titre,";
-        $sql.= "langs,";
-        $sql.= "perms,";
-        $sql.= "enabled,";
-        $sql.= "usertype";
-        $sql.= ") VALUES (";
-        $sql.= " '".$this->db->escape($this->menu_handler)."',";
-        $sql.= " '".$this->db->escape($conf->entity)."',";
-        $sql.= " '".$this->db->escape($this->module)."',";
-        $sql.= " '".$this->db->escape($this->type)."',";
-        $sql.= " ".($this->mainmenu?"'".$this->db->escape($this->mainmenu)."'":"''").",";    // Can't be null
-        $sql.= " ".($this->leftmenu?"'".$this->db->escape($this->leftmenu)."'":"null").",";
-        $sql.= " '".$this->db->escape($this->fk_menu)."',";
-        $sql.= " ".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
-        $sql.= " ".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
-        $sql.= " '".(int) $this->position."',";
-        $sql.= " '".$this->db->escape($this->url)."',";
-        $sql.= " '".$this->db->escape($this->target)."',";
-        $sql.= " '".$this->db->escape($this->titre)."',";
-        $sql.= " '".$this->db->escape($this->langs)."',";
-        $sql.= " '".$this->db->escape($this->perms)."',";
-        $sql.= " '".$this->db->escape($this->enabled)."',";
-        $sql.= " '".$this->db->escape($this->user)."'";
-        $sql.= ")";
+        // Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
+        $sql = "SELECT count(*)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."menu";
+        $sql.= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
+        $sql.= " AND fk_menu = ".((int) $this->fk_menu);
+        $sql.= " AND position = ".((int) $this->position);
+        $sql.= " AND url = '".$this->db->escape($this->url)."'";
+        $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+        $result=$this->db->query($sql);
+        if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+        	$row = $this->db->fetch_row($result);
 
-            return $this->id;
+        	if ($row[0] == 0)   // If not found
+        	{
+		        // Insert request
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+		        $sql.= "menu_handler,";
+		        $sql.= "entity,";
+		        $sql.= "module,";
+		        $sql.= "type,";
+		        $sql.= "mainmenu,";
+		        $sql.= "leftmenu,";
+		        $sql.= "fk_menu,";
+		        $sql.= "fk_mainmenu,";
+		        $sql.= "fk_leftmenu,";
+		        $sql.= "position,";
+		        $sql.= "url,";
+		        $sql.= "target,";
+		        $sql.= "titre,";
+		        $sql.= "langs,";
+		        $sql.= "perms,";
+		        $sql.= "enabled,";
+		        $sql.= "usertype";
+		        $sql.= ") VALUES (";
+		        $sql.= " '".$this->db->escape($this->menu_handler)."',";
+		        $sql.= " '".$this->db->escape($conf->entity)."',";
+		        $sql.= " '".$this->db->escape($this->module)."',";
+		        $sql.= " '".$this->db->escape($this->type)."',";
+		        $sql.= " ".($this->mainmenu?"'".$this->db->escape($this->mainmenu)."'":"''").",";    // Can't be null
+		        $sql.= " ".($this->leftmenu?"'".$this->db->escape($this->leftmenu)."'":"null").",";
+		        $sql.= " ".((int) $this->fk_menu).",";
+		        $sql.= " ".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+		        $sql.= " ".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
+		        $sql.= " ".((int) $this->position).",";
+		        $sql.= " '".$this->db->escape($this->url)."',";
+		        $sql.= " '".$this->db->escape($this->target)."',";
+		        $sql.= " '".$this->db->escape($this->titre)."',";
+		        $sql.= " '".$this->db->escape($this->langs)."',";
+		        $sql.= " '".$this->db->escape($this->perms)."',";
+		        $sql.= " '".$this->db->escape($this->enabled)."',";
+		        $sql.= " '".$this->db->escape($this->user)."'";
+		        $sql.= ")";
+
+		        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		        $resql=$this->db->query($sql);
+		        if ($resql)
+		        {
+		            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+		            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+
+		            return $this->id;
+		        }
+		        else
+		        {
+		            $this->error="Error ".$this->db->lasterror();
+		            return -1;
+		        }
+        	}
+        	else
+        	{
+        		dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
+        		$this->error = 'Error Menu entry already exists';
+        		return 0;
+        	}
         }
         else
         {
-            $this->error="Error ".$this->db->lasterror();
-            return -1;
+        	return -1;
         }
     }
 
@@ -197,10 +256,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);
+        $this->fk_menu = (int) $this->fk_menu;
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -219,7 +278,7 @@ class Menubase
         $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-        $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
+        $sql.= " fk_menu=".$this->fk_menu.",";
         $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
         $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
@@ -530,7 +589,6 @@ class Menubase
 
             $a = 0;
             $b = 0;
-            $oldrowid=0;
             while ($a < $numa)
             {
                 //$objm = $this->db->fetch_object($resql);
@@ -655,6 +713,4 @@ class Menubase
             }
         }
    }
-
 }
-

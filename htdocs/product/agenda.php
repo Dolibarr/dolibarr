@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 if (GETPOST('actioncode','array'))
@@ -158,7 +159,7 @@ if ($id > 0 || $ref)
     if ((! empty($objproduct->id) || ! empty($objcon->id)) && $permok)
     {
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objproduct) == 'Product') $out.='&amp;prodid='.$objproduct->id;
+        if (get_class($objproduct) == 'Product') $out.='&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
         $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
     	//$out.=$langs->trans("AddAnAction").' ';
     	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
@@ -175,11 +176,11 @@ if ($id > 0 || $ref)
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        	$morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     	}
     	else
     	{
-        	$morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        	$morehtmlcenter.='<a class="butActionNewRefused" href="#">'.$langs->trans("AddAction").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     	}
     }
 
@@ -202,7 +203,6 @@ if ($id > 0 || $ref)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

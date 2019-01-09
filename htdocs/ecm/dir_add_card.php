@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-// Load traductions files
+// Load translation files required by the page
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts","categories"));
 
 // Get parameters
@@ -290,7 +290,6 @@ if (empty($action) || $action == 'delete_section')
 	if ($action == 'delete_section')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-
 	}
 
 	// Construit fiche  rubrique
@@ -304,7 +303,7 @@ if (empty($action) || $action == 'delete_section')
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 	print '</div>';
 }

@@ -39,14 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("paybox");
-$langs->load("paypal");
-$langs->load("stripe");
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 /*$source=GETPOST('source');
 $ref=GETPOST('ref');

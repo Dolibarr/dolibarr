@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check
@@ -65,17 +66,14 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 
 
-
 /*
  * Actions
  */
 
 if ($action == 'add')
 {
-	$module=GETPOST("module");
+	$module=GETPOST("module",'alpha');
 	$result=-1;
-
-	$var=true;
 
 	foreach ($modulesdir as $dir)
 	{
@@ -91,14 +89,10 @@ if ($action == 'add')
 		{
 			require_once $file;
 
-			// We fill $filtersarray. Using this variable is now deprecated. Kept for backward compatibility.
-			$filtersarray=array();
-			if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
-
 			// Add targets into database
 			$obj = new $classname($db);
 			dol_syslog("Call add_to_target on class ".$classname);
-			$result=$obj->add_to_target($id,$filtersarray);
+			$result=$obj->add_to_target($id);
 		}
 	}
 	if ($result > 0)
@@ -260,7 +254,7 @@ if ($object->fetch($id) >= 0)
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
 
 		//print '<table class="noborder" width="100%">';
-		print '<div class="tagtable centpercent liste_titre_bydiv" id="tablelines">';
+		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
 
 		//print '<tr class="liste_titre">';
 		print '<div class="tagtr liste_titre">';
@@ -276,8 +270,6 @@ if ($object->fetch($id) >= 0)
 		print '</div>';
 
 		clearstatcache();
-
-		$var = true;
 
 		foreach ($modulesdir as $dir)
 		{
@@ -306,9 +298,11 @@ if ($object->fetch($id) >= 0)
 			// Sort $modulenames
 			sort($modulenames);
 
+			$var = true;
+
 			// Loop on each submodule
-            foreach($modulenames as $modulename)
-            {
+			foreach($modulenames as $modulename)
+			{
 				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
@@ -331,7 +325,7 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = !$var;
+					$var = ! $var;
 
 					if ($allowaddtarget)
 					{
@@ -425,7 +419,13 @@ if ($object->fetch($id) >= 0)
 	{
 	    $result = $db->query($sql);
 	    $nbtotalofrecords = $db->num_rows($result);
+	    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	    {
+	    	$page = 0;
+	    	$offset = 0;
+	    }
 	}
+
 	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
 	$sql .= $db->plimit($limit+1, $offset);
 
@@ -555,7 +555,7 @@ if ($object->fetch($id) >= 0)
                         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $objectstatic=new Adherent($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'user')
                     {
@@ -563,14 +563,21 @@ if ($object->fetch($id) >= 0)
                         $objectstatic=new User($db);
 						$objectstatic->fetch($obj->source_id);
                         $objectstatic->id=$obj->source_id;
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
+                    }
+                    else if ($obj->source_type == 'contact')
+                    {
+                    	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+                    	$objectstatic=new Contact($db);
+                    	$objectstatic->fetch($obj->source_id);
+                    	print $objectstatic->getNomUrl(1);
                     }
                     else
                     {
@@ -634,10 +641,8 @@ if ($object->fetch($id) >= 0)
 	}
 
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

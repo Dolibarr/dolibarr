@@ -1,5 +1,4 @@
 <?php
-
 /*
 ================================================================================
 
@@ -10,7 +9,7 @@ Copyright (C) 2005 Miles Kaufmann <http://www.twmagic.com/>
 
 NAME
     EvalMath - safely evaluate math expressions
-    
+
 SYNOPSIS
       include('evalmath.class.php');
       $m = new EvalMath;
@@ -24,9 +23,9 @@ SYNOPSIS
       $m->evaluate('f(x,y) = x^2 + y^2 - 2x*y + 1');
       // and then use them
       $result = $m->evaluate('3*f(42,a)');
-      
+
 DESCRIPTION
-    Use the EvalMath class when you want to evaluate mathematical expressions 
+    Use the EvalMath class when you want to evaluate mathematical expressions
     from untrusted sources.  You can define your own variables and functions,
     which are stored in the object.  Try it, it's fun!
 
@@ -35,13 +34,13 @@ METHODS
         Evaluates the expression and returns the result.  If an error occurs,
         prints a warning and returns false.  If $expr is a function assignment,
         returns true on success.
-    
+
     $m->e($expr)
         A synonym for $m->evaluate().
-    
+
     $m->vars()
         Returns an associative array of all user-defined variables and values.
-        
+
     $m->funcs()
         Returns an array of all user-defined functions.
 
@@ -63,7 +62,7 @@ LICENSE
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are
     met:
-    
+
     1   Redistributions of source code must retain the above copyright
         notice, this list of conditions and the following disclaimer.
     2.  Redistributions in binary form must reproduce the above copyright
@@ -72,7 +71,7 @@ LICENSE
     3.  The name of the author may not be used to endorse or promote
         products derived from this software without specific prior written
         permission.
-    
+
     THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
     IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -86,13 +85,13 @@ LICENSE
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-class EvalMath {
-
+class EvalMath
+{
     var $suppress_errors = false;
     var $last_error = null;
     var $last_error_code = null;
-    
-    var $v = array('e'=>2.71,'pi'=>3.14); // variables (and constants)
+
+    var $v = array('e'=>2.71,'pi'=>3.14159); // variables (and constants)
     var $f = array(); // user-defined functions
     var $vb = array('e', 'pi'); // constants
     var $fb = array(  // built-in functions
@@ -100,17 +99,20 @@ class EvalMath {
         'cos','cosh','arccos','acos','arccosh','acosh',
         'tan','tanh','arctan','atan','arctanh','atanh',
         'sqrt','abs','ln','log');
-    
-    function EvalMath() {
+
+    /**
+     * Constructor
+     */
+    function __construct() {
         // make the variables a little more accurate
         $this->v['pi'] = pi();
         $this->v['e'] = exp(1);
     }
-    
+
     function e($expr) {
         return $this->evaluate($expr);
     }
-    
+
     function evaluate($expr) {
         $this->last_error = null;
         $this->last_error_code = null;
@@ -134,7 +136,8 @@ class EvalMath {
             }
             $args = explode(",", preg_replace("/\s+/", "", $matches[2])); // get the arguments
             if (($stack = $this->nfx($matches[3])) === false) return false; // see if it can be converted to postfix
-            for ($i = 0; $i<count($stack); $i++) { // freeze the state of the non-argument variables
+            $nbstack = count($stack);
+            for ($i = 0; $i < $nbstack; $i++) { // freeze the state of the non-argument variables
                 $token = $stack[$i];
                 if (preg_match('/^[a-z]\w*$/', $token) and !in_array($token, $args)) {
                     if (array_key_exists($token, $this->v)) {
@@ -151,14 +154,14 @@ class EvalMath {
             return $this->pfx($this->nfx($expr)); // straight up evaluation, woo
         }
     }
-    
+
     function vars() {
         $output = $this->v;
         unset($output['pi']);
         unset($output['e']);
         return $output;
     }
-    
+
     function funcs() {
         $output = array();
         foreach ($this->f as $fnn=>$dat)
@@ -170,23 +173,23 @@ class EvalMath {
 
     // Convert infix to postfix notation
     function nfx($expr) {
-    
+
         $index = 0;
-        $stack = new EvalMathStack;
+        $stack = new EvalMathStack();
         $output = array(); // postfix form of expression, to be passed to pfx()
         $expr = trim(strtolower($expr));
-        
+
         $ops   = array('+', '-', '*', '/', '^', '_');
-        $ops_r = array('+'=>0,'-'=>0,'*'=>0,'/'=>0,'^'=>1); // right-associative operator?  
+        $ops_r = array('+'=>0,'-'=>0,'*'=>0,'/'=>0,'^'=>1); // right-associative operator?
         $ops_p = array('+'=>0,'-'=>0,'*'=>1,'/'=>1,'_'=>1,'^'=>2); // operator precedence
-        
+
         $expecting_op = false; // we use this in syntax-checking the expression
                                // and determining when a - is a negation
-    
+
         if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
             return $this->trigger(4, "illegal character '{$matches[0]}'", $matches[0]);
         }
-    
+
         while(1) { // 1 Infinite Loop ;)
             $op = substr($expr, $index, 1); // get the first character at the current index
             // find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
@@ -195,7 +198,7 @@ class EvalMath {
             if ($op == '-' and !$expecting_op) { // is it a negation instead of a minus?
                 $stack->push('_'); // put a negation on the stack
                 $index++;
-            } elseif ($op == '_') { // we have to explicitly deny this, because it's legal on the stack 
+            } elseif ($op == '_') { // we have to explicitly deny this, because it's legal on the stack
                 return $this->trigger(4, "illegal character '_'", "_"); // but not in the input expression
             //===============
             } elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
@@ -233,7 +236,7 @@ class EvalMath {
                 $index++;
             //===============
             } elseif ($op == ',' and $expecting_op) { // did we just finish a function argument?
-                while (($o2 = $stack->pop()) != '(') { 
+                while (($o2 = $stack->pop()) != '(') {
                     if (is_null($o2)) return $this->trigger(5, "unexpected ','", ","); // oops, never had a (
                     else $output[] = $o2; // pop the argument expression stuff and push onto the output
                 }
@@ -282,11 +285,11 @@ class EvalMath {
                     break;
                 }
             }
-            while (substr($expr, $index, 1) == ' ') { // step the index past whitespace (pretty much turns whitespace 
+            while (substr($expr, $index, 1) == ' ') { // step the index past whitespace (pretty much turns whitespace
                 $index++;                             // into implicit multiplication if no operator is there)
             }
-        
-        } 
+
+        }
         while (!is_null($op = $stack->pop())) { // pop everything off the stack and push onto output
             if ($op == '(') return $this->trigger(11, "expecting ')'", ")"); // if there are (s on the stack, ()s were unbalanced
             $output[] = $op;
@@ -296,11 +299,11 @@ class EvalMath {
 
     // evaluate postfix notation
     function pfx($tokens, $vars = array()) {
-        
+
         if ($tokens == false) return false;
-    
-        $stack = new EvalMathStack;
-        
+
+        $stack = new EvalMathStack();
+
         foreach ($tokens as $token) { // nice and easy
             // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
             if (in_array($token, array('+', '-', '*', '/', '^'))) {
@@ -355,7 +358,7 @@ class EvalMath {
         if ($stack->count != 1) return $this->trigger(18, "internal error");
         return $stack->pop();
     }
-    
+
     // trigger an error, but nicely, if need be
     function trigger($code, $msg, $info = null) {
         $this->last_error = $msg;
@@ -365,17 +368,19 @@ class EvalMath {
     }
 }
 
-// for internal use
-class EvalMathStack {
-
+/**
+  * Class for internal use
+  */
+class EvalMathStack
+{
     var $stack = array();
     var $count = 0;
-    
+
     function push($val) {
         $this->stack[$this->count] = $val;
         $this->count++;
     }
-    
+
     function pop() {
         if ($this->count > 0) {
             $this->count--;
@@ -383,7 +388,7 @@ class EvalMathStack {
         }
         return null;
     }
-    
+
     function last($n=1) {
         if (isset($this->stack[$this->count-$n])) {
           return $this->stack[$this->count-$n];

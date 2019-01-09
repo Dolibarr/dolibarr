@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,16 +24,14 @@
  *  \brief      Page to list withdraw requests
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modPrelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -54,7 +52,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortfield) $sortfield="f.ref";
 
 
 /*
@@ -68,7 +66,7 @@ $invoicestatic=new Facture($db);
 
 // List of requests
 
-$sql= "SELECT f.facnumber, f.rowid, f.total_ttc,";
+$sql= "SELECT f.ref, f.rowid, f.total_ttc,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande as date_demande,";
 $sql.= " pfd.fk_user_demande";
@@ -129,8 +127,6 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-	$var = True;
-
 	$users = array();
 
 	while ($i < min($num,$limit))
@@ -142,7 +138,7 @@ if ($resql)
 		// Ref facture
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
-		$invoicestatic->ref=$obj->facnumber;
+		$invoicestatic->ref=$obj->ref;
 		print $invoicestatic->getNomUrl(1,'withdraw');
 		print '</td>';
 
@@ -171,5 +167,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

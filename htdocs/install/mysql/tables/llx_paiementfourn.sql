@@ -28,7 +28,7 @@ create table llx_paiementfourn
   amount				double(24,8) DEFAULT 0,    -- montant
   multicurrency_amount	double(24,8) DEFAULT 0,    -- multicurrency amount
   fk_user_author		integer,           -- auteur
-  fk_user_modif         integer,
+  fk_user_modif 		integer,
   fk_paiement			integer NOT NULL,  -- moyen de paiement
   num_paiement			varchar(50),       -- numero de paiement (cheque)
   note					text,

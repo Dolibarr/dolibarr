@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,14 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userperms';   // To manage different context of search
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -73,8 +74,7 @@ $object->getrights();
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userperms','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userperms','globalcard'));
 
 
 /**
@@ -176,11 +176,9 @@ $db->commit();
 // Lecture des droits utilisateurs
 $permsuser = array();
 
-$sql = "SELECT DISTINCT r.id, r.libelle, r.module";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql.= " WHERE ur.fk_id = r.id";
-$sql.= " AND ur.entity = ".$entity;
+$sql = "SELECT DISTINCT ur.fk_id";
+$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+$sql.= " WHERE ur.entity = ".$entity;
 $sql.= " AND ur.fk_user = ".$object->id;
 
 dol_syslog("get user perms", LOG_DEBUG);
@@ -192,7 +190,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		array_push($permsuser,$obj->id);
+		array_push($permsuser,$obj->fk_id);
 		$i++;
 	}
 	$db->free($result);
@@ -205,12 +203,10 @@ else
 // Lecture des droits groupes
 $permsgroupbyentity = array();
 
-$sql = "SELECT DISTINCT r.id, r.libelle, r.module, gu.entity";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
+$sql = "SELECT DISTINCT gr.fk_id, gu.entity";
+$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql.= " WHERE gr.fk_id = r.id";
-$sql.= " AND gr.entity = ".$entity;
+$sql.= " WHERE gr.entity = ".$entity;
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$object->id;
 
@@ -225,7 +221,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 		if (! isset($permsgroupbyentity[$obj->entity]))
 			$permsgroupbyentity[$obj->entity] = array();
-		array_push($permsgroupbyentity[$obj->entity], $obj->id);
+		array_push($permsgroupbyentity[$obj->entity], $obj->fk_id);
 		$i++;
 	}
 	$db->free($result);
@@ -243,13 +239,13 @@ else
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
-//print '<div class="underbanner clearboth"></div>';
+print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
@@ -261,11 +257,22 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 
 print "\n";
+print '<div class="div-table-responsive">';
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
-if ($caneditperms) print '<td>&nbsp</td>';
-print '<td align="center" width="24">&nbsp;</td>';
+if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
+{
+	if ($caneditperms)
+	{
+		print '<td align="center" class="nowrap">';
+		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+		print '/';
+		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+		print '</td>';
+	}
+	print '<td align="center" width="24">&nbsp;</td>';
+}
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
@@ -306,21 +313,31 @@ if ($result)
     		print '<tr class="oddeven trforbreak">';
     		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
     		print '<a name="'.$objMod->getName().'"></a></td>';
-    		print '<td align="center" class="nowrap">';
-    		if ($caneditperms && empty($objMod->rights_admin_allowed) || empty($object->admin))
+    		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
     		{
-    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-    			print '/';
-    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+    			if ($caneditperms)
+    			{
+    				print '<td align="center" class="nowrap">';
+    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+    				print '/';
+    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+    				print '</td>';
+    			}
     		}
-    		print '</td>';
+    		else
+    		{
+    			if ($caneditperms)
+    			{
+    				print '<td></td>';
+    			}
+    		}
     		print '<td colspan="2">&nbsp;</td>';
     		print '</tr>'."\n";
         }
 
 		print '<tr class="oddeven">';
 
-		// Picto and label of permission
+		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
 
         // Permission and tick
@@ -379,6 +396,7 @@ if ($result)
         	print '<td>&nbsp</td>';
         }
 
+        // Label
 		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
 		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
 
@@ -389,6 +407,7 @@ if ($result)
 }
 else dol_print_error($db);
 print '</table>';
+print '</div>';
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('insertExtraFooter',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -397,6 +416,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

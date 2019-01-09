@@ -11,7 +11,9 @@ MailFrom=Avsändare
 MailErrorsTo=Fel på
 MailReply=Svara
 MailTo=Mottagare (s)
+MailToUsers=To user(s)
 MailCC=Kopiera till
+MailToCCUsers=Copy to users(s)
 MailCCC=Cachad kopia till
 MailTopic=E-post ämne
 MailText=Meddelande
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

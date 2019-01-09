@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012-2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
 -- Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
@@ -85,6 +85,7 @@ create table llx_product
   pmp                           double(24,8) DEFAULT 0 NOT NULL,    -- To store valuation of stock calculated using average price method, for this product
   fifo                          double(24,8),                       -- To store valuation of stock calculated using fifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   lifo                          double(24,8),                       -- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
+  fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
   finished                      tinyint      DEFAULT NULL,          -- 1=manufactured product, 0=matiere premiere
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.

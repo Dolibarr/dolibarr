@@ -43,7 +43,7 @@ if (GETPOST('addfile','alpha'))
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir_tmp = $vardir.'/temp';             // TODO Add $keytoavoidconflict in upload_dir path
 
-	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid);
+	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid, 0);
 	$action='presend';
 }
 
@@ -107,7 +107,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	$subject='';$actionmsg='';$actionmsg2='';
 
-	if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	if (is_object($object))
@@ -115,7 +114,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport', 'contact')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -131,38 +130,19 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
-			elseif (! empty($conf->dolimail->enabled))
-			{
-				$dolimail = new Dolimail($db);
-				$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
-				$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-				if (!$possibleaccounts && !$possibleuser)
-				{
-					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
-				}
-				elseif (count($possibleaccounts)>1)
-				{
-					$sendtosocid=$possibleaccounts[1]['id'];
-					$result=$object->fetch($sendtosocid);
-
-					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
-				}
-				else
-				{
-					if($possibleaccounts){
-						$sendtosocid=$possibleaccounts[1]['id'];
-						$result=$object->fetch($sendtosocid);
-					}elseif($possibleuser){
-						$sendtosocid=$possibleuser[0]['id'];
-
-						$result=$uobject->fetch($sendtosocid);
-						$object=$uobject;
-					}
-
-				}
-			}
+		}
+		else if ($object->element == 'contact')
+		{
+			$contact=$object;
+			if ($contact->id > 0) $sendtosocid=$contact->fetch_thirdparty()->id;
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
+
+		if (is_object($hookmanager))
+		{
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('initSendToSocid',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		}
 	}
 	else $thirdparty = $mysoc;
 
@@ -172,6 +152,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$sendtocc='';
 		$sendtobcc='';
 		$sendtoid = array();
+		$sendtouserid=array();
+		$sendtoccuserid=array();
 
 		// Define $sendto
 		$receiver=$_POST['receiver'];
@@ -193,7 +175,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$tmparray[] = str_replace(","," ",$thirdparty->name).' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -202,6 +189,20 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+		{
+			$receiveruser=$_POST['receiveruser'];
+			if (is_array($receiveruser) && count($receiveruser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiveruser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($val,'email');
+					$sendtouserid[] = $val;
+				}
+			}
+		}
+
 		$sendto=implode(',',$tmparray);
 
 		// Define $sendtocc
@@ -223,12 +224,30 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+				}
+			}
+		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$receiverccuser=$_POST['receiverccuser'];
+
+			if (is_array($receiverccuser) && count($receiverccuser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiverccuser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($val,'email');
+					$sendtoccuserid[] = $val;
 				}
 			}
 		}
@@ -247,13 +266,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			$fromtype = GETPOST('fromtype','alpha');
 			if ($fromtype === 'robot') {
-				$from = $conf->global->MAIN_MAIL_EMAIL_FROM .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")) .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
 			}
 			elseif ($fromtype === 'user') {
-				$from = $user->getFullName($langs) .' <'.$user->email.'>';
+				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")) .' <'.$user->email.'>';
 			}
 			elseif ($fromtype === 'company') {
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")) .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 			}
 			elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp=explode(',', $user->email_aliases);
@@ -269,14 +288,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$obj = $db->fetch_object($resql);
 				if ($obj)
 				{
-					$from = $obj->label.' <'.$obj->email.'>';
+					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
 			}
 			else {
-				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				$from = dol_string_nospecial($_POST['fromname'], ' ', array(",")) . ' <' . $_POST['frommail'] .'>';
 			}
 
-			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+			$replyto = dol_string_nospecial($_POST['replytoname'], ' ', array(",")). ' <' . $_POST['replytomail'].'>';
 			$message = GETPOST('message','none');
 			$subject = GETPOST('subject','none');
 
@@ -321,6 +340,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$mimetype = $attachedfiles['mimes'];
 
 			// Feature to push mail sent into Sent folder
+			/* This code must be now included into the hook mail, method sendMailAfter
 			if (! empty($conf->dolimail->enabled))
 			{
 				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
@@ -329,7 +349,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$mbid = $mailfromid[1];
 
-					/*IMAP Postbox*/
+					// IMAP Postbox
 					$mailboxconfig = new IMAP($db);
 					$mailboxconfig->fetch($mbid);
 					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
@@ -344,9 +364,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (!$folder) $folder = "Sent";	// Default Sent folder
 
 						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (FALSE === $mailboxconfig->mbox)
+						if (false === $mailboxconfig->mbox)
 						{
-							$info = FALSE;
+							$info = false;
 							$err = $langs->trans('Error3_Imap_Connection_Error');
 							setEventMessages($err,$mailboxconfig->element, null, 'errors');
 						}
@@ -361,6 +381,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					}
 				}
 			}
+			*/
 
 			// Make substitution in email content
 			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
@@ -393,7 +414,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					// FIXME This must be moved into the trigger for action $trigger_name
+					// Two hooks are available into method $mailfile->sendfile, so dedicated code is no more required
+					/*
 					if (! empty($conf->dolimail->enabled))
 					{
 						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
@@ -411,24 +433,37 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
 							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
 						}
-					}
+					}*/
 
-					// Initialisation of datas
+					// Initialisation of datas of object to call trigger
 					if (is_object($object))
 					{
 					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically
 
 						$object->socid			= $sendtosocid;	   // To link to a company
-						$object->sendtoid		= $sendtoid;	   // To link to contacts/addresses. This is an array.
+						$object->sendtoid		= $sendtoid;	   // To link to contact addresses. This is an array.
 						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-						$object->actionmsg		= $actionmsg;      // Long text
-						$object->actionmsg2		= $actionmsg2;     // Short text
+						$object->actionmsg		= $actionmsg;      // Long text (@TODO Replace this with $message, we already have details of email in dedicated properties)
+						$object->actionmsg2		= $actionmsg2;     // Short text ($langs->transnoentities('MailSentBy')...);
+
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
 						if (is_array($attachedfiles) && count($attachedfiles)>0) {
 							$object->attachedfiles	= $attachedfiles;
 						}
+						if (is_array($sendtouserid) && count($sendtouserid)>0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+							$object->sendtouserid	= $sendtouserid;
+						}
+
+						$object->email_msgid = $mailfile->msgid;	// @TODO Set msgid into $mailfile after sending
+						$object->email_from = $from;
+						$object->email_subject = $subject;
+						$object->email_to = $sendto;
+						$object->email_tocc = $sendtocc;
+						$object->email_tobcc = $sendtobcc;
+						$object->email_subject = $subject;
+						$object->email_msgid = $mailfile->msgid;
 
 						// Call of triggers
 						if (! empty($trigger_name))
@@ -446,13 +481,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					// This avoid sending mail twice if going out and then back to page
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 					setEventMessages($mesg, null, 'mesgs');
-					if ($conf->dolimail->enabled)
-					{
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						exit;
-					}
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
-					exit;
+
+  					$moreparam='';
+	  				if (isset($paramname2) || isset($paramval2)) $moreparam.= '&'.($paramname2?$paramname2:'mid').'='.$paramval2;
+		  			header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').$moreparam);
+			  		exit;
 				}
 				else
 				{
@@ -489,5 +522,4 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}
-
 }

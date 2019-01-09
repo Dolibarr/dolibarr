@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 
-$langs->load("agenda");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array("agenda", "commercial"));
 
 $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -93,6 +93,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1,$offset);
@@ -133,7 +138,6 @@ if ($resql)
 	print '<td align="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj=$db->fetch_object($resql);
@@ -205,5 +209,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

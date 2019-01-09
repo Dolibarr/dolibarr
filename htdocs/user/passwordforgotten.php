@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
  *
@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 
-$langs->load("errors");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
@@ -78,7 +75,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     }
     else
     {
-        if (dol_hash($edituser->pass_temp) == $passwordhash)
+        if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -96,7 +93,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 if ($action == 'buildnewpassword' && $username)
 {
     $sessionkey = 'dol_antispam_value';
-    $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+    $ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
     if (! $ok)
@@ -180,11 +177,11 @@ $rowspan=2;
 $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
 }
 elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 	$width=128;
 }
 elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
@@ -218,4 +215,3 @@ $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions',$pa
 $moreloginextracontent = $hookmanager->resPrint;
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
-

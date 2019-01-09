@@ -4,9 +4,9 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-$langs->load("admin");
-$langs->load("sendings");
-$langs->load("deliveries");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -509,5 +507,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

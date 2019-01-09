@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.cl
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$langs->load("products");
-$langs->load("accountancy"); //"Back" translation is on this file
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
@@ -219,7 +219,7 @@ print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
-	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused">'.$langs->trans('Delete').'</span></div>'."\n";
+	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 }
 else
 {
@@ -244,5 +244,6 @@ print '<script type="text/javascript">
 	}
 </script>';
 
+// End of page
 llxFooter();
 $db->close();

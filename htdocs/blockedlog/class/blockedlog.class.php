@@ -18,9 +18,6 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-
-
-
 /*ini_set('unserialize_callback_func', 'mycallback');
 
 function mycallback($classname)
@@ -42,13 +39,21 @@ class BlockedLog
 	 * @var int
 	 */
 	public $id;
+
 	/**
 	 * Entity
 	 * @var int
 	 */
 	public $entity;
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
 	public $errors = array();
 
 	/**
@@ -167,10 +172,15 @@ class BlockedLog
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
+
+		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
+		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || ! empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE']='logCASHCONTROL_VALIDATE';
 	}
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
+     * @return string
 	 */
 	public function getObjectLink()
 	{
@@ -264,6 +274,17 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+		else if($this->element === 'cashcontrol') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+
+			$object = new CashControl($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
 		else if ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
@@ -281,11 +302,11 @@ class BlockedLog
 		}
 
 		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
-
 	}
 
 	/**
 	 *      try to retrieve user author
+     * @return string
 	 */
 	public function getUser()
 	{
@@ -345,6 +366,10 @@ class BlockedLog
 		{
 			$this->date_object = $object->dateh;
 		}
+		elseif ($object->element=='cashcontrol')
+		{
+			$this->date_object = $object->date_creation;
+		}
 		else {
 			$this->date_object = $object->date;
 		}
@@ -358,7 +383,24 @@ class BlockedLog
 
 		// Set object_data
 		$this->object_data=new stdClass();
-		$arrayoffieldstoexclude = array('table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','modelpdf','table_element_line','linkedObjectsIds','linkedObjects','fk_delivery_address');
+		// Add fields to exclude
+		$arrayoffieldstoexclude = array(
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','civility_id','contact','contact_id',
+			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
+			'linkedObjectsIds','linkedObjects','fk_delivery_address',
+			'context',
+		    'projet'          // There is already ->fk_project
+		);
+		// Add more fields to exclude depending on object type
+		if ($this->element == 'cashcontrol')
+		{
+		    $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+		        'name','lastname','firstname','region','region_id','region_code','state','state_id','state_code','country','country_id','country_code',
+		        'total_ht','total_tva','total_ttc','total_localtax1','total_localtax2',
+		        'barcode_type','barcode_type_code','barcode_type_label','barcode_type_coder','mode_reglement_id','cond_reglement_id','mode_reglement','cond_reglement','shipping_method_id',
+		        'fk_incoterms','libelle_incoterms','location_incoterms','lines')
+		    );
+		}
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
@@ -407,7 +449,7 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
+				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
 				if ($key == 'lines')
 				{
@@ -438,7 +480,7 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
@@ -551,7 +593,7 @@ class BlockedLog
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 						if (! in_array($key, array(
-						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 						))) continue;									// Discard if not into a dedicated list
 						if (!is_object($value))
 						{
@@ -609,7 +651,8 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id) {
+    public function fetch($id)
+    {
 
 		global $langs;
 
@@ -672,7 +715,6 @@ class BlockedLog
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 
@@ -705,14 +747,13 @@ class BlockedLog
 	 *
 	 *	@return	boolean
 	 */
-	public function setCertified() {
+    public function setCertified()
+    {
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if($res===false) return false;
 
 		return true;
-
-
 	}
 
 	/**
@@ -722,7 +763,8 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	public function create($user, $forcesignature='') {
+    public function create($user, $forcesignature='')
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -749,11 +791,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 
@@ -940,17 +983,14 @@ class BlockedLog
 
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
-
 		}
 		else if ($element=='not_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 0";
-
 		}
 		else if ($element=='just_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
-
 		}
 		else{
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
@@ -1028,6 +1068,7 @@ class BlockedLog
 	 * Check if module was already used or not for at least one recording.
 	 *
 	 * @param	int		$ignoresystem		Ignore system events for the test
+     * @return bool
 	 */
 	function alreadyUsed($ignoresystem=0)
 	{
@@ -1052,6 +1093,4 @@ class BlockedLog
 
 		return $result;
 	}
-
 }
-

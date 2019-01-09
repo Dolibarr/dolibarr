@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@
  *  \brief      File sample to list members
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -39,10 +40,7 @@ require '../../main.inc.php';
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("main", "members", "companies", "other"));
 
 
 /**
@@ -81,7 +79,7 @@ function llxFooterVierge()
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -139,7 +137,6 @@ if ($result)
 	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
 	{
 		$objp = $db->fetch_object($result);

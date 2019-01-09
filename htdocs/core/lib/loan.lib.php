@@ -40,6 +40,11 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans('Card');
 	$head[$tab][2] = 'card';
 	$tab++;
+	
+	$head[$tab][0] = DOL_URL_ROOT.'/loan/schedule.php?loanid='.$object->id;
+	$head[$tab][1] = $langs->trans('FinancialCommitment');
+	$head[$tab][2] = 'FinancialCommitment';
+	$tab++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -59,7 +64,7 @@ function loan_prepare_head($object)
 	$tab++;
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{		
+	{
 		$nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");

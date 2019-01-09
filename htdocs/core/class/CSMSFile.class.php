@@ -2,7 +2,7 @@
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +34,18 @@
  */
 class CSMSFile
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-	var $addr_from;
-	var $addr_to;
-	var $deferred;
-	var $priority;
-	var $class;
-	var $message;
-	var $nostop;
+	public $addr_from;
+	public $addr_to;
+	public $deferred;
+	public $priority;
+	public $class;
+	public $message;
+	public $nostop;
 
 
 	/**
@@ -192,6 +195,7 @@ class CSMSFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write content of a SendSms request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -200,6 +204,7 @@ class CSMSFile
 	 */
 	function dump_sms()
 	{
+        // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
@@ -221,6 +226,7 @@ class CSMSFile
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Write content of a SendSms result into a dump file (mode = all)
      *  Used for debugging.
@@ -230,6 +236,7 @@ class CSMSFile
      */
     function dump_sms_result($result)
     {
+        // phpcs:enable
         global $conf,$dolibarr_main_data_root;
 
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
@@ -244,6 +251,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }
-

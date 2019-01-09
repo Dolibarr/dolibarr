@@ -1,15 +1,17 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
- * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
- * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2016	   Ferran Marcet		  <fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Charlene Benke	    <charlie@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("orders",'sendings','deliveries','companies','compta','bills'));
 
 $action=GETPOST('action','aZ09');
@@ -51,6 +54,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'orderlist';
 
 $search_orderyear=GETPOST("search_orderyear","int");
 $search_ordermonth=GETPOST("search_ordermonth","int");
@@ -72,6 +76,8 @@ $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
+$search_total_ttc=GETPOST('search_total_ttc','alpha');
+$search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
@@ -98,16 +104,14 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='c.ref';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'orderlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Commande($db);
+$hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('commande');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -197,6 +201,7 @@ if (empty($reshook))
 		$billed='';
 		$toselect='';
 		$search_array_options=array();
+		$search_categ_cus=0;
 	}
 	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
 	 || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
@@ -230,7 +235,7 @@ $projectstatic=new Project($db);
 
 $title=$langs->trans("Orders");
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
-llxHeader('',$title,$help_url);
+// llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -241,6 +246,8 @@ $sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_clie
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql.= ' c.date_creation as date_creation, c.tms as date_update,';
 $sql.= " p.rowid as project_id, p.ref as project_ref";
+if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
+
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -251,6 +258,7 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
@@ -295,32 +303,8 @@ if ($viewstatut <> '')
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
-if ($search_ordermonth > 0)
-{
-	if ($search_orderyear > 0 && empty($search_orderday))
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,$search_ordermonth,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,$search_ordermonth,false))."'";
-	else if ($search_orderyear > 0 && ! empty($search_orderday))
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_ordermonth, $search_orderday, $search_orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_ordermonth, $search_orderday, $search_orderyear))."'";
-	else
-	$sql.= " AND date_format(c.date_commande, '%m') = '".$search_ordermonth."'";
-}
-else if ($search_orderyear > 0)
-{
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,12,false))."'";
-}
-if ($search_deliverymonth > 0)
-{
-	if ($search_deliveryyear > 0 && empty($search_deliveryday))
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,$search_deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,$search_deliverymonth,false))."'";
-	else if ($search_deliveryyear > 0 && ! empty($search_deliveryday))
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."'";
-	else
-	$sql.= " AND date_format(c.date_livraison, '%m') = '".$search_deliverymonth."'";
-}
-else if ($search_deliveryyear > 0)
-{
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,12,false))."'";
-}
+$sql.= dolSqlDateFilter("c.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
+$sql.= dolSqlDateFilter("c.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
@@ -330,7 +314,10 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
+if ($search_total_ttc != '') $sql.= natural_search('c.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
+if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -346,6 +333,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -386,6 +379,16 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->rowid;
+		header("Location: ".DOL_URL_ROOT.'/commande/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$title,$help_url);
+
 	$param='';
 
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -408,12 +411,13 @@ if ($resql)
 	if ($search_total_vat != '')  $param.='&search_total_vat='.urlencode($search_total_vat);
 	if ($search_total_ttc != '')  $param.='&search_total_ttc='.urlencode($search_total_ttc);
 	if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
-	if ($search_town != '')       $param .= '&search_town='.urlencode($search_town);
-	if ($search_zip != '')        $param .= '&search_zip='.urlencode($search_zip);
-	if ($search_state != '')      $param .= '&search_state='.urlencode($search_state);
-	if ($search_country != '')    $param .= '&search_country='.urlencode($search_country);
-	if ($search_type_thirdparty != '')  $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
-	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
+	if ($search_town != '')       $param.='&search_town='.urlencode($search_town);
+	if ($search_zip != '')        $param.='&search_zip='.urlencode($search_zip);
+	if ($search_state != '')      $param.='&search_state='.urlencode($search_state);
+	if ($search_country != '')    $param.='&search_country='.urlencode($search_country);
+	if ($search_type_thirdparty != '')  $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
+	if ($search_product_category != '') $param.='&search_product_category='.urlencode($search_product_category);
+	if ($search_categ_cus > 0)          $param.='&search_categ_cus='.urlencode($search_categ_cus);
 	if ($show_files)            $param.='&show_files=' .urlencode($show_files);
 	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 	if ($billed != '')			$param.='&billed='.urlencode($billed);
@@ -423,13 +427,24 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
+		'cancelorders'=>$langs->trans("Cancel"),
+
 	);
 	if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->commande->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+	$newcardbutton='';
+	if ($contextpage == 'orderlist' && $user->rights->commande->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/commande/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewOrder').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -442,8 +457,10 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendOrderRef";
 	$modelmail="order_send";
@@ -462,7 +479,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -487,7 +504,7 @@ if ($resql)
 		{
 			print $form->selectyesno('valdate_invoices', 0, 1);
 		}
-		if (! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
+		if (! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
 		else print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
 		print '</td>';
 		print '</tr>';
@@ -504,7 +521,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -535,6 +552,14 @@ if ($resql)
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
+	}
+	if (! empty($conf->categorie->enabled))
+	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
+		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
+	 	$moreforfilter.='</div>';
 	}
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -610,17 +635,17 @@ if ($resql)
 	// Date order
 	if (! empty($arrayfields['c.date_commande']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
 		$formother->select_year($search_orderyear?$search_orderyear:-1,'search_orderyear',1, 20, 5);
 		print '</td>';
 	}
 	if (! empty($arrayfields['c.date_delivery']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
 		$formother->select_year($search_deliveryyear?$search_deliveryyear:-1,'search_deliveryyear',1, 20, 5);
 		print '</td>';
 	}
@@ -1112,30 +1137,24 @@ if ($resql)
 
 	print '</form>'."\n";
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		/*
-	     * Show list of available documents
-	     */
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->commande->lire;
-		$delallowed=$user->rights->commande->creer;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->commande->lire;
+	$delallowed=$user->rights->commande->creer;
 
+	print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

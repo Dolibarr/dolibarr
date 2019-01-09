@@ -122,7 +122,7 @@ create table llx_expensereport_extrafields
 ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
 
 ALTER TABLE llx_cotisation RENAME TO llx_subscription;
--- VPGSQL8.2 ALTER SEQUENCE llx_cotisation_rowid_seq RENAME TO llx_subscription_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_cotisation_rowid_seq RENAME TO llx_subscription_rowid_seq;
 
 ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;

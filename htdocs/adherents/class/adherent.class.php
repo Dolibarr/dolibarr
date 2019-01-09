@@ -4,10 +4,10 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -33,7 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -41,71 +41,176 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='member';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='adherent';
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $mesgs;
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
-	var $login;
+	public $mesgs;
+
+    /**
+     * @var string login of member
+     */
+	public $login;
 
 	//! Clear password in memory
-	var $pass;
+	public $pass;
 	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
-	var $pass_indatabase;
+	public $pass_indatabase;
 	//! Encrypted password in database (always defined)
-	var $pass_indatabase_crypted;
+	public $pass_indatabase_crypted;
 
-	var $societe;
-	var $company;
-	var $address;
-	var $zip;
-	var $town;
+    /**
+     * @var string company name
+     * @deprecated
+     */
+	public $societe;
 
-	var $state_id;              // Id of department
-	var $state_code;            // Code of department
-	var $state;                 // Label of department
+	/**
+	 * @var string company name
+	 */
+	public $company;
 
-	var $email;
-	var $skype;
-	var $phone;
-	var $phone_perso;
-	var $phone_mobile;
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
 
-	var $morphy;
-	var $public;
-	var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-	var $photo;
+	/**
+	 * @var string Address
+	 */
+	public $address;
 
-	var $datec;
-	var $datem;
-	var $datefin;
-	var $datevalid;
-	var $birth;
+    /**
+     * @var string zipcode
+     */
+    public $zip;
 
-	var $note_public;
-	var $note_private;
+    /**
+     * @var string town
+     */
+	public $town;
 
-	var $typeid;			// Id type adherent
-	var $type;				// Libelle type adherent
-	var $need_subscription;
+    /**
+     * @var int Id of state
+     */
+    public $state_id;
 
-	var $user_id;
-	var $user_login;
+    /**
+     * @var string Code of state
+     */
+    public $state_code;
 
-	var $fk_soc;
+    /**
+     * @var string Label of state
+     */
+	public $state;
+
+    /**
+     * @var string email
+     */
+	public $email;
+
+    /**
+     * @var string skype account
+     */
+    public $skype;
+
+    /**
+     * @var string twitter account
+     */
+    public $twitter;
+
+    /**
+     * @var string facebook account
+     */
+	public $facebook;
+
+    /**
+     * @var string Phone number
+     */
+	public $phone;
+
+    /**
+     * @var string Private Phone number
+     */
+	public $phone_perso;
+
+    /**
+     * @var string Mobile phone number
+     */
+	public $phone_mobile;
+
+    /**
+     * @var string Fax number
+     */
+    public $fax;
+
+    /**
+     * @var string Function
+     */
+    public $poste;
+
+	public $morphy;
+	public $public;
+
+    // -1:brouillon, 0:resilie, >=1:valide,paye
+    // def in common object
+    //public $statut;
+
+    public $photo;
+
+	public $datec;
+	public $datem;
+	public $datevalid;
+
+	public $gender;
+	public $birth;
+
+    /**
+     * @var int id type member
+     */
+	public $typeid;
+
+    /**
+     * @var string label type member
+     */
+	public $type;
+	public $need_subscription;
+
+	public $user_id;
+	public $user_login;
+
+	public $datefin;	// From member table
 
 	// Fields loaded by fetch_subscriptions()
-	var $first_subscription_date;
-	var $first_subscription_amount;
-	var $last_subscription_date;
-	var $last_subscription_date_start;
-	var $last_subscription_date_end;
-	var $last_subscription_amount;
-	var $subscriptions=array();
+	public $first_subscription_date;
+	public $first_subscription_amount;
+	public $last_subscription_date;
+	public $last_subscription_date_start;
+	public $last_subscription_date_end;
+	public $last_subscription_amount;
+	public $subscriptions=array();
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+    /**
+     * @var Adherent To contains a clone of this when we need to save old properties of object
+     */
+	public $oldcopy;
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	/**
@@ -124,8 +229,9 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *  Function sending an email has the adherent with the text supplied in parameter.
+	 *  Function sending an email to the current member with the text supplied in parameter.
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -137,18 +243,22 @@ class Adherent extends CommonObject
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='', $moreinheader='')
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		// Detect if message is HTML
 		if ($msgishtml == -1)
 		{
 			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
+			if (dol_textishtml($text,0)) $msgishtml = 1;
 		}
+
+		dol_syslog('send_an_email msgishtml='.$msgishtml);
 
 		$texttosend=$this->makeSubstitution($text);
 		$subjecttosend=$this->makeSubstitution($subject);
@@ -158,9 +268,11 @@ class Adherent extends CommonObject
 		$from=$conf->email_from;
 		if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
+		$trackid = 'mem'.$this->id;
+
 		// Send email (substitutionarray must be done just before this)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
+		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
 		if ($mailfile->sendfile())
 		{
 			return 1;
@@ -214,22 +326,22 @@ class Adherent extends CommonObject
 		// Substitutions
 		$substitutionarray=array(
 			'__CIVILITY__'=>$this->getCivilityLabel(),
-			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
+			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
-			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
-			'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-			'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-			'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
-			'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
-			'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
-			'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
-			'__PHONE__'=>$msgishtml?dol_htmlentitiesbr($this->phone):$this->phone,
-			'__PHONEPRO__'=>$msgishtml?dol_htmlentitiesbr($this->phone_perso):$this->phone_perso,
-			'__PHONEMOBILE__'=>$msgishtml?dol_htmlentitiesbr($this->phone_mobile):$this->phone_mobile,
+			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):($this->societe?$this->societe:''),
+			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):($this->address?$this->address:''),
+			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):($this->zip?$this->zip:''),
+			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):($this->town?$this->town:''),
+			'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):($this->country?$this->country:''),
+			'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):($this->email?$this->email:''),
+			'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):($birthday?$birthday:''),
+			'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):($this->photo?$this->photo:''),
+			'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):($this->login?$this->login:''),
+			'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):($this->pass?$this->pass:''),
+			'__PHONE__'=>$msgishtml?dol_htmlentitiesbr($this->phone):($this->phone?$this->phone:''),
+			'__PHONEPRO__'=>$msgishtml?dol_htmlentitiesbr($this->phone_perso):($this->phone_perso?$this->phone_perso:''),
+			'__PHONEMOBILE__'=>$msgishtml?dol_htmlentitiesbr($this->phone_mobile):($this->phone_mobile?$this->phone_mobile:'')
 		);
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
@@ -396,17 +508,18 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
 		// Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
-		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
-		$this->address=($this->address?$this->address:$this->address);
-		$this->zip=($this->zip?$this->zip:$this->zip);
-		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
+		$this->lastname     = trim($this->lastname)?trim($this->lastname):trim($this->lastname);
+		$this->firstname    = trim($this->firstname)?trim($this->firstname):trim($this->firstname);
+		$this->gender       = trim($this->gender);
+		$this->address      = ($this->address?$this->address:$this->address);
+		$this->zip          = ($this->zip?$this->zip:$this->zip);
+		$this->town         = ($this->town?$this->town:$this->town);
+		$this->country_id   = ($this->country_id > 0?$this->country_id:$this->country_id);
+		$this->state_id     = ($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
-		$this->note_public=($this->note_public?$this->note_public:$this->note_public);
-		$this->note_private=($this->note_private?$this->note_private:$this->note_private);
+		$this->note_public  = ($this->note_public?$this->note_public:$this->note_public);
+		$this->note_private = ($this->note_private?$this->note_private:$this->note_private);
 
 		// Check parameters
 		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -422,6 +535,7 @@ class Adherent extends CommonObject
 		$sql.= " civility = ".($this->civility_id?"'".$this->db->escape($this->civility_id)."'":"null");
 		$sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
+		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
 		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
 		$sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
@@ -432,6 +546,8 @@ class Adherent extends CommonObject
 		$sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -461,24 +577,15 @@ class Adherent extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('memberdao'));
-			$parameters=array('id'=>$this->id);
-			$action='';
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			// Update password
 			if (! $error && $this->pass)
@@ -535,11 +642,22 @@ class Adherent extends CommonObject
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;
+						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
 						$luser->societe_id=$this->societe;
 
+						$luser->birth=$this->birth;
+
+						$luser->address=$this->address;
+						$luser->zip=$this->zip;
+						$luser->town=$this->town;
+						$luser->country_id=$this->country_id;
+						$luser->state_id=$this->state_id;
+
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
+						$luser->twitter=$this->twitter;
+						$luser->facebook=$this->facebook;
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 
@@ -579,6 +697,8 @@ class Adherent extends CommonObject
 						$lthirdparty->town=$this->town;
 						$lthirdparty->email=$this->email;
 						$lthirdparty->skype=$this->skype;
+						$lthirdparty->twitter=$this->twitter;
+						$lthirdparty->facebook=$this->facebook;
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
@@ -630,6 +750,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update denormalized last subscription date.
 	 * 	This function is called when we delete a subscription for example.
@@ -639,6 +760,7 @@ class Adherent extends CommonObject
 	 */
 	function update_end_date($user)
 	{
+        // phpcs:enable
 		$this->db->begin();
 
 		// Search for last subscription id and end date
@@ -683,7 +805,6 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -985,6 +1106,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Method to load member from its login
 	 *
@@ -993,6 +1115,7 @@ class Adherent extends CommonObject
 	 */
 	function fetch_login($login)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
@@ -1014,6 +1137,7 @@ class Adherent extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Method to load member from its name
 	 *
@@ -1023,6 +1147,7 @@ class Adherent extends CommonObject
 	 */
 	function fetch_name($firstname,$lastname)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
@@ -1048,19 +1173,21 @@ class Adherent extends CommonObject
 	/**
 	 *	Load member from database
 	 *
-	 *	@param	int		$rowid      Id of object to load
-	 * 	@param	string	$ref		To load member from its ref
-	 * 	@param	int		$fk_soc		To load member from its link to third party
-	 * 	@param	string	$ref_ext	External reference
-	 *	@return int         		>0 if OK, 0 if not found, <0 if KO
+	 *	@param	int		$rowid      			Id of object to load
+	 * 	@param	string	$ref					To load member from its ref
+	 * 	@param	int		$fk_soc					To load member from its link to third party
+	 * 	@param	string	$ref_ext				External reference
+	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
+	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
+	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='',$fetch_optionals=true,$fetch_subscriptions=true)
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1105,6 +1232,7 @@ class Adherent extends CommonObject
 				$this->civility_id		= $obj->civility_id;
 				$this->firstname		= $obj->firstname;
 				$this->lastname			= $obj->lastname;
+				$this->gender			= $obj->gender;
 				$this->login			= $obj->login;
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
@@ -1132,7 +1260,10 @@ class Adherent extends CommonObject
 				$this->phone_perso		= $obj->phone_perso;
 				$this->phone_mobile		= $obj->phone_mobile;
 				$this->email			= $obj->email;
+
 				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
 
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
@@ -1157,15 +1288,16 @@ class Adherent extends CommonObject
 
 				$this->model_pdf        = $obj->model_pdf;
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				if ($fetch_optionals) {
+					$this->fetch_optionals();
+				}
 
 				// Load other properties
-				$result=$this->fetch_subscriptions();
+				if ($fetch_subscriptions) {
+					$result=$this->fetch_subscriptions();
+				}
 
 				return $this->id;
 			}
@@ -1182,17 +1314,17 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Fonction qui recupere pour un adherent les parametres
-	 *				first_subscription_date
-	 *				first_subscription_amount
-	 *				last_subscription_date
-	 *				last_subscription_amount
+	 *	Function to get member subscriptions data
+	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
+	 *				last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
 	function fetch_subscriptions()
 	{
+        // phpcs:enable
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
@@ -1217,10 +1349,14 @@ class Adherent extends CommonObject
 			{
 				if ($i==0)
 				{
-					$this->first_subscription_date=$obj->dateh;
+					$this->first_subscription_date=$this->db->jdate($obj->datec);
+					$this->first_subscription_date_start=$this->db->jdate($obj->dateh);
+					$this->first_subscription_date_end=$this->db->jdate($obj->datef);
 					$this->first_subscription_amount=$obj->subscription;
 				}
-				$this->last_subscription_date=$obj->dateh;
+				$this->last_subscription_date=$this->db->jdate($obj->datec);
+				$this->last_subscription_date_start=$this->db->jdate($obj->datef);
+				$this->last_subscription_date_end=$this->db->jdate($obj->datef);
 				$this->last_subscription_amount=$obj->subscription;
 
 				$subscription=new Subscription($this->db);
@@ -1252,9 +1388,9 @@ class Adherent extends CommonObject
 	 *	Insert subscription into database and eventually add links to banks, mailman, etc...
 	 *
 	 *	@param	int	        $date        		Date of effect of subscription
-	 *	@param	double		$montant     		Amount of subscription (0 accepted for some members)
+	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
 	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type operation (if Id bank account provided)
+	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
 	 *	@param	string		$label				Label operation (if Id bank account provided)
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
@@ -1262,7 +1398,7 @@ class Adherent extends CommonObject
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	function subscription($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
+	function subscription($date, $amount, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
 	{
 		global $conf,$langs,$user;
 
@@ -1271,7 +1407,7 @@ class Adherent extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (! $montant) $montant=0;
+		if (! $amount) $amount=0;
 
 		$this->db->begin();
 
@@ -1291,8 +1427,9 @@ class Adherent extends CommonObject
 		$subscription->fk_adherent=$this->id;
 		$subscription->dateh=$date;		// Date of new subscription
 		$subscription->datef=$datefin;	// End data of new subscription
-		$subscription->amount=$montant;
-		$subscription->note=$label;
+		$subscription->amount=$amount;
+		$subscription->note=$label;		// deprecated
+		$subscription->note_public=$label;
 
 		$rowid=$subscription->create($user);
 		if ($rowid > 0)
@@ -1304,9 +1441,9 @@ class Adherent extends CommonObject
 			{
 				// Change properties of object (used by triggers)
 				$this->last_subscription_date=dol_now();
-				$this->last_subscription_amount=$montant;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
+				$this->last_subscription_amount=$amount;
 			}
 
 			if (! $error)
@@ -1323,10 +1460,316 @@ class Adherent extends CommonObject
 		else
 		{
 			$this->error=$subscription->error;
+			$this->errors=$subscription->errors;
 			$this->db->rollback();
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Do complementary actions after subscription recording.
+	 *
+	 *	@param	int			$subscriptionid			Id of created subscription
+	 *  @param	string		$option					Which action ('bankdirect', 'bankviainvoice', 'invoiceonly', ...)
+	 *	@param	int			$accountid				Id bank account
+	 *	@param	int			$datesubscription		Date of subscription
+	 *	@param	int			$paymentdate			Date of payment
+	 *	@param	string		$operation				Code of type of operation (if Id bank account provided). Example 'CB', ...
+	 *	@param	string		$label					Label operation (if Id bank account provided)
+	 *	@param	double		$amount     			Amount of subscription (0 accepted for some members)
+	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
+	 *	@param	string		$emetteur_nom			Name of cheque writer
+	 *	@param	string		$emetteur_banque		Name of bank of cheque
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *	@return int									<0 if KO, >0 if OK
+	 */
+	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
+	{
+		global $conf, $langs, $user, $mysoc;
+
+		$error = 0;
+
+		$this->invoice = null;	// This will contains invoice if an invoice is created
+
+		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
+
+		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
+		if ($option == 'bankdirect' && $accountid)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+			$acct=new Account($this->db);
+			$result=$acct->fetch($accountid);
+
+			$dateop=$paymentdate;
+
+			$insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
+			if ($insertid > 0)
+			{
+				$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
+				if ($inserturlid > 0)
+				{
+					// Update table subscription
+					$sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
+					$sql.=" WHERE rowid=".$subscriptionid;
+
+					dol_syslog("subscription::subscription", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+						$this->error=$this->db->lasterror();
+						$this->errors[]=$this->error;
+					}
+				}
+				else
+				{
+					$error++;
+					$this->error=$acct->error;
+					$this->errors=$acct->errors;
+				}
+			}
+			else
+			{
+				$error++;
+				$this->error=$acct->error;
+				$this->errors=$acct->errors;
+			}
+		}
+
+		// If option choosed, we create invoice
+		if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
+
+			$invoice=new Facture($this->db);
+			$customer=new Societe($this->db);
+
+			if (! $error)
+			{
+				if (! ($this->fk_soc > 0))	// If not yet linked to a company
+				{
+					if ($autocreatethirdparty)
+					{
+						// Create a linked thirdparty to member
+						$companyalias='';
+						$fullname = $this->getFullName($langs);
+
+						if ($this->morphy == 'mor')
+						{
+							$companyname=$this->societe;
+							if (! empty($fullname)) $companyalias=$fullname;
+						}
+						else
+						{
+							$companyname=$fullname;
+							if (! empty($this->societe)) $companyalias=$this->societe;
+						}
+
+						$result=$customer->create_from_member($this, $companyname, $companyalias);
+						if ($result < 0)
+						{
+							$this->error = $customer->error;
+							$this->errors = $customer->errors;
+							$error++;
+						}
+						else
+						{
+							$this->fk_soc = $result;
+						}
+					}
+					else
+					{
+						 $langs->load("errors");
+						 $this->error=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
+						 $this->errors[]=$this->error;
+						 $error++;
+					}
+				}
+			}
+			if (! $error)
+			{
+				$result=$customer->fetch($this->fk_soc);
+				if ($result <= 0)
+				{
+					$this->error=$customer->error;
+					$this->errors=$customer->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// Create draft invoice
+				$invoice->type=Facture::TYPE_STANDARD;
+				$invoice->cond_reglement_id=$customer->cond_reglement_id;
+				if (empty($invoice->cond_reglement_id))
+				{
+					$paymenttermstatic=new PaymentTerm($this->db);
+					$invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
+					if (empty($invoice->cond_reglement_id))
+					{
+						$error++;
+						$this->error='ErrorNoPaymentTermRECEPFound';
+						$this->errors[]=$this->error;
+					}
+				}
+				$invoice->socid=$this->fk_soc;
+				$invoice->date=$datesubscription;
+
+				// Possibility to add external linked objects with hooks
+				$invoice->linked_objects['subscription'] = $subscriptionid;
+				if (! empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects']))
+				{
+					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				}
+
+				$result=$invoice->create($user);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+				else
+				{
+					$this->invoice = $invoice;
+				}
+			}
+
+			if (! $error)
+			{
+				// Add line to draft invoice
+				$idprodsubscription=0;
+				if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled))) $idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
+
+				$vattouse=0;
+				if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
+				{
+					$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				}
+				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,'',0,0,'','TTC',$amount,1);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// Validate invoice
+				$result=$invoice->validate($user);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// TODO Link invoice with subscription ?
+			}
+
+			// Add payment onto invoice
+			if (! $error && $option == 'bankviainvoice' && $accountid)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+
+				$amounts = array();
+				$amounts[$invoice->id] = price2num($amount);
+
+				$paiement = new Paiement($this->db);
+				$paiement->datepaye     = $paymentdate;
+				$paiement->amounts      = $amounts;
+				$paiement->paiementid   = dol_getIdFromCode($this->db,$operation,'c_paiement','code','id',1);
+				$paiement->num_paiement = $num_chq;
+				$paiement->note         = $label;
+				$paiement->note_public  = $label;
+
+				if (! $error)
+				{
+					// Create payment line for invoice
+					$paiement_id = $paiement->create($user);
+					if (! $paiement_id > 0)
+					{
+						$this->error=$paiement->error;
+						$this->errors=$paiement->errors;
+						$error++;
+					}
+				}
+
+				if (! $error)
+				{
+					// Add transaction into bank account
+					$bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
+					if (! ($bank_line_id > 0))
+					{
+						$this->error=$paiement->error;
+						$this->errors=$paiement->errors;
+						$error++;
+					}
+				}
+
+				if (! $error && !empty($bank_line_id))
+				{
+					// Update fk_bank into subscription table
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
+					$sql.= ' WHERE rowid='.$subscriptionid;
+
+					$result = $this->db->query($sql);
+					if (! $result)
+					{
+						$error++;
+					}
+				}
+
+				if (! $error)
+				{
+					// Set invoice as paid
+					$invoice->set_paid($user);
+				}
+			}
+
+			if (! $error)
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				$lang_id=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($lang_id))
+					$newlang = $lang_id;
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $customer->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs);
+			}
+		}
+
+		if ($error)
+		{
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
 
 	/**
 	 *		Function that validate a member
@@ -1366,6 +1809,8 @@ class Adherent extends CommonObject
 			$result=$this->call_trigger('MEMBER_VALIDATE',$user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 			// End call triggers
+
+			$this->datevalid = $now;
 
 			$this->db->commit();
 			return 1;
@@ -1427,6 +1872,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to add member into external tools mailing-list, spip, etc.
 	 *
@@ -1434,6 +1880,7 @@ class Adherent extends CommonObject
 	 */
 	function add_to_abo()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -1484,6 +1931,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to delete a member from external tools like mailing-list, spip, etc.
 	 *
@@ -1491,6 +1939,7 @@ class Adherent extends CommonObject
 	 */
 	function del_to_abo()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -1591,6 +2040,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
+		if (! empty($this->company))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->company;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
@@ -1661,6 +2112,7 @@ class Adherent extends CommonObject
 		return $this->LibStatut($this->statut,$this->need_subscription,$this->datefin,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -1672,79 +2124,73 @@ class Adherent extends CommonObject
 	 */
 	function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load("members");
 		if ($mode == 0)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
 				else                                     return $langs->trans("MemberStatusPaid");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
 			if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			if ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaid").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -1754,6 +2200,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
@@ -1761,9 +2208,10 @@ class Adherent extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $conf;
 
-		$this->nb=array();
+		$this->nb = array();
 
 		$sql = "SELECT count(a.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -1786,9 +2234,9 @@ class Adherent extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1797,6 +2245,7 @@ class Adherent extends CommonObject
 	 */
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -1853,9 +2302,10 @@ class Adherent extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -1874,7 +2324,7 @@ class Adherent extends CommonObject
 
 		$modelpath = "core/modules/member/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 
@@ -1895,6 +2345,7 @@ class Adherent extends CommonObject
 		$this->civility_id = 0;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
+		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
 		$this->societe = 'Societe ABC';
@@ -1906,7 +2357,9 @@ class Adherent extends CommonObject
 		$this->country = 'France';
 		$this->morphy = 1;
 		$this->email = 'specimen@specimen.com';
-		$this->skype = 'tom.hanson';
+		$this->skype = 'skypepseudo';
+		$this->twitter = 'twitterpseudo';
+		$this->facebook = 'facebookpseudo';
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
@@ -1924,12 +2377,18 @@ class Adherent extends CommonObject
 		$this->need_subscription=0;
 
 		$this->first_subscription_date=time();
+		$this->first_subscription_date_start=$this->first_subscription_date;
+		$this->first_subscription_date_end=dol_time_plus_duree($this->first_subscription_date_start, 1, 'y');
 		$this->first_subscription_amount=10;
-		$this->last_subscription_date=time();
+
+		$this->last_subscription_date=$this->first_subscription_date;
+		$this->last_subscription_date_start=$this->first_subscription_date;
+		$this->last_subscription_date_end=dol_time_plus_duree($this->last_subscription_date_start, 1, 'y');
 		$this->last_subscription_amount=10;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -1941,6 +2400,7 @@ class Adherent extends CommonObject
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
@@ -1950,6 +2410,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
@@ -1957,6 +2418,7 @@ class Adherent extends CommonObject
 	 */
 	function _load_ldap_info()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$info=array();
@@ -2001,15 +2463,17 @@ class Adherent extends CommonObject
 		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))					$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
+		if ($this->twitter && ! empty($conf->global->LDAP_MEMBER_FIELD_TWITTER))				$info[$conf->global->LDAP_MEMBER_FIELD_TWITTER] = $this->twitter;
+		if ($this->facebook && ! empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK))				$info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
 		if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
-		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note_private;
-		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = $this->note_public;
+		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
 		if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))				$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
 		if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
 		if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))	$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
@@ -2103,11 +2567,38 @@ class Adherent extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
 			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 *  Return number of mass Emailing received by this member with its email
+	 *
+	 *  @return       int     Number of EMailings
+	 */
+	function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
@@ -2119,6 +2610,7 @@ class Adherent extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -2159,9 +2651,9 @@ class Adherent extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
 	 * @return bool
 	 */
 	public static function replaceThirdparty($db, $origin_id, $dest_id)
@@ -2191,4 +2683,207 @@ class Adherent extends CommonObject
 		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
 	}
 
+
+
+	/**
+	 * Send reminders by emails before subscription end
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before end of subscription (negative number = after subscription). Can be a list of delay, separated by a semicolon, for example '10;5;0;-5'
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredSubscription($daysbeforeendlist='10')
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error='';
+
+		$blockingerrormsg = '';
+
+		if (empty($conf->adherent->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}
+		if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$arraydaysbeforeend=explode(';',$daysbeforeendlist);
+		foreach($arraydaysbeforeend as $daysbeforeend)			// Loop on each delay
+		{
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (! is_numeric($daysbeforeend))
+			{
+				$blockingerrormsg="Value for delta is not a positive or negative numeric";
+				$nbko++;
+				break;
+			}
+
+			$tmp=dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), $daysbeforeend, 'd');
+
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
+			$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$adherent = new Adherent($this->db);
+				$formmail = new FormMail($this->db);
+
+				$i=0;
+				while ($i < $num_rows)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$adherent->fetch($obj->rowid, '', '', '', true, true);
+
+					if (empty($adherent->email))
+					{
+						$nbko++;
+					}
+					else
+					{
+						$adherent->fetch_thirdparty();
+
+						// Send reminder email
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+						$outputlangs->loadLangs(array("main", "members"));
+						dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
+
+						$arraydefaultmessage=null;
+						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
+
+						if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+						if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+						{
+							$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
+							//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
+							complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$from = $conf->global->ADHERENT_MAIL_FROM;
+							$to = $adherent->email;
+
+							$trackid = 'mem'.$adherent->id;
+							$moreinheader='X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (! $result)
+							{
+								$error++;
+								$this->error = $cmail->error;
+								$this->errors += $cmail->errors;
+								$nbko++;
+							}
+							else
+							{
+								$nbok++;
+
+								$message = $msg;
+								$sendto = $to;
+								$sendtocc = '';
+								$sendtobcc = '';
+								$actioncode='EMAIL';
+								$extraparams='';
+
+								$actionmsg='';
+								$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
+								if ($message)
+								{
+									$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+									$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+									if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+									$actionmsg = dol_concatdesc($actionmsg, $message);
+								}
+
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+	    						// Insert record of emails sent
+	    						$actioncomm = new ActionComm($this->db);
+
+	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+	    						$actioncomm->code        = 'AC_'.$actioncode;
+	    						$actioncomm->label       = $actionmsg2;
+	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->fk_project  = 0;
+	    						$actioncomm->datep       = $now;
+	    						$actioncomm->datef       = $now;
+	    						$actioncomm->percentage  = -1;   // Not applicable
+	    						$actioncomm->socid       = $adherent->thirdparty->id;
+	    						$actioncomm->contactid   = 0;
+	    						$actioncomm->authorid    = $user->id;   // User saving action
+	    						$actioncomm->userownerid = $user->id;	// Owner of action
+	    						// Fields when action is en email (content should be added into note)
+	    						$actioncomm->email_msgid = $cmail->msgid;
+	    						$actioncomm->email_from  = $from;
+	    						$actioncomm->email_sender= '';
+	    						$actioncomm->email_to    = $to;
+	    						$actioncomm->email_tocc  = $sendtocc;
+	    						$actioncomm->email_tobcc = $sendtobcc;
+	    						$actioncomm->email_subject = $subject;
+	    						$actioncomm->errors_to   = '';
+
+	    						$actioncomm->fk_element  = $adherent->id;
+	    						$actioncomm->elementtype = $adherent->element;
+
+	    						$actioncomm->extraparams = $extraparams;
+
+	    						$actioncomm->create($user);
+							}
+						}
+						else
+						{
+							$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
+							$nbko++;
+							break;
+						}
+					}
+
+					$i++;
+				}
+			}
+			else
+			{
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg)
+		{
+			$this->error = $blockingerrormsg;
+			return 1;
+		}
+		else
+		{
+			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
+			$this->output.= ' Send email successfuly to '.$nbok.' members';
+			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+		}
+
+		return 0;
+	}
 }

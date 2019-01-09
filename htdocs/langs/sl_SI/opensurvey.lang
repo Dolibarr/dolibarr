@@ -58,3 +58,4 @@ MoreChoices=Vnesite več možnih izbir za glasovalce
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=%s je izpolnil vrstico.\nVašo anketo lahko najdete na povezavi: \n%s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

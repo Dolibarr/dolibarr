@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  *
@@ -73,13 +73,15 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$sourceref);
 		}
 		elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
 		{
 		    $discount=new DiscountAbsolute($db);
 		    $discount->fetch($line->fk_remise_except);
-		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
+		    $sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$sourceref);
 		    // Add date of deposit
 		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.=' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
@@ -88,6 +90,12 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
+		}
+		elseif ($desc == '(EXCESS PAID)' && $line->fk_remise_except)
+		{
+			$discount=new DiscountAbsolute($db);
+			$discount->fetch($line->fk_remise_except);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid",$discount->ref_invoice_supplier_source);
 		}
 		else
 		{

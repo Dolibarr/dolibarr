@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,13 @@ class modFckeditor extends DolibarrModules
 		$this->numero = 2000;
 
 		$this->family = "technic";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Editeur WYSIWYG";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='list';

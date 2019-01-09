@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
+ * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (! empty($conf->accounting->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills', 'banks'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -241,11 +242,12 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	{
 		$object->paye = 0;
 		$object->id = $object->ref = null;
+		$object->lib = $langs->trans("CopyOf").' '.$object->lib;
 
-		if(GETPOST('clone_for_next_month') != '') {
-
-			$object->date_ech = strtotime('+1month', $object->date_ech);
-			$object->periode = strtotime('+1month', $object->periode);
+		if (GETPOST('clone_for_next_month') != '')
+		{
+			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
+			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 		}
 
 		if ($object->check())
@@ -327,12 +329,22 @@ if ($action == 'create')
 	// Date end period
 	print '<tr>';
 	print '<td class="fieldrequired">';
-	print $langs->trans("PeriodEndDate");
+	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
 	print '</td>';
    	print '<td>';
-	print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print '</tr>';
+
+	// Date due
+	print '<tr>';
+	print '<td class="fieldrequired">';
+	print $langs->trans("DateDue");
+	print '</td>';
+	print '<td>';
+	print $form->selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+	print '</td>';
+	print "</tr>\n";
 
 	// Amount
 	print '<tr>';
@@ -369,16 +381,6 @@ if ($action == 'create')
 		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 		print '</td></tr>';
 	}
-
-	// Date due
-	print '<tr>';
-	print '<td class="fieldrequired">';
-	print $langs->trans("DateDue");
-	print '</td>';
-	print '<td>';
-	print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
-	print '</td>';
-	print "</tr>\n";
 
 	print '</table>';
 
@@ -479,7 +481,7 @@ if ($id > 0)
 		}
 		$morehtmlref.='</div>';
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -496,11 +498,11 @@ if ($id > 0)
 		print "</tr>";
 
 		// Period end date
-		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+		print "<tr><td>".$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"))."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -512,10 +514,9 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
-		}
-		else {
+		} else {
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
 		}
 
@@ -586,7 +587,7 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
     	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id AND c.entity IN (" . getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE p.fk_charge = ".$id;
 		$sql.= " AND p.fk_charge = cs.rowid";
@@ -748,7 +749,6 @@ if ($id > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

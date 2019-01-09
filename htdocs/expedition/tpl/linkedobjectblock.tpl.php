@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,15 +34,15 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("sendings");
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>">
@@ -61,7 +61,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'commande') {
     			?>
-    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     			<?php
     		}
     		?>

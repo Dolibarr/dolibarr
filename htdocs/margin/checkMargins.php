@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -51,7 +49,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder = "DESC";
-if (! $sortfield) $sortfield = 'f.facnumber';
+if (! $sortfield) $sortfield = 'f.ref';
 
 $startdate = $enddate = '';
 
@@ -145,7 +143,7 @@ $title = $langs->trans("Margins");
 
 llxHeader('', $title);
 
-// print_fiche_titre($text);
+// print load_fiche_titre($text);
 
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -167,11 +165,11 @@ print '<table class="border" width="100%">';
 
 print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
-$form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td>' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
-$form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
@@ -187,16 +185,16 @@ $massactionbutton='';
 
 
 $sql = "SELECT";
-$sql .= " f.facnumber, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
+$sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
 $sql .= " ,d.fk_product";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND f.entity IN (" . getEntity('facture') . ") ";
+$sql .= " AND f.entity IN (" . getEntity('invoice') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
-if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);
+if ($search_ref) $sql.=natural_search('f.ref', $search_ref);
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -205,10 +203,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
-	if ($result) {
-		$nbtotalofrecords = $db->num_rows($result);
-	} else {
-		setEventMessages($db->lasterror, null, 'errors');
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
 	}
 }
 
@@ -250,7 +249,7 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
 	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -322,5 +321,6 @@ print '</form>';
 
 $db->free($result);
 
+// End of page
 llxFooter();
 $db->close();

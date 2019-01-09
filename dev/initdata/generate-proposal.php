@@ -33,11 +33,11 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 //$path=preg_replace('/generate-propale.php/i','',$_SERVER["PHP_SELF"]);
-require (__DIR__. '/../../htdocs/master.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+require __DIR__. '/../../htdocs/master.inc.php';
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
+require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 /*
  * Parameters
@@ -157,7 +157,7 @@ $user->rights->propal->propal_advance->validate=1;
 
 if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php";
 }
 
 $i=0;
@@ -218,6 +218,4 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	{
 		dol_print_error($db,$object->error);
 	}
-
 }
-

@@ -22,45 +22,48 @@
  *		\brief      List page for myobject
  */
 
-//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
-//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
-//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
-
+//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
+//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER','1');				// Do not load object $user
+//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC','1');				// Do not load object $mysoc
+//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN','1');				// Do not load object $langs
+//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION','1');		// Do not check injection attack on GET parameters
+//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');		// Do not check injection attack on POST parameters
+//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK','1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
+//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL','1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK','1');				// Do not check style html tag into posted data
+//if (! defined('NOIPCHECK'))                define('NOIPCHECK','1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
+//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML','1');				// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX','1');       	  	// Do not load ajax.lib.php library
+//if (! defined("NOLOGIN"))                  define("NOLOGIN",'1');						// If this page is public (can be called outside logged session)
+//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
+//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
+//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
 while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
 // Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
 if (! $res) die("Include of main fails");
 
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
-$action     = GETPOST('action','alpha')?GETPOST('action','alpha'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
+$action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
 $show_files = GETPOST('show_files','int');												// Show files area generated by bulk actions ?
 $confirm    = GETPOST('confirm','alpha');												// Result of a confirmation
@@ -77,19 +80,21 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+//if (! $sortfield) $sortfield="p.date_fin";
+//if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object=new MyObject($db);
+$object = new MyObject($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$extralabels = $extrafields->fetch_name_optionals_label('myobject');	// Load $extrafields->attributes['myobject']
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -127,11 +132,12 @@ foreach($object->fields as $key => $val)
 	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
 }
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -141,8 +147,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "$action" parameter
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
@@ -186,8 +190,6 @@ if (empty($reshook))
 
 /*
  * View
- *
- * Put here all code to render page
  */
 
 $form=new Form($db);
@@ -207,18 +209,20 @@ foreach($object->fields as $key => $val)
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."myobject_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
+	if ($key == 'status' && $search[$key] == -1) continue;
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
@@ -234,14 +238,16 @@ $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY "
 foreach($object->fields as $key => $val)
 {
-    $sql.='t.'.$key.', ';
+	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+$sql=preg_replace('/, $/','', $sql);
 */
 
 $sql.=$db->order($sortfield,$sortorder);
@@ -250,27 +256,39 @@ $sql.=$db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
-
-$sql.= $db->plimit($limit+1, $offset);
-
-$resql=$db->query($sql);
-if (! $resql)
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
-	dol_print_error($db);
-	exit;
+	$num = $nbtotalofrecords;
 }
+else
+{
+	$sql.= $db->plimit($limit+1, $offset);
 
-$num = $db->num_rows($resql);
+	$resql=$db->query($sql);
+	if (! $resql)
+	{
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
+}
 
 // Direct jump if only one record found
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/mymodule/myobject_card.php?id='.$id);
+	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
 	exit;
 }
 
@@ -314,7 +332,7 @@ $arrayofmassactions =  array(
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
-if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -327,7 +345,15 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+$newcardbutton='';
+//if ($user->rights->mymodule->creer)
+//{
+	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+//}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendMyObjectRef";
@@ -339,7 +365,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -372,11 +398,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+	$cssforfield='';
+	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -398,11 +424,14 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+	$cssforfield='';
+	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	if (! empty($arrayfields['t.'.$key]['checked']))
+	{
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -416,9 +445,12 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-foreach ($extrafields->attribute_computed as $key => $val)
+if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
 {
-	if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
+	{
+		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	}
 }
 
 
@@ -442,14 +474,21 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-		$align='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-		if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-		if ($key == 'status') $align.=($align?' ':'').'center';
-		if (! empty($arrayfields['t.'.$key]['checked']))
+	    $cssforfield='';
+	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	    
+	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    
+	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
-			if ($align) print ' class="'.$align.'"';
+			if ($cssforfield || $val['css']) print ' class="';
+			print $cssforfield;
+			if ($cssforfield && $val['css']) print ' ';
+			print $val['css'];
+			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
@@ -527,25 +566,21 @@ print '</form>'."\n";
 
 if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-		$formfile = new FormFile($db);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		// Show list of available documents
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+	$formfile = new FormFile($db);
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->mymodule->read;
-		$delallowed=$user->rights->mymodule->create;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->mymodule->read;
+	$delallowed=$user->rights->mymodule->create;
+
+	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
 // End of page

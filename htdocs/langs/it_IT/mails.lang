@@ -11,7 +11,9 @@ MailFrom=Mittente
 MailErrorsTo=Errors to
 MailReply=Rispondi a
 MailTo=Destinatario(i)
+MailToUsers=To user(s)
 MailCC=Copia carbone (CC)
+MailToCCUsers=Copy to users(s)
 MailCCC=Copia carbone cache (CCC)
 MailTopic=Titolo
 MailText=Testo
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informazioni
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

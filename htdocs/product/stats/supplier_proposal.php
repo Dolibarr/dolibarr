@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.cla
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE p.fk_soc = s.rowid";
-			$sql .= " AND p.entity IN (".getEntity('propal').")";
+			$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 			$sql .= " AND d.fk_supplier_proposal = p.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))
@@ -260,5 +260,6 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

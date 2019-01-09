@@ -3,13 +3,14 @@
  * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2016	   Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2018	   Charlene Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,8 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products'));
 
 $socid=GETPOST('socid','int');
 
@@ -57,6 +53,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierproposallist';
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -77,13 +74,16 @@ $search_btn=GETPOST('button_search','alpha');
 $search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
+$day=GETPOST("day");
 $yearvalid=GETPOST("yearvalid");
 $monthvalid=GETPOST("monthvalid");
+$dayvalid=GETPOST("dayvalid");
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -98,9 +98,6 @@ if ($object_statut != '') $search_status=$object_statut;
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='supplierproposallist';
 
 // Security check
 $module='supplier_proposal';
@@ -118,20 +115,21 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 $diroutputmassaction=$conf->supplier_proposal->dir_output . '/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new SupplierProposal($db);
 $hookmanager->initHooks(array('supplier_proposallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('supplier_proposal');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'p.ref'=>'Ref',
+	'sp.ref'=>'Ref',
 	's.nom'=>'Supplier',
 	'pd.description'=>'Description',
-	'p.note_public'=>'NotePublic',
+	'sp.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
@@ -201,8 +199,10 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_author='';
 	$yearvalid='';
 	$monthvalid='';
+	$dayvalid='';
 	$year='';
 	$month='';
+	$day='';
 	$search_status='';
 	$object_statut='';
 }
@@ -223,6 +223,7 @@ if (empty($reshook))
  * View
  */
 
+
 $now=dol_now();
 
 $form = new Form($db);
@@ -233,7 +234,7 @@ $companystatic=new Societe($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('',$langs->trans('CommRequest'),$help_url);
+//llxHeader('',$langs->trans('CommRequest'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -288,32 +289,8 @@ if ($search_montant_ttc != '') $sql.= natural_search("sp.total", $search_montant
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
-if ($month > 0)
-{
-	if ($year > 0 && empty($day))
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-	else if ($year > 0 && ! empty($day))
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-	else
-	$sql.= " AND date_format(sp.date_livraison, '%m') = '".$month."'";
-}
-else if ($year > 0)
-{
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-}
-if ($monthvalid > 0)
-{
-	if ($yearvalid > 0 && empty($dayvalid))
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,$monthvalid,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,$monthvalid,false))."'";
-	else if ($yearvalid > 0 && ! empty($dayvalid))
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $monthvalid, $dayvalid, $yearvalid))."' AND '".$db->idate(dol_mktime(23, 59, 59, $monthvalid, $dayvalid, $yearvalid))."'";
-	else
-	$sql.= " AND date_format(sp.date_valid, '%m') = '".$monthvalid."'";
-}
-else if ($yearvalid > 0)
-{
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,1,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,12,false))."'";
-}
+$sql.= dolSqlDateFilter("sp.date_livraison", $day, $month, $year);
+$sql.= dolSqlDateFilter("sp.date_valid", $dayvalid, $monthvalid, $yearvalid);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
@@ -335,6 +312,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -360,6 +342,19 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+
+		$id = $obj->rowid;
+
+		header("Location: ".DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$id);
+
+		exit;
+	}
+
+	llxHeader('',$langs->trans('CommRequest'),$help_url);
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -382,12 +377,21 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 		//'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->supplier_proposal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+	$newcardbutton='';
+	if($user->rights->supplier_proposal->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewAskPrice').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
 	// Lignes des champs de filtre
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -399,7 +403,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendSupplierProposalRef";
 	$modelmail="supplier_proposal_send";
@@ -410,7 +414,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$i = 0;
@@ -467,13 +471,13 @@ if ($resql)
 	if (! empty($arrayfields['sp.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
+		print '<input class="flat" type="text" size="12" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
@@ -504,7 +508,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="monthvalid" value="'.$monthvalid.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syearvalid = $yearvalid;
 		$formother->select_year($syearvalid,'yearvalid',1, 20, 5);
@@ -515,7 +519,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
 		$formother->select_year($syear,'year',1, 20, 5);
@@ -526,28 +530,28 @@ if ($resql)
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.$search_montant_ht.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_vat']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_ttc']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
 		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.$search_author.'">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_author).'">';
 		print '</td>';
 	}
 	// Extra fields
@@ -860,26 +864,19 @@ if ($resql)
 
 	print '</form>'."\n";
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		/*
-	     * Show list of available documents
-	     */
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		$filedir=$diroutputmassaction;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		$genallowed=$user->rights->supplier_proposal->lire;
-		$delallowed=$user->rights->supplier_proposal->creer;
+	$filedir=$diroutputmassaction;
 
-		print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$genallowed=$user->rights->supplier_proposal->lire;
+	$delallowed=$user->rights->supplier_proposal->creer;
 
+	print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +23,11 @@
  *	\brief      Page to preview votes of a survey
  */
 
-$res=0;
-require_once('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Security check
@@ -459,7 +459,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
+if ($action == 'edit') print $form->selectDate($expiredate?$expiredate:$object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
@@ -492,7 +492,6 @@ if ($action != 'edit')
 				});
 		    </script>';
 	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
-
 }
 
 print '</td></tr>';
@@ -1051,18 +1050,20 @@ $toutsujet = explode(",", $object->sujet);  // With old versions, this field was
 
 $compteursujet = 0;
 $meilleursujet = '';
-for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
+for ($i = 0; $i < $nbcolonnes; $i++)
+{
+	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne)
+	{
 		$meilleursujet.=", ";
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
-
+			//var_dump($toutsujet);
             if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
-				$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ' ('.dol_print_date($toutsujetdate[0],'%A').')' . ' - ' . $toutsujetdate[1];
+				$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0],'%A').')' : '') . ' - ' . $toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ' ('.dol_print_date($toutsujet[$i],'%A').')';
+				$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i],'%A').')' : '');
 			}
 		}
 		else
@@ -1084,9 +1085,9 @@ if ($nbofcheckbox >= 2)
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b>" . $vote_str . ".\n";
+		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b> " . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoices') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b>" . $vote_str . ".\n";
+		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoices') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b> " . $vote_str . ".\n";
 	}
 	print '<br></p><br>'."\n";
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -66,7 +66,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {
@@ -170,8 +170,6 @@ if ($action != 'presend')
 		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 }
-
-
 
 // End of page
 llxFooter();

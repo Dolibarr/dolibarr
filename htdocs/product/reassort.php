@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -57,7 +57,8 @@ $page = GETPOST("page",'int');
 if (empty($page) || $page < 0) $page = 0;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 
 // Load sale and categ filters
@@ -76,7 +77,7 @@ if (! empty($canvas))
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)|| ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -126,7 +127,7 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_produc
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $all);
+if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
@@ -160,6 +161,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -311,7 +317,6 @@ if ($resql)
 	        foreach($warehouses_list as &$wh) {
 	            print_liste_field_titre($wh['label'], '', '','','','align="right"');
 	        }
-
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock",$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -325,11 +330,12 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr>';
-		print '<td class="nowrap">';
 		$product=new Product($db);
 		$product->fetch($objp->rowid);
 		$product->load_stock();
+
+		print '<tr>';
+		print '<td class="nowrap">';
 		print $product->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
@@ -366,17 +372,15 @@ if ($resql)
 			}
 		}
 
-
-
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-	    		print '<td align="right">';
+			print '<td align="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	    		print $product->stock_theorique;
-	    		print '</td>';
+			print $product->stock_theorique;
+			print '</td>';
 		}
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
         print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy,5,1).'</td>';
 		print '<td></td>';
@@ -390,13 +394,12 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

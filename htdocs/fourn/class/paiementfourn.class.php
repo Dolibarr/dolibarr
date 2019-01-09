@@ -2,9 +2,11 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +36,16 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class PaiementFourn extends Paiement
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='payment_supplier';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='paiementfourn';
+
 	public $picto = 'payment';
 
 	var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
@@ -80,7 +90,7 @@ class PaiementFourn extends Paiement
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
@@ -192,7 +202,7 @@ class PaiementFourn extends Paiement
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
+			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -253,7 +263,6 @@ class PaiementFourn extends Paiement
 							$this->error=$this->db->lasterror();
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -496,6 +505,7 @@ class PaiementFourn extends Paiement
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -505,6 +515,7 @@ class PaiementFourn extends Paiement
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('compta');
@@ -645,14 +656,12 @@ class PaiementFourn extends Paiement
 			}
 
 			// For compatibility
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
 				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
 				$classname = preg_replace('/\-.*$/','',$classname);
 				// Include file with class
-				foreach ($conf->file->dol_document_root as $dirroot)
-				{
+				foreach ($conf->file->dol_document_root as $dirroot) {
 					$dir = $dirroot."/core/modules/supplier_payment/";
 
 					// Load file with numbering class (if found)
@@ -662,8 +671,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				dol_print_error('',"Failed to include file ".$file);
 				return '';
 			}
@@ -699,9 +707,10 @@ class PaiementFourn extends Paiement
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $user, $langs;
 
@@ -728,7 +737,7 @@ class PaiementFourn extends Paiement
 		{
 			$modelpath = "core/modules/supplier_payment/doc/";
 
-			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 	}
 
@@ -760,14 +769,16 @@ class PaiementFourn extends Paiement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    	Load the third party of object, from id into this->thirdparty
+	 *  Load the third party of object, from id into this->thirdparty
 	 *
-	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								<0 if KO, >0 if OK
+	 *	@param		int		$force_thirdparty_id	Force thirdparty id
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 
 		if (empty($force_thirdparty_id))
@@ -785,5 +796,4 @@ class PaiementFourn extends Paiement
 
 		return parent::fetch_thirdparty($force_thirdparty_id);
 	}
-
 }

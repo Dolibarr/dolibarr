@@ -24,7 +24,7 @@
 
 /**
  * CombinePaths
- * 
+ *
  * @param   string $sBasePath     sBasePath
  * @param   string $sFolder       sFolder
  * @return  string                Combined path
@@ -393,13 +393,13 @@ EOF;
 // This is the function that sends the results of the uploading process to CKE.
 /**
  * SendCKEditorResults
- * 
+ *
  * @param   string  $callback       callback
  * @param   string  $sFileUrl       sFileUrl
  * @param   string  $customMsg      customMsg
  * @return  void
  */
-function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
+function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
 {
   echo '<script type="text/javascript">';
 
@@ -409,5 +409,3 @@ function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 
   echo '</script>';
 }
-
-

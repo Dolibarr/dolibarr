@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *	\brief      Page of a project task
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -33,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadlangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST("ref",'alpha',1);          // task ref
@@ -210,7 +211,7 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 		$result=$projectstatic->fetch($object->fk_project);
@@ -332,12 +333,12 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
 		}
 		}
 		else
 		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 		}
 
 		print '</div>';
@@ -390,12 +391,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print $form->select_date($object->date_start,'dateo',1,1,0,'',1,0,1);
+			print $form->selectDate($object->date_start, 'dateo', 1, 1, 0, '', 1, 0);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $form->select_date($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
+			print $form->selectDate($object->date_end?$object->date_end:-1, 'datee', 1, 1, 0, '', 1, 0);
 			print '</td></tr>';
 
 			// Planned workload
@@ -418,7 +419,7 @@ if ($id > 0 || ! empty($ref))
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}
@@ -579,7 +580,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 				}
 
 				// Delete
@@ -591,12 +592,12 @@ if ($id > 0 || ! empty($ref))
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProjecHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 				}
 
 				print '</div>';
@@ -614,8 +615,6 @@ if ($id > 0 || ! empty($ref))
 			$genallowed=($user->rights->projet->lire);
 			$delallowed=($user->rights->projet->creer);
 
-			$var=true;
-
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -630,6 +629,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

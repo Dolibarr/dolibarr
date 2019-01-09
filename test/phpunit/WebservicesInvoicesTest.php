@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id))
@@ -93,6 +93,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -133,6 +138,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
+    /**
+     * tearDownAfterClass
+     *
+     * @return void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -184,12 +194,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$WS_METHOD  = 'createInvoice';
 
     	$body = array (
-    			"id" => NULL,
-				"ref" => NULL,
+    			"id" => null,
+				"ref" => null,
 				"ref_ext" => "ref-phpunit-2",
 				"thirdparty_id" => self::$socid,
-				"fk_user_author" => NULL,
-				"fk_user_valid" => NULL,
+				"fk_user_author" => null,
+				"fk_user_valid" => null,
 				"date" => "2015-04-19 20:16:53",
 				"date_due" => "",
 				"date_creation" => "",
@@ -203,11 +213,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 				"note_private" => "Synchronised from Prestashop",
 				"note_public" => "",
 				"status" => "1",
-				"close_code" => NULL ,
-				"close_note" => NULL,
-				"project_id" => NULL,
+				"close_code" => null ,
+				"close_note" => null,
+				"project_id" => null,
 				"lines" => array(
-					array("id" => NULL,
+					array("id" => null,
 					"type" => 0,
 					"desc" => "Horloge Vinyle Serge",
 					"vat_rate" => 20,
@@ -293,7 +303,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>'ref-phpunit-2');
+    	$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
@@ -341,12 +351,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// update status to 2
     	$body = array (
-    		"id" => NULL,
-			"ref" => NULL,
+    		"id" => null,
+			"ref" => null,
 			"ref_ext" => "ref-phpunit-2",
 			"thirdparty_id" => self::$socid,
-			"fk_user_author" => NULL,
-			"fk_user_valid" => NULL,
+			"fk_user_author" => null,
+			"fk_user_valid" => null,
 			"date" => "2015-04-19 20:16:53",
 			"date_due" => "",
 			"date_creation" => "",
@@ -360,12 +370,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			"note_private" => "Synchronised from Prestashop",
 			"note_public" => "",
 			"status" => "2",
-			"close_code" => NULL ,
-			"close_note" => NULL,
-			"project_id" => NULL,
+			"close_code" => null ,
+			"close_note" => null,
+			"project_id" => null,
 			"lines"  => array(
 				array(
-				"id"  => NULL,
+				"id"  => null,
 				"type" => 0,
 				"desc" => "Horloge Vinyle Serge",
 				"vat_rate" => 20,
@@ -420,5 +430,4 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-
 }

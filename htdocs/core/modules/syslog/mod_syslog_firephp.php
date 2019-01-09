@@ -122,7 +122,15 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 
 		if (!file_exists($conf->global->SYSLOG_FIREPHP_INCLUDEPATH . self::$firephp_class_path))
 		{
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
+			$conf->global->MAIN_SYSLOG_DISABLE_FIREPHP = 1; // avoid infinite loop
+			if (is_object($langs))   // $langs may not be defined yet.
+			{
+				$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
+			}
+			else
+			{
+				$errors[] = "ErrorFailedToOpenFile " . self::$firephp_class_path;
+			}
 		}
 
 		return $errors;
@@ -145,7 +153,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 
 		try
 		{
-			// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
+			// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
 			set_include_path($conf->global->SYSLOG_FIREPHP_INCLUDEPATH);

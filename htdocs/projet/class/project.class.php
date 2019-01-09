@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
@@ -33,11 +33,32 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 class Project extends CommonObject
 {
 
-    public $element = 'project';    //!< Id that identify managed objects
-    public $table_element = 'projet';  //!< Name of table without prefix where object is stored
-    public $table_element_line = 'projet_task';
-    public $fk_element = 'fk_projet';
-    public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'project';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'projet';
+
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = 'projet_task';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_projet';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+    public $ismultientitymanaged = 1;
+
     public $picto = 'projectpub';
 
     /**
@@ -45,37 +66,43 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $description;
+    /**
+	 * @var string description
+	 */
+	public $description;
+
 	/**
 	 * @var string
 	 * @deprecated
 	 * @see title
 	 */
 	public $titre;
-    var $title;
-    var $date_start;
-    var $date_end;
-    var $date_close;
 
-    var $socid;             // To store id of thirdparty
-    var $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
+    public $title;
+    public $date_start;
+    public $date_end;
+    public $date_close;
 
-    var $user_author_id;    //!< Id of project creator. Not defined if shared project.
-	var $user_close_id;
-    var $public;      //!< Tell if this is a public or private project
-    var $budget_amount;
+    public $socid;             // To store id of thirdparty
+    public $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
 
-    var $statuts_short;
-    var $statuts_long;
+    public $user_author_id;    //!< Id of project creator. Not defined if shared project.
+	public $user_close_id;
+    public $public;      //!< Tell if this is a public or private project
+    public $budget_amount;
+    public $bill_time;			// Is the time spent on project must be invoiced or not
 
-    var $statut;			// 0=draft, 1=opened, 2=closed
-    var $opp_status;		// opportunity status, into table llx_c_lead_status
-	var $opp_percent;		// opportunity probability
+    public $statuts_short;
+    public $statuts_long;
 
-    var $oldcopy;
+    public $statut;			// 0=draft, 1=opened, 2=closed
+    public $opp_status;		// opportunity status, into table llx_c_lead_status
+	public $opp_percent;		// opportunity probability
 
-    var $weekWorkLoad;			// Used to store workload details of a projet
-    var $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
+    public $oldcopy;
+
+    public $weekWorkLoad;			// Used to store workload details of a projet
+    public $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
 
 	/**
 	 * @var int Creation date
@@ -83,16 +110,19 @@ class Project extends CommonObject
 	 * @see date_c
 	 */
 	public $datec;
+
 	/**
 	 * @var int Creation date
 	 */
 	public $date_c;
+
 	/**
 	 * @var int Modification date
 	 * @deprecated
 	 * @see date_m
 	 */
 	public $datem;
+
 	/**
 	 * @var int Modification date
 	 */
@@ -107,10 +137,12 @@ class Project extends CommonObject
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Open/Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Closed status
 	 */
@@ -147,6 +179,10 @@ class Project extends CommonObject
 
         $now=dol_now();
 
+        // Clean parameters
+        $this->note_private = dol_substr($this->note_private, 0, 65535);
+        $this->note_public = dol_substr($this->note_public, 0, 65535);
+
         // Check parameters
         if (!trim($this->ref))
         {
@@ -161,6 +197,7 @@ class Project extends CommonObject
             return -1;
         }
 
+        // Create project
         $this->db->begin();
 
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "projet (";
@@ -178,6 +215,9 @@ class Project extends CommonObject
         $sql.= ", datee";
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
+        $sql.= ", bill_time";
+        $sql.= ", note_private";
+        $sql.= ", note_public";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -194,6 +234,9 @@ class Project extends CommonObject
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", " . (strcmp($this->opp_amount,'') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount,'') ? price2num($this->budget_amount) : 'null');
+        $sql.= ", " . ($this->bill_time ? 1 : 0);
+        $sql.= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
+        $sql.= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -220,7 +263,7 @@ class Project extends CommonObject
         }
 
         // Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -231,13 +274,13 @@ class Project extends CommonObject
         	}
         }
 
-        if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        if (! $error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             $res = $this->setValid($user);
             if ($res < 0) $error++;
         }
 
-        if (!$error)
+        if (! $error)
         {
             $this->db->commit();
             return $ret;
@@ -297,6 +340,7 @@ class Project extends CommonObject
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= ", fk_user_modif = " . $user->id;
+            $sql.= ", bill_time = " . ($this->bill_time ? 1 : 0);
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -316,7 +360,7 @@ class Project extends CommonObject
                 	}
                 }
 
-                if (! $error && !$notrigger)
+                if (! $error && ! $notrigger)
                 {
                 	// Call trigger
                 	$result=$this->call_trigger('PROJECT_MODIFY',$user);
@@ -394,7 +438,8 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
+        $sql.= " note_private, note_public, model_pdf, bill_time";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -441,10 +486,12 @@ class Project extends CommonObject
                 $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
+                $this->bill_time = (int) $obj->bill_time;
 
                 $this->db->free($resql);
 
-                // Retreive all extrafield for thirdparty
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
                 return 1;
@@ -461,6 +508,7 @@ class Project extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Return list of projects
      *
@@ -469,6 +517,7 @@ class Project extends CommonObject
      */
     function liste_array($socid='')
     {
+        // phpcs:enable
         global $conf;
 
         $projects = array();
@@ -502,6 +551,7 @@ class Project extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Return list of elements for type, linked to a project
      *
@@ -510,10 +560,12 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of date field for filter
      *  @param		int			$dates			Start date
      *  @param		int			$datee			End date
+	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
+    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
     {
+        // phpcs:enable
         $elements = array();
 
         if ($this->id <= 0) return $elements;
@@ -522,11 +574,11 @@ class Project extends CommonObject
 
 		if ($type == 'agenda')
         {
-        	$sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project IN (". $ids .")";
+        	$sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project IN (". $ids .") AND entity IN (".getEntity('agenda').")";
         }
         elseif ($type == 'expensereport')
 		{
-            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet IN (". $ids .")";
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (". $ids .")";
 		}
         elseif ($type == 'project_task')
 		{
@@ -538,11 +590,11 @@ class Project extends CommonObject
 		}
 		elseif ($type == 'stock_mouvement')
 		{
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms WHERE ms.origintype = 'project' AND ms.fk_origin  IN (". $ids .") AND ms.type_mouvement = 1";
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms, " . MAIN_DB_PREFIX . "entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (". $ids .") AND ms.type_mouvement = 1";
 		}
         else
 		{
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .")";
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE ".$projectkey." IN (". $ids .") AND entity IN (".getEntity($type).")";
 		}
 
 		if ($dates > 0)
@@ -619,9 +671,10 @@ class Project extends CommonObject
 
         // Set fk_projet into elements to null
         $listoftables=array(
-        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet',
-                'facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet','supplier_proposal'=>'fk_projet',
-        		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet','don'=>'fk_projet'
+        		'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
+        		'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
+        		'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet', 'fichinter'=>'fk_projet', 'don'=>'fk_projet',
+        		'actioncomm'=>'fk_project'
         		);
         foreach($listoftables as $key => $value)
         {
@@ -716,10 +769,10 @@ class Project extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * 		Delete tasks with no children first, then task with children recursively
-     *  
+     *
      *  	@param     	User		$user		User
      *		@return		int				<0 if KO, 1 if OK
      */
@@ -747,7 +800,7 @@ class Project extends CommonObject
         {
             if (count($this->lines)) $this->deleteTasks($this->lines);
         }
-        
+
         return 1;
     }
 
@@ -889,6 +942,7 @@ class Project extends CommonObject
         return $this->LibStatut($this->statut, $mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoi status label for a status
      *
@@ -898,6 +952,7 @@ class Project extends CommonObject
      */
     function LibStatut($statut, $mode=0)
     {
+        // phpcs:enable
         global $langs;
 
         if ($mode == 0)
@@ -960,7 +1015,7 @@ class Project extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1009,17 +1064,15 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-		if (! is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+			/*
+			$hookmanager->initHooks(array('projectdao'));
+			$parameters=array('id'=>$this->id);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+			if ($reshook > 0)
+				$linkclose = $hookmanager->resPrint;
+			*/
 		}
-		$hookmanager->initHooks(array('projectdao'));
-		$parameters=array('id'=>$this->id);
-		// Note that $action and $object may have been modified by some hooks
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-		if ($reshook > 0)
-			$linkclose = $hookmanager->resPrint;
-        }
 
         $picto = 'projectpub';
         if (! $this->public) $picto = 'project';
@@ -1033,6 +1086,13 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.= $this->ref;
         $result .= $linkend;
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+        global $action;
+        $hookmanager->initHooks(array('projectdao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }
@@ -1135,10 +1195,10 @@ class Project extends CommonObject
      *
      * @param 	User	$user			User object
      * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list			0=Return array,1=Return string list
+     * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @param	string		$filter			additionnal filter on project (statut, ref, ...)
-     * @return 	array or string			Array of projects id, or string with projects id separated with ","
+     * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+     * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
     {
@@ -1450,7 +1510,6 @@ class Project extends CommonObject
 							$tab_conv_child_parent[$tasktoclone->id] =  $new_task_id;
 						}
 				    }
-
 			    }
 
 			    //Parse all clone node to be sure to update new parent
@@ -1556,15 +1615,17 @@ class Project extends CommonObject
 	}
 
 
-	 /**
-	  *    Associate element to a project
-	  *
-	  *    @param	string	$tableName			Table of the element to update
-	  *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
-	  *    @return	int							1 if OK or < 0 if KO
-	  */
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *    Associate element to a project
+	 *
+	 *    @param	string	$tableName			Table of the element to update
+	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @return	int							1 if OK or < 0 if KO
+     */
 	function update_element($tableName, $elementSelectId)
 	{
+        // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
 		if ($tableName == "actioncomm")
@@ -1586,9 +1647,9 @@ class Project extends CommonObject
 		}else {
 			return 1;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Associate element to a project
 	 *
@@ -1598,6 +1659,7 @@ class Project extends CommonObject
 	 */
 	function remove_element($tableName, $elementSelectId)
 	{
+        // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
 		if ($TableName=="actioncomm")
@@ -1619,7 +1681,6 @@ class Project extends CommonObject
 		}else {
 			return 1;
 		}
-
 	}
 
 	/**
@@ -1720,6 +1781,7 @@ class Project extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -1728,13 +1790,14 @@ class Project extends CommonObject
      */
     function load_board($user)
     {
+        // phpcs:enable
         global $conf, $langs;
 
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
         //$socid=$user->societe_id;
 
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
-        
+
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
@@ -1748,7 +1811,7 @@ class Project extends CommonObject
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
         //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        
+
         //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1804,6 +1867,7 @@ class Project extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
@@ -1811,6 +1875,7 @@ class Project extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 	    global $user;
 
 	    $this->nb=array();
@@ -1902,7 +1967,6 @@ class Project extends CommonObject
 	        }
 
 	        $this->db->free($result);
-
 	    }
 	    else
 	    {
@@ -1918,6 +1982,7 @@ class Project extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -1984,6 +2049,4 @@ class Project extends CommonObject
 
 	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
 	}
-
 }
-

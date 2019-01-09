@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  *
@@ -48,6 +48,7 @@ dol_syslog(join(',',$_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->load("main");
 
 top_httphead();

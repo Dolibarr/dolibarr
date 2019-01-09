@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
@@ -38,7 +38,7 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDb      $db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -64,6 +64,7 @@ class html_cerfafr extends ModeleDon
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write the object to document file to disk
 	 *
@@ -74,6 +75,7 @@ class html_cerfafr extends ModeleDon
 	 */
 	function write_file($don,$outputlangs,$currency='')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc;
 
 		$now=dol_now();
@@ -81,12 +83,8 @@ class html_cerfafr extends ModeleDon
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("donations");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
 
@@ -167,7 +165,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 				$form = str_replace('__AMOUNT__', price($don->amount), $form);
-				$form = str_replace('__AMOUNTLETTERS__',chiffre_en_lettre($don->amount),$form);
+				$form = str_replace('__AMOUNTLETTERS__', $this->amountToLetters($don->amount),$form);
 				$form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$currency),$form);
 				$form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
@@ -276,153 +274,163 @@ class html_cerfafr extends ModeleDon
 			return 0;
 		}
 	}
-}
 
-function chiffre_en_lettre($montant, $devise1='', $devise2='')
-{
-	if(empty($devise1)) $dev1='euros';
-	else $dev1=$devise1;
-	if(empty($devise2)) $dev2='centimes';
-	else $dev2=$devise2;
-	$valeur_entiere=intval($montant);
-	$valeur_decimal=intval(round($montant-intval($montant), 2)*100);
-	$dix_c=intval($valeur_decimal%100/10);
-	$cent_c=intval($valeur_decimal%1000/100);
-	$unite[1]=$valeur_entiere%10;
-	$dix[1]=intval($valeur_entiere%100/10);
-	$cent[1]=intval($valeur_entiere%1000/100);
-	$unite[2]=intval($valeur_entiere%10000/1000);
-	$dix[2]=intval($valeur_entiere%100000/10000);
-	$cent[2]=intval($valeur_entiere%1000000/100000);
-	$unite[3]=intval($valeur_entiere%10000000/1000000);
-	$dix[3]=intval($valeur_entiere%100000000/10000000);
-	$cent[3]=intval($valeur_entiere%1000000000/100000000);
-	$chif=array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
-		$secon_c='';
-		$trio_c='';
-	for($i=1; $i<=3; $i++){
-		$prim[$i]='';
-		$secon[$i]='';
-		$trio[$i]='';
-		if($dix[$i]==0){
+	/**
+	 * numbers to letters
+	 *
+	 * @param   mixed   $montant    amount
+	 * @param   mixed   $devise1    devise 1 ex: euro
+	 * @param   mixed   $devise2    devise 2 ex: centimes
+	 * @return string               amount in letters
+	 */
+	private function amountToLetters($montant, $devise1='', $devise2='')
+	{
+		$unite = array();
+		$dix = array();
+		$cent = array();
+		if(empty($devise1)) $dev1='euros';
+		else $dev1=$devise1;
+		if(empty($devise2)) $dev2='centimes';
+		else $dev2=$devise2;
+		$valeur_entiere=intval($montant);
+		$valeur_decimal=intval(round($montant-intval($montant), 2)*100);
+		$dix_c=intval($valeur_decimal%100/10);
+		$cent_c=intval($valeur_decimal%1000/100);
+		$unite[1]=$valeur_entiere%10;
+		$dix[1]=intval($valeur_entiere%100/10);
+		$cent[1]=intval($valeur_entiere%1000/100);
+		$unite[2]=intval($valeur_entiere%10000/1000);
+		$dix[2]=intval($valeur_entiere%100000/10000);
+		$cent[2]=intval($valeur_entiere%1000000/100000);
+		$unite[3]=intval($valeur_entiere%10000000/1000000);
+		$dix[3]=intval($valeur_entiere%100000000/10000000);
+		$cent[3]=intval($valeur_entiere%1000000000/100000000);
+		$chif=array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
+			$secon_c='';
+			$trio_c='';
+		for($i=1; $i<=3; $i++){
+			$prim[$i]='';
 			$secon[$i]='';
-			$prim[$i]=$chif[$unite[$i]];
+			$trio[$i]='';
+			if($dix[$i]==0){
+				$secon[$i]='';
+				$prim[$i]=$chif[$unite[$i]];
+			}
+			else if($dix[$i]==1){
+				$secon[$i]='';
+				$prim[$i]=$chif[($unite[$i]+10)];
+			}
+			else if($dix[$i]==2){
+				if($unite[$i]==1){
+				$secon[$i]='vingt et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='vingt';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==3){
+				if($unite[$i]==1){
+				$secon[$i]='trente et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='trente';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==4){
+				if($unite[$i]==1){
+				$secon[$i]='quarante et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='quarante';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==5){
+				if($unite[$i]==1){
+				$secon[$i]='cinquante et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='cinquante';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==6){
+				if($unite[$i]==1){
+				$secon[$i]='soixante et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='soixante';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==7){
+				if($unite[$i]==1){
+				$secon[$i]='soixante et';
+				$prim[$i]=$chif[$unite[$i]+10];
+				}
+				else {
+				$secon[$i]='soixante';
+				$prim[$i]=$chif[$unite[$i]+10];
+				}
+			}
+			else if($dix[$i]==8){
+				if($unite[$i]==1){
+				$secon[$i]='quatre-vingts et';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+				else {
+				$secon[$i]='quatre-vingt';
+				$prim[$i]=$chif[$unite[$i]];
+				}
+			}
+			else if($dix[$i]==9){
+				if($unite[$i]==1){
+				$secon[$i]='quatre-vingts et';
+				$prim[$i]=$chif[$unite[$i]+10];
+				}
+				else {
+				$secon[$i]='quatre-vingts';
+				$prim[$i]=$chif[$unite[$i]+10];
+				}
+			}
+			if($cent[$i]==1) $trio[$i]='cent';
+			else if($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
 		}
-		else if($dix[$i]==1){
-			$secon[$i]='';
-			$prim[$i]=$chif[($unite[$i]+10)];
-		}
-		else if($dix[$i]==2){
-			if($unite[$i]==1){
-			$secon[$i]='vingt et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='vingt';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==3){
-			if($unite[$i]==1){
-			$secon[$i]='trente et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='trente';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==4){
-			if($unite[$i]==1){
-			$secon[$i]='quarante et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='quarante';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==5){
-			if($unite[$i]==1){
-			$secon[$i]='cinquante et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='cinquante';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==6){
-			if($unite[$i]==1){
-			$secon[$i]='soixante et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='soixante';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==7){
-			if($unite[$i]==1){
-			$secon[$i]='soixante et';
-			$prim[$i]=$chif[$unite[$i]+10];
-			}
-			else {
-			$secon[$i]='soixante';
-			$prim[$i]=$chif[$unite[$i]+10];
-			}
-		}
-		else if($dix[$i]==8){
-			if($unite[$i]==1){
-			$secon[$i]='quatre-vingts et';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-			else {
-			$secon[$i]='quatre-vingt';
-			$prim[$i]=$chif[$unite[$i]];
-			}
-		}
-		else if($dix[$i]==9){
-			if($unite[$i]==1){
-			$secon[$i]='quatre-vingts et';
-			$prim[$i]=$chif[$unite[$i]+10];
-			}
-			else {
-			$secon[$i]='quatre-vingts';
-			$prim[$i]=$chif[$unite[$i]+10];
-			}
-		}
-		if($cent[$i]==1) $trio[$i]='cent';
-		else if($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
+
+
+		$chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
+		$secon_c=$chif2[$dix_c];
+		if($cent_c==1) $trio_c='cent';
+		else if($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
+
+		if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
+			$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
+		else if(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
+			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
+		else
+			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
+
+		if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
+			$somme = $somme.' mille ';
+		else if(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
+			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
+		else
+			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];
+
+		$somme = $somme. $trio[1]. ' ' .$secon[1]. ' ' . $prim[1];
+
+		$somme = $somme. ' '. $dev1 .' ' ;
+
+		if(($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
+			return $somme. ' et z&eacute;ro '. $dev2;
+		else
+			return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
 	}
-
-
-$chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
-	$secon_c=$chif2[$dix_c];
-	if($cent_c==1) $trio_c='cent';
-	else if($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
-
-	if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
-		$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
-	else if(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
-		$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
-	else
-		$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
-
-	if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
-		$somme = $somme.' mille ';
-	else if(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
-		$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
-	else
-		$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];
-
-	$somme = $somme. $trio[1]. ' ' .$secon[1]. ' ' . $prim[1];
-
-	$somme = $somme. ' '. $dev1 .' ' ;
-
-	if(($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
-		return $somme. ' et z&eacute;ro '. $dev2;
-	else
-		return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
-
 }

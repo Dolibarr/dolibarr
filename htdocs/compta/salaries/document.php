@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -35,11 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("other");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -47,8 +44,9 @@ $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
 // Security check
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', $id, '');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 // Get parameters
@@ -93,7 +91,7 @@ if ($object->id)
 
 	dol_fiche_head($head, 'documents',  $langs->trans("SalaryPayment"), -1, 'payment');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -101,7 +99,7 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 
@@ -118,7 +116,7 @@ if ($object->id)
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 	print '</table>';
 
 	print '</div>';
@@ -129,13 +127,12 @@ if ($object->id)
 	$permission = $user->rights->salaries->write;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

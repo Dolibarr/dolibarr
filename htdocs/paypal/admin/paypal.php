@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename='PayPal';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paypal");
-$langs->load("paybox");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
 
 if (! $user->admin) accessforbidden();
 
@@ -54,6 +52,8 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "PAYPAL_SSLVERSION",GETPOST('PAYPAL_SSLVERSION','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
@@ -210,6 +210,13 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
@@ -247,8 +254,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -319,5 +326,6 @@ $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+// End of page
 llxFooter();
 $db->close();

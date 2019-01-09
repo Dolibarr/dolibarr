@@ -11,7 +11,9 @@ MailFrom=Αποστολέας
 MailErrorsTo=Σφάλματα σε
 MailReply=Απάντηση σε
 MailTo=Παραλήπτης(ες)
+MailToUsers=To user(s)
 MailCC=Αντιγραφή σε
+MailToCCUsers=Copy to users(s)
 MailCCC=Cached copy to
 MailTopic=EMail topic
 MailText=Μήνυμα
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Πληροφορίες
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

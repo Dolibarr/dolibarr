@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
 
 $id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('rowid','int');
 
@@ -148,10 +148,12 @@ if ($object->id > 0)
     //print '</div>';
 
 
-	$createbutton = '';
+	$newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
-    	$createbutton.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a>';
+    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    	$newcardbutton.= '</a>';
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
@@ -162,7 +164,7 @@ if ($object->id > 0)
     	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $createbutton, '', 0, 1, 1);
+    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
 
     	// List of all actions
     	$filters=array();
@@ -173,8 +175,6 @@ if ($object->id > 0)
     }
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

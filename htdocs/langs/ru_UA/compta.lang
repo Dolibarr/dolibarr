@@ -23,7 +23,6 @@ ListOfCustomerPayments=Список клиентских платежей
 TotalToPay=Общая сумма
 CustomerAccountancyCode=Код клиента бухгалтерского
 SupplierAccountancyCode=Код поставщика бухгалтерия
-SalesTurnover=Оборот
 ByThirdParties=Бу третьим лицам
 NewCheckDeposit=Новая проверка депозита
 NewCheckDepositOn=Создайте для получения депозита на счет: %s

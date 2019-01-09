@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -30,6 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $id = GETPOST('id', 'int');
@@ -114,6 +115,7 @@ if ($id > 0 || ! empty($ref))
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();
 

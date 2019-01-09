@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,23 +67,7 @@ class ActionsCardCompany extends ActionsCardCommon
     }
 
 
-	/**
-     *  doActions of a canvas is not the doActions of the hook
-     *  @deprecated Use the doActions of hooks instead of this.
-	 *
-	 *  @param	string	$action    Type of action
-	 *  @param	int		$id			Id of object
-	 * 	@return	int					<0 if KO, >0 if OK
-	 */
-	function doActions(&$action, $id)
-	{
-		$ret = $this->getObject($id);
-
-		$return = parent::doActions($action);
-
-		return $return;
-	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -94,6 +78,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
@@ -196,7 +181,6 @@ class ActionsCardCompany extends ActionsCardCommon
 				{
 					$this->tpl['tva_intra'] = $s;
 				}
-
 			}
 			else
 			{
@@ -235,6 +219,4 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-
 }
-

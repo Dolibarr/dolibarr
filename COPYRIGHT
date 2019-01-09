@@ -53,6 +53,10 @@ JsTimezoneDetect       1.0.6         MIT License                 Yes            
 SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
 Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
 
+Image libraries
+Octicons               8.1           MIT                         Yes
+
+
 For licenses compatibility informations:
 http://www.gnu.org/licenses/licenses.en.html
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,7 +45,7 @@ $year=GETPOST("year",'int');
 $filtre=GETPOST("filtre",'alpha');
 if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -133,7 +133,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs,";
 	$sql.= " ".MAIN_DB_PREFIX."paiementcharge as pc";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " WHERE cs.fk_type = c.id AND pc.fk_charge = cs.rowid";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)
@@ -158,12 +158,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$total = 0;
 		$totalnb = 0;
 		$totalpaye = 0;
-		$var=true;
 
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
-			$var = !$var;
 			print '<tr class="oddeven">';
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
@@ -253,13 +251,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datev","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 		    print "</tr>\n";
-		    $var=1;
+
 		    while ($i < $num)
 		    {
 		        $obj = $db->fetch_object($result);
 
 		        $total = $total + $obj->amount;
-
 
 		        print '<tr class="oddeven">';
 		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
@@ -355,13 +352,12 @@ while($j<$numlt)
 			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
-			$var=1;
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
 
 				$total = $total + $obj->amount;
-
 
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
@@ -401,7 +397,7 @@ while($j<$numlt)
 
 
 // Payment Salary
-if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
+if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 {
     if (! $mode || $mode != 'sconly')
     {
@@ -409,7 +405,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
         print "<br>";
 
-        print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+        print load_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
@@ -437,13 +433,12 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
             print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
             print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
-            $var=1;
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
 
                 $total = $total + $obj->amount;
-
 
                 print '<tr class="oddeven">';
 
@@ -485,7 +480,6 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();
