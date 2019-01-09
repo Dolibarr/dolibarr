@@ -1139,7 +1139,9 @@ class Paiement extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+        $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+        $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
