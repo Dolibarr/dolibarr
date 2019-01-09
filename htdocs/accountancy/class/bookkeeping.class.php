@@ -221,7 +221,7 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) $this->credit = 0;
 
 		// Check parameters
-		if (empty($this->numero_compte) || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
+		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
 		{
 			$langs->loadLangs(array("errors"));
 			if (in_array($this->doc_type, array('bank', 'expense_report')))

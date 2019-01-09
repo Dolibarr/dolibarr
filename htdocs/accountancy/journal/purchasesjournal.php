@@ -140,7 +140,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined';
+	$cptfour = ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined';
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
 
 	$i = 0;
@@ -148,7 +148,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
+		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -742,7 +742,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
-	if (empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
+	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
@@ -877,7 +877,7 @@ if (empty($action) || $action == 'view') {
 				// Account
 				print "<td>";
 				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("MainAccountForSupplierssNotDefined").'</span>';
 				}
@@ -886,7 +886,7 @@ if (empty($action) || $action == 'view') {
 				// Subledger account
 				print "<td>";
 				$accountoshow = length_accounta($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 				}
@@ -912,7 +912,7 @@ if (empty($action) || $action == 'view') {
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
 				}
@@ -946,7 +946,7 @@ if (empty($action) || $action == 'view') {
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
-					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')'.'</span>';
 					}
@@ -977,7 +977,7 @@ if (empty($action) || $action == 'view') {
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
-					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
 					}
