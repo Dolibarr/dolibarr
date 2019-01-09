@@ -198,12 +198,16 @@ if ($result > 0)
 
 	// Payment mode
 	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
+	print $object->num_paiement?' - '.$object->num_paiement:'';
+	print '</td></tr>';
 
 	// Payment numero
-	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+	/* TODO Add field num_payment into payment table and save it
+	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
+    */
 
 	// Amount
 	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
@@ -212,11 +216,6 @@ if ($result > 0)
 	{
 		print '<tr><td colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
-
-	// Note
-	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
-	print '</td></tr>';
 
 	$allow_delete = 1 ;
 	// Bank account
@@ -233,13 +232,6 @@ if ($result > 0)
 			}
 
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showconciliated');
-			print '</td>';
-			print '</tr>';
-
-			print '<tr>';
 			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
 			print '<td colspan="3">';
 			$accountstatic=new Account($db);
@@ -247,8 +239,20 @@ if ($result > 0)
 			print $accountstatic->getNomUrl(1);
 			print '</td>';
 			print '</tr>';
+
+			print '<tr>';
+			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			print $bankline->getNomUrl(1,0,'showconciliated');
+			print '</td>';
+			print '</tr>';
 		}
 	}
+
+	// Note
+	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -276,9 +280,9 @@ if ($result > 0)
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
 		print '<td>'.$langs->trans('Company').'</td>';
-		print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-		print '<td align="center">'.$langs->trans('Status').'</td>';
-		print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+		print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+		print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+		print '<td class="right">'.$langs->trans('Status').'</td>';
 		print "</tr>\n";
 
 		if ($num > 0)
@@ -302,12 +306,13 @@ if ($result > 0)
 				// Third party
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->name.'</a></td>';
 				// Expected to pay
-				print '<td align="right">'.price($objp->total_ttc).'</td>';
-				// Status
-				print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+				print '<td class="right">'.price($objp->total_ttc).'</td>';
 				// Payed
-				print '<td align="right">'.price($objp->amount).'</td>';
+				print '<td class="right">'.price($objp->amount).'</td>';
+				// Status
+				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
 				print "</tr>\n";
+
 				if ($objp->paye == 1)
 				{
 					$allow_delete = 0;
