@@ -1173,7 +1173,7 @@ class Paiement extends CommonObject
 		$result='';
         $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
         $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-        $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->date, 'dayhour');
+        $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
