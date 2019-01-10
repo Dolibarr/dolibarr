@@ -705,6 +705,7 @@ AddFile=Add file
 FreeZone=Not a predefined product/service
 FreeLineOfType=Free-text item, type:
 CloneMainAttributes=Clone object with its main attributes
+ReGeneratePDF=Re-generate PDF
 PDFMerge=PDF Merge
 Merge=Merge
 DocumentModelStandardPDF=Standard PDF template

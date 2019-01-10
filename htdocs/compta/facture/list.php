@@ -572,7 +572,7 @@ if ($resql)
 
 	$arrayofmassactions=array(
 		'validate'=>$langs->trans("Validate"),
-		'generate_doc'=>$langs->trans("GeneratePDF"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
 	);
