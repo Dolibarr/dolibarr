@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,16 +115,23 @@ function LoadProducts(position){
     if (currentcat=="") return;
 	pageproducts=0;
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		for (i = 0; i < 30; i++) {
-			if (typeof (data[i]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+		idata=0; //product data counter
+		ishow=0; //product to show counter
+		while (idata < 30) {
+			if (typeof (data[idata]) == "undefined") {
+				$("#prodesc"+ishow).text(""); 
+				$("#proimg"+ishow).attr("src",""); 
+				$("#prodiv"+ishow).data("rowid","");
+				ishow++; //Next product to show after print data product
 			}
-			$("#prodesc"+i).text(data[parseInt(i)]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['id']);
-			$("#prodiv"+i).data("rowid",data[i]['id']);
+			else if ((data[idata]['status']) == "1") {
+				//Only show products with status=1 (for sell)
+				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				ishow++; //Next product to show after print data product
+			}
+			idata++; //Next data everytime
 		}
 	});
 }
@@ -145,16 +153,23 @@ function MoreProducts(moreorless){
 			pageproducts=pageproducts-1;
 			return;
 		}
-		for (i = 0; i < 30; i++) {
-			if (typeof (data[i+(30*pageproducts)]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+		idata=30*pageproducts; //product data counter
+		ishow=0; //product to show counter
+		while (idata < 30) {
+			if (typeof (data[idata]) == "undefined") {
+				$("#prodesc"+ishow).text(""); 
+				$("#proimg"+ishow).attr("src",""); 
+				$("#prodiv"+ishow).data("rowid","");
+				ishow++; //Next product to show after print data product
 			}
-			$("#prodesc"+i).text(data[parseInt(i+(30*pageproducts))]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i+(30*pageproducts)]['id']);
-			$("#prodiv"+i).data("rowid",data[i+(30*pageproducts)]['id']);
+			else if ((data[idata]['status']) == "1") {
+				//Only show products with status=1 (for sell)
+				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				ishow++; //Next product to show after print data product
+			}
+			idata++; //Next data everytime
 		}
 	});
 }
