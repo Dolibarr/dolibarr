@@ -450,7 +450,7 @@ class Form
 		if ($notabs == 2) $tag='div';
 		if ($notabs == 3) $tag='span';
 		// Sanitize tooltip
-		$htmltext=str_replace("\\","\\\\",$htmltext);
+		//$htmltext=str_replace("\\","\\\\",$htmltext);
 		$htmltext=str_replace("\r","",$htmltext);
 		$htmltext=str_replace("\n","",$htmltext);
 
@@ -1141,8 +1141,8 @@ class Form
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 
 		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
-			$sql .= " ,s.address, s.zip, s.town";
-		 	$sql .= " , dictp.code as country_code";
+			$sql .= ", s.address, s.zip, s.town";
+		 	$sql .= ", dictp.code as country_code";
 		}
 
 		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
@@ -1441,9 +1441,10 @@ class Form
 				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
-			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+			if ($htmlname != 'none' && ! $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out.= '<option value="0"'.(in_array(0,$selected)?' selected':'').'>&nbsp;</option>';
 			if ($showempty == 2) $out.= '<option value="0"'.(in_array(0,$selected)?' selected':'').'>'.$langs->trans("Internal").'</option>';
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -1504,7 +1505,7 @@ class Form
 				$out.= ($socid != -1) ? ($langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
 				$out.= '</option>';
 			}
-			if ($htmlname != 'none' || $options_only)
+			if ($htmlname != 'none' && ! $options_only)
 			{
 				$out.= '</select>';
 			}
@@ -2491,9 +2492,10 @@ class Form
 	 *	@param	array	$ajaxoptions	Options for ajax_autocompleter
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
+	 *  @param	string	$morecss		More CSS
 	 *	@return	void
 	 */
-	function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0)
+	function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0, $morecss='')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2518,7 +2520,7 @@ class Form
 		}
 		else
 		{
-			print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss);
 		}
 	}
 
@@ -2536,9 +2538,10 @@ class Form
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
+	 *  @param	string	$morecss		Add more CSS
 	 *  @return array           		Array of keys for json
 	 */
-	function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0)
+	function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0,$morecss='')
 	{
         // phpcs:enable
 		global $langs,$conf,$db;
@@ -2593,7 +2596,7 @@ class Form
 			$num = $this->db->num_rows($result);
 
 			//$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-			$out.='<select class="flat maxwidthonsmartphone" id="'.$htmlname.'" name="'.$htmlname.'">';
+			$out.='<select class="flat maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 			if (! $selected) $out.='<option value="0" selected>&nbsp;</option>';
 			else $out.='<option value="0">&nbsp;</option>';
 
@@ -4293,9 +4296,10 @@ class Form
 	 *    @param    string	$htmlname    	Name of select html field
 	 *    @param  	string	$filtertype		To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
 	 *    @param    int     $active         Active or not, -1 = all
+	 *    @param   int     $addempty       1=Add empty entry
 	 *    @return	void
 	 */
-	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1)
+	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1, $addempty=0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4304,7 +4308,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmode">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$this->select_types_paiements($selected,$htmlname,$filtertype,0,0,0,0,$active);
+			$this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
@@ -5671,7 +5675,7 @@ class Form
 	 *  @param  int             $disablebademail	Check if an email is found into value and if not disable and colorize entry
 	 *  @param  int             $nohtmlescape		No html escaping.
 	 * 	@return	string								HTML select string.
-	 *  @see multiselectarray
+	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
 	 */
 	static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
 	{
@@ -6001,14 +6005,18 @@ class Form
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray
+	 *  @see selectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=1)
+	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=-1)
 	{
 		global $conf, $langs;
 
 		$out = '';
 
+		if ($addjscombo < 0) {
+		    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $addjscombo = 1;
+		    else $addjscombo = 0;
+		}
 
 		// Add code for jquery to use multiselect
 		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
@@ -6254,7 +6262,7 @@ class Form
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array(
 			'morehtmlright' => $morehtmlright,
-		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
+		    'compatibleImportElementsList' => &$compatibleImportElementsList,
 		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
@@ -6431,6 +6439,7 @@ class Form
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
 		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
 		if (empty($reshook))
 		{
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
@@ -6454,7 +6463,7 @@ class Form
 
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
-				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+				print '<div id="'.$key.'list"'.(empty($conf->use_javascript_ajax)?'':' style="display:none"').'>';
 				$sql = $possiblelink['sql'];
 
 				$resqllist = $this->db->query($sql);
@@ -6463,9 +6472,11 @@ class Form
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
 
-					print '<br><form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
+					print '<br>';
+					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
 					print '<input type="hidden" name="action" value="addlink">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<input type="hidden" name="addlink" value="'.$key.'">';
 					print '<table class="noborder">';
 					print '<tr class="liste_titre">';
@@ -6514,8 +6525,9 @@ class Form
 		{
 			$linktoelem='
     		<dl class="dropdown" id="linktoobjectname">
-    		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
-    		<dd>
+    		';
+			if (! empty($conf->use_javascript_ajax)) $linktoelem.='<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>';
+			$linktoelem.='<dd>
     		<div class="multiselectlinkto">
     		<ul class="ulselectedfields">'.$linktoelemlist.'
     		</ul>
@@ -6528,7 +6540,9 @@ class Form
 			$linktoelem='';
 		}
 
-		print '<!-- Add js to show linkto box -->
+		if (! empty($conf->use_javascript_ajax))
+		{
+		  print '<!-- Add js to show linkto box -->
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
@@ -6538,7 +6552,8 @@ class Form
 					});
 				});
 				</script>
-		';
+		  ';
+		}
 
 		return $linktoelem;
 	}

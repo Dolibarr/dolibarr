@@ -86,7 +86,7 @@ $formproduct=new FormProduct($db);
 llxHeader('',$langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)',$linkback,'title_setup');
 print '<br>';
 
 
@@ -95,14 +95,64 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
 
+if (! empty($conf->service->enabled))
+{
+	print '<table class="noborder" width="100%">';
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("CashdeskShowServices");
+	print '<td colspan="2">';
+	print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+	print "</td></tr>\n";
+
+	// Use Takepos printing
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOSCONNECTOR",$conf->global->TAKEPOSCONNECTOR,1);
+	print "</td></tr>\n";
+
+	if ($conf->global->TAKEPOSCONNECTOR){
+		print '<tr class="oddeven value"><td>';
+		print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+		print '<td colspan="2">';
+		print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
+		print '</td></tr>';
+	}
+
+	// Bar Restaurant mode
+	print '<tr class="oddeven"><td>';
+	print 'Bar Restaurant';
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOS_BAR_RESTAURANT",$conf->global->TAKEPOS_BAR_RESTAURANT,1);
+	print "</td></tr>\n";
+
+	if ($conf->global->TAKEPOS_BAR_RESTAURANT and $conf->global->TAKEPOSCONNECTOR){
+		print '<tr class="oddeven value"><td>';
+		print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+		print '<td colspan="2">';
+		print $form->selectyesno("TAKEPOS_ORDER_PRINTERS",$conf->global->TAKEPOS_ORDER_PRINTERS,1);
+		print '</td></tr>';
+	}
+
+	print '</table>';
+
+	print '<br>';
+}
+
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3) AND s.status = 1',1,0,1,array(),0);
+print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1,3) AND s.status = 1', 1, 0, 0, array(), 0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
@@ -138,7 +188,8 @@ if (! empty($conf->stock->enabled))
 	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
 	       $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
 	    }
-	    print $langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch');
+	    print $langs->trans("Yes").'<br>';
+	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
 	}
 	print '</td></tr>';
 
@@ -154,48 +205,9 @@ if (! empty($conf->stock->enabled))
 	}
 	else
 	{
-		print $langs->trans("StockDecreaseForPointOfSaleDisabled");
+		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
-}
-
-if (! empty($conf->service->enabled))
-{
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';
-    print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
-    print "</td></tr>\n";
-}
-
-// Use Takepos printing
-print '<tr class="oddeven"><td>';
-print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-print '<td colspan="2">';
-print $form->selectyesno("TAKEPOSCONNECTOR",$conf->global->TAKEPOSCONNECTOR,1);
-print "</td></tr>\n";
-
-if ($conf->global->TAKEPOSCONNECTOR){
-    print '<tr class="oddeven value"><td>';
-    print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-    print '<td colspan="2">';
-    print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
-    print '</td></tr>';
-}
-
-// Bar Restaurant mode
-print '<tr class="oddeven"><td>';
-print 'Bar Restaurant';
-print '<td colspan="2">';
-print $form->selectyesno("TAKEPOS_BAR_RESTAURANT",$conf->global->TAKEPOS_BAR_RESTAURANT,1);
-print "</td></tr>\n";
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT and $conf->global->TAKEPOSCONNECTOR){
-    print '<tr class="oddeven value"><td>';
-    print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-    print '<td colspan="2">';
-    print $form->selectyesno("TAKEPOS_ORDER_PRINTERS",$conf->global->TAKEPOS_ORDER_PRINTERS,1);
-    print '</td></tr>';
 }
 
 print '</table>';
@@ -206,9 +218,10 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 print "</form>\n";
 
 
+print '<br><br>';
 
 // Marketplace
-print "<br><table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="2">TakePOS Marketplace</td>';
 print '<td>'.$langs->trans("URL").'</td>';
@@ -221,18 +234,11 @@ print '<td>TakePOS for mobile devices</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
 
-print "<tr class=\"oddeven\">\n";
-$url='https://www.dolistore.com/en/modules/949-Cash-Control-7.html';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/cashcontrol.jpg"></a></td>';
-print '<td>TakePOS CashControl</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-print '</tr>';
-
 print "</table>\n";
 print '<br>';
 
 // Support
-print "<br><table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
+print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="2">TakePOS Support</td>';
 print '<td>'.$langs->trans("URL").'</td>';

@@ -42,7 +42,7 @@ $backtopage = GETPOST('backtopage','alpha');
 $search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
 $search_email		= GETPOST('search_email','alpha');
-$type				= GETPOST('type','alpha');
+$type				= GETPOST('type','intcomma');
 $status				= GETPOST('status','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -59,8 +59,8 @@ if (! $sortfield) {  $sortfield="d.lastname"; }
 $label=GETPOST("label","alpha");
 $subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
-$comment=GETPOST("comment");
-$mail_valid=GETPOST("mail_valid");
+$comment=GETPOST("comment",'alphanohtml');
+$mail_valid=GETPOST("mail_valid",'none');
 
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');

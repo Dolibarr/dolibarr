@@ -42,7 +42,7 @@ class box_produits extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -135,13 +135,13 @@ class box_produits extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
 

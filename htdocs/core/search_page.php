@@ -81,6 +81,7 @@ else
 	$showtitlebefore = GETPOST('showtitlebefore','int');
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
+	$i=0;
     $accesskeyalreadyassigned=array();
     foreach($arrayresult as $key => $val)
     {
@@ -94,7 +95,9 @@ else
             $accesskey=$val['label'][0];
             $accesskeyalreadyassigned[$accesskey]=$accesskey;
         }
-        $searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('',$val['img'],'', 0, 1), $showtitlebefore);
+        $searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('',$val['img'],'', 0, 1), $showtitlebefore, ($i>0?0:1));
+
+        $i++;
     }
 }
 

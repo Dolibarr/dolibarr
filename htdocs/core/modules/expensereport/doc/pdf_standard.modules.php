@@ -257,8 +257,10 @@ class pdf_standard extends ModeleExpenseReport
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 12;	// Height reserved to output the footer (value include bottom margin)
-                $pdf->SetAutoPageBreak(1,0);
+		        $heightforfooter = $this->marge_basse + 12;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
+
+	            $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {

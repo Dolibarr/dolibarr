@@ -62,7 +62,6 @@ CatSupLinks=Koppelingen tussen leveranciers en tags/categorieën
 CatCusLinks=Koppelingen tussen klanten/prospects en tags/categorieën
 CatProdLinks=Koppelingen tussen producten/diensten en tags/categorieën
 CatProJectLinks=Koppelingen tussen projecten en tags/categorieën
-DeleteFromCat=Verwijderen uit tags/categorie
 CategoriesSetup=Tags/categorieën instellingen
 CategorieRecursiv=Automatische koppeling met bovenliggende tag/categorie
 CategorieRecursivHelp=Indien geactiveerd zal het product ook gekoppeld worden met de bovenliggende categorie wanneer een subcategorie toegevoegd wordt.

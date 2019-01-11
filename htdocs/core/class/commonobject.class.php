@@ -1777,7 +1777,7 @@ abstract class CommonObject
 			if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
 			$sql .= ' WHERE rowid='.$this->id;
 
 			if ($this->db->query($sql))
@@ -1962,7 +1962,7 @@ abstract class CommonObject
 			if (get_class($this) == 'Fournisseur') $fieldname = 'cond_reglement_supplier';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
 			$sql .= ' WHERE rowid='.$this->id;
 
 			if ($this->db->query($sql))
@@ -4940,6 +4940,7 @@ abstract class CommonObject
 			   		if ($this->array_options[$key] === '') $mandatorypb=true;
 			   		if ($mandatorypb)
 			   		{
+			   			dol_syslog($this->error);
 			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
 			   			return -1;
 			   		}
@@ -5023,8 +5024,6 @@ abstract class CommonObject
 						$new_array_options[$key] = price2num($this->array_options[$key]);
 						break;
 					case 'date':
-						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
-						break;
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
 						if (! is_int($this->array_options[$key])) {
@@ -6270,7 +6269,7 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 			{
-				//Show only the key field in params
+				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey',$params) && $key != $params['onlykey']) continue;
 
 				$enabled = 1;

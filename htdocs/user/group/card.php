@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2018		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ if (empty($reshook)) {
 		{
 			$object->fetch($id);
 			$object->delete();
-			header("Location: index.php?restore_lastsearch_values=1");
+			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else

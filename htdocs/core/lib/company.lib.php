@@ -1340,6 +1340,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
         if (is_object($objcon) && $objcon->id) {
 		    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
+		    $sql.= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . $objcon->id;
 	    }
 
 	    if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -1377,13 +1378,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-
-	    // Work with new table actioncomm_resources and multiple contact affectation.
-	    if (is_object($objcon) && $objcon->id)
-	    {
-		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
-			    " AND r.fk_element = " . $objcon->id;
-	    }
 
         // Condition on actioncode
         if (! empty($actioncode))

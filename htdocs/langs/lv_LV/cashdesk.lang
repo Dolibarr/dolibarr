@@ -39,6 +39,6 @@ Floors=Stāvi
 Floor=Stāvs
 AddTable=Pievienot tabulu
 Place=Vieta
-TakeposConnectorNecesary='TakePOS Connector' required
+TakeposConnectorNecesary=Ir nepieciešams "TakePOS Connector"
 OrderPrinters=Pasūtīt printerus
 SearchProduct=Meklēt produktu

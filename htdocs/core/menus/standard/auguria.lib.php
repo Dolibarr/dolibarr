@@ -153,7 +153,7 @@ function print_start_menu_array_auguria()
     global $conf;
 
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**

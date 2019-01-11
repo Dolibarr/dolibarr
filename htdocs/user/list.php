@@ -266,21 +266,21 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('',$langs->trans("ListOfUsers"));
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($sall != '') $param.='&sall='.urlencode($sall);
-if ($search_user != '') $param.="&search_user=".$search_user;
-if ($search_login != '') $param.="&search_login=".$search_login;
-if ($search_lastname != '') $param.="&search_lastname=".$search_lastname;
-if ($search_firstname != '') $param.="&search_firstname=".$search_firstname;
-if ($search_gender != '') $param.="&search_gender=".$search_gender;
-if ($search_employee != '') $param.="&search_employee=".$search_employee;
-if ($search_accountancy_code != '') $param.="&search_accountancy_code=".$search_accountancy_code;
-if ($search_email != '') $param.="&search_email=".$search_email;
-if ($search_supervisor > 0) $param.="&search_supervisor=".$search_supervisor;
-if ($search_statut != '') $param.="&search_statut=".$search_statut;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
-if ($mode != '')      $param.='&mode='.$mode;
+if ($search_user != '') $param.="&search_user=".urlencode($search_user);
+if ($search_login != '') $param.="&search_login=".urlencode($search_login);
+if ($search_lastname != '') $param.="&search_lastname=".urlencode($search_lastname);
+if ($search_firstname != '') $param.="&search_firstname=".urlencode($search_firstname);
+if ($search_gender != '') $param.="&search_gender=".urlencode($search_gender);
+if ($search_employee != '') $param.="&search_employee=".urlencode($search_employee);
+if ($search_accountancy_code != '') $param.="&search_accountancy_code=".urlencode($search_accountancy_code);
+if ($search_email != '') $param.="&search_email=".urlencode($search_email);
+if ($search_supervisor > 0) $param.="&search_supervisor=".urlencode($search_supervisor);
+if ($search_statut != '') $param.="&search_statut=".urlencode($search_statut);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($mode != '')      $param.='&mode='.urlencode($mode);
 if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

@@ -6,7 +6,6 @@ Order=Pedido
 PdfOrderTitle=Pedido
 Orders=Pedidos
 OrderLine=Linha de Comando
-OrderDate=Data Pedido
 OrderDateShort=Data do pedido
 OrderToProcess=Pedido a processar
 NewOrder=Novo Pedido

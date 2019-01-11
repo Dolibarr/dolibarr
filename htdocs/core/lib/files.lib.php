@@ -2119,6 +2119,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($conf->multicompany->enabled)) $entity=1;
 		else $entity=0;
 	}
+	// Fix modulepart
+	if ($modulepart == 'users') $modulepart='user';
+
 	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;

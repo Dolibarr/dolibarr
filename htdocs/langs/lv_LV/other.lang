@@ -262,6 +262,6 @@ WEBSITE_PAGEURL=Lapas URL
 WEBSITE_TITLE=Virsraksts
 WEBSITE_DESCRIPTION=Apraksts
 WEBSITE_IMAGE=Attēls
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Attēlu nesēja relatīvais ceļš. Jūs varat to paturēt tukša, jo to reti izmanto (to var izmantot dinamiskais saturs, lai parādītu emuāra ziņu saraksta priekšskatījumu).
 WEBSITE_KEYWORDS=Atslēgas vārdi
 LinesToImport=Importējamās līnijas

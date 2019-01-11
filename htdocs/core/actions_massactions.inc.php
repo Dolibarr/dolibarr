@@ -2,6 +2,7 @@
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
+ * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,6 +424,8 @@ if (! $error && $massaction == 'confirm_presend')
 							// Insert logs into agenda
 							foreach($listofqualifiedobj as $objid => $objectobj)
 							{
+								dol_syslog("Try to insert email event into agenda for objid=".$objid." => objectobj=".get_class($objectobj));
+
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
 	                            if ($objectclass == 'Facture') $actiontypecode='AC_FAC';
@@ -448,14 +451,14 @@ if (! $error && $massaction == 'confirm_presend')
 								$objectobj->elementtype	= $objectobj->element;
 
 								$triggername = strtoupper(get_class($objectobj)) .'_SENTBYMAIL';
-								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
-								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
-								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
+								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYMAIL';
+								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYMAIL';
+								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYMAIL';
 								if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYMAIL';
-								if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
+								if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYMAIL';
 								if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
-								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
-								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
+								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYMAIL';
+								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 
 								if (! empty($triggername))
 								{
@@ -716,6 +719,7 @@ if ($massaction == 'confirm_createbills')
 			}
 
 			$id = $objecttmp->id; // For builddoc action
+			$object = $objecttmp;
 
 			// Builddoc
 			$donotredirect = 1;
