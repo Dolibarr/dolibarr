@@ -1193,16 +1193,19 @@ class Website extends CommonObject
 			$out.= '</li></a>';
 		}
 		$i=0;
-		foreach($languagecodes as $languagecode)
+		if (is_array($languagecodes))
 		{
-			if ($languagecode == $languagecodeselected) continue;	// Already output
-			$shortcode = strtolower(substr($languagecode, -2));
-			$label = $weblangs->trans("Language_".$languagecode);
-			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
-			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out.= '</li></a>';
-			$i++;
+    		foreach($languagecodes as $languagecode)
+    		{
+    			if ($languagecode == $languagecodeselected) continue;	// Already output
+    			$shortcode = strtolower(substr($languagecode, -2));
+    			$label = $weblangs->trans("Language_".$languagecode);
+    			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+    			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+    			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+    			$out.= '</li></a>';
+    			$i++;
+    		}
 		}
 		$out.= '</ul>';
 
