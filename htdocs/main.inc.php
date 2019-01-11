@@ -1115,7 +1115,8 @@ function top_httphead($contenttype='text/html', $forcenocache=0)
 	else header("Content-Type: ".$contenttype);
 	// Security options
 	header("X-Content-Type-Options: nosniff");  // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
-	header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
+	if (! defined('XFRAMEOPTIONS_ALLOWALL')) header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
+	else header("X-Frame-Options: ALLOWALL");
 	//header("X-XSS-Protection: 1");      		// XSS protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 	if (! defined('FORCECSP'))
 	{
