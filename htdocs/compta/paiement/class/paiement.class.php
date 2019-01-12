@@ -450,7 +450,7 @@ class Paiement extends CommonObject
 				}
 			}
 
-			if (! $error)
+			if (! $error)    // All payments into $this->amounts were recorded without errors
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
