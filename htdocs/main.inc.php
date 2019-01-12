@@ -1464,8 +1464,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                     }
                 }
             }
-
-
         }
 
         if (! empty($head)) print $head."\n";
