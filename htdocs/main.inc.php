@@ -1188,7 +1188,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
-		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+	    if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
+	    $hookmanager->initHooks("main");
+
+	    $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 
@@ -1221,8 +1224,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else if ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
 		else $titletoshow = dol_htmlentities($appli);
 
-		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
-		$hookmanager->initHooks("main");
 		$parameters=array('title'=>$titletoshow);
 		$result=$hookmanager->executeHooks('setHtmlTitle',$parameters);		// Note that $action and $object may have been modified by some hooks
 		if ($result > 0) $titletoshow = $hookmanager->resPrint;				// Replace Title to show
@@ -1463,10 +1464,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                     }
                 }
             }
+
+
         }
 
         if (! empty($head)) print $head."\n";
         if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
+
+        $parameters=array();
+        $result=$hookmanager->executeHooks('addHtmlHeader',$parameters);	// Note that $action and $object may have been modified by some hooks
+        print $hookmanager->resPrint;				// Replace Title to show
 
         print "</head>\n\n";
     }
