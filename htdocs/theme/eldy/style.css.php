@@ -456,7 +456,7 @@ select.flat, form.flat select {
 	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .opacityhigh {
 	opacity: 0.2;
@@ -1153,6 +1153,11 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
@@ -1391,7 +1396,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    
+
     .fichehalfright-lg .ficheaddleft{
     	padding-left:0;
     }
@@ -4714,7 +4719,6 @@ div.dataTables_length select {
 }
 .select2-default {
     color: #999 !important;
-    /*opacity: 0.2;*/
 }
 .select2-choice, .select2-container .select2-choice {
 	border-bottom: solid 1px rgba(0,0,0,.4);
@@ -4855,7 +4859,7 @@ a span.select2-chosen
 	cursor: default;
 }
 .select2-container-disabled .select2-choice .select2-arrow b {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
@@ -4880,11 +4884,11 @@ a span.select2-chosen
 }
 .select2-container--default .select2-selection--single .select2-selection__placeholder {
 	color: unset;
-	opacity: 0.5;
+	opacity: 0.4;
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;
