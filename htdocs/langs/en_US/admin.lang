@@ -1535,11 +1535,6 @@ FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines fo
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
 FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
-##### OSCommerce 1 #####
-OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database does not appear to be an OSCommerce database (Key %s not found in table %s).
-OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successful.
-OSCommerceTestKo1=Connection to server '%s' succeeded but database '%s' could not be reached.
-OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.
 ##### Stock #####
 StockSetup=Stock module setup
 IfYouUsePointOfSaleCheckModule=If you use the Point of Sale module (POS) provided by default or an external module, this setup may be ignored by your POS module. Most POS modules are designed by default to create an invoice immediately and decrease stock irrespective of the options here. So if you need or not to have a stock decrease when registering a sale from your POS, check also your POS module setup.
