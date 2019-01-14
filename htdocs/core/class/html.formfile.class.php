@@ -776,16 +776,16 @@ class FormFile
             {
                 $colspan=2;
 
-                foreach($link_list as $file)
+                foreach($link_list as $link)
                 {
                     $out.='<tr class="oddeven">';
                     $out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
                     $out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
-                    $out.=$file->label;
+                    $out.=$link->label;
                     $out.='</a>';
                     $out.='</td>';
                     $out.='<td align="right">';
-                    $out.=dol_print_date($file->datea,'dayhour');
+                    $out.=dol_print_date($link->datea,'dayhour');
                     $out.='</td>';
                     if ($delallowed || $printer || $morepicto) $out.='<td></td>';
                     $out.='</tr>'."\n";
