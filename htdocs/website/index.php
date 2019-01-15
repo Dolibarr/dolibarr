@@ -2516,6 +2516,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$type_container = 'page';
 		$pagedatecreation=dol_now();
 		$pageauthorid=$user->id;
+		$pageusermodifid=0;
 	}
 	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
@@ -2669,7 +2670,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	    print '<tr><td>';
 		print $langs->trans('DateModification');
 		print '</td><td>';
-		print dol_print_date($pagedatemodification, 'dayhour');
+		print dol_print_date($pagedatemodification, 'dayhour', 'tzuser');
 		print '</td></tr>';
 	}
 
