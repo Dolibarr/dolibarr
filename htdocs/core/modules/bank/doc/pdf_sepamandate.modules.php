@@ -35,9 +35,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 class pdf_sepamandate extends ModeleBankAccountDoc
 {
-	var $emetteur;	// Objet societe qui emet
-	var $version = 'dolibarr';
-	
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
 	/**
 	 *	Constructor
 	 *
@@ -45,8 +54,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-		
+		global $conf, $langs, $mysoc;
+
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
 
@@ -83,8 +92,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-	/**
-	 *	Fonction generant le projet sur le disque
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+	 *  Fonction generant le projet sur le disque
 	 *
 	 *	@param	    Project		$object   		    Object project a generer
 	 *	@param	    Translate	$outputlangs	    Lang output object
@@ -97,15 +107,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
-		// Translations
+
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "withdrawals", "companies", "projects", "bills"));
-		
+
 		if (! empty($conf->bank->dir_output))
 		{
 			//$nblignes = count($object->lines);  // This is set later with array of tasks
@@ -124,7 +135,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		        else $dir = $conf->bank->dir_output . "/" . $objectref;
 		        $file = $dir . "/" . $langs->transnoentitiesnoconv("SepaMandateShort").' '.$objectref . "-".dol_sanitizeFileName($object->rum).".pdf";
 		    }
-		    
+
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
@@ -213,55 +224,55 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$nexY = $tab_top + 7;
 
 				$posY = $curY;
-				
+
 				$pdf->SetFont('','', $default_font_size);
-				
+
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY+=2;
-				
+
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->transnoentitiesnoconv("RUM").')'.' : '.$object->rum, 0, 'L');
-				
+
 				$posY=$pdf->GetY();
 				$posY+=2;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$ics='';
 				if (! empty($conf->global->PRELEVEMENT_ICS)) $ics=$conf->global->PRELEVEMENT_ICS;
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").')'.' : '.$ics, 0, 'L');
-				
+
 				$posY=$pdf->GetY();
 				$posY+=1;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorName").' : '.$mysoc->name, 0, 'L');
-				
+
 				$posY=$pdf->GetY();
 				$posY+=1;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(), 0, 'L');
-				
+
 				$posY=$pdf->GetY();
 				$posY+=3;
-				
+
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
-				
+
 				$pdf->SetFont('','', $default_font_size - 1);
-				
+
 				$posY+=8;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 8, $outputlangs->transnoentitiesnoconv("SEPALegalText", $mysoc->name, $mysoc->name), 0, 'L');
-				
+
 				// Your data form
 				$posY=$pdf->GetY();
 				$posY+=8;
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY+=2;
-				
+
 				$pdf->SetFont('','', $default_font_size);
-				
+
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFillForm"), 0, 'C');
-				
+
 				$thirdparty=new Societe($this->db);
 				if ($object->socid > 0) $thirdparty->fetch($object->socid);
 
@@ -276,7 +287,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourName").' * : ', 0, 'L');
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
-				
+
 			    $address = '______________________________________________';
 				if ($thirdparty->id > 0)
 				{
@@ -294,7 +305,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
     				$pdf->SetXY(80, $posY);
     				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
 				}
-				
+
 				$ban = '__________________________________________________';
 				if (! empty($object->iban)) $ban = $object->iban;
 				$posY=$pdf->GetY();
@@ -303,7 +314,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourBAN").' * : ', 0, 'L');
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $ban, 0, 'L');
-				
+
 				$bic = '__________________________________________________';
 				if (! empty($object->bic)) $bic = $object->bic;
 				$posY=$pdf->GetY();
@@ -312,8 +323,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourBIC").' * : ', 0, 'L');
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $bic, 0, 'L');
-				
-				
+
+
 				$posY=$pdf->GetY();
 				$posY+=1;
 				$pdf->SetXY($this->marge_gauche, $posY);
@@ -339,13 +350,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				    $txt = '('.$langs->transnoentitiesnoconv("PleaseCheckOne").')';
     				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				}
-				
+
 				$posY=$pdf->GetY();
 				$posY+=3;
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY+=3;
-				
-				
+
+
 				// Show square
 				if ($pagenb == 1)
 				{
@@ -363,10 +374,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				var_dump($heightforfreetext);
 				var_dump($heightforfooter);
 				var_dump($bottomlasttab);*/
-				
+
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
-				
+
 				/*
 				 * Pied de page
 				 */
@@ -392,7 +403,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -424,10 +435,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
-
 	}
 
-	
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -439,30 +450,32 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-	    global $conf, $mysoc;
-	
+        // phpcs:enable
+        global $conf, $mysoc;
+
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
-	
+
 	    $diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?1:$conf->global->PDF_DIFFSIZE_TITLE);
 
 	    $posy+=$this->_signature_area($pdf, $object, $posy, $outputlangs);
-   
+
 	    $pdf->SetXY($this->marge_gauche, $posy);
 	    $pdf->SetFont('','', $default_font_size);
 	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("PleaseReturnMandate", $mysoc->email).':', 0, 'L', 0);
 	    $posy=$pdf->GetY()+2;
-	     
+
 	    $pdf->SetXY($this->marge_gauche, $posy);
 	    $pdf->SetFont('','', $default_font_size - $diffsizetitle);
 	    $pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
 		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress()), 0, 'L', 0);
 		$posy=$pdf->GetY()+2;
-		
+
 	    return $posy;
 	}
-	
-	
-	
+
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -474,19 +487,20 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 	    $tab_top = $posy + 4;
 	    $tab_hl = 4;
-	
+
 	    $posx = $this->marge_gauche;
 	    $pdf->SetXY($posx, $tab_top + 0);
-	    
+
 	    $pdf->SetFont('','', $default_font_size - 2);
-	    
+
 	    $pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
 	    $pdf->MultiCell(100, 3, ' ');
 	    $pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
-	    
+
 	    $posx = 120;
 	    $largcol = ($this->page_largeur - $this->marge_droite - $posx);
 	    $useborder=0;
@@ -495,14 +509,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    $pdf->SetFillColor(255,255,255);
 	    $pdf->SetXY($posx, $tab_top + 0);
 	    $pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
-	
+
 	    $pdf->SetXY($posx, $tab_top + $tab_hl);
 	    $pdf->MultiCell($largcol, $tab_hl*3, '', 1, 'R');
-	
+
 	    return ($tab_hl*7);
 	}
-	
-	
+
+
 	/**
 	 *  Show top header of page.
 	 *
@@ -593,7 +607,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    	}
 	    }
         */
-
 	}
 
 	/**
@@ -611,6 +624,4 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',null,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

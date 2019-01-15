@@ -65,9 +65,11 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->config_page_url = array("geoipmaxmind.php");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->phpmin = array(4,2,0);
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);
 		$this->phpmax = array();
 		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
+$langs->loadLangs(array("admin", "modulebuilder", "other", "cron", "errors"));
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
@@ -69,6 +69,11 @@ if (! empty($tmpdir[1]))
 {
 	$module=$tmpdir[0];
 	$dirread=$tmpdir[1];
+	$forceddirread=1;
+}
+if (GETPOST('dirins','alpha'))
+{
+	$dirread = $dirins = GETPOST('dirins','alpha');
 	$forceddirread=1;
 }
 
@@ -121,6 +126,15 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
+		if (!empty($conf->global->MODULEBUILDER_USE_ABOUT))
+		{
+			dol_delete_file($destdir.'/admin/about.php');
+		}
+		if (!empty($conf->global->MODULEBUILDER_USE_DOCFOLDER))
+		{
+			dol_delete_dir($destdir.'/doc/');
+		}
+
 		// Delete some files related to object (because to previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
 		dol_delete_file($destdir.'/myobject_note.php');
@@ -164,6 +178,12 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			{
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
+		}
+
+		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README))
+		{
+			dol_delete_file($destdir.'/README.md');
+			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
 	}
 
@@ -896,17 +916,31 @@ $dirsincustom=dol_dir_list($dirread, 'directories');
 if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 	foreach ($dirsincustom as $dircustomcursor) {
 		$fullname = $dircustomcursor['fullname'];
-		if (dol_is_file($fullname . '/' . $FILEFLAG)) {
+		if (dol_is_file($fullname . '/' . $FILEFLAG))
+		{
 			// Get real name of module (MyModule instead of mymodule)
-			$descriptorfiles = dol_dir_list($fullname . '/core/modules/', 'files', 0, 'mod.*\.class\.php$');
+			$dirtoscanrel = basename($fullname).'/core/modules/';
+
+			$descriptorfiles = dol_dir_list(dirname($fullname).'/'.$dirtoscanrel, 'files', 0, 'mod.*\.class\.php$');
+			if (empty($descriptorfiles))	// If descriptor not found into module dir, we look into main module dir.
+			{
+				$dirtoscanrel = 'core/modules/';
+				$descriptorfiles = dol_dir_list($fullname.'/../'.$dirtoscanrel, 'files', 0, 'mod'.strtoupper(basename($fullname)).'\.class\.php$');
+			}
 			$modulenamewithcase = '';
+			$moduledescriptorrelpath = '';
+			$moduledescriptorfullpath = '';
+
 			foreach ($descriptorfiles as $descriptorcursor) {
 				$modulenamewithcase = preg_replace('/^mod/', '', $descriptorcursor['name']);
 				$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
+				$moduledescriptorrelpath = $dirtoscanrel.$descriptorcursor['name'];
+				$moduledescriptorfullpath = $descriptorcursor['fullname'];
+				//var_dump($descriptorcursor);
 			}
 			if ($modulenamewithcase)
 			{
-				$listofmodules[$dircustomcursor['name']] = $modulenamewithcase;
+				$listofmodules[$dircustomcursor['name']] = array('modulenamewithcase'=>$modulenamewithcase, 'moduledescriptorrelpath'=> $moduledescriptorrelpath, 'moduledescriptorfullpath'=>$moduledescriptorfullpath);
 			}
 			//var_dump($listofmodules);
 		}
@@ -914,7 +948,7 @@ if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 }
 if ($forceddirread && empty($listofmodules))
 {
-	$listofmodules[strtolower($module)] = $module;
+	$listofmodules[strtolower($module)] = array('modulenamewithcase'=>$module, 'moduledescriptorrelpath'=> 'notyetimplemented', 'moduledescriptorfullpath'=> 'notyetimplemented');
 }
 
 // Show description of content
@@ -968,7 +1002,8 @@ if (! empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 	$modulelowercase=strtolower($module);
 
 	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($fullpathdirtodescriptor);
 	$class='mod'.$module;
 
 	if (class_exists($class))
@@ -1002,11 +1037,11 @@ $head[$h][1] = $langs->trans("NewModule");
 $head[$h][2] = 'initmodule';
 $h++;
 
-foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
+foreach($listofmodules as $tmpmodule => $tmpmodulearray)
 {
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulewithcase.($forceddirread?'@'.$dirread:'');
-	$head[$h][1] = $tmpmodulewithcase;
-	$head[$h][2] = $tmpmodulewithcase;
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread?'@'.$dirread:'');
+	$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
+	$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
 	$h++;
 }
 
@@ -1139,13 +1174,20 @@ elseif (! empty($module))
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
+		// Link to enable / disable
 		print $modulestatusinfo;
 		print ' '.$linktoenabledisable;
-		print '<br><br>';
+		print '<br>';
+
+		if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase)
+		{
+			print $langs->trans("RealPathOfModule").' : <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
+		}
+		print '<br>';
 
 		if ($tab == 'description')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			$pathtofilereadme = $modulelowercase.'/README.md';
 			$pathtochangelog = $modulelowercase.'/ChangeLog.md';
 
@@ -1170,7 +1212,7 @@ elseif (! empty($module))
 				print '<br>';
 				print '<br>';
 
-				print_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"));
 
 				if (! empty($moduleobj))
 				{
@@ -1234,22 +1276,23 @@ elseif (! empty($module))
 					print '<br><br>';
 
 					// Readme file
-					print_fiche_titre($langs->trans("ReadmeFile"));
+					print load_fiche_titre($langs->trans("ReadmeFile"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
-
-					print $moduleobj->getDescLong();
+					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print $moduleobj->getDescLong();
+					else print $langs->trans("ErrorFileNotFound", $pathtofilereadme);
 
 					print '<br><br>';
 
 					// ChangeLog
-					print_fiche_titre($langs->trans("ChangeLog"));
+					print load_fiche_titre($langs->trans("ChangeLog"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
 
-					print $moduleobj->getChangeLog();
+					if (dol_is_file($dirread.'/'.$pathtochangelog)) print $moduleobj->getChangeLog();
+					else print $langs->trans("ErrorFileNotFound", $pathtochangelog);
 
 					print '</div>';
 				}
@@ -1520,6 +1563,8 @@ elseif (! empty($module))
 				if ($action != 'editfile' || empty($file))
 				{
 					try {
+						//$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
 						$pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
 						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($module).'.class.php';
 						$pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
@@ -1531,24 +1576,28 @@ elseif (! empty($module))
 						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
 						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
 						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
-						$pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
+						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
+						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
-						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 1);
-						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 1);
-						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 1);
-						$realpathtocard     = dol_buildpath($pathtocard, 0, 1);
-						$realpathtodocument = dol_buildpath($pathtodocument, 0, 1);
-						$realpathtolist     = dol_buildpath($pathtolist, 0, 1);
-						$realpathtonote     = dol_buildpath($pathtonote, 0, 1);
-						$realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 1);
-						$realpathtosql      = dol_buildpath($pathtosql, 0, 1);
-						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 1);
-						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 1);
-						$realpathtolib      = dol_buildpath($pathtolib, 0, 1);
-						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 1);
-						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 1);
+						//var_dump($pathtolib);
+
+						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 2);
+						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 2);
+						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 2);
+						$realpathtocard     = dol_buildpath($pathtocard, 0, 2);
+						$realpathtodocument = dol_buildpath($pathtodocument, 0, 2);
+						$realpathtolist     = dol_buildpath($pathtolist, 0, 2);
+						$realpathtonote     = dol_buildpath($pathtonote, 0, 2);
+						$realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 2);
+						$realpathtosql      = dol_buildpath($pathtosql, 0, 2);
+						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 2);
+						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 2);
+						$realpathtolib      = dol_buildpath($pathtolib, 0, 2);
+						$realpathtoobjlib   = dol_buildpath($pathtoobjlib, 0, 2);
+						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
+						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 2);
 
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
@@ -1566,6 +1615,9 @@ elseif (! empty($module))
 
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtolib?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForObjLib").' : <strong>'.($realpathtoobjlib?'':'<strike>').$pathtoobjlib.($realpathtoobjlib?'':'</strike>').'</strong>';
+						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoobjlib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
 						//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -1629,7 +1681,7 @@ elseif (! empty($module))
 						}
 						else
 						{
-							$result = @include_once($dirread.'/'.$pathtoclass);
+							$result = @include_once $dirread.'/'.$pathtoclass;
 						}
 						if (class_exists($tabobj))
 						{
@@ -1669,24 +1721,24 @@ elseif (! empty($module))
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
 							print '<tr class="liste_titre">';
-							print '<td>'.$langs->trans("Property");
-							print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
-							print '</td>';
-							print '<td>';
+							print '<th class="liste_titre">'.$langs->trans("Property");
+							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
+							print '</th>';
+							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
-							print '</td>';
-							print '<td>'.$langs->trans("Type").'</td>';
-							print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</td>';
-							print '<td class="center">'.$langs->trans("DefaultValue").'</td>';
-							print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
-							print '<td class="right">'.$langs->trans("Position").'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
-							print '<td>'.$langs->trans("Comment").'</td>';
-							print '<td></td>';
+							print '</th>';
+							print '<th>'.$langs->trans("Type").'</td>';
+							print '<th>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
+							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
+							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
+							print '<th class="right">'.$langs->trans("Position").'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
+							print '<th>'.$langs->trans("Comment").'</th>';
+							print '<th></th>';
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
@@ -1855,7 +1907,7 @@ elseif (! empty($module))
 
 		if ($tab == 'menus')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			//$menus = $moduleobj->;
 
@@ -1980,7 +2032,7 @@ elseif (! empty($module))
 
 		if ($tab == 'permissions')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			//$perms = $moduleobj->;
 
@@ -2110,7 +2162,7 @@ elseif (! empty($module))
 				print $langs->trans("HooksDefDesc").'<br>';
 				print '<br>';
 
-				$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+				$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
@@ -2255,7 +2307,7 @@ elseif (! empty($module))
 
 		if ($tab == 'cron')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			$cronjobs = $moduleobj->cronjobs;
 
@@ -2389,7 +2441,8 @@ elseif (! empty($module))
 			$FILENAMEZIP='';
 
 			// Load module
-			dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
 			$class='mod'.$module;
 
 			if (class_exists($class))
@@ -2476,8 +2529,6 @@ elseif (! empty($module))
 
 dol_fiche_end(); // End modules
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

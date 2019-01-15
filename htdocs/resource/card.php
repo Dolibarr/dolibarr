@@ -22,12 +22,7 @@
  */
 
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
@@ -176,7 +171,6 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-
 			}
 			else
 			{
@@ -256,7 +250,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
@@ -405,8 +399,6 @@ if ($action == 'create' || $object->fetch($id) > 0)
 else {
 	dol_print_error();
 }
-
-
 
 // End of page
 llxFooter();

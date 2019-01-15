@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,18 +133,22 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-$prevyear=$year_start; $prevquarter=$q;
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$prevyear=$year_start;
+$prevquarter=$q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-	$prevquarter=4; $prevyear--;
+    $prevquarter=4;
+    $prevyear--;
 }
-$nextyear=$year_start; $nextquarter=$q;
+$nextyear=$year_start;
+$nextquarter=$q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-	$nextquarter=1; $nextyear++;
+    $nextquarter=1;
+    $nextyear++;
 }
 $description.=$fsearch;
 $builddate=dol_now();
@@ -209,7 +214,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	$langs->load("errors");
 	if ($x_coll == -1)
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-	else if ($x_coll == -2)
+	elseif ($x_coll == -2)
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("Error").'</td></tr>';
@@ -584,7 +589,7 @@ else
 
 						// Localtax
 						print '<td class="nowrap" align="right">';
-						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;;
+						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;
 						print price(price2num($temp_vat,'MT'),1);
 						//print price($fields['vat']);
 						print '</td>';
@@ -640,5 +645,6 @@ else
 }
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

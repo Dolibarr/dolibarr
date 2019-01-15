@@ -83,7 +83,16 @@ if ($action == 'edit')
 
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+		print '</td><td>';
+		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		{
+			print $form->selectyesno($key, $conf->global->$key, 1);
+		}
+		else
+		{
+			print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
+		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -104,7 +113,16 @@ else
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
+		print '</td><td>';
+		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		{
+			print yn($conf->global->$key);
+		}
+		else
+		{
+			print $conf->global->$key;
+		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -143,6 +161,6 @@ $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'Web
 $message.='<br>';
 print $message;
 
-
+// End of page
 llxFooter();
 $db->close();

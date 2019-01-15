@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -132,9 +132,7 @@ if ($action == 'set')
 	{
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
-
 	}
-
 }
 
 // Set level
@@ -302,6 +300,6 @@ if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enable
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
-
 $db->close();

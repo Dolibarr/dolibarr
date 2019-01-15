@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,14 +66,13 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 
 
-
 /*
  * Actions
  */
 
 if ($action == 'add')
 {
-	$module=GETPOST("module");
+	$module=GETPOST("module",'alpha');
 	$result=-1;
 
 	foreach ($modulesdir as $dir)
@@ -90,14 +89,10 @@ if ($action == 'add')
 		{
 			require_once $file;
 
-			// We fill $filtersarray. Using this variable is now deprecated. Kept for backward compatibility.
-			$filtersarray=array();
-			if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
-
 			// Add targets into database
 			$obj = new $classname($db);
 			dol_syslog("Call add_to_target on class ".$classname);
-			$result=$obj->add_to_target($id,$filtersarray);
+			$result=$obj->add_to_target($id);
 		}
 	}
 	if ($result > 0)
@@ -306,8 +301,8 @@ if ($object->fetch($id) >= 0)
 			$var = true;
 
 			// Loop on each submodule
-            foreach($modulenames as $modulename)
-            {
+			foreach($modulenames as $modulename)
+			{
 				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
@@ -646,10 +641,8 @@ if ($object->fetch($id) >= 0)
 	}
 
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

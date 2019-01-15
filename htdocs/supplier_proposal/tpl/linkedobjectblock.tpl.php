@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -36,12 +36,11 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>">

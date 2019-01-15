@@ -31,12 +31,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
-	var $nom='Aquarium';
-	var $name='Aquarium';
-	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Aquarium';
 
-	var	$prefixcustomeraccountancycode;
-	var	$prefixsupplieraccountancycode;
+	/**
+	 * @var string model name
+	 */
+	public $name='Aquarium';
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public	$prefixcustomeraccountancycode;
+
+	public	$prefixsupplieraccountancycode;
 
 
 	/**
@@ -107,6 +122,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -117,6 +133,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function get_code($db, $societe, $type='')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$i = 0;
@@ -147,7 +164,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse=preg_replace('/([^a-z0-9])/i','',$codetouse);
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
 		if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse=preg_replace('/([a-z])/i','',$codetouse);
-		// Apply a regex replacement pattern if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
+		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 		{
 			$codetouse=preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/','\1\2\3',$codetouse);
@@ -212,4 +229,3 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 	}
 }
-

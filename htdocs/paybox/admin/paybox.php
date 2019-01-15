@@ -71,6 +71,9 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE",GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+        $result=dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY','alpha')),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+        
 
     if (! $error)
   	{
@@ -142,6 +145,12 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
+print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
+print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
 print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
@@ -250,5 +259,6 @@ print '<br><br>';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+// End of page
 llxFooter();
 $db->close();

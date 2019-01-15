@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com> 
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/importaccounts.php
+ * \file        htdocs/accountancy/admin/importaccounts.php
  * \ingroup		Advanced accountancy
  * \brief 		Page import accounting account
  */
@@ -71,10 +72,10 @@ if ($_POST["action"] == 'import') {
 
 				$accounting = new AccountingAccount($db);
 
-				$monLabel = GETPOST('label' . $maLigneCochee);
-				$monParentAccount = GETPOST('AccountParent' . $maLigneCochee);
-				$monType = GETPOST('pcgType' . $maLigneCochee);
-				$monSubType = GETPOST('pcgSubType' . $maLigneCochee);
+				$monLabel = (string) GETPOST('label' . $maLigneCochee);
+				$monParentAccount = (string) GETPOST('AccountParent' . $maLigneCochee);
+				$monType = (string) GETPOST('pcgType' . $maLigneCochee);
+				$monSubType = (string) GETPOST('pcgSubType' . $maLigneCochee);
 
 				$accounting->fk_pcg_version = $obj->pcg_version;
 				$accounting->account_number = $maLigneCochee;
@@ -83,7 +84,7 @@ if ($_POST["action"] == 'import') {
 				$accounting->pcg_type = $monType;
 				$accounting->pcg_subtype = $monSubType;
 				$accounting->active = 1;
-				
+
 				$result = $accounting->create($user);
 				if ($result > 0) {
 					setEventMessages($langs->trans("AccountingAccountAdd"), null, 'mesgs');
@@ -101,7 +102,7 @@ if ($_POST["action"] == 'import') {
 	print '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
 }
 
-// list accounting account from product 
+// list accounting account from product
 
 $sql = "(SELECT p.rowid as product_id, p.accountancy_code_sell as accounting ";
 $sql .= " FROM  " . MAIN_DB_PREFIX . "product as p ";
@@ -172,14 +173,15 @@ if ($result) {
 		print '</tr>';
 		$i ++;
 	}
-	
+
 	print '<tr><td colspan="8">&nbsp;</td></tr><tr><td colspan="8" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Import") . '"></td></tr>';
-	
+
 	print '</table>';
 	print '</form>';
 } else {
 	print $db->error();
 }
 
+// End of page
 llxFooter();
 $db->close();

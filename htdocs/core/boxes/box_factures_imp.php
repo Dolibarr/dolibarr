@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,11 @@ class box_factures_imp extends ModeleBoxes
 	var $boxlabel="BoxOldestUnpaidCustomerBills";
 	var $depends = array("facture");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -85,7 +89,7 @@ class box_factures_imp extends ModeleBoxes
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email,";
             $sql.= " s.code_client,";
             $sql.= " s.logo,";
-			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+			$sql.= " f.ref, f.date_lim_reglement as datelimite,";
             $sql.= " f.type,";
 			$sql.= " f.amount, f.datef as df,";
             $sql.= " f.total as total_ht,";
@@ -103,10 +107,10 @@ class box_factures_imp extends ModeleBoxes
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.facnumber, f.date_lim_reglement,";
+			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
 			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
-			//$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
-			$sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
+			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+			$sql.= " ORDER BY datelimite ASC, f.ref ASC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -123,7 +127,7 @@ class box_factures_imp extends ModeleBoxes
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
                     $facturestatic->id = $objp->facid;
-                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
@@ -207,5 +211,4 @@ class box_factures_imp extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }

@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

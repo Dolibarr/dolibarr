@@ -247,6 +247,6 @@ print '</form>';
 
 print "<br>";
 
+// End of page
 llxFooter();
-
 $db->close();

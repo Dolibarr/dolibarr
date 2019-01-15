@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -26,7 +26,7 @@
  */
 
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -91,7 +91,7 @@ print '</td></tr></table><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql.= " pfd.date_demande, pfd.amount,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
@@ -120,7 +120,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             $invoicestatic->id=$obj->rowid;
-            $invoicestatic->ref=$obj->facnumber;
+            $invoicestatic->ref=$obj->ref;
             $invoicestatic->statut=$obj->fk_statut;
             $invoicestatic->paye=$obj->paye;
             $invoicestatic->type=$obj->type;
@@ -221,6 +221,6 @@ else
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

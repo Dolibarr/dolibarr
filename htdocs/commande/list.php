@@ -1,15 +1,17 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
- * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
- * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2016	   Ferran Marcet		  <fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Charlene Benke	    <charlie@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +76,7 @@ $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
+$search_total_ttc=GETPOST('search_total_ttc','alpha');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
@@ -108,7 +111,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('commande');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -214,7 +217,6 @@ if (empty($reshook))
 	$uploaddir = $conf->commande->dir_output;
 	$trigger_name='ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
 }
 
 
@@ -233,7 +235,7 @@ $projectstatic=new Project($db);
 
 $title=$langs->trans("Orders");
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
-llxHeader('',$title,$help_url);
+// llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -301,32 +303,8 @@ if ($viewstatut <> '')
 		$sql .= ' AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))'; // validated, in process or closed but not billed
 	}
 }
-if ($search_ordermonth > 0)
-{
-	if ($search_orderyear > 0 && empty($search_orderday))
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,$search_ordermonth,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,$search_ordermonth,false))."'";
-	else if ($search_orderyear > 0 && ! empty($search_orderday))
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_ordermonth, $search_orderday, $search_orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_ordermonth, $search_orderday, $search_orderyear))."'";
-	else
-	$sql.= " AND date_format(c.date_commande, '%m') = '".$search_ordermonth."'";
-}
-else if ($search_orderyear > 0)
-{
-	$sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($search_orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_orderyear,12,false))."'";
-}
-if ($search_deliverymonth > 0)
-{
-	if ($search_deliveryyear > 0 && empty($search_deliveryday))
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,$search_deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,$search_deliverymonth,false))."'";
-	else if ($search_deliveryyear > 0 && ! empty($search_deliveryday))
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_deliverymonth, $search_deliveryday, $search_deliveryyear))."'";
-	else
-	$sql.= " AND date_format(c.date_livraison, '%m') = '".$search_deliverymonth."'";
-}
-else if ($search_deliveryyear > 0)
-{
-	$sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_deliveryyear,12,false))."'";
-}
+$sql.= dolSqlDateFilter("c.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
+$sql.= dolSqlDateFilter("c.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
@@ -336,6 +314,7 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
+if ($search_total_ttc != '') $sql.= natural_search('c.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
@@ -400,6 +379,16 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->rowid;
+		header("Location: ".DOL_URL_ROOT.'/commande/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$title,$help_url);
+
 	$param='';
 
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -438,6 +427,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'cancelorders'=>$langs->trans("Cancel"),
@@ -489,7 +479,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -1165,5 +1155,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -4,11 +4,12 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,10 @@
  */
 class ExtraFields
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	// type of element (for what object is the extrafield)
 	// @deprecated
@@ -87,7 +91,11 @@ class ExtraFields
 	// New array to store extrafields definition
 	var $attributes;
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
 	var $errno;
 
 
@@ -156,14 +164,14 @@ class ExtraFields
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
 	 *  @param	string			$list				Visibilty ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
-	 *  @param	int				$notused			Deprecated.
+	 *  @param	string			$help				Text with help tooltip
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list='-1', $notused=0, $computed='', $entity='', $langfile='', $enabled='1')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list='-1', $help='', $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -174,13 +182,13 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
 		{
-			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed);
+			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help);
 		}
 		$err1=$this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default_value, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -285,6 +293,7 @@ class ExtraFields
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Add description of a new optional attribute
 	 *
@@ -300,7 +309,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	string			$list			Visibily
-	 *  @param	int				$notused		Deprecated.
+	 *  @param	string			$help			Help on tooltip
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
@@ -308,8 +317,9 @@ class ExtraFields
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list='-1', $notused=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list='-1', $help='', $default='', $computed='',$entity='', $langfile='', $enabled='1')
 	{
+        // phpcs:enable
 		global $conf,$user;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -357,7 +367,8 @@ class ExtraFields
 			$sql.= " fk_user_author,";
 			$sql.= " fk_user_modif,";
 			$sql.= " datec,";
-			$sql.= " enabled";
+			$sql.= " enabled,";
+			$sql.= " help";
 			$sql.= " )";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
@@ -378,7 +389,8 @@ class ExtraFields
 			$sql .= " " . (is_object($user) ? $user->id : 0). ",";
 			$sql .= " " . (is_object($user) ? $user->id : 0). ",";
 			$sql .= "'" . $this->db->idate(dol_now()) . "',";
-			$sql.= " ".($enabled?"'".$this->db->escape($enabled)."'":"1");
+			$sql.= " ".($enabled?"'".$this->db->escape($enabled)."'":"1").",";
+			$sql.= " ".($help?"'".$this->db->escape($help)."'":"null");
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -450,9 +462,9 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Delete description of an optional attribute
 	 *
@@ -462,6 +474,7 @@ class ExtraFields
 	 */
 	private function delete_label($attrname, $elementtype='member')
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -490,7 +503,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 	/**
@@ -508,20 +520,21 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	string	$list				Visibility
-	 *  @param	int		$notused			Deprecated.
+	 *  @param	string	$help				Help on tooltip
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
+     *  @param  int     $totalizable        Is extrafield totalizable on list
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $notused=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $help='', $default='', $computed='', $entity='', $langfile='', $enabled='1', $totalizable=0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
-		$table=$elementtype.'_extrafields';
+        $table=$elementtype.'_extrafields';
 		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
@@ -566,7 +579,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$notused,$default,$computed,$entity,$langfile,$enabled);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$help,$default,$computed,$entity,$langfile,$enabled, $totalizable);
 				}
 				if ($result > 0)
 				{
@@ -599,9 +612,9 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Modify description of personalized attribute
 	 *
@@ -617,18 +630,20 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	string	$list				Visiblity
-	 *  @param	int		$notused			Deprecated.
+	 *  @param	string	$help				Help on tooltip.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
-	 *  @return	int							<=0 if KO, >0 if OK
+     *  @param  int     $totalizable        Is extrafield totalizable on list
+     *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list='0',$notused=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list='0',$help='',$default='',$computed='',$entity='',$langfile='',$enabled='1', $totalizable=0)
 	{
+        // phpcs:enable
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$notused.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -636,6 +651,9 @@ class ExtraFields
 
 		if (empty($pos)) $pos=0;
 		if (empty($list)) $list='0';
+        if (empty($totalizable)) {
+            $totalizable = 0;
+        }
 		if (empty($required)) $required=0;
 		if (empty($unique)) $unique=0;
 		if (empty($alwayseditable)) $alwayseditable=0;
@@ -690,12 +708,14 @@ class ExtraFields
 			$sql.= " alwayseditable,";
 			$sql.= " param,";
 			$sql.= " list,";
+            $sql.= " totalizable,";
 			$sql.= " fielddefault,";
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
 			$sql.= " fk_user_modif,";
 			$sql.= " datec,";
-			$sql.= " enabled";
+			$sql.= " enabled,";
+			$sql.= " help";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".($entity===''?$conf->entity:$entity).",";
@@ -711,12 +731,14 @@ class ExtraFields
 			$sql.= " '".$this->db->escape($alwayseditable)."',";
 			$sql.= " '".$this->db->escape($params)."',";
 			$sql.= " '".$this->db->escape($list)."', ";
+            $sql.= " ".$totalizable.",";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
 			$sql .= "'" . $this->db->idate(dol_now()) . "',";
-			$sql .= "'" . $this->db->escape($enabled). "'";
+			$sql .= "'" . $this->db->escape($enabled). "',";
+			$sql.= " ".($help?"'".$this->db->escape($help)."'":"null");
 			$sql.= ")";
 
 			$resql2=$this->db->query($sql);
@@ -740,6 +762,7 @@ class ExtraFields
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
@@ -749,6 +772,7 @@ class ExtraFields
 	 */
 	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (empty($elementtype)) return array();
@@ -781,7 +805,7 @@ class ExtraFields
 		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";	// Filed with object->table_element
@@ -815,6 +839,7 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
+					$this->attribute_totalizable[$tab->name]=$tab->totalizable;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
 					$this->attribute_entitylabel[$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 
@@ -833,9 +858,11 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['perms'][$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
+                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name]=$tab->totalizable;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name]=$tab->enabled;
+					$this->attributes[$tab->elementtype]['help'][$tab->name]=$tab->help;
 
 					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
@@ -893,6 +920,8 @@ class ExtraFields
 			$perms=dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
 			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
 			$list=dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$totalizable=$this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
+			$help=$this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 		else	// Old usage
@@ -908,6 +937,7 @@ class ExtraFields
 			$param=$this->attribute_param[$key];
 			$langfile=$this->attribute_langfile[$key];
 			$list=$this->attribute_list[$key];
+			$totalizable=$this->attribute_totalizable[$key];
 			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
@@ -967,11 +997,11 @@ class ExtraFields
 
 			$showtime = in_array($type,array('datetime')) ? 1 : 0;
 
-			// Do not show current date when field not required (see select_date() method)
+			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 1, 0, 1);
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
 		elseif (in_array($type,array('int','integer')))
 		{
@@ -1303,7 +1333,58 @@ class ExtraFields
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
-					} else {
+					} else if (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
+						// Pattern for word=$ID$
+						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
+						
+						// Removing space arount =, ( and )
+						$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+						
+						$nbPreg = 1;
+						// While we have parenthesis
+						while ($nbPreg!=0) {
+							// Init des compteurs
+							$nbPregRepl = $nbPregSel = 0;
+							// On retire toutes les parenthèses sans = avant
+							$InfoFieldList[4]=preg_replace( '#([^=])(\([^)^(]*(' . $word .   ')[^)^(]*\))#','$1 $3 ',$InfoFieldList[4],-1,$nbPregRepl);
+							// On retire les espaces autour des = et parenthèses
+							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+							// On retire toutes les parenthèses avec = avant
+							$InfoFieldList[4]=preg_replace(  '#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*(' . $word .   ')[^)^(]*\)#','$1 ',$InfoFieldList[4], -1, $nbPregSel);
+							// On retire les espaces autour des = et parenthèses
+							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
+							
+							// Calcul du compteur général pour la boucle
+							$nbPreg = $nbPregRepl + $nbPregSel;
+						}
+						
+						// Si l'on a un AND ou un OR, avant ou après
+						preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
+						while(!empty($matchCondition[0])) {
+							// If the two sides differ but are not empty
+							if (! empty($matchCondition[1]) && ! empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3] ) {
+								// Nobody sain would do that without parentheses
+								$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
+							}
+							else {
+								if (! empty($matchCondition[1])) {
+									$boolCond =(( $matchCondition[1] == "AND" )?' AND 1 ':' OR 0 ');
+									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond.$matchCondition[3],$InfoFieldList[4]);
+								}
+								else if (! empty($matchCondition[3])) {
+									$boolCond =(( $matchCondition[3] == "AND" )?' 1 AND ':' 0 OR');
+									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond,$InfoFieldList[4]);
+								}
+								else {
+									$InfoFieldList[4] = 1;
+								}
+							}
+							
+							// Si l'on a un AND ou un OR, avant ou après
+							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
+						}
+					}
+					else {
 						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
 					}
 
@@ -1362,7 +1443,6 @@ class ExtraFields
 							}
 
 							$data[$obj->rowid]=$labeltoshow;
-
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1391,7 +1471,6 @@ class ExtraFields
 					$this->db->free($resql);
 
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
-
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -1685,7 +1764,6 @@ class ExtraFields
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}
@@ -1759,7 +1837,7 @@ class ExtraFields
 
 		$align='';
 
-		if ($type == 'date')
+        if ($type == 'date')
 		{
 			$align="center";
 		}
@@ -1786,6 +1864,10 @@ class ExtraFields
 		elseif ($type == 'checkbox')
 		{
 			$align="center";
+		}
+		elseif ($type == 'price')
+		{
+			$align="right";
 		}
 
 		return $align;

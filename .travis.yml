@@ -2,7 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
-# We use dist: trusty to have php 5.4+ available 
+# We use dist: trusty to have php 5.4+ available
 dist: trusty
 sudo: required
 
@@ -20,7 +20,7 @@ addons:
     # To use the last version of pgloader, we add repo of postgresql
     - postgresql
     - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'  
+    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
@@ -105,7 +105,7 @@ before_install:
     pgloader --version
     echo
   fi
- 
+
 install:
 - |
   echo "Updating Composer"
@@ -137,7 +137,7 @@ install:
 
 - |
   echo "Installing PHP CodeSniffer"
-  composer -n require squizlabs/php_codesniffer ^2
+  composer -n require squizlabs/php_codesniffer ^3
   echo
 
 - |
@@ -199,7 +199,7 @@ before_script:
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
     echo
-  
+
   - |
     echo "Setting up database"
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
@@ -207,12 +207,11 @@ before_script:
       mysql -e 'DROP DATABASE IF EXISTS travis;'
       mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
       mysql -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
-      mysql -e 'FLUSH PRIVILEGES;'    
+      mysql -e 'FLUSH PRIVILEGES;'
       mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
-      #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
-      #pgloader mysql://root:pass@127.0.0.1/base postgresql://dolibarrowner@127.0.0.1/dolibarr
+      #pgloader mysql://root:pass@127.0.0.1/dolibarr_35 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
     fi
     # TODO: SQLite
@@ -221,7 +220,7 @@ before_script:
   - |
     export CONF_FILE=htdocs/conf/conf.php
     echo "Setting up Dolibarr $CONF_FILE"
-    echo '<?php ' > $CONF_FILE
+    echo '<?php' > $CONF_FILE
     echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
@@ -242,8 +241,9 @@ before_script:
   - |
     echo "Create documents directory and set permissions"
     # and admin/temp subdirectory needed for unit tests
-    mkdir -p documents/admin/temp
-    echo "first line" > documents/dolibarr.log
+    mkdir -p $TRAVIS_BUILD_DIR/documents/admin/temp
+    sudo chmod -R a+rwx $TRAVIS_BUILD_DIR/documents
+    echo "***** First line of dolibarr.log" > $TRAVIS_BUILD_DIR/documents/dolibarr.log
     echo
 
 
@@ -288,7 +288,8 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  parallel-lint --exclude htdocs/includes --blame .
+  #parallel-lint --exclude htdocs/includes --blame .
+  parallel-lint --exclude htdocs/includes/sabre --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 
@@ -338,33 +339,31 @@ script:
   php upgrade.php 7.0.0 8.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade700800.log
   php upgrade2.php 7.0.0 8.0.0 MAIN_MODULE_TICKETSUP > $TRAVIS_BUILD_DIR/upgrade700800-2.log
   php step5.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-3.log
+  php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
+  php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
+  php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
+  php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
+  php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
+  php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
   cd -
   set +e
   echo
-  #cat $TRAVIS_BUILD_DIR/upgrade400500-2.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600-2.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600-3.log
-  #cat $TRAVIS_BUILD_DIR/upgrade600700-2.log
-  cat /tmp/dolibarr_install.log
-  
+  #cat /tmp/dolibarr_install.log
+
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+  phpunitresult=$?
+  echo "Phpunit return code = $phpunitresult"
   set +e
-
-- |
-  #echo "Output dolibarr.log"
-  #cat documents/dolibarr.log
 
 after_script:
 - |
-  # Dolibarr log file
-  #echo "After script"
-  #cat documents/dolibarr.log
-
+  echo "After script - Output 50 latest lines of dolibarr.log"
+  ls $TRAVIS_BUILD_DIR/documents
+  tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_success:
 - |
@@ -372,20 +371,24 @@ after_success:
 
 after_failure:
 - |
-  echo Failure
-  # This part of code seems to be never executed, error or not ???
-  echo "Debugging informations"
+  echo Failure detected, so we show samples of log to help diagnose
+  # This part of code is executed only if previous commande that fails are enclosed with set +e
   # Upgrade log files
-  cat *.log
-  echo "Debugging informations"
+  for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
+  do
+    echo "Debugging informations for file $ficlog"
+    #cat $ficlog
+  done
   # Apache log file
+  echo "Debugging informations for file apache error.log"
   sudo cat /var/log/apache2/error.log
-  # Dolibarr log file
-  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
+    # Dolibarr log file
+    echo "Debugging informations for file dolibarr.log (latest 50 lines)"
+    tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # MariaDB log file
-    sudo cat /var/log/mysql/error.log
+    echo "Debugging informations for file mysql error.log"
+    sudo tail -n 50 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi
-

@@ -1,21 +1,22 @@
 <?php
-/* Copyright (C) 2007-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+/* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 /**
  *      \file       htdocs/core/class/html.formbarcode.class.php
@@ -28,19 +29,25 @@
  */
 class FormBarCode
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
-     *	Constructor
+     *  Constructor
      *
-     *	@param	DoliDB		$db		Database handler
+     *  @param  DoliDB		$db		Database handler
      */
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -106,17 +113,35 @@ class FormBarCode
         return $select_encoder;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Return form to select type of barcode
+     *  Print form to select type of barcode
      *
-     *	@param	int		$selected          Id code pre-selected
-     *  @param	string	$htmlname          Name of HTML select field
-     *  @param  int		$useempty          Affiche valeur vide dans liste
-     *  @return	void
+     *  @param  int     $selected          Id code pre-selected
+     *  @param  string  $htmlname          Name of HTML select field
+     *  @param  int     $useempty          Affiche valeur vide dans liste
+     *  @return void
+     *  @deprecated
      */
-    function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
+    function select_barcode_type($selected='', $htmlname='barcodetype_id', $useempty=0)
     {
-        global $langs,$conf;
+        // phpcs:enable
+        print $this->selectBarcodeType($selected, $htmlname, $useempty);
+    }
+
+    /**
+     *  Return html form to select type of barcode
+     *
+     *  @param  int     $selected          Id code pre-selected
+     *  @param  string  $htmlname          Name of HTML select field
+     *  @param  int     $useempty          Display empty value in select
+     *  @return string
+     */
+    function selectBarcodeType($selected='', $htmlname='barcodetype_id', $useempty=0)
+    {
+        global $langs, $conf;
+
+        $out = '';
 
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
@@ -125,46 +150,40 @@ class FormBarCode
         $sql.= " ORDER BY code";
 
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
 
-            if ($useempty && $num > 0)
-            {
-                print '<select class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
-                print '<option value="0">&nbsp;</option>';
-            }
-            else
-            {
+            if ($useempty && $num > 0) {
+                $out .= '<select class="flat minwidth75imp" name="' . $htmlname . '" id="select_' . $htmlname . '">';
+                $out .= '<option value="0">&nbsp;</option>';
+            } else {
                 $langs->load("errors");
-                print '<select disabled class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
-                print '<option value="0" selected>'.$langs->trans('ErrorNoActivatedBarcode').'</option>';
+                $out .= '<select disabled class="flat minwidth75imp" name="' . $htmlname . '" id="select_' . $htmlname . '">';
+                $out .= '<option value="0" selected>' . $langs->trans('ErrorNoActivatedBarcode') . '</option>';
             }
 
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
-                if ($selected == $obj->rowid)
-                {
-                    print '<option value="'.$obj->rowid.'" selected>';
+                if ($selected == $obj->rowid) {
+                    $out .= '<option value="' . $obj->rowid . '" selected>';
+                } else {
+                    $out .= '<option value="' . $obj->rowid . '">';
                 }
-                else
-                {
-                    print '<option value="'.$obj->rowid.'">';
-                }
-                print $obj->libelle;
-                print '</option>';
+                $out .= $obj->libelle;
+                $out .= '</option>';
                 $i++;
             }
-            print "</select>";
-            print ajax_combobox("select_".$htmlname);
+            $out .= "</select>";
+            $out .= ajax_combobox("select_".$htmlname);
         }
         else {
             dol_print_error($this->db);
         }
+        return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show form to select type of barcode
      *
@@ -172,23 +191,37 @@ class FormBarCode
      *  @param  int			$selected    	Id condition preselected
      *  @param  string		$htmlname    	Nom du formulaire select
      *  @return	void
+     *  @deprecated
      */
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
-        global $langs,$conf;
-        if ($htmlname != "none")
-        {
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            $this->select_barcode_type($selected, $htmlname, 1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-            print '</td></tr></table></form>';
-        }
+        // phpcs:enable
+        print $this->formBarcodeType($page, $selected, $htmlname);
     }
 
+    /**
+     *  Return html form to select type of barcode
+     *
+     *  @param  string      $page           Page
+     *  @param  int         $selected       Id condition preselected
+     *  @param  string      $htmlname       Nom du formulaire select
+     *  @return string
+     */
+    function formBarcodeType($page, $selected='', $htmlname='barcodetype_id')
+    {
+        global $langs, $conf;
+        $out = '';
+        if ($htmlname != "none") {
+            $out .= '<form method="post" action="' . $page . '">';
+            $out .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+            $out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
+            $out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $out .= '<tr><td>';
+            $out .= $this->selectBarcodeType($selected, $htmlname, 1);
+            $out .= '</td>';
+            $out .= '<td align="left"><input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+            $out .= '</td></tr></table></form>';
+        }
+        return $out;
+    }
 }
-

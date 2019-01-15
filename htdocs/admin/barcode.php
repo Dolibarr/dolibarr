@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ if ($action == 'setcoder')
 	$resql=$db->query($sqlp);
 	if (! $resql) dol_print_error($db);
 }
-else if ($action == 'update')
+elseif ($action == 'update')
 {
 	$location = GETPOST('GENBARCODE_LOCATION','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
@@ -71,7 +71,7 @@ else if ($action == 'update')
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id,'chaine',0,'',$conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id,'chaine',0,'',$conf->entity);
-	
+
 	if ($res > 0)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -81,7 +81,7 @@ else if ($action == 'update')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-else if ($action == 'updateengine')
+elseif ($action == 'updateengine')
 {
     $sql = "SELECT rowid, coder";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
@@ -97,17 +97,17 @@ else if ($action == 'updateengine')
 	   while ($i <	$num)
 	   {
 	       $obj = $db->fetch_object($resql);
-	       
+
 	       if (GETPOST('coder'.$obj->rowid, 'alpha'))
 	       {
 	           $coder = GETPOST('coder'.$obj->rowid,'alpha');
 	           $code_id = $obj->rowid;
-	           
+
 	           $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	           $sqlp.= " SET coder = '" . $coder."'";
 	           $sqlp.= " WHERE rowid = ". $code_id;
 	           $sqlp.= " AND entity = ".$conf->entity;
-	           
+
 	           $upsql=$db->query($sqlp);
 	           if (! $upsql) dol_print_error($db);
 	       }
@@ -115,8 +115,8 @@ else if ($action == 'updateengine')
 	       $i++;
 	   }
     }
-
 }
+
 
 /*
  * View
@@ -334,7 +334,7 @@ if (! empty($conf->product->enabled))
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
-	$formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
+	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td></tr>';
 }
 
@@ -345,7 +345,7 @@ if (! empty($conf->societe->enabled))
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" align="right">';
-	print $formbarcode->select_barcode_type($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY,"GENBARCODE_BARCODETYPE_THIRDPARTY",1);
+	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td></tr>';
 }
 
@@ -433,5 +433,6 @@ if ($conf->produit->enabled)
 
 print "<br>";
 
+// End of page
 llxFooter();
 $db->close();

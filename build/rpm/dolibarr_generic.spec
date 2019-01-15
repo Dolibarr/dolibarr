@@ -54,7 +54,7 @@ BuildRequires: desktop-file-utils
 Group: Applications/Productivity
 Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
 Requires: mysql, mysql-client 
-%else
+%else%_datadir/dolibarr/htdocs/datapolicy
 %if 0%{?suse_version}
 # Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
@@ -124,7 +124,7 @@ cui hai bisogno ed essere facile da usare.
 
 %if 0%{?sles_version}
 %{__rm} -rf $RPM_BUILD_ROOT
-%{__mkdir} $RPM_BUILD_ROOT
+%{__mkdir} $RPM_BUILD_ROOT%_datadir/dolibarr/htdocs/datapolicy
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %else
@@ -257,9 +257,11 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/custom
+%_datadir/dolibarr/htdocs/datapolicy
 %_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
+%_datadir/dolibarr/htdocs/emailcollector
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -292,6 +294,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
+%_datadir/dolibarr/htdocs/takepos
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants

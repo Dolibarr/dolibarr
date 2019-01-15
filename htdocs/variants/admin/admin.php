@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,16 @@ if ($_POST) {
 	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
 	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
-		setEventMessage($langs->trans('RecordSaved'));
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 	}
 
        if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-               setEventMessage($langs->trans('RecordSaved'));
+               setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
        } else {
-               setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+               setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
        }
-
 }
 
 $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
@@ -62,16 +61,15 @@ print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td>
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-       $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+    $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
 } else {
-       $separator = "_";
+    $separator = "_";
 }
 print '<td align="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 print '</table>';
 print '<br><div style="text-align: center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
-

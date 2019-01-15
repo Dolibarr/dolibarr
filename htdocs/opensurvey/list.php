@@ -22,13 +22,13 @@
  *	\brief      Page to list surveys
  */
 
-require_once('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
-// Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+// Load translation files required by the page
+$langs->load("opensurvey");
 
 $action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
@@ -41,7 +41,6 @@ $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
 $id=GETPOST('id','alpha');
-$numsondage= $id;
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
@@ -51,26 +50,87 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+// Initialize technical objects
+$object = new Opensurveysondage($db);
+$opensurvey_static = new Opensurveysondage($db);
+
+$extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->opensurvey->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('surveylist'));     // Note that conf->hooks_modules contains array
+// Fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('survey');	// Load $extrafields->attributes['myobject']
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element,'','search_');
+
+// Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="p.date_fin";
 if (! $sortorder) $sortorder="DESC";
 
-// Load translation files required by the page
-$langs->load("opensurvey");
+// Security check
+if (!$user->rights->opensurvey->read) accessforbidden();
+
+// Definition of fields for list
+$arrayfields=array();
+foreach($object->fields as $key => $val)
+{
+    // If $val['visible']==0, then we never show the field
+    if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+}
+// Extra fields
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+{
+    foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+    {
+        if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+            $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+    }
+}
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	$search_status='';
-	$search_title='';
-	$search_ref='';
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    // Purge search criteria
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    {
+        $search_status='';
+        $search_title='';
+        $search_ref='';
+        $toselect='';
+        $search_array_options=array();
+    }
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+        || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    {
+        $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+    }
+
+    // Mass actions
+    $objectclass='Opensurveysondage';
+    $objectlabel='Opensurveysondage';
+    $permtoread = $user->rights->opensurvey->read;
+    $permtodelete = $user->rights->opensurvey->write;
+    $uploaddir = $conf->opensurvey->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -79,40 +139,15 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  */
 
 $form=new Form($db);
-$opensurvey_static = new Opensurveysondage($db);
 
 $now = dol_now();
 
-llxHeader('', $langs->trans("OpenSurveyArea"));
-
-$param='';
-$fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
-
+//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+$help_url='';
+$title = $langs->trans('OpenSurveyArea');
 
 
-
-
-
-
-
-
-
-$newcardbutton='';
-if (!$user->rights->opensurvey->creer)
-{
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle">'.$langs->trans('NewSurvey').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
-else
-{
-	$newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
-
-
-$sql = "SELECT p.id_sondage, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre, p.nom_admin,";
+$sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre, p.nom_admin,";
 $sql.= " u.login, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
@@ -122,44 +157,124 @@ if ($search_expired == 'expired') $sql.=" AND p.date_fin < '".$db->idate($now)."
 if ($search_expired == 'opened')  $sql.=" AND p.date_fin >= '".$db->idate($now)."'";
 if ($search_ref) $sql.=natural_search("p.id_sondage", $search_ref);
 if ($search_title) $sql.=natural_search("p.titre", $search_title);
-$sql.= $db->order($sortfield,$sortorder);
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
+$sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
 	{
 		$page = 0;
 		$offset = 0;
 	}
 }
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+{
+	$num = $nbtotalofrecords;
+}
+else
+{
+    $sql.= $db->plimit($limit+1, $offset);
 
-$sql.= $db->plimit($limit+1, $offset);
+    $resql=$db->query($sql);
+    if (! $resql)
+    {
+        dol_print_error($db);
+        exit;
+    }
 
-$resql=$db->query($sql);
-if (! $resql) dol_print_error($db);
+    $num = $db->num_rows($resql);
+}
 
-$num=$db->num_rows($resql);
+// Direct jump if only one record found
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+{
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".dol_buildpath('/opensurvey/card.php', 1).'?id='.$id);
+	exit;
+}
 
 
+llxHeader('', $title, $help_url);
 
+$arrayofselected=is_array($toselect)?$toselect:array();
+
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+$fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
+
+if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// List of mass actions available
+$arrayofmassactions =  array(
+    //'presend'=>$langs->trans("SendByMail"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+);
+if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 
 // List of surveys into database
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("OpenSurveyArea"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionsbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+$newcardbutton='';
+if (! empty($user->rights->opensurvey->write))
+{
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle">'.$langs->trans('NewSurvey').'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
+}
+else
+{
+    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+
+// Add code for pre mass action (confirmation or email presend form)
+$topicmail="SendOpenSurveyRef";
+$modelmail="opensurvey";
+$objecttmp=new Opensurveysondage($db);
+$trackid='surv'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($sall)
+{
+    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+}
 
 $moreforfilter = '';
+/*$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
+$moreforfilter.= '</div>';*/
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
@@ -174,7 +289,8 @@ if (! empty($moreforfilter))
 }
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+$selectedfields='';
 $selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -191,11 +307,20 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 $arraystatus=array('-1'=>'&nbsp;','0'=>$langs->trans("Draft"),'1'=>$langs->trans("Opened"),'2'=>$langs->trans("Closed"));
 print '<td class="liste_titre" align="center">'. $form->selectarray('search_status', $arraystatus, $search_status).'</td>';
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+// Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
 print '</tr>'."\n";
+
 
 // Fields title label
 // --------------------------------------------------------------------
@@ -207,7 +332,13 @@ print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $
 print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", $param,"",'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", $param,"",'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", $param,"",'align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
 
@@ -230,8 +361,8 @@ while ($i < min($num, $limit))
 	}
 	else dol_print_error($db);
 
-	$opensurvey_static->id=$obj->id_sondage;
-	$opensurvey_static->ref=$obj->id_sondage;
+	$opensurvey_static->id=$obj->rowid;
+	$opensurvey_static->ref=$obj->rowid;
 	$opensurvey_static->title=$obj->titre;
 	$opensurvey_static->status=$obj->status;
 	$opensurvey_static->date_fin=$db->jdate($obj->date_fin);
@@ -278,24 +409,87 @@ while ($i < min($num, $limit))
 
 	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
 
-	print'<td align="center"></td>'."\n";
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+	// Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	// Action column
+	print '<td class="nowrap" align="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+	    $selected=0;
+	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	}
+	print '</td>';
 
 	print '</tr>'."\n";
 	$i++;
 }
 
+// Show total line
+if (isset($totalarray['pos']))
+{
+    print '<tr class="liste_total">';
+    $i=0;
+    while ($i < $totalarray['nbfield'])
+    {
+        $i++;
+        if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+        else
+        {
+            if ($i == 1)
+            {
+                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+            else print '<td></td>';
+        }
+    }
+    print '</tr>';
+}
+
 // If no record found
 if ($num == 0)
 {
-    $colspan=8;
-    //foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
-    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	$colspan=1;
+	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
+
+$db->free($resql);
+
+$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters, $object);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>'."\n";
-print '</div>';
-print '</form>';
+print '</div>'."\n";
 
+print '</form>'."\n";
+
+if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
+{
+    $hidegeneratedfilelistifempty=1;
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
+
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    $formfile = new FormFile($db);
+
+    // Show list of available documents
+    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    $urlsource.=str_replace('&amp;','&',$param);
+
+    $filedir=$diroutputmassaction;
+    $genallowed=$user->rights->mymodule->read;
+    $delallowed=$user->rights->mymodule->create;
+
+    print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+}
+
+// End of page
 llxFooter();
-
 $db->close();

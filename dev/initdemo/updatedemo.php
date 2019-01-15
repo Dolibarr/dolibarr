@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
- * 
+ *
  * Get a distant dump file and load it into a mysql database
  */
 
@@ -36,15 +36,15 @@ $confirm=isset($argv[1])?$argv[1]:'';
 
 // Include Dolibarr environment
 $res=0;
-if (! $res && file_exists($path."../../master.inc.php")) $res=@include($path."../../master.inc.php");
-if (! $res && file_exists($path."../../htdocs/master.inc.php")) $res=@include($path."../../htdocs/master.inc.php");
-if (! $res && file_exists("../master.inc.php")) $res=@include("../master.inc.php");
-if (! $res && file_exists("../../master.inc.php")) $res=@include("../../master.inc.php");
-if (! $res && file_exists("../../../master.inc.php")) $res=@include("../../../master.inc.php");
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include($path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"); // Used on dev env only
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include("../../../dolibarr".$reg[1]."/htdocs/master.inc.php"); // Used on dev env only
+if (! $res && file_exists($path."../../master.inc.php")) $res=@include $path."../../master.inc.php";
+if (! $res && file_exists($path."../../htdocs/master.inc.php")) $res=@include $path."../../htdocs/master.inc.php";
+if (! $res && file_exists("../master.inc.php")) $res=@include "../master.inc.php";
+if (! $res && file_exists("../../master.inc.php")) $res=@include "../../master.inc.php";
+if (! $res && file_exists("../../../master.inc.php")) $res=@include "../../../master.inc.php";
+if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include $path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
+if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include "../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
 if (! $res) die ("Failed to include master.inc.php file\n");
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 /*
@@ -74,7 +74,7 @@ $tables=array(
 
 $year=2010;
 $currentyear=$tmp['year'];
-while ($year <= $currentyear) 
+while ($year <= $currentyear)
 {
     //$year=2021;
     $delta=($currentyear - $year);
@@ -84,7 +84,7 @@ while ($year <= $currentyear)
     {
         foreach($tables as $tablekey => $tableval)
         {
-            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." "; 
+            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
             //$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
             $resql = $db->query($sql);
@@ -110,14 +110,14 @@ while ($year <= $currentyear)
                         //print $sql2."\n";
                         $resql2 = $db->query($sql2);
                         if (! $resql2) dol_print_error($db);
-                    }            
+                    }
                     $i++;
                 }
             }
             else dol_print_error($db);
         }
     }
-    
+
     $year++;
 }
 

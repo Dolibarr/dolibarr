@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ function shipping_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -121,8 +121,8 @@ function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();

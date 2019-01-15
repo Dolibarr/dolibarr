@@ -28,36 +28,62 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Productcustomerprice extends CommonObject
 {
-	var $element = 'product_customer_price'; // !< Id that identify managed objects
-	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_type;
-	var $localtax1_tx;
-	var $localtax2_type;
-	var $localtax2_tx;
-	var $fk_user;
-	var $lines = array ();
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'product_customer_price';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'product_customer_price';
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+  public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_type;
+	public $localtax1_tx;
+	public $localtax2_type;
+	public $localtax2_tx;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $lines = array ();
+
 
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDb $db handler
 	 */
-	function __construct($db) {
-
+    function __construct($db)
+    {
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -68,7 +94,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0, $forceupdateaffiliate = 0) {
+    function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -294,6 +321,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -306,6 +334,7 @@ class Productcustomerprice extends CommonObject
 	 */
 	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ( empty($sortfield)) $sortfield = "t.rowid";
@@ -342,7 +371,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
@@ -407,6 +436,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -419,6 +449,7 @@ class Productcustomerprice extends CommonObject
 	 */
 	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if (! empty($sortfield)) $sortfield = "t.rowid";
@@ -522,7 +553,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0) {
+    function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -719,7 +751,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate) {
+    function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
+    {
 
 		$error = 0;
 
@@ -811,7 +844,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+    function delete($user, $notrigger = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -864,7 +898,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $fromid of object to clone
 	 * @return int id of clone
 	 */
-	function createFromClone($fromid) {
+    function createFromClone($fromid)
+    {
 
 		global $user, $langs;
 
@@ -914,7 +949,8 @@ class Productcustomerprice extends CommonObject
 	 *
 	 * @return void
 	 */
-	function initAsSpecimen() {
+    function initAsSpecimen()
+    {
 
 		$this->id = 0;
 
@@ -943,24 +979,46 @@ class Productcustomerprice extends CommonObject
  */
 class PriceByCustomerLine
 {
-	var $id;
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $default_vat_code;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $fk_user;
-	var $import_key;
-	var $socname;
-	var $prodref;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $default_vat_code;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_tx;
+	public $localtax2_tx;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $import_key;
+	public $socname;
+	public $prodref;
 }

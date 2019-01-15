@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
@@ -40,7 +40,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 	var $boxlabel="BoxProductsAlertStock";
 	var $depends = array("produit");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -238,6 +242,5 @@ class box_produits_alerte_stock extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

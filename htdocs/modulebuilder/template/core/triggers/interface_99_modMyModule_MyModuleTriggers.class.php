@@ -113,11 +113,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		    //case 'USER_SETINGROUP':
 		    //case 'USER_REMOVEFROMGROUP':
 
-		    //case 'USER_LOGIN':
-		    //case 'USER_LOGIN_FAILED':
-		    //case 'USER_LOGOUT':
-		    //case 'USER_UPDATE_SESSION':      // Warning: To increase performances, this action is triggered only if constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-
 		    // Actions
 		    //case 'ACTION_MODIFY':
 		    //case 'ACTION_CREATE':

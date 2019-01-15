@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ if ($action == 'update' && ! $cancel)
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
-	dolibarr_set_const($db, "MAIN_MENU_STANDARD",        GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",      GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD",   GETPOST('MAIN_MENUFRONT_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD','alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize
@@ -269,7 +269,6 @@ if ($action != 'edit')
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

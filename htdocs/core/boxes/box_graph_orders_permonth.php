@@ -33,7 +33,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 	var $boxlabel="BoxCustomersOrdersPerMonth";
 	var $depends = array("commande");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -253,7 +256,6 @@ class box_graph_orders_permonth extends ModeleBoxes
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}
-
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
@@ -275,6 +277,5 @@ class box_graph_orders_permonth extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

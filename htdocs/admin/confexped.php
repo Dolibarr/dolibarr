@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>ù
  * Copyright (C) 2015      Claudio Aschieri     <c.aschieri@19.coop>
@@ -147,5 +147,6 @@ print '</table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

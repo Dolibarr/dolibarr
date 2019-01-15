@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  *
@@ -42,6 +42,9 @@ if ($user->societe_id) {
 }
 $result=restrictedArea($user,'produit|service');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockreplenishlist'));
+
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
@@ -79,13 +82,18 @@ if (!$sortorder) {
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
 $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
@@ -678,6 +686,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	$i++;
 }
+
+$parameters=array('sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>';
 print '</div>';
 

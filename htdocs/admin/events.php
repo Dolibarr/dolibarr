@@ -74,7 +74,7 @@ llxHeader('',$langs->trans("Audit"),$wikihelp);
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
-print $langs->trans("LogEventDesc")."<br>\n";
+print $langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."<br>\n";
 print "<br>\n";
 
 
@@ -94,7 +94,7 @@ print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
-	{		
+	{
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
@@ -114,6 +114,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
 $db->close();

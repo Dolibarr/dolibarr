@@ -100,6 +100,5 @@ class FormOrder extends Form
 
 		return 1;
 	}
-
 }
 

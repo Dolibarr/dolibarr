@@ -23,7 +23,7 @@
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box to show last projet
@@ -34,7 +34,12 @@ class box_project extends ModeleBoxes
 	var $boximg="object_projectpub";
 	var $boxlabel;
 	//var $depends = array("projet");
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	var $param;
 
 	var $info_box_head = array();
@@ -49,8 +54,9 @@ class box_project extends ModeleBoxes
     function __construct($db,$param='')
     {
         global $user, $langs;
-        $langs->load("boxes");
-        $langs->load("projects");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
         $this->boxlabel="Projects";
@@ -80,7 +86,7 @@ class box_project extends ModeleBoxes
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 
-		    include_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+		    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		    $projectstatic = new Project($this->db);
 
 		    $socid=$user->societe_id;
@@ -179,7 +185,6 @@ class box_project extends ModeleBoxes
             'td' => '',
             'text' => "&nbsp;",
         );
-
 	}
 
 	/**

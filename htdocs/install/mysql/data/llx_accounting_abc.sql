@@ -3,10 +3,11 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,13 +30,13 @@
 --
 
 
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'ACCOUNTING_SELL_JOURNAL',           2, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'ACCOUNTING_PURCHASE_JOURNAL',       3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'FinanceJournal',           4, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'ACCOUNTING_MISCELLANEOUS_JOURNAL',          1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'ACCOUNTING_HAS_NEW_JOURNAL',        9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'ExpenseReportsJournal', 5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal'    , 8, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'ACCOUNTING_SELL_JOURNAL',          2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'ACCOUNTING_PURCHASE_JOURNAL',      3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'FinanceJournal',                   4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'ACCOUNTING_MISCELLANEOUS_JOURNAL', 1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ExpenseReportsJournal',            5, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -126,3 +127,5 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account RO RO-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  188, 'RO-BASE', 'Plan de conturi romanesc', 1);
 
+-- Description of chart of account DZ NSCF
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  13, 'NSCF', 'Nouveau système comptable financier', 1);

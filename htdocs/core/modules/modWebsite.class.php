@@ -46,12 +46,12 @@ class modWebsite extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "portal";
-        $this->module_position = 50;
+        $this->module_position = '50';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -61,27 +61,23 @@ class modWebsite extends DolibarrModules
 		$this->dirs = array("/website/temp");
 
         // Config pages
-        //-------------
         $this->config_page_url = array('website.php');
 
-        // Dependancies
-        //-------------
+        // Dependencies
 		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
 		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("website");
 
         // Constants
-        //-----------
        	$this->const = array();
 
         // New pages on tabs
-        // -----------------
        	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
-        //------
         $this->boxes = array();
 
 		// Permissions
@@ -111,7 +107,7 @@ class modWebsite extends DolibarrModules
         $r=0;
         $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
-						        'titre'=>'Websites',
+						        'titre'=>'WebSites',
                                 'mainmenu'=>'website',
 						        'url'=>'/website/index.php',
 						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -138,5 +134,47 @@ class modWebsite extends DolibarrModules
         $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
         $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
         $r++;
+    }
+
+
+    /**
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+    	global $conf,$langs;
+
+    	// Remove permissions and default values
+    	$this->remove($options);
+
+    	// Copy flags and octicons directoru
+    	$dirarray=array('common/flags', 'common/octicons');
+    	foreach($dirarray as $dir)
+    	{
+	    	$src=DOL_DOCUMENT_ROOT.'/theme/'.$dir;
+	    	$dest=DOL_DATA_ROOT.'/medias/image/'.$dir;
+
+	    	if (is_dir($src))
+	    	{
+	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    		dol_mkdir($dest);
+	    		$result=dolCopyDir($src,$dest,0,0);
+	    		if ($result < 0)
+	    		{
+	    			$langs->load("errors");
+	    			$this->error=$langs->trans('ErrorFailToCopyDir',$src,$dest);
+	    			return 0;
+	    		}
+	    	}
+    	}
+
+    	$sql = array();
+
+    	return $this->_init($sql, $options);
     }
 }

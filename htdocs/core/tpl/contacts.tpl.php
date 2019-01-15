@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
@@ -42,6 +42,7 @@ elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur-
 elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'reception')		{ $permission=$user->rights->reception->creer; }
 elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission) && isset($user->rights->$module->creer))
 {
@@ -94,7 +95,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject=$object;
-		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
@@ -133,7 +134,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject=$object;
-			if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type','external', 'position', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
@@ -157,20 +158,23 @@ if ($permission) {
 	</form>
 
 	<?php
+	$var = false;
+
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
-		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 
 		$tab = $tmpobject->liste_contact(-1,$source);
 		$num=count($tab);
 
 		$i = 0;
 		while ($i < $num) {
+		    $var = ! $var;
 	?>
 
-	<form class="tagtr oddeven">
+	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
 		<div class="tagtd" align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
@@ -199,12 +203,12 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
-				echo $userstatic->getNomUrl(-1);
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1);
+				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>

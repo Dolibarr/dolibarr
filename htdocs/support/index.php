@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,7 @@ if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 if (! defined('DOL_URL_ROOT'))
 	define('DOL_URL_ROOT', $pos);	// URL racine relative
 
-$langs->load("other");
-$langs->load("help");
-
+$langs->loadLangs(array("other", $langs->load("help")));
 
 /*
  * View

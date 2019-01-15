@@ -23,7 +23,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -54,7 +54,7 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print_fiche_titre($langs->trans('MenuReportMonth'));
+print load_fiche_titre($langs->trans('MenuReportMonth'));
 
 $html = new Form($db);
 $formother = new FormOther($db);
@@ -190,11 +190,10 @@ else
          print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }
-
 }
 print '</table>';
 print '</div>';
 
-// Fin de page
-$db->close();
+// End of page
 llxFooter();
+$db->close();

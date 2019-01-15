@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -44,6 +44,7 @@ $origin		= GETPOST('origin','alpha');
 $catorigin	= GETPOST('catorigin','int');
 $type 		= GETPOST('type','alpha');
 $urlfrom	= GETPOST('urlfrom','alpha');
+$backtopage = GETPOST('backtopage','alpha');
 
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
@@ -173,6 +174,11 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".$urlfrom);
 			exit;
 		}
+		elseif ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
 		else if ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
@@ -232,8 +238,9 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="id" value="'.GETPOST('origin','alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
@@ -288,7 +295,6 @@ if ($user->rights->categorie->creer)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

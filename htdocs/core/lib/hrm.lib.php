@@ -18,7 +18,7 @@
 /**
  * \file    htdocs/core/lib/hrm.lib.php
  * \ingroup HRM
- * \brief   Library for hrm 
+ * \brief   Library for hrm
  */
 $langs->load('hrm');
 

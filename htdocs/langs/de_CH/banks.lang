@@ -4,6 +4,7 @@ BankAccounts=Kontenübersicht
 AccountRef=Konto-Referenz
 AccountLabel=Kontobezeichnung
 CashAccount=Kasse
+CashAccounts=Kassen
 BankBalanceBefore=Bilanz vor
 BankBalanceAfter=Bilanz nach
 AllTime=Vom start

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,12 +29,21 @@
  */
 class Ldap
 {
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[]	Array of error strings
+	 */
+	public $errors = array();
 
 	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	var $server=array();
+
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
@@ -140,6 +149,7 @@ class Ldap
 
 	// Connection handling methods -------------------------------------------
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
@@ -149,6 +159,7 @@ class Ldap
 	 */
 	function connect_bind()
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$connected=0;
@@ -370,7 +381,8 @@ class Ldap
 	 *
 	 * @return	boolean					version
 	 */
-	function setVersion() {
+    function setVersion()
+    {
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
 		$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
 		return $ldapsetversion;
@@ -381,7 +393,8 @@ class Ldap
 	 *
 	 * @return	boolean					referrals
 	 */
-	function setReferrals() {
+    function setReferrals()
+    {
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
 		$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 		return $ldapreferrals;
@@ -643,6 +656,7 @@ class Ldap
 		return -1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Build a LDAP message
 	 *
@@ -652,6 +666,7 @@ class Ldap
 	 */
 	function dump_content($dn, $info)
 	{
+        // phpcs:enable
 		$content='';
 
 		// Create file content
@@ -1423,6 +1438,7 @@ class Ldap
 		return($retval);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Convertit le temps ActiveDirectory en Unix timestamp
 	 *
@@ -1431,6 +1447,7 @@ class Ldap
 	 */
 	function convert_time($value)
 	{
+        // phpcs:enable
 		$dateLargeInt=$value; // nano secondes depuis 1601 !!!!
 		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
 		$ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes

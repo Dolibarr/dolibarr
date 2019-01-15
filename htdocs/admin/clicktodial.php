@@ -140,6 +140,6 @@ if (! empty($conf->global->CLICKTODIAL_URL))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

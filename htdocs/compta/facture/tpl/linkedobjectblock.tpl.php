@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -47,8 +47,8 @@ foreach($linkedObjectBlock as $key => $objectlink)
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
 	<tr class="<?php echo $trclass; ?>" data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
-        <td class="linkedcol-element" ><?php echo $langs->trans("CustomerInvoice"); ?></td>
-        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td class="linkedcol-element"><?php echo $langs->trans("CustomerInvoice"); ?></td>
+        <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
     	<td class="linkedcol-amount" align="right"><?php

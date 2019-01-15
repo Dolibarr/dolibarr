@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015		Charles-Fr BENKE  	 <charles.fr@benke.fr>
+ * Copyright (C) 2015-2018 Charlene BENKE  	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,9 @@ class pdf_paiement
 	function __construct($db)
 	{
 		global $langs,$conf;
-		$langs->load("bills");
-		$langs->load("compta");
-		$langs->load("main");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","compta","main"));
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
@@ -80,10 +80,10 @@ class pdf_paiement
 		}
 		// which type of document will be generated: clients (client) or providers (fourn) invoices
 		$this->doc_type = "client";
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction generant la rapport sur le disque
 	 *
@@ -95,6 +95,7 @@ class pdf_paiement
 	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		global $conf, $hookmanager, $langs, $user;
@@ -179,7 +180,7 @@ class pdf_paiement
 		// number of bill
 		switch ($this->doc_type) {
 			case "client":
-				$sql = "SELECT p.datep as dp, f.facnumber";
+				$sql = "SELECT p.datep as dp, f.ref";
 				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 				$sql.= ", c.code as paiement_code, p.num_paiement";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
@@ -210,7 +211,7 @@ class pdf_paiement
 				$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 				break;
 			case "fourn":
-				$sql = "SELECT p.datep as dp, f.ref as facnumber";
+				$sql = "SELECT p.datep as dp, f.ref as ref";
 				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 				$sql.= ", c.code as paiement_code, p.num_paiement";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
@@ -253,7 +254,7 @@ class pdf_paiement
 			{
 				$objp = $this->db->fetch_object($result);
 
-				$lines[$i][0] = $objp->facnumber;
+				$lines[$i][0] = $objp->ref;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
@@ -345,7 +346,7 @@ class pdf_paiement
 	 */
 	function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -406,6 +407,7 @@ class pdf_paiement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output body
 	 *
@@ -417,6 +419,7 @@ class pdf_paiement
 	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
+        // phpcs:enable
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -495,4 +498,3 @@ class pdf_paiement
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('Total')." : ".price($total), 0, 'R', 0);
 	}
 }
-
