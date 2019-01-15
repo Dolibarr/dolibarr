@@ -1003,9 +1003,11 @@ class FormFile
 	 * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
 	 * 	@param	 int	$useinecm			Change output for use in ecm module:
-	 * 										0: Add a previw link. Show also rename and crop file
+	 * 										0 or 6: Add a preview column. Show also a rename and crop button.
 	 * 										1: Add link to edit ECM entry
 	 * 										2: Add rename and crop file
+	 *                                      4: Add a preview column
+	 *                                      5: Add link to edit ECM entry and Add a preview column
 	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int	$maxlength          Maximum length of file name shown.
 	 *  @param	 string	$title				Title before list. Use 'none' to disable title.
@@ -1100,7 +1102,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if (empty($useinecm) && $title != 'none') print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
+			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1113,7 +1115,7 @@ class FormFile
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" id="tablelines" class="'.($useinecm?'liste noborder':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="'.(($useinecm && $useinecm != 6)?'liste noborder':'liste').'">'."\n";
 
 			if (! empty($addfilterfields))
 			{
@@ -1121,7 +1123,7 @@ class FormFile
 				print '<td><input type="search_doc_ref" value="'.dol_escape_htmltag(GETPOST('search_doc_ref','alpha')).'"></td>';
 				print '<td></td>';
 				print '<td></td>';
-				if (empty($useinecm)) print '<td></td>';
+				if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
 				if (! $disablemove) print '<td></td>';
@@ -1133,7 +1135,7 @@ class FormFile
 			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre('Date',$url,"date","",$param,'align="center"',$sortfield,$sortorder);
-			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');					// Preview
+			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('',$url,"","",$param,'align="center"');					// Preview
 			print_liste_field_titre('');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
@@ -1220,14 +1222,21 @@ class FormFile
 					print '<td align="center" width="140px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';	// 140px = width for date with PM format
 
 					// Preview
-					if (empty($useinecm))
+					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5|| $useinecm == 6)
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
 						if (image_format_supported($file['name']) > 0)
 						{
-							$minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
-							if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+						    if ($useinecm == 5 || $useinecm == 6)
+						    {
+						        $minifile=getImageFileNameForSize($file['name'], '');     // There is no thumb for ECM module and Media filemanager, so we use true image
+						    }
+						    else
+						    {
+						        $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+						    }
+						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							//print $file['path'].'/'.$minifile.'<br>';
 
 							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
@@ -1237,7 +1246,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+							print '<img border="0" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6)? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -1287,11 +1296,11 @@ class FormFile
 						// Delete or view link
 						// ($param must start with &)
 						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
-						if ($useinecm == 1)
+						if ($useinecm == 1 || $useinecm == 5)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
-						if (! $useinecm || $useinecm == 2)
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6)
 						{
 							$newmodulepart=$modulepart;
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
@@ -1308,7 +1317,7 @@ class FormFile
 							if ($permtoeditline)
 							{
 								$paramsectiondir=(in_array($modulepart, array('medias','ecm'))?'&section_dir='.urlencode($relativepath):'');
-								print '<a href="'.(($useinecm == 1)?'#':($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
+								print '<a href="'.(($useinecm == 1 || $useinecm == 5)?'#':($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject)
@@ -1317,7 +1326,7 @@ class FormFile
 							if (! empty($conf->dol_use_jmobile)) $useajax=0;
 							if (empty($conf->use_javascript_ajax)) $useajax=0;
 							if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
-							print '<a href="'.(($useinecm && $useajax)?'#':($url.'?action=delete&urlfile='.urlencode($filepath).$param)).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax)?'#':($url.'?action=delete&urlfile='.urlencode($filepath).$param)).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
@@ -1355,7 +1364,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				$colspan=(empty($useinecm)?'6':'6');
+				$colspan='6';
 				if (empty($disablemove)) $colspan++;		// 6 columns or 7
 				print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
@@ -1413,7 +1422,7 @@ class FormFile
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
 		// Show list of documents
-		if (empty($useinecm)) print load_fiche_titre($langs->trans("AttachedFiles"));
+		if (empty($useinecm) || $useinecm == 6) print load_fiche_titre($langs->trans("AttachedFiles"));
 		if (empty($url)) $url=$_SERVER["PHP_SELF"];
 
 		if (! empty($addfilterfields))
@@ -1621,7 +1630,7 @@ class FormFile
 				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
 				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
 				print '<td align="right">';
-				//if (! empty($useinecm))  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
