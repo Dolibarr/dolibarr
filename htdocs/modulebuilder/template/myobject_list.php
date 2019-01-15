@@ -353,6 +353,12 @@ $newcardbutton='';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 //}
+//else
+//{
+//    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('New');
+//    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+//    $newcardbutton.= '</a>';
+//}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 

@@ -93,6 +93,7 @@ NEW: The binding step in accountancy has a country filter with autocompletion
 NEW: Top menu is always on screen with MD theme.
 NEW: Withdraw request massaction can include already partially paid invoices
 NEW: Option "Simplify interface for blind persons"
+NEW: Generic cash fence feature (compatible with several POS modules)
 
 For developers:
 NEW: Add lib for multiselect with checkboxes

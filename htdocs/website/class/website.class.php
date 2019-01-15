@@ -79,16 +79,13 @@ class Website extends CommonObject
 	 * @var mixed
 	 */
 	public $date_creation;
-
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
+	public $date_modification;
 
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
+	public $fk_user_creat;
 
 	/**
 	 * @var string
@@ -169,7 +166,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -525,6 +522,7 @@ class Website extends CommonObject
         global $hookmanager, $langs;
 		global $dolibarr_main_data_root;
 
+		$now = dol_now();
 		$error=0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -560,6 +558,8 @@ class Website extends CommonObject
 		$object->ref=$newref;
 		$object->fk_default_home=0;
 		$object->virtualhost='';
+		$object->date_creation = $now;
+		$object->fk_user_creat = $user->id;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
