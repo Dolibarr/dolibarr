@@ -250,6 +250,7 @@ PriceMode=Price mode
 PriceNumeric=Number
 DefaultPrice=Default price
 ComposedProductIncDecStock=Increase/Decrease stock on parent change
+ComposedProductOptional=Optional
 ComposedProduct=Sub-product
 MinSupplierPrice=Minimum buying price
 MinCustomerPrice=Minimum selling price

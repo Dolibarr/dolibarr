@@ -560,3 +560,7 @@ UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing'
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
 DROP TABLE llx_ticket_logs;
+
+
+-- Product components
+ALTER TABLE llx_product_association ADD COLUMN optional integer DEFAULT 0;

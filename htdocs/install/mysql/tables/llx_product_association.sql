@@ -24,5 +24,6 @@ create table llx_product_association
   fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
   qty                   double NULL,
   incdec                integer DEFAULT 1			-- when set to 1 changing stock of product will change stock of linked product too
+  optional              integer DEFAULT 0           -- mark product component as optional
 )ENGINE=innodb;
 

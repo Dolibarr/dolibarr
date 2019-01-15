@@ -74,7 +74,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	{
 		if ($_POST["prod_qty_".$i] > 0)
 		{
-			if ($object->add_sousproduit($id, $_POST["prod_id_".$i], $_POST["prod_qty_".$i], $_POST["prod_incdec_".$i]) > 0)
+			if ($object->add_sousproduit($id, $_POST["prod_id_".$i], $_POST["prod_qty_".$i], $_POST["prod_incdec_".$i], $_POST["prod_optional_".$i]) > 0)
 			{
 				//var_dump($id.' - '.$_POST["prod_id_".$i].' - '.$_POST["prod_qty_".$i]);exit;
 				$action = 'edit';
@@ -119,7 +119,7 @@ else if($action==='save_composed_product')
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
-			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
+			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0, isset($row['optional']) ? 1 : 0  );
 			else $object->del_sousproduit($id, $id_product);
 		}
 		setEventMessages('RecordSaved', null);
@@ -338,6 +338,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans('Stock').'</td>';
 			print '<td align="center">'.$langs->trans('Qty').'</td>';
 			print '<td align="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+			print '<td align="center">'.$langs->trans('ComposedProductOptional').'</td>';
 			print '</tr>'."\n";
 
 			$class='pair';
@@ -402,16 +403,18 @@ if ($id > 0 || ! empty($ref))
 						// Stock
 						if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
 
-						// Qty + IncDec
+						// Qty + IncDec + Optional
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][optional]" value="1" '.($value['optional']==1?'checked':''  ).' /></td>';
 
 						}
 						else{
 							print '<td>'.$nb_of_subproduct.'</td>';
 							print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
+							print '<td>'.($value['optional']==1?'x':''  ).'</td>';
 						}
 
 						print '</tr>'."\n";
@@ -473,7 +476,7 @@ if ($id > 0 || ! empty($ref))
 				// Stock
 				if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 
-				print '<td align="right" colspan="2">';
+				print '<td align="right" colspan="3">';
 				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
@@ -483,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				$colspan=8;
+				$colspan=9;
 				if (! empty($conf->stock->enabled)) $colspan++;
 
 				print '<tr class="impair">';
@@ -546,6 +549,7 @@ if ($id > 0 || ! empty($ref))
 			//print '<th class="liste_titre" align="center">'.$langs->trans("IsInPackage").'</td>';
 			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
 			print '<th align="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
+			print '<th align="center">'.$langs->trans('ComposedProductOptional').'</th>';
 			print '</tr>';
 			if ($resql)
 			{
@@ -607,12 +611,14 @@ if ($id > 0 || ! empty($ref))
 							//$addchecked = ' checked';
 							$qty=$object->is_sousproduit_qty;
 							$incdec=$object->is_sousproduit_incdec;
+							$optional=$object->is_sousproduit_optional;
 						}
 						else
 						{
 							//$addchecked = '';
 							$qty=0;
 							$incdec=0;
+							$optional=0;
 						}
 						// Contained into package
 						/*print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
@@ -628,6 +634,17 @@ if ($id > 0 || ! empty($ref))
 							// TODO Hide field and show it when setting a qty
 							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
 							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
+						}
+						print '</td>';
+
+						// Optional
+						print '<td align="center">';
+						if ($qty) print '<input type="checkbox" name="prod_optional_'.$i.'" value="1" '.($optional?'checked':'').'>';
+						else
+						{
+							// TODO Hide field and show it when setting a qty
+							print '<input type="checkbox" name="prod_optional_'.$i.'" value="1">';
+							//print '<input type="checkbox" disabled name="prod_optional_'.$i.'" value="1">';
 						}
 						print '</td>';
 
