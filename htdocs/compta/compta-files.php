@@ -97,7 +97,7 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
     $sql.=" SELECT rowid as id,ref,paid,total_ttc,fk_user_author as fk_soc,date_fin as date,'Expense' as item  FROM ".MAIN_DB_PREFIX."expensereport";
     $sql.=" WHERE date_fin between  ".$wheretail;
     $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id,ref,paid,amount as total_ttc,CONCAT(firstname,' ',lastname) as fk_soc,datedon as date,'Donation' as item  FROM ".MAIN_DB_PREFIX."don";
+    $sql.=" SELECT rowid as id,ref,paid,amount as total_ttc,'0' as fk_soc,datedon as date,'Donation' as item  FROM ".MAIN_DB_PREFIX."don";
     $sql.=" WHERE datedon between  ".$wheretail;
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id,label as ref,1 as paid,amount as total_ttc,fk_user as fk_soc,datep as date,'Salary' as item  FROM ".MAIN_DB_PREFIX."payment_salary";
