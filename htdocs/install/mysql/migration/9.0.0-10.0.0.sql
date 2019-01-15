@@ -84,3 +84,6 @@ ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
+
+-- Product components
+ALTER TABLE llx_product_association ADD COLUMN optional integer DEFAULT 0;
