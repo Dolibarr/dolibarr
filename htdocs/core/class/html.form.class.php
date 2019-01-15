@@ -6754,8 +6754,11 @@ class Form
 			// Special case for project/task page
 			if ($paramid == 'project_ref')
 			{
-				$navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/','/tasks.php',$navurl);
-				$paramid='ref';
+			    if (preg_match('/\/tasks\/(task|contact|note|document)\.php/', $navurl))     // TODO Remove this when nav with project_ref on task pages are ok
+			    {
+				    $navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/', '/tasks.php', $navurl);
+    				$paramid='ref';
+			    }
 			}
 
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
