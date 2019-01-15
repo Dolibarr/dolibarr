@@ -1163,6 +1163,8 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
+		$newdatecreation=dol_mktime(GETPOST('datecreationhour','int'), GETPOST('datecreationmin','int'), GETPOST('datecreationsec','int'), GETPOST('datecreationmonth','int'), GETPOST('datecreationday','int'), GETPOST('datecreationyear','int'));
+		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
 
 		$res = $objectpage->update($user);
 		if (! ($res > 0))
@@ -2506,7 +2508,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagehtmlheader=$objectpage->htmlheader;
 		$pagedatecreation=$objectpage->date_creation;
 		$pagedatemodification=$objectpage->date_modification;
-		$pageauthorid=$objectpage->fk_user_create;
+		$pageauthorid=$objectpage->fk_user_creat;
+		$pageusermodifid=$objectpage->fk_user_modif;
 	}
 	else
 	{
@@ -2633,23 +2636,37 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	$fuser=new User($db);
-	$fuser->fetch($pageauthorid);
 
 	print '<tr><td>';
 	print $langs->trans('Author');
 	print '</td><td>';
-	if ($pageauthorid > 0) print $fuser->getNomUrl(1);
+	if ($pageauthorid > 0)
+	{
+	    $fuser->fetch($pageauthorid);
+	    print $fuser->getNomUrl(1);
+	}
 	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans('DateCreation');
 	print '</td><td>';
-	print dol_print_date($pagedatecreation, 'dayhour');
+	print $form->select_date($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
+	//print dol_print_date($pagedatecreation, 'dayhour');
 	print '</td></tr>';
 
 	if ($action != 'createcontainer')
 	{
-		print '<tr><td>';
+	    print '<tr><td>';
+	    print $langs->trans('LastModificationAuthor');
+	    print '</td><td>';
+	    if ($pageusermodifid > 0)
+	    {
+	        $fuser->fetch($pageusermodifid);
+	        print $fuser->getNomUrl(1);
+	    }
+	    print '</td></tr>';
+
+	    print '<tr><td>';
 		print $langs->trans('DateModification');
 		print '</td><td>';
 		print dol_print_date($pagedatemodification, 'dayhour');
