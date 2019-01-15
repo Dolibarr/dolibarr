@@ -1716,6 +1716,11 @@ function company_admin_prepare_head()
 	$head[$h][1] = $langs->trans("Accountant");
 	$head[$h][2] = 'accountant';
 	$h++;
+  
+  $head[$h][0] = DOL_URL_ROOT."/admin/schedule.php";
+	$head[$h][1] = $langs->trans("Schedule");
+	$head[$h][2] = 'schedule';
+	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'company_admin','remove');
 
@@ -1767,5 +1772,3 @@ function email_admin_prepare_head()
 
 	return $head;
 }
-
-
