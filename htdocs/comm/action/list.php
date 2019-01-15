@@ -62,6 +62,7 @@ else
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 $search_id=GETPOST('search_id','alpha');
 $search_title=GETPOST('search_title','alpha');
+$search_note=GETPOST('search_note','alpha');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth','int'), GETPOST('dateselectday','int'), GETPOST('dateselectyear','int'));
 $datestart=dol_mktime(0, 0, 0, GETPOST('datestartmonth','int'), GETPOST('datestartday','int'), GETPOST('datestartyear','int'));
@@ -126,6 +127,7 @@ $arrayfields=array(
 	'owner'=>array('label'=>"Owner", 'checked'=>1),
 	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
 	'a.label'=>array('label'=>"Title", 'checked'=>1),
+	'a.note'=>array('label'=>'Description', 'checked'=>0),
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
@@ -176,6 +178,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     //$actioncode='';
     $search_id='';
 	$search_title='';
+    $search_note='';
     $datestart='';
     $dateend='';
     $status='';
@@ -222,6 +225,7 @@ if ($type) $param.="&search_type=".urlencode($type);
 if ($usergroup) $param.="&search_usergroup=".urlencode($usergroup);
 if ($search_id != '') $param.='&search_title='.urlencode($search_id);
 if ($search_title != '') $param.='&search_title='.urlencode($search_title);
+if ($search_note != '') $param.='&search_note='.$search_note;
 if (GETPOST('datestartday','int')) $param.='&datestartday='.GETPOST('datestartday','int');
 if (GETPOST('datestartmonth','int')) $param.='&datestartmonth='.GETPOST('datestartmonth','int');
 if (GETPOST('datestartyear','int')) $param.='&datestartyear='.GETPOST('datestartyear','int');
@@ -235,7 +239,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
 $sql.= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql.= " a.id, a.label, a.datep as dp, a.datep2 as dp2,";
+$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -308,6 +312,7 @@ if ($status == 'done') { $sql.= " AND (a.percent = 100)"; }
 if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
 if ($search_id) $sql.=natural_search("a.id", $search_id, 1);
 if ($search_title) $sql.=natural_search("a.label", $search_title);
+if ($search_note) $sql.=natural_search('a.note', $search_note);
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {
@@ -495,6 +500,7 @@ if ($resql)
 	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.note']['checked']))		  print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"],"a.note",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
@@ -542,6 +548,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
+		$actionstatic->note=dol_htmlentitiesbr($obj->note);
 
 		print '<tr class="oddeven">';
 
@@ -592,6 +599,14 @@ if ($resql)
 		if (! empty($arrayfields['a.label']['checked'])) {
 			print '<td class="tdoverflowmax200">';
 			print $actionstatic->label;
+			print '</td>';
+		}
+
+		// Description
+		if (! empty($arrayfields['a.note']['checked'])) {
+			print '<td class="tdoverflowonsmartphone">';
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note, 0));
+			print $form->textwithtooltip(dol_trunc($text,40), $actionstatic->note);
 			print '</td>';
 		}
 
