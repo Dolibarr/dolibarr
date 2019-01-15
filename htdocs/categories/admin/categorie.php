@@ -30,14 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
+// Load translation files required by the page
 $langs->load("categories");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 /*
  *	Actions
  */
-if (preg_match('/set_(.*)/',$action,$reg))
+
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -51,7 +53,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -72,17 +74,17 @@ if (preg_match('/del_(.*)/',$action,$reg))
  */
 
 $help_url='EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 llxHeader('',$langs->trans("Categories"),$help_url);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup');
 
 
 $head=categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Categories"), 0, 'category');
+dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
 print '<table class="noborder" width="100%">';
@@ -92,12 +94,11 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // Mail required for members
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
 print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 
@@ -121,5 +122,6 @@ print '</td></tr>';
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

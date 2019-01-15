@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,11 +26,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
+// Load translation files required by the page
 $langs->load('projects');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $id = GETPOST('id','int');
-$ref= GETPOST('ref');
+$ref= GETPOST('ref','alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -38,6 +39,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
 $socid=0;
@@ -77,12 +79,12 @@ if ($id > 0 || ! empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public?'projectpub':'project'));
 
 	
 	// Project card
 	
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	
 	$morehtmlref='<div class="refidno">';
 	// Title
@@ -117,6 +119,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -31,16 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 
 $securityevent=new Events($db);
 $eventstolog=$securityevent->eventstolog;
-
 
 
 /*
@@ -73,10 +71,10 @@ if ($action == "save")
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('',$langs->trans("Audit"),$wikihelp);
 
-//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
-print $langs->trans("LogEventDesc")."<br>\n";
+print $langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."<br>\n";
 print "<br>\n";
 
 
@@ -86,10 +84,8 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'audit', $langs->trans("Security"));
+dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
-
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
@@ -99,13 +95,12 @@ foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
 		print '</td></tr>'."\n";
 	}
 }
@@ -119,6 +114,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
 $db->close();

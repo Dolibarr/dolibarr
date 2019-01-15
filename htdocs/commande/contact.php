@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -107,13 +106,14 @@ else if ($action == 'deletecontact' && $user->rights->commande->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -141,16 +141,16 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id, $ref) > 0)
 	{
 	    $object->fetch_thirdparty();
-	    
-		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
 
-		
+		$head = commande_prepare_head($object);
+		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
+
+
 		// Order card
-		
-		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
-		
+
+		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -190,7 +190,7 @@ if ($id > 0 || ! empty($ref))
 	            }
 	        }
 	    }
-		$morehtmlref.='</div>';		
+		$morehtmlref.='</div>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
@@ -214,5 +214,6 @@ if ($id > 0 || ! empty($ref))
 }
 
 
+// End of page
 llxFooter();
 $db->close();

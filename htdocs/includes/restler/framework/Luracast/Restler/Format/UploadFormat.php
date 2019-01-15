@@ -25,7 +25,9 @@ class UploadFormat extends Format
         2 => "The uploaded file exceeds the maximum allowed size",
         3 => "The uploaded file was only partially uploaded",
         4 => "No file was uploaded",
-        6 => "Missing a temporary folder"
+        6 => "Missing a temporary folder",
+        7 => "Failed to write file to disk",
+        8 => "A PHP extension stopped the file upload"
     );
     /**
      * use it if you need to restrict uploads based on file type

@@ -2,9 +2,10 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +31,18 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
-$filter=GETPOST("filter",'',3);
-$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+$filter = GETPOST("filter",'alpha',3);
+$filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
@@ -54,8 +57,8 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page","int");
-if ($page == -1) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
@@ -82,9 +85,9 @@ $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):date("d");
 $pid=GETPOST("projectid","int",3);
-$status=GETPOST("status");
-$type=GETPOST("type");
-$maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$status=GETPOST("status",'alpha');
+$type=GETPOST("type",'alpha');
+$maxprint=((GETPOST("maxprint",'int')!='')?GETPOST("maxprint",'int'):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('actioncode','array'))
 {
@@ -93,22 +96,22 @@ if (GETPOST('actioncode','array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode","alpha")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
-$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
+$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth','int'), GETPOST('dateselectday','int'), GETPOST('dateselectyear','int'));
 if ($dateselect > 0)
 {
-	$day=GETPOST('dateselectday');
-	$month=GETPOST('dateselectmonth');
-	$year=GETPOST('dateselectyear');
+	$day=GETPOST('dateselectday','int');
+	$month=GETPOST('dateselectmonth','int');
+	$year=GETPOST('dateselectyear','int');
 }
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_HOURS)?'9-18':$conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmparray=explode('-',$tmp);
-$begin_h = GETPOST('begin_h')!=''?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOST('end_h')?GETPOST('end_h'):($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOST('begin_h','int')!=''?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOST('end_h','int')?GETPOST('end_h','int'):($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) $begin_h = 9;
 if ($end_h < 1 || $end_h > 24) $end_h = 18;
 if ($end_h <= $begin_h) $end_h = $begin_h + 1;
@@ -124,23 +127,20 @@ if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $ac
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week' && $action != 'show_peruser')  {
     $action='show_month'; $day='';
 }                                                   // View by month
-if (GETPOST('viewweek') || $action == 'show_week') {
+if (GETPOST('viewweek','alpha') || $action == 'show_week') {
     $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
 }  // View by week
-if (GETPOST('viewday') || $action == 'show_day')  {
+if (GETPOST('viewday','alpha') || $action == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
-if (GETPOST('viewyear') || $action == 'show_year')  {
+if (GETPOST('viewyear','alpha') || $action == 'show_year')  {
     $action='show_year';
 }                                  // View by year
 
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
-$langs->load("users");
-$langs->load("agenda");
-$langs->load("other");
-$langs->load("commercial");
-
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 
@@ -161,11 +161,11 @@ if ($action =='delete_action')
  * View
  */
 
-$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
-llxHeader('',$langs->trans("Agenda"),$help_url);
-
 $form=new Form($db);
 $companystatic=new Societe($db);
+
+$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $now=dol_now();
 $nowarray=dol_getdate($now);
@@ -250,7 +250,7 @@ $picto='calendarweek';
 $nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
 $nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 $nav.='<input type="hidden" name="action" value="' . $action . '">';
-$nav.='<input type="hidden" name="usertodo" value="' . $filtert . '">';
+$nav.='<input type="hidden" name="filtert" value="' . $filtert . '">';
 $nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';
 $nav.='<input type="hidden" name="actioncode" value="' . $actioncode . '">';
 $nav.='<input type="hidden" name="resourceid" value="' . $resourceid . '">';
@@ -263,7 +263,7 @@ $nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
 $nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
 $nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 
-$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 
@@ -354,7 +354,7 @@ $sql.= ' a.datep2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype,';
+$sql.= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql.= ' ca.code, ca.color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
@@ -364,7 +364,7 @@ if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
+$sql.= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (! empty($actioncode))
 {
@@ -425,8 +425,8 @@ if ($type) $sql.= " AND ca.id = ".$type;
 if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
-if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
-if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100)"; }
+if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {
@@ -456,29 +456,29 @@ if ($resql)
         	continue;
         }
 
+        $datep=$db->jdate($obj->datep);
+        $datep2=$db->jdate($obj->datep2);
+
         // Create a new object action
         $event=new ActionComm($db);
         $event->id=$obj->id;
-        $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
-        $event->datef=$db->jdate($obj->datep2);
+        $event->datep=$datep;      // datep and datef are GMT date
+        $event->datef=$datep2;
         $event->type_code=$obj->code;
         $event->type_color=$obj->color;
-        //$event->libelle=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
-        //$event->author->id=$obj->fk_user_author;	// user id of creator
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
-        $event->fetch_userassigned();				// This load $event->userassigned
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
         $event->transparency=$obj->transparency;
 
+        $event->fk_project=$obj->fk_project;
+
         $event->socid=$obj->fk_soc;
         $event->contactid=$obj->fk_contact;
-        //$event->societe->id=$obj->fk_soc;			// deprecated
-        //$event->contact->id=$obj->fk_contact;		// deprecated
 
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
@@ -487,15 +487,15 @@ if ($resql)
         // They are date start and end of action but modified to not be outside calendar view.
         if ($event->percentage <= 0)
         {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
+        	$event->date_start_in_calendar=$datep;
+        	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar=$datep2;
+        	else $event->date_end_in_calendar=$datep;
         }
         else
-		{
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
+        {
+        	$event->date_start_in_calendar=$datep;
+        	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar=$datep2;
+        	else $event->date_end_in_calendar=$datep;
         }
         // Define ponctual property
         if ($event->date_start_in_calendar == $event->date_end_in_calendar)
@@ -508,10 +508,14 @@ if ($resql)
         $event->date_start_in_calendar >= $lastdaytoshow)
         {
             // This record is out of visible range
+        	unset($event);
         }
         else
 		{
-            if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
+			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
+			$event->fetch_userassigned();				// This load $event->userassigned
+
+			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
             if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar=($lastdaytoshow - 1);
 
             // Add an entry in actionarray for each day
@@ -539,7 +543,6 @@ if ($resql)
             //print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
         }
         $i++;
-
     }
 }
 else
@@ -572,7 +575,7 @@ $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restor
 $newparam.='&viewweek=1';
 
 echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
-echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 echo '<input type="hidden" name="newdate" id="newdate">' ;
 echo '</form>';
@@ -714,7 +717,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
+			url = "'.DOL_URL_ROOT.'/comm/action/list.php?filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */
@@ -727,10 +730,8 @@ jQuery(document).ready(function() {
 });
 </script>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -762,7 +763,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	global $user, $conf, $langs, $hookmanager, $action;
 	global $filter, $filtert, $status, $actioncode;	// Filters used into search form
 	global $theme_datacolor;	// Array with a list of different we can use (come from theme)
-	global $cachethirdparties, $cachecontacts, $colorindexused;
+	global $cachethirdparties, $cachecontacts, $cacheprojects, $colorindexused;
 	global $begin_h, $end_h;
 
 	$cases1 = array();	// Color first half hour
@@ -881,11 +882,37 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			        		}
 							$cases1[$h][$event->id]['string'].=' - '.$event->label;
 							$cases1[$h][$event->id]['typecode']=$event->type_code;
-							if ($event->socid)
-							{
-								//$cases1[$h][$event->id]['string'].='xxx';
-							}
 							$cases1[$h][$event->id]['color']=$color;
+							if ($event->fk_project > 0)
+							{
+								if (empty($cacheprojects[$event->fk_project]))
+								{
+									$tmpproj=new Project($db);
+									$tmpproj->fetch($event->fk_project);
+									$cacheprojects[$event->fk_project]=$tmpproj;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
+							}
+							if ($event->socid > 0)
+							{
+								if (empty($cachethirdparties[$event->socid]))
+								{
+									$tmpthirdparty=new Societe($db);
+									$tmpthirdparty->fetch($event->socid);
+									$cachethirdparties[$event->socid]=$tmpthirdparty;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$cachethirdparties[$event->socid]->name;
+							}
+							if ($event->contactid > 0)
+							{
+								if (empty($cachecontacts[$event->contactid]))
+								{
+									$tmpcontact=new Contact($db);
+									$tmpcontact->fetch($event->contactid);
+									$cachecontacts[$event->contactid]=$tmpcontact;
+								}
+								$cases1[$h][$event->id]['string'].=', '.$cachecontacts[$event->contactid]->getFullName($langs);
+							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
 						{
@@ -901,11 +928,37 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			        		}
 							$cases2[$h][$event->id]['string'].=' - '.$event->label;
 							$cases2[$h][$event->id]['typecode']=$event->type_code;
-							if ($event->socid)
-							{
-								//$cases2[$h][$event->id]['string'].='xxx';
-							}
 							$cases2[$h][$event->id]['color']=$color;
+							if ($event->fk_project > 0)
+							{
+								if (empty($cacheprojects[$event->fk_project]))
+								{
+									$tmpproj=new Project($db);
+									$tmpproj->fetch($event->fk_project);
+									$cacheprojects[$event->fk_project]=$tmpproj;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
+							}
+							if ($event->socid > 0)
+							{
+								if (empty($cachethirdparties[$event->socid]))
+								{
+									$tmpthirdparty=new Societe($db);
+									$tmpthirdparty->fetch($event->socid);
+									$cachethirdparties[$event->socid]=$tmpthirdparty;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$cachethirdparties[$event->socid]->name;
+							}
+							if ($event->contactid > 0)
+							{
+								if (empty($cachecontacts[$event->contactid]))
+								{
+									$tmpcontact=new Contact($db);
+									$tmpcontact->fetch($event->contactid);
+									$cachecontacts[$event->contactid]=$tmpcontact;
+								}
+								$cases2[$h][$event->id]['string'].=', '.$cachecontacts[$event->contactid]->getFullName($langs);
+							}
 						}
 					}
 					else
@@ -928,6 +981,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		}
 	}
 
+	// Now output $casesX
 	for ($h = $begin_h; $h < $end_h; $h++)
 	{
 		$color1='';$color2='';

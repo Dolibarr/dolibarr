@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'usernote';   // To manage different context of search
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("bills");
-$langs->load("users");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
@@ -49,12 +48,13 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('usercard','globalcard'));
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('usercard','usernote','globalcard'));
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+
+/*
+ * Actions
+ */
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -64,7 +64,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
 		$db->begin();
 
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private','none'), ENT_QUOTES));
 		if ($res < 0) {
 			$mesg = '<div class="error">'.$adh->error.'</div>';
 			$db->rollback();
@@ -75,9 +75,9 @@ if (empty($reshook)) {
 }
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -88,17 +88,22 @@ if ($id)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, 0, 'user');
+	dol_fiche_head($head, 'note', $title, -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+	print '<div class="fichecenter">';
     print '<table class="border" width="100%">';
 
     // Login
@@ -123,6 +128,7 @@ if ($id)
 	print "</td></tr>";
 
     print "</table>";
+    print '</div>';
 
 	dol_fiche_end();
 
@@ -152,6 +158,6 @@ if ($id)
 	print "</form>\n";
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
@@ -33,34 +34,39 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("companies");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
-$action=GETPOST('action');
-$cancel=GETPOST('cancel');
+$action=GETPOST('action','aZ09');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
+
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-$backtopage=GETPOST("backtopage");
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $result=restrictedArea($user,'stock');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard','globalcard'));
 
 $object = new Entrepot($db);
 
+
 /*
  * Actions
  */
+
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
 
 // Ajout entrepot
 if ($action == 'add' && $user->rights->stock->creer)
@@ -100,7 +106,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else 
+	else
 	{
 		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 		$action="create";   // Force retour sur page creation
@@ -110,12 +116,12 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
-	$object->fetch($_REQUEST["id"]);
+	$object->fetch(GETPOST('id','int'));
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
 	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -163,6 +169,11 @@ if ($cancel == $langs->trans("Cancel"))
 }
 
 
+// Actions to build doc
+$upload_dir = $conf->stock->dir_output;
+$permissioncreate = $user->rights->stock->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 /*
  * View
@@ -172,6 +183,7 @@ $productstatic=new Product($db);
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 $formcompany=new FormCompany($db);
+$formfile = new FormFile($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
@@ -180,6 +192,8 @@ llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewWarehouse"));
+
+	dol_set_focus('input[name="libelle"]');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -194,7 +208,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
-		
+
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
@@ -257,13 +271,14 @@ if ($action == 'create')
 else
 {
     $id=GETPOST("id",'int');
-	if ($id)
+	if ($id > 0 || $ref)
 	{
 		$object = new Entrepot($db);
-		$result = $object->fetch($id);
-		if ($result < 0)
+		$result = $object->fetch($id, $ref);
+		if ($result <= 0)
 		{
-			dol_print_error($db);
+			print 'No record found';
+			exit;
 		}
 
 		/*
@@ -273,22 +288,21 @@ else
 		{
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
-			
+
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			if (! $formconfirm) {
-			    $parameters = array();
-			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-			}
+			// Call Hook formConfirm
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 			// Print form confirm
 			print $formconfirm;
@@ -300,7 +314,10 @@ else
 			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
         	$morehtmlref.='</div>';
 
-        	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'libelle', $morehtmlref);
+            $shownav = 1;
+            if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
         	print '<div class="fichecenter">';
         	print '<div class="fichehalfleft">';
@@ -315,7 +332,6 @@ else
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
-				
 			}
 
 			// Description
@@ -367,7 +383,7 @@ else
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 			}
 			else
 			{
@@ -403,12 +419,12 @@ else
 					if ($user->rights->stock->creer)
 						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
 					else
-						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
+						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
 
 					if ($user->rights->stock->supprimer)
 						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 					else
-						print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
 				}
 			}
 
@@ -424,13 +440,13 @@ else
 
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("Product","", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
+			print_liste_field_titre("Label","", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
+            print_liste_field_titre("Units","", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre("AverageUnitPricePMPShort","", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("EstimatedStockValueShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("SellPriceMin","", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("EstimatedStockValueSellShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
 			if ($user->rights->stock->creer)            print_liste_field_titre('');
 			print "</tr>\n";
@@ -438,7 +454,7 @@ else
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql.= " ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
@@ -452,7 +468,6 @@ else
 			{
 				$num = $db->num_rows($resql);
 				$i = 0;
-				$var=True;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
@@ -474,15 +489,16 @@ else
 						}
 					}
 
-					$var=!$var;
+
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-                    $productstatic->ref = $objp->ref;
-                    $productstatic->label = $objp->produit;
+					$productstatic->ref = $objp->ref;
+					$productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					$productstatic->entity=$objp->entity;
+					$productstatic->status_batch=$objp->tobatch;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
 
@@ -550,7 +566,6 @@ else
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
-
 			}
 			else
 			{
@@ -641,12 +656,53 @@ else
 			print '</div>';
 
 			print '</form>';
-
 		}
 	}
 }
 
+/*
+ * Documents generes
+ */
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	$modulepart='stock';
+
+	if ($action != 'create' && $action != 'edit' && $action != 'delete')
+	{
+		print '<br/>';
+	    print '<div class="fichecenter"><div class="fichehalfleft">';
+	    print '<a name="builddoc"></a>'; // ancre
+
+	    // Documents
+	    $objectref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $comref . '/' . $objectref . '.pdf';
+	    $filedir = $conf->stock->dir_output . '/' . $objectref;
+	    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+	    $genallowed=$usercanread;
+	    $delallowed=$usercancreate;
+	    $modulepart = 'stock';
+
+	    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+	    $somethingshown=$formfile->numoffiles;
+
+	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+	    $MAXEVENT = 10;
+
+	    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+	    $morehtmlright.= $langs->trans("SeeAll");
+	    $morehtmlright.= '</a>';
+
+	    // List of actions on element
+	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	    $formactions = new FormActions($db);
+	    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+
+	    print '</div></div></div>';
+	}
+}
+
+// End of page
 llxFooter();
-
 $db->close();

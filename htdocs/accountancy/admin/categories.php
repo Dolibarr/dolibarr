@@ -21,6 +21,7 @@
  * \ingroup Advanced accountancy
  * \brief	Page to assign mass categories to accounts
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancycategory.class.php';
@@ -28,26 +29,34 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel');
-$action = GETPOST('action');
-$cat_id = GETPOST('account_category');
+$cancel = GETPOST('cancel','alpha');
+$action = GETPOST('action','aZ09');
+$cat_id = GETPOST('account_category','int');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid');
+$cpt_id = GETPOST('cptid','int');
 
 if ($cat_id == 0) {
 	$cat_id = null;
 }
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (empty($user->rights->accounting->chartofaccount))
+{
+	accessforbidden();
+}
 
 $accountingcategory = new AccountancyCategory($db);
+
+
+/*
+ * Actions
+ */
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
@@ -62,7 +71,7 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {
@@ -79,12 +88,15 @@ if ($action == 'delete') {
 /*
  * View
  */
+
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountAccounting'));
+llxheader('', $langs->trans('AccountingCategory'));
 
-print load_fiche_titre($langs->trans('Categories'));
+$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
 
 print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -93,26 +105,41 @@ print '<input type="hidden" name="action" value="display">';
 dol_fiche_head();
 
 print '<table class="border" width="100%">';
-// Category
-print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
+
+// Select the category
+print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
-$formaccounting->select_accounting_category($cat_id, 'account_category', 1);
-print '<input class="button" type="submit" value="' . $langs->trans("Show") . '">';
+$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
+print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
-if (! empty($cat_id)) {
-	$return = $accountingcategory->getCptBK($cat_id);
+// Select the accounts
+if (! empty($cat_id))
+{
+	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
 	if ($return < 0) {
 		setEventMessages(null, $accountingcategory->errors, 'errors');
 	}
 	print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
 	print '<td>';
+
+	$arraykeyvalue=array();
+	foreach($accountingcategory->lines_cptbk as $key => $val)
+	{
+		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' (' . $val->label_compte . ($val->doc_ref?' '.$val->doc_ref:'').')';
+	}
+
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print '<select size="' . count($obj) . '" name="cpt_bk[]" multiple>';
+
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
+		print '<br>';
+		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
 		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
 		}
-		print '</select>';
+		print '</select><br>';
+		print ajax_combobox('cpt_bk');
+		*/
 		print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
 	}
 	print '</td></tr>';
@@ -129,20 +156,19 @@ if ($action == 'display' || $action == 'delete') {
 
     print "<table class='noborder' width='100%'>\n";
     print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("AccountAccounting")."</td>";
-	print '<td colspan="2">'.$langs->trans("Label")."</td>";
+	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
+	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
 	print "</tr>\n";
 
 	if (! empty($cat_id)) {
-		$return = $accountingcategory->display($cat_id);
+		$return = $accountingcategory->display($cat_id);	// This load ->lines_display
 		if ($return < 0) {
 			setEventMessages(null, $accountingcategory->errors, 'errors');
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
 			foreach ( $accountingcategory->lines_display as $cpt ) {
-				$var = ! $var;
-				print '<tr' . $bc[$var] . '>';
+				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print '<td align="right">';
@@ -158,6 +184,6 @@ if ($action == 'display' || $action == 'delete') {
 	print "</table>";
 }
 
+// End of page
 llxFooter();
-
 $db->close();

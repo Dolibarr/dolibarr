@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -37,12 +37,31 @@ class box_actions extends ModeleBoxes
 	var $boxlabel="BoxLastActions";
 	var $depends = array("agenda");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB	$db      	Database handler
+	 *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param='')
+	{
+	    global $user;
+
+	    $this->db = $db;
+
+	    $this->hidden = ! ($user->rights->agenda->myactions->read);
+	}
 
 	/**
      *  Load data for box to show them later
@@ -110,14 +129,14 @@ class box_actions extends ModeleBoxes
 					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $actionstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => ($societestatic->id > 0 ? $societestatic->getNomUrl(1) : ''),
                         'asis' => 1,
                     );
@@ -128,7 +147,7 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
                     );
 
@@ -149,15 +168,15 @@ class box_actions extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'align' => 'left',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
 	}
@@ -173,16 +192,13 @@ class box_actions extends ModeleBoxes
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		global $langs, $conf;
-		parent::showBox($this->info_box_head, $this->info_box_contents);
-		$out='';
+		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
+
         if (! empty($conf->global->SHOW_DIALOG_HOMEPAGE))
         {
 			$actioncejour=false;
 			$contents=$this->info_box_contents;
 			$nblines=count($contents);
-			$bcx=array();
-			$bcx[0] = 'class="box_pair"';
-			$bcx[1] = 'class="box_impair"';
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
 			{
 				$out.= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
@@ -194,7 +210,7 @@ class box_actions extends ModeleBoxes
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
 						$actioncejour=true;
-						$var=!$var;
+
 						// TR
 						$logo=$contents[$line][0]['logo'];
 						$label=$contents[$line][1]['text'];
@@ -204,7 +220,7 @@ class box_actions extends ModeleBoxes
 						$urlsoc=$contents[$line][3]['url'];
 						$dateligne=$contents[$line][4]['text'];
 						$percentage=$contents[$line][5]['text'];
-						$out.= '<tr '.$bcx[$var].'>';
+						$out.= '<tr class="oddeven">';
 						$out.= '<td align=center>';
 						$out.= img_object("",$logo);
 						$out.= '</td>';
@@ -216,7 +232,6 @@ class box_actions extends ModeleBoxes
 					}
 				}
 				$out.= '</table>';
-
 			}
 			$out.= '</div>';
 			if ($actioncejour)
@@ -244,6 +259,5 @@ class box_actions extends ModeleBoxes
 
 		return '';
 	}
-
 }
 

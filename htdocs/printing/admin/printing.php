@@ -30,15 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 use OAuth\Common\Storage\DoliStorage;
 
-$langs->load("admin");
-$langs->load("printing");
-$langs->load("oauth");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
-$value = GETPOST('value','alpha');
+$value = GETPOST('value','alpha',0,null,null,1);			// The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
@@ -110,12 +109,12 @@ if ($action == 'setvalue' && $user->admin)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("PrintingSetup"));
+llxHeader('', $langs->trans("PrintingSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
 
-$head=printingadmin_prepare_head($mode);
+$head = printingAdminPrepareHead($mode);
 
 if ($mode == 'setup' && $user->admin)
 {
@@ -123,12 +122,11 @@ if ($mode == 'setup' && $user->admin)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setconst">';
 
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
@@ -136,22 +134,20 @@ if ($mode == 'setup' && $user->admin)
     print "</tr>\n";
     $submit_enabled=0;
 
-    if (! empty($driver))
-    {
+    if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
         $langs->load($driver);
         $printer = new $classname($db);
-        
+
         $i=0;
         $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
-            $var=!$var;
             switch ($key['type']) {
                 case "text":
                 case "password":
-                    print '<tr '.$bc[$var].'>';
+                    print '<tr class="oddeven">';
                     print '<td'.($key['required']?' class=required':'').'>'.$langs->trans($key['varname']).'</td>';
                     print '<td><input size="32" type="'.(empty($key['type'])?'text':$key['type']).'" name="setupdriver['.$i.'][value]" value="'.$conf->global->{$key['varname']}.'"';
                     print isset($key['moreattributes'])?' '.$key['moreattributes']:'';
@@ -160,7 +156,7 @@ if ($mode == 'setup' && $user->admin)
                     print '</tr>'."\n";
                     break;
                 case "info":    // Google Api setup or Google OAuth Token
-                    print '<tr '.$bc[$var].'>';
+                    print '<tr class="oddeven">';
                     print '<td'.($key['required']?' class=required':'').'>';
                     if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
                     {
@@ -191,11 +187,11 @@ if ($mode == 'setup' && $user->admin)
                     break;
             }
             $i++;
-            
+
             if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
             {
                 // Token
-                print '<tr '.$bc[$var].'>';
+                print '<tr class="oddeven">';
                 print '<td>'.$langs->trans("Token").'</td>';
                 print '<td colspan="2">';
                 $tokenobj=null;
@@ -229,9 +225,9 @@ if ($mode == 'setup' && $user->admin)
     }
 
     print '</table>';
-    
+
     dol_fiche_end();
-    
+
     if (! empty($driver))
     {
         if ($submit_enabled) {
@@ -243,13 +239,12 @@ if ($mode == 'setup' && $user->admin)
 }
 if ($mode == 'config' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDesc")."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
 
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Description").'</th>';
     print '<th class="center">'.$langs->trans("Active").'</th>';
@@ -265,8 +260,8 @@ if ($mode == 'config' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+
+        print '<tr class="oddeven">';
         print '<td>'.img_picto('', $printer->picto).' '.$langs->trans($printer->desc).'</td>';
         print '<td class="center">';
         if (! empty($conf->use_javascript_ajax))
@@ -296,7 +291,7 @@ if ($mode == 'config' && $user->admin)
 
 if ($mode == 'test' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
@@ -308,7 +303,7 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        if (count($printer->getlist_available_printers())) {
+        if (count($printer->getlistAvailablePrinters())) {
             if ($printer->listAvailablePrinters()==0) {
                 print $printer->resprint;
             } else {
@@ -318,7 +313,6 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
-
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');
     }
@@ -329,12 +323,11 @@ if ($mode == 'test' && $user->admin)
 
 if ($mode == 'userconf' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">';
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -348,8 +341,8 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+
+        print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';
         print '<td>'.$row['driver'].'</td>';
@@ -363,9 +356,8 @@ if ($mode == 'userconf' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
+// End of page
 llxFooter();
-
 $db->close();

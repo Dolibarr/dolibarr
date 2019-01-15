@@ -1,15 +1,16 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Name=Direct Printing
 Module64000Desc=Enable Direct Printing System
-PrintingSetup=Setup of Direct Printing System
+PrintingSetup=Direkt Nyontatási Rendszer beállítása
 PrintingDesc=This module adds a Print button to send documents directly to a printer (without opening document into an application) with various module.
 MenuDirectPrinting=Direct Printing jobs
 DirectPrint=Direct print
 PrintingDriverDesc=Configuration variables for printing driver.
 ListDrivers=List of drivers
-PrintTestDesc=List of Printers.
-FileWasSentToPrinter=File %s was sent to printer
-NoActivePrintingModuleFound=No active module to print document
+PrintTestDesc=Nyomtatók listája
+FileWasSentToPrinter=Az állomány %s-a nyomtásra elküldve.
+ViaModule=via the module
+NoActivePrintingModuleFound=No active driver to print document. Check setup of module %s.
 PleaseSelectaDriverfromList=Please select a driver from list.
 PleaseConfigureDriverfromList=Please configure the selected driver from list.
 SetupDriver=Driver setup

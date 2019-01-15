@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Buchhaltung
 ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Exportdatei
 ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
 ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
@@ -7,58 +8,81 @@ ACCOUNTING_EXPORT_LABEL=Exportiere Beschriftung
 ACCOUNTING_EXPORT_AMOUNT=Exportiere Betrag
 ACCOUNTING_EXPORT_DEVISE=Exportiere Währung
 Selectformat=Wählen Sie das Format für die Datei
+ACCOUNTING_EXPORT_FORMAT=Wählen Sie das Format für die Datei
+ACCOUNTING_EXPORT_ENDLINE=Art des Zeilenumbruchs wählen
 ACCOUNTING_EXPORT_PREFIX_SPEC=Präfix für den Dateinamen angeben
 ThisService=Diese Leistung
 ThisProduct=Dieses Produkt
 DefaultForService=Standard für Leistung
 DefaultForProduct=Standard für Produkt
 CantSuggest=Kann keines vorschlagen
-AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
+AccountancySetupDoneFromAccountancyMenu=Die wichtigste Teil der Konfiguration der Buchhaltung aus dem Menü %s wurde erledigt
 ConfigAccountingExpert=Konfiguration des Experten-Buchhaltungsmoduls
 Journalization=Journalisieren
 Journaux=Journale
 JournalFinancial=Finanzjournale
 BackToChartofaccounts=Zurück zum  Kontenplan
-Chartofaccounts=Kontenplan
+Chartofaccounts=Konten
 CurrentDedicatedAccountingAccount=Aktuelles dediziertes Konto
 AssignDedicatedAccountingAccount=Neues Konto zuweisen
 InvoiceLabel=Rechnungsanschrift
-OverviewOfAmountOfLinesNotBound=Übersicht über die Anzahl der nicht an ein Buchhaltungskonto zugeordneten Zeilen
-OverviewOfAmountOfLinesBound=Übersicht über die Anzahl der bereits an ein Buchhaltungskonto zugeordneten Zeilen
+OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to an accounting account
+OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to an accounting account
 OtherInfo=Zusatzinformationen
+DeleteCptCategory=Buchhaltungskonto aus Gruppe entfernen
+ConfirmDeleteCptCategory=Soll dieses Buchhaltungskonto wirklich aus der Gruppe entfernt werden?
+JournalizationInLedgerStatus=Status der Journalisierung
+AlreadyInGeneralLedger=Schon ins Hauptbuch übernommen
+NotYetInGeneralLedger=Noch nicht ins Hauptbuch übernommen
+GroupIsEmptyCheckSetup=Gruppe ist leer, kontrollieren Sie die persönlichen Kontogruppen
+DetailByAccount=Detail pro Konto zeigen
+AccountWithNonZeroValues=Konto mit Werten != 0
+ListOfAccounts=Kontenpläne
 
-AccountancyArea=Rechnungswesen
+MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
+MainAccountForUsersNotDefined=STandardkonto für Benutzer ist im Setup nicht definiert
+MainAccountForVatPaymentNotDefined=Standardkonto für MWSt Zahlungen ist im Setup nicht definiert
+
+AccountancyArea=Bereich Buchhaltung
 AccountancyAreaDescIntro=Die Verwendung des Buchhaltungsmoduls erfolgt in mehreren Schritten:
-AccountancyAreaDescActionOnce=The following actions are usually executed one time only, or once per year...
+AccountancyAreaDescActionOnce=Die folgenden Aktionen werden üblicherweise nur ein Mal ausgeführt, oder jährlich...
 AccountancyAreaDescActionOnceBis=Die nächsten Schritte sollten getan werden, um Ihnen in Zukunft  Zeit zu sparen, indem Sie Ihnen das korrekte Standardbuchhaltungskonto vorschlagen, wenn Sie die Journalisierung (Schreiben des Buchungsjournal und des Hauptbuchs) machen.
-AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
+AccountancyAreaDescActionFreq=Die folgende Aktionen werden in der Regel jeden Monat, Woche oder Tag für sehr großes Unternehmen durchgeführt ...
+
+AccountancyAreaDescJournalSetup=SCHRITT %s: Buchhaltungsjournal erstellen oder kontrollieren via Menü  %s
 AccountancyAreaDescChartModel=SCHRITT %s: Erstellen Sie ein Modell des Kontenplans im Menü %s
 AccountancyAreaDescChart=SCHRITT %s: Erstellen oder überprüfen des Inhalts Ihres Kontenplans im Menü %s
-AccountancyAreaDescBank=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Bankkonten und dem Buchhaltungskonto erstellt wurden.  Vervollständigen Sie die fehlenden Zuordnungen. Dazu gehen Sie auf die Karte jedes Finanzkontos.  Sie können beginnen bei der Seite %s.
-AccountancyAreaDescVat=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Steuersatz und Buchhaltungskonto erstellt wurde. Vervollständigen Sie die fehlenden Zuordnungen. Sie können Buchhaltungskonten zu verwenden für jede MwSt. festlegen, von der Seite %s.
-AccountancyAreaDescExpenseReport=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Arten der Spesenabrechnung und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen.  Sie können Buchhaltungskonten zur Verwendung für jede MwSt. festlegen, von der Seite %s.
-AccountancyAreaDescSal=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Lohn-Zahlungen und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen. Dazu können Sie den Menüeintrag %s verwenden.
-AccountancyAreaDescContrib=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen besondere Aufwendungen (Sonstige Steuern)  und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen. Dafür können Sie das Menü %s verwenden.
-AccountancyAreaDescDonation=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Spenden  und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen. Über das Menü %s können Sie das entsprechende Konto festlegen.
-AccountancyAreaDescMisc=SCHRITT %s: Überprüfen der Standard-Zuordnung zwischen verschiedener Transaktionszeilen und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen.  Dafür können Sie das Menü %s verwenden.
-AccountancyAreaDescProd=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Produkt/Dienstleistung und dem Buchhaltungskonto erstellt wurde. Vervollständigen Sie die fehlenden Zuordnungen. Dazu können Sie den Menüeintrag %s verwenden.
-AccountancyAreaDescLoan=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen Darlehenszahlungen   und dem Buchhaltungskonto erstellt wurden. Vervollständigen Sie die fehlenden Zuordnungen. Dafür können Sie das Menü %s verwenden.
 
-AccountancyAreaDescCustomer=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen den Ausgangs-Rechnungspositionen und dem Buchhaltungskonto erstellt wurden, so wird die Anwendung in der Lage sein, mit einem Klick die Transaktionen in das Hauptbuch zu journalisieren. Vervollständigen Sie die fehlenden Zuordnungen. Dazu können Sie das Menü %s verwenden.
-AccountancyAreaDescSupplier=SCHRITT %s: Überprüfen Sie die Zuordnung die zwischen den Eingangs-Rechnungspositionen und dem Buchhaltungskonto erstellt wurden, so wird die Anwendung in der Lage sein, mit einem Klick die Transaktionen in das Hauptbuch zu journalisieren. Vervollständigen Sie die fehlenden Zuordnungen. Dazu können Sie das Menü %s verwenden.
-AccountancyAreaDescWriteRecords=SCHRITT %s: Schreiben Sie die Transaktionen in das Hauptbuch. Dazu gehen Sie in jedes Journal, und klicken Sie auf die Schaltfläche "Buchungen ins Hauptbuch übernehmen"
+AccountancyAreaDescVat=SCHRITT %s: Definition des Buchhaltungskonto für jeden Steuersatz. Kann im Menü %s geändert werden.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
+AccountancyAreaDescExpenseReport=SCHRITT %s: Definition der Buchhaltungskonten für die verschiedenen Arten der Spesenabrechnung. Kann im Menü %s geändert werden.
+AccountancyAreaDescSal=SCHRITT %s: Buchhaltungskonto für Lohnzahlungen definieren. Kann im Menü %s geändert werden.
+AccountancyAreaDescContrib=SCHRITT %s: Definition der Buchhaltungskonten für besondere Aufwendungen (Sonstige Steuern) . Kann im Menü %s geändert werden.
+AccountancyAreaDescDonation=SCHRITT %s: Definition der Buchhaltungskonten für Spenden. Kann im Menü %s geändert werden.
+AccountancyAreaDescMisc=SCHRITT %s: Buchhaltungskonto für nicht zugeordnete Buchungen definieren. Kann im Menü %s geändert werden.
+AccountancyAreaDescLoan=SCHRITT %s: Definitiond der Buchhaltungskonten für Darlehenszahlungen. Kann im Menü %s geändert werden.
+AccountancyAreaDescBank=SCHRITT %s: Definition der Buchhaltungskonten für jede Bank und Finanzkonten. Kann im Menü %s geändert werden.
+AccountancyAreaDescProd=SCHRITT %s: Definition der Buchhaltungskonten für Ihre Produkte/Dienstleistungen. Kann im Menü %s geändert werden.
+
+AccountancyAreaDescBind=SCHRITT %s: Kontrolle der Zuweisung zwischen bestehenden %s Buchungszeilen und Konten ist erledigt damit die Anwendung die übernahme der Buchungen ins Hauptbuch mit einem klick erfolgen kann. Wir im Menü %s eingestellt.
+AccountancyAreaDescWriteRecords=SCHRITT %s: Schreiben Sie die Buchungen in das Hauptbuch. Dazu gehen Sie ins Menü <strong>%s</strong>, und klicken Sie auf die Schaltfläche <strong>%s</strong>
 AccountancyAreaDescAnalyze=SCHRITT %s: Vorhandene Transaktionen hinzufügen oder bearbeiten sowie Berichte und Exporte generieren.
 
 AccountancyAreaDescClosePeriod=SCHRITT %s: Schließen Sie die Periode, damit wir in Zukunft keine Veränderungen vornehmen können.
 
-MenuAccountancy=Buchführung
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Eine erofrderliche Einrichtung wurde nicht abgeschlossen. (Kontierungsinformationen fehlen bei einigen Finanzkonten)
 Selectchartofaccounts=Kontenplan wählen
-ChangeAndLoad=Change and load
+ChangeAndLoad=Ändere und Lade
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungskonto
 AccountAccountingShort=Konto
+SubledgerAccount=Nebenbuch Konto
+ShowAccountingAccount=Buchhaltungskonten anzeigen
+ShowAccountingJournal=Buchhaltungsjournal anzeigen
 AccountAccountingSuggest=Buchhaltungskonto Vorschlag
 MenuDefaultAccounts=Standardkonten
+MenuBankAccounts=Bank Konten
 MenuVatAccounts=Mwst. Konten
 MenuTaxAccounts=Steuer Konten
 MenuExpenseReportAccounts=Spesenabrechnung Konten
@@ -67,25 +91,26 @@ MenuProductsAccounts=Produkt Erlöskonten
 ProductsBinding=Produkt Konten
 Ventilation=Zu Konten zusammenfügen 
 CustomersVentilation=Kundenrechnungen zuordnen
-SuppliersVentilation=Lieferantenrechnungen zusammenfügen
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Spesenabrechnung Zuordnung
 CreateMvts=Neue Transaktion erstellen
 UpdateMvts=Änderung einer Transaktion
+ValidTransaction=Transaktion bestätigen
 WriteBookKeeping=Buchungen ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
 AccountBalance=Saldo Sachkonto
-
+ObjectsRef=Quellreferenz
 CAHTF=Einkaufssume pro Lieferant ohne Steuer
-TotalExpenseReport=Total expense report
+TotalExpenseReport=Gesamtausgaben Bericht
 InvoiceLines=Zeilen der Rechnungen zu verbinden
 InvoiceLinesDone=Verbundene Rechnungszeilen
-ExpenseReportLines=Lines of expense reports to bind
-ExpenseReportLinesDone=Bound lines of expense reports
+ExpenseReportLines=Zeilen von Spesenabrechnungen zu verbinden
+ExpenseReportLinesDone=Gebundene Zeile von Spesenabrechnungen
 IntoAccount=mit dem Buchhaltungskonto verbundene Zeilen
 
 
 Ventilate=zusammenfügen
-LineId=Id line
+LineId=Zeile ID
 Processing=Bearbeitung
 EndProcessing=Prozess abgeschlossen.
 SelectedLines=Gewählte Zeilen
@@ -94,112 +119,139 @@ LineOfExpenseReport=Zeilen der Spesenabrechnung
 NoAccountSelected=Kein Buchhaltungskonto ausgewählt
 VentilatedinAccount=erfolgreich zu dem Buchhaltungskonto zugeordnet
 NotVentilatedinAccount=Nicht zugeordnet, zu einem Buchhaltungskonto
-XLineSuccessfullyBinded=%s Produkte/Leistungen erfolgreich an ein Buchhaltungskonto zugeordnet
+XLineSuccessfullyBinded=%s Produkte/Leistungen erfolgreich an Buchhaltungskonto zugewiesen
 XLineFailedToBeBinded=%s Produkte/Leistungen waren an kein Buchhaltungskonto zugeordnet
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Anzahl der Elemente, die beim Kontieren angezeigt werden  (empfohlen Max.: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Beginnen Sie die Sortierung der Seite "Link zu realisieren“ durch die neuesten Elemente
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen die Sortierung auf der Seite "Zuordnung erledigt " durch die neuesten Elemente\n\n\n\n\n\n\n78/5000\n\nStarten Sie die „made-Links“ Seite durch neuere Elemente Sortier
 
-ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Länge des allgemeinen Buchführungskonto
-ACCOUNTING_LENGTH_AACCOUNT=Länge von den Partner Buchhaltungskonten
-ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disabled by default. If set to on, you must also set the 2 following parameters (or it is ignored)
+ACCOUNTING_LENGTH_DESCRIPTION=Länge für die Anzeige der Beschreibung von Produkten und Leistungen in Listen (optimal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Beschreibung von Produkte und Leistungen in den Listen (Ideal = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Länge der Kontonummern der Buchhaltung (Wenn dieser Wert auf 6 gesetzt ist, wird Konto '706' als '706000' am Bildschirm angezeigt)
+ACCOUNTING_LENGTH_AACCOUNT=Länge von den Partner Buchhaltungskonten (Wenn dieser Wert auf 6 gesetzt ist, wird das Konto '401' als '401000' am Bildschirm angezeigt)
+ACCOUNTING_MANAGE_ZERO=Verwalten der Null am Ende eines Buchhaltungskontos. In einigen Ländern notwendig (zB. Schweiz). Standardmäßig deaktiviert. Wenn ausgeschaltet, können die folgenden 2 Parameter konfigurieren werden um virtuelle Nullen anzuhängen
 BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Ausgangsrechnungen
 ACCOUNTING_PURCHASE_JOURNAL=Eingangsrechnungen
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Spesenabrechnung Journal
 ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Buchhaltungskonten für Transferierung
 ACCOUNTING_ACCOUNT_SUSPENSE=Buchhaltungskonten in Wartestellung
-DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
+DONATION_ACCOUNTINGACCOUNT=Buchhaltungskonto für die Buchung von Spenden
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (used if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (used if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (used if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Produkte (wenn nicht anders im Produktblatt definiert)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard-Buchhaltungskonto für die gekauften Leistungen (wenn nicht anders im Produktblatt definiert)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Leistungen (wenn nicht anders im Produktblatt definiert)
 
 Doctype=Dokumententyp
 Docdate=Datum
 Docref=Referenz
-Code_tiers=Partner
-Labelcompte=Konto-Beschriftung
+LabelAccount=Konto-Beschriftung
+LabelOperation=Bezeichnung der Operation
 Sens=Zweck
 Codejournal=Journal
 NumPiece=Teilenummer
 TransactionNumShort=Anz. Buchungen
-AccountingCategory=Buchhaltungskategorie
+AccountingCategory=Personalisierte Gruppen
 GroupByAccountAccounting=Gruppieren nach Buchhaltungskonto
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
+ByAccounts=Pro Konto
+ByPredefinedAccountGroups=Pro vordefinierten Gruppen
+ByPersonalizedAccountGroups=Pro persönlichen Gruppierung
+ByYear=Bis zum Jahresende
 NotMatch=undefiniert
-DeleteMvt=Lösche Hauptbuch Datensätze
+DeleteMvt=Zeilen im Hauptbuch löschen
 DelYear=Jahr zu entfernen
 DelJournal=Journal zu entfernen
-ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specific journal. At least one criteria is required.
-ConfirmDeleteMvtPartial=Dadurch wird die ausgewählte(n) Zeile(n) aus dem Hauptbuch gelöscht
-DelBookKeeping=Delete record of the general ledger
-FinanceJournal=Finance journal
-ExpenseReportsJournal=Expense reports journal
+ConfirmDeleteMvt=Es werden alle Zeilen des Hauptbuchs für Jahr und/oder eines bestimmten Journals gelöscht. Mindestens ein Kriterium ist erforderlich.
+ConfirmDeleteMvtPartial=Die Buchung wird aus dem Hauptbuch gelöscht (Alle Einträge aus dieser Buchung werden gelöscht)
+FinanceJournal=Finanzjournal
+ExpenseReportsJournal=Spesenabrechnungsjournal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
-DescJournalOnlyBindedVisible=This is a view of record that are bound to products/services accountancy account and can be recorded into the General Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Steuerkonto nicht definiert
 ThirdpartyAccountNotDefined=Konto für Adresse nicht definiert
 ProductAccountNotDefined=Konto für Produkt nicht definiert
 FeeAccountNotDefined=Konto für Gebühr nicht definiert
 BankAccountNotDefined=Konto für Bank nicht definiert
 CustomerInvoicePayment=Rechnungszahlung (Kunde)
-ThirdPartyAccount=Partner Konto
+ThirdPartyAccount=Konto des Partners
 NewAccountingMvt=Erstelle Transaktion
 NumMvts=Transaktionsnummer
 ListeMvts=Liste der Bewegungen
 ErrorDebitCredit=Soll und Haben können nicht gleichzeitig eingegeben werden
-
+AddCompteFromBK=Buchhaltungskonten zur Gruppe hinzufügen
 ReportThirdParty=Zeige Partner
-DescThirdPartyReport=Konsultieren Sie hier die Liste der Kunden- und Lieferantenadressen und ihre Buchhaltungskonten
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Liste der Abrechnungskonten
+UnknownAccountForThirdparty=Unbekanntes Konto, %s wird verwendet
+UnknownAccountForThirdpartyBlocking=Unbekanntes Konto, weiterfahren nicht möglich
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Kontenklasse
 Pcgsubtype=Unterkontenklasse
+PcgtypeDesc=Gruppen und Untergruppen der Konten werden as vordefinierte 'Filter' und 'Gruppierung' Merkmale in manchen Finanzberichten verwendet. z.B. 'Aufwand' oder 'Ertrag' werden als Gruppen im Kontenplan für den Bericht verwendet.
 
 TotalVente=Verkaufssumme ohne Steuer
 TotalMarge=Gesamt-Spanne
 
-DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
-DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
-ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
+DescVentilCustomer=Kontieren Sie hier in die Liste Kundenrechnungszeilen gebunden (oder nicht), zu ihren Erlös Buchhaltungs-Konten
+DescVentilMore=In den meisten Fällen, wenn Sie vordefinierte Produkte oder Dienstleistungen verwenden und Sie die Kontonummer stellen auf der Produkt / Service-Karte, wird die Anwendung in der Lage sein, alle Kontierungen zwischen den Rechnungspositionen und dem Buchhaltungskonto auf Ihrer Konto  zu machen, nur in ein Klick mit der Taste <strong> "%s" </strong>. Wenn das Buchhaltungs-Konto nicht auf Produkt / Service-Karten festgelegt wurde oder wenn Sie noch ein paar Zeilen hat nicht auf jedes Konto kontiert, werden Sie manuelle Kontierungen in dem Menü "<strong> %s </strong>" machen müssen.
+DescVentilDoneCustomer=Kontieren Sie hier die Liste der Kundenrechnungszeilen zu einem Buchhaltungs-Konto
+DescVentilTodoCustomer=Kontiere nicht bereits kontierte Rechnungspositionen mit einem  Buchhaltung Erlös-Konto
+ChangeAccount=Ändere das Artikel Buchhaltungskonto für die ausgewählten Zeilen mit dem folgenden Buchhaltungskonto:
 Vide=-
-DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abrechnungskonto
-DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
-DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
-DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
-DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
+DescVentilTodoExpenseReport=Binde Spesenabrechnungspositionen die nicht gebunden mit einem Buchhaltungs-Konto
+DescVentilExpenseReport=Kontieren Sie hier in der Liste Spesenabrechnungszeilen  gebunden (oder nicht) zu Ihren Buchhaltungs-Konten
+DescVentilExpenseReportMore=Wenn Sie beim Buchhaltungskonto den Typen Spesenabrechnungpositionen eingestellt haben, wird die Applikation alle Kontierungen zwischen den Spesenabrechnungspositionen und dem Buchhaltungskonto von Ihrem Kontenrahmen verwenden, durch einen einzigen Klick auf die Schaltfläche <strong> "%s" </strong>. Wenn kein Konto definiert wurde unter Stammdaten / Gebührenarten oder wenn Sie einige Zeilen nicht zu irgendeinem automatischen Konto gebunden haben, müssen Sie die Zuordnung manuell aus dem Menü  "<strong> %s </strong>“ machen.
+DescVentilDoneExpenseReport=Hier finden Sie die Liste der Aufwendungsposten und ihr Gebühren Buchhaltungskonto
 
 ValidateHistory=automatisch verbinden
 AutomaticBindingDone=automatische Zuordnung erledigt
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchhaltungskonto nicht löschen, da es benutzt wird.
-MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Zuordnungs Karte
 GeneralLedgerIsWritten=Operationen werden ins Hauptbuch geschrieben
-GeneralLedgerSomeRecordWasNotRecorded=Einige der Buchungen konnten nicht verbucht werden.
-NoNewRecordSaved=Keine neuen Einträge gespeichert
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
+NoNewRecordSaved=Keine weiteren Einträge zum Übernehmen
 ListOfProductsWithoutAccountingAccount=Liste der Produkte, die nicht an ein Buchhaltungskonto gebunden sind
 ChangeBinding=Ändern der Zuordnung
+Accounted=Gebucht im Hauptbuch
+NotYetAccounted=ungebucht
 
 ## Admin
 ApplyMassCategories=Massenaktualisierung der Kategorien
+AddAccountFromBookKeepingWithNoCategories=Verfügbares Konto nicht in der persönlichen Liste
+CategoryDeleted=Die Gruppe für das Buchhaltungskonto wurde entfernt
+AccountingJournals=Buchhaltungsjournale
+AccountingJournal=Buchhaltungsjournal
+NewAccountingJournal=Neues Buchhaltungsjournal
+ShowAccoutingJournal=Buchhaltungsjournal anzeigen
+Nature=Art
+AccountingJournalType1=Miscellaneous operations
+AccountingJournalType2=Verkauf
+AccountingJournalType3=Einkauf
+AccountingJournalType4=Bank
+AccountingJournalType5=Spesenabrechnungen
+AccountingJournalType8=Inventur
+AccountingJournalType9=Hat neue
+ErrorAccountingJournalIsAlreadyUse=Dieses Journal wird bereits verwendet
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 
 ## Export
-Exports=Exporte
-Export=Exportieren
+ExportDraftJournal=Entwurfsjournal exportieren
 Modelcsv=Exportmodell
-OptionsDeactivatedForThisExportModel=Für dieses Exportmodell sind die Einstellungen deaktiviert
 Selectmodelcsv=Wählen Sie ein Exportmodell
 Modelcsv_normal=Klassischer Export
 Modelcsv_CEGID=Export zu CEGID Expert Buchhaltung
@@ -209,22 +261,25 @@ Modelcsv_ciel=Export zu Sage Ciel Compta oder Compta Evolution
 Modelcsv_quadratus=Export zu Quadratus QuadraCompta
 Modelcsv_ebp=Export zu EBP
 Modelcsv_cogilog=Export zu Cogilog
+Modelcsv_agiris=Nach Agiris exportieren
+Modelcsv_configurable=Konfigurierbarer Export
+ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases.
+InitAccountancyDesc=Auf dieser Seite kann ein Sachkonto für Artikel und Dienstleistungen vorgegeben werden, wenn noch kein Buchhaltungs-Konto für Ein- und Verkäufe definiert ist.
 DefaultBindingDesc=Diese Seite kann verwendet werden, um ein Standardkonto festzulegen, das für die Verknüpfung von Transaktionsdatensätzen zu Lohnzahlungen, Spenden, Steuern und Mwst. verwendet werden soll, wenn kein bestimmtes Konto angegeben wurde.
 Options=Optionen
 OptionModeProductSell=Modus Verkauf
 OptionModeProductBuy=Modus Einkäufe
-OptionModeProductSellDesc=Show all products with accounting account for sales.
-OptionModeProductBuyDesc=Show all products with accounting account for purchases.
-CleanFixHistory=Bereinige Buchhaltungs-Konten von Positionen, die nicht in Kontenplänen existieren.
+OptionModeProductSellDesc=Alle Artikel mit Sachkonten für Vertrieb anzeigen
+OptionModeProductBuyDesc=Alle Artikel mit Sachkonten für Einkauf anzeigen
+CleanFixHistory=Nicht existierenden Buchhaltungskonten von Positionen entfernen, die im Kontenplan nicht vorkommen.
 CleanHistory=Aller Zuordungen für das selektierte Jahr zurücksetzen
-
+PredefinedGroups=Vordefinierte Gruppen
 WithoutValidAccount=Mit keinem gültigen dedizierten Konto
 WithValidAccount=Mit gültigen dedizierten Konto
-ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
+ValueNotIntoChartOfAccount=Dieser Wert für das Buchhaltungs-Konto existiert nicht im Kontenplan
 
 ## Dictionary
 Range=Bereich von Sachkonten
@@ -232,11 +287,20 @@ Calculated=berechnet
 Formula=Formel
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=No accounting category available for country %s (See Home - Setup - Dictionaries)
+SomeMandatoryStepsOfSetupWereNotDone=Einige zwingende Einstellungen wurden nicht gemacht, bitte vervollständigen sie die Einrichtung
+ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Startseite - Einstellungen - Stammdaten)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt
 BookeppingLineAlreayExists=Datensätze existieren bereits in der Buchhaltung
-
+NoJournalDefined=Kein Journal definiert
 Binded=Zeilen verbunden
 ToBind=Zeilen für Zuordnung
+UseMenuToSetBindindManualy=Automatische Kontierung nicht möglich, verwende das Menü <a href="%s">%s</a> um die Zuweisung manuell zu machen
 
-WarningReportNotReliable=Warning, this report is not based on the General Ledger, so is not reliable yet. It will be replaced by a correct report in a next version.
+## Import
+ImportAccountingEntries=Accounting entries
+
+WarningReportNotReliable=Warnung: Dieser Bericht basiert nicht auf dem Hauptbuch, daruch werden keine im Hauptbuch veränderten Buchungen berücksichtigt. Wenn die Buchhaltung aktuell ist, ist die Buchhaltungsansicht aussagekräftiger.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +29,49 @@
  */
 class Menubase
 {
-    public $db;							// To store db handler
-    public $error;							// To return error code (or message)
-    public $errors=array();				// To return several error codes (or messages)
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    public $id;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $menu_handler;
     public $module;
     public $type;
     public $mainmenu;
+
+    /**
+     * @var int ID
+     */
     public $fk_menu;
+
+    /**
+     * @var string fk_mainmenu
+     */
     public $fk_mainmenu;
+
+    /**
+     * @var string fk_leftmenu
+     */
     public $fk_leftmenu;
+
+    /**
+     * @var int position
+     */
     public $position;
     public $url;
     public $target;
@@ -84,10 +115,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
+        $this->fk_menu = (int) $this->fk_menu;          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -95,7 +126,7 @@ class Menubase
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
-        $this->position=trim($this->position);
+        if (empty($this->position)) $this->position=0;
         if (! $this->level) $this->level=0;
 
         // Check parameters
@@ -124,58 +155,86 @@ class Menubase
           else dol_print_error($this->db);
         }
 
-        // Insert request
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
-        $sql.= "menu_handler,";
-        $sql.= "entity,";
-        $sql.= "module,";
-        $sql.= "type,";
-        $sql.= "mainmenu,";
-        $sql.= "leftmenu,";
-        $sql.= "fk_menu,";
-        $sql.= "fk_mainmenu,";
-        $sql.= "fk_leftmenu,";
-        $sql.= "position,";
-        $sql.= "url,";
-        $sql.= "target,";
-        $sql.= "titre,";
-        $sql.= "langs,";
-        $sql.= "perms,";
-        $sql.= "enabled,";
-        $sql.= "usertype";
-        $sql.= ") VALUES (";
-        $sql.= " '".$this->menu_handler."',";
-        $sql.= " '".$conf->entity."',";
-        $sql.= " '".$this->module."',";
-        $sql.= " '".$this->type."',";
-        $sql.= " ".($this->mainmenu?"'".$this->mainmenu."'":"''").",";    // Can't be null
-        $sql.= " ".($this->leftmenu?"'".$this->leftmenu."'":"null").",";
-        $sql.= " '".$this->fk_menu."',";
-        $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
-        $sql.= " '".(int) $this->position."',";
-        $sql.= " '".$this->db->escape($this->url)."',";
-        $sql.= " '".$this->db->escape($this->target)."',";
-        $sql.= " '".$this->db->escape($this->titre)."',";
-        $sql.= " '".$this->db->escape($this->langs)."',";
-        $sql.= " '".$this->db->escape($this->perms)."',";
-        $sql.= " '".$this->db->escape($this->enabled)."',";
-        $sql.= " '".$this->user."'";
-        $sql.= ")";
+        // Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
+        $sql = "SELECT count(*)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."menu";
+        $sql.= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
+        $sql.= " AND fk_menu = ".((int) $this->fk_menu);
+        $sql.= " AND position = ".((int) $this->position);
+        $sql.= " AND url = '".$this->db->escape($this->url)."'";
+        $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
+        $result=$this->db->query($sql);
+        if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+        	$row = $this->db->fetch_row($result);
 
-            return $this->id;
+        	if ($row[0] == 0)   // If not found
+        	{
+		        // Insert request
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+		        $sql.= "menu_handler,";
+		        $sql.= "entity,";
+		        $sql.= "module,";
+		        $sql.= "type,";
+		        $sql.= "mainmenu,";
+		        $sql.= "leftmenu,";
+		        $sql.= "fk_menu,";
+		        $sql.= "fk_mainmenu,";
+		        $sql.= "fk_leftmenu,";
+		        $sql.= "position,";
+		        $sql.= "url,";
+		        $sql.= "target,";
+		        $sql.= "titre,";
+		        $sql.= "langs,";
+		        $sql.= "perms,";
+		        $sql.= "enabled,";
+		        $sql.= "usertype";
+		        $sql.= ") VALUES (";
+		        $sql.= " '".$this->db->escape($this->menu_handler)."',";
+		        $sql.= " '".$this->db->escape($conf->entity)."',";
+		        $sql.= " '".$this->db->escape($this->module)."',";
+		        $sql.= " '".$this->db->escape($this->type)."',";
+		        $sql.= " ".($this->mainmenu?"'".$this->db->escape($this->mainmenu)."'":"''").",";    // Can't be null
+		        $sql.= " ".($this->leftmenu?"'".$this->db->escape($this->leftmenu)."'":"null").",";
+		        $sql.= " ".((int) $this->fk_menu).",";
+		        $sql.= " ".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+		        $sql.= " ".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
+		        $sql.= " ".((int) $this->position).",";
+		        $sql.= " '".$this->db->escape($this->url)."',";
+		        $sql.= " '".$this->db->escape($this->target)."',";
+		        $sql.= " '".$this->db->escape($this->titre)."',";
+		        $sql.= " '".$this->db->escape($this->langs)."',";
+		        $sql.= " '".$this->db->escape($this->perms)."',";
+		        $sql.= " '".$this->db->escape($this->enabled)."',";
+		        $sql.= " '".$this->db->escape($this->user)."'";
+		        $sql.= ")";
+
+		        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		        $resql=$this->db->query($sql);
+		        if ($resql)
+		        {
+		            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+		            dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+
+		            return $this->id;
+		        }
+		        else
+		        {
+		            $this->error="Error ".$this->db->lasterror();
+		            return -1;
+		        }
+        	}
+        	else
+        	{
+        		dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
+        		$this->error = 'Error Menu entry already exists';
+        		return 0;
+        	}
         }
         else
         {
-            $this->error="Error ".$this->db->lasterror();
-            return -1;
+        	return -1;
         }
     }
 
@@ -197,10 +256,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);
+        $this->fk_menu = (int) $this->fk_menu;
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -216,20 +275,20 @@ class Menubase
         $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
         $sql.= " menu_handler='".$this->db->escape($this->menu_handler)."',";
         $sql.= " module='".$this->db->escape($this->module)."',";
-        $sql.= " type='".$this->type."',";
+        $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-        $sql.= " fk_menu='".$this->fk_menu."',";
-        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
-        $sql.= " position='".$this->position."',";
+        $sql.= " fk_menu=".$this->fk_menu.",";
+        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
+        $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";
         $sql.= " titre='".$this->db->escape($this->titre)."',";
         $sql.= " langs='".$this->db->escape($this->langs)."',";
         $sql.= " perms='".$this->db->escape($this->perms)."',";
         $sql.= " enabled='".$this->db->escape($this->enabled)."',";
-        $sql.= " usertype='".$this->user."'";
+        $sql.= " usertype='".$this->db->escape($this->user)."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -402,7 +461,8 @@ class Menubase
     }
 
     /**
-     * 	Load entries found from database in this->newmenu array.
+     * 	Load entries found from database (and stored into $tabMenu) in $this->newmenu array.
+     *  Warning: Entries in $tabMenu must have child after parent
      *
      * 	@param	Menu	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION["mainmenu"])
@@ -435,10 +495,10 @@ class Menubase
         // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+        // Now complete $this->newmenu->list to add entries found into $tabMenu that are childs of mainmenu=$menutopid, using the fk_menu link that is int (old method)
         $this->recur($tabMenu, $menutopid, 1);
 
-        // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
+        // Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
         foreach($tabMenu as $key => $val)
         {
         	//var_dump($tabMenu);
@@ -479,6 +539,10 @@ class Menubase
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
         			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
+        			else {
+        			    dol_syslog("Error. Modules ".$val['module']." has defined a menu entry with a parent='fk_mainmenu=".$val['fk_leftmenu'].",fk_leftmenu=".$val['fk_leftmenu']."' and position=".$val['position'].'. The parent was not found. May be you forget it into your definition of menu, or may be the parent has a "position" that is after the child (fix field "position" of parent or child in this case).', LOG_WARNING);
+        			    //print "Parent menu not found !!<br>";
+        			}
         		}
         	}
         }
@@ -494,7 +558,7 @@ class Menubase
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-     *  @param  array	$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+     *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -508,15 +572,15 @@ class Menubase
 
         $sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-        $sql.= " WHERE m.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+        $sql.= " WHERE m.entity IN (0,".$conf->entity.")";
         $sql.= " AND m.menu_handler IN ('".$menu_handler."','all')";
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
         $sql.= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-//$tmp1=microtime(true);
-//print '>>> 1 0<br>';
+		//$tmp1=microtime(true);
+		//print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -525,7 +589,6 @@ class Menubase
 
             $a = 0;
             $b = 0;
-            $oldrowid=0;
             while ($a < $numa)
             {
                 //$objm = $this->db->fetch_object($resql);
@@ -553,7 +616,8 @@ class Menubase
                 // Define $title
                 if ($enabled)
                 {
-                	$title = $langs->trans($menu['titre']);
+                	$title = $langs->trans($menu['titre']);		// If $menu['titre'] start with $, a dol_eval is done.
+                	//var_dump($title.'-'.$menu['titre']);
                     if ($title == $menu['titre'])   // Translation not found
                     {
                         if (! empty($menu['langs']))    // If there is a dedicated translation file
@@ -561,6 +625,9 @@ class Menubase
                         	//print 'Load file '.$menu['langs'].'<br>';
                             $langs->load($menu['langs']);
                         }
+
+                        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+                        $menu['titre'] = make_substitutions($menu['titre'], $substitarray);
 
                         if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
                         {
@@ -579,8 +646,8 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-//$tmp4=microtime(true);
-//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+					//$tmp4=microtime(true);
+					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
@@ -602,7 +669,7 @@ class Menubase
                     //$tabMenu[$b]['langs']       = $menu['langs'];
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
-                    $tabMenu[$b]['position']    = $menu['position'];
+                    $tabMenu[$b]['position']    = (int) $menu['position'];
 
                     $b++;
                 }
@@ -610,6 +677,11 @@ class Menubase
                 $a++;
             }
             $this->db->free($resql);
+
+            // Currently $tabMenu is sorted on position.
+            // If a child have a position lower that its parent, we can make a loop to fix this here, but we prefer to show a warning
+            // into the leftMenuCharger later to avoid useless operations.
+
             return 1;
         }
         else
@@ -622,7 +694,7 @@ class Menubase
     /**
      *  Complete this->newmenu with menu entry found in $tab
      *
-     *  @param  array	$tab			Tab array
+     *  @param  array	$tab			Tab array with all menu entries
      *  @param  int		$pere			Id of parent
      *  @param  int		$level			Level
      *  @return	void
@@ -641,6 +713,4 @@ class Menubase
             }
         }
    }
-
 }
-

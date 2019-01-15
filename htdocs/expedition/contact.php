@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -91,7 +90,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') 
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -123,13 +122,13 @@ else if ($action == 'deletecontact' && $user->rights->expedition->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->expedition->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
 
 
 /*
@@ -156,12 +155,12 @@ if ($id > 0 || ! empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), 0, 'sending');
+	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
 
 
 	// Shipment card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer shipment
 	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
@@ -203,11 +202,11 @@ if ($id > 0 || ! empty($ref))
         }
     }
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
     //print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -237,23 +236,23 @@ if ($id > 0 || ! empty($ref))
 	    print "</td>\n";
 	    print '</tr>';
 	}
-	
+
 	print "</table>";
 
-	
+
 	//print '</div>';
 	//print '<div class="fichehalfright">';
 	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	//print '</div>';
 	//print '</div>';
 	print '</div>';
-		
+
 	print '<div class="clearboth"></div>';
-	
-	
+
+
 	dol_fiche_end();
 
 	// Lignes de contacts
@@ -266,9 +265,8 @@ if ($id > 0 || ! empty($ref))
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
-
 }
 
+// End of page
 llxFooter();
-
 $db->close();

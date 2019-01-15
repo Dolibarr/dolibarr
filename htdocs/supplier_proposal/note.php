@@ -2,8 +2,9 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -71,18 +73,18 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id, $ref))
 	{
 	    $object->fetch_thirdparty();
-	    
+
 		$societe = new Societe($db);
 		if ( $societe->fetch($object->socid) )
 		{
 			$head = supplier_proposal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), 0, 'supplier_proposal');
+			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 
 			// Supplier proposal card
-			$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-			
-			
+			$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref supplier
 			//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -123,17 +125,17 @@ if ($id > 0 || ! empty($ref))
 			    }
 			}
 			$morehtmlref.='</div>';
-			
-			
+
+
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-				
-			
+
+
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
-				
+
 			$cssclass="titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-			
+
 			print '</div>';
 
 			dol_fiche_end();
@@ -141,6 +143,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

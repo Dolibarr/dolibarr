@@ -31,3 +31,4 @@ DONATION_ART200=Vis artikkel 200 fra CGI hvis du er bekymret
 DONATION_ART238=Vis artikkel 238 fra CGI hvis du er bekymret
 DONATION_ART885=Vis artikkel 885 fra CGI hvis du er bekymret
 DonationPayment=Donasjonsbetaling
+DonationValidated=Donation %s validated

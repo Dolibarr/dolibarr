@@ -4,6 +4,7 @@
 /dolimed*
 /ecommerce*
 /extensions*
+/forceproject*
 /google*
 /lead
 /multicompany*
@@ -22,4 +23,8 @@
 /cabinetmed*
 /webmail*
 /conf/conf.php
-/subtotal/
+/subtotal*
+/abricot*
+/nomenclature*
+/of/
+/workstation/

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,6 @@ else
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		$var=True;
 		$i=0;
 		while ($i < $num)
 		{
@@ -75,7 +74,7 @@ else
 		}
 	}
 
-	if ($base == 1)
+	if ($base == 1)	// mysql
 	{
 		$link=array();
 		$cons = explode(";", $row[14]);
@@ -97,29 +96,40 @@ else
 
 		//  var_dump($link);
 
-		print '<table>';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
-		print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
+		print '<table class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td>'.$langs->trans("FieldsLinked").'</td>';
+		print '</tr>';
 
-		$sql = "DESCRIBE ".$table;
+		//$sql = "DESCRIBE ".$table;
+		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
+				print "<td>".$row[0]."</td>";
+				print "<td>".$row[1]."</td>";
+				print "<td>".$row[3]."</td>";
+				print "<td>".(empty($row[4])?'':$row[4])."</td>";
+				print "<td>".(empty($row[5])?'':$row[5])."</td>";
+				print "<td>".(empty($row[6])?'':$row[6])."</td>";
+				print "<td>".(empty($row[7])?'':$row[7])."</td>";
 
-				print "<td>$row[0]</td>";
-				print "<td>$row[1]</td>";
-				print "<td>$row[3]</td>";
 				print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
 				print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
 
+				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
 				print '</tr>';
 				$i++;
 			}
@@ -128,6 +138,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

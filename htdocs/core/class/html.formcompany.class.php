@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +31,15 @@
  */
 class FormCompany
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Constructor
@@ -43,11 +49,10 @@ class FormCompany
 	function __construct($db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type
 	 *
@@ -57,6 +62,7 @@ class FormCompany
 	 */
 	function typent_array($mode=0, $filter='')
 	{
+        // phpcs:enable
 		global $langs,$mysoc;
 
 		$effs = array();
@@ -89,6 +95,7 @@ class FormCompany
 		return $effs;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
@@ -98,6 +105,7 @@ class FormCompany
 	 */
 	function effectif_array($mode=0, $filter='')
 	{
+        // phpcs:enable
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
@@ -127,6 +135,7 @@ class FormCompany
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
@@ -138,6 +147,7 @@ class FormCompany
 	 */
 	function form_prospect_level($page, $selected='', $htmlname='prospect_level_id', $empty=0)
 	{
+        // phpcs:enable
 		global $user, $langs;
 
 		print '<form method="post" action="'.$page.'">';
@@ -176,6 +186,7 @@ class FormCompany
 		print '</form>';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *   Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -190,9 +201,11 @@ class FormCompany
 	 */
 	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
+        // phpcs:enable
 		print $this->select_state($selected,$country_codeid, $htmlname);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -202,12 +215,13 @@ class FormCompany
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
-	 *    @param    string	$htmlname			Id of department
+	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
 	 */
 	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 
 		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
@@ -216,16 +230,15 @@ class FormCompany
 
 		$out='';
 
-		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
+		// Serch departements/cantons/province active d'une region et pays actif
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
-		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$country_codeid."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
+		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$this->db->escape($country_codeid)."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		$sql .= " ORDER BY c.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -264,8 +277,26 @@ class FormCompany
 						{
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
+
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						if (!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+						}
+						else {
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+						}
+
 						$out.= '</option>';
 					}
 					$i++;
@@ -279,14 +310,18 @@ class FormCompany
 			dol_print_error($this->db);
 		}
 
-        // Make select dynamic
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $out .= ajax_combobox($htmlname);
+		// Make select dynamic
+		if (! empty($htmlname))
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
@@ -299,6 +334,7 @@ class FormCompany
 	 */
 	function select_region($selected='',$htmlname='region_id')
 	{
+        // phpcs:enable
 		global $conf,$langs;
 		$langs->load("dict");
 
@@ -353,16 +389,18 @@ class FormCompany
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return combo list with people title
 	 *
 	 *  @param  string	$selected   	Title preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
-	 *  @param  string  $morecss        Add more css on SELECT element      
+	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
 	 */
 	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
@@ -409,6 +447,7 @@ class FormCompany
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays.
@@ -422,9 +461,11 @@ class FormCompany
 	 */
 	function select_forme_juridique($selected='', $country_codeid=0, $filter='')
 	{
+        // phpcs:enable
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
@@ -437,6 +478,7 @@ class FormCompany
 	 */
 	function select_juridicalstatus($selected='', $country_codeid=0, $filter='', $htmlname='forme_juridique_code')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
@@ -536,9 +578,10 @@ class FormCompany
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
      *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
+     *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $moreparam='')
+	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $moreparam='', $morecss='')
 	{
 		global $conf, $langs;
 
@@ -563,33 +606,34 @@ class FormCompany
 			$events=array();
 			// Add an entry 'method' to say 'yes, we must execute url with param action = method';
 			// Add an entry 'url' to say which url to execute
-			// Add an entry htmlname to say which element we must change once url is called 
-			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines 
+			// Add an entry htmlname to say which element we must change once url is called
+			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines
 			// To refresh contacts list on thirdparty list change
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			
+
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
-					    console.log("Call runJsCodeForEvent'.$htmlname.'");
 						var obj = '.json_encode($events).';
 						$.each(obj, function(key,values) {
 							if (values.method.length) {
 								runJsCodeForEvent'.$htmlname.'(values);
 							}
 						});
-						/* Clean contact */
-						$("div#s2id_contactid>a>span").html(\'\');
+
+						$(this).trigger("blur");
 					});
-								    
+
 					// Function used to execute events when search_htmlname change
 					function runJsCodeForEvent'.$htmlname.'(obj) {
 						var id = $("#'.$htmlname.'").val();
 						var method = obj.method;
 						var url = obj.url;
 						var htmlname = obj.htmlname;
+						var showempty = obj.showempty;
+						console.log("Run runJsCodeForEvent-'.$htmlname.' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 						$.getJSON(url,
 							{
 								action: method,
@@ -599,6 +643,7 @@ class FormCompany
 							function(response) {
 								if (response != null)
 								{
+									console.log("Change select#"+htmlname+" with content "+response.value)
 									$.each(obj.params, function(key,action) {
 										if (key.length) {
 											var num = response.num;
@@ -609,7 +654,6 @@ class FormCompany
 											}
 										}
 									});
-						            /* console.log("Change select#"+htmlname+" with content "+response.value) */
 									$("select#" + htmlname).html(response.value);
 								}
 							}
@@ -629,7 +673,7 @@ class FormCompany
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
 			$sql.= " ".MAIN_DB_PREFIX."societe as s";
-			$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+			$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto))
 			{
@@ -640,7 +684,7 @@ class FormCompany
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"';
+				print '<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax)
 				{
 					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
@@ -693,16 +737,17 @@ class FormCompany
      *  @param  string		$source			Source ('internal' or 'external')
      *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
      *  @param  int			$showempty      1=Add en empty line
+     *  @param  string      $morecss        Add more css to select component
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0, $morecss='')
 	{
 	    global $user, $langs;
-	    
+
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
-			print '<select class="flat valignmiddle" name="'.$htmlname.'" id="'.$htmlname.'">';
+			print '<select class="flat valignmiddle'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
@@ -716,6 +761,7 @@ class FormCompany
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return a select list with zip codes and their town
 	 *
@@ -730,6 +776,7 @@ class FormCompany
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='',$morecss='')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$out='';
@@ -747,6 +794,7 @@ class FormCompany
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return HTML string to use as input of professional id into a HTML page (siren, siret, etc...)
      *
@@ -759,6 +807,7 @@ class FormCompany
      */
     function get_input_id_prof($idprof,$htmlname,$preselected,$country_code,$morecss='maxwidth100onsmartphone quatrevingtpercent')
     {
+        // phpcs:enable
         global $conf,$langs;
 
         $formlength=0;
@@ -791,12 +840,13 @@ class FormCompany
 
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
-        
+
         $out = '<input type="text" '.($morecss?'class="'.$morecss.'" ':'').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Return a HTML select with localtax values for thirdparties
      *
@@ -807,10 +857,11 @@ class FormCompany
      */
     function select_localtax($local, $selected, $htmlname)
     {
-    	$tax=get_localtax_by_third($local);
+        // phpcs:enable
+        $tax=get_localtax_by_third($local);
 
-    	$num = $this->db->num_rows($tax);
-    	$i = 0;
+        $num = $this->db->num_rows($tax);
+        $i = 0;
     	if ($num)
     	{
     		$valors=explode(":", $tax);
@@ -837,6 +888,4 @@ class FormCompany
     		}
     	}
     }
-
 }
-

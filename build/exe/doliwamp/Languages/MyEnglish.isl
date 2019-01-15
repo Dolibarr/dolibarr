@@ -13,8 +13,8 @@ AssocingFileExtension=Associating %1 with the %2 file extension...
 
 YouWillInstallDoliWamp=You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.
 ThisAssistantInstallOrUpgrade=This assistant installs or upgrades Dolibarr ERP-CRM and all required third party softwares (Apache, Mysql and PHP) optimized for a Dolibarr usage.
-IfYouHaveTechnicalKnowledge=If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on your existing Apache, Mysql and PHP installation.
-ButIfYouLook=But if you look for an automatic setup, you''re on the good way...
+IfYouHaveTechnicalKnowledge=If you are looking for a hosted version in the Cloud, you should look at https://saas.dolibarr.org. If you have technical knowledge and want to manage your Apache, Mysql and PHP yourself, you should not use this assistant and make a manual installation of Dolibarr on your existing Apache, Mysql and PHP installation.
+ButIfYouLook=But if you look for an automatic setup on your local computer, you''re on the good way...
 DoYouWantToStart=Do you want to start installation/upgrade process ?
 
 TechnicalParameters=Technical parameters
@@ -43,3 +43,5 @@ DoliWampWillStartApacheMysql=DoliWamp installer will now start or restart Apache
 OldVersionFoundAndMoveInNew=An old database version has been found and moved to be used by new Dolibarr version
 OldVersionFoundButFailedToMoveInNew=An old database version has been found but could not be moved to be used with new Dolibarr version
 
+DLLMissing=The "Visual C++ Redistributable for Visual Studio 2012" component is missing. Please install the 32-bit version (vcredit_x86.exe) first from https://www.microsoft.com/en-us/download/details.aspx?id=30679 and restart DoliWamp installation/upgrade.
+ContinueAnyway=Continue anyway (install process may fails without this prerequisite)

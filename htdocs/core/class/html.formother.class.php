@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -38,7 +38,11 @@
 class FormOther
 {
     private $db;
-    public $error;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**
@@ -49,11 +53,10 @@ class FormOther
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return HTML select list of export models
      *
@@ -61,18 +64,21 @@ class FormOther
      *    @param    string	$htmlname          Nom de la zone select
      *    @param    string	$type              Type des modeles recherches
      *    @param    int		$useempty          Affiche valeur vide dans liste
+     *    @param    int		$fk_user          Utilisateur créant le modèle
      *    @return	void
      */
-    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
+    function select_export_model($selected='', $htmlname='exportmodelid', $type='', $useempty=0, $fk_user=null)
     {
+        // phpcs:enable
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
+		if (!empty($fk_user)) $sql.=" AND fk_user=".$fk_user;
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -103,6 +109,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of export models
      *
@@ -112,8 +119,9 @@ class FormOther
      *    @param    int		$useempty          Affiche valeur vide dans liste
      *    @return	void
      */
-    function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
+    function select_import_model($selected='', $htmlname='importmodelid', $type='', $useempty=0)
     {
+        // phpcs:enable
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."import_model";
         $sql.= " WHERE type = '".$type."'";
@@ -121,7 +129,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -152,6 +160,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of ecotaxes with label
      *
@@ -159,11 +168,12 @@ class FormOther
      *    @param    string	$htmlname	Name of combo list
      *    @return	integer
      */
-    function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
+    function select_ecotaxes($selected='', $htmlname='ecotaxe_id')
     {
+        // phpcs:enable
         global $langs;
 
-        $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
+        $sql = "SELECT e.rowid, e.code, e.label, e.price, e.organization,";
         $sql.= " c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
         $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
@@ -189,9 +199,9 @@ class FormOther
                     else
                     {
                         print '<option value="'.$obj->rowid.'">';
-                        //print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+                        //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
-                    $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
+                    $selectOptionValue = $obj->code.' - '.$obj->label.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
                     print $selectOptionValue;
                     print '</option>';
                     $i++;
@@ -208,6 +218,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of revenue stamp for country
      *
@@ -216,13 +227,14 @@ class FormOther
      *    @param    string	$country_code   Country Code
      *    @return	string					HTML select list
      */
-    function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
+    function select_revenue_stamp($selected='', $htmlname='revenuestamp', $country_code='')
     {
+        // phpcs:enable
     	global $langs;
 
     	$out='';
 
-    	$sql = "SELECT r.taux";
+    	$sql = "SELECT r.taux, r.revenuestamp_type";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
     	$sql.= " AND c.code = '".$country_code."'";
@@ -242,14 +254,14 @@ class FormOther
     				$obj = $this->db->fetch_object($resql);
     				if (($selected && $selected == $obj->taux) || $num == 1)
     				{
-    					$out.='<option value="'.$obj->taux.'" selected>';
+    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
     				}
     				else
     				{
-    					$out.='<option value="'.$obj->taux.'">';
+    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
     					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
     				}
-    				$out.=$obj->taux;
+    				$out.=$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
     				$out.='</option>';
     				$i++;
     			}
@@ -265,6 +277,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return a HTML select list to select a percent
      *
@@ -274,15 +287,18 @@ class FormOther
      *    @param    int		$increment     	increment value
      *    @param    int		$start         	start value
      *    @param    int		$end           	end value
+     *    @param    int     $showempty      Add also an empty line
      *    @return   string					HTML select string
      */
-    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
+    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
     {
+        // phpcs:enable
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
+        if ($showempty) $return.='<option value="-1"'.(($selected == -1 || $selected == '')?' selected':'').'>&nbsp;</option>';
 
         for ($i = $start ; $i <= $end ; $i += $increment)
         {
-            if ($selected == $i)
+            if ($selected != '' && (int) $selected == $i)
             {
                 $return.= '<option value="'.$i.'" selected>';
             }
@@ -299,6 +315,7 @@ class FormOther
         return $return;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Return select list for categories (to use in form search selectors)
      *
@@ -307,11 +324,13 @@ class FormOther
      * @param   string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @param   int     $showempty      Add also an empty line
-     * @return string		        	Html combo list code
+     * @param   string  $morecss        More CSS
+     * @return  string		        	Html combo list code
      * @see	select_all_categories
      */
-    function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0,$showempty=1)
+    function select_categories($type, $selected=0, $htmlname='search_categ', $nocateg=0, $showempty=1, $morecss='')
     {
+        // phpcs:enable
         global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -320,24 +339,22 @@ class FormOther
         {
             dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
         }
-        
+
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
 
         $moreforfilter = '';
-        $nodatarole = '';
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
             $moreforfilter.=$comboenhancement;
-            $nodatarole=($comboenhancement?' data-role="none"':'');
         }
 
         // Print a select with each of them
-        $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $moreforfilter.='<select class="flat minwidth100'.($morecss?' '.$morecss:'').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) $moreforfilter.='<option value="0">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -360,6 +377,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return select list for categories (to use in form search selectors)
      *
@@ -373,11 +391,11 @@ class FormOther
      */
     function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
     {
+        // phpcs:enable
         global $conf,$langs;
         $langs->load('users');
 
         $out = '';
-        $nodatarole = '';
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
@@ -387,11 +405,10 @@ class FormOther
             if ($comboenhancement)
             {
             	$out.=$comboenhancement;
-            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
         }
         // Select each sales and print them in a select input
-        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) $out.='<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
@@ -409,7 +426,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-	$sql_usr.= " ORDER BY u.statut DESC, lastname ASC";
+	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -469,9 +486,11 @@ class FormOther
      * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      *  @param  int		$useempty       		0=Allow empty values
      *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
+	 *  @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
+     *  @param	string	$morecss				More css
      *  @return	void
      */
-    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0)
+    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0, $filteronprojstatus='', $morecss='')
     {
         global $user, $langs;
 
@@ -479,15 +498,17 @@ class FormOther
 
         //print $modeproject.'-'.$modetask;
         $task=new Task($this->db);
-        $tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode);
+        $tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode, '', $filteronprojstatus);
         if ($tasksarray)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+        	print '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty) print '<option value="0">&nbsp;</option>';
             $j=0;
             $level=0;
             $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid, $disablechildoftaskid);
             print '</select>';
+
+            print ajax_combobox($htmlname);
         }
         else
         {
@@ -566,6 +587,7 @@ class FormOther
                     if ($disabled) print ' disabled';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
+                    print ' '.$lines[$i]->projectlabel;
                     if (empty($lines[$i]->public))
                     {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
@@ -602,23 +624,16 @@ class FormOther
     static function showColor($color, $textifnotdefined='')
     {
     	$textcolor='FFF';
-    	if ($color)
-    	{
-        	$hex=$color;
-        	$r = hexdec($hex[0].$hex[1]);
-        	$g = hexdec($hex[2].$hex[3]);
-        	$b = hexdec($hex[4].$hex[5]);
-        	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-            if ($bright > 0.6) $textcolor='000';     	   
-    	}
-    	
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    	if(colorIsLight($color)) $textcolor='000';
+
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-    	
+
 		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *		Output a HTML code to select a color
      *
@@ -633,6 +648,7 @@ class FormOther
      */
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
+        // phpcs:enable
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
 
@@ -736,6 +752,7 @@ class FormOther
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Creation d'un icone de couleur
      *
@@ -748,6 +765,7 @@ class FormOther
      */
     function CreateColorIcon($color,$module,$name,$x='12',$y='12')
     {
+        // phpcs:enable
         global $conf;
 
         $file = $conf->$module->dir_temp.'/'.$name.'.png';
@@ -775,6 +793,7 @@ class FormOther
         ImageDestroy($image);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    	Return HTML combo list of week
      *
@@ -785,15 +804,18 @@ class FormOther
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
+        // phpcs:enable
         global $langs;
 
-        $week = array(	0=>$langs->trans("Day0"),
-        1=>$langs->trans("Day1"),
-        2=>$langs->trans("Day2"),
-        3=>$langs->trans("Day3"),
-        4=>$langs->trans("Day4"),
-        5=>$langs->trans("Day5"),
-        6=>$langs->trans("Day6"));
+        $week = array(
+            0=>$langs->trans("Day0"),
+            1=>$langs->trans("Day1"),
+            2=>$langs->trans("Day2"),
+            3=>$langs->trans("Day3"),
+            4=>$langs->trans("Day4"),
+            5=>$langs->trans("Day5"),
+            6=>$langs->trans("Day6")
+        );
 
         $select_week = '<select class="flat" name="'.$htmlname.'">';
         if ($useempty)
@@ -817,17 +839,20 @@ class FormOther
         return $select_week;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Return HTML combo list of month
      *
-     *      @param  string      $selected          Preselected value
-     *      @param  string      $htmlname          Name of HTML select object
-     *      @param  int         $useempty          Show empty in list
-     *      @param  int         $longlabel         Show long label
+     *      @param  string      $selected          	Preselected value
+     *      @param  string      $htmlname          	Name of HTML select object
+     *      @param  int         $useempty          	Show empty in list
+     *      @param  int         $longlabel         	Show long label
+     *      @param	string		$morecss			More Css
      *      @return string
      */
-    function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
+    function select_month($selected='', $htmlname='monthid', $useempty=0, $longlabel=0, $morecss='')
     {
+        // phpcs:enable
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -835,7 +860,7 @@ class FormOther
         if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
         else $montharray = monthArray($langs, 1);
 
-        $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+        $select_month = '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';
@@ -857,6 +882,7 @@ class FormOther
         return $select_month;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Return HTML combo list of years
      *
@@ -868,11 +894,13 @@ class FormOther
      *  @param	int			$offset			Offset
      *  @param	int			$invert			Invert
      *  @param	string		$option			Option
+     *  @param	string		$morecss		More CSS
      *  @return	string
      */
-    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
+    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
-        print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option);
+        // phpcs:enable
+        print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
     }
 
     /**
@@ -886,9 +914,10 @@ class FormOther
      *  @param	int		$offset			Offset
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
+     *  @param	string	$morecss		More css
      *  @return	string
      */
-    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
+    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         $out='';
 
@@ -897,7 +926,7 @@ class FormOther
         $min_year = $currentyear-$min_year;
         if(empty($selected) && empty($useempty)) $selected = $currentyear;
 
-        $out.= '<select class="flat" placeholder="aa" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
+        $out.= '<select class="flat'.($morecss?' '.$morecss:'').'" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
         {
         	$selected_html='';
@@ -927,6 +956,7 @@ class FormOther
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Show form to select address
      *
@@ -940,6 +970,7 @@ class FormOther
      */
     function form_address($page, $selected, $socid, $htmlname='address_id', $origin='', $originid='')
     {
+        // phpcs:enable
         global $langs,$conf;
         global $form;
 
@@ -977,8 +1008,8 @@ class FormOther
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
+     * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
+     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     static function getBoxesArea($user,$areacode)
     {
@@ -990,16 +1021,16 @@ class FormOther
 
         // $boxactivated will be array of boxes enabled into global setup
         // $boxidactivatedforuser will be array of boxes choosed by user
-        
+
         $selectboxlist='';
-        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
-        
+        $boxactivated=InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone)?null:$user), array(), 0);	// Search boxes of common+user (or common only if user has no specific setup)
+
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-        
+
         // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
@@ -1010,7 +1041,11 @@ class FormOther
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
-        		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		if (preg_match('/graph/',$box->class) && $conf->browser->layout != 'phone')
+        		{
+        			$label=$label.' <span class="fa fa-bar-chart"></span>';
+        		}
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
             foreach($boxidactivatedforuser as $boxid)
@@ -1022,15 +1057,20 @@ class FormOther
         	//var_dump($boxidactivatedforuser);
 
         	// Class Form must have been already loaded
+        	$selectboxlist.='<!-- Form with select box list -->'."\n";
 			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
-            //$selectboxlist.=ajax_combobox("boxcombo");
+            if (! empty($conf->use_javascript_ajax))
+            {
+            	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$selectboxlist.=ajax_combobox("boxcombo");
+            }
         }
 
         // Javascript code for dynamic actions
@@ -1040,22 +1080,22 @@ class FormOther
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
-	        	var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-	        	var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+	        	var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
+	        	var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
 	        	var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=delbox\';
 	        	}
 	        	else
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: true
 	        		});
 	        	}
@@ -1065,28 +1105,27 @@ class FormOther
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
 	        		if (boxid > 0) {
-	            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-	            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+	            		var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
+	            		var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
 	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
 	    				jQuery.ajax({
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
 	    			        async: false
 	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
 	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
 	        	$selectboxlist.='
 
-	        	jQuery("#left, #right").sortable({
-		        	/* placeholder: \'ui-state-highlight\', */
+	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
 	    	    	revert: \'invalid\',
-	       			items: \'.box\',
-	        		containment: \'.fiche\',
-	        		connectWith: \'.connectedSortable\',
+	       			items: \'.boxdraggable\',
+					containment: \'document\',
+	        		connectWith: \'#boxhalfleft, #boxhalfright\',
 	        		stop: function(event, ui) {
-	        			updateBoxOrder(0);
+	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
 	        		}
 	    		});
 
@@ -1094,9 +1133,10 @@ class FormOther
 	        		var self = this;	// because JQuery can modify this
 	        		var boxid=self.id.substring(8);
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
+	        		console.log("We close box "+boxid);
 	        		jQuery(\'#boxto_\'+boxid).remove();
 	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-	        		updateBoxOrder(1);
+	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
 	        	});
 
         	});'."\n";
@@ -1109,18 +1149,12 @@ class FormOther
 
         if ($nbboxactivated)
         {
-        	$langs->load("boxes");
-			$langs->load("projects");
+        	// Load translation files required by the page
+            $langs->loadLangs(array("boxes","projects"));
 
         	$emptybox=new ModeleBoxes($db);
 
-            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
-            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
-
-            //$boxlist.='<div class="fichehalfleft">';
-
             $boxlista.="\n<!-- Box left container -->\n";
-            $boxlista.='<div id="left" class="connectedSortable">'."\n";
 
             // Define $box_max_lines
             $box_max_lines=5;
@@ -1142,20 +1176,16 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
             	$boxlista.= $emptybox->outputBox(array(),array());
             }
-            $boxlista.= "</div>\n";
             $boxlista.= "<!-- End box left container -->\n";
 
-            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
             $boxlistb.= "\n<!-- Box right container -->\n";
-            $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
             $ii=0;
             foreach ($boxactivated as $key => $box)
@@ -1173,29 +1203,24 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
             	$boxlistb.= $emptybox->outputBox(array(),array());
             }
-            $boxlistb.= "</div>\n";
+
             $boxlistb.= "<!-- End box right container -->\n";
-
-            //$boxlist.= '</div></div>';
-            //$boxlist.= "\n";
-
-            //$boxlist.= "</td></tr>";
-            //$boxlist.= "</table>";
         }
 
         return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *  Return a HTML select list of bank accounts
+     *  Return a HTML select list of a dictionary
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$dictionarytable	Dictionary table
@@ -1208,6 +1233,7 @@ class FormOther
      */
     function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0,$moreattrib='')
     {
+        // phpcs:enable
         global $langs, $conf;
 
         $langs->load("admin");
@@ -1256,6 +1282,4 @@ class FormOther
             dol_print_error($this->db);
         }
     }
-
 }
-

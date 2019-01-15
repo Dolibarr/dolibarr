@@ -20,13 +20,13 @@
  *  \brief      	Page to show info of an establishment
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
-$langs->load("admin");
-$langs->load("hrm");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
 if (! $user->admin) accessforbidden();
@@ -44,7 +44,7 @@ if ($id)
 
 	$head = establishment_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), 0, 'building');
+	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
@@ -53,5 +53,6 @@ if ($id)
     print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

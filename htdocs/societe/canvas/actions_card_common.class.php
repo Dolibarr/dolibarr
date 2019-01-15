@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,11 @@
  */
 abstract class ActionsCardCommon
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -37,39 +41,18 @@ abstract class ActionsCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
-	 * 	Instantiation of DAO class
-	 *
-	 * 	@return	int		0
-	 *  @deprecated		Using getInstanceDao should not be used.
+	 * @var string[] Error codes (or messages)
 	 */
-	private function getInstanceDao()
-	{
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+	public $errors = array();
 
-		if (! is_object($this->object))
-		{
-			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
-	        if (file_exists($modelclassfile))
-	        {
-	            // Include dataservice class (model)
-	            $ret = require_once $modelclassfile;
-	            if ($ret)
-	            {
-	            	// Instantiate dataservice class (model)
-	            	$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
-	            	$this->object = new $modelclassname($this->db);
-	            }
-	        }
-		}
-    	return 0;
-	}
 
 	/**
      *  Get object from id or ref and save it into this->object
@@ -87,271 +70,7 @@ abstract class ActionsCardCommon
     	$this->object = $object;
     }
 
-    /**
-     *  doActions of a canvas is not the doActions of the hook
-     *  @deprecated Use the doActions of hooks instead of this.
-     *
-     *	@param	int		$action	Action code
-     *	@return	void
-     */
-    function doActions(&$action)
-    {
-        global $conf, $user, $langs;
-
-        if ($_POST["getcustomercode"])
-        {
-            // We defined value code_client
-            $_POST["code_client"]="Acompleter";
-        }
-
-        if ($_POST["getsuppliercode"])
-        {
-            // We defined value code_fournisseur
-            $_POST["code_fournisseur"]="Acompleter";
-        }
-
-        // Add new third party
-        if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-        && ($action == 'add' || $action == 'update'))
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            $error=0;
-
-            if (GETPOST("private") == 1)
-            {
-                $this->object->particulier		= GETPOST("private");
-
-                $this->object->name				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["firstname"].' '.$_POST["lastname"]):trim($_POST["lastname"].' '.$_POST["firstname"]);
-                $this->object->civility_id		= $_POST["civility_id"];
-                // Add non official properties
-                $this->object->name_bis        	= $_POST["lastname"];
-                $this->object->firstname		= $_POST["firstname"];
-            }
-            else
-            {
-                $this->object->name				= $_POST["nom"];
-            }
-
-            $this->object->address				= $_POST["adresse"];
-            $this->object->zip					= $_POST["zipcode"];
-            $this->object->town					= $_POST["town"];
-            $this->object->country_id			= $_POST["country_id"];
-            $this->object->state_id				= $_POST["state_id"];
-            $this->object->phone					= $_POST["tel"];
-            $this->object->fax					= $_POST["fax"];
-            $this->object->email				= trim($_POST["email"]);
-            $this->object->url					= $_POST["url"];
-            $this->object->idprof1				= $_POST["idprof1"];
-            $this->object->idprof2				= $_POST["idprof2"];
-            $this->object->idprof3				= $_POST["idprof3"];
-            $this->object->idprof4				= $_POST["idprof4"];
-            $this->object->prefix_comm			= $_POST["prefix_comm"];
-            $this->object->code_client			= $_POST["code_client"];
-            $this->object->code_fournisseur		= $_POST["code_fournisseur"];
-            $this->object->capital				= $_POST["capital"];
-            $this->object->barcode				= $_POST["barcode"];
-            $this->object->canvas				= GETPOST("canvas");
-
-            $this->object->tva_assuj			= $_POST["assujtva_value"];
-
-            // Local Taxes
-            $this->object->localtax1_assuj		= $_POST["localtax1assuj_value"];
-            $this->object->localtax2_assuj		= $_POST["localtax2assuj_value"];
-            $this->object->tva_intra			= $_POST["tva_intra"];
-
-            $this->object->forme_juridique_code	= $_POST["forme_juridique_code"];
-            $this->object->effectif_id			= $_POST["effectif_id"];
-            if (GETPOST("private") == 1)
-            {
-                $this->object->typent_id		= dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
-            }
-            else
-            {
-                $this->object->typent_id		= $_POST["typent_id"];
-            }
-            $this->object->client				= $_POST["client"];
-            $this->object->fournisseur			= $_POST["fournisseur"];
-
-            $this->object->commercial_id		= $_POST["commercial_id"];
-            $this->object->default_lang			= $_POST["default_lang"];
-
-            // Check parameters
-            if (empty($_POST["cancel"]))
-            {
-                if (! empty($this->object->email) && ! isValidEMail($this->object->email))
-                {
-                    $error = 1;
-                    $langs->load("errors");
-                    $this->error = $langs->trans("ErrorBadEMail",$this->object->email);
-                    $action = ($action == 'add' ? 'create' : 'edit');
-                }
-                if (! empty($this->object->url) && ! isValidUrl($this->object->url))
-                {
-                    $error = 1;
-                    $langs->load("errors");
-                    $this->error = $langs->trans("ErrorBadUrl",$this->object->url);
-                    $action = ($action == 'add' ? 'create' : 'edit');
-                }
-                if ($this->object->fournisseur && ! $conf->fournisseur->enabled)
-                {
-                    $error = 1;
-                    $langs->load("errors");
-                    $this->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-                    $action = ($action == 'add' ? 'create' : 'edit');
-                }
-            }
-
-            if (! $error)
-            {
-                if ($action == 'add')
-                {
-                    $this->db->begin();
-
-                    if (empty($this->object->client))      $this->object->code_client='';
-                    if (empty($this->object->fournisseur)) $this->object->code_fournisseur='';
-
-                    $result = $this->object->create($user);
-                    if ($result >= 0)
-                    {
-                        if ($this->object->particulier)
-                        {
-                            dol_syslog(get_class($this)."::doActions This thirdparty is a personal people",LOG_DEBUG);
-                            $contact=new Contact($this->db);
-
-                            $contact->civility_id   = $this->object->civility_id;
-                            $contact->name          = $this->object->name_bis;
-                            $contact->firstname     = $this->object->firstname;
-                            $contact->address       = $this->object->address;
-                            $contact->zip           = $this->object->zip;
-                            $contact->town          = $this->object->town;
-                            $contact->country_id    = $this->object->country_id;
-                            $contact->socid         = $this->object->id;                // fk_soc
-                            $contact->status        = 1;
-                            $contact->email         = $this->object->email;
-                            $contact->priv          = 0;
-
-                            $result=$contact->create($user);
-                        }
-                    }
-                    else
-                    {
-                        $this->errors=$this->object->errors;
-                    }
-
-                    if ($result >= 0)
-                    {
-                        $this->db->commit();
-
-                        if ( $this->object->client == 1 )
-                        {
-                            header("Location: ".DOL_URL_ROOT."/comm/card.php?socid=".$this->object->id);
-                            return;
-                        }
-                        else
-                        {
-                            if (  $this->object->fournisseur == 1 )
-                            {
-                                header("Location: ".DOL_URL_ROOT."/fourn/card.php?socid=".$this->object->id);
-                                return;
-                            }
-                            else
-                            {
-                                header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $this->db->rollback();
-
-                        $this->errors=$this->object->errors;
-                        $action = 'create';
-                    }
-                }
-
-                if ($action == 'update')
-                {
-                    if ($_POST["cancel"])
-                    {
-                        header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
-                        exit;
-                    }
-
-					$oldsoccanvas = clone $this->object;
-
-                    // To avoid setting code if third party is not concerned. But if it had values, we keep them.
-                    if (empty($this->object->client) && empty($oldsoccanvas->code_client))             $this->object->code_client='';
-                    if (empty($this->object->fournisseur) && empty($oldsoccanvas->code_fournisseur))    $this->object->code_fournisseur='';
-
-                    $result = $this->object->update($this->object->id, $user, 1, $oldsoccanvas->codeclient_modifiable(), $oldsoccanvas->codefournisseur_modifiable());
-                    if ($result >= 0)
-                    {
-                        header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
-                        exit;
-                    }
-                    else
-                    {
-                        $reload = 0;
-                        $this->errors = $this->object->errors;
-                        $action = "edit";
-                    }
-                }
-            }
-        }
-
-        if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
-        {
-            $result = $this->object->delete($this->object->id);
-
-            if ($result >= 0)
-            {
-                header("Location: ".DOL_URL_ROOT."/societe/list.php?delsoc=".$this->object->name."");
-                exit;
-            }
-            else
-            {
-                $reload = 0;
-                $this->errors=$this->object->errors;
-                $action = '';
-            }
-        }
-
-        /*
-         * Generate document
-         */
-        if ($action == 'builddoc')    // En get ou en post
-        {
-            if (is_numeric(GETPOST('model')))
-            {
-                $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
-            }
-            else
-            {
-                require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
-                $this->object->fetch_thirdparty();
-
-                // Define output language
-                $outputlangs = $langs;
-                $newlang='';
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
-                if (! empty($newlang))
-                {
-                    $outputlangs = new Translate("",$conf);
-                    $outputlangs->setDefaultLang($newlang);
-                }
-                $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model','alpha'), $outputlangs);
-                if ($result <= 0)
-                {
-                    dol_print_error($this->db,$result);
-                    exit;
-                }
-            }
-        }
-    }
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -362,6 +81,7 @@ abstract class ActionsCardCommon
      */
     function assign_values(&$action, $id=0, $ref='')
     {
+        // phpcs:enable
         global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
@@ -538,7 +258,6 @@ abstract class ActionsCardCommon
                     $this->tpl['localtax'].= '</td><tr>';
                 }
             }
-
         }
         else
         {
@@ -651,6 +370,7 @@ abstract class ActionsCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -659,6 +379,7 @@ abstract class ActionsCardCommon
      */
     private function assign_post($action)
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
         $this->object->id					=	$_POST["socid"];
@@ -673,7 +394,7 @@ abstract class ActionsCardCommon
         $this->object->town					=	$_POST["town"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id		        =	$_POST["state_id"];
-        $this->object->phone					=	$_POST["tel"];
+        $this->object->phone				=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];
         $this->object->url					=	$_POST["url"];
@@ -704,5 +425,4 @@ abstract class ActionsCardCommon
             $this->object->country_label=	$tmparray['label'];
         }
     }
-
 }

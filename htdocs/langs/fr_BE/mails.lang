@@ -1,5 +1,2 @@
 # Dolibarr language file - Source file is en_US - mails
 MailingStatusSentCompletely=Complètement envoyé
-MailSuccessfulySent=Email successfully sent (from %s to %s)
-MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
-ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser?

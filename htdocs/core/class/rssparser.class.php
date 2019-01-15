@@ -26,8 +26,15 @@
  */
 class RssParser
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     private $_format='';
     private $_urlRSS;
@@ -54,7 +61,7 @@ class RssParser
      */
     public function __construct($db)
     {
-    	$this->db=$db;
+    	$this->db = $db;
     }
 
     /**
@@ -278,12 +285,19 @@ class RssParser
                 dol_syslog(get_class($this)."::parser cache file ".$newpathofdestfile." is saved onto disk.");
                 if (! dol_is_dir($cachedir)) dol_mkdir($cachedir);
                 $fp = fopen($newpathofdestfile, 'w');
-                fwrite($fp, $str);
-                fclose($fp);
-                if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-                @chmod($newpathofdestfile, octdec($newmask));
+                if ($fp)
+                {
+                	fwrite($fp, $str);
+                	fclose($fp);
+                	if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+                	@chmod($newpathofdestfile, octdec($newmask));
 
-                $this->_lastfetchdate=$nowgmt;
+	                $this->_lastfetchdate=$nowgmt;
+                }
+                else
+                {
+                	print 'Error, failed to open file '.$newpathofdestfile.' for write';
+                }
             }
 
             unset($str);    // Free memory
@@ -447,6 +461,7 @@ class RssParser
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when opened tag is found
      *
@@ -457,6 +472,7 @@ class RssParser
      */
     function feed_start_element($p, $element, &$attrs)
     {
+        // phpcs:enable
         $el = $element = strtolower($element);
         $attrs = array_change_key_case($attrs, CASE_LOWER);
 
@@ -529,8 +545,6 @@ class RssParser
             }
 
             $this->incontent = $el;
-
-
         }
 
         // if inside an Atom content construct (e.g. content or summary) field treat tags as text
@@ -567,6 +581,7 @@ class RssParser
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when CDATA is found
      *
@@ -576,6 +591,7 @@ class RssParser
      */
     function feed_cdata($p, $text)
     {
+        // phpcs:enable
         if ($this->_format == 'atom' and $this->incontent)
         {
             $this->append_content($text);
@@ -587,6 +603,7 @@ class RssParser
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when closed tag is found
      *
@@ -596,6 +613,7 @@ class RssParser
      */
     function feed_end_element($p, $el)
     {
+        // phpcs:enable
         $el = strtolower($el);
 
         if ($el == 'item' or $el == 'entry')
@@ -656,6 +674,7 @@ class RssParser
         $str1 .= $str2;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Enter description here ...
      *
@@ -664,6 +683,7 @@ class RssParser
      */
     function append_content($text)
     {
+        // phpcs:enable
         if ( $this->initem ) {
             $this->concat($this->current_item[ $this->incontent ], $text);
         }
@@ -712,10 +732,8 @@ class RssParser
             elseif ($this->inchannel) {
                 $this->concat($this->channel[ $el ], $text);
             }
-
         }
     }
-
 }
 
 
@@ -738,20 +756,19 @@ function xml2php($xml)
         foreach($value->attributes() as $ak=>$av)
         {
             $child[$ak] = (string) $av;
-
         }
 
         //Let see if the new child is not in the array
-        if($tab==false && in_array($key,array_keys($array)))
+        if ($tab === false && in_array($key,array_keys($array)))
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
-            $array[$key] = NULL;
+            $array[$key] = null;
             $array[$key][] = $tmp;
             $array[$key][] = $child;
             $tab = true;
         }
-        elseif($tab == true)
+        elseif($tab === true)
         {
             //Add an element in an existing array
             $array[$key][] = $child;
@@ -766,12 +783,10 @@ function xml2php($xml)
     }
 
 
-    if($fils==0)
+    if ($fils==0)
     {
         return (string) $xml;
     }
 
     return $array;
-
 }
-

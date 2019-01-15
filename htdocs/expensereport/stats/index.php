@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies'));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -74,7 +75,7 @@ print load_fiche_titre($title, $mesg);
 dol_mkdir($dir);
 
 $stats = new ExpenseReportStats($db, $socid, $userid);
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$object_status.')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -206,7 +207,7 @@ $h++;
 
 complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -246,6 +247,7 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -255,15 +257,14 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right">0</td>';
@@ -271,8 +272,8 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
@@ -282,13 +283,13 @@ foreach ($data as $val)
 }
 
 print '</table>';
-
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -306,7 +307,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

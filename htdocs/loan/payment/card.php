@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/loan/payment/card.php
- *		\ingroup    loan
- *		\brief      Payment's card of loan
+ *  \file       htdocs/loan/payment/card.php
+ *  \ingroup    loan
+ *  \brief      Payment's card of loan
  */
 
 require '../../main.inc.php';
@@ -26,21 +26,19 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
-$langs->load('loan');
+// Load translation files required by the page
+$langs->loadLangs(array("bills","banks","companies","loan"));
 
 // Security check
 $id=GETPOST("id",'int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
-if ($id > 0) 
+if ($id > 0)
 {
 	$result=$payment->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
@@ -56,17 +54,20 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 {
 	$db->begin();
 
+	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
+	$db->query($sql);
+	
 	$result = $payment->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/loan/index.php");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/loan/list.php");
+		exit;
 	}
 	else
 	{
 		setEventMessages($payment->error, $payment->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -76,7 +77,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 	$db->begin();
 
 	$result=$payment->valide();
-	
+
 	if ($result > 0)
 	{
 		$db->commit();
@@ -141,7 +142,7 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);	
+	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 }
 
 
@@ -173,18 +174,18 @@ print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_pu
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-    if ($payment->bank_account)
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($payment->bank_line);
+	if ($payment->bank_account)
+	{
+		$bankline=new AccountLine($db);
+		$bankline->fetch($payment->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td>';
 		print $bankline->getNomUrl(1,0,'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -213,21 +214,18 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Loan').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+	// print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$loan->fetch($objp->id);
@@ -236,11 +234,13 @@ if ($resql)
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
-			print '<td align="right">'.price($objp->capital).'</td>';
+			// print '<td align="right">'.price($objp->capital).'</td>';
 			// Status
 			print '<td align="center">'.$loan->getLibStatut(4,$objp->amount_capital).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount_capital).'</td>';
+			$amount_payed = $objp->amount_capital + $objp->amount_insurance + $objp->amount_interest;
+
+			print '<td align="right">'.price($amount_payed).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
 			{
@@ -250,7 +250,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+
 
 	print "</table>\n";
 	$db->free($resql);
@@ -289,14 +289,12 @@ if (empty($action) && ! empty($user->rights->loan->delete))
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 	}
 }
 
 print '</div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

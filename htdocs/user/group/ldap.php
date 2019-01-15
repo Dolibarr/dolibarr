@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("users");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
+
+// Users/Groups management only in master entity if transverse mode
+if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+{
+	accessforbidden();
+}
 
 $canreadperms=true;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
@@ -45,9 +50,9 @@ $action = GETPOST('action', 'alpha');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
-$fgroup = new Usergroup($db);
-$fgroup->fetch($id);
-$fgroup->getrights();
+$object = new Usergroup($db);
+$object->fetch($id);
+$object->getrights();
 
 
 /*
@@ -56,30 +61,31 @@ $fgroup->getrights();
 
 if ($action == 'dolibarr2ldap')
 {
-	$db->begin();
-
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$fgroup->_load_ldap_info();
-	// Get a gid number for objectclass PosixGroup
-	if(in_array('posixGroup',$info['objectclass']))
-		$info['gidNumber'] = $ldap->getNextGroupGid();
+	if ($result > 0)
+	{
+		$info=$object->_load_ldap_info();
 
-	$dn=$fgroup->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+		// Get a gid number for objectclass PosixGroup
+		if (in_array('posixGroup',$info['objectclass'])) {
+			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+		}
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+		$dn=$object->_load_ldap_dn($info);
+		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+		$result=$ldap->update($dn,$info,$user,$olddn);
+	}
 
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
-		$db->commit();
 	}
 	else
 	{
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
-		$db->rollback();
 	}
 }
 
@@ -93,34 +99,35 @@ llxHeader();
 $form = new Form($db);
 
 
-$head = group_prepare_head($fgroup);
+$head = group_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group"), 0, 'group');
+dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object,'id',$linback,$user->rights->user->user->lire || $user->admin);
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
 
-// Ref
-print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
-print '<td colspan="2">';
-print $form->showrefnav($fgroup,'id','',$canreadperms);
-print '</td>';
-print '</tr>';
-
-// Name
-print '<tr><td width="25%">'.$langs->trans("Name").'</td>';
-print '<td width="75%" class="valeur">'.$fgroup->name;
-if (!$fgroup->entity)
+// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
+if (! empty($conf->mutlicompany->enabled))
 {
-	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+    print '<td class="valeur">'.$object->name;
+    if (!$object->entity)
+    {
+    	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    }
+    print "</td></tr>\n";
 }
-print "</td></tr>\n";
 
 // Note
-print '<tr><td width="25%" class="tdtop">'.$langs->trans("Note").'</td>';
-print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
 print "</tr>\n";
-
-$langs->load("admin");
 
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPGroupDn").'</td><td class="valeur">'.$conf->global->LDAP_GROUP_DN."</td></tr>\n";
@@ -137,6 +144,9 @@ print "</table>\n";
 
 print '</div>';
 
+dol_fiche_end();
+
+
 /*
  * Barre d'actions
  */
@@ -145,7 +155,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fgroup->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -169,9 +179,9 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$fgroup->_load_ldap_info();
-	$dn=$fgroup->_load_ldap_dn($info,1);
-	$search = "(".$fgroup->_load_ldap_dn($info,2).")";
+	$info=$object->_load_ldap_info();
+	$dn=$object->_load_ldap_dn($info,1);
+	$search = "(".$object->_load_ldap_dn($info,2).")";
 	$records = $ldap->getAttribute($dn,$search);
 
 	//var_dump($records);
@@ -197,12 +207,11 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();
-

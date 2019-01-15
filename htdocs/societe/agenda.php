@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -50,18 +50,18 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep, a.id';
-if (! $sortorder) $sortorder='DESC';
+if (! $sortfield) $sortfield='a.datep,a.id';
+if (! $sortorder) $sortorder='DESC,DESC';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
 
 
@@ -76,14 +76,14 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -95,8 +95,6 @@ if (empty($reshook))
 /*
  *	View
  */
-
-$contactstatic = new Contact($db);
 
 $form = new Form($db);
 
@@ -118,30 +116,30 @@ if ($socid > 0)
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     $object->info($socid);
 	print dol_print_object_info($object, 1);
-	
+
 	print '</div>';
 
 	dol_fiche_end();
 
 
-	
+
 	// Actions buttons
-	
+
     $objthirdparty=$object;
     $objcon=new stdClass();
-	
+
     $out='';
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
@@ -154,48 +152,42 @@ if ($socid > 0)
     	//$out.="</a>";
 	}
 
-	
-	print '<div class="tabsAction">';
 
+	//print '<div class="tabsAction">';
+	//print '</div>';
+
+
+	$newcardbutton='';
     if (! empty($conf->agenda->enabled))
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
-    	}
-    	else
-    	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        	$newcardbutton.= '</a>';
     	}
     }
 
-    print '</div>';
-
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
+    	print '<br>';
+
         $param='&socid='.$socid;
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-        
-		print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-		
-        // List of todo actions
-        //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
+		print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
+        //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
 
-        // List of done actions
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
-     
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with smae code then into listactions.php
+        // TODO Replace this with same code than into list.php
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

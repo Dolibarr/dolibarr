@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load('propal');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'propal'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -38,7 +37,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -63,13 +62,13 @@ $textobject=$langs->transnoentitiesnoconv("Proposals");
 
 llxHeader('',$langs->trans("PropalSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PropalSetup"),$linkback,'title_setup');
 
 
 $head = propal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), 0, 'propal');
+dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), -1, 'propal');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -87,7 +86,7 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation of an optional field											  */	
+/* Creation of an optional field											  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +111,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

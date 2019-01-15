@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,13 @@
  *      \brief      Page liste des prelevements
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("withdrawals");
-$langs->load("companies");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'withdrawals', 'companies', 'categories'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -40,11 +38,11 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -65,7 +63,7 @@ $ligne=new LignePrelevement($db,$user);
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_line="";
 	$search_bon="";
@@ -84,7 +82,7 @@ $form=new Form($db);
 llxHeader('',$langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
-$sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
+$sql.= " ,f.rowid as facid, f.ref, f.total_ttc";
 $sql.= " , s.rowid as socid, s.nom as name, s.code_client";
 $sql.= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -101,7 +99,7 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_line) $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
 if ($search_bon) $sql.= natural_search("p.ref", $search_bon);
 if ($search_code) $sql.= natural_search("s.code_client", $search_code);
-if ($search_company) natural_search("s.nom", $search_company);
+if ($search_company) $sql.= natural_search("s.nom", $search_company);
 
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -111,6 +109,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -123,28 +126,18 @@ if ($result)
 
     $urladd = "&amp;statut=".$statut;
     $urladd .= "&amp;search_bon=".$search_bon;
-
-    print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+	if ($limit > 0 && $limit != $conf->liste_limit) $urladd.='&limit='.urlencode($limit);
 
     print"\n<!-- debut table -->\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-    $moreforfilter='';
-    
+	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+	$moreforfilter='';
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"]);
-    print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref");
-    print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
-    print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
-    print_liste_field_titre('');
-	print "</tr>\n";
-	
     print '<tr class="liste_titre">';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="6"></td>';
@@ -154,20 +147,27 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
     print '</td>';
     print '</tr>';
 
-    $var=True;
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Line",$_SERVER["PHP_SELF"]);
+    print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref");
+    print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"f.ref",'',$urladd);
+    print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom");
+    print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
+    print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
+    print_liste_field_titre('');
+	print "</tr>\n";
 
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
 
-        $var=!$var;
-
-        print "<tr ".$bc[$var]."><td>";
+        print '<tr class="oddeven"><td>';
 
         print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";
@@ -183,9 +183,9 @@ if ($result)
 
         print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
         print img_object($langs->trans("ShowBill"),"bill");
-          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
+          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
         print '</a></td>';
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";
@@ -203,9 +203,9 @@ if ($result)
     }
     print "</table>";
     print '</div>';
-    
+
     print '</form>';
-    
+
     $db->free($result);
 }
 else
@@ -213,5 +213,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

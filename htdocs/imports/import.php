@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
-$langs->load("exports");
-$langs->load("compta");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('exports', 'compta', 'errors'));
 
 // Security check
 $result=restrictedArea($user, 'import');
@@ -77,7 +76,7 @@ $hexa				= GETPOST('hexa');
 $importmodelid		= GETPOST('importmodelid');
 $excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 1);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
-$updatekeys			= (GETPOST('updatekeys') ? GETPOST('updatekeys') : array());
+$updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator') ? GETPOST('separator') : (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?$conf->global->IMPORT_CSV_SEPARATOR_TO_USE:','));
 $enclosure			= (GETPOST('enclosure') ? GETPOST('enclosure') : '"');
 
@@ -225,7 +224,7 @@ if ($step == 3 && $datatoimport)
 		$param='&datatoimport='.$datatoimport.'&format='.$format;
 		if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
 		if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
-		
+
 		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret=dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -340,10 +339,10 @@ if ($step == 1 || ! $datatoimport)
 
     $head = import_prepare_head($param, 1);
 
-	dol_fiche_head($head, 'step1', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
 
 
-	print $langs->trans("SelectImportDataSet").'<br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
 	// Affiche les modules d'imports
 	print '<table class="noborder" width="100%">';
@@ -359,16 +358,16 @@ if ($step == 1 || ! $datatoimport)
 		{
 			//var_dump($objimport->array_import_code[$key]);
 			$val=!$val;
-			print '<tr '.$bc[$val].'><td nospan="nospan">';
+			print '<tr '.$bc[$val].'><td>';
 			$titleofmodule=$objimport->array_import_module[$key]->getName();
 			// Special cas for import common to module/services
-			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 			print $titleofmodule;
 			print '</td><td>';
 			//print $value;
 			print img_object($objimport->array_import_module[$key]->getName(),$objimport->array_import_icon[$key]).' ';
 			print $objimport->array_import_label[$key];
-			print '</td><td align="right">';
+            print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key])
 			{
 				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
@@ -403,8 +402,10 @@ if ($step == 2 && $datatoimport)
 
     $head = import_prepare_head($param,2);
 
-	dol_fiche_head($head, 'step2', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -1);
 
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -413,7 +414,7 @@ if ($step == 2 && $datatoimport)
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 	print $titleofmodule;
 	print '</td></tr>';
 
@@ -426,18 +427,19 @@ if ($step == 2 && $datatoimport)
 
 	print '</table>';
 
+	print '</div><br>';
+
 	dol_fiche_end();
-	
+
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
-	print $langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'</span><br><br>';
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$var=true;
 
 	// Add format informations and link to download example
 	print '<tr class="liste_titre"><td colspan="6">';
@@ -446,14 +448,14 @@ if ($step == 2 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 	foreach($liste as $key)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+
+		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
     	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
+		print '<td style="text-align:center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
-		print '<td align="right">';
+		print '<td style="text-align:right">';
 		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"),'filenew').'</a>';
 		print '</td>';
 		print '</tr>';
@@ -478,7 +480,7 @@ if ($step == 3 && $datatoimport)
 
     $head = import_prepare_head($param, 3);
 
-	dol_fiche_head($head, 'step3', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -1);
 
 	/*
 	 * Confirm delete file
@@ -486,8 +488,10 @@ if ($step == 3 && $datatoimport)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
 	}
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -496,7 +500,7 @@ if ($step == 3 && $datatoimport)
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 	print $titleofmodule;
 	print '</td></tr>';
 
@@ -507,8 +511,15 @@ if ($step == 3 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -517,40 +528,39 @@ if ($step == 3 && $datatoimport)
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
-    print '</td><td align="right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+    print '</td><td style="text-align:right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
 
 	print '</table>';
-	
+	print '</div>';
+
 	dol_fiche_end();
 
     print '<br>';
-    
+
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-	
+
 	print '<input type="hidden" value="'.$step.'" name="step">';
 	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
 	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
-	print '<input type="hidden" value="'.$separator.'" name="separator">';
-	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
-	
+
+	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</span><br><br>';
+
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$var=true;
-
-	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
 
 	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
-	$var=false;
-	print '<tr '.$bc[$var].'><td colspan="6">';
+	print '<tr class="oddeven"><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled':'');
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
@@ -598,8 +608,8 @@ if ($step == 3 && $datatoimport)
 			$modulepart='import';
 			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.$param.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+
+			print '<tr class="oddeven">';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
     		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
@@ -607,14 +617,14 @@ if ($step == 3 && $datatoimport)
     		print '</a>';
 			print '</td>';
 			// Affiche taille fichier
-			print '<td align="right">'.dol_print_size(dol_filesize($dir.'/'.$file)).'</td>';
+			print '<td style="text-align:right">'.dol_print_size(dol_filesize($dir.'/'.$file)).'</td>';
 			// Affiche date fichier
-			print '<td align="right">'.dol_print_date(dol_filemtime($dir.'/'.$file),'dayhour').'</td>';
+			print '<td style="text-align:right">'.dol_print_date(dol_filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
-			print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&step=3'.$param.'&urlfile='.urlencode($relativepath);
+			print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&step=3'.$param.'&urlfile='.urlencode($relativepath);
 			print '">'.img_delete().'</a></td>';
 			// Action button
-			print '<td align="right">';
+			print '<td style="text-align:right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
@@ -637,7 +647,8 @@ if ($step == 4 && $datatoimport)
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db,$datatoimport);
-	if ($model == 'csv') {
+	if ($model == 'csv')
+	{
 	    $obj->separator = $separator;
 	    $obj->enclosure = $enclosure;
 	}
@@ -650,9 +661,8 @@ if ($step == 4 && $datatoimport)
             header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
             exit;
         }
-        
     }
-	
+
 	if (GETPOST('update')) {
 		$array_match_file_to_database=array();
 	}
@@ -732,7 +742,10 @@ if ($step == 4 && $datatoimport)
 
     $head = import_prepare_head($param,4);
 
-	dol_fiche_head($head, 'step4', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -1);
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -741,7 +754,7 @@ if ($step == 4 && $datatoimport)
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 	print $titleofmodule;
 	print '</td></tr>';
 
@@ -752,8 +765,14 @@ if ($step == 4 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -776,9 +795,9 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
 		print $langs->trans("Separator").' : ';
-		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
+		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
+		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/>';
 		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
 		print '</form>';
 		print '</td></tr>';
@@ -795,9 +814,10 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-	
+	print '</div>';
+
 	dol_fiche_end();
-	
+
 	print '<br>'."\n";
 
 
@@ -812,10 +832,10 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
     print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-    print '<input type="hidden" name="separator" value="'.$separator.'">';
-	print '<input type="hidden" name="enclosure" value="'.$enclosure.'">';
-    print '<table><tr><td colspan="2">';
-    print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
+    print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
+    print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
+    print '<table><tr><td colspan="2" class="opacitymedium">';
+    print $langs->trans("SelectImportFields",img_picto('','grip_title','')).' ';
     $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
@@ -880,16 +900,15 @@ if ($step == 4 && $datatoimport)
 
 	print '</td><td width="50%">';
 
-	// List of targets fields
-	$height=24;
+	// List of target fields
+	$height='24px';//needs px for css height attribute below
 	$i = 0;
-	$var=true;
 	$mandatoryfieldshavesource=true;
+
 	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="'.$height.'">';
+		print '<tr class="oddeven" style="height:'.$height.'">';
 
 		$i++;
 		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
@@ -915,7 +934,7 @@ if ($step == 4 && $datatoimport)
 		print $text;
 		print '</td>';
 		// Info field
-		print '<td style="font-weight: normal" align="right">';
+		print '<td style="font-weight:normal; text-align:right">';
 		$filecolumn=$array_match_database_to_file[$code];
 		// Source field info
 		$htmltext ='<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
@@ -989,7 +1008,7 @@ if ($step == 4 && $datatoimport)
 	{
 		if (empty($fieldsplaced[$key]))
 		{
-			//$var=!$var;
+			//
 			$nbofnotimportedfields++;
 			show_elem($fieldssource,$key,'',$var,'nostyle');
 			//print '> '.$lefti.'-'.$key;
@@ -1072,7 +1091,7 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
 		}
 	}
 
@@ -1096,17 +1115,17 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
     	print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
     	print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-    	print '<input type="hidden" value="'.$separator.'" name="separator">';
-		print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
+    	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
+    	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
 		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
-		$var=false;
-		print '<tr '.$bc[$var].'>';
-		print '<td><input name="import_name" size="48" value=""></td><td align="right">';
+
+		print '<tr class="oddeven">';
+		print '<td><input name="import_name" size="48" value=""></td><td style="text-align:right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
@@ -1120,14 +1139,13 @@ if ($step == 4 && $datatoimport)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$var=false;
 			while ($i < $num)
 			{
-				$var=!$var;
+
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr class="oddeven"><td>';
 				print $obj->label;
-				print '</td><td align="right">';
+				print '</td><td style="text-align:right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
@@ -1142,7 +1160,6 @@ if ($step == 4 && $datatoimport)
 		print '</table>';
 		print '</form>';
 	}
-
 }
 
 
@@ -1188,18 +1205,20 @@ if ($step == 5 && $datatoimport)
 	if ($excludefirstline)		$param.='&excludefirstline='.$excludefirstline;
 	if ($endatlinenb)			$param.='&endatlinenb='.$endatlinenb;
 	if (!empty($updatekeys))	$param.='&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
-	
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
     $head = import_prepare_head($param,5);
 
-    
+
     print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param2.'" method="POST">';
     print '<input type="hidden" name="step" value="5">';    // step 5
     print '<input type="hidden" name="action" value="launchsimu">';    // step 5
-    
-	dol_fiche_head($head, 'step5', $langs->trans("NewImport"));
 
+	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -1);
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -1208,7 +1227,7 @@ if ($step == 5 && $datatoimport)
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 	print $titleofmodule;
 	print '</td></tr>';
 
@@ -1219,8 +1238,14 @@ if ($step == 5 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1235,13 +1260,11 @@ if ($step == 5 && $datatoimport)
 	if ($model == 'csv') {
 	    print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 	    print '<td>';
-	    print $langs->trans("Separator").' : ';
-	    print htmlentities($separator);
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-	    print htmlentities($enclosure);
+	    print $langs->trans("Separator").' : '.dol_escape_htmltag($separator);
+	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : '.dol_escape_htmltag($enclosure);
 	    print '</td></tr>';
 	}
-	
+
 	// File to import
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
@@ -1252,75 +1275,88 @@ if ($step == 5 && $datatoimport)
     print '</a>';
     print '</td></tr>';
 
-	// Nb of fields
+	// Total lines in source file
 	print '<tr><td>';
 	print $langs->trans("NbOfSourceLines");
 	print '</td><td>';
 	print $nboflines;
 	print '</td></tr>';
 
-	// Do not import first lines
+	// Range of lines to import
 	print '<tr><td>';
-	print $langs->trans("ImportFromLine");
+	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action=='launchsimu')
 	{
-	    print '<input type="text" size="4" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+	    print '<input type="number" class="maxwidth50" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 	    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
-	    print '<input type="text" size="4" name="excludefirstline" value="'.$excludefirstline.'">';
+	    print '<input type="number" class="maxwidth50" name="excludefirstline" value="'.$excludefirstline.'">';
 	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
-	print '</td></tr>';
-
-	// Do not import end lines
-	print '<tr><td>';
-	print $langs->trans("EndAtLineNb");
-	print '</td><td>';
+	print ' - ';
 	if ($action=='launchsimu')
 	{
-	    print '<input type="text" size="4" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
+	    print '<input type="text" class="maxwidth50" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
 	    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
 	else
 	{
-	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
+	    print '<input type="text" class="maxwidth50" name="endatlinenb" value="'.$endatlinenb.'">';
 	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
+    if ($action == 'launchsimu') print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	print '</td></tr>';
-	
+
+	// Keys for data UPDATE (not INSERT of new data)
 	print '<tr><td>';
 	print $langs->trans("KeysToUseForUpdates");
 	print '</td><td>';
 	if($action=='launchsimu') {
-		print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '', 'disabled');
+		if (count($updatekeys))
+		{
+			print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%', 'disabled');
+		}
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("NoUpdateAttempt").'</span> &nbsp; -';
+		}
 		foreach($updatekeys as $val) {
 			print '<input type="hidden" name="updatekeys[]" value="'.$val.'">';
 		}
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
-		print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
-		print $form->textwithpicto("", $langs->trans("SelectColumnsOfYourFileForUpdateAttempt"));
+   		if ($objimport->array_import_updatekeys[0] && count($objimport->array_import_updatekeys[0]))
+        {//TODO dropdown UL is created inside nested SPANS
+			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
+			print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
+		}
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
+		}
 	}
 	/*echo '<pre>';
 	print_r($objimport->array_import_updatekeys);
 	echo '</pre>';*/
 	print '</td></tr>';
-	
+
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 
 	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
 	// Tables imported
-	print '<tr><td width="25%">';
+	print '<tr><td class="titlefield">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables=array();
@@ -1380,6 +1416,7 @@ if ($step == 5 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
     dol_fiche_end();
 
@@ -1387,7 +1424,8 @@ if ($step == 5 && $datatoimport)
     if ($action != 'launchsimu')
     {
         // Show import id
-        print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
+        print '<br><span class="opacitymedium">';
+        print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'</span><br>';
         print '<br>';
 
         // Actions
@@ -1398,7 +1436,7 @@ if ($step == 5 && $datatoimport)
         }
         else
         {
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+            print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
         }
         print '</div>';
     }
@@ -1429,23 +1467,24 @@ if ($step == 5 && $datatoimport)
         	$sourcelinenb=0; $endoffile=0;
 
             // Loop on each input file record
-            while ($sourcelinenb < $nboflines && ! $endoffile)
+            while (($sourcelinenb < $nboflines) && ! $endoffile)
             {
                 $sourcelinenb++;
-                // Read line and stor it into $arrayrecord
+                // Read line and store it into $arrayrecord
+                //dol_syslog("line ".$sourcelinenb.' - '.$nboflines.' - '.$excludefirstline.' - '.$endatlinenb);
                 $arrayrecord=$obj->import_read_record();
                 if ($arrayrecord === false)
                 {
-					$arrayofwarnings[$sourcelinenb][0]=array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines.','type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+					$arrayofwarnings[$sourcelinenb][0]=array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines. Ensure the complete string is delimited correctly when there is a separator character in the text string.','type'=>'EOF_RECORD_ON_SEVERAL_LINES');
                 	$endoffile++;
                 	continue;
                 }
                 if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
-                if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
-                
+                if ($endatlinenb && ($sourcelinenb > $endatlinenb)) break;
+
                 // Run import
                 $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
-                
+
                 if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
                 if (count($obj->warnings)) $arrayofwarnings[$sourcelinenb]=$obj->warnings;
                 if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
@@ -1459,7 +1498,7 @@ if ($step == 5 && $datatoimport)
         }
 
 	    $error=0;
-	    
+
 	    // Run the sql after import if defined
 	    //var_dump($objimport->array_import_run_sql_after[0]);
 	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
@@ -1469,23 +1508,23 @@ if ($step == 5 && $datatoimport)
 	        {
 	            $i++;
 	            $resqlafterimport=$db->query($sqlafterimport);
-	            if (! $resqlafterimport) 
+	            if (! $resqlafterimport)
 	            {
 			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
 	                $error++;
 	            }
 	        }
 	    }
-	    
+
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
         if (! count($arrayoferrors) && ! count($arrayofwarnings)) {
-        	print '<center>'.img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b></center><br><br>';
+        	print '<div class="center">'.img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
 			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
 			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
 		}
-        else print '<b>'.$langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
+        else print $langs->trans("NbOfLinesOK",$nbok).'<br><br>';
 
         // Show Errors
         //var_dump($arrayoferrors);
@@ -1557,17 +1596,16 @@ if ($step == 5 && $datatoimport)
             {
                 //print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RunSimulateImportFile")).'">';
 
-                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
             }
         }
         else
         {
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+            print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
 
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
+            print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
         }
         print '</div>';
-        
     }
 
     print '</form>';
@@ -1622,8 +1660,10 @@ if ($step == 6 && $datatoimport)
 
     $head = import_prepare_head($param,6);
 
-	dol_fiche_head($head, 'step6', $langs->trans("NewImport"));
+	dol_fiche_head($head, 'step6', $langs->trans("NewImport"), -1);
 
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 
 	print '<table width="100%" class="border">';
 
@@ -1632,7 +1672,7 @@ if ($step == 6 && $datatoimport)
 	print '<td>';
 	$titleofmodule=$objimport->array_import_module[0]->getName();
 	// Special cas for import common to module/services
-	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice','produit_languages'))) $titleofmodule=$langs->trans("ProductOrService");
 	print $titleofmodule;
 	print '</td></tr>';
 
@@ -1643,8 +1683,14 @@ if ($step == 6 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
@@ -1665,7 +1711,7 @@ if ($step == 6 && $datatoimport)
 	    print htmlentities($enclosure);
 	    print '</td></tr>';
 	}
-	
+
 	// File to import
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
@@ -1696,12 +1742,15 @@ if ($step == 6 && $datatoimport)
 	print '</td><td>';
     print '<input type="text" size="4" name="endatlinenb" disabled="disabled" value="'.$endatlinenb.'">';
 	print '</td></tr>';
-	
+
 	print '</table>';
+	print '</div>';
 
 	print '<br>';
 
 	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
 	print '<table width="100%" class="border">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
@@ -1763,6 +1812,7 @@ if ($step == 6 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	// Launch import
 	$arrayoferrors=array();
@@ -1799,11 +1849,11 @@ if ($step == 6 && $datatoimport)
 				continue;
 			}
 			if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
-			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
+			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) break;
 
 			// Run import
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
-			
+
 			if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (count($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
 			if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
@@ -1817,10 +1867,10 @@ if ($step == 6 && $datatoimport)
 	}
 
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
-	else 
+	else
 	{
 	    $error=0;
-	    
+
 		// Run the sql after import if defined
 	    //var_dump($objimport->array_import_run_sql_after[0]);
 	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
@@ -1830,18 +1880,18 @@ if ($step == 6 && $datatoimport)
 	        {
 	            $i++;
 	            $resqlafterimport=$db->query($sqlafterimport);
-	            if (! $resqlafterimport) 
+	            if (! $resqlafterimport)
 	            {
 			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
 	                $error++;
 	            }
 	        }
 	    }
-	    
+
 	    if (! $error) $db->commit();	// We can commit if no errors.
 	    else $db->rollback();
 	}
-	    
+
     dol_fiche_end();
 
 
@@ -1860,9 +1910,8 @@ if ($step == 6 && $datatoimport)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -1880,17 +1929,24 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
-	$height='24';
-	
+	$height='24px';
+
+    if ($key == 'none') {//stop multiple duplicate ids with no number
+        print "\n\n<!-- Box_no-key start-->\n";
+        print '<div class="box boximport" style="padding:0;">' . "\n";
+        print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">' . "\n";
+    } else {
 	print "\n\n<!-- Box ".$pos." start -->\n";
-	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
+        print '<div class="box boximport" style="padding: 0;" id="boxto_' . $pos . '">' . "\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+    }
+
 	if ($pos && $pos > count($fieldssource))	// No fields
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr'.($nostyle?'':' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
+		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'grip_title','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
@@ -1899,7 +1955,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	elseif ($key == 'none')	// Empty line
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr'.($nostyle?'':' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -1910,10 +1966,10 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	else	// Print field of source file
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
+		print '<tr'.($nostyle?'':' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print img_picto($langs->trans("MoveField",$pos),'grip_title','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;

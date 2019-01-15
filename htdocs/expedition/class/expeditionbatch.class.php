@@ -28,13 +28,18 @@
  */
 class ExpeditionLineBatch extends CommonObject
 {
-	var $element='expeditionlignebatch';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expeditionlignebatch';
+
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
 	var $sellby;
 	var $eatby;
 	var $batch;
-	var $dluo_qty;
+	var $qty;
+	var $dluo_qty; // deprecated, use qty
 	var $entrepot_id;
 	var $fk_origin_stock;
 	var $fk_expeditiondet;
@@ -47,7 +52,6 @@ class ExpeditionLineBatch extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 	/**
@@ -58,40 +62,41 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	function fetchFromStock($id_stockdluo)
 	{
-        $sql = "SELECT";
-		$sql.= " t.sellby,";
-		$sql.= " t.eatby,";
-		$sql.= " t.batch,";
-		$sql.= " e.fk_entrepot";
+		$sql = "SELECT";
+		$sql.= " pb.batch,";
+		$sql.= " pl.sellby,";
+		$sql.= " pl.eatby,";
+		$sql.= " ps.fk_entrepot";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t inner join ";
-        $sql.= MAIN_DB_PREFIX."product_stock as e on t.fk_product_stock=e.rowid ";
-        $sql.= " WHERE t.rowid = ".(int) $id_stockdluo;
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql.= " JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."product_lot as pl on pl.batch = pb.batch AND pl.fk_product = ps.fk_product";
+		$sql.= " WHERE pb.rowid = ".(int) $id_stockdluo;
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
 				$this->sellby = $this->db->jdate($obj->sellby);
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->batch = $obj->batch;
 				$this->entrepot_id= $obj->fk_entrepot;
 				$this->fk_origin_stock=(int) $id_stockdluo;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 * Create an expeditiondet_batch DB record link to an expedtiondet record
@@ -117,7 +122,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':("'".$this->db->idate($this->sellby))."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':("'".$this->db->idate($this->eatby))."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':("'".$this->db->escape($this->batch)."'")).",";
-		$sql.= " ".(! isset($this->dluo_qty)?'NULL':$this->dluo_qty).",";
+		$sql.= " ".(! isset($this->qty)?((! isset($this->dluo_qty))?'NULL':$this->dluo_qty):$this->qty).","; // dluo_qty deprecated, use qty
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
 
@@ -169,22 +174,33 @@ class ExpeditionLineBatch extends CommonObject
 	}
 
 	/**
-	 * Retrieve all batch number details link to a shipment line
+	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	DoliDB	$db					Database object
-	 * @param	int		$id_line_expdet		id of shipment line
-	 * @return	variant						-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	DoliDB		$db					Database object
+	 * @param	int			$id_line_expdet		id of shipment line
+	 * @param	int			$fk_product			If provided, load also detailed information of lot
+	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	static function fetchAll($db,$id_line_expdet)
+	static function fetchAll($db, $id_line_expdet, $fk_product=0)
 	{
-		$sql="SELECT rowid,";
-		$sql.= "fk_expeditiondet";
-		$sql.= ", sellby";
-		$sql.= ", eatby";
-		$sql.= ", batch";
-		$sql.= ", qty";
-		$sql.= ", fk_origin_stock";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element;
+		$sql="SELECT";
+		$sql.= " eb.rowid,";
+		$sql.= " eb.fk_expeditiondet,";
+		$sql.= " eb.sellby as oldsellby,";				// deprecated
+		$sql.= " eb.eatby as oldeatby,";				// deprecated
+		$sql.= " eb.batch,";
+		$sql.= " eb.qty,";
+		$sql.= " eb.fk_origin_stock";
+		if ($fk_product > 0)
+		{
+			$sql.= ", pl.sellby";
+			$sql.= ", pl.eatby";
+		}
+		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as eb";
+		if ($fk_product > 0)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".$fk_product;
+		}
 		$sql.= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__ ."", LOG_DEBUG);
@@ -200,13 +216,14 @@ class ExpeditionLineBatch extends CommonObject
 
 				$obj = $db->fetch_object($resql);
 
-				$tmp->sellby = $db->jdate($obj->sellby);
-				$tmp->eatby = $db->jdate($obj->eatby);
+				$tmp->sellby = $db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
 				$tmp->fk_expeditiondet = $obj->fk_expeditiondet;
-				$tmp->dluo_qty = $obj->qty;
+				$tmp->dluo_qty = $obj->qty; // dluo_qty deprecated, use qty
+				$tmp->qty = $obj->qty;
 
 				$ret[]=$tmp;
 				$i++;
@@ -216,8 +233,8 @@ class ExpeditionLineBatch extends CommonObject
 		}
 		else
 		{
+			dol_print_error($db);
 			return -1;
 		}
 	}
-
 }

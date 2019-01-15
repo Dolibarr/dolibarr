@@ -26,14 +26,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
 	accessforbidden();
 
-if (GETPOST('action') == 'donothing')
+if (GETPOST('action','aZ09') == 'donothing')
 {
 	exit;
 }
@@ -50,7 +49,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
 
-print $langs->trans("YouMayFindPerfAdviceHere",'http://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print $langs->trans("YouMayFindPerfAdviceHere",'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
 // Recupere la version de PHP
 $phpversion=version_php();
@@ -112,7 +111,7 @@ $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by defautl starting with PHP 5.5
+	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
@@ -180,7 +179,7 @@ jQuery(document).ready(function() {
   var compcssstring;
   getcssurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui.css\',
+    url: \''.DOL_URL_ROOT.'/includes/jquery/css/base/jquery-ui.css\',
     cache: false,
     /* async: false, */
     /*crossDomain: true, */
@@ -336,7 +335,7 @@ jQuery(document).ready(function() {
   var compjsphpstring;
   getjsphpurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/core/js/datepicker.js.php\',
+    url: \''.DOL_URL_ROOT.'/core/js/lib_head.js.php\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/
@@ -376,7 +375,8 @@ jQuery(document).ready(function() {
 
 print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
-print $langs->trans("CacheByServer").':</strong><br>';
+print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
+print ':</strong><br>';
 // No cahce on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
@@ -399,7 +399,9 @@ print $langs->trans("TestNotPossibleWithCurrentBrowsers").'<br>';
 
 // Compressions
 print '<br>';
-print '<strong>'.$langs->trans("CompressionOfResources").'</strong>: ';
+print '<strong>';
+print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
+print '</strong>: ';
 //$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
 print '<br>';
 // on PHP
@@ -488,7 +490,6 @@ print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
 */
 
-
+// End of page
 llxFooter();
-
 $db->close();

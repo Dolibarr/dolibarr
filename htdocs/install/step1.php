@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,54 +32,52 @@ include 'inc.php';
 
 global $langs;
 
-$action=GETPOST('action','alpha');
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "errors"));
 
 // Dolibarr pages directory
-$main_dir = GETPOST('main_dir');
+$main_dir = GETPOST('main_dir')?GETPOST('main_dir'):(empty($argv[3])?'':$argv[3]);
 // Directory for generated documents (invoices, orders, ecm, etc...)
-$main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : $main_dir . '/documents';
+$main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : (empty($argv[4])? ($main_dir . '/documents') :$argv[4]);
 // Dolibarr root URL
-$main_url = GETPOST('main_url');
-// Database login informations
-$userroot=GETPOST('db_user_root');
-$passroot=GETPOST('db_pass_root');
+$main_url = GETPOST('main_url')?GETPOST('main_url'):(empty($argv[5])?'':$argv[5]);
+// Database login information
+$userroot=GETPOST('db_user_root','alpha')?GETPOST('db_user_root','alpha'):(empty($argv[6])?'':$argv[6]);
+$passroot=GETPOST('db_pass_root','none')?GETPOST('db_pass_root','none'):(empty($argv[7])?'':$argv[7]);
 // Database server
-$db_type=GETPOST('db_type','alpha');
-$db_host=GETPOST('db_host','alpha');
-$db_name=GETPOST('db_name','alpha');
-$db_user=GETPOST('db_user','alpha');
-$db_pass=GETPOST('db_pass');
-$db_port=GETPOST('db_port','int');
-$db_prefix=GETPOST('db_prefix','alpha');
-$db_create_database = GETPOST('db_create_database');
-$db_create_user = GETPOST('db_create_user');
+$db_type=GETPOST('db_type','aZ09')?GETPOST('db_type','aZ09'):(empty($argv[8])?'':$argv[8]);
+$db_host=GETPOST('db_host','alpha')?GETPOST('db_host','alpha'):(empty($argv[9])?'':$argv[9]);
+$db_name=GETPOST('db_name','aZ09')?GETPOST('db_name','aZ09'):(empty($argv[10])?'':$argv[10]);
+$db_user=GETPOST('db_user','alpha')?GETPOST('db_user','alpha'):(empty($argv[11])?'':$argv[11]);
+$db_pass=GETPOST('db_pass','none')?GETPOST('db_pass','none'):(empty($argv[12])?'':$argv[12]);
+$db_port=GETPOST('db_port','int')?GETPOST('db_port','int'):(empty($argv[13])?'':$argv[13]);
+$db_prefix=GETPOST('db_prefix','aZ09')?GETPOST('db_prefix','aZ09'):(empty($argv[14])?'':$argv[14]);
+$db_create_database = GETPOST('db_create_database','none')?GETPOST('db_create_database','none'):(empty($argv[15])?'':$argv[15]);
+$db_create_user = GETPOST('db_create_user','none')?GETPOST('db_create_user','none'):(empty($argv[16])?'':$argv[16]);
 // Force https
-$main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
+$main_force_https = ((GETPOST("main_force_https",'alpha') && (GETPOST("main_force_https",'alpha') == "on" || GETPOST("main_force_https",'alpha') == 1)) ? '1' : '0');
 // Use alternative directory
-$main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '//');
+$main_use_alt_dir = ((GETPOST("main_use_alt_dir",'alpha') == '' || (GETPOST("main_use_alt_dir",'alpha') == "on" || GETPOST("main_use_alt_dir",'alpha') == 1)) ? '' : '//');
 // Alternative root directory name
-$main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
+$main_alt_dir_name = ((GETPOST("main_alt_dir_name",'alpha') && GETPOST("main_alt_dir_name",'alpha') != '') ? GETPOST("main_alt_dir_name",'alpha') : 'custom');
 
 session_start();    // To be able to keep info into session (used for not losing password during navigation. The password must not transit through parameters)
 
-// Save a flag to tell to restore input value if we do back
+// Save a flag to tell to restore input value if we go back
 $_SESSION['dol_save_pass']=$db_pass;
 //$_SESSION['dol_save_passroot']=$passroot;
 
-// Now we load forced value from install.forced.php file.
+// Now we load forced values from install.forced.php file.
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
-	// If forced install is enabled, let's replace post values. These are empty because form fields are disabled.
+	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if ($force_install_noedit) {
 		$main_dir = detect_dolibarr_main_document_root();
 		if (!empty($force_install_main_data_root)) {
@@ -88,6 +86,7 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = detect_dolibarr_main_data_root($main_dir);
 		}
 		$main_url = detect_dolibarr_main_url_root();
+
 		if (!empty($force_install_databaserootlogin)) {
 			$userroot = parse_database_login($force_install_databaserootlogin);
 		}
@@ -203,7 +202,7 @@ if (! $error) {
     $result=@include_once $main_dir."/core/db/".$db_type.'.class.php';
     if ($result)
     {
-        // If we ask database or user creation we need to connect as root, so we need root login
+        // If we require database or user creation we need to connect as root, so we need root login credentials
         if (!empty($db_create_database) && !$userroot) {
             print '<div class="error">'.$langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$db_name).'</div>';
             print '<br>';
@@ -311,14 +310,25 @@ if (! $error && $db->connected)
 // Define $defaultCharacterSet and $defaultDBSortingCollation
 if (! $error && $db->connected)
 {
-    if (!empty($db_create_database)) { // If we create database, we force default value
-    	$defaultCharacterSet=$db->forcecharset;
+    if (!empty($db_create_database))    // If we create database, we force default value
+    {
+        // Default values come from the database handler
+
+        $defaultCharacterSet=$db->forcecharset;
     	$defaultDBSortingCollation=$db->forcecollate;
     }
     else	// If already created, we take current value
     {
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
         $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
+    }
+
+    // Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
+    // TODO Remove this when utf8mb4 is supported
+    if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci')
+    {
+        $defaultCharacterSet = 'utf8';
+        $defaultDBSortingCollation = 'utf8_unicode_ci';
     }
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
@@ -333,15 +343,18 @@ if (! $error && $db->connected)
 if (! $error && $db->connected && $action == "set")
 {
     umask(0);
-    foreach($_POST as $key => $value)
+    if (is_array($_POST))
     {
-        if (! preg_match('/^db_pass/i', $key)) {
-			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
-		}
+        foreach($_POST as $key => $value)
+        {
+            if (! preg_match('/^db_pass/i', $key)) {
+    			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
+    		}
+        }
     }
 
     // Show title of step
-    print '<h3>'.$langs->trans("ConfigurationFile").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
     print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
     // Check parameter main_dir
@@ -382,7 +395,7 @@ if (! $error && $db->connected && $action == "set")
             print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
             print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
             print '</td><td>';
-            print '<font class="error">'.$langs->trans("Error").'</font>';
+            print '<span class="error">'.$langs->trans("Error").'</span>';
             print "</td></tr>";
             print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
             $error++;
@@ -405,18 +418,18 @@ if (! $error && $db->connected && $action == "set")
                 }
             }
 
-            // Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
-            $dir[0] = $main_data_dir."/mycompany";
-            $dir[1] = $main_data_dir."/users";
-            $dir[2] = $main_data_dir."/custom";
-            $dir[3] = $main_data_dir."/facture";
-            $dir[4] = $main_data_dir."/propale";
-            $dir[5] = $main_data_dir."/ficheinter";
-            $dir[6] = $main_data_dir."/produit";
-            $dir[7] = $main_data_dir."/doctemplates";
-            $dir[7] = $main_data_dir."/extensions";
+            // Documents are stored above the web pages root to prevent being downloaded without authentification
+            $dir=array();
+            $dir[] = $main_data_dir."/mycompany";
+            $dir[] = $main_data_dir."/medias";
+            $dir[] = $main_data_dir."/users";
+            $dir[] = $main_data_dir."/facture";
+            $dir[] = $main_data_dir."/propale";
+            $dir[] = $main_data_dir."/ficheinter";
+            $dir[] = $main_data_dir."/produit";
+            $dir[] = $main_data_dir."/doctemplates";
 
-            // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
+            // Loop on each directory of dir [] to create them if they do not exist
             $num=count($dir);
             for ($i = 0; $i < $num; $i++)
             {
@@ -442,22 +455,41 @@ if (! $error && $db->connected && $action == "set")
                 }
             }
 
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+            // Copy directory medias
+            $srcroot=$main_dir.'/install/medias';
+            $destroot=$main_data_dir.'/medias';
+            dolCopyDir($srcroot, $destroot, 0, 0);
+
             if ($error)
             {
                 print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
                 print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
                 print '</td><td>';
-                print '<font class="error">'.$langs->trans("Error").'</font>';
+                print '<span class="error">'.$langs->trans("Error").'</span>';
                 print "</td></tr>";
                 print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
             }
             else
             {
             	//ODT templates
-            	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             	$srcroot=$main_dir.'/install/doctemplates';
             	$destroot=$main_data_dir.'/doctemplates';
-            	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice', 'projects' => 'project', 'tasks' => 'task_summary');
+            	$docs=array(
+            		'contracts' => 'contract',
+            		'invoices' => 'invoice',
+            		'orders' => 'order',
+            		'products' => 'product',
+            		'projects' => 'project',
+            		'proposals' => 'proposal',
+            		'shipments' => 'shipment',
+            		'supplier_proposals' => 'supplier_proposal',
+            		'tasks' => 'task_summary',
+            		'thirdparties' => 'thirdparty',
+            		'usergroups' => 'usergroups',
+            		'users' => 'user',
+            	);
             	foreach($docs as $cursordir => $cursorfile)
             	{
             		$src=$srcroot.'/'.$cursordir.'/template_'.$cursorfile.'.odt';
@@ -484,7 +516,7 @@ if (! $error && $db->connected && $action == "set")
         // Save old conf file on disk
         if (file_exists("$conffile"))
         {
-            // We must ignore errors as an existing old file may already exists and not be replacable or
+            // We must ignore errors as an existing old file may already exist and not be replaceable or
             // the installer (like for ubuntu) may not have permission to create another file than conf.php.
             // Also no other process must be able to read file or we expose the new file, so content with password.
             @dol_copy($conffile, $conffile.'.old', '0400');
@@ -492,10 +524,6 @@ if (! $error && $db->connected && $action == "set")
 
         $error+=write_conf_file($conffile);
     }
-
-    // Write main.inc.php and master.inc.php into documents/custom dir
-    //$error+=write_main_file($main_data_dir.'/custom/main.inc.php',$main_dir);
-    //$error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
 
     // Create database and admin user database
     if (! $error)
@@ -508,8 +536,8 @@ if (! $error && $db->connected && $action == "set")
         print '</td>';
         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
-        // Si creation utilisateur admin demandee, on le cree
-        if (isset($db_create_user) && $db_create_user == "on") {
+        // Create database user if requested
+        if (isset($db_create_user) && ($db_create_user == "1" || $db_create_user == "on")) {
             dolibarr_install_syslog("step1: create database user: " . $dolibarr_main_db_user);
 
             //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
@@ -527,7 +555,7 @@ if (! $error && $db->connected && $action == "set")
                 $databasefortest='master';
             }
 
-            // Creation handler de base, verification du support et connexion
+            // Check database connection
 
             $db=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
 
@@ -542,7 +570,7 @@ if (! $error && $db->connected && $action == "set")
                 if ($db->connected)
                 {
                     $resultbis = 1;
-                    
+
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                     // Create user bis
@@ -553,7 +581,7 @@ if (! $error && $db->connected && $action == "set")
                             $resultbis=$db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                         }
                     }
-                    
+
                     if ($result > 0 && $resultbis > 0)
                     {
 
@@ -598,7 +626,7 @@ if (! $error && $db->connected && $action == "set")
                     print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
                     print '</tr>';
 
-                    // Affiche aide diagnostique
+                    // warning message due to connection failure
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
                     print '<br>';
@@ -609,11 +637,11 @@ if (! $error && $db->connected && $action == "set")
                     $error++;
                 }
             }
-        }   // Fin si "creation utilisateur"
+        }   // end of user account creation
 
 
-        // If database creation is asked, we create it
-        if (!$error && (isset($db_create_database) && $db_create_database == "on")) {
+        // If database creation was asked, we create it
+        if (!$error && (isset($db_create_database) && ($db_create_database == "1" || $db_create_database == "on"))) {
             dolibarr_install_syslog("step1: create database: " . $dolibarr_main_db_name . " " . $dolibarr_main_db_character_set . " " . $dolibarr_main_db_collation . " " . $dolibarr_main_db_user);
         	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
@@ -630,9 +658,10 @@ if (! $error && $db->connected && $action == "set")
                     print '</td>';
                     print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
+                    $newdb->select_db($dolibarr_main_db_name);
                     $check1=$newdb->getDefaultCharacterSetDatabase();
                     $check2=$newdb->getDefaultCollationDatabase();
-                    dolibarr_install_syslog('step1: note that default server was charset=' . $check1 . ' collation=' . $check2);
+                    dolibarr_install_syslog('step1: new database is using charset=' . $check1 . ' collation=' . $check2);
 
                     // If values differs, we save conf file again
                     //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('step1: value for character_set is not the one asked for database creation', LOG_WARNING);
@@ -640,7 +669,7 @@ if (! $error && $db->connected && $action == "set")
                 }
                 else
                 {
-                    // Affiche aide diagnostique
+                    // warning message
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
                     print $newdb->lasterror().'<br>';
@@ -661,7 +690,7 @@ if (! $error && $db->connected && $action == "set")
                 print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
                 print '</tr>';
 
-                // Affiche aide diagnostique
+                // warning message
                 print '<tr><td colspan="2"><br>';
                 print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
                 print '<br>';
@@ -671,7 +700,7 @@ if (! $error && $db->connected && $action == "set")
 
                 $error++;
             }
-        }   // Fin si "creation database"
+        }   // end of create database
 
 
         // We test access with dolibarr database user (not admin)
@@ -692,7 +721,7 @@ if (! $error && $db->connected && $action == "set")
                 print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
                 print "</td></tr>";
 
-                // si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
+                // server access ok, basic access ok
                 if ($db->database_selected)
                 {
                     dolibarr_install_syslog("step1: connection to database " . $conf->db->name . " by user " . $conf->db->user . " ok");
@@ -715,7 +744,7 @@ if (! $error && $db->connected && $action == "set")
                     print '<img src="../theme/eldy/img/error.png" alt="Error">';
                     print "</td></tr>";
 
-                    // Affiche aide diagnostique
+                    // warning message
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans('CheckThatDatabasenameIsCorrect',$dolibarr_main_db_name).'<br>';
                     print $langs->trans('IfAlreadyExistsCheckOption').'<br>';
@@ -735,7 +764,7 @@ if (! $error && $db->connected && $action == "set")
                 print '<img src="../theme/eldy/img/error.png" alt="Error">';
                 print "</td></tr>";
 
-                // Affiche aide diagnostique
+                // warning message
                 print '<tr><td colspan="2"><br>';
                 print $langs->trans("ErrorConnection",$conf->db->host,$conf->db->name,$conf->db->user);
                 print $langs->trans('IfLoginDoesNotExistsCheckCreateUser').'<br>';
@@ -768,9 +797,16 @@ function jsinfo()
 
 <?php
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step1: end");
 
 pFooter($error?1:0,$setuplang,'jsinfo',1);
+
+// Return code if ran from command line
+if ($ret) exit($ret);
 
 
 /**
@@ -839,7 +875,7 @@ function write_conf_file($conffile)
 
     $error=0;
 
-    $key = md5(uniqid(mt_rand(),TRUE)); // Generate random hash
+    $key = md5(uniqid(mt_rand(), true)); // Generate random hash
 
     $fp = fopen("$conffile", "w");
     if($fp)
@@ -854,45 +890,45 @@ function write_conf_file($conffile)
         fputs($fp,'// and explanations for all possibles parameters.'."\n");
         fputs($fp,'//'."\n");
 
-        fputs($fp, '$dolibarr_main_url_root=\''.str_replace("'","\'",($main_url)).'\';');
+        fputs($fp, '$dolibarr_main_url_root=\''.str_replace("'","\'",trim($main_url)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, '$dolibarr_main_document_root=\''.str_replace("'","\'",($main_dir)).'\';');
+        fputs($fp, '$dolibarr_main_document_root=\''.str_replace("'","\'",trim($main_dir)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.str_replace("'","\'",("/".$main_alt_dir_name)).'\';');
+        fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.str_replace("'","\'",trim("/".$main_alt_dir_name)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'","\'",($main_dir."/".$main_alt_dir_name)).'\';');
+        fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'","\'",trim($main_dir."/".$main_alt_dir_name)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",($main_data_dir)).'\';');
+		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",trim($main_data_dir)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",($db_host)).'\';');
+		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",trim($db_host)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",($db_port)).'\';');
+		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",trim($db_port)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",($db_name)).'\';');
+		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",trim($db_name)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",($main_db_prefix)).'\';');
+		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",trim($main_db_prefix)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",($db_user)).'\';');
+		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",trim($db_user)).'\';');
 		fputs($fp,"\n");
-		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",($db_pass)).'\';');
-		fputs($fp,"\n");
-
-		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",($db_type)).'\';');
+		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",trim($db_pass)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($db_character_set)).'\';');
+		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",trim($db_type)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($db_collation)).'\';');
+		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",trim($db_character_set)).'\';');
+		fputs($fp,"\n");
+
+		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",trim($db_collation)).'\';');
 		fputs($fp,"\n");
 
 		/* Authentication */
@@ -984,7 +1020,7 @@ function write_conf_file($conffile)
 
 		if (file_exists("$conffile"))
 		{
-			include $conffile;	// On force rechargement. Ne pas mettre include_once !
+			include $conffile;	// force config reload, do not put include_once
 			conf($dolibarr_main_document_root);
 
 			print "<tr><td>";

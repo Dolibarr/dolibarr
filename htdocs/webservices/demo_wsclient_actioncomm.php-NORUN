@@ -107,8 +107,7 @@ if ($action=='create')
 	'projectid'=>'',
 	'note'=>'This is note',
 	'contactid'=>'',
-	'usertodo'=>'1',
-	'userdone'=>'1',
+	'userownerod'=>'1',
 	'label'=>'Ceci est les titre de l\'envenement',
 	'percentage'=>'100',
 	'location'=>'Location1'

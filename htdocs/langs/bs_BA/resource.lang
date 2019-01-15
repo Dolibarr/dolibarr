@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
+MenuResourceIndex=Resursi
 MenuResourceAdd=New resource
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources
 
 SelectResource=Select resource
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resursi

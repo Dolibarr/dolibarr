@@ -48,4 +48,4 @@ SmsInfoNumero= (Format international dvs.: 33899701761)
 DelayBeforeSending=Forsinkelse før afsendelse (minutter)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Intet mål til rådighed. Kontrollér opsætningen af ​​din SMS-udbyderen.
-
+DisableStopIfSupported=Disable STOP message (if supported)

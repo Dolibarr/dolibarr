@@ -20,14 +20,15 @@
 /**
  * Returns an array with the tabs for the "salaries" section
  * It loads tabs from modules looking for the entity salaries
- *  
+ *
  * @param Paiement $object Current salaries object
  * @return array Tabs for the salaries section
  */
-function salaries_prepare_head($object) {
-	
+function salaries_prepare_head($object)
+{
+
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -45,7 +46,7 @@ function salaries_prepare_head($object) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->salaries->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -57,7 +58,7 @@ function salaries_prepare_head($object) {
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-    
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries', 'remove');
 
 	return $head;

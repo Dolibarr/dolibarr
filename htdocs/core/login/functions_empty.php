@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,12 @@
  */
 function check_user_password_empty($usertotest,$passwordtotest,$entitytotest)
 {
+	global $langs;
+
 	dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
 
 	$login='';
+	$_SESSION["dol_loginmesg"]=$langs->trans("FailedToLogin");
 
 	return $login;
 }

@@ -23,7 +23,7 @@ create table llx_payment_donation
   datec           datetime,           -- date de creation
   tms             timestamp,
   datep           datetime,           -- payment date
-  amount          real DEFAULT 0,
+  amount          double(24,8) DEFAULT 0,
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),
   note            text,

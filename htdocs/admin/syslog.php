@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -31,16 +31,16 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other"));
 
 $error=0;
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 $syslogModules = array();
 $activeModules = array();
 
-if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(constant('SYSLOG_HANDLERS'));
+if (! empty($conf->global->SYSLOG_HANDLERS)) $activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
 
 $dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
 foreach ($dirsyslogs as $reldir) {
@@ -50,7 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-			$var = true;
 
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
@@ -88,7 +87,8 @@ if ($action == 'set')
 
 	$newActiveModules = array();
 	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
-	//var_dump($selectedModules);
+
+	// Save options of handler
 	foreach ($syslogModules as $syslogHandler)
 	{
 		if (in_array($syslogHandler, $syslogModules))
@@ -101,7 +101,7 @@ if ($action == 'set')
 				if (isset($_POST[$option['constant']]))
 				{
 					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
-					dolibarr_del_const($db, $option['constant'], 0);
+					dolibarr_del_const($db, $option['constant'], -1);
 					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
 				}
 			}
@@ -109,7 +109,9 @@ if ($action == 'set')
 	}
 
 	$activeModules = $newActiveModules;
-	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
+
+    dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity
+    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
@@ -130,9 +132,7 @@ if ($action == 'set')
 	{
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
-
 	}
-
 }
 
 // Set level
@@ -143,6 +143,16 @@ if ($action == 'setlevel')
 	dol_syslog("admin/syslog: level ".$level);
 
 	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		$file_saves = GETPOST("file_saves");
+		$res = dolibarr_set_const($db,"SYSLOG_FILE_SAVES",$file_saves,'chaine',0,'',0);
+		dol_syslog("admin/syslog: file saves  ".$file_saves);
+
+		if (! $res > 0) $error++;
+	}
+
 	if (! $error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -161,7 +171,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
 print '<br>';
 
@@ -194,7 +204,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-$var=true;
 
 foreach ($syslogModules as $moduleName)
 {
@@ -204,10 +213,10 @@ foreach ($syslogModules as $moduleName)
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
 	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td width="140">';
-	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
+	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
 	print $module->getName();
 	print '</td>';
 
@@ -217,12 +226,24 @@ foreach ($syslogModules as $moduleName)
 	{
 		foreach ($setuparray as $option)
 		{
-			if (isset($_POST[$option['constant']])) $value=$_POST[$option['constant']];
-			else if (defined($option['constant'])) $value = constant($option['constant']);
+		    $tmpoption=$option['constant'];
+		    if (! empty($tmpoption))
+		    {
+    			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
+    			else if (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+		    }
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
+
+			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/',$value))
+			{
+    			$filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
+    			$filelogparam.=$langs->trans('Download');
+    			$filelogparam.=$filelog.'</a>)';
+    			print $filelogparam;
+			}
 		}
 	}
 	print '</td>';
@@ -256,9 +277,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-$var=true;
-$var=!$var;
-print '<tr '.$bc[$var].'><td width="140">'.$langs->trans("SyslogLevel").'</td>';
+
+print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
 print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG ('.LOG_EMERG.')</option>';
 print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT ('.LOG_ALERT.')</option>';
@@ -270,9 +290,16 @@ print '<option value="'.LOG_INFO.'" '.($conf->global->SYSLOG_LEVEL==LOG_INFO?'SE
 print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL>=LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select>';
 print '</td></tr>';
+
+if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enabled)) {
+	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
+	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
+	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+}
+
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -19,7 +19,6 @@
 create table llx_bookmark
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc      integer,
   fk_user     integer NOT NULL,
   dateb       datetime,
   url         varchar(255) NOT NULL,

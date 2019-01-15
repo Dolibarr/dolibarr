@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2004	   Eric Seigne			<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ModelePDFCards
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -46,6 +50,7 @@ class ModelePDFCards
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='member';
@@ -59,6 +64,7 @@ class ModelePDFCards
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
  *
@@ -72,20 +78,21 @@ class ModelePDFCards
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir='', $template='standard')
 {
+    // phpcs:enable
 	global $conf,$langs;
 	$langs->load("members");
 
 	$error=0;
-	
+
 	// Increase limit for PDF build
 	$err=error_reporting();
 	error_reporting(0);
 	@set_time_limit(120);
 	error_reporting($err);
-	
+
 	$code='';
 	$srctemplatepath='';
-	
+
 	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
@@ -108,7 +115,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		$srctemplatepath=$tmp[1];
 	}
 	else $srctemplatepath=$code;
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
@@ -118,7 +125,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		foreach(array('doc','pdf') as $prefix)
 		{
 			$file = $prefix."_".$template.".class.php";
-			
+
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
 			if (file_exists($file))
@@ -130,8 +137,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		}
 		if ($filefound) break;
 	}
-	
-	
+
+
 	// Charge le modele
 	if ($filefound)
 	{
@@ -160,7 +167,4 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-
-
 }
-

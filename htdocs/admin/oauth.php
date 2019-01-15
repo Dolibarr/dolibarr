@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,8 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-
-$langs->load("admin");
-$langs->load("oauth");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'oauth'));
 
 // Security check
 if (!$user->admin)
@@ -47,7 +46,7 @@ $action = GETPOST('action', 'alpha');
 /*
  * Actions
  */
- 
+
 if ($action == 'update')
 {
     $error = 0;
@@ -77,7 +76,7 @@ llxHeader();
 
 $form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'),$linkback,'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -86,16 +85,16 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
 
-dol_fiche_head($head, 'services', '', 0, 'technic');
+dol_fiche_head($head, 'services', '', -1, 'technic');
 
 
 print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
 
 print '<table class="noborder" width="100%">';
 
-$var = true;
 $i=0;
 
+// $list is defined into oauth.lib.php
 foreach ($list as $key)
 {
     $supported=0;
@@ -103,10 +102,10 @@ foreach ($list as $key)
     if (! $supported) continue;     // show only supported
 
     $i++;
-    
+
     print '<tr class="liste_titre'.($i > 1 ?' liste_titre_add':'').'">';
     // Api Name
-    $label = $langs->trans($key[0]); 
+    $label = $langs->trans($key[0]);
     print '<td>'.$label.'</td>';
     print '<td>';
     if (! empty($key[3])) print $langs->trans($key[3]);
@@ -116,35 +115,30 @@ foreach ($list as $key)
     if ($supported)
     {
         $redirect_uri=$urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
-        $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
     }
     else
     {
-        $var = !$var;
-        print '<tr '.$bc[$var].' class="value">';
+        print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
         print '</td></tr>';
     }
-        
+
     // Api Id
-    $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr class="oddeven value">';
     print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
     print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
     print '</td></tr>';
 
     // Api Secret
-    $var = !$var;
-    print '<tr '.$bc[$var].' class="value">';
+    print '<tr class="oddeven value">';
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
     print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';
-
 }
 
 print '</table>'."\n";
@@ -155,6 +149,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-
+// End of page
 llxFooter();
 $db->close();

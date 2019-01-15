@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-$langs->load("products");
-$langs->load('other');
+$langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
@@ -95,7 +94,7 @@ if ($_POST) {
 		$delete_prev_comb_res = 1;
 
 		if (!$donotremove) {
-			$delete_prev_comb_res = $combination->deleteByFkProductParent($id);
+			$delete_prev_comb_res = $combination->deleteByFkProductParent($user, $id);
 		}
 
 		//Current combinations will be deleted
@@ -103,7 +102,7 @@ if ($_POST) {
 
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb) 
+			foreach (cartesianArray($adapted_values) as $currcomb)
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
@@ -115,20 +114,21 @@ if ($_POST) {
 
 			if ($res > 0) {
 				$db->commit();
-				setEventMessage($langs->trans('RecordSaved'));
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 				exit;
 			}
 		} else {
-			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');
+			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
 		}
 
 		$db->rollback();
-
 	} else {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
 }
+
+
 
 /*
  *	View
@@ -140,55 +140,39 @@ if (! empty($id) || ! empty($ref)) {
 
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-	if ($result) {
-		$head = product_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
-		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+	if ($result > 0)
+	{
+		$showbarcode=empty($conf->barcode->enabled)?0:1;
+		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
+		$head=product_prepare_head($object);
+		$titre=$langs->trans("CardProduct".$object->type);
+		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
 
-		print '<table class="border" width="100%">';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter=" fk_product_type = ".$object->type;
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', '', 0);
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-		print $object->getLibStatut(2, 0);
-		print '</td></tr>';
-
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-		print $object->getLibStatut(2, 1);
-		print '</td></tr>';
-
-		print '</table>';
+		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
 		dol_fiche_end();
 	}
 
-	print_fiche_titre($langs->trans('ProductCombinationGenerator'));
+	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
 
-	$dictionnary_attr = array();
+	$dictionary_attr = array();
 
 	foreach ($prodattr->fetchAll() as $attr) {
-		$dictionnary_attr[$attr->id] = $attr;
+		$dictionary_attr[$attr->id] = $attr;
 		foreach ($prodattrval->fetchAllByProductAttribute($attr->id) as $attrval) {
-			$dictionnary_attr[$attr->id]->values[$attrval->id] = $attrval;
+			$dictionary_attr[$attr->id]->values[$attrval->id] = $attrval;
 		}
 	}
 	?>
 
 	<script>
 
-		dictionnary_attr = <?php echo json_encode($dictionnary_attr) ?>;
+		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
 		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
@@ -205,7 +189,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			if (!attr_selected.hasOwnProperty(attr)) {
 
-				var label = dictionnary_attr[attr].label;
+				var label = dictionary_attr[attr].label;
 
 				var table = jQuery(document.createElement('table'))
 					.attr('id', 'combinations_'+attr)
@@ -253,7 +237,7 @@ if (! empty($id) || ! empty($ref)) {
 			}
 
 			html.append(
-				jQuery(document.createElement('td')).text(dictionnary_attr[attr].values[val].value),
+				jQuery(document.createElement('td')).text(dictionary_attr[attr].values[val].value),
 				jQuery(document.createElement('td')).css('text-align', 'center').append(
 					jQuery(document.createElement('input')).attr('type', 'text').css('width', '50px').attr('name', 'combinations[' + attr + '][' + val + '][price]').val(price),
 					percent_symbol_html
@@ -364,7 +348,7 @@ if (! empty($id) || ! empty($ref)) {
 		<div style="float:left; width: 20%">
 
 			<select id="features" multiple style="width: 100%; height: 300px; overflow: auto">
-				<?php foreach ($dictionnary_attr as $attr): ?>
+				<?php foreach ($dictionary_attr as $attr): ?>
 				<optgroup label="<?php echo $attr->label ?>">
 					<?php foreach ($attr->values as $attrval): ?>
 						<option value="<?php echo $attr->id.':'.$attrval->id ?>"<?php
@@ -388,5 +372,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-	llxFooter();
+  // End of page
+  llxFooter();
 }
+
+$db->close();

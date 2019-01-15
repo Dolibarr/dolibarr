@@ -5,7 +5,7 @@ Establishments=机构
 Establishment=机构
 NewEstablishment=新建机构
 DeleteEstablishment=删除机构
-ConfirmDeleteEstablishment=你确定想要删除这个机构吗？
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=打开机构
 CloseEtablishment=关闭机构
 # Dictionary

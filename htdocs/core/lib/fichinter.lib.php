@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2016		   Gilles Poirier 		   <glgpoirier@gmail.com>
- 
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
+ * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,14 +56,6 @@ function fichinter_prepare_head($object)
 		$h++;
 	}
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Preview');
-		$head[$h][2] = 'preview';
-		$h++;
-	}
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -83,11 +76,10 @@ function fichinter_prepare_head($object)
 				foreach($resources as $resource_obj)
 				{
 					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
-					
 				}
 			}
 		}
-				
+
    		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
@@ -110,7 +102,7 @@ function fichinter_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->ficheinter->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -170,4 +162,28 @@ function fichinter_admin_prepare_head()
 		return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object  $object     Object related to tabs
+ * @return  array               Array of tabs to show
+ */
+function fichinter_rec_prepare_head($object)
+{
+	global $langs, $conf; //, $user;
 
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("CardFichinter");
+	$head[$h][2] = 'card';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention-rec');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h,'intervention-rec','remove');
+
+
+	return $head;
+}

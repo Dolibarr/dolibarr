@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills","users"));
 
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+$rowid=GETPOST("rowid",'int');
 
 
 
@@ -44,16 +42,26 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
+
+llxHeader();
 
 $object = new Subscription($db);
 $result = $object->fetch($rowid);
 
 $head = subscription_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Subscription"), '', 'payment');
+dol_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'rowid', $linkback, 1);
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
 
 $object->info($rowid);
 
@@ -64,5 +72,8 @@ print '</td></tr></table>';
 print '</div>';
 
 
+dol_fiche_end();
+
+// End of page
 llxFooter();
 $db->close();

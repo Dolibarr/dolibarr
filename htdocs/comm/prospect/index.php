@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
+// Load translation files required by the page
 $langs->load("propal");
 
 
@@ -58,9 +59,9 @@ if (! empty($conf->propal->enabled))
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr class="oddeven"><td>';
 	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>\n";
 }
@@ -76,7 +77,7 @@ $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (2, 3)";
-$sql.= " AND s.entity IN (".getEntity($companystatic->element, 1).")";
+$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY st.id";
 $sql.= " ORDER BY st.id";
@@ -88,16 +89,14 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		$var=true;
-
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
+
+			print '<tr class="oddeven"><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
 			print img_action($langs->trans("Show"),$obj->id).' ';
 			print $langs->trans("StatusProspect".$obj->id);
@@ -120,14 +119,12 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_statut = 0";
 	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=true;
-
 		$total=0;
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -140,8 +137,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
+
+				print '<tr class="oddeven"><td>';
 				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
 				print '</td><td align="right">';
 				print price($obj->price);
@@ -150,7 +147,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$total += $obj->price;
 			}
 			if ($total>0) {
-				$var=!$var;
+
 				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -183,7 +180,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	$sql.= " WHERE p.fk_soc = s.rowid";
 	$sql.= " AND p.fk_statut = c.id";
 	$sql.= " AND p.fk_statut = 1";
-	$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+	$sql.= " AND p.entity IN (".getEntity('propal').")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY p.rowid DESC";
@@ -197,16 +194,14 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
+
+				print '<tr class="oddeven"><td>';
 				print '<a href="../propal.php?id='.$obj->propalid.'">';
 				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
 
@@ -223,7 +218,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$i++;
 				$total += $obj->price;
 			}
-			if ($total>0) {
+			if ($total>0)
+			{
 				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -243,7 +239,7 @@ $sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = 1";
-$sql.= " AND s.entity IN (".getEntity($companystatic->element, 1).")";
+$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY s.tms ASC";
 $sql.= $db->plimit(15, 0);
@@ -255,16 +251,14 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		$var=true;
-
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td width="12%">';
+
+			print '<tr class="oddeven"><td width="12%">';
             $companystatic->id=$obj->socid;
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;
@@ -281,6 +275,6 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

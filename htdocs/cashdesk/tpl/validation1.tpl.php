@@ -16,9 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("banks");
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","banks"));
 
 // Object $form must de defined
 
@@ -35,13 +41,11 @@ $langs->load("banks");
 			if ( $obj_facturation->montantTva() ) {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(),'MT'),0,$langs,0,0,-1,$conf->currency).'</td></tr>');
-
 			}
 			else
 			{
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
-
 			}
 		?>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price(price2num($obj_facturation->prixTotalTtc(),'MT'),0,$langs,0,0,-1,$conf->currency); ?></td></tr>
@@ -85,18 +89,15 @@ $langs->load("banks");
 			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
-
 			} else {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(),'MT'),0,$langs,0,0,-1,$conf->currency).'</td></tr>');
-
 			}
 
 			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montantRendu() ) {
 
 				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(),'MT'),0,$langs,0,0,-1,$conf->currency).'</td></tr>');
-
 			}
 
 		?>

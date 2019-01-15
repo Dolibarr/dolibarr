@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
 --
@@ -33,6 +33,7 @@ create table llx_product_customer_price
   price_min					double(24,8) DEFAULT 0,
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
+  default_vat_code			varchar(10),	         		-- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx					double(6,3),
   recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 

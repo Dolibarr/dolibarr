@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ if (! $user->admin)
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice');
+$choice=GETPOST('choice','aZ09');
 
 
 // Define filelog to discard it from purge
 $filelog='';
 if (! empty($conf->syslog->enabled))
 {
-	$filelog=SYSLOG_FILE;
+	$filelog=$conf->global->SYSLOG_FILE;
 	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 }
 
@@ -83,7 +83,15 @@ if (! empty($conf->syslog->enabled))
 {
 	print '<input type="radio" name="choice" value="logfile"';
 	print ($choice && $choice=='logfile') ? ' checked' : '';
-	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
+	$filelogparam=$filelog;
+	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
+	{
+	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam.=basename($filelog);
+	   $filelogparam.='">'.$filelog.'</a>';
+	}
+	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
+	print '<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
@@ -111,7 +119,6 @@ if (preg_match('/^confirm/i',$choice))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -29,19 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("errors");
-$langs->load("mails");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -55,7 +50,7 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
 
-    if (! $error)
+    if (! $error && is_array($_POST))
     {
     	//var_dump($_POST);
 	    foreach($_POST as $key => $val)
@@ -115,7 +110,7 @@ $notify = new Notify($db);
 
 llxHeader('',$langs->trans("NotificationSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br>';
@@ -128,15 +123,13 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
@@ -165,32 +158,36 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>';
 
-$var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    $var=!$var;
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+    $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
     elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+    elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+    elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
 
     if ($i) print ', ';
     print $label;
-     
+
     $i++;
 }
 print '</td></tr>';
 
 print '</table>';
+print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
 if (! empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '</div>';
 print '<br><br>';
 
 
@@ -210,19 +207,22 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-$var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    $var=!$var;
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
+    $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+	// Special cases
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
 	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+	elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+	elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
 
-    print '<tr '.$bc[$var].'>';
+    print '<tr class="oddeven">';
     print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';
@@ -279,7 +279,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/task/modules_task.php';
  */
 class mod_task_simple extends ModeleNumRefTask
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='TK';
-    var $error='';
-	var $nom = "Simple";
-	var $name = "Simple";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='TK';
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Simple';
 
 
     /**
@@ -76,7 +95,7 @@ class mod_task_simple extends ModeleNumRefTask
 		$sql = "SELECT MAX(CAST(SUBSTRING(task.ref FROM " . $posindice . ") AS SIGNED)) as max";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "projet_task AS task, ";
 		$sql .= MAIN_DB_PREFIX . "projet AS project WHERE task.fk_projet=project.rowid";
-		$sql .= " AND task.ref LIKE '" . $this->prefix . "____-%'";
+		$sql .= " AND task.ref LIKE '" . $db->escape($this->prefix) . "____-%'";
 		$sql .= " AND project.entity = " . $conf->entity;
         $resql=$db->query($sql);
         if ($resql)
@@ -112,7 +131,7 @@ class mod_task_simple extends ModeleNumRefTask
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -140,16 +159,16 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * 	Return next reference not yet used as a reference
+     *  Return next reference not yet used as a reference
      *
-     *  @param	Societe	$objsoc     Object third party
-     *  @param  Task	$object		Object task
-     *  @return string      		Next not used reference
+     *  @param  Societe	$objsoc     Object third party
+     *  @param  Task	$object     Object task
+     *  @return string              Next not used reference
      */
     function task_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
-

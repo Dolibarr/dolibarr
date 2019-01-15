@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("products");
-$langs->load("languages");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'languages'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -200,9 +200,12 @@ if (! empty($object->multilangs))
 
 dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', '', '', 0, '', '', 1);
+$shownav = 1;
+if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
 dol_fiche_end();
 
@@ -244,10 +247,11 @@ if ($action == 'edit')
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
-		    
+			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+
+			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
-			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
+			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 			$doleditor->Create();
@@ -263,6 +267,8 @@ if ($action == 'edit')
 		}
 	}
 
+	print '<br>';
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -270,26 +276,27 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($action != 'add')
 {
-    if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
-    
 	if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s=picto_from_langcode($key);
+			print ($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))
 			{
                 print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
+			print '</div>';
 		}
 	}
 	if (! $cnt_trans && $action != 'add') print '<div class="opacitymedium">'. $langs->trans('NoTranslation').'</div>';
@@ -312,6 +319,8 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
 
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$object->multilangs,1);
@@ -331,7 +340,9 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
     }
 	print '</table>';
 
-	print '<br><div class="center">';
+	dol_fiche_end();
+
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -342,5 +353,6 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

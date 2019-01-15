@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $action=GETPOST('action','alpha');
 $id=GETPOST('id','int');
@@ -41,7 +41,7 @@ if ($user->id == $id)	// A user can always read its own card
 }
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard','globalcard'));
 
 /*
@@ -53,7 +53,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    if ($action == 'update' && !GETPOST('cancel')) {
+    if ($action == 'update' && !GETPOST('cancel','alpha')) {
         $edituser = new User($db);
         $edituser->fetch($id);
 
@@ -63,7 +63,7 @@ if (empty($reshook)) {
         $edituser->clicktodial_poste = GETPOST("poste");
 
         $result = $edituser->update_clicktodial();
-        if ($result < 0) 
+        if ($result < 0)
         {
             setEventMessages($edituser->error, $edituser->errors, 'errors');
         }
@@ -83,7 +83,8 @@ llxHeader("","ClickToDial");
 if ($id > 0)
 {
     $object = new User($db);
-    $object->fetch($id);
+    $object->fetch($id, '', '', 1);
+    $object->getrights();
     $object->fetch_clicktodial();
 
 
@@ -91,24 +92,29 @@ if ($id > 0)
 
 	$title = $langs->trans("User");
 
-	
+
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
-	
-	dol_fiche_head($head, 'clicktodial', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
+	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
+
+	$linkback = '';
+
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-	
+
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     // Edit mode
     if ($action == 'edit')
     {
 	   print '<table class="border" width="100%">';
-        
+
         if ($user->admin)
         {
         	print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
@@ -171,15 +177,15 @@ if ($id > 0)
         print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">'.(! empty($object->clicktodial_poste)?$object->clicktodial_poste:'').'</td>';
         print "</tr>";
-        
+
         print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">'.(! empty($object->clicktodial_login)?$object->clicktodial_login:'').'</td>';
         print '</tr>';
-        
+
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">'.preg_replace('/./','*',(! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
         print "</tr>\n";
-        
+
         print "</table>\n";
     }
 
@@ -191,10 +197,11 @@ if ($id > 0)
         print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
         print '</div>';
-    }    
-    
+    }
+
+    print '</div>';
     print '</form>';
-    
+
     /*
      * Barre d'actions
      */
@@ -206,10 +213,8 @@ if ($id > 0)
     }
 
     print "</div>\n";
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

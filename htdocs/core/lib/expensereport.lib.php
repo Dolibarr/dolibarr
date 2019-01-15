@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ function expensereport_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -67,7 +67,7 @@ function expensereport_prepare_head($object)
 	    $head[$h][2] = 'note';
 	    $h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
@@ -78,7 +78,41 @@ function expensereport_prepare_head($object)
 	return $head;
 }
 
+/**
+ * Returns an array with the tabs for the "Expense report payment" section
+ * It loads tabs from modules looking for the entity payment
+ *
+ * @param	Paiement	$object		Current payment object
+ * @return	array					Tabs for the payment section
+ */
+function payment_expensereport_prepare_head(PaymentExpenseReport $object)
+{
 
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'payment';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport');
+
+	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport', 'remove');
+
+	return $head;
+}
 
 /**
  *  Return array head with list of tabs to view object informations.
@@ -98,6 +132,22 @@ function expensereport_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExpenseReports");
 	$head[$h][2] = 'expensereport';
 	$h++;
+
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
+		$head[$h][1] = $langs->trans("ExpenseReportsIk");
+		$head[$h][2] = 'expenseik';
+		$h++;
+	}
+
+	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
+		$head[$h][1] = $langs->trans("ExpenseReportsRules");
+		$head[$h][2] = 'expenserules';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -119,5 +169,5 @@ function expensereport_admin_prepare_head()
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin','remove');
 
-	return $head;
+    return $head;
 }

@@ -51,7 +51,7 @@ class Menu
     /**
      * Add a menu entry into this->liste (at end)
      *
-     * @param	string	$url        Url to follow on click
+     * @param	string	$url        Url to follow on click (does not include DOL_URL_ROOT)
      * @param   string	$titre      Label of menu to add
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
@@ -59,17 +59,21 @@ class Menu
      * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
      * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
      * @param	int		$position	Position (not used yet)
+     * @param	string	$id			Id
+     * @param	string	$idsel		Id sel
+     * @param	string	$classname	Class name
+     * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0)
+    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
     {
-        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position);
+    	$this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
     }
 
     /**
      * Insert a menu entry into this->liste
      *
-     * @param	int		$idafter	Array key after which inserting new entry
+     * @param   int		$idafter	Array key after which inserting new entry
      * @param	string	$url        Url to follow on click
      * @param   string	$titre      Label of menu to add
      * @param   integer	$level      Level of menu to add
@@ -78,16 +82,21 @@ class Menu
      * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
      * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
      * @param	int		$position	Position (not used yet)
+     * @param	string	$id			Id
+     * @param	string	$idsel		Id sel
+     * @param	string	$classname	Class name
+     * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
-    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0)
+    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
     {
         $array_start = array_slice($this->liste,0,($idafter+1));
-        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position));
+        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
         $array_end   = array_slice($this->liste,($idafter+1));
         $this->liste=array_merge($array_start,$array_new,$array_end);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Remove a menu entry from this->liste
      *
@@ -95,12 +104,15 @@ class Menu
      */
     function remove_last()
     {
-    	if (count($this->liste) > 1) array_pop($this->liste);
+        // phpcs:enable
+        if (count($this->liste) > 1) {
+            array_pop($this->liste);
+        }
     }
 
     /**
      * Return number of visible entries (gray or not)
-     * 
+     *
      *  @return int     Number of visible (gray or not) menu entries
      */
     function getNbOfVisibleMenuEntries()

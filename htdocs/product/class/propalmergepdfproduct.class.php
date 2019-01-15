@@ -22,7 +22,7 @@
  *  \brief      This file is an CRUD class file (Create/Read/Update/Delete)
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 
@@ -31,9 +31,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Propalmergepdfproduct extends CommonObject
 {
-	var $element='propal_merge_pdf_product';			//!< Id that identify managed objects
-	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
-    
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='propal_merge_pdf_product';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='propal_merge_pdf_product';
+
 	var $fk_product;
 	var $file_name;
 	var $fk_user_author;
@@ -41,10 +48,10 @@ class Propalmergepdfproduct extends CommonObject
 	var $datec='';
 	var $tms='';
 	var $lang;
-	
+
 	var $lines=array();
 
-    
+
 
 
     /**
@@ -55,7 +62,6 @@ class Propalmergepdfproduct extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -72,7 +78,7 @@ class Propalmergepdfproduct extends CommonObject
 		$error=0;
 
 		// Clean parameters
-        
+
 		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
 		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
@@ -80,14 +86,14 @@ class Propalmergepdfproduct extends CommonObject
 		if (isset($this->lang)) $this->lang=trim($this->lang);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
 
-        
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_merge_pdf_product(";
-		
+
 		$sql.= "fk_product,";
 		$sql.= "file_name,";
 		if ($conf->global->MAIN_MULTILANGS) {
@@ -97,10 +103,10 @@ class Propalmergepdfproduct extends CommonObject
 		$sql.= "fk_user_mod,";
 		$sql.= "datec";
 
-		
+
         $sql.= ") VALUES (";
-        
-		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->fk_product."'").",";
+
+		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
 		$sql.= " ".(! isset($this->file_name)?'NULL':"'".$this->db->escape($this->file_name)."'").",";
 		if ($conf->global->MAIN_MULTILANGS) {
 			$sql.= " ".(! isset($this->lang)?'NULL':"'".$this->db->escape($this->lang)."'").",";
@@ -109,7 +115,7 @@ class Propalmergepdfproduct extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->idate(dol_now())."'";
 
-        
+
 		$sql.= ")";
 
 		$this->db->begin();
@@ -164,10 +170,10 @@ class Propalmergepdfproduct extends CommonObject
     function fetch($id)
     {
     	global $langs,$conf;
-    	
+
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		
+
 		$sql.= " t.fk_product,";
 		$sql.= " t.file_name,";
 		$sql.= " t.lang,";
@@ -177,7 +183,7 @@ class Propalmergepdfproduct extends CommonObject
 		$sql.= " t.tms,";
 		$sql.= " t.import_key";
 
-		
+
         $sql.= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
         $sql.= " WHERE t.rowid = ".$id;
 
@@ -190,7 +196,7 @@ class Propalmergepdfproduct extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
-                
+
 				$this->fk_product = $obj->fk_product;
 				$this->file_name = $obj->file_name;
 				if ($conf->global->MAIN_MULTILANGS) {
@@ -201,8 +207,6 @@ class Propalmergepdfproduct extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->import_key = $obj->import_key;
-
-                
             }
             $this->db->free($resql);
 
@@ -215,7 +219,8 @@ class Propalmergepdfproduct extends CommonObject
             return -1;
         }
     }
-    
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load object in memory from the database
      *
@@ -225,11 +230,12 @@ class Propalmergepdfproduct extends CommonObject
      */
     function fetch_by_product($product_id, $lang='')
     {
+        // phpcs:enable
     	global $langs,$conf;
-    	
+
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
-    
+
     	$sql.= " t.fk_product,";
     	$sql.= " t.file_name,";
     	$sql.= " t.lang,";
@@ -238,14 +244,14 @@ class Propalmergepdfproduct extends CommonObject
     	$sql.= " t.datec,";
     	$sql.= " t.tms,";
     	$sql.= " t.import_key";
-    
-    
+
+
     	$sql.= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
     	$sql.= " WHERE t.fk_product = ".$product_id;
     	if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
     		$sql.= " AND t.lang = '".$lang."'";
     	}
-    
+
     	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -253,11 +259,11 @@ class Propalmergepdfproduct extends CommonObject
     		if ($this->db->num_rows($resql))
     		{
     			while($obj = $this->db->fetch_object($resql)) {
-    
+
     				$line = new PropalmergepdfproductLine();
-    				
+
 	    			$line->id    = $obj->rowid;
-	    
+
 	    			$line->fk_product = $obj->fk_product;
 	    			$line->file_name = $obj->file_name;
 	    			if ($conf->global->MAIN_MULTILANGS) {
@@ -268,21 +274,17 @@ class Propalmergepdfproduct extends CommonObject
 	    			$line->datec = $this->db->jdate($obj->datec);
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->import_key = $obj->import_key;
-	    			
-	    			
+
+
 	    			if ($conf->global->MAIN_MULTILANGS) {
 	    				$this->lines[$obj->file_name.'_'.$obj->lang]=$line;
 	    			}else {
 	    				$this->lines[$obj->file_name]=$line;
 	    			}
-	    			
-    			
     			}
-    
-    
     		}
     		$this->db->free($resql);
-    
+
     		return 1;
     	}
     	else
@@ -307,21 +309,18 @@ class Propalmergepdfproduct extends CommonObject
 		$error=0;
 
 		// Clean parameters
-        
+
 		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
 		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
 		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
 		if (isset($this->lang)) $this->lang=trim($this->lang);
-		
-
-        
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal_merge_pdf_product SET";
-        
+
 		$sql.= " fk_product=".(isset($this->fk_product)?$this->fk_product:"null").",";
 		$sql.= " file_name=".(isset($this->file_name)?"'".$this->db->escape($this->file_name)."'":"null").",";
 		if ($conf->global->MAIN_MULTILANGS) {
@@ -329,7 +328,7 @@ class Propalmergepdfproduct extends CommonObject
 		}
 		$sql.= " fk_user_mod=".$user->id;
 
-        
+
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -430,7 +429,8 @@ class Propalmergepdfproduct extends CommonObject
 			return 1;
 		}
 	}
-	
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -442,18 +442,19 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	function delete_by_product($user, $product_id, $lang_id='',  $notrigger=0)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
-	
+
 		$this->db->begin();
-	
+
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
-	
+
 				//// Call triggers
 				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
@@ -462,21 +463,21 @@ class Propalmergepdfproduct extends CommonObject
 				//// End call triggers
 			}
 		}
-	
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
 			$sql.= " WHERE fk_product=".$product_id;
-			
+
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
 				$sql.= " AND lang='".$lang_id."'";
 			}
-	
+
 			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
-	
+
 		// Commit or rollback
 		if ($error)
 		{
@@ -494,7 +495,8 @@ class Propalmergepdfproduct extends CommonObject
 			return 1;
 		}
 	}
-	
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -503,18 +505,19 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	function delete_by_file($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
-	
+
 		$this->db->begin();
-	
+
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
-	
+
 				//// Call triggers
 				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
@@ -523,17 +526,17 @@ class Propalmergepdfproduct extends CommonObject
 				//// End call triggers
 			}
 		}
-	
+
 		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
 			$sql.= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
-	
+
 			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
-	
+
 		// Commit or rollback
 		if ($error)
 		{
@@ -617,7 +620,7 @@ class Propalmergepdfproduct extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		
+
 		$this->fk_product='';
 		$this->file_name='';
 		$this->fk_user_author='';
@@ -625,10 +628,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->datec='';
 		$this->tms='';
 		$this->import_key='';
-
-		
 	}
-
 }
 
 /**
@@ -636,18 +636,38 @@ class Propalmergepdfproduct extends CommonObject
  */
 class PropalmergepdfproductLine
 {
-	var $id;
-	
-	var $fk_product;
-	var $file_name;
-	var $lang;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $datec='';
-	var $tms='';
-	var $import_key;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	function __construct() {
-		return 1;
-	}
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	public $file_name;
+	public $lang;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_mod;
+
+	public $datec='';
+	public $tms='';
+	public $import_key;
+
+    /**
+     *  Constructor
+     */
+    function __construct()
+    {
+        return 1;
+    }
 }

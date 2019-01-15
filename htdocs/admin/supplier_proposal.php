@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio         <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry		   <jfefe@aternatik.fr>
@@ -25,25 +25,30 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('supplier_proposal');
+
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='supplier_proposal';
+
+$error=0;
+
 
 /*
  * Actions
  */
-$error=0;
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
 	$maskconstsupplier_proposal=GETPOST('maskconstsupplier_proposal','alpha');
@@ -126,7 +131,7 @@ if ($action == 'set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK')
 
 if ($action == 'set_SUPPLIER_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT');	// No alpha here, we want exact string
+	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT','none');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -156,35 +161,6 @@ if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions')
-{
-	$post_size=count($_POST);
-
-	$db->begin();
-
-	for($i=0;$i < $post_size;$i++)
-	{
-		if (array_key_exists('param'.$i,$_POST))
-		{
-			$param=GETPOST("param".$i,'alpha');
-			$value=GETPOST("value".$i,'alpha');
-			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-			if (! $res > 0) $error++;
-		}
-	}
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
 }
 
 // Activate a model
@@ -239,7 +215,7 @@ $form=new Form($db);
 
 //if ($mesg) print $mesg;
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
 
 $head = supplier_proposal_admin_prepare_head();
@@ -270,11 +246,10 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 21) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 22) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
@@ -288,8 +263,8 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -389,7 +364,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -426,8 +400,7 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
-	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
@@ -446,7 +419,7 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -458,7 +431,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -515,7 +488,6 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
@@ -523,12 +495,17 @@ print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-$var=! $var;
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_PROPOSAL_FREE_TEXT">';
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnSupplierProposal").' '.img_info($langs->trans("AddCRIfTooLong")).'</br>';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnSupplierProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='SUPPLIER_PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -537,7 +514,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';
@@ -545,12 +522,13 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-$var=!$var;
+
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK\">";
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("WatermarkOnDraftSupplierProposal").'</td><td>';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print '</td><td>';
 print '<input size="50" class="flat" type="text" name="SUPPLIER_PROPOSAL_DRAFT_WATERMARK" value="'.$conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -559,8 +537,8 @@ print '</form>';
 
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
     if (! empty($conf->use_javascript_ajax))
     {
@@ -581,8 +559,8 @@ if ($conf->banque->enabled)
 }
 else
 {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
@@ -601,9 +579,10 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
+print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
+// End of page
 llxFooter();
 $db->close();
 

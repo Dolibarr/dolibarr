@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
-$langs->load("members");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
 
 
 /*
@@ -141,7 +141,7 @@ if (! $mesg)
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -167,6 +167,7 @@ print '<br><br>';
 $data = $stats->getAllByYear();
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -176,15 +177,13 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
     $year = $val['year'];
     while ($oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
-        $var=!$var;
-        print '<tr '.$bc[$var].' height="24">';
+        print '<tr class="oddeven" height="24">';
         print '<td align="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
@@ -195,8 +194,7 @@ foreach ($data as $val)
         print '<td align="right">0</td>';
         print '</tr>';
     }
-    $var=!$var;
-    print '<tr '.$bc[$var].' height="24">';
+    print '<tr class="oddeven" height="24">';
     print '<td align="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;
@@ -210,13 +208,14 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -232,7 +231,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

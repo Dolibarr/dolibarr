@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +23,11 @@
  *	\brief      Page to preview votes of a survey
  */
 
-$res=0;
-require_once('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Security check
@@ -35,7 +35,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 
 // Init vars
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $numsondage= GETPOST("id");
 
 $object=new Opensurveysondage($db);
@@ -389,12 +389,12 @@ for ($i = 0; $i < $nbcolonnes; $i++)
  * View
  */
 
+$form=new Form($db);
+
 if ($object->fk_user_creat) {
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
-
-$form=new Form($db);
 
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0)
@@ -426,23 +426,23 @@ print '<form name="formulaire4" action="#" method="POST">'."\n";
 
 $head = opensurvey_prepare_head($object);
 
-print dol_get_fiche_head($head,'preview',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
+dol_fiche_head($head,'preview',$langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
 
+$morehtmlref = '';
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtmlref);
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
 
-$linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-// Ref
-print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
-print '</td>';
-print '</tr>';
-
 // Type
 $type=($object->format=="A")?'classic':'date';
-print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
+print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="2">';
 print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate").'</td></tr>';
 
@@ -459,7 +459,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
+if ($action == 'edit') print $form->selectDate($expiredate?$expiredate:$object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
@@ -492,12 +492,13 @@ if ($action != 'edit')
 				});
 		    </script>';
 	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
-
 }
 
 print '</td></tr>';
 
 print '</table>';
+
+print '</div>';
 
 dol_fiche_end();
 
@@ -518,7 +519,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
-	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage','alpha').'">';
 
 	print '<div class="center">'."\n";
 	print "<br><br>"."\n";
@@ -598,7 +599,7 @@ if (GETPOST('ajoutsujet'))
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<br />'.$langs->trans("PollAdminDesc", img_picto('','delete'), $langs->trans("Add")).'<br>';
+	print '<br>'.$langs->trans("PollAdminDesc", img_picto('','delete'), $langs->trans("Add")).'<br>';
 }
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
@@ -1045,22 +1046,24 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 
-$toutsujet = explode(",", $object->sujet);
+$toutsujet = explode(",", $object->sujet);  // With old versions, this field was not set
 
 $compteursujet = 0;
 $meilleursujet = '';
-for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
+for ($i = 0; $i < $nbcolonnes; $i++)
+{
+	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne)
+	{
 		$meilleursujet.=", ";
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
-
-			if (strpos($toutsujet[$i], '@') !== false) {
+			//var_dump($toutsujet);
+            if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
-				$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ' ('.dol_print_date($toutsujetdate[0],'%A').')' . ' - ' . $toutsujetdate[1];
+				$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0],'%A').')' : '') . ' - ' . $toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ' ('.dol_print_date($toutsujet[$i],'%A').')';
+				$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i],'%A').')' : '');
 			}
 		}
 		else
@@ -1072,8 +1075,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$compteursujet++;
 	}
 }
-
-$meilleursujet = substr("$meilleursujet", 1);
+$meilleursujet = substr($meilleursujet, 1);
 $meilleursujet = str_replace("°", "'", $meilleursujet);
 
 // Show best choice
@@ -1083,9 +1085,9 @@ if ($nbofcheckbox >= 2)
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b> " . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> " . $langs->trans('TheBestChoices') . ": <b>".$meilleursujet." </b>" . $langs->trans("with") . " <b>".$meilleurecolonne."</b> " . $vote_str . ".\n";
 	}
 	print '<br></p><br>'."\n";
 }

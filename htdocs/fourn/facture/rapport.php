@@ -31,7 +31,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $socid=0;
 if ($user->societe_id > 0)
@@ -56,10 +56,10 @@ if ($action == 'builddoc')
     $rap = new pdf_paiement_fourn($db);
 
     $outputlangs = $langs;
-    if (GETPOST('lang_id'))
+    if (GETPOST('lang_id','aZ09'))
     {
         $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang(GETPOST('lang_id'));
+        $outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
     }
 
     // We save charset_output to restore it because write_file can change it if needed for
@@ -85,9 +85,10 @@ if ($action == 'builddoc')
 
 $formother=new FormOther($db);
 
-llxHeader();
-
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
+
+llxHeader('', $titre);
+
 print load_fiche_titre($titre,'','title_accountancy.png');
 
 // Formulaire de generation
@@ -145,17 +146,16 @@ if ($year)
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
-        $var=true;
+
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
             {
                 if (preg_match('/^supplier_payment/i',$file))
                 {
-                    $var=!$var;
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print "<tr ".$bc[$var].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
                 }
@@ -166,6 +166,6 @@ if ($year)
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

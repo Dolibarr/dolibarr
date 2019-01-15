@@ -20,12 +20,12 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
-$langs->load("admin");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -61,7 +61,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -69,12 +69,12 @@ $establishmenttmp=new Establishment($db);
 dol_htmloutput_mesg($mesg);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
 $head = hrm_admin_prepare_head();
-dol_fiche_head($head, 'establishments', $langs->trans("HRM"), 0, "user");
+dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
@@ -90,15 +90,13 @@ if ($result)
 
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Address"),$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zipcode"),$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Address",$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Zipcode",$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
-
-	$var=true;
 
 	if ($num > 0)
     {
@@ -107,30 +105,29 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
             $obj = $db->fetch_object($result);
-            
+
 			$establishmentstatic->id=$obj->rowid;
 			$establishmentstatic->name=$obj->name;
 			$establishmentstatic->status=$obj->status;
-			
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+
+
+			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
-			print $establishmentstatic->getLibStatus(5);
+			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";
 
             $i++;
         }
-
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
 	print '</table>';
@@ -147,5 +144,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

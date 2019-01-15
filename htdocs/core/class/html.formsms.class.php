@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
@@ -32,31 +33,42 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormSms
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $fromname;
-    var $fromsms;
-    var $replytoname;
-    var $replytomail;
-    var $toname;
-    var $tomail;
+    public $fromname;
+    public $fromsms;
+    public $replytoname;
+    public $replytomail;
+    public $toname;
+    public $tomail;
 
-    var $withsubstit;			// Show substitution array
-    var $withfrom;
-    var $withto;
-    var $withtopic;
-    var $withbody;
+    public $withsubstit;			// Show substitution array
+    public $withfrom;
+    public $withto;
+    public $withtopic;
+    public $withbody;
 
-    var $withfromreadonly;
-    var $withreplytoreadonly;
-    var $withtoreadonly;
-    var $withtopicreadonly;
-    var $withcancel;
+    public $withfromreadonly;
+    public $withreplytoreadonly;
+    public $withtoreadonly;
+    public $withtopicreadonly;
+    public $withcancel;
 
-    var $substit=array();
-    var $param=array();
+    public $substit=array();
+    public $param=array();
 
-    var $error;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
 
 
     /**
@@ -78,26 +90,25 @@ class FormSms
         $this->withtoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withbodyreadonly=0;
-
-        return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Show the form to input an sms.
      *
-     *	@param	string	$morecss        Class on first column td
-     *  @param  int     $showform       Show form tags and submit button (recommanded is to use with value 0)
+     *	@param	string	$morecss Class on first column td
+     *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
     function show_form($morecss='titlefield', $showform=1)
     {
+     // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("sms");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'sms'));
 
         $soc=new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
@@ -121,7 +132,7 @@ function limitChars(textarea, limit, infodiv)
 </script>';
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
-        
+
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         foreach ($this->param as $key=>$value)
         {
@@ -130,7 +141,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if ($this->withsubstit)
+        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";
@@ -147,7 +158,7 @@ function limitChars(textarea, limit, infodiv)
         {
             if ($this->withfromreadonly)
             {
-                print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom");
+                print '<tr><td class="titlefield '.$morecss.'">'.$langs->trans("SmsFrom");
                 print '<input type="hidden" name="fromsms" value="'.$this->fromsms.'">';
                 print "</td><td>";
                 if ($this->fromtype == 'user')
@@ -205,8 +216,16 @@ function limitChars(textarea, limit, infodiv)
                     try
                     {
                         $classname=ucfirst($classfile);
-                        $sms = new $classname($this->db);
-                        $resultsender = $sms->SmsSenderList();
+                        if (class_exists($classname))
+                        {
+                        	$sms = new $classname($this->db);
+                        	$resultsender = $sms->SmsSenderList();
+                        }
+                        else
+                        {
+                        	$sms = new stdClass();
+                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        }
                     }
                     catch(Exception $e)
                     {
@@ -223,7 +242,7 @@ function limitChars(textarea, limit, infodiv)
 
                 if (is_array($resultsender) && count($resultsender) > 0)
                 {
-                    print '<select name="fromsms" id="valid" class="flat">';
+                    print '<select name="fromsms" id="fromsms" class="flat">';
                     foreach($resultsender as $obj)
                     {
                         print '<option value="'.$obj->number.'">'.$obj->number.'</option>';
@@ -244,7 +263,7 @@ function limitChars(textarea, limit, infodiv)
         // To (target)
         if ($this->withto || is_array($this->withto))
         {
-            print '<tr><td width="180">';
+            print '<tr><td>';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
             $moretext='';
             print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
@@ -259,7 +278,7 @@ function limitChars(textarea, limit, infodiv)
                 if (! empty($this->withtosocid) && $this->withtosocid > 0)
                 {
                     $liste=array();
-                    foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value)
                     {
                         $liste[$key]=$value;
                     }
@@ -285,7 +304,7 @@ function limitChars(textarea, limit, infodiv)
             $defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
             print "<tr>";
-            print "<td width=\"180\" valign=\"top\">".$langs->trans("SmsText")."</td>";
+            print '<td class="tdtop">'.$langs->trans("SmsText")."</td>";
             print "<td>";
             if ($this->withbodyreadonly)
             {
@@ -306,7 +325,7 @@ function limitChars(textarea, limit, infodiv)
             <td> <input name="deferred" id="deferred" size="4" value="0"></td></tr>
 
            <tr><td>'.$langs->trans("Priority").' :</td><td>
-           <select name="priority" id="valid" class="flat">
+           <select name="priority" id="priority" class="flat">
            <option value="0">high</option>
            <option value="1">medium</option>
            <option value="2" selected>low</option>
@@ -314,17 +333,23 @@ function limitChars(textarea, limit, infodiv)
            </select></td></tr>
 
            <tr><td>'.$langs->trans("Type").' :</td><td>
-           <select name="class" id="valid" class="flat">
+           <select name="class" id="class" class="flat">
            <option value="0">Flash</option>
            <option value="1" selected>Standard</option>
            <option value="2">SIM</option>
            <option value="3">ToolKit</option>
+           </select></td></tr>
+
+           <tr><td>'.$langs->trans("DisableStopIfSupported").' :</td><td>
+           <select name="disablestop" id="disablestop" class="flat">
+           <option value="0" selected>No</option>
+           <option value="1" selected>Yes</option>
            </select></td></tr>';
 
         print "</table>\n";
 
-        
-        if ($showform) 
+
+        if ($showform)
         {
             print '<div class="center">';
             print '<input class="button" type="submit" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
@@ -334,12 +359,10 @@ function limitChars(textarea, limit, infodiv)
                 print '<input class="button" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
             }
             print '</div>';
-    
+
             print "</form>\n";
         }
-        
+
         print "<!-- End form SMS -->\n";
     }
-
 }
-

@@ -22,6 +22,8 @@
  *		\brief		File of class to manage subscriptions of foundation members
  */
 
+//namespace DolibarrMember;
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
@@ -30,17 +32,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Subscription extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='subscription';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='subscription';
-    public $picto='payment';
-    
-	var $datec;				// Date creation
-	var $datem;				// Date modification
-	var $dateh;				// Subscription start date (date subscription)
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-	var $amount;
-	var $fk_bank;
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
+
+	public $datec;				// Date creation
+	public $datem;				// Date modification
+	public $dateh;				// Subscription start date (date subscription)
+	public $datef;				// Subscription end date
+
+	/**
+     * @var int ID
+     */
+	public $fk_adherent;
+
+	public $amount;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
 
 
 	/**
@@ -57,12 +79,15 @@ class Subscription extends CommonObject
 	/**
 	 *	Function who permitted cretaion of the subscription
 	 *
-	 *	@param	int		$userid		userid de celui qui insere
-	 *	@return	int					<0 if KO, Id subscription created if OK
+	 *	@param	User	$user			User that create
+	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
+	 *	@return	int						<0 if KO, Id subscription created if OK
 	 */
-	function create($userid)
+	function create($user, $notrigger = false)
 	{
 		global $langs;
+
+		$error = 0;
 
 		$now=dol_now();
 
@@ -72,25 +97,44 @@ class Subscription extends CommonObject
 			$this->error=$langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
+		if (empty($this->datec)) $this->datec = $now;
+
+
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($now)."',";
+        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
-		$sql.= " '".$this->db->escape($this->note)."')";
+		$sql.= " '".$this->db->escape($this->note_public?$this->note_public:$this->note)."')";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-		    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."subscription");
-		    return $this->id;
+		if (! $resql) {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
 		}
-		else
+
+		if (! $error)
 		{
-			$this->error=$this->db->lasterror();
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return $this->id;
 		}
 	}
 
@@ -152,8 +196,10 @@ class Subscription extends CommonObject
 	 *	@param 	int		$notrigger		0=Disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update($user,$notrigger=0)
+	function update($user, $notrigger=0)
 	{
+		$error = 0;
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
@@ -170,18 +216,31 @@ class Subscription extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$member=new Adherent($this->db);
 			$result=$member->fetch($this->fk_adherent);
 			$result=$member->update_end_date($user);
 
-			$this->db->commit();
-			return 1;
+			if (! $error && ! $notrigger) {
+				// Call triggers
+				$result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY',$user);
+				if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+				// End call triggers
+			}
 		}
 		else
 		{
-			$this->db->rollback();
+			$error++;
 			$this->error=$this->db->lasterror();
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return $this->id;
 		}
 	}
 
@@ -189,66 +248,88 @@ class Subscription extends CommonObject
 	 *	Delete a subscription
 	 *
 	 *	@param	User	$user		User that delete
+	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
 	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=false)
 	{
-		$accountline=new AccountLine($this->db);
+		$error = 0;
 
 		// It subscription is linked to a bank transaction, we get it
 		if ($this->fk_bank > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$accountline=new AccountLine($this->db);
 			$result=$accountline->fetch($this->fk_bank);
 		}
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num=$this->db->affected_rows($resql);
-			if ($num)
-			{
-				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-				$member=new Adherent($this->db);
-				$result=$member->fetch($this->fk_adherent);
-				$result=$member->update_end_date($user);
+		if (! $error) {
+			if (! $notrigger) {
+				// Call triggers
+				$result=$this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
+				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
+				// End call triggers
+			}
+		}
 
-				if (is_object($accountline) && $accountline->id > 0)						// If we found bank account line (this means this->fk_bank defined)
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$num=$this->db->affected_rows($resql);
+				if ($num)
 				{
-					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
-					if ($result > 0)
+					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+					$member=new Adherent($this->db);
+					$result=$member->fetch($this->fk_adherent);
+					$result=$member->update_end_date($user);
+
+					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0)	// If we found bank account line (this means this->fk_bank defined)
 					{
-						$this->db->commit();
-						return 1;
+						$result=$accountline->delete($user);		// Return false if refused because line is conciliated
+						if ($result > 0)
+						{
+							$this->db->commit();
+							return 1;
+						}
+						else
+						{
+							$this->error=$accountline->error;
+							$this->db->rollback();
+							return -1;
+						}
 					}
 					else
 					{
-						$this->error=$accountline->error;
-						$this->db->rollback();
-						return -1;
+						$this->db->commit();
+						return 1;
 					}
 				}
 				else
 				{
 					$this->db->commit();
-					return 1;
+					return 0;
 				}
 			}
 			else
 			{
-				$this->db->commit();
-				return 0;
+				$error++;
+				$this->error=$this->db->lasterror();
 			}
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
+
+		// Commit or rollback
+		if ($error) {
 			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
@@ -256,24 +337,42 @@ class Subscription extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int  	$notooltip					1=Disable tooltip
+	 *	@param	string	$option						Page for link ('', 'nolink', ...)
+	 *  @param  string  $morecss        			Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0, $notooltip=0, $option='', $morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs;
 
 		$result='';
+
+		$langs->load("members");
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
+		$linkend = '</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -288,7 +387,8 @@ class Subscription extends CommonObject
 	{
 	    return '';
 	}
-	
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -297,11 +397,12 @@ class Subscription extends CommonObject
 	 */
 	function LibStatut($statut)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load("members");
 	    return '';
 	}
-	
+
     /**
      *  Load information of the subscription object
 	 *
@@ -328,7 +429,6 @@ class Subscription extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

@@ -72,6 +72,8 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -147,7 +149,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
+        $_GET["param5"]="a_1-b";
 
+        // Test int
         $result=GETPOST('id','int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
@@ -160,6 +164,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,333);
 
+        // Test alpha
         $result=GETPOST("param2",'alpha');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,$_GET["param2"]);
@@ -171,6 +176,27 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         $result=GETPOST("param4",'alpha');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
+
+        // Test aZ09
+        $result=GETPOST("param1",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,$_GET["param1"]);
+
+        $result=GETPOST("param2",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+
+        $result=GETPOST("param3",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+
+        $result=GETPOST("param4",'aZ09');  // Must return '' as there is a forbidden char ../
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,'');
+
+        $result=GETPOST("param5",'aZ09');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result,$_GET["param5"]);
 
         return $result;
     }
@@ -210,12 +236,17 @@ class SecurityTest extends PHPUnit_Framework_TestCase
      */
     public function testEncodeDecode()
     {
-        $stringtotest="This is a string to test encode/decode";
+        $stringtotest="This is a string to test encode/decode. This is a string to test encode/decode. This is a string to test encode/decode.";
 
         $encodedstring=dol_encode($stringtotest);
         $decodedstring=dol_decode($encodedstring);
         print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
-        $this->assertEquals($stringtotest,$decodedstring);
+        $this->assertEquals($stringtotest,$decodedstring, 'Use dol_encode/decode with no parameter');
+
+        $encodedstring=dol_encode($stringtotest, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $decodedstring=dol_decode($encodedstring, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
+        $this->assertEquals($stringtotest,$decodedstring, 'Use dol_encode/decode with a key parameter');
 
         return 0;
     }
@@ -229,19 +260,23 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     {
         global $conf;
 
-        $genpass1=getRandomPassword(true);    // Should be a string return by dol_hash (if no option set, will be md5)
+        $genpass1=getRandomPassword(true);				// Should be a string return by dol_hash (if no option set, will be md5)
         print __METHOD__." genpass1=".$genpass1."\n";
-        $this->assertEquals(strlen($genpass1),32);
+        $this->assertEquals(strlen($genpass1), 32);
+
+        $genpass1=getRandomPassword(true, array('I'));	// Should be a string return by dol_hash (if no option set, will be md5)
+        print __METHOD__." genpass1=".$genpass1."\n";
+        $this->assertEquals(strlen($genpass1), 32);
 
         $conf->global->USER_PASSWORD_GENERATED='None';
-        $genpass2=getRandomPassword(false);  // Should be an empty string
+        $genpass2=getRandomPassword(false);				// Should return an empty string
         print __METHOD__." genpass2=".$genpass2."\n";
-        $this->assertEquals($genpass2,'');
+        $this->assertEquals($genpass2, '');
 
         $conf->global->USER_PASSWORD_GENERATED='Standard';
-        $genpass3=getRandomPassword(false);
+        $genpass3=getRandomPassword(false);				// Should return a password of 8 chars
         print __METHOD__." genpass3=".$genpass3."\n";
-        $this->assertEquals(strlen($genpass3),8);
+        $this->assertEquals(strlen($genpass3), 8);
 
         return 0;
     }
@@ -265,5 +300,4 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$result=restrictedArea($user,'societe');
 		$this->assertEquals(1,$result);
     }
-
 }

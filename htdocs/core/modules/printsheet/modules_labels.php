@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +30,27 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Parent class of document generator for address sheet.
+ *  Parent class of document generator for address sheet.
  */
 class ModelePDFLabels
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param  DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='members_labels';
@@ -59,6 +64,7 @@ class ModelePDFLabels
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create a document onto disk according to template module.
  *
@@ -73,6 +79,7 @@ class ModelePDFLabels
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel', $filename='tmp_address_sheet.pdf')
 {
+    // phpcs:enable
 	global $conf,$langs;
 	$langs->load("members");
 
@@ -111,7 +118,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	else $srctemplatepath=$code;
 
 	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
@@ -161,7 +168,4 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-
-
 }
-

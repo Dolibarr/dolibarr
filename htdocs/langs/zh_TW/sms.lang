@@ -48,4 +48,4 @@ SmsInfoNumero= （國際格式如：33899701761）
 DelayBeforeSending=延遲發送前（分鐘）
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=沒有目標。檢查您的SMS提供商的設置。
-
+DisableStopIfSupported=Disable STOP message (if supported)

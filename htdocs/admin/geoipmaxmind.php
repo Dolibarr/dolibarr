@@ -24,16 +24,17 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 
 // Security check
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("admin");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","errors"));
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 /*
  * Actions
@@ -75,7 +76,7 @@ $form=new Form($db);
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
 print '<br>';
 
@@ -94,7 +95,6 @@ else
 }
 
 // Mode
-$var=true;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
@@ -105,8 +105,7 @@ print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
+print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
 if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';
@@ -152,9 +151,28 @@ if ($geoip)
 	if ($result) print $result;
 	else print $langs->trans("Error");
 	*/
+	//var_dump($_SERVER);
+	$ip = getUserRemoteIP();
+	//$ip='91.161.249.43';
+	$isip=is_ip($ip);
+	if ($isip == 1)
+	{
+		print '<br>'.$ip.' -> ';
+		$result=dol_print_ip($ip,1);
+		if ($result) print $result;
+		else print $langs->trans("Error");
+	}
+	else
+	{
+		print '<br>'.$ip.' -> ';
+		$result=dol_print_ip($ip,1);
+		if ($result) print $result;
+		else print $langs->trans("NotAPublicIp");
+	}
+
 	$geoip->close();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

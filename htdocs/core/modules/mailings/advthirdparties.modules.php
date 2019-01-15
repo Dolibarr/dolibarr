@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -32,7 +32,11 @@ class mailing_advthirdparties extends MailingTargets
 
 	var $require_module=array("none");	// This module should not be displayed as Selector in mailling
 	var $picto='company';
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -42,12 +46,11 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	function __construct($db)
 	{
-		global $conf;
-
 		$this->db=$db;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -59,6 +62,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid,true).' contactid='.var_export($contactid,true));
@@ -71,7 +75,7 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
-				$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
 				$sql.= " ORDER BY email";
 
@@ -100,7 +104,7 @@ class mailing_advthirdparties extends MailingTargets
     								'source_url' => $this->url($obj->id,'thirdparty'),
     								'source_id' => $obj->id,
     								'source_type' => 'thirdparty'
-    						);
+    							);
     						}
     					}
 
@@ -116,13 +120,13 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-		if  (($type_of_target==1) || ($type_of_target==2)) {
+		if  (($type_of_target==1) || ($type_of_target==2) || ($type_of_target==4)) {
 			// Select the third parties from category
 			if (count($socid)>0 || count($contactid)>0)
 			{
 				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE socp.entity IN (".getEntity('socpeople').")";
 				if (count($contactid)>0) {
 					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
 				}
@@ -211,7 +215,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -273,7 +277,6 @@ class mailing_advthirdparties extends MailingTargets
 
 		$s.='</select>';
 		return $s;
-
 	}
 
 
@@ -289,12 +292,11 @@ class mailing_advthirdparties extends MailingTargets
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0);
+			return $companystatic->getNomUrl(0, '', 0, 1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
-
 }

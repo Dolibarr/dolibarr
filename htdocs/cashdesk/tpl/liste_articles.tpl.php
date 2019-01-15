@@ -17,12 +17,19 @@
  *
  */
 
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 ?>
 
@@ -53,11 +60,9 @@ else
         if ( $tab[$i]['remise_percent'] > 0 ) {
 
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
-
         } else {
 
             $remise_percent = '';
-
         }
 
         $remise = $tab[$i]['remise'];

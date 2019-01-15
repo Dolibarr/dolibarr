@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,30 +27,31 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
+// Load translation files required by the page
 $langs->load("stocks");
 
 // Security check
 $result=restrictedArea($user,'stock');
 
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref","alpha");
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
-$sall=GETPOST("sall","alpha");
 $search_status=GETPOST("search_status","int");
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-if (! $sortfield) $sortfield="e.label";
+if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
-if ($page < 0) $page = 0;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'e.label'=>"Ref",
+    'e.ref'=>"Ref",
     'e.lieu'=>"LocationSummary",
     'e.description'=>"Description",
     'e.address'=>"Address",
@@ -65,7 +66,7 @@ $fieldstosearchall = array(
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
     $search_ref="";
     $sall="";
@@ -82,17 +83,17 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 $form=new Form($db);
 $warehouse=new Entrepot($db);
 
-$sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
+$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
 $sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-if ($search_ref) $sql.= natural_search("e.label", $search_ref);			// ref
+$sql.= " WHERE e.entity IN (".getEntity('stock').")";
+if ($search_ref) $sql.= natural_search("e.ref", $search_ref);			// ref
 if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
 if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-$sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
+$sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
@@ -125,42 +126,41 @@ if ($result)
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_ref)	$param.="&search_ref=".$search_ref;
-	if ($search_label)	$param.="&search_label=".$search_label;
-	if ($search_status)	$param.="&search_status=".$search_status;
-	if ($sall)			$param.="&sall=".$sall;
-	
+	if ($search_ref)	$param.="&search_ref=".urlencode($search_ref);
+	if ($search_label)	$param.="&search_label=".urlencode($search_label);
+	if ($search_status)	$param.="&search_status=".urlencode($search_status);
+	if ($sall)			$param.="&sall=".urlencode($sall);
+
+	$newcardbutton='';
+	if ($user->rights->stock->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuNewWarehouse').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
+
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, '', '', $limit);
-	
+	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, $newcardbutton, '', $limit);
+
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
-	
+
 	$moreforfilter='';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "estimatedvalue",'',$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
 	// Lignes des champs de filtre
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
@@ -178,11 +178,21 @@ if ($result)
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 
 	print '</tr>';
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"], "e.ref","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("LocationSummary",$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"], "e.statut",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
 
 	if ($num)
 	{
@@ -191,13 +201,14 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($result);
-            
+
 			$warehouse->id = $objp->rowid;
-            $warehouse->label = $objp->ref;
+			$warehouse->ref = $objp->ref;
+			$warehouse->label = $objp->ref;
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
-            
-            print "<tr ".$bc[$var].">";
+
+            print '<tr class="oddeven">';
             print '<td>' . $warehouse->getNomUrl(1) . '</td>';
             // Location
             print '<td>'.$objp->lieu.'</td>';
@@ -224,7 +235,7 @@ if ($result)
 
             print "</tr>\n";
 
-            $var=!$var;
+
             $i++;
 		}
 
@@ -252,7 +263,7 @@ if ($result)
 
 	print "</table>";
     print "</table>";
-    
+
 	print '</form>';
 }
 else
@@ -260,7 +271,6 @@ else
   dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

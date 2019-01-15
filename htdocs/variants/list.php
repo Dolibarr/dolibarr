@@ -18,8 +18,8 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id');
-$action = GETPOST('action');
+$id = GETPOST('id','int');
+$action = GETPOST('action','aZ09');
 $object = new ProductAttribute($db);
 
 
@@ -50,14 +50,21 @@ if ($action == 'up') {
 
 $langs->load('products');
 
-$var = false;
 $title = $langs->trans($langs->trans('ProductAttributes'));
 
 $variants = $object->fetchAll();
 
 llxHeader('', $title);
 
-print_fiche_titre($title);
+$newcardbutton='';
+if ($user->rights->produit->creer)
+{
+	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle">'.$langs->trans('Create').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
+print load_fiche_titre($title, $newcardbutton, 'title_products');
 
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 ?>
@@ -81,14 +88,14 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 				onDrop: function(table, row) {
 					console.log('drop');
 					var reloadpage = "<?php echo $forcereloadpage; ?>";
-					var roworder = cleanSerialize($("#tablelines").tableDnDSerialize());
+					var roworder = cleanSerialize(decodeURI($("#tablelines").tableDnDSerialize()));
 					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
 							roworder: roworder
 						},
 						function() {
 							if (reloadpage == 1) {
-								location.href = '<?php echo $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']; ?>';
+								location.href = '<?php echo dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']); ?>';
 							} else {
 								$("#tablelines .drag").each(
 									function( intIndex ) {
@@ -100,7 +107,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 						});
 				},
 				onDragClass: "dragClass",
-				dragHandle: "tdlineupdown"
+				dragHandle: "td.tdlineupdown"
 			});
 		});
 	</script>
@@ -114,7 +121,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			<th class="liste_titre" colspan="2"></th>
 		</tr>
 		<?php foreach ($variants as $key => $attribute): ?>
-		<tr id="row-<?php echo $attribute->id ?>" <?php echo $bcdd[$var] ?>>
+		<tr id="row-<?php echo $attribute->id ?>" class="drag drop oddeven">
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->ref) ?></a></td>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->label) ?></a></td>
 			<td align="right"><?php echo $attribute->countChildValues() ?></td>
@@ -123,7 +130,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 				<a href="card.php?id=<?php echo $attribute->id ?>&action=edit"><?php echo img_edit() ?></a>
 				<a href="card.php?id=<?php echo $attribute->id ?>&action=delete"><?php echo img_delete() ?></a>
 			</td>
-			<td align="center" class="linecolmove tdlineupdown">
+			<td class="center linecolmove tdlineupdown">
 				<?php if ($key > 0): ?>
 				<a class="lineupdown"
 				   href="<?php echo $_SERVER['PHP_SELF'] ?>?action=up&amp;rowid=<?php echo $attribute->id ?>"><?php echo img_up('default', 0, 'imgupforline'); ?></a>
@@ -135,17 +142,13 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			</td>
 		</tr>
 		<?php
-			$var = !$var;
 			endforeach
 		?>
 
 	</table>
 
-	<div class="tabsAction">
-		<div class="inline-block divButAction">
-		<a href="create.php" class="butAction"><?php echo $langs->trans('Create') ?></a>
-		</div>
-	</div>
 <?php
 
+// End of page
 llxFooter();
+$db->close();

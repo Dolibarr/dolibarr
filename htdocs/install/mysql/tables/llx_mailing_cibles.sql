@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2011-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2011-2012	Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ create table llx_mailing_cibles
   other				varchar(255) NULL,
   tag				varchar(128) NULL,
   statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
-  source_url		varchar(160),
+  source_url		varchar(255),
   source_id			integer,
   source_type		varchar(16),
   date_envoi		datetime,

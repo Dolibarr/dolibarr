@@ -2,7 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -42,13 +41,13 @@ $result = restrictedArea($user, 'expensereport','','');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.date_create";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 
 
 /*
@@ -70,12 +69,16 @@ $label=$somme=$nb=array();
 $totalnb=$totalsum=0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
-$sql.= " WHERE de.fk_expensereport = d.rowid AND de.fk_c_type_fees = tf.id";
+$sql.= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+    $childids = $user->getAllChildIds();
+    $childids[]=$user->id;
+    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
+
 $sql.= " GROUP BY tf.code, tf.label";
 
 $result = $db->query($sql);
@@ -108,20 +111,29 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$label,'data'=>(isset($somme[$code])?(int) $somme[$code]:0));
+    $dataseries[]=array($label, (isset($somme[$code])?(int) $somme[$code]:0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr '.$bc[0].'><td align="center" colspan="4">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',320,180,$data,1,'pie',0,'',0);
+    print '<tr><td align="center" colspan="4">';
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($totalnb?0:1);
+
     print '</td></tr>';
 }
 
@@ -146,8 +158,15 @@ $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.pho
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND d.fk_user_author IN ('.join(',',$childids).')';
-$sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
+// RESTRICT RIGHTS
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
+    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
+{
+    $childids = $user->getAllChildIds();
+    $childids[]=$user->id;
+    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+}
+$sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
 $sql.= $db->order($sortfield,$sortorder);
@@ -163,11 +182,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-    print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-    print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-    print '<td>&nbsp;</td>';
+    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+    print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+    print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+    print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+    print '<th>&nbsp;</th>';
     print '</tr>';
     if ($num)
     {
@@ -186,7 +205,7 @@ if ($result)
             $userstatic->login=$obj->login;
             $userstatic->statut=$obj->statut;
             $userstatic->photo=$obj->photo;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -197,14 +216,13 @@ if ($result)
 			print $expensereportstatic->LibStatut($obj->fk_status,3);
             print '</td>';
             print '</tr>';
-            $var=!$var;
+
             $i++;
         }
-
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }
@@ -212,6 +230,6 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

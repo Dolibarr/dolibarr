@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PR';
-	var $error='';
-	var $nom = "Marbre";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PR';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Marbre';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Marbre';
 
 
     /**
@@ -75,7 +95,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -112,8 +132,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql.= " AND entity IN (".getEntity('proposalnumber', 1, $propal).")";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -149,5 +169,4 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

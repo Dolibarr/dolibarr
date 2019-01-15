@@ -24,17 +24,14 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
-
 
 // Security check
 $result=restrictedArea($user,'export');
 
-
-
 $export=new Export($db);
 $export->load_arrays($user);
-
 
 /*
  * View
@@ -47,28 +44,28 @@ llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Export
 print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
-print $langs->trans("FormatedExportDesc2").' ';
-print $langs->trans("FormatedExportDesc3").'<br>';
+//print $langs->trans("FormatedExportDesc2").' ';
+//print $langs->trans("FormatedExportDesc3").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List export set
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$var=true;
 if (count($export->array_export_code))
 {
 	foreach ($export->array_export_code as $key => $value)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>';
+
+		print '<tr class="oddeven"><td>';
 		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 		print $export->array_export_module[$key]->getName();
 		print '</td><td>';
@@ -89,17 +86,18 @@ else
 }
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($export->array_export_code))
 {
 	if ($user->rights->export->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'</a>';
+		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
+		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	/*
 	 print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
@@ -110,11 +108,10 @@ if (count($export->array_export_code))
 print '</div>';
 print '<br>';
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
-// List of available export format
-$var=true;
+// List of available export formats
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -126,7 +123,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model=new ModeleExports($db);
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
-$var=true;
 foreach($liste as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/',$liste[$key]))
@@ -134,8 +130,7 @@ foreach($liste as $key => $val)
     	$liste[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$liste[$key]);
     }
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	$label=$liste[$key];
@@ -148,9 +143,8 @@ foreach($liste as $key => $val)
 print '</table>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

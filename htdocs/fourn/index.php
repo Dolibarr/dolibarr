@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("suppliers");
-$langs->load("orders");
-$langs->load("companies");
+$langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
@@ -57,7 +55,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Orders
-$commande = new CommandeFournisseur($db);
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -76,17 +73,15 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
-	$var=True;
 
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
-		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
+		print '<tr class="oddeven">';
+		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -129,12 +124,11 @@ if (! empty($conf->fournisseur->enabled))
 			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
 
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td  class="nowrap">';
+
+				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);
@@ -151,7 +145,7 @@ if (! empty($conf->fournisseur->enabled))
 			}
 			if ($total>0)
 			{
-				$var=!$var;
+
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
@@ -186,12 +180,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
-			$var = True;
+
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td class="nowrap">';
+
+				print '<tr class="oddeven"><td class="nowrap">';
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -240,7 +234,7 @@ $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.fournisseur = 1";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY s.tms DESC";
@@ -259,13 +253,9 @@ if ($resql)
 	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
-	$var=True;
-
 	while ($obj = $db->fetch_object($resql) )
 	{
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
@@ -296,12 +286,10 @@ if (count($companystatic->SupplierCategories))
 	print '<tr class="liste_titre"><td colspan="2">';
 	print $langs->trans("Category");
 	print "</td></tr>\n";
-	$var=True;
 
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">\n";
+		print '<tr class="oddeven">'."\n";
 		print '<td>';
 		$categstatic->id=$rowid;
 		$categstatic->ref=$label;
@@ -323,6 +311,6 @@ if (count($companystatic->SupplierCategories))
 //print "</td></tr></table>\n";
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

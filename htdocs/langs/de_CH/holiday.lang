@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
+MenuReportMonth=Monatsauszug
 NotActiveModCP=Sie müssen das Urlaubs-Modul aktivieren um diese Seite zu sehen.
 AddCP=Urlaubs-Antrag einreichen
 CancelCP=widerrufen
@@ -13,7 +14,6 @@ NoDateDebut=Sie müssen ein Urlaubsbeginn Datum wählen.
 NoDateFin=Sie müssen ein Urlaubsende Datum wählen.
 DateCancelCP=Datum der Absage
 HolidaysCancelation=Urlaubsanfragen Stornos
-EmployeeFirstname=Miarbeiter Vorname
 ErrorMailNotSend=Ein Fehler ist beim EMail-Senden aufgetreten:
 HolidaysToValidateAlertSolde=Der Einreicher dieses Urlaubsantrags besitzt nicht mehr genügend verfügbare Tage.
 HolidaysCanceled=Urlaubsantrag storniert

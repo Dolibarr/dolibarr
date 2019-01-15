@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -43,10 +42,10 @@ $action=GETPOST('action','alpha');
  * Actions
  */
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -58,7 +57,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 
-else if (preg_match('/del_(.*)/',$action,$reg))
+else if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -103,12 +102,10 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'misc', $langs->trans("Security"));
+dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
@@ -116,8 +113,7 @@ print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
-$var=!$var;
-print "<tr ".$bc[$var].">";
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
@@ -146,8 +142,7 @@ else
 print '</td></tr>';
 
 // Enable advanced perms
-$var=!$var;
-print "<tr ".$bc[$var].">";
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
 if (! empty($conf->use_javascript_ajax))
@@ -174,18 +169,16 @@ print '<br>';
 
 
 // Timeout
-$var=true;
-
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$var=!$var;
+
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
@@ -194,10 +187,10 @@ print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" valu
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -213,6 +206,6 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 
 print '</form>';
 
-
+// End of page
 llxFooter();
 $db->close();

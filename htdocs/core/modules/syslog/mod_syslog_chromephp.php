@@ -48,7 +48,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
+		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
 	}
 	
 	/**
@@ -66,14 +66,14 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			}
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
 
-		    $res = @include_once('ChromePhp.php');
-		    if (! $res) $res=@include_once('ChromePhp.class.php');
+		    $res = @include_once 'ChromePhp.php';
+		    if (! $res) $res=@include_once 'ChromePhp.class.php';
 
 		    restore_include_path();
 
 		    if ($res)
 		    {
-		        return 1;
+        		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_CHROMEPHP)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_CHROMEPHP to 1 to disable this loghandler
 		    }
 		    else
 		    {
@@ -121,13 +121,14 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		if (! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.php') && ! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.class.php'))
 		{
+			$conf->global->MAIN_SYSLOG_DISABLE_CHROMEPHP = 1; // avoid infinite loop
 			if (is_object($langs))   // $langs may not be defined yet.
 			{
-			    $errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php or ChromePhp.php');
+				$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php or ChromePhp.php');
 			}
 			else
 			{
-		        $errors[] = "ErrorFailedToOpenFile ChromePhp.class.php or ChromePhp.php";
+				$errors[] = "ErrorFailedToOpenFile ChromePhp.class.php or ChromePhp.php";
 			}
 		}
 
@@ -151,12 +152,12 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		try
 		{
-			// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once() a constant from
+			// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
-		    $res = @include_once('ChromePhp.php');
-		    if (! $res) $res=@include_once('ChromePhp.class.php');
+		    $res = @include_once 'ChromePhp.php';
+		    if (! $res) $res=@include_once 'ChromePhp.class.php';
 			set_include_path($oldinclude);
 			
 			ob_start();	// To be sure headers are not flushed until all page is completely processed

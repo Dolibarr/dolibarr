@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 /**
  *      \file       htdocs/projet/info.php
- *      \ingroup    commande
- *		\brief      Page with info on project
+ *      \ingroup    project
+ *		\brief      Page with events on project
  */
 
 require '../main.inc.php';
@@ -28,14 +28,15 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+// Load translation files required by the page
 $langs->load("projects");
 
 $id     = GETPOST('id','int');
 $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
@@ -49,15 +50,14 @@ $pagenext = $page + 1;
 
 if (GETPOST('actioncode','array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
-    if (! count($actioncode)) $actioncode='0';
+	$actioncode=GETPOST('actioncode','array',3);
+	if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
-
 
 // Security check
 $id = GETPOST("id",'int');
@@ -70,7 +70,7 @@ if (!$user->rights->projet->lire)	accessforbidden();
 
 
 /*
- *	Actions
+ * Actions
  */
 
 $parameters=array('id'=>$socid);
@@ -78,10 +78,10 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
-    $actioncode='';
-    $search_agenda_label='';
+	$actioncode='';
+	$search_agenda_label='';
 }
 
 
@@ -97,6 +97,7 @@ if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
+	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
     $object->info($object->id);
 }
 
@@ -107,12 +108,12 @@ llxHeader("",$title,$help_url);
 
 $head = project_prepare_head($object);
 
-dol_fiche_head($head, 'agenda', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
 // Project card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 // Title
@@ -156,48 +157,40 @@ if ($permok)
 }
 
 
-print '<div class="tabsAction">';
-
+//print '<div class="tabsAction">';
+$morehtmlcenter='';
 if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        $morehtmlcenter.='<span class="fa fa-plus-circle valignmiddle"></span>';
+        $morehtmlcenter.='</a>';
     }
     else
     {
-        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 
-print '</div>';
-
+//print '</div>';
 
 if (!empty($object->id))
 {
-    $param='&id='.$object->id;
+	print '<br>';
+
+	$param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
-    
-    // List of actions on element
-    /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-    $formactions=new FormActions($db);
-    $somethingshown=$formactions->showactions($object,'project',0);*/
-    
-    // List of todo actions
-    //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
-    
-    // List of done actions
-    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
-    
+    print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

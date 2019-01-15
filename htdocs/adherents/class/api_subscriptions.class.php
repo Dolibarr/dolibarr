@@ -34,7 +34,7 @@ class Subscriptions extends DolibarrApi
         'fk_adherent',
         'dateh',
         'datef',
-        'amount'
+        'amount',
     );
 
     /**
@@ -85,7 +85,8 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -98,7 +99,7 @@ class Subscriptions extends DolibarrApi
         $sql.= " FROM ".MAIN_DB_PREFIX."subscription as t";
         $sql.= ' WHERE 1 = 1';
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -107,7 +108,7 @@ class Subscriptions extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -193,9 +194,13 @@ class Subscriptions extends DolibarrApi
         }
 
         if ($subscription->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $subscription->error);
+        }
     }
 
     /**

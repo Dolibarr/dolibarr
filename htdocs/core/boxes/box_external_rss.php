@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,11 @@ class box_external_rss extends ModeleBoxes
     var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
@@ -80,8 +84,11 @@ class box_external_rss extends ModeleBoxes
 		// documents/externalrss is created by module activation
 		// documents/externalrss/tmp is created by rssparser
 
+		$keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
+		$keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
+
 		// Get RSS feed
-        $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
+		$url=$conf->global->$keyforparamurl;
 
         $rssparser=new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
@@ -90,7 +97,7 @@ class box_external_rss extends ModeleBoxes
 		$description=$rssparser->getDescription();
 		$link=$rssparser->getLink();
 
-        $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
+        $title=$langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
         if ($result < 0 || ! empty($rssparser->error))
         {
             // Show warning
@@ -103,7 +110,8 @@ class box_external_rss extends ModeleBoxes
                 'text' => $title,
                 'sublink' => $link,
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
-                'subpicto'=>'object_bookmark',
+                'subpicto'=>'help',
+		'target'=>'_blank',
             );
 		}
 
@@ -163,7 +171,7 @@ class box_external_rss extends ModeleBoxes
             );
 
             $this->info_box_contents[$line][1] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $title,
                 'url' => $href,
                 'tooltip' => $tooltip,
@@ -185,12 +193,11 @@ class box_external_rss extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

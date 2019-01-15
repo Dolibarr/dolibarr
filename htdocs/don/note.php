@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
@@ -35,9 +35,8 @@ if (! empty($conf->projet->enabled))
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("donations");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","bills","donations"));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
@@ -84,7 +83,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = donation_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, 'note', $langs->trans("Donation"), -1, 'generic');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 

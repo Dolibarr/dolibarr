@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ function shipping_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -53,9 +53,9 @@ function shipping_prepare_head($object)
 		$object->fetchObjectLinked($object->id,$object->element);
 		if (count($object->linkedObjectsIds['delivery']) >  0)		// If there is a delivery
 		{
-		    // Take first one element of array 
+		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);
-		    
+
 			$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$tmp;
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
@@ -78,7 +78,18 @@ function shipping_prepare_head($object)
     	$head[$h][2] = 'contact';
     	$h++;
 	}
-	
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
+
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
@@ -110,8 +121,8 @@ function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -171,7 +182,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
 	$warehousestatic=new Entrepot($db);
-	
+
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql.= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
 	$sql.= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
@@ -184,7 +195,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
-	$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+	$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sql.= " AND obj.fk_".$origin." = ".$origin_id;
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
 	$sql.= " AND ed.fk_expedition = e.rowid";
@@ -230,12 +241,11 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			}
 			print "</tr>\n";
 
-			$var=True;
 			while ($i < $num)
 			{
-				$var=!$var;
 				$objp = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+
+				print '<tr class="oddeven">';
 
 				// Sending id
 				print '<td align="left" class="nowrap">';
@@ -336,7 +346,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
     				}
     				print '</td>';
 				}
-				
+
 				// Batch number managment
 				/*TODO Add link to expeditiondet_batch
 				if (! empty($conf->productbatch->enabled))
@@ -351,7 +361,11 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				            $detail = '';
 				            foreach ($lines[$i]->detail_batch as $dbatch)
 				            {
-				                $detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
+								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
+								$detail.= '<br>';
 				            }
 				            print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 				        }
@@ -363,8 +377,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				    } else {
 				        print '<td></td>';
 				    }
-				}*/			
-				
+				}*/
+
 				// Informations on receipt
 				if (! empty($conf->livraison_bon->enabled))
 				{

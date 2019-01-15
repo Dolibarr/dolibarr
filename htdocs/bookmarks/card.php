@@ -27,18 +27,19 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-$langs->load("bookmarks");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
 $url=GETPOST("url","alpha");
+$urlsource=GETPOST("urlsource","alpha");
 $target=GETPOST("target","alpha");
 $userid=GETPOST("userid","int");
 $position=GETPOST("position","int");
@@ -62,9 +63,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST("cancel"))
+	if (GETPOST('cancel','alpha'))
 	{
-		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -97,7 +98,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):DOL_URL_ROOT.'/bookmarks/list.php');
+			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -120,6 +121,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 		$action = $invertedaction;
 	}
 }
+
 
 /*
  * View
@@ -153,19 +155,23 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth100" name="title" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+	dol_set_focus('#titlebookmark');
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+	// Url
+	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
 
+	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
 	print $form->selectarray('target',$liste,1);
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
+	// Owner
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
@@ -215,13 +221,15 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans("BackToList").'</a>';
-	
-  dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 
-  print '<div class="underbanner clearboth"></div>';
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
+
+    print '<div class="fichecenter">';
+
+    print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
 	print '<tr><td class="titlefield">';
@@ -297,6 +305,8 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 	print '</table>';
 
+	print '</div>';
+
 	dol_fiche_end();
 
 	if ($action == 'edit')
@@ -323,10 +333,8 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</div>';
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

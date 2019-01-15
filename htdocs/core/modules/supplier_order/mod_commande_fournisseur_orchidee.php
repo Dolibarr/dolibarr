@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Orchidee';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Orchidee';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Orchidee';
 
 
     /**
@@ -44,10 +63,10 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
-		$langs->load("bills");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","admin"));
 
 		$form = new Form($this->db);
 
@@ -127,6 +146,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -136,7 +156,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
     function commande_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
 }
-

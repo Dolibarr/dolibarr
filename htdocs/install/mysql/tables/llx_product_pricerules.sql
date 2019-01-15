@@ -23,4 +23,4 @@ CREATE TABLE llx_product_pricerules
     fk_level INT NOT NULL, -- Price variations are made over price of X
     var_percent FLOAT NOT NULL, -- Price variation over based price
     var_min_percent FLOAT NOT NULL -- Min price discount over general price
-);
+)ENGINE=innodb;

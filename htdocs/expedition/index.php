@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 /*
  *	View
@@ -47,14 +47,16 @@ print load_fiche_titre($langs->trans("SendingsArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-$var=false;
-print '<form method="post" action="list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    print '<form method="post" action="list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>\n";
+}
 
 /*
  * Shipments to validate
@@ -75,7 +77,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND e.entity IN (".getEntity('expedition', 1).")";
+$sql.= " AND e.entity IN (".getEntity('expedition').")";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
@@ -86,19 +88,17 @@ if ($resql)
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
-				
-			$var=!$var;
-			print "<tr ".$bc[$var].'><td class="nowrap">';
+
+			print '<tr class="oddeven"><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
 			print '<td>';
@@ -139,8 +139,7 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersToProcess").'</td></tr>';
-		$var = True;
+		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -149,13 +148,12 @@ if ($resql)
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->facturee=0;
-			
+			$orderstatic->billed=0;
+
 			$companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
-			
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -201,23 +199,21 @@ if ( $resql )
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OrdersInProcess").'</td></tr>';
-		$var = True;
+		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 		    $orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->status;
-            $orderstatic->facturee=$obj->billed;
-			
+            $orderstatic->billed=$obj->billed;
+
             $companystatic->name=$obj->name;
 			$companystatic->id=$obj->socid;
-				
-			$var=!$var;
-			print "<tr ".$bc[$var]."><td>";
+
+			print '<tr class="oddeven"><td>';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
@@ -246,7 +242,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_ta
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-$sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
 $sql.= " AND e.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
@@ -262,18 +258,16 @@ if ($resql)
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
-		$var = True;
+		print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-		    
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
 			$shipment->ref_customer=$obj->ref_customer;
-				
-			$var=!$var;
-			print '<tr '.$bc[$var].'><td>';
+
+			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
@@ -297,6 +291,6 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

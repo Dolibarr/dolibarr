@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,23 +31,52 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Deplacement extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='deplacement';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='deplacement';
+
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = '';
-	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $datec;         // Creation date
-	var $dated;
-	var $fk_user_author;
-	var $fk_user;
-	var $km;
-	var $socid;
-	var $statut;		// 0=draft, 1=validated
-	var $extraparams=array();
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 0;
 
-	var $statuts=array();
-	var $statuts_short=array();
+	public $datec;         // Creation date
+	public $dated;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_author;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $km;
+	public $socid;
+	public $statut;		// 0=draft, 1=validated
+	public $extraparams=array();
+
+	public $statuts=array();
+	public $statuts_short=array();
 
    /**
 	* Constructor
@@ -60,8 +89,6 @@ class Deplacement extends CommonObject
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
         $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-
-		return 1;
 	}
 
 	/**
@@ -107,7 +134,7 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
-		$sql.= ", '".$this->type."'";
+		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
@@ -148,7 +175,6 @@ class Deplacement extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -187,8 +213,8 @@ class Deplacement extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
-		$sql .= " , type = '".$this->type."'";
-		$sql .= " , fk_statut = '".$this->statut."'";
+		$sql .= " , type = '".$this->db->escape($this->type)."'";
+		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
@@ -295,6 +321,7 @@ class Deplacement extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -304,35 +331,36 @@ class Deplacement extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
@@ -447,6 +475,4 @@ class Deplacement extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }
-

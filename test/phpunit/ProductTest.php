@@ -60,7 +60,9 @@ class ProductTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -232,7 +234,7 @@ class ProductTest extends PHPUnit_Framework_TestCase
         $localobject=new Product($this->savdb);
         $result=$localobject->fetch($id);
 
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($user);
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 

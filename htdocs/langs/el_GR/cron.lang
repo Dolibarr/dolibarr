@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
+Permission23101 = Λεπτομέρειες προγραμματισμένης εργασίας
 Permission23102 = Δημιουργία/ενημέρωση προγραμματισμένης εργασίας
 Permission23103 = Διαγραφή προγραμματισμένης εργασίας
 Permission23104 = Εκτέλεση προγραμματισμένης εργασίας
@@ -10,22 +10,24 @@ CronSetup= Προγραμματισμένη ρύθμιση διαχείριση�
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Ή να ελέγξετε και να ξεκινήσει μία συγκεκριμένη εργασία
 KeyForCronAccess=Κλειδί ασφαλείας για το URL για να ξεκινήσει η εργασία cron
-FileToLaunchCronJobs=Γραμμής εντολών για να ξεκινήσει τις εργασίες
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=Στο Unix περιβάλλον θα πρέπει να χρησιμοποιήσετε την ακόλουθη καταχώρηση crontab για να τρέχει η γραμμή εντολών καθένα 5 λεπτά
 CronExplainHowToRunWin=Σε Microsoft (tm) Windows περιβάλλον μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελείτε η γραμμή εντολών καθένα 5 λεπτά
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
 # Menu
-EnabledAndDisabled=Enabled and disabled
+EnabledAndDisabled=Ενεργοποίηση και απενεργοποίηση
 # Page list
-CronLastOutput=Τελευταία εκτέλεση εξόδου
-CronLastResult=Τελευταίος κωδικός αποτελέσματος
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
 CronCommand=Εντολή
 CronList=Προγραμματισμένες εργασίες
 CronDelete=Διαγραφή προγραμματισμένων εργασιών
-CronConfirmDelete=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις προγραμματισμένες εργασίες;
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
-CronInfo=Scheduled job module allow to execute job that have been planned
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Εργασία
 CronNone=Καμία
 CronDtStart=Όχι πριν
@@ -39,9 +41,9 @@ CronMethod=Μέθοδος
 CronModule=Module
 CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
-CronLabel=Label
+CronLabel=Ετικέτα
 CronNbRun=Nb. έναρξης
-CronMaxRun=Max nb. launch
+CronMaxRun=Max number launch
 CronEach=Κάθε
 JobFinished=Ξεκίνησε και τελείωσε
 #Page card
@@ -53,27 +55,29 @@ CronSaveSucess=Επιτυχής αποθήκευση
 CronNote=Σχόλιο
 CronFieldMandatory=Τα πεδία %s είναι υποχρεωτικά
 CronErrEndDateStartDt=Η ημερομηνία λήξης δεν μπορεί να είναι πριν από την ημερομηνία έναρξης
+StatusAtInstall=Status at module installation
 CronStatusActiveBtn=Ενεργοποίηση
 CronStatusInactiveBtn=Απενεργοποίηση
 CronTaskInactive=Αυτή η εργασία είναι απενεργοποιημένη
 CronId=Id
-CronClassFile=Classes (filename.class.php)
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
-CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
-CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+CronClassFile=Filename with class
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Γραμμή εντολών του συστήματος προς εκτέλεση.
 CronCreateJob=Create new Scheduled Job
 CronFrom=Από
 # Info
 # Common
 CronType=Είδος εργασίας
-CronType_method=Καλέστε τη μέθοδο της κατηγορίας Dolibarr
+CronType_method=Call method of a PHP Class
 CronType_command=Εντολή Shell
-CronCannotLoadClass=Cannot load class %s or object %s
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Αντίγραφο ασφαλείας τοπικής βάσης δεδομένων
-MakeLocalDatabaseDump=Create a local database dump
-WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

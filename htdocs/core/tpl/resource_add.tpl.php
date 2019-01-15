@@ -1,14 +1,22 @@
 <!-- BEGIN TEMPLATE resource_add.tpl.php -->
 <?php
 
-require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 $form = new Form($db);
 $formresources = new FormResource($db);
 
-$out  = '<div class="tagtable centpercent border allwidth nohover">';
+$out  = '<div class="tagtable centpercent noborder allwidth nohover">';
 
-$out .= '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+$out .= '<form class="tagtr nohover '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
@@ -17,9 +25,10 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 
 
 // Place
-$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div><div>';
+$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
+$out .= '<div class="tagtd">';
 $events=array();
-$out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
+$out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2,null);
 $out .= '</div>';
 
 $out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy',(isset($_POST['busy'])?$_POST['busy']:1),1).'</div>';

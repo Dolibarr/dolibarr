@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ create table llx_user_param
 (
   fk_user       integer      NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
-  param         varchar(255)  NOT NULL,
+  param         varchar(180)  NOT NULL,
   value         text NOT NULL
 )ENGINE=innodb;
 

@@ -28,8 +28,15 @@
  */
 class FormMargin
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -40,8 +47,6 @@ class FormMargin
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -85,8 +90,6 @@ class FormMargin
 				$product = new ProductFournisseur($db);
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
 					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-					$line->pa_ht += $product->fourn_unitcharges;
 			}
 			// si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
 			if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
@@ -96,7 +99,7 @@ class FormMargin
 			$pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
 			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
 			$pa = $line->qty * $pa_ht;
-			
+
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
 				if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
@@ -214,6 +217,9 @@ class FormMargin
     	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
+		print '<div class="div-table-responsive-no-min">';
+		print '<!-- Margin table -->'."\n";
+
 		print '<table class="noborder margintable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
@@ -232,7 +238,7 @@ class FormMargin
 		if (! empty($conf->product->enabled))
 		{
 			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-			print '<tr class="impair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
@@ -246,7 +252,7 @@ class FormMargin
 
 		if (! empty($conf->service->enabled))
 		{
-			print '<tr class="pair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnServices').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
@@ -272,7 +278,7 @@ class FormMargin
 			print '</tr>';
 		}
 		print '</table>';
+		print '</div>';
 	}
-
 }
 

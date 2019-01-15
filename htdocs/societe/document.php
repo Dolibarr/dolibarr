@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -32,11 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("companies");
-$langs->load('other');
+$langs->loadLangs(array("companies", "other"));
 
-
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
@@ -53,12 +51,12 @@ $result = restrictedArea($user, 'societe', $id, '&societe');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 $object = new Societe($db);
 if ($id > 0 || ! empty($ref))
@@ -68,6 +66,10 @@ if ($id > 0 || ! empty($ref))
 	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
 	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('thirdpartydocument','globalcard'));
+
 
 
 /*
@@ -98,23 +100,23 @@ if ($object->id)
 
 	$form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	// Build file list
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -146,12 +148,12 @@ if ($object->id)
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print '</table>';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 
 	$modulepart = 'societe';
@@ -165,6 +167,6 @@ else
 	accessforbidden('',0,0);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

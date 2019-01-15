@@ -40,7 +40,7 @@ function resource_prepare_head($object)
     	$head[$h][2] = 'resource';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && (empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER) || empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)))
 	{
 	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
@@ -70,11 +70,21 @@ function resource_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/resource/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+		$head[$h][1].= '/';
+		$head[$h][1].= $langs->trans("Agenda");
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	/*$head[$h][0] = DOL_URL_ROOT.'/resource/info.php?id='.$object->id;
@@ -87,7 +97,13 @@ function resource_prepare_head($object)
 	return $head;
 }
 
-function resource_admin_prepare_head() {
+/**
+ * Prepare head for admin tabs
+ *
+ * @return  array               Array of head entries
+ */
+function resource_admin_prepare_head()
+{
 
 	global $langs, $conf, $user;
 
@@ -113,5 +129,4 @@ function resource_admin_prepare_head() {
 	complete_head_from_modules($conf,$langs,null,$head,$h,'resource_admin','remove');
 
 	return $head;
-
 }

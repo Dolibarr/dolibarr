@@ -1,30 +1,30 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Configuration
-OAuthServices=OAuth services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
-NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
-TokenDeleted=Token deleted
-RequestAccess=Click here to request/renew access and receive a new token to save
-DeleteAccess=Click here to delete token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credential on your OAuth provider:
-ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
-TOKEN_REFRESH=Token Refresh Present
-TOKEN_EXPIRED=Token expired
-TOKEN_EXPIRE_AT=Token expire at
-TOKEN_DELETE=Delete saved token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
+ConfigOAuth=Konfigurace Oauth
+OAuthServices=Služby OAuth
+ManualTokenGeneration=Ruční generování tokenů
+TokenManager=Správce tokenů
+IsTokenGenerated=Je token generován?
+NoAccessToken=Žádný přístupový token uložený v místní databázi
+HasAccessToken=Token byl generován a uložen do lokální databáze
+NewTokenStored=Token přijat a uložen
+ToCheckDeleteTokenOnProvider=Klikněte zde pro kontrolu / odstranění oprávnění uloženého zprostředkovatelem %s OAuth
+TokenDeleted=Token byl smazán
+RequestAccess=Kliknutím sem můžete požádat/obnovit přístup a obdržet nový token, který chcete uložit
+DeleteAccess=Klikněte zde pro smazání tokenu
+UseTheFollowingUrlAsRedirectURI=Při vytváření pověření u poskytovatele OAuth použijte následující adresu URL jako URI přesměrování:
+ListOfSupportedOauthProviders=Zadejte zde pověření poskytnuté poskytovatelem OAuth2. Zde jsou zobrazena pouze podporovaní poskytovatelé OAuth2. Toto nastavení mohou používat jiné moduly, které potřebují ověření OAuth2.
+OAuthSetupForLogin=Page pro vygenerování tokenu OAuth
+SeePreviousTab=Viz předchozí tabulka
+OAuthIDSecret=OAuth ID a tajemství
+TOKEN_REFRESH=Token obnovit přítomnost
+TOKEN_EXPIRED=Token vypršel
+TOKEN_EXPIRE_AT=Token vyprší na
+TOKEN_DELETE=Odstranění uloženého tokenu
+OAUTH_GOOGLE_NAME=O službě Google Oauth
+OAUTH_GOOGLE_ID=ID Google Oauth
 OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
+OAUTH_GOOGLE_DESC=Přejděte na <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> tuto stránku </a> a poté na "pověření" pro vytvoření pověření Oauth
+OAUTH_GITHUB_NAME=Služba Oauth GitHub
+OAUTH_GITHUB_ID=ID Oauth GitHub
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+OAUTH_GITHUB_DESC=Přejděte na <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> tuto stránku </a> a pak na "Registrace nové aplikace" pro vytvoření pověření Oauth

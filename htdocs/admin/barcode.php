@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -38,6 +39,8 @@ $action = GETPOST('action','alpha');
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setbarcodeproducton')
 {
@@ -60,7 +63,7 @@ if ($action == 'setcoder')
 	$resql=$db->query($sqlp);
 	if (! $resql) dol_print_error($db);
 }
-else if ($action == 'update')
+elseif ($action == 'update')
 {
 	$location = GETPOST('GENBARCODE_LOCATION','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
@@ -68,30 +71,8 @@ else if ($action == 'update')
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id,'chaine',0,'',$conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id,'chaine',0,'',$conf->entity);
-}
-else if ($action == 'updateengine')
-{
-    // TODO Update engines.
-    
-}
 
-// define constants for models generator that need parameters
-if ($action == 'setModuleOptions')
-{
-    $post_size=count($_POST);
-
-    for($i=0;$i < $post_size;$i++)
-    {
-        if (array_key_exists('param'.$i,$_POST))
-        {
-            $param=GETPOST("param".$i,'alpha');
-            $value=GETPOST("value".$i,'alpha');
-            if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-        }
-    }
-	if (! $res > 0) $error++;
-
- 	if (! $error)
+	if ($res > 0)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -100,20 +81,42 @@ if ($action == 'setModuleOptions')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
-if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
+elseif ($action == 'updateengine')
 {
-	if (! $res > 0) $error++;
+    $sql = "SELECT rowid, coder";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+    $sql.= " WHERE entity = ".$conf->entity;
+    $sql.= " ORDER BY code";
 
- 	if (! $error)
+    $resql=$db->query($sql);
+    if ($resql)
     {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
+	   $num = $db->num_rows($resql);
+	   $i = 0;
+
+	   while ($i <	$num)
+	   {
+	       $obj = $db->fetch_object($resql);
+
+	       if (GETPOST('coder'.$obj->rowid, 'alpha'))
+	       {
+	           $coder = GETPOST('coder'.$obj->rowid,'alpha');
+	           $code_id = $obj->rowid;
+
+	           $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
+	           $sqlp.= " SET coder = '" . $coder."'";
+	           $sqlp.= " WHERE rowid = ". $code_id;
+	           $sqlp.= " AND entity = ".$conf->entity;
+
+	           $upsql=$db->query($sqlp);
+	           if (! $upsql) dol_print_error($db);
+	       }
+
+	       $i++;
+	   }
     }
 }
+
 
 /*
  * View
@@ -125,7 +128,7 @@ $formbarcode = new FormBarCode($db);
 $help_url='EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
 llxHeader('',$langs->trans("BarcodeSetup"),$help_url);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'title_setup');
 
 // Detect bar codes modules
@@ -181,14 +184,16 @@ foreach($dirbarcode as $reldir)
 /*
  *  CHOIX ENCODAGE
  */
-$var=true;
 
 print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
 
-//print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-//print "<input type=\"hidden\" name=\"action\" value=\"updateengine\">";
+if (empty($conf->use_javascript_ajax))
+{
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="updateengine">';
+}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -209,13 +214,12 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=true;
 
 	while ($i <	$num)
 	{
 		$obj = $db->fetch_object($resql);
 
-		print '<tr '.$bc[$var].'><td width="100">';
+		print '<tr class="oddeven"><td width="100">';
 		print $obj->libelle;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
@@ -276,7 +280,7 @@ if ($resql)
 		print '<td align="center">';
 		print $formbarcode->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
 		print "</td></tr>\n";
-		$var=!$var;
+
 		$i++;
 	}
 }
@@ -284,10 +288,9 @@ print "</table>\n";
 
 if (empty($conf->use_javascript_ajax))
 {
-    // TODO Implement code behind action updateengine
-    //print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+    print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+    print '</form>';
 }
-//print '</form>';
 
 print "<br>";
 
@@ -301,7 +304,6 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -312,8 +314,8 @@ print '</tr>';
 // Chemin du binaire genbarcode sous linux
 if (! isset($_SERVER['WINDIR']))
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
@@ -328,22 +330,22 @@ if (! isset($_SERVER['WINDIR']))
 // Module products
 if (! empty($conf->product->enabled))
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
-	$formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
+	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td></tr>';
 }
 
 // Module thirdparty
 if (! empty($conf->societe->enabled))
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" align="right">';
-	print $formbarcode->select_barcode_type($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY,"GENBARCODE_BARCODETYPE_THIRDPARTY",1);
+	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td></tr>';
 }
 
@@ -395,9 +397,8 @@ if ($conf->produit->enabled)
 	    			}
 
 	    			$modBarCode = new $file();
-	    			$var = !$var;
 
-	    			print '<tr '.$bc[$var].'>';
+	    			print '<tr class="oddeven">';
 	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
 	    			print $modBarCode->info($langs);
 	    			print '</td>';
@@ -432,5 +433,6 @@ if ($conf->produit->enabled)
 
 print "<br>";
 
+// End of page
 llxFooter();
 $db->close();

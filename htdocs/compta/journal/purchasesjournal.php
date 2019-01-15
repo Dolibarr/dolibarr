@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012	Alexandre spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
-$langs->load("companies");
-$langs->load("other");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadlangs(array('companies', 'other', 'compta'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
@@ -81,19 +81,20 @@ $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
+    $date_start=dol_get_first_day($pastmonthyear,$pastmonth,false);
+    $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
 }
 
-$nom=$langs->trans("PurchasesJournal");
-$nomlink='';
+$name=$langs->trans("PurchasesJournal");
 $periodlink='';
 $exportlink='';
-$builddate=time();
+$builddate=dol_now();
 $description=$langs->trans("DescPurchasesJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -184,7 +185,6 @@ print "<td>".$langs->trans("Account")."</td>";
 print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
-$var=false;
 
 $invoicestatic=new FactureFournisseur($db);
 $companystatic=new Fournisseur($db);
@@ -229,7 +229,7 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
+				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
@@ -249,14 +249,10 @@ foreach ($tabfac as $key => $val)
 			}
 		}
 	}
-
-	$var = !$var;
 }
 
 print "</table>";
 
-
 // End of page
 llxFooter();
-
 $db->close();

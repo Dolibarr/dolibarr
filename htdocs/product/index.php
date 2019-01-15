@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
@@ -39,8 +39,11 @@ if ($type=='0') $result=restrictedArea($user,'produit');
 else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('productindex'));
 
 $product_static = new Product($db);
 
@@ -77,82 +80,93 @@ print load_fiche_titre($transAreaType,$linkback,'title_products.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search Area of product/service
- */
- 
-// Search contract
-if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$listofsearchfields['search_product']=array('text'=>'ProductOrService');
-}
+    // Search contract
+    if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
+    {
+    	$listofsearchfields['search_product']=array('text'=>'ProductOrService');
+    }
 
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
 /*
  * Number of products and/or services
  */
 $prodser = array();
-$prodser[0][0]=$prodser[0][1]=$prodser[1][0]=$prodser[1][1]=0;
+$prodser[0][0]=$prodser[0][1]=$prodser[0][2]=$prodser[0][3]=0;
+$prodser[1][0]=$prodser[1][1]=$prodser[1][2]=$prodser[1][3]=0;
 
 $sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
-	$status=2;
-	if (! $objp->tosell && ! $objp->tobuy) $status=0;	// To sell OR to buy
-	if ((! $objp->tosell && $objp->tobuy) || ($objp->tosell && ! $objp->tobuy)) $status=1;
+	$status=3;
+	if (! $objp->tosell && ! $objp->tobuy) $status=0;	// Not on sale, not on purchase
+	if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
+	if (! $objp->tosell && $objp->tobuy) $status=2;     // On purchase only
 	$prodser[$objp->fk_product_type][$status]=$objp->total;
 }
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->product->enabled))
 {
-	$statProducts = "<tr ".$bc[0].">";
+	$statProducts = '<tr class="oddeven">';
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
-	$statProducts.= "<tr ".$bc[1].">";
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
-	$statProducts.= "<tr ".$bc[0].">";
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][2]).'</td>';
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td align="right">'.round($prodser[0][2]).'</td>';
 	$statProducts.= "</tr>";
-
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
+	$statProducts.= "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
-	$statServices = "<tr ".$bc[1].">";
+	$statServices = '<tr class="oddeven">';
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
-	$statServices.= "<tr ".$bc[0].">";
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
-	$statServices.= "<tr ".$bc[1].">";
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][2]).'</td>';
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td align="right">'.round($prodser[1][2]).'</td>';
 	$statServices.= "</tr>";
-
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
+	$statServices.= "</tr>";
 }
 $total=0;
 if ($type == '0')
@@ -174,11 +188,13 @@ print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="rig
 print $total;
 print '</td></tr>';
 print '</table>';
+print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
@@ -186,7 +202,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql.= " WHERE c.type = 0";
-	$sql.= " AND c.entity IN (".getEntity('category',1).")";
+	$sql.= " AND c.entity IN (".getEntity('category').")";
 	$sql.= " GROUP BY c.label";
 	$total=0;
 	$result = $db->query($sql);
@@ -203,25 +219,38 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			{
 				$obj = $db->fetch_object($result);
 				if ($i < $nbmax)
-					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				{
+					$dataseries[]=array($obj->label, round($obj->nb));
+				}
 				else
+				{
 					$rest+=$obj->nb;
+				}
 				$total+=$obj->nb;
 				$i++;
 			}
 			if ($i > $nbmax)
-				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
-			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategproduct',300,180,$data,1,'pie',0);
+			{
+				$dataseries[]=array($langs->trans("Other"), round($rest));
+			}
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->setWidth('100%');
+			$dolgraph->draw('idstatscategproduct');
+			print $dolgraph->show($total?0:1);
 		}
 		else
 		{
-			$var=true;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr $bc[$var]><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+
+				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
 			}
@@ -232,6 +261,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print $total;
 	print '</td></tr>';
 	print '</table>';
+	print '</div>';
 }
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -240,12 +270,16 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified products
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.fk_price_expression,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 $sql.= " p.entity,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
 
@@ -263,14 +297,15 @@ if ($result)
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
 		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=5;
+		$colnb=4;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><td colspan="'.$colnb.'">'.$transRecordedType.'</td></tr>';
-
-		$var=True;
+		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 
 		while ($i < $num)
 		{
@@ -292,14 +327,15 @@ if ($result)
 				}
 			}
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
 			$product_static->label = $objp->label;
 			$product_static->type=$objp->fk_product_type;
-            $product_static->entity = $objp->entity;
+			$product_static->entity = $objp->entity;
+			$product_static->status_batch = $objp->tobatch;
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
@@ -324,12 +360,12 @@ if ($result)
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td align="right" class="nowrap">';
-			print $product_static->LibStatut($objp->tosell,5,0);
-			print "</td>";
-            print '<td align="right" class="nowrap">';
-            print $product_static->LibStatut($objp->tobuy,5,1);
-            print "</td>";
+			print '<td align="right" class="nowrap"><span class="statusrefsell">';
+			print $product_static->LibStatut($objp->tosell,3,0);
+			print "</span></td>";
+            print '<td align="right" class="nowrap"><span class="statusrefbuy">';
+            print $product_static->LibStatut($objp->tobuy,3,1);
+            print "</span></td>";
 			print "</tr>\n";
 			$i++;
 		}
@@ -337,6 +373,7 @@ if ($result)
 		$db->free($result);
 
 		print "</table>";
+		print '</div>';
 		print '<br>';
 	}
 }
@@ -358,8 +395,8 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -418,8 +455,6 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
-		$var=true;
-		
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -427,8 +462,7 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-				    $var=!$var;
-					print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
+					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
 					print '<td align=right>'.price($trim3).'</td>';
@@ -461,8 +495,7 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-		    $var=!$var;
-			print '<tr '.$bc[$var].'><td align=left>'.$tmpyear.'</td>';
+			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';
 			print '<td align=right>'.price($trim3).'</td>';

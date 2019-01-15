@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - loan
+Loans=Prêts
+NewLoan=Nouveau prêt
+ShowLoan=Afficher le prêt
+PaymentLoan=Paiement de prêt
+LoanPayment=Paiement de prêt
+ShowLoanPayment=Afficher le paiement du prêt
+LoanAccountancyCapitalCode=Capital comptable comptable
+LoanAccountancyInsuranceCode=Assurance comptable comptable
+LoanAccountancyInterestCode=Intérêt du compte comptable
+ConfirmDeleteLoan=Confirmer la suppression de ce prêt
+LoanDeleted=Prêt supprimé avec succès
+ConfirmPayLoan=Confirmer classer payé ce prêt
+LoanPaid=Prêt payé
+AddLoan=Créer un prêt
+ConfigLoan=Configuration du prêt du module
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital de comptabilité par défaut
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compter les intérêts du compte par défaut
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Assurance compte comptable par défaut

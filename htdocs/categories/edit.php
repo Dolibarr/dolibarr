@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,14 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->load("categories");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=(GETPOST('action','aZ09')?GETPOST('action','aZ09'):'edit');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
@@ -173,8 +174,10 @@ print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
 
+$parameters=array();
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook) && ! empty($extrafields->attribute_label))
+print $hookmanager->resPrint;
+if (empty($reshook))
 {
 	print $object->showOptionals($extrafields,'edit');
 }
@@ -189,7 +192,6 @@ print '<div class="center"><input type="submit" class="button" name"submit" valu
 
 print '</form>';
 
-
-
+// End of page
 llxFooter();
 $db->close();

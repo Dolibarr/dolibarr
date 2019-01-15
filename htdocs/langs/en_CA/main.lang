@@ -26,5 +26,3 @@ TotalVAT=Total GST
 TotalLT1=Total PST
 VAT=GST
 VATRate=GST rate
-Select2MoreCharacter=or more characters<br /><br /><strong>Search syntax:</strong><br /><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br /><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br /><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br /><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br />
-Select2MoreCharacters=or more characters<br /><br /><strong>Search syntax:</strong><br /><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br /><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br /><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br /><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br />

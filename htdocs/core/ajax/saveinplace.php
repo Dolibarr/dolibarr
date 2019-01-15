@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,8 @@
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -54,7 +52,7 @@ savemethodname:
 
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 //print_r($_POST);
 
 // Load original field value
@@ -94,10 +92,30 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 	else $newelement = $element;
 
+	$_POST['action']='update';	// Hack so restrictarea will test permissions on write too
+	$feature = $newelement;
+	$feature2 = $subelement;
+	$object_id = $fk_element;
+	if ($feature == 'expedition' || $feature == 'shipping')
+	{
+		$feature = 'commande';
+		$object_id = 0;
+	}
+	if ($feature == 'shipping') $feature = 'commande';
+	if ($feature == 'payment') { $feature = 'facture'; }
+	if ($feature == 'payment_supplier') { $feature = 'fournisseur'; $feature2 = 'facture'; }
+	//var_dump(GETPOST('action','aZ09'));
+	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
+	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
+	//var_dump($user->rights);
+	/*
 	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
-	|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
-	|| ($element == 'payment' && $user->rights->facture->paiement)
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
+		|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
+		|| ($element == 'payment' && $user->rights->facture->paiement)
+		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
+	*/
+
+	if ($check_access)
 	{
 		// Clean parameters
 		$newvalue = trim($value);

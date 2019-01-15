@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +24,15 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load("companies");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'contracts'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -44,6 +48,10 @@ $object = new Contrat($db);
 $object->fetch($id,$ref);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
+
 
 
 /*
@@ -70,11 +78,11 @@ if ($id > 0 || ! empty($ref))
 
     $hselected = 2;
 
-    dol_fiche_head($head, 'note', $langs->trans("Contract"), 0, 'contract');
+    dol_fiche_head($head, 'note', $langs->trans("Contract"), -1, 'contract');
 
     // Contract card
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
     $morehtmlref='';
@@ -139,7 +147,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border" width="100%">';
 
-     
+
     // Ligne info remises tiers
     print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
     if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
@@ -161,15 +169,14 @@ if ($id > 0 || ! empty($ref))
     print '</tr>';
 
 	print "</table>";
-	
+
 	print '</div>';
-	
-	print '<br>';
+
+	//print '<br>';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();
-
 }
 
 

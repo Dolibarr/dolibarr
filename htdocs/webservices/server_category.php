@@ -23,10 +23,10 @@
 
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
-require_once("../master.inc.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require "../master.inc.php";
+require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -92,7 +92,7 @@ $server->wsdl->addComplexType(
 /*
  * Les catégories filles, sous tableau dez la catégorie
  */
- $server->wsdl->addComplexType(
+$server->wsdl->addComplexType(
     'FillesArray',
     'complexType',
     'array',
@@ -108,38 +108,38 @@ $server->wsdl->addComplexType(
  /*
   * Image of product
  */
- $server->wsdl->addComplexType(
- 		'PhotosArray',
- 		'complexType',
- 		'array',
- 		'sequence',
- 		'',
- 		array(
- 				'image' => array(
- 						'name' => 'image',
- 						'type' => 'tns:image',
- 						'minOccurs' => '0',
- 						'maxOccurs' => 'unbounded'
- 				)
- 		)
- );
+$server->wsdl->addComplexType(
+		'PhotosArray',
+		'complexType',
+		'array',
+		'sequence',
+		'',
+		array(
+				'image' => array(
+						'name' => 'image',
+						'type' => 'tns:image',
+						'minOccurs' => '0',
+						'maxOccurs' => 'unbounded'
+				)
+		)
+);
 
  /*
   * An image
  */
- $server->wsdl->addComplexType(
- 		'image',
- 		'complexType',
- 		'struct',
- 		'all',
- 		'',
- 		array(
- 				'photo' => array('name'=>'photo','type'=>'xsd:string'),
- 				'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
- 				'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
- 				'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
- 		)
- );
+$server->wsdl->addComplexType(
+		'image',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'photo' => array('name'=>'photo','type'=>'xsd:string'),
+				'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+				'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+				'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+		)
+);
 
 /*
  * Retour
@@ -250,9 +250,7 @@ function getCategory($authentication,$id)
 								'dir' => $pdir,
 								'photos' => $fille->liste_photos($dir,$nbmax=10)
 							);
-
 						}
-
 					}
 
 			    // Create

@@ -1,9 +1,10 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
-URLToLink=URL to link
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=新しいファイル/ドキュメントをリンクする
+LinkedFiles=ファイルとドキュメントをリンクしました
+NoLinkFound=リンクは登録されていません
+LinkComplete=ファイルを正常にリンクしました
+ErrorFileNotLinked=ファイルをリンクできませんでした
+LinkRemoved=リンク %s が削除されました
+ErrorFailedToDeleteLink= リンク '<b>%s</b>' を削除できませんでした
+ErrorFailedToUpdateLink= リンク '<b>%s</b>' を更新できませんでした
+URLToLink=リンクの URL

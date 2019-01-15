@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -52,7 +54,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'fournisseur',$id,'', 'commande');
+$result=restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
 
@@ -68,7 +70,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $actioncode='';
     $search_agenda_label='';
@@ -100,7 +102,7 @@ $now=dol_now();
 $head = ordersupplier_prepare_head($object);
 
 
-dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), 0, 'order');
+dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
 
 
 // Supplier order card
@@ -185,7 +187,7 @@ if (! empty($conf->agenda->enabled))
     }
     else
     {
-        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 
@@ -197,13 +199,13 @@ if (!empty($object->id))
     $param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    
+
     print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
 
     // List of actions on element
     /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
     $formactions=new FormActions($db);
-    $somethingshown=$formactions->showactions($object,'project',0);*/
+    $somethingshown = $formactions->showactions($object,'project',0);*/
 
     // List of todo actions
     //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
@@ -217,7 +219,6 @@ if (!empty($object->id))
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
 }
 
-
-
+// End of page
 llxFooter();
 $db->close();

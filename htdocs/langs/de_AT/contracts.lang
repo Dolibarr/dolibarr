@@ -1,6 +1,19 @@
 # Dolibarr language file - Source file is en_US - contracts
+ContractsArea=Vertragsgebiet
+ContractStatusValidated=Bestätigt
 ServiceStatusNotLate=Läuft (nicht abgelaufen)
 ServiceStatusNotLateShort=Läuft
+ServiceStatusLateShort=abgelaufen
+ServiceStatusClosed=geschlossen
+MenuServices=Dienstleistung
+MenuInactiveServices=Dienstleistung inaktiv
+MenuRunningServices=Laufende Services
+MenuExpiredServices=Dienstleistung abgelaufen
+NewContract=neuer Vertrag
+AddContract=Erstelle Vertrag
+DeleteAContract=lösche Vertrag
+CloseAContract=beende Vertrag
+ConfirmDeleteAContract=Sind Sie sicher, dass Sie diesen Vertrag und alle Dienstleistungen löschen wollen?
 ListOfInactiveServices=Liste inaktiver Services
 ListOfExpiredServices=Liste abgelaufener Services
 ListOfClosedServices=Liste geschlossener Services
@@ -15,4 +28,3 @@ BoardRunningServices=Abgelaufene, aktive Services
 ServiceStatus=Service-Status
 CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Services
 DeleteContractLine=Lösche Vertragsposition
-ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung des Services:

@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=资源成功删除
 DictionaryResourceType=资源类别
 
 SelectResource=请选择资源
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=资源

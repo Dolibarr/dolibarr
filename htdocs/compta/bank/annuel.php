@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,16 +24,16 @@
  *		\brief       Page to report input-output of a bank account
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
@@ -90,7 +90,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount >= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -118,7 +118,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount <= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -144,12 +144,12 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
-dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
+dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$object->label;
-$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start+1)."'>".img_next('', 'class="valignbottom"')."</a>":"");
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 
 if (!empty($id))
@@ -180,9 +180,9 @@ dol_fiche_end();
 
 
 // Affiche tableau
-print '<div class="floatright">'.$link.'</div>';
+print load_fiche_titre('', $link, '');
 
-
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
@@ -200,11 +200,10 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-$var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
@@ -238,7 +237,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "</tr>\n";
 
 print "</table>";
-
+print "</div>";
 
 print '<br>';
 
@@ -250,7 +249,7 @@ $sql = "SELECT SUM(b.amount) as total";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 if (! empty($id))
 	$sql.= " AND b.fk_account IN (".$db->escape($id).")";
 
@@ -290,7 +289,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($id && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$id.")";
 
 	$resql = $db->query($sql);
@@ -321,7 +320,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount > 0";
@@ -340,7 +339,6 @@ else
 				$i++;
 			}
 			$db->free($resql);
-
 		}
 		else
 		{
@@ -358,7 +356,7 @@ else
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1),-2)]) ? $tblyear[1][substr("0".($i+1),-2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1),-2)]) ? $tblyear[2][substr("0".($i+1),-2)] : 0;
-		$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
+		$labels[$i] = $langs->transnoentitiesnoconv("MonthVeryShort".sprintf("%02d", $i+1));
 		$datamin[$i] = 0;
 	}
 
@@ -410,7 +408,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount < 0";
@@ -446,7 +444,7 @@ else
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1),-2)]) ? $tblyear[1][substr("0".($i+1),-2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1),-2)]) ? $tblyear[2][substr("0".($i+1),-2)] : 0;
-		$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
+		$labels[$i] = $langs->transnoentitiesnoconv("MonthVeryShort".sprintf("%02d", $i+1));
 		$datamin[$i] = 0;
 	}
 
@@ -493,7 +491,8 @@ else
 }
 
 
-print "\n</div>\n";
+print "\n</div><br>\n";
 
+// End of page
 llxFooter();
 $db->close();

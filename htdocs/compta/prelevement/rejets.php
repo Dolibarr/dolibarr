@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -24,16 +24,14 @@
  *      \brief      Reject page
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -89,12 +87,10 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
+	print_liste_field_titre("Line",$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
+	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre("Reason",$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print "</tr>\n";
-
-	$var=True;
 
 	$total = 0;
 
@@ -102,7 +98,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		print "<tr ".$bc[$var]."><td>";
+		print '<tr class="oddeven"><td>';
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
@@ -112,7 +108,7 @@ if ($result)
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";
-		$var=!$var;
+
 		$i++;
 	}
 
@@ -124,5 +120,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

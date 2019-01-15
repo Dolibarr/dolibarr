@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,15 @@ class FactureStats extends Stats
     var $socid;
     var $userid;
 
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
+	
     var $from;
     var $field;
     var $where;
-	
+
 
 	/**
      * 	Constructor
@@ -56,8 +60,8 @@ class FactureStats extends Stats
 		$this->db = $db;
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-		
+		$this->cachefilesuffix = $mode;
+
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
@@ -84,8 +88,8 @@ class FactureStats extends Stats
 			$this->where.=" AND f.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where.=' AND f.fk_user_author = '.$this->userid;
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2)";
-		else $this->where.= " AND f.type IN (0,1,2,3)";
+		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2,5)";
+		else $this->where.= " AND f.type IN (0,1,2,3,5)";
 	}
 
 
@@ -93,9 +97,10 @@ class FactureStats extends Stats
 	 * 	Return orders number by month for a year
 	 *
 	 *	@param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -107,7 +112,7 @@ class FactureStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}
@@ -136,10 +141,11 @@ class FactureStats extends Stats
 	/**
 	 * 	Return the invoices amount by month for a year
 	 *
-	 *	@param	int		$year	Year to scan
-	 *	@return	array			Array with amount by month
+	 *	@param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *	@return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -151,7 +157,7 @@ class FactureStats extends Stats
         $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql);
+		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}
@@ -195,7 +201,7 @@ class FactureStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-	
+
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
@@ -218,7 +224,5 @@ class FactureStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-	
-	
 }
 

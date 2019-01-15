@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module AskPriceSupllier
+ *	Class to describe and enable module SupplierProposal
  */
 class modSupplierProposal extends DolibarrModules
 {
@@ -56,15 +56,20 @@ class modSupplierProposal extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='supplier_proposal';
-
+        
+		// Data directories to create when module is enabled.
 		$this->dirs = array();
+		
+		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
+        $this->config_page_url = array("supplier_proposal.php");
 
-		// Dependancies
-		$this->depends = array('modFournisseur');
-		$this->requiredby = array();
-		$this->config_page_url = array("supplier_proposal.php");
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array('modFournisseur');		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array("supplier_proposal");
 
 		// Constants
@@ -177,7 +182,7 @@ class modSupplierProposal extends DolibarrModules
             'position'=>302
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array(
 		    'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 		    'type'=>'left',
@@ -227,14 +232,14 @@ class modSupplierProposal extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'supplier_proposal' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','supplier_proposal',".$conf->entity.")",
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'supplier_proposal' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','supplier_proposal',".$conf->entity.")",
 		);
 
 		return $this->_init($sql, $options);
 	}
-	
-	
+
+
 
 	/**
 	 * Function called when module is disabled.
@@ -247,10 +252,9 @@ class modSupplierProposal extends DolibarrModules
 	public function remove($options = '')
 	{
 	    $sql = array(
-	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"
+	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
 	    );
-	
+
 	    return $this->_remove($sql, $options);
-	}	
-	
+	}
 }

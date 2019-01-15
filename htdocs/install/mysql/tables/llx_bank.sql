@@ -32,6 +32,7 @@ create table llx_bank
   fk_type         varchar(6),                -- TIP,VIR,PRE,CB,CHQ,... (Code in llx_c_paiement)
   num_releve      varchar(50),
   num_chq         varchar(50),
+  numero_compte   varchar(32) NULL,		     -- FEC:CompteNum	| account number
   rappro          tinyint default 0,
   note            text,
   fk_bordereau    integer DEFAULT 0,

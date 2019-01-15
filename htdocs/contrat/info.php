@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,38 +22,63 @@
  *      \brief      Page des informations d'un contrat
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
+// Load translation files required by the page
 $langs->load("contracts");
 
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$id			= GETPOST('id','int');
+$ref		= GETPOST('ref','alpha');
+
 // Security check
-$contratid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat',$contratid,'');
+$result = restrictedArea($user, 'contrat', $id, '');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
 
 
 /*
-* View
-*/
+ * Actions
+ */
+
+// None
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
 
 llxHeader('',$langs->trans("Contract"),"");
 
 $object = new Contrat($db);
-$object->fetch($contratid);
-$object->fetch_thirdparty();
-$object->info($contratid);
+$object->fetch($id, $ref);
+if ($object->id > 0)
+{
+    $object->fetch_thirdparty();
+}
+
+$object->info($object->id);
 
 $head = contract_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Contract"), 0, 'contract');
+dol_fiche_head($head, 'info', $langs->trans("Contract"), -1, 'contract');
 
 
 // Contract card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 $morehtmlref='';

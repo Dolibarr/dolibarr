@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("sendings");
-$langs->load("other");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('sendings', 'other', 'companies'));
 
 
 /*
@@ -214,7 +213,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/expedition/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -223,7 +222,7 @@ $type='shipment_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -260,6 +259,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -269,26 +270,24 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-	
+
 		print '<td align="right">0</td>';
 		/*print '<td align="right">0</td>';
 		print '<td align="right">0</td>';*/
 		print '</tr>';
 	}
 
-	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center">';
 	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';
 	else print $langs->trans("ValidationDateNotDefinedEvenIfShipmentValidated");
@@ -301,13 +300,14 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -361,6 +361,6 @@ print '</table>';
 print '<br>';
 print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira		<viniciusvgn@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,8 @@ $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
-$langs->load("suppliers");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders"));
 
 
 /*
@@ -53,17 +53,16 @@ print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
-$var=false;
-print '<form method="post" action="list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form><br>\n";
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    print '<form method="post" action="list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print "</table></form><br>\n";
+}
 
 
 /*
@@ -85,8 +84,6 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-
-	$var=True;
 
 	$total=0;
 	$totalinprocess=0;
@@ -112,15 +109,15 @@ if ($resql)
 	$db->free($resql);
 
 	print '<table class="noborder nohover" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $statut)
 	{
-		$dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($statut,1), (isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+
+			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
 			print "</tr>\n";
@@ -129,8 +126,17 @@ if ($resql)
 	if ($conf->use_javascript_ajax)
 	{
 		print '<tr class="impair"><td align="center" colspan="2">';
-		$data=array('series'=>$dataseries);
-		dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setWidth('100%');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total?0:1);
+
 		print '</td></tr>';
 	}
 	//if ($totalinprocess != $total)
@@ -169,18 +175,16 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
-	print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
-	print '<td align="right">'.$langs->trans("Nb").'</td>';
+	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
+	print '<th align="right">'.$langs->trans("Nb").'</th>';
 	print "</tr>\n";
-	$var=True;
 
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
-		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
+		print '<tr class="oddeven">';
+		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";
@@ -216,18 +220,17 @@ if (! empty($conf->fournisseur->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+
+				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
@@ -261,16 +264,14 @@ if ($resql)
 	$i = 0;
 
 	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
+	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
-	$var=True;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 		$userstatic->id=$obj->rowid;
 		$userstatic->lastname=$obj->lastname;
@@ -315,19 +316,17 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$commandestatic->id=$obj->rowid;
@@ -385,17 +384,16 @@ $num = $db->num_rows($resql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></td></tr>';
+print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
 
 if ($num)
 {
 $i = 0;
-$var = True;
 while ($i < $num)
 {
-$var=!$var;
 $obj = $db->fetch_object($resql);
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td class="nowrap">';
 
 $commandestatic->id=$obj->rowid;
@@ -434,6 +432,6 @@ print "</table><br>";
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

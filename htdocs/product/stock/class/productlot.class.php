@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,38 +39,53 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_lot';
-	
+
 	public $picto='barcode';
-	
-	public $isnolinkedbythird = 1;
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
     public $ismultientitymanaged = 1;
-    
+
 	/**
 	 * @var ProductlotLine[] Lines
 	 */
 	public $lines = array();
 
 	/**
+	 * @var int Entity
 	 */
-	
 	public $entity;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
 	public $datec = '';
 	public $tms = '';
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
 
 	/**
-	 */
-	
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	public $import_key;
+
 
 	/**
 	 * Constructor
@@ -92,32 +107,33 @@ class Productlot extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		global $conf;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -134,7 +150,7 @@ class Productlot extends CommonObject
 		$sql.= 'fk_user_modif,';
 		$sql.= 'import_key';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
+		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
 		$sql .= ' '.(! isset($this->fk_product)?'NULL':$this->fk_product).',';
 		$sql .= ' '.(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").',';
 		$sql .= ' '.(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").',';
@@ -157,7 +173,17 @@ class Productlot extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $error && ! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
@@ -191,6 +217,7 @@ class Productlot extends CommonObject
 	 */
 	public function fetch($id = 0, $product_id = 0, $batch = '')
 	{
+		global $conf;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
@@ -207,7 +234,7 @@ class Productlot extends CommonObject
 		$sql .= " t.import_key";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if ($product_id > 0 && $batch != '') {
-			$sql .= ' WHERE t.batch = ' . '\'' . $this->db->escape($batch) . '\' AND t.fk_product = ' . $product_id;
+			$sql .= " WHERE t.batch = '". $this->db->escape($batch) . "' AND t.fk_product = " . $product_id;
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -221,10 +248,9 @@ class Productlot extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				//$this->ref = $obj->fk_product.'_'.$obj->batch;
-				
+
 				$this->batch = $obj->batch;
-				
-				$this->entity = $obj->entity;
+				$this->entity = (!empty($obj->entity)?$obj->entity:$conf->entity); // Prevent "null" entity
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
@@ -234,12 +260,9 @@ class Productlot extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
 
-				// Retrieve all extrafields for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);				
+				$this->fetch_optionals();
 			}
 			$this->db->free($resql);
 
@@ -271,21 +294,21 @@ class Productlot extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -293,6 +316,13 @@ class Productlot extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
+
+		if (empty($this->oldcopy))
+		{
+			$org=new self($this->db);
+			$org->fetch($this->id);
+			$this->oldcopy=$org;
+		}
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
@@ -317,10 +347,17 @@ class Productlot extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Actions on extra fields
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
 
+		if (!$error && !$notrigger) {
 			// Call triggers
 			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
 			if ($result < 0) { $error++; }
@@ -355,8 +392,8 @@ class Productlot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
+		//if (!$error) {
+			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -364,8 +401,8 @@ class Productlot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
-			}
-		}
+			//}
+		//}
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -437,24 +474,55 @@ class Productlot extends CommonObject
 			return - 1;
 		}
 	}
-	
+
+
+	/**
+	 *	Return label of status of object
+	 *
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut(0,$mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *	Return label of a given status
+	 *
+	 *	@param	int		$statut     Status
+	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return string      		Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+        // phpcs:enable
+	    global $langs;
+
+	    //$langs->load('stocks');
+
+	    return '';
+	}
+
+
 	/**
 	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int		$withpicto				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option					On what the link point to
+     *  @param	integer	$notooltip				1=Disable tooltip
+     *  @param	int		$maxlen					Max length of visible user name
+     *  @param  string  $morecss            	Add more css on link
+     *  @param  int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string							String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
-
 
         $result = '';
 
@@ -469,23 +537,44 @@ class Productlot extends CommonObject
         {
             $label.= '<br><b>' . $langs->trans('SellByDate') . ':</b> ' . dol_print_date($this->sellby, 'day');
         }
-        
-        $link = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
-		$linkend='</a>';
 
-        if ($withpicto)
+        $url = DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id;
+
+        if ($option != 'nolink')
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-            if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $link . $this->batch . $linkend;
-		return $result;
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend='</a>';
+
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->batch;
+        $result .= $linkend;
+
+        return $result;
 	}
-	
-	
-	/** 
+
+
+	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
@@ -494,18 +583,16 @@ class Productlot extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
-		$this->entity = '';
-		$this->fk_product = '';
+
+		$this->entity = null;
+		$this->fk_product = null;
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
 		$this->datec = '';
 		$this->tms = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_user_creat = null;
+		$this->fk_user_modif = null;
 		$this->import_key = '';
 	}
-
 }
-

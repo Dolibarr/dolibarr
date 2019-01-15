@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,14 @@
  * \ingroup     Advanced accountancy
  * \brief       Page to show a fiscal year
  */
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)
@@ -36,17 +38,17 @@ if (empty($user->rights->accounting->fiscalyear))
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 
 // List of statut
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear' 
+		'1' => 'CloseFiscalYear'
 );
 $statut2label = array (
-		'' 
+		''
 );
 foreach ( $tmpstatut2label as $key => $val )
 	$statut2label[$key] = $langs->trans($val);
@@ -69,7 +71,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} 
+}
 
 else if ($action == 'add') {
 	if (! GETPOST('cancel', 'alpha')) {
@@ -113,7 +115,7 @@ else if ($action == 'add') {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-} 
+}
 
 // Update record
 else if ($action == 'update') {
@@ -126,7 +128,7 @@ else if ($action == 'update') {
 		$object->statut = GETPOST('statut', 'int');
 
 		$result = $object->update($user);
-		
+
 		if ($result > 0) {
 			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 			exit();
@@ -145,13 +147,13 @@ else if ($action == 'update') {
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
 llxHeader("",$title,$helpurl);
 
-$form = new Form($db);
-
-if ($action == 'create') 
+if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
@@ -164,16 +166,16 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST('label', 'alpha') . '"></td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
+	print $form->selectDate(($date_start ? $date_start : ''), 'fiscalyear');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
+	print $form->selectDate(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 
 	/*
@@ -181,10 +183,10 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+	print $form->selectarray('statut', $statut2label, GETPOST('statut', 'int'));
 	print '</td></tr>';
 	*/
-	
+
 	print '</table>';
 
 	dol_fiche_end();
@@ -224,12 +226,12 @@ if ($action == 'create')
 
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+			print $form->selectDate($object->date_start ? $object->date_start : - 1, 'fiscalyear');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+			print $form->selectDate($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 
 			// Statut
@@ -306,9 +308,9 @@ if ($action == 'create')
     			print '<div class="tabsAction">';
 
     			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
-    
+
     			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
-			
+
     			print '</div>';
 			}
 		}
@@ -317,5 +319,6 @@ if ($action == 'create')
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

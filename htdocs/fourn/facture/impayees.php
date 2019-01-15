@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira       <viniciusvgn@gmail.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -33,9 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("companies");
-$langs->load("bills");
-
+$langs->loadLangs(array("companies", "bills"));
 
 $socid=GETPOST('socid','int');
 $option = GETPOST('option');
@@ -57,14 +55,14 @@ $search_amount_no_tax = GETPOST('search_amount_no_tax','alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax','alpha');
 
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_ref_supplier="";
@@ -141,7 +139,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)
 	{
-		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".$db->escape(GETPOST('sf_re'))."%'";
 	}
 
 	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
@@ -189,15 +187,15 @@ if ($user->rights->fournisseur->facture->lire)
 
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AlreadyPaid"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("RefSupplier",$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("DateDue",$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("AmountHT",$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("AmountTTC",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("AlreadyPaid",$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
 		// Lines with filter fields
@@ -216,14 +214,13 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
 		print "</tr>\n";
 
 		if ($num > 0)
 		{
-			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
 			$total_paid=0;
@@ -235,9 +232,9 @@ if ($user->rights->fournisseur->facture->lire)
 				$facturestatic->statut = $objp->fk_statut;
 				$facturestatic->date_echeance = $db->jdate($objp->datelimite);
 
-				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+
+				print '<tr class="oddeven">';
 				$classname = "impayee";
 
 				print '<td class="nowrap">';
@@ -297,7 +294,6 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

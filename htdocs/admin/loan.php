@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2017  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
  */
 
 require '../main.inc.php';
-	
+
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("admin");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'loan'));
 
 // Security check
 if (!$user->admin)
@@ -47,7 +47,7 @@ $list = array (
 /*
  * Actions
  */
- 
+
 if ($action == 'update')
 {
     $error = 0;
@@ -77,9 +77,9 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'),$linkback,'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -96,19 +96,17 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	$var=!$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
-	$label = $langs->trans($key); 
+	$label = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value
 	print '<td>';
 	if (! empty($conf->accounting->enabled))
 	{
-		print $formaccountancy->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	}
 	else
 	{
@@ -122,7 +120,8 @@ print '</tr>';
 print '</form>';
 print "</table>\n";
 
-print '<br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
+// End of page
 llxFooter();
 $db->close();

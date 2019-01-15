@@ -4,7 +4,14 @@ dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jsgantt/*
 dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jstz/*
 # Those are false positives, the files are their own sources since
 # they are not minified
-source-is-missing htdocs/includes/jsgantt/jsgantt.js *
-source-is-missing htdocs/includes/jquery/plugins/colorpicker/jquery.colorpicker.js *
-source-is-missing htdocs/includes/jquery/plugins/select2/select2.js *
-source-is-missing htdocs/includes/jquery/plugins/select2/select2_locale_ar.js *
+source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/a11yhelp/dialogs/lang/*.js
+source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/specialchar/dialogs/lang/*.js
+source-is-missing htdocs/includes/ckeditor/ckeditor/lang/*.js
+source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/*/dialogs/*.js
+source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/*/filter/*.js
+source-is-missing htdocs/includes/ckeditor/ckeditor/plugins/templates/templates/default.js
+source-is-missing htdocs/includes/restler/framework/Luracast/Restler/explorer/lib/*.js
+# Those are false positives, the files are their own sources since
+# they are data files
+source-is-missing htdocs/includes/mobiledetect/mobiledetectlib/Mobile_Detect.json
+

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -35,12 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("resource");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'resource', 'companies'));
 
 $id = GETPOST('id','int');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
@@ -53,7 +52,7 @@ $result = restrictedArea($user, 'resource', $id, 'resource');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -89,11 +88,11 @@ if ($object->id)
 
 	$head=resource_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource');
+	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	// Build file list
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -101,41 +100,47 @@ if ($object->id)
 	}
 
 
+	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
+	$morehtmlref='<div class="refidno">';
+	$morehtmlref.='</div>';
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
     print '<table class="border" width="100%">';
-
-
-	print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
-	$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
-	print $form->showrefnav($object, 'id', $linkback,1,"rowid");
-	print '</td>';
-	print '</tr>';
 
 	// Resource type
 	print '<tr>';
-	print '<td>' . $langs->trans("ResourceType") . '</td>';
+	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
 	print '<td>';
 	print $object->type_label;
 	print '</td>';
 	print '</tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
 
+    dol_fiche_end();
+
     $modulepart = 'dolresource';
     $permission = $user->rights->resource->write;
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
+    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,7 @@
 function propal_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("propal");
-	$langs->load("compta");
+	$langs->loadLangs(array('propal', 'compta', 'companies'));
 
 	$h = 0;
 	$head = array();
@@ -47,18 +46,12 @@ function propal_prepare_head($object)
 	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
+		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
-		$h++;
-	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
 		$h++;
 	}
 
@@ -92,8 +85,8 @@ function propal_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// Load translation files required by page
 $langs->load("users");
 
 // Security check
@@ -34,7 +35,7 @@ $id = GETPOST('id','int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
@@ -65,10 +66,14 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'info', $title, 0, 'user');
+dol_fiche_head($head, 'info', $title, -1, 'user');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '';
+
+if ($user->rights->user->user->lire || $user->admin) {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+}
 
 dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -88,6 +93,6 @@ print '</div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
 $db->close();

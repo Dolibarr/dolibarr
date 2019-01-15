@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne			<erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -34,7 +35,7 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
@@ -78,7 +79,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= " ".MAIN_DB_PREF
 $sql.= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND p.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND p.entity IN (".getEntity('socpeople').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($type == "c") $sql.= " AND s.client IN (1, 3)";
 if ($type == "p") $sql.= " AND s.client IN (2, 3)";
@@ -126,14 +127,14 @@ if ($resql)
 	print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,"",$num);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Email"));
-	print_liste_field_titre($langs->trans("Phone"));
+	print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Email");
+	print_liste_field_titre("Phone");
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -144,15 +145,12 @@ if ($resql)
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
-	$var=True;
 	$i = 0;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
 		print "<td>$obj->firstname</TD>";
@@ -168,9 +166,9 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
-	
+
 	print '</form>';
-	
+
 	$db->free($resql);
 }
 else
@@ -178,6 +176,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

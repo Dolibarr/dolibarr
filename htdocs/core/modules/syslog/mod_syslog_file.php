@@ -51,7 +51,8 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-		return 1;
+	    global $conf;
+		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_FILE)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
 	/**
@@ -103,8 +104,24 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	private function getFilename($suffixinfilename='')
 	{
-		$tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, SYSLOG_FILE);
-		return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
+	    global $conf;
+
+	    if (empty($conf->global->SYSLOG_FILE)) $tmp=DOL_DATA_ROOT.'/dolibarr.log';
+	    else $tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+
+	    if (! empty($conf->global->SYSLOG_FILE_ONEPERSESSION))
+	    {
+	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1)	// file depend on session key name (Note that session name is same for all users and is not a per user value)
+	    	{
+	        	$suffixinfilename .= '_'.session_name();
+	    	}
+	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2)	// file depend on session value sor per user
+	    	{
+	    		$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+	    	}
+	    }
+
+	    return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
 	}
 
 	/**
@@ -122,12 +139,13 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		$logfile = $this->getFilename($suffixinfilename);
 
-		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
+		// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
+		if (defined('SYSLOG_FILE_NO_ERROR')) $filefd = @fopen($logfile, 'a+');
 		else $filefd = fopen($logfile, 'a+');
 
 		if (! $filefd)
 		{
-			if (! defined("SYSLOG_FILE_NO_ERROR"))
+			if (! defined('SYSLOG_FILE_NO_ERROR') || ! constant('SYSLOG_FILE_NO_ERROR'))
 			{
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
@@ -146,7 +164,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				LOG_INFO => 'INFO',
 				LOG_DEBUG => 'DEBUG'
 			);
-			
+
 			$delay = "";
 			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY))
 			{
@@ -154,8 +172,8 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
 				$this->lastTime = $now;
 			}
-			
-			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S").$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
+
+			$message = strftime("%Y-%m-%d %H:%M:%S", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));

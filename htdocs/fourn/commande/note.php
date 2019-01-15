@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +28,20 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $ref = GETPOST('ref');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
@@ -75,19 +77,19 @@ if ($id > 0 || ! empty($ref))
     if ($result >= 0)
     {
         $object->fetch_thirdparty();
-        
+
         $author = new User($db);
         $author->fetch($object->user_author_id);
 
         $head = ordersupplier_prepare_head($object);
 
         $title=$langs->trans("SupplierOrder");
-        dol_fiche_head($head, 'note', $title, 0, 'order');
+        dol_fiche_head($head, 'note', $title, -1, 'order');
 
 		// Supplier order card
-	
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-		
+
 		$morehtmlref='<div class="refidno">';
 		// Ref supplier
 		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
@@ -128,19 +130,19 @@ if ($id > 0 || ! empty($ref))
 		    }
 		}
 		$morehtmlref.='</div>';
-				
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
 
-		
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-		
-		
+
+
 		$cssclass="titlefield";
         include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         print '</div>';
-        
+
         dol_fiche_end();
     }
     else
@@ -151,7 +153,6 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

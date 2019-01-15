@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,52 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
+ *  \file       htdocs/core/modules/product/modules_product.class.php
+ *  \ingroup    contract
+ *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
+
+ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+/**
+ *	Parent class to manage intervention document templates
+ */
+abstract class ModelePDFProduct extends CommonDocGenerator
+{
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
+     */
+	static function liste_modeles($db,$maxfilenamelength=0)
+	{
+        // phpcs:enable
+		global $conf;
+
+		$type='product';
+		$liste=array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		return $liste;
+	}
+}
+
 abstract class ModeleProductCode
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
@@ -101,6 +141,7 @@ abstract class ModeleProductCode
         return $langs->trans("NotAvailable");
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoi la liste des modeles de numérotation
      *
@@ -110,6 +151,7 @@ abstract class ModeleProductCode
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         $liste=array();
         $sql ="";
 
@@ -162,7 +204,7 @@ abstract class ModeleProductCode
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == 1)
+        elseif ($type == 1)
         {
             $s.=$langs->trans("RequiredIfService").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
@@ -170,7 +212,7 @@ abstract class ModeleProductCode
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
-        if ($type == -1)
+        elseif ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
@@ -199,15 +241,15 @@ abstract class ModeleProductCode
         return $s;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return	int		0=no, 1=yes
 	 */
     function verif_prefixIsUsed()
     {
+        // phpcs:enable
         return 0;
     }
-
 }
-

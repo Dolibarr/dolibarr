@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';
 
-$langs->load("supplier_proposal");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -60,15 +60,18 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Search form
  */
-$var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '</tr>';
-print "</table></form><br>\n";
+
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print '</tr>';
+    print "</table></form><br>\n";
+}
 
 
 /*
@@ -80,7 +83,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -113,16 +116,14 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</td></tr>'."\n";
-    $var=true;
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$supplier_proposalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
@@ -130,9 +131,18 @@ if ($resql)
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr '.$bc[false].'><td align="center" colspan="2">';
-        $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+        print '<tr><td align="center" colspan="2">';
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+        $dolgraph = new DolGraph();
+        $dolgraph->SetData($dataseries);
+        $dolgraph->setShowLegend(1);
+        $dolgraph->setShowPercent(1);
+        $dolgraph->SetType(array('pie'));
+        $dolgraph->setWidth('100%');
+        $dolgraph->draw('idgraphstatus');
+        print $dolgraph->show($total?0:1);
+
         print '</td></tr>';
     }
 
@@ -165,19 +175,17 @@ if (! empty($conf->supplier_proposal->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftRequests").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
 
+				print '<tr class="oddeven">';
 				$supplier_proposalstatic->id=$obj->rowid;
 				$supplier_proposalstatic->ref=$obj->ref;
 				print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
@@ -223,19 +231,17 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$supplier_proposalstatic->id=$obj->rowid;
@@ -290,7 +296,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 	$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql.= " AND p.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -304,17 +310,15 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" width="140">';
@@ -371,6 +375,6 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

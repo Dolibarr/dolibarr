@@ -46,13 +46,20 @@ then
         then
         	aaupper="GR"
         fi        
+        if [ $bb = "EG" ]
+        then
+        	aaupper="SA"
+        fi        
+
     	bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
+
+		echo "***** Process language "$aa"_"$bb
     	if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
     	    if [ -d $reflang -a $aa"_"$bb != $aa"_"$aaupper ]
     	    then
-		    	echo "***** Process language "$aa"_"$bb" - Search original into "$reflang
+		    	echo "***** Search original into "$reflang
     			echo $dirshort is an alternative language of $reflang
     			echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
     			./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2

@@ -61,7 +61,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '')
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
@@ -70,9 +70,9 @@ class BankAccounts extends DolibarrApi
         }
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('bank_account', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('bank_account').')';
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -81,7 +81,7 @@ class BankAccounts extends DolibarrApi
             $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $this->db->order($sortfield, $sortorder);
         if ($limit)    {
             if ($page < 0)
@@ -89,16 +89,17 @@ class BankAccounts extends DolibarrApi
                 $page = 0;
             }
             $offset = $limit * $page;
-        
+
             $sql.= $this->db->plimit($limit + 1, $offset);
         }
-        
+
         dol_syslog("API Rest request");
         $result = $this->db->query($sql);
 
         if ($result) {
             $num = $this->db->num_rows($result);
-            for ($i = 0; $i < min($num, ($limit <= 0 ? $num : $limit)); $i++) {
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
                 $obj = $this->db->fetch_object($result);
                 $account = new Account($this->db);
                 if ($account->fetch($obj->rowid) > 0) {
@@ -190,9 +191,13 @@ class BankAccounts extends DolibarrApi
         }
 
         if ($account->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $account->error);
+        }
     }
 
     /**
@@ -235,7 +240,7 @@ class BankAccounts extends DolibarrApi
     function _validate($data)
     {
         $account = array();
-        foreach (Accounts::$FIELDS as $field) {
+        foreach (BankAccounts::$FIELDS as $field) {
             if (! isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $account[$field] = $data[$field];
@@ -343,7 +348,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Add a link to an account line
      *
-     * @param int    $account_id    ID of account
+     * @param int    $id    		ID of account
      * @param int    $line_id       ID of account line
      * @param int    $url_id        ID to set in the URL {@from body}
      * @param string $url           URL of the link {@from body}
@@ -351,16 +356,16 @@ class BankAccounts extends DolibarrApi
      * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
      * @return int  ID of link
      *
-     * @url POST {account_id}/lines/{line_id}/links
+     * @url POST {id}/lines/{line_id}/links
      */
-    function addLink($account_id, $line_id, $url_id, $url, $label, $type)
+    function addLink($id, $line_id, $url_id, $url, $label, $type)
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
         }
 
         $account = new Account($this->db);
-        $result = $account->fetch($account_id);
+        $result = $account->fetch($id);
         if (! $result) {
             throw new RestException(404, 'account not found');
         }

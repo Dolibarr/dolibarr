@@ -1,3 +1,0 @@
-# Dolibarr language file - Source file is en_US - oauth
-NewTokenStored=Token received ans saved
-ToCheckDeleteTokenOnProvider=To check/delete authorization saved by %s OAuth provider

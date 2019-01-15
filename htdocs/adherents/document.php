@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -33,26 +33,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("companies");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","other"));
+
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
-	$id = $user->societe_id;
-}
 $result=restrictedArea($user,'adherent',$id);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -94,28 +90,28 @@ if ($id > 0)
     $result=$membert->fetch($object->typeid);
 	if ($result > 0)
 	{
-			
-		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+
+		// Build file list
+		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
 			$totalsize+=$file['size'];
 		}
-	    
+
 	    if (! empty($conf->notification->enabled))
 			$langs->load("mails");
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"),0,'user');
+		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
-    	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-    	
+    	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     	dol_banner_tab($object, 'rowid', $linkback);
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
@@ -148,12 +144,12 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 		//Total taille
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 		print '</table>';
 
 		print '</div>';
-		
+
 		dol_fiche_end();
 
 		$modulepart = 'member';
@@ -174,6 +170,6 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

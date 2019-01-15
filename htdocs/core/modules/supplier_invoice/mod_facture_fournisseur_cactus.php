@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,12 +33,34 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Cactus';
-	var $prefixinvoice='SI';
-	var $prefixcreditnote='SA';
-	var $prefixdeposit='SD';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Cactus';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Cactus';
+
+	public $prefixinvoice='SI';
+
+	public $prefixcreditnote='SA';
+
+	public $prefixdeposit='SD';
 
 
     /**
@@ -82,7 +104,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixinvoice."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 		$resql=$db->query($sql);
 		if ($resql)
@@ -103,7 +125,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixcreditnote."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -124,7 +146,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefixdeposit."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -202,7 +224,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         {
         	$date=$object->date;	// This is invoice date (not creation date)
         	$yymm = strftime("%y%m",$date);
-        	
+
         	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         	else $num = sprintf("%04s",$max+1);
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -30,11 +30,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -90,26 +91,31 @@ if ($id > 0 || ! empty($ref))
     $head = product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
-    
-    dol_fiche_head($head, 'note', $titre, 0, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    dol_fiche_head($head, 'note', $titre, -1, $picto);
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
     $cssclass='titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
-    
+
     //print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();
 

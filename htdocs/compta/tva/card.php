@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
@@ -45,7 +45,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 
@@ -55,17 +55,25 @@ $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 {
-	header("Location: reglement.php");
+	header("Location: list.php");
 	exit;
+}
+
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
 }
 
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
+    $object->datev=dol_mktime(12,0,0,GETPOST('datevmonth','int'),GETPOST('datevday','int'),GETPOST('datevyear','int'));
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
-    
+
     $action='';
 }
 
@@ -81,15 +89,15 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->num_payment=GETPOST("num_payment");
     $object->datev=$datev;
     $object->datep=$datep;
-	
-	$amount = price2num(GETPOST("amount"));
+
+	$amount = price2num(GETPOST("amount",'alpha'));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
     $object->amount= $amount;
-	$object->label=GETPOST("label");
-	$object->note=GETPOST("note");
-	
+	$object->label=GETPOST("label",'alpha');
+	$object->note=GETPOST("note",'none');
+
 	if (empty($object->datev))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
@@ -119,7 +127,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: reglement.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -154,7 +162,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
 			else
@@ -172,7 +180,8 @@ if ($action == 'delete')
 	}
 	else
 	{
-        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		$mesg='Error try do delete a line linked to a conciliated bank transaction';
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -180,11 +189,13 @@ if ($action == 'delete')
 /*
  *	View
  */
+
+$form = new Form($db);
+
 $title=$langs->trans("VAT") . " - " . $langs->trans("Card");
 $help_url='';
 llxHeader("",$title,$helpurl);
 
-$form = new Form($db);
 
 if ($id)
 {
@@ -207,11 +218,11 @@ if ($action == 'create')
         print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
                 $("#radiorefund").click(function() {
                     $("#label").val($(this).data("label"));
-                    
+
                 });
         });';
 		print '</script>'."\n";
@@ -245,11 +256,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add',1,1);
+    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add',1,1);
+    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
 	// Label
@@ -261,7 +272,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount","alpha").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
@@ -282,8 +293,9 @@ if ($action == 'create')
 	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
     print '</table>';
 
@@ -303,29 +315,36 @@ if ($id)
 {
 	$head=vat_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
+	$morehtmlref='<div class="refidno">';
+	// Label of social contribution
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	// Project
+	$morehtmlref.='</div>';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
-	print '</td></tr>';
-
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
+	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-
 	print '<tr><td>';
-	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	print '</td><td>';
-	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
@@ -335,22 +354,26 @@ if ($id)
 	{
 		if ($object->fk_account > 0)
 		{
- 		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($object->fk_bank);
+			$bankline=new AccountLine($db);
+			$bankline->fetch($object->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<tr>';
+			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
+			print '</td>';
+			print '</tr>';
 		}
 	}
 
-        // Other attributes
-        $reshook=$hookmanager->executeHooks('formObjectOptions','',$object,$action);    // Note that $action and $object may have been modified by hook
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
+
+	print '</div>';
 
 	dol_fiche_end();
 
@@ -366,12 +389,12 @@ if ($id)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

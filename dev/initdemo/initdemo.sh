@@ -6,7 +6,7 @@
 # WARNING: This script erase all data of database
 # with data into dump file
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: initdemo.sh
@@ -155,7 +155,7 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
-echo "drop table llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
+echo "drop table if exists llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
 echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 export res=$?
@@ -171,6 +171,7 @@ then
 	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	mkdir -p "$documentdir/ecm/Administrative documents"
 	mkdir -p "$documentdir/ecm/Images"
+	rm -f "$documentdir/doctemplates/"*/index.html
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else

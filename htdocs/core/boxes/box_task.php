@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+/* Copyright (C) 2012-2018 Charlene BENKE 	<charlie@patas-monkey.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
  *  \brief      Module to Task activity of the current year
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
 /**
@@ -31,16 +31,22 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
  */
 class box_task extends ModeleBoxes
 {
-    var $boxcode="projet";
-    var $boximg="object_projecttask";
-    var $boxlabel;
-    //var $depends = array("projet");
-    var $db;
-    var $param;
-    var $enabled = 0;		// Disabled because bugged.
+    public $boxcode="projet";
+    public $boximg="object_projecttask";
+    public $boxlabel;
+    //public $depends = array("projet");
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $enabled = 0;		// Disabled because bugged.
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+
 
     /**
      *  Constructor
@@ -50,11 +56,15 @@ class box_task extends ModeleBoxes
      */
     function __construct($db,$param='')
     {
-        global $langs;
-        $langs->load("boxes");
-        $langs->load("projects");
+        global $user, $langs;
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
+
         $this->boxlabel="Tasks";
         $this->db = $db;
+
+        $this->hidden = ! ($user->rights->projet->lire);
     }
 
 	/**
@@ -72,7 +82,10 @@ class box_task extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalDuree=0;
-		include_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
+		$totalplannedtot=0;
+		$totaldurationtot=0;
+		
+		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		$taskstatic=new Task($db);
 
 
@@ -99,19 +112,19 @@ class box_task extends ModeleBoxes
                 {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' =>$langs->trans("Task")." ".$taskstatic->LibStatut($objp->fk_statut,0),
                     );
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
                         'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
                     );
 					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
+					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
 					$totalplannedtot += $objp->plannedtot;
-					$this->info_box_contents[$i][] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
+					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
 					$totaldurationtot += $objp->durationtot;
 
 					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
@@ -123,13 +136,12 @@ class box_task extends ModeleBoxes
 		}
 
 
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => 'align="left"', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		// Add the sum at the bottom of the boxes
+		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
 		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
-
 	}
 
 	/**
@@ -138,10 +150,10 @@ class box_task extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
 	function showBox($head = null, $contents = null, $nooutput=0)
 	{
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

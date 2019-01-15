@@ -27,12 +27,32 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
 /**
  *	Class to manage customer payment numbering rules Cicada
  */
-class mod_supplier_payment_bronan extends ModeleNumRefPayments
+class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='SPAY';
-	var $error='';
-	var $nom='Bronan';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='SPAY';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Bronan';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Bronan';
 
 
     /**
@@ -73,7 +93,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefPayments
 		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -107,7 +127,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefPayments
 		$posindice=10;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -135,6 +155,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefPayments
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -144,7 +165,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefPayments
 	 */
 	function payment_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

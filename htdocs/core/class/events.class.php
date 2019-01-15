@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,26 +30,52 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
-	public $element='events';				//!< Id that identify managed objects
-	public $table_element='events';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='events';
 
-	var $id;
-	var $db;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='events';
 
-	var $error;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $tms;
-	var $type;
-	var $entity;
-	var $dateevent;
-	var $description;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	// List of all events supported by triggers
-	var $eventstolog=array(
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $tms;
+	public $type;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $dateevent;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	// List of all Audit/Security events supported by triggers
+	public $eventstolog=array(
 		array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
 	    array('id'=>'USER_LOGOUT',            'test'=>1),
@@ -58,6 +84,8 @@ class Events // extends CommonObject
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
 		array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
 		array('id'=>'USER_DELETE',            'test'=>1),
+	/*    array('id'=>'USER_SETINGROUP',        'test'=>1), deprecated. Replace with USER_MODIFY
+	    array('id'=>'USER_REMOVEFROMGROUP',   'test'=>1), deprecated. Replace with USER_MODIFY */
 		array('id'=>'GROUP_CREATE',           'test'=>1),
 		array('id'=>'GROUP_MODIFY',           'test'=>1),
 		array('id'=>'GROUP_DELETE',           'test'=>1),
@@ -94,7 +122,6 @@ class Events // extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
@@ -110,6 +137,7 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description=trim($this->description);
+		if (empty($this->user_agent) && !empty($_SERVER['HTTP_USER_AGENT'])) $this->user_agent=$_SERVER['HTTP_USER_AGENT'];
 
 		// Check parameters
 		if (empty($this->description)) { $this->error='ErrorBadValueForParameterCreateEventDesc'; return -1; }
@@ -124,12 +152,12 @@ class Events // extends CommonObject
 		$sql.= "fk_user,";
 		$sql.= "description";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->type."',";
+		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
-		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
+		$sql.= " '".$this->db->escape(getUserRemoteIP())."',";
+		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent,250))."'" : 'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
-		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
+		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
 		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
 		$sql.= ")";
 
@@ -169,8 +197,8 @@ class Events // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
-		$sql.= " type='".$this->type."',";
-		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
+		$sql.= " type='".$this->db->escape($this->type)."',";
+		$sql.= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -278,5 +306,4 @@ class Events // extends CommonObject
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
 	}
-
 }

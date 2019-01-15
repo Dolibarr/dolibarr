@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 
@@ -59,9 +60,9 @@ if ($id > 0)
 
 	$head = contact_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $title, 0, 'contact');
+	dol_fiche_head($head, 'info', $title, -1, 'contact');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
@@ -71,11 +72,11 @@ if ($id > 0)
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<br>';
-	
+
 	dol_print_object_info($object);
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 }
 

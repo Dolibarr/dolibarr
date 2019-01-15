@@ -48,4 +48,4 @@ SmsInfoNumero= (Tức là định dạng quốc tế: 33899701761)
 DelayBeforeSending=Chậm trễ trước khi gửi (phút)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Không có mục tiêu có sẵn. Kiểm tra thiết lập của nhà cung cấp tin nhắn SMS của bạn.
-
+DisableStopIfSupported=Disable STOP message (if supported)

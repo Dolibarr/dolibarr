@@ -1,16 +1,20 @@
 <?php
+
 require 'Segment.php';
+
 class OdfException extends Exception
-{}
+{
+}
+
 /**
  * Templating class for odt file
  * You need PHP 5.2 at least
  * You need Zip Extension or PclZip library
  *
- * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
- * @copyright  GPL License 2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
- * @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
- * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
+ * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
+ * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
+ * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
+ * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
@@ -32,18 +36,19 @@ class Odf
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
-	
+
 	public $creator;
 	public $title;
 	public $subject;
 	public $userdefined=array();
-	
+
 	const PIXEL_TO_CM = 0.026458333;
-	
+
 	/**
 	 * Class constructor
 	 *
-	 * @param string $filename the name of the odt file
+	 * @param string $filename     The name of the odt file
+	 * @param string $config       Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -108,7 +113,7 @@ class Odf
 
 		copy($filename, $this->tmpfile);
 
-		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the 
+		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the
 		// <table:table-row tag and clean bad lines tags.
 		$this->_moveRowSegments();
 	}
@@ -116,9 +121,10 @@ class Odf
 	/**
 	 * Assing a template variable
 	 *
-	 * @param string $key name of the variable within the template
-	 * @param string $value replacement value
-	 * @param bool $encode if true, special XML characters are encoded
+	 * @param string   $key        Name of the variable within the template
+	 * @param string   $value      Replacement value
+	 * @param bool     $encode     If true, special XML characters are encoded
+	 * @param string   $charset    Charset
 	 * @throws OdfException
 	 * @return odf
 	 */
@@ -129,7 +135,7 @@ class Odf
 		// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
 		// instead of {aaa} so we should enhance this function.
 		//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
-		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml , $tag) === false) {
+		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml, $tag) === false) {
 			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
 			throw new OdfException("var $key not found in the document");
 			//}
@@ -205,7 +211,7 @@ class Odf
 	{
 		preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU',$this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
 		$nbfound=count($matches['content']);
-		for ($i=0; $i < $nbfound; $i++) 
+		for ($i=0; $i < $nbfound; $i++)
 		{
 			try {
 				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
@@ -262,7 +268,7 @@ IMG;
 	    $this->contentXml = preg_replace('/\[!--\sBEGIN<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- BEGIN \\1 --]', $this->contentXml);
 	    // Replace END<text:s/>xxx into END xxx
 	    $this->contentXml = preg_replace('/\[!--\sEND<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- END \\1 --]', $this->contentXml);
-    
+
 	    // Search all possible rows in the document
 		$reg1 = "#<table:table-row[^>]*>(.*)</table:table-row>#smU";
 		preg_match_all($reg1, $this->contentXml, $matches);
@@ -296,7 +302,7 @@ IMG;
 	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
 	    $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
-	    
+
 	    //var_dump($this->vars);exit;
 	    foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
 		{
@@ -306,7 +312,7 @@ IMG;
 			}
 	    }
 	    //var_dump($this->vars);exit;
-	    
+
 		// Conditionals substitution
 		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
 	    foreach($this->vars as $key => $value)
@@ -352,7 +358,7 @@ IMG;
 		if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
 		if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
 		if ($type == 'meta')	$this->metaXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->metaXml);
-		
+
 	}
 
 	/**
@@ -461,7 +467,7 @@ IMG;
 
 		$this->setMetaData();
 		//print $this->metaXml;exit;
-		
+
 		if (! $this->file->addFromString('content.xml', $this->contentXml)) {
 			throw new OdfException('Error during file export addFromString content');
 		}
@@ -471,7 +477,7 @@ IMG;
 		if (! $this->file->addFromString('styles.xml', $this->stylesXml)) {
 			throw new OdfException('Error during file export addFromString styles');
 		}
-		
+
 		foreach ($this->images as $imageKey => $imageValue) {
 			// Add the image inside the ODT document
 			$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
@@ -493,12 +499,12 @@ IMG;
 	public function setMetaData()
 	{
 	    if (empty($this->creator)) $this->creator='';
-	    
+
 		$this->metaXml = preg_replace('/<dc:date>.*<\/dc:date>/', '<dc:date>'.gmdate("Y-m-d\TH:i:s").'</dc:date>', $this->metaXml);
 		$this->metaXml = preg_replace('/<dc:creator>.*<\/dc:creator>/', '<dc:creator>'.htmlspecialchars($this->creator).'</dc:creator>', $this->metaXml);
 		$this->metaXml = preg_replace('/<dc:title>.*<\/dc:title>/', '<dc:title>'.htmlspecialchars($this->title).'</dc:title>', $this->metaXml);
 		$this->metaXml = preg_replace('/<dc:subject>.*<\/dc:subject>/', '<dc:subject>'.htmlspecialchars($this->subject).'</dc:subject>', $this->metaXml);
-		
+
 		if (count($this->userdefined))
 		{
 		    foreach($this->userdefined as $key => $val)
@@ -509,7 +515,7 @@ IMG;
 		    }
 		}
 	}
-	
+
 	/**
 	 * Update Manifest file according to added image files
 	 *
@@ -555,7 +561,7 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param string $name (optional)
+	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
 	 * @throws OdfException
 	 * @return void
 	 */
@@ -563,23 +569,67 @@ IMG;
 	{
 		global $conf;
 
-		if( $name == "" ) $name = md5(uniqid());
+		if( $name == "" ) $name = "temp".md5(uniqid());
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		// Method 1 sometimes hang the server.
 
-		$name=preg_replace('/\.odt/i', '', $name);
-		if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
+
+		// Export to PDF using LibreOffice
+		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
-			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+			// using windows libreoffice that must be in path
+			// using linux/mac libreoffice that must be in path
+			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+		}
+		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
+		{
+			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
+
+			// MAIN_ODT_AS_PDF should be   "sudo -u unoconv /usr/bin/unoconv" and userunoconv must have sudo to be root by adding file /etc/sudoers.d/unoconv with content  www-data ALL=(unoconv) NOPASSWD: /usr/bin/unoconv .
+
+			// Try this with www-data user:    /usr/bin/unoconv -vvvv -f pdf /tmp/document-example.odt
+			// It must return:
+			//Verbosity set to level 4
+			//Using office base path: /usr/lib/libreoffice
+			//Using office binary path: /usr/lib/libreoffice/program
+			//DEBUG: Connection type: socket,host=127.0.0.1,port=2002;urp;StarOffice.ComponentContext
+			//DEBUG: Existing listener not found.
+			//DEBUG: Launching our own listener using /usr/lib/libreoffice/program/soffice.bin.
+			//LibreOffice listener successfully started. (pid=9287)
+			//Input file: /tmp/document-example.odt
+			//unoconv: file `/tmp/document-example.odt' does not exist.
+			//unoconv: RuntimeException during import phase:
+			//Office probably died. Unsupported URL <file:///tmp/document-example.odt>: "type detection failed"
+			//DEBUG: Terminating LibreOffice instance.
+			//DEBUG: Waiting for LibreOffice instance to exit
+
+			// If it fails:
+			// - set shell of user to bash instead of nologin.
+			// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
+
+			$command = $conf->global->MAIN_ODT_AS_PDF.' '.escapeshellcmd($name);
+			//$command = '/usr/bin/unoconv -vvv '.escapeshellcmd($name);
 		}
 		else
 		{
-			$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
-		}
+			// deprecated old method
+			$tmpname=preg_replace('/\.odt/i', '', $name);
 
+			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
+			{
+				$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+			}
+			else
+			{
+			    dol_syslog(get_class($this).'::exportAsAttachedPDF is used but the constant MAIN_DOL_SCRIPTS_ROOT with path to script directory was not defined.', LOG_WARNING);
+				$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+			}
+		}
 
 		//$dirname=dirname($name);
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
@@ -591,16 +641,19 @@ IMG;
 		}
 		if ($execmethod == 2)
 		{
+			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
+
 			$ok=0;
 			$handle = fopen($outputfile, 'w');
 			if ($handle)
 			{
 				dol_syslog(get_class($this)."Run command ".$command,LOG_DEBUG);
+				fwrite($handle, $command."\n");
 				$handlein = popen($command, 'r');
 				while (!feof($handlein))
 				{
 					$read = fgets($handlein);
-					fwrite($handle,$read);
+					fwrite($handle, $read);
 					$output_arr[]=$read;
 				}
 				pclose($handlein);
@@ -609,7 +662,7 @@ IMG;
 			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 
-		if($retval == 0)
+		if ($retval == 0)
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			if (headers_sent($filename, $linenum)) {
@@ -617,12 +670,15 @@ IMG;
 			}
 
 			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$name=preg_replace('/\.od(x|t)/i', '', $name);
 				header('Content-type: application/pdf');
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile("$name.pdf");
+				readfile($name.".pdf");
 			}
 			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
-				unlink("$name.odt");
+			{
+				unlink($name);
+			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
@@ -642,7 +698,8 @@ IMG;
 	/**
 	 * Returns a variable of configuration
 	 *
-	 * @return string The requested variable of configuration
+	 * @param  string  $configKey  Config key
+	 * @return string              The requested variable of configuration
 	 */
 	public function getConfig($configKey)
 	{
@@ -678,7 +735,8 @@ IMG;
 
 	/**
 	 * Empty the temporary working directory recursively
-	 * @param $dir the temporary working directory
+	 *
+	 * @param  string  $dir    The temporary working directory
 	 * @return void
 	 */
 	private function _rrmdir($dir)
@@ -700,9 +758,9 @@ IMG;
 
 	/**
 	 * return the value present on odt in [valuename][/valuename]
-	 * 
-	 * @param  string $value   name balise in the template
-	 * @return string          the value inside the balise
+	 *
+	 * @param  string $valuename   Balise in the template
+	 * @return string              The value inside the balise
 	 */
 	public function getvalue($valuename)
 	{

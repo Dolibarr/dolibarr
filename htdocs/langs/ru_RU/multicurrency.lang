@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi currency
+ErrorAddRateFail=Error in added rate
+ErrorAddCurrencyFail=Error in added currency
+ErrorDeleteCurrencyFail=Error delete fail
+multicurrency_syncronize_error=Synchronisation error: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Use date of document to find currency rate, instead of using latest known rate
+multicurrency_useOriginTx=When an object is created from another, keep the original rate of source object (otherwise use the latest known rate)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Вы должны создать аккаунт на их сайте для того, чтобы использовать этот функционал<br>Получите<b>API-ключ</b><br>Если вы используете бесплатный аккаунт, вы не можете изменить<b>источник валюты</b>(USD по умолчанию)<br>Но если ваша основная валюта не USD, то вы можете использовать <b>альтернативный источник валюты</b>для того, чтобы принудительно использовать основную валюту<br><br>Вы сможете производить не более 1000 синхронизаций в месяц
+multicurrency_appId=API key
+multicurrency_appCurrencySource=Currency source
+multicurrency_alternateCurrencySource=Alternate currency source
+CurrenciesUsed=Currencies used
+CurrenciesUsed_help_to_add=Add the differents currencies and rates you need to use on you <b>proposals</b>, <b>orders</b>, etc.
+rate=rate
+MulticurrencyReceived=Received, original currency
+MulticurrencyRemainderToTake=Remaining amout, original currency
+MulticurrencyPaymentAmount=Сумма платежа, в оригинальной валюте
+AmountToOthercurrency=Amount To (in currency of receiving account)

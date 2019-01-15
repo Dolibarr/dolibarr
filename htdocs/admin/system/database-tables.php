@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,13 +103,11 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
@@ -158,13 +156,11 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td align="right">'.$row[1].'</td>';
 				print '<td align="right">'.$row[2].'</td>';
@@ -182,8 +178,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+    print '<div class="div-table-responsive-no-min">';
+	  print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -194,7 +190,6 @@ else
 
 		if ($resql)
 		{
-			$var=True;
 			while ($row = $db->fetch_row($resql)) {
 
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
@@ -205,7 +200,7 @@ else
 					$count = '?';
 				}
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';
@@ -217,5 +212,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

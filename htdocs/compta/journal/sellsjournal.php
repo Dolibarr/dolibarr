@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-
-$langs->load("companies");
-$langs->load("other");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other', 'compta'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
@@ -89,20 +88,19 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 $nom=$langs->trans("SellsJournal");
-$nomlink='';
 $periodlink='';
 $exportlink='';
-$builddate=time();
+$builddate=dol_now();
 $description=$langs->trans("DescSellsJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
 $sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
 $sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
@@ -170,7 +168,7 @@ if ($result)
 		$prev_progress = 0;
 		if ($obj->type==Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
-			if ($obj->situation_percent == 0) { 
+			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
 		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id on invoice
@@ -182,7 +180,7 @@ if ($result)
 
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
-   		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+   		$tabfac[$obj->rowid]["ref"] = $obj->ref;
    		$tabfac[$obj->rowid]["type"] = $obj->type;
    		if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc]=0;
    		if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod]=0;
@@ -216,7 +214,6 @@ print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
-$var=false;
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);
@@ -262,7 +259,7 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
+				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
@@ -282,12 +279,9 @@ foreach ($tabfac as $key => $val)
 			}
 		}
 	}
-
-	$var = !$var;
 }
 
 print "</table>";
-
 
 // End of page
 llxFooter();

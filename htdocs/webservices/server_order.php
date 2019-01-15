@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,13 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK",'1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -116,7 +115,8 @@ $line_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
-if (count($extrafields)>0) {
+$extrafield_line_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -127,7 +127,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$line_fields=array_merge($line_fields,$extrafield_line_array);
+if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields,$extrafield_line_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -215,7 +215,8 @@ $order_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('commande',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -226,7 +227,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$order_fields=array_merge($order_fields,$extrafield_array);
+if (is_array($extrafield_array)) $order_fields=array_merge($order_fields,$extrafield_array);
 
 $server->wsdl->addComplexType(
 		'order',
@@ -325,7 +326,7 @@ $server->register(
 
 $server->register(
 		'validOrder',
-		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
+		array('authentication'=>'tns:authentication','id'=>'xsd:string','id_warehouse'=>'xsd:string'),  // Entry values
 		array('result'=>'tns:result'),	// Exit values
 		$ns,
 		$ns.'#validOrder',
@@ -658,7 +659,7 @@ function createOrder($authentication,$order)
 {
 	global $db,$conf,$langs;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 	$now=dol_now();
 
@@ -748,7 +749,6 @@ function createOrder($authentication,$order)
 		{
 			dol_syslog("Webservice server_order:: order creation failed", LOG_ERR);
 			$error++;
-
 		}
 
 		if ($order['status'] == 1)   // We want order to have status validated
@@ -776,7 +776,6 @@ function createOrder($authentication,$order)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
-
 	}
 
 	if ($error)
@@ -793,9 +792,10 @@ function createOrder($authentication,$order)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
+ * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication,$id='')
+function validOrder($authentication,$id='',$id_warehouse=0)
 {
 	global $db,$conf,$langs;
 
@@ -821,14 +821,14 @@ function validOrder($authentication,$id='')
 			$db->begin();
 			if ($result > 0)
 			{
-				$result=$order->valid($fuser);
+
+				$result=$order->valid($fuser,$id_warehouse);
 
 				if ($result	>= 0)
 				{
 					// Define output language
 					$outputlangs = $langs;
 					$order->generateDocument($order->modelpdf, $outputlangs);
-
 				}
 				else
 				{
@@ -845,7 +845,6 @@ function validOrder($authentication,$id='')
 				$errorcode='KO';
 				$errorlabel=$newobject->error;
 			}
-
 		}
 		else
 		{
@@ -854,7 +853,6 @@ function validOrder($authentication,$id='')
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
-
 	}
 
 	if ($error)
@@ -922,8 +920,7 @@ function updateOrder($authentication,$order)
 					{
 						// Define output language
 						$outputlangs = $langs;
-						$order->generateDocument($order->modelpdf, $outputlangs);
-					
+						$object->generateDocument($order->modelpdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);

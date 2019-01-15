@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@
 
 /**
  *		\file       htdocs/viewimage.php
- *		\brief      Wrapper to show images into Dolibarr screens
- *      \remarks    Call to wrapper is '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0">'
+ *		\brief      Wrapper to show images into Dolibarr screens.
+ *		\remarks    Call to wrapper is :
+ *					DOL_URL_ROOT.'/viewimage.php?modulepart=diroffile&file=relativepathofofile&cache=0
+ *					DOL_URL_ROOT.'/viewimage.php?hashp=sharekey
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -33,43 +35,66 @@ if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
+
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN"))
+// Note that only directory logo is free to access without login.
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file']))
 {
-	define("NOLOGIN",'1');
-	// For multicompany
-	$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-	if (is_numeric($entity)) define("DOLENTITY", $entity);
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
+// For direct external download link, we don't need to load/check we are into a login session
+if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
+{
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+// Some value of modulepart can be used to get resources that are public so no login are required.
+if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
+{
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// For multicompany
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 /**
  * Header empty
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
-require 'main.inc.php';
+require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-
 $action=GETPOST('action','alpha');
-$original_file=GETPOST("file");
+$original_file=GETPOST('file','alpha');		// Do not use urldecode here ($_GET are already decoded by PHP).
+$hashp=GETPOST('hashp','aZ09');
 $modulepart=GETPOST('modulepart','alpha');
-$urlsource=GETPOST("urlsource");
-$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
+$urlsource=GETPOST('urlsource','alpha');
+$entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
+if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
+
 
 
 /*
@@ -84,7 +109,7 @@ if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatib
  * View
  */
 
-if (GETPOST("cache"))
+if (GETPOST("cache",'alpha'))
 {
     // Important: Following code is to avoid page request by browser and PHP CPU at
     // each Dolibarr page access.
@@ -97,9 +122,51 @@ if (GETPOST("cache"))
     //print $dolibarr_nocache; exit;
 }
 
+// If we have a hash public (hashp), we guess the original_file.
+if (! empty($hashp))
+{
+	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	$ecmfile=new EcmFiles($db);
+	$result = $ecmfile->fetch(0, '', '', '', $hashp);
+	if ($result > 0)
+	{
+		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
+		// filepath can be 'users/X' or 'X/propale/PR11111'
+		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+		{
+			$tmp = explode('/', $tmp[1], 2);
+		}
+		$moduleparttocheck = $tmp[0];	// moduleparttocheck is first part of path
+
+		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
+		{
+			if ($moduleparttocheck == $modulepart)
+			{
+				// We remove first level of directory
+				$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
+				//var_dump($original_file); exit;
+			}
+			else
+			{
+				accessforbidden('Bad link. File is from another module part.',0,0,1);
+			}
+		}
+		else
+		{
+			$modulepart = $moduleparttocheck;
+			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
+		}
+	}
+	else
+	{
+		$langs->load("errors");
+		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
+	}
+}
+
 // Define mime type
 $type = 'application/octet-stream';
-if (! empty($_GET["type"])) $type=$_GET["type"];
+if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
@@ -110,26 +177,58 @@ $refname=basename(dirname($original_file)."/");
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
+
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$original_file              = $check_access['original_file'];
+$fullpath_original_file     = $check_access['original_file'];               // $fullpath_original_file is now a full path name
+
+if (! empty($hashp))
+{
+	$accessallowed = 1;					// When using hashp, link is public so we force $accessallowed
+	$sqlprotectagainstexternals = '';
+}
+else
+{
+	// Basic protection (against external users only)
+	if ($user->societe_id > 0)
+	{
+		if ($sqlprotectagainstexternals)
+		{
+			$resql = $db->query($sqlprotectagainstexternals);
+			if ($resql)
+			{
+				$num=$db->num_rows($resql);
+				$i=0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					if ($user->societe_id != $obj->fk_soc)
+					{
+						$accessallowed=0;
+						break;
+					}
+					$i++;
+				}
+			}
+		}
+	}
+}
 
 // Security:
 // Limit access if permissions are wrong
 if (! $accessallowed)
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpath_original_file))
 {
-    dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
-    // Do no show plain path in shown error message
-    dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
-    exit;
+	dol_syslog("Refused to deliver file ".$fullpath_original_file);
+	print "ErrorFileNameInvalid: ".$original_file;
+	exit;
 }
 
 
@@ -137,13 +236,13 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 if ($modulepart == 'barcode')
 {
     $generator=GETPOST("generator","alpha");
-    $code=GETPOST("code");
+    $code=GETPOST("code",'none');							// This can be rich content (qrcode, datamatrix, ...)
     $encoding=GETPOST("encoding","alpha");
-    $readable=GETPOST("readable")?GETPOST("readable","alpha"):"Y";
+    $readable=GETPOST("readable",'alpha')?GETPOST("readable","alpha"):"Y";
 
     if (empty($generator) || empty($encoding))
     {
-        dol_print_error(0,'Error, parameter "generator" or "encoding" not defined');
+        print 'Error: Parameter "generator" or "encoding" not defined';
         exit;
     }
 
@@ -175,33 +274,35 @@ else					// Open and return file
 {
     clearstatcache();
 
+    $filename = basename($fullpath_original_file);
+
     // Output files on browser
-    dol_syslog("viewimage.php return file $original_file content-type=$type");
+    dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
     // This test is to avoid error images when image is not available (for example thumbs).
-    if (! dol_is_file($original_file))
+    if (! dol_is_file($fullpath_original_file) && empty($_GET["noalt"]))
     {
-        $original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+        $fullpath_original_file=DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
         /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
-        dol_print_error(0,$error);
         print $error;
         exit;*/
     }
 
-    // Les drois sont ok et fichier trouve
+    // Permissions are ok and file found, so we return it
     if ($type)
     {
-        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: '.$type);
+        top_httphead($type);
+        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }
     else
     {
-        header('Content-Disposition: inline; filename="'.basename($original_file).'"');
-        header('Content-type: image/png');
+        top_httphead('image/png');
+        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }
 
-    $original_file_osencoded=dol_osencode($original_file);
-    readfile($original_file_osencoded);
+    $fullpath_original_file_osencoded=dol_osencode($fullpath_original_file);
+
+    readfile($fullpath_original_file_osencoded);
 }
 
 

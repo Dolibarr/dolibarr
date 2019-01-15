@@ -48,7 +48,7 @@ class modComptabilite extends DolibarrModules
 		$this->numero = 10;
 
 		$this->family = "financial";
-		$this->module_position = 600;
+		$this->module_position = '60';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion sommaire de comptabilite";
@@ -57,7 +57,6 @@ class modComptabilite extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
         $this->picto='accounting';
 
 		// Config pages
@@ -94,12 +93,11 @@ class modComptabilite extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'resultat';
 		$this->rights[$r][5] = 'lire';
-		
-		
+
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
 	}
 
 

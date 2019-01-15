@@ -38,7 +38,7 @@ SmsStatusNotSent=Neposlal
 SmsSuccessfulySent=Sms správne poslal (od %s %s do)
 ErrorSmsRecipientIsEmpty=Počet cieľa je prázdny
 WarningNoSmsAdded=Žiadne nové telefónne číslo pridať do zoznamu cieľov
-ConfirmValidSms=Myslíte si potvrdiť overenie tejto kampani o?
+ConfirmValidSms=Potvrdzujete overenie tejto prevádzkovej doby ?
 NbOfUniqueSms=Nb dof jedinečná telefónne čísla
 NbOfSms=Nbre čísel phono
 ThisIsATestMessage=Toto je testovacia správa
@@ -48,4 +48,4 @@ SmsInfoNumero= (Medzinárodným formátu, tj: 33899701761)
 DelayBeforeSending=Oneskorenie pred odoslaním (minúty)
 SmsNoPossibleSenderFound=Odosielateľ nedostupný. Skontrolijte nastavenie SMS poskytovateľa
 SmsNoPossibleRecipientFound=Žiadny cieľ k dispozícii. Skontrolujte nastavenia poskytovateľa služieb SMS.
-
+DisableStopIfSupported=Disable STOP message (if supported)

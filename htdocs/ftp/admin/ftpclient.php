@@ -25,8 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("ftp");
+$langs->loadLangs(array("admin", "ftp"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -142,7 +141,7 @@ $form=new Form($db);
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');
 print '<br>';
 
@@ -234,8 +233,6 @@ else
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
-			$var=true;
-
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
@@ -247,40 +244,46 @@ else
 			print '<td></td>';
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			$keyforname="FTP_NAME_" . $idrss;
+			$keyforserver="FTP_SERVER_" . $idrss;
+			$keyforport="FTP_PORT_" . $idrss;
+			$keyforuser="FTP_USER_" . $idrss;
+			$keyforpassword="FTP_PASSWORD_" . $idrss;
+			$keyforpassive="FTP_PASSIVE_" . $idrss;
+				
+			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Name")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . @constant("FTP_NAME_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . $conf->global->$keyforname . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Server")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . @constant("FTP_SERVER_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . $conf->global->$keyforserver . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . @constant("FTP_PORT_" . $idrss) . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . $conf->global->$keyforport . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . @constant("FTP_USER_" . $idrss) . "\" size=\"24\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . $conf->global->$keyforuser . "\" size=\"24\"></td>";
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
-			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . @constant("FTP_PASSWORD_" . $idrss) . "\" size=\"24\"></td>";
+			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . $conf->global->$keyforpassword . "\" size=\"24\"></td>";
 			print "</tr>";
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
-			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
+			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, $conf->global->$keyforpassive, 1).'</td>';
 			print "</tr>";
 
 			print "<tr>";
@@ -305,6 +308,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

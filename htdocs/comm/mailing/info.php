@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
+$id=GETPOST('id');
+
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check
@@ -45,11 +48,11 @@ $form = new Form($db);
 
 $object = new Mailing($db);
 
-if ($object->fetch($_REQUEST["id"]) >= 0)
+if ($object->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), 0, 'email');
+	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -72,5 +75,6 @@ if ($object->fetch($_REQUEST["id"]) >= 0)
 	dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

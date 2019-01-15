@@ -21,7 +21,7 @@
  *		\brief      Popup screen to validate VAT
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
 
@@ -34,8 +34,12 @@ $WS_DOL_URL_WSDL='http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
 $WS_METHOD ='checkVat';
 
 
-top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"));
-print '<body style="margin: 10px">';
+
+$conf->dol_hide_topmenu=1;
+$conf->dol_hide_leftmenu=1;
+
+llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
+
 print '<div>';
 print '<div>';
 
@@ -53,7 +57,7 @@ else
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$countryCode=substr($vatNumber,0,2);
 	$vatNumber=substr($vatNumber,2);
-	
+
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
@@ -170,6 +174,6 @@ if ($messagetoshow)
 	print nl2br($messagetoshow);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

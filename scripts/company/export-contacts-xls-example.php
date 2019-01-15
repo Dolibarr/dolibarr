@@ -41,13 +41,13 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 
-require_once($path."../../htdocs/master.inc.php");
-//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
-//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
+require_once $path."../../htdocs/master.inc.php";
+//require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php";
+//require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php";
 
-require_once(PHPEXCEL_PATH."/PHPExcel.php");
-//require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php");
-require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php");
+require_once PHPEXCEL_PATH."/PHPExcel.php";
+//require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php";
+require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php";
 
 // Global variables
 $version=DOL_VERSION;

@@ -3,7 +3,7 @@
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,14 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("categories");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
-$type=(GETPOST('type') ? GETPOST('type') : Categorie::TYPE_PRODUCT);
+$type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
 $catname=GETPOST('catname','alpha');
-$section=(GETPOST('section')?GETPOST('section'):0);
+
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 
 /*
@@ -48,22 +50,26 @@ $section=(GETPOST('section')?GETPOST('section'):0);
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoriesArea");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoriesArea");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
-elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
-elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesArea");
-elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesArea");
-else                                        $title=$langs->trans("CategoriesArea");
+if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
+elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
+elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
+elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
+elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
+elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
+elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
+elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
+else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
+$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'"><span class="valignmiddle">'.$langs->trans("NewCategory").'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
-print load_fiche_titre($title);
+print load_fiche_titre($title, $newcardbutton);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -76,11 +82,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<form method="post" action="index.php?type='.$type.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+
+
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
-print '<tr '.$bc[0].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
@@ -104,16 +112,14 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 if ($catname || $id > 0)
 {
-	$cats = $categstatic->rechercher($id,$catname,$type);
+	$cats = $categstatic->rechercher($id, $catname, $typetext);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	$var=true;
 	foreach ($cats as $cat)
 	{
-		$var = ! $var;
-		print "\t<tr ".$bc[$var].">\n";
+		print "\t".'<tr class="oddeven">'."\n";
 		print "\t\t<td>";
 		$categstatic->id=$cat->id;
 		$categstatic->ref=$cat->label;
@@ -125,7 +131,7 @@ if ($catname || $id > 0)
 		print '</span>';
 		print "</td>\n";
 		print "\t\t<td>";
-		print $cat->description;
+		print dolGetFirstLineOfText($cat->description);
 		print "</td>\n";
 		print "\t</tr>\n";
 	}
@@ -141,7 +147,7 @@ print '<div class="fichecenter"><br>';
 
 
 // Charge tableau des categories
-$cate_arbo = $categstatic->get_full_arbo($type);
+$cate_arbo = $categstatic->get_full_arbo($typetext);
 
 // Define fulltree array
 $fulltree=$cate_arbo;
@@ -162,12 +168,14 @@ foreach($fulltree as $key => $val)
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
-	'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
+	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
 }
 
+
+//print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
 
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
@@ -181,13 +189,13 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr '.$bc[0].'><td colspan="3">';
+	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data,$data[0],0);
 	print '</td></tr>';
 }
 else
 {
-	print '<tr '.$bc[0].'>';
+	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
@@ -201,6 +209,6 @@ print "</table>";
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

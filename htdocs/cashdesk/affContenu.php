@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ if ( $_GET['id'] == 'NOUV' )
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
 if (isset($_SESSION['serObjFacturation']))
 {
-	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
-	unset($_SESSION['serObjFacturation']);
+    $obj_facturation = unserialize($_SESSION['serObjFacturation']);
+    unset($_SESSION['serObjFacturation']);
 }
 else
 {
@@ -43,7 +43,7 @@ else
 	$obj_facturation = new Facturation();
 }
 
-
+// $obj_facturation contains data for all invoice total + selection of current product
 
 $obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
@@ -87,7 +87,7 @@ print '</div>';
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="liste_articles">';
 
-require ('tpl/liste_articles.tpl.php');
+require 'tpl/liste_articles.tpl.php';
 
 print '</div>';
 print '</div>';

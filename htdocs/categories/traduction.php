@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2016  Destailleur Laurent     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -32,14 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("categories");
-$langs->load("languages");
+// Load translation files required by the page
+$langs->loadLangs(array('categories', 'languages'));
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
-$type=GETPOST('type');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$cancel = GETPOST('cancel','alpha');
+$type   = GETPOST('type','aZ09');
+
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -153,6 +155,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -167,7 +170,7 @@ if (! empty($object->multilangs))
     }
 }
 
-dol_fiche_head($head, 'translation', $title, 0, 'category');
+dol_fiche_head($head, 'translation', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 
@@ -184,6 +187,7 @@ dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref',
 
 print '<br>';
 
+print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
@@ -201,6 +205,7 @@ print $formother->showColor($object->color);
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 
@@ -254,9 +259,9 @@ if ($action == 'edit')
 			print '</table>';
 		}
 	}
-    
+
 	print '<br>';
-	
+
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -264,12 +269,11 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
-    
+
     if (! empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
@@ -329,5 +333,6 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

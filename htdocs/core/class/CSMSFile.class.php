@@ -2,7 +2,7 @@
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +34,18 @@
  */
 class CSMSFile
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-	var $addr_from;
-	var $addr_to;
-	var $deferred;
-	var $priority;
-	var $class;
-	var $message;
+	public $addr_from;
+	public $addr_to;
+	public $deferred;
+	public $priority;
+	public $class;
+	public $message;
+	public $nostop;
 
 
 	/**
@@ -81,6 +85,7 @@ class CSMSFile
         $this->priority=$priority;
         $this->class=$class;
         $this->message=$msg;
+        $this->nostop=false;
 	}
 
 
@@ -107,6 +112,7 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
+
 		    // Action according to choosed sending method
 		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{
@@ -118,6 +124,7 @@ class CSMSFile
 				$sms->deferred=$this->deferred;
 				$sms->priority=$this->priority;
                 $sms->class=$this->class;
+                $sms->nostop=$this->nostop;
 
                 $res=$sms->SmsSend();
 				if ($res <= 0)
@@ -129,7 +136,7 @@ class CSMSFile
 				{
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
-					$this->dump_sms_result($res);
+					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
 			}
 		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
@@ -147,6 +154,7 @@ class CSMSFile
 		            $sms->priority=$this->priority;
 		            $sms->class=$this->class;
 		            $sms->message=$this->message;
+		            $sms->nostop=$this->nostop;
 
                     $res=$sms->SmsSend();
                     $this->error = $sms->error;
@@ -159,7 +167,7 @@ class CSMSFile
     				{
     					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
     					//var_dump($res);        // 1973128
-    					$this->dump_sms_result($res);
+    					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
     				}
 		        }
 		        catch(Exception $e)
@@ -187,6 +195,7 @@ class CSMSFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write content of a SendSms request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -195,6 +204,7 @@ class CSMSFile
 	 */
 	function dump_sms()
 	{
+        // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
@@ -207,6 +217,7 @@ class CSMSFile
 			fputs($fp, "Priority: ".$this->priority."\n");
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
+			fputs($fp, "DisableStop: ".$this->nostop."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
@@ -215,6 +226,7 @@ class CSMSFile
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Write content of a SendSms result into a dump file (mode = all)
      *  Used for debugging.
@@ -224,6 +236,7 @@ class CSMSFile
      */
     function dump_sms_result($result)
     {
+        // phpcs:enable
         global $conf,$dolibarr_main_data_root;
 
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
@@ -238,6 +251,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }
-

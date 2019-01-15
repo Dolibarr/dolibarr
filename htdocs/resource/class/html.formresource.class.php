@@ -21,8 +21,8 @@
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
+require_once DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php";
+require_once DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php";
 
 
 /**
@@ -33,12 +33,19 @@ require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
  */
 class FormResource
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $substit=array();
-    var $param=array();
+    public $substit=array();
 
-    var $error;
+    public $param=array();
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -49,11 +56,10 @@ class FormResource
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html form to select a resource
      *
@@ -71,6 +77,7 @@ class FormResource
      */
     function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
     {
+        // phpcs:enable
     	global $conf,$user,$langs;
 
     	$out='';
@@ -109,10 +116,10 @@ class FormResource
     			while ( $i < $num)
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
-    			    
+
     				$label=$resourcestat->lines[$i]->ref?$resourcestat->lines[$i]->ref:''.$resourcestat->lines[$i]->label;
     				if ($resourceclass != 'Dolresource') $label.=' ('.$langs->trans($resourceclass).')';
-    				
+
     				if ($selected > 0 && $selected == $resourcestat->lines[$i]->id)
     				{
     					$out.= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
@@ -129,6 +136,7 @@ class FormResource
     			}
     		}
     		$out.= '</select>'."\n";
+    		$out.= ajax_combobox($htmlname);
 
     		if ($outputmode != 2)
     		{
@@ -147,20 +155,22 @@ class FormResource
     	return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *      Return html list of tickets type
+     *  Return html list of tickets type
      *
-     *      @param	string	$selected       Id du type pre-selectionne
-     *      @param  string	$htmlname       Nom de la zone select
-     *      @param  string	$filtertype     To filter on field type in llx_c_ticketsup_type (array('code'=>xx,'label'=>zz))
-     *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-     *      @param  int		$empty			1=peut etre vide, 0 sinon
-     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
-     *      @param  int		$maxlength      Max length of label
-     * 		@return	void
+     *  @param	string	$selected       Id du type pre-selectionne
+     *  @param  string	$htmlname       Nom de la zone select
+     *  @param  string	$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+     *  @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+     *  @param  int		$empty			1=peut etre vide, 0 sinon
+     *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     *  @param  int		$maxlength      Max length of label
+     * 	@return	void
      */
     function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
+        // phpcs:enable
     	global $langs,$user;
 
     	$resourcestat = new Dolresource($this->db);
@@ -172,7 +182,7 @@ class FormResource
     	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
 
     	$resourcestat->load_cache_code_type_resource();
-    	print '<select id="select'.$htmlname.'" class="flat select_'.$htmlname.'" name="'.$htmlname.'">';
+    	print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
     	if ($empty) print '<option value="">&nbsp;</option>';
     	if (is_array($resourcestat->cache_code_type_resource) && count($resourcestat->cache_code_type_resource))
     	{
@@ -201,8 +211,4 @@ class FormResource
     	print '</select>';
     	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
-
-
-
 }
-

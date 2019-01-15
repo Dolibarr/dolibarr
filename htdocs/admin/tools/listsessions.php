@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","install","users","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -40,14 +41,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -99,7 +96,7 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
@@ -128,22 +125,18 @@ if ($savehandler == 'files')
 {
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("SessionId"),$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Age"),$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Raw"),$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("SessionId",$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Age",$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Raw",$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
-
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';
@@ -177,7 +170,6 @@ if ($savehandler == 'files')
 		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
-
 }
 else
 {
@@ -212,5 +204,6 @@ print '</div>';
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ create table llx_mailing
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   statut			smallint       DEFAULT 0,            --
-  titre				varchar(60),                         -- Ref of mailing
+  titre				varchar(128),                        -- Ref of mailing
   entity			integer DEFAULT 1 NOT NULL,	         -- multi company id
-  sujet				varchar(60),                         -- Sujet of mailing
+  sujet				varchar(128),                        -- Sujet of mailing
   body				mediumtext,
   bgcolor			varchar(8),                          -- Backgroud color of mailing
   bgimage			varchar(255),                        -- Backgroud image of mailing

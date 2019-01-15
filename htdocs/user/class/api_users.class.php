@@ -22,17 +22,17 @@ use Luracast\Restler\RestException;
 /**
  * API class for users
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class Users extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'login'
+		'login',
 	);
 
 	/**
@@ -43,13 +43,14 @@ class Users extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+    function __construct()
+    {
 		global $db, $conf;
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
 	}
 
-	
+
 	/**
 	 * List Users
 	 *
@@ -63,24 +64,25 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    {
 	    global $db, $conf;
-	
+
 	    $obj_ret = array();
-	
+
 		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
 	       throw new RestException(401, "You are not allowed to read list of users");
 	    }
-	     
+
 	    // case of external user, $societe param is ignored and replaced by user's socid
 	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-	
+
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
-	    $sql.= ' WHERE t.entity IN ('.getEntity('user', 1).')';
+	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -89,7 +91,7 @@ class Users extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-	    
+
 	    $sql.= $db->order($sortfield, $sortorder);
 	    if ($limit)	{
 	        if ($page < 0)
@@ -97,16 +99,17 @@ class Users extends DolibarrApi
 	            $page = 0;
 	        }
 	        $offset = $limit * $page;
-	
+
 	        $sql.= $db->plimit($limit + 1, $offset);
 	    }
-	
+
 	    $result = $db->query($sql);
-	
+
 	    if ($result)
 	    {
 	        $num = $db->num_rows($result);
-	        while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+	        $min = min($num, ($limit <= 0 ? $num : $limit));
+	        while ($i < $min)
 	        {
 	            $obj = $db->fetch_object($result);
 	            $user_static = new User($db);
@@ -124,7 +127,7 @@ class Users extends DolibarrApi
 	    }
 	    return $obj_ret;
 	}
-	
+
 	/**
 	 * Get properties of an user object
 	 *
@@ -132,10 +135,11 @@ class Users extends DolibarrApi
 	 *
 	 * @param 	int 	$id ID of user
 	 * @return 	array|mixed data without useless information
-	 * 
+	 *
 	 * @throws 	RestException
 	 */
-	function get($id) {
+    function get($id)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
 		//}
@@ -153,15 +157,16 @@ class Users extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
-	
-	
+
+
 	/**
 	 * Create user account
 	 *
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-	function post($request_data = NULL) {
+    function post($request_data = null)
+    {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
 	    //   throw new RestException(401, "User creation not allowed");
@@ -184,16 +189,17 @@ class Users extends DolibarrApi
 	    }
 	    return $this->useraccount->id;
     }
-	
-    
+
+
 	/**
 	 * Update account
 	 *
 	 * @param int   $id             Id of account to update
-	 * @param array $request_data   Datas   
-	 * @return int 
+	 * @param array $request_data   Datas
+	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+    function put($id, $request_data = null)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
 		//}
@@ -215,46 +221,31 @@ class Users extends DolibarrApi
 		    $this->useraccount->$field = $value;
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user, 1))
+		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		{
 			return $this->get($id);
-
-        return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->useraccount->error);
+		}
     }
 
     /**
-	 * add user to group
+	 * Add a user into a group
 	 *
-	 * @param   int     $id User ID
-	 * @param   int     $group Group ID
-	 * @return  int
-     * 
+	 * @param   int     $id        User ID
+	 * @param   int     $group     Group ID
+	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
+	 * @return  int                1 if success
+     *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id, $group) {
-		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
-			//throw new RestException(401);
-		//}
-        $result = $this->useraccount->fetch($id);
-        if (!$result)
-        {
-          throw new RestException(404, 'User not found');
-        }
-    
-        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-        {
-          throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
-        }
-    
-        return $this->useraccount->SetInGroup($group,1);
-    }
+    function setGroup($id, $group, $entity = 1)
+    {
 
-	/**
-	 * Delete account
-	 *
-	 * @param   int     $id Account ID
-	 * @return  array
-	 */
-	function delete($id) {
+		global $conf;
+
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -269,17 +260,118 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		return $this->useraccount->delete($id);
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && ! empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
+		{
+			$entity = (! empty($entity) ? $entity : $conf->entity);
+		}
+		else
+		{
+			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
+			// hack the security by giving himself permissions on another entity.
+			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+		}
+
+		$result = $this->useraccount->SetInGroup($group, $entity);
+		if (! ($result > 0))
+		{
+			throw new RestException(500, $this->useraccount->error);
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Delete account
+	 *
+	 * @param   int     $id Account ID
+	 * @return  array
+	 */
+    function delete($id)
+    {
+		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
+			//throw new RestException(401);
+		//}
+		$result = $this->useraccount->fetch($id);
+		if (!$result)
+		{
+			throw new RestException(404, 'User not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+		{
+			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		return $this->useraccount->delete(DolibarrApiAccess::$user);
+	}
+
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	function _cleanObjectDatas($object)
+	{
+		global $conf;
+
+	    $object = parent::_cleanObjectDatas($object);
+
+	    unset($object->default_values);
+	    unset($object->lastsearch_values);
+	    unset($object->lastsearch_values_tmp);
+
+	    unset($object->total_ht);
+	    unset($object->total_tva);
+	    unset($object->total_localtax1);
+	    unset($object->total_localtax2);
+	    unset($object->total_ttc);
+
+	    unset($object->libelle_incoterms);
+	    unset($object->location_incoterms);
+
+	    unset($object->fk_delivery_address);
+	    unset($object->fk_incoterms);
+	    unset($object->all_permissions_are_loaded);
+	    unset($object->shipping_method_id);
+	    unset($object->nb_rights);
+	    unset($object->search_sid);
+	    unset($object->ldap_sid);
+	    unset($object->clicktodial_loaded);
+
+	    // List of properties never returned by API, whatever are permissions
+	    unset($object->pass);
+	    unset($object->pass_indatabase);
+	    unset($object->pass_indatabase_crypted);
+	    unset($object->pass_temp);
+	    unset($object->api_key);
+	    unset($object->clicktodial_password);
+	    unset($object->openid);
+
+
+	    $canreadsalary = ((! empty($conf->salaries->enabled) && ! empty(DolibarrApiAccess::$user->rights->salaries->read))
+	    	|| (! empty($conf->hrm->enabled) && ! empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
+
+		if (! $canreadsalary)
+		{
+			unset($object->salary);
+			unset($object->salaryextra);
+			unset($object->thm);
+			unset($object->tjm);
+		}
+
+	    return $object;
 	}
 
 	/**
 	 * Validate fields before create or update object
-     * 
+     *
 	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
 	 */
-	function _validate($data) {
+    function _validate($data)
+    {
 		$account = array();
 		foreach (Users::$FIELDS as $field)
 		{

@@ -27,10 +27,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$langs->load("orders");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'companies'));
 
-$_socid = $_GET["id"];
+$id = GETPOST('id','int');
+$_socid = GETPOST("id",'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -44,11 +45,11 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setpricelevel')
 {
-	$soc = New Societe($db);
-	$soc->fetch($_GET["id"]);
+	$soc = new Societe($db);
+	$soc->fetch($id);
 	$soc->set_price_level($_POST["price_level"],$user);
 
-	header("Location: multiprix.php?id=".$_GET["id"]);
+	header("Location: multiprix.php?id=".$id);
 	exit;
 }
 
@@ -87,7 +88,7 @@ if ($_socid > 0)
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
-	
+
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
 	print '<table width="100%" border="0">';
@@ -122,12 +123,12 @@ if ($_socid > 0)
 	print "</table>";
 
 	dol_fiche_end();
-	
+
 	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 	print "</form>";
 
-	
+
 	print '<br><br>';
 
 
@@ -173,8 +174,8 @@ if ($_socid > 0)
 	{
 		dol_print_error($db);
 	}
-
 }
 
+// End of page
 llxFooter();
 $db->close();

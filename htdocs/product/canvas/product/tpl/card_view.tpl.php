@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $object=$GLOBALS['object'];
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
-<?php echo $langs->trans("Product"); ?>
+<?php
+$head=product_prepare_head($object);
+$titre=$langs->trans("CardProduct".$object->type);
+
+dol_fiche_head($head, 'card', $titre, -1, 'product');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter=" fk_product_type = ".$object->type;
+
+$shownav = 1;
+if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+?>
 
 <?php dol_htmloutput_errors($object->error,$object->errors); ?>
 
@@ -40,16 +61,6 @@ $object=$GLOBALS['object'];
 </td>
 <?php } ?>
 
-</tr>
-
-<tr>
-<td><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $object->status; ?></td>
-</tr>
-
-<tr>
-<td><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $object->status_buy; ?></td>
 </tr>
 
 <tr>

@@ -28,21 +28,53 @@
  */
 class Bookmark extends CommonObject
 {
-    public $element='bookmark';
-    public $table_element='bookmark';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'bookmark';
-    
-    var $db;
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bookmark';
 
-    var $id;
-    var $fk_user;
-    var $datec;
-    var $url;
-    var $target;	// 0=replace, 1=new window
-    var $title;
-    var $position;
-    var $favicon;
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='bookmark';
+
+    /**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+    public $ismultientitymanaged = 1;
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'bookmark';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    /**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+    public $datec;
+
+    public $url;
+
+    public $target;	// 0=replace, 1=new window
+
+    public $title;
+
+    public $position;
+
+    public $favicon;
 
 
     /**
@@ -111,7 +143,7 @@ class Bookmark extends CommonObject
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
 		if (empty($this->position)) $this->position=0;
-		
+
 		$now=dol_now();
 
     	$this->db->begin();
@@ -119,17 +151,15 @@ class Bookmark extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= ",title,favicon,position";
         $sql.= ",entity";
-        if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
-        $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
+        $sql.= ($this->fk_user > 0 ? $this->fk_user:"0").",";
         $sql.= " '".$this->db->idate($now)."',";
-        $sql.= " '".$this->url."', '".$this->target."',";
-        $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
-        $sql.= ", '".$conf->entity."'";
-        if ($this->fk_soc) $sql.=",".$this->fk_soc;
+        $sql.= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
+        $sql.= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', '".$this->db->escape($this->position)."'";
+        $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
-        dol_syslog("Bookmark::update", LOG_DEBUG);
+        dol_syslog("Bookmark::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -170,13 +200,13 @@ class Bookmark extends CommonObject
 		if (empty($this->position)) $this->position=0;
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
-        $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
+        $sql.= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user :"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
         $sql.= " ,url = '".$this->db->escape($this->url)."'";
-        $sql.= " ,target = '".$this->target."'";
+        $sql.= " ,target = '".$this->db->escape($this->target)."'";
         $sql.= " ,title = '".$this->db->escape($this->title)."'";
-        $sql.= " ,favicon = '".$this->favicon."'";
-        $sql.= " ,position = '".$this->position."'";
+        $sql.= " ,favicon = '".$this->db->escape($this->favicon)."'";
+        $sql.= " ,position = '".$this->db->escape($this->position)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("Bookmark::update", LOG_DEBUG);
@@ -213,7 +243,6 @@ class Bookmark extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -243,5 +272,4 @@ class Bookmark extends CommonObject
 	{
 	    return '';
 	}
-	
 }

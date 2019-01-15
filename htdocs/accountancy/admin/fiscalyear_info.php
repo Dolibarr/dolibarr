@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)
@@ -58,5 +58,6 @@ if ($id) {
 	print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

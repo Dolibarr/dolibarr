@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
  */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -45,7 +64,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -88,9 +107,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
+    	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
+    	$mysoc->typent_code='TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
+		$mysoc->typent_code=$old_code_type;
 
 		if (! $numExample)
 		{
@@ -113,7 +135,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask=$conf->global->PROPALE_SAPHIR_MASK;
+		$mask = $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
 		{
@@ -121,11 +143,13 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		$date=$propal->datep;
-		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
+		// Get entities
+		$entity = getEntity('proposalnumber', 1, $propal);
+
+		$date = $propal->date;
+
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date,'next',false,null,$entity);
 
 		return  $numFinal;
 	}
-
 }

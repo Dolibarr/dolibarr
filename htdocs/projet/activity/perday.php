@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  *	\brief      List activities of tasks (per day entry)
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -32,13 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadLangs(array('projects','users','companies'));
 
-$action=GETPOST('action');
-$mode=GETPOST("mode");
+$action=GETPOST('action','aZ09');
+$mode=GETPOST("mode",'alpha');
 $id=GETPOST('id','int');
-$taskid=GETPOST('taskid');
+$taskid=GETPOST('taskid','int');
 
 $mine=0;
 if ($mode == 'mine') $mine=1;
@@ -48,7 +51,8 @@ $projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+// For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();
@@ -57,15 +61,19 @@ $nowday=$nowtmp['mday'];
 $nowmonth=$nowtmp['mon'];
 $nowyear=$nowtmp['year'];
 
-$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):date("Y"));
-$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):date("m"));
-$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):date("d"));
+$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):(GETPOST("addtimeyear","int")?GETPOST("addtimeyear","int"):date("Y")));
+$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):(GETPOST("addtimemonth","int")?GETPOST("addtimemonth","int"):date("m")));
+$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):(GETPOST("addtimeday","int")?GETPOST("addtimeday","int"):date("d")));
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+
+$search_categ=GETPOST("search_categ",'alpha');
+$search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
 $search_task_ref=GETPOST('search_task_ref', 'alpha');
 $search_task_label=GETPOST('search_task_label', 'alpha');
 $search_project_ref=GETPOST('search_project_ref', 'alpha');
 $search_thirdparty=GETPOST('search_thirdparty', 'alpha');
+$search_declared_progress=GETPOST('search_declared_progress', 'alpha');
 
 $monthofday=GETPOST('addtimemonth');
 $dayofday=GETPOST('addtimeday');
@@ -75,6 +83,23 @@ $daytoparse = $now;
 if ($yearofday && $monthofday && $dayofday) $daytoparse=dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday);	// xxxofday is value of day after submit action 'addtime'
 else if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);							// this are value submited after submit of action 'submitdateselect'
 
+
+if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
+{
+	$usertoprocess=$user;
+	$search_usertoprocessid=$usertoprocess->id;
+}
+elseif ($search_usertoprocessid > 0)
+{
+	$usertoprocess=new User($db);
+	$usertoprocess->fetch($search_usertoprocessid);
+	$search_usertoprocessid=$usertoprocess->id;
+}
+else
+{
+	$usertoprocess=new User($db);
+}
+
 $object=new Task($db);
 
 
@@ -83,22 +108,31 @@ $object=new Task($db);
  */
 
 // Purge criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $action = '';
-    $search_task_ref = '';
-    $search_task_label = '';
-    $search_project_ref = '';
-    $search_thirdparty = '';
+	$action = '';
+	$search_categ='';
+	$search_usertoprocessid = $user->id;
+	$search_task_ref = '';
+	$search_task_label = '';
+	$search_project_ref = '';
+	$search_thirdparty = '';
+	$search_declared_progress = '';
+
+	// We redefine $usertoprocess
+	$usertoprocess=$user;
 }
-if (GETPOST("button_search_x") || GETPOST("button_search.x") || GETPOST("button_search"))
+if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
-    $action = '';
+	$action = '';
 }
 
 if (GETPOST('submitdateselect'))
 {
-	$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	if (GETPOST('remonth','int') && GETPOST('reday','int') && GETPOST('reyear','int'))
+	{
+		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+	}
 
 	$action = '';
 }
@@ -106,57 +140,57 @@ if (GETPOST('submitdateselect'))
 
 if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
-    $action = 'assigntask';
+	$action = 'assigntask';
 
-    if ($taskid > 0)
-    {
+	if ($taskid > 0)
+	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-    }
-    else
-    {
-    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
-    	$error++;
-    }
-    if (! GETPOST('type'))
-    {
-    	setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
-    	$error++;
-    }
-    if (! $error)
-    {
-    	$idfortaskuser=$user->id;
+	}
+	else
+	{
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+		$error++;
+	}
+	if (! GETPOST('type'))
+	{
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+		$error++;
+	}
+	if (! $error)
+	{
+		$idfortaskuser=$usertoprocess->id;
 		$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
 
-    	if ($result >= 0 || $result == -2)	// Contact add ok or already contact of task
-    	{
+		if ($result >= 0 || $result == -2)	// Contact add ok or already contact of task
+		{
 			// Test if we are already contact of the project (should be rare but sometimes we can add as task contact without being contact of project, like when admin user has been removed from contact of project)
-    		$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
-    		$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
-    		$resql=$db->query($sql);
-    		if ($resql)
-    		{
-    			$obj=$db->fetch_object($resql);
-    			if (! $obj)	// User is not already linked to project, so we will create link to first type
-    			{
-    				$project = new Project($db);
-    				$project->fetch($object->fk_project);
-    				// Get type
-    				$listofprojcontact=$project->liste_type_contact('internal');
-    				
-    				if (count($listofprojcontact))
-    				{
-    					$typeforprojectcontact=reset(array_keys($listofprojcontact));
-    					$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
-    				}
-    			}
-    		}
-    		else 
-    		{
-    			dol_print_error($db);
-    		}
-    	}
-    }
+			$sql='SELECT ec.rowid FROM '.MAIN_DB_PREFIX.'element_contact as ec, '.MAIN_DB_PREFIX.'c_type_contact as tc WHERE tc.rowid = ec.fk_c_type_contact';
+			$sql.=' AND ec.fk_socpeople = '.$idfortaskuser." AND ec.element_id = '.$object->fk_project.' AND tc.element = 'project' AND source = 'internal'";
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$obj=$db->fetch_object($resql);
+				if (! $obj)	// User is not already linked to project, so we will create link to first type
+				{
+					$project = new Project($db);
+					$project->fetch($object->fk_project);
+					// Get type
+					$listofprojcontact=$project->liste_type_contact('internal');
+
+					if (count($listofprojcontact))
+					{
+						$typeforprojectcontact=reset(array_keys($listofprojcontact));
+						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
+					}
+				}
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+		}
+	}
 
 	if ($result < 0)
 	{
@@ -175,6 +209,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	if (! $error)
 	{
 		setEventMessages("TaskAssignedToEnterTime", null);
+		$taskid=0;
 	}
 
 	$action='';
@@ -182,46 +217,50 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 
 if ($action == 'addtime' && $user->rights->projet->lire)
 {
-    $timespent_duration=array();
+	$timespent_duration=array();
 
-    foreach($_POST as $key => $time)
-    {
-        if (intval($time) > 0)
-        {
-            // Hours or minutes of duration
-            if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
-            {
-                $id = $matches[1];
-				if ($id > 0)
-				{
-	                // We store HOURS in seconds
-	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
-
-	                // We store MINUTES in seconds
-	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
-				}
-            }
-        }
-    }
-
-    if (count($timespent_duration) > 0)
-    {
-    	foreach($timespent_duration as $key => $val)
-    	{
-	        $object->fetch($key);
-		    $object->progress = GETPOST($key.'progress', 'int');
-	        $object->timespent_duration = $val;
-	        $object->timespent_fk_user = $user->id;
-	        $object->timespent_note = GETPOST($key.'note');
-	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
-	        {
-	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
-	        	$object->timespent_withhour = 1;
-	        }
-	        else
+	if (is_array($_POST))
+	{
+		foreach($_POST as $key => $time)
+		{
+			if (intval($time) > 0)
 			{
-	        	$object->timespent_date = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+				// Hours or minutes of duration
+				if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
+				{
+					$id = $matches[1];
+					if ($id > 0)
+					{
+						// We store HOURS in seconds
+						if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
+
+						// We store MINUTES in seconds
+						if($matches[2]=='min') $timespent_duration[$id] += $time*60;
+					}
+				}
 			}
+		}
+	}
+
+	if (count($timespent_duration) > 0)
+	{
+		foreach($timespent_duration as $key => $val)
+		{
+			$object->fetch($key);
+			$object->progress = GETPOST($key.'progress', 'int');
+			$object->timespent_duration = $val;
+			$object->timespent_fk_user = $usertoprocess->id;
+			$object->timespent_note = GETPOST($key.'note');
+			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+			{
+				$object->timespent_datehour = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
+				$object->timespent_withhour = 1;
+			}
+			else
+			{
+				$object->timespent_datehour = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
+			}
+			$object->timespent_date = $object->timespent_datehour;
 
 			if ($object->timespent_date > 0)
 			{
@@ -240,21 +279,21 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				$error++;
 				break;
 			}
-    	}
+		}
 
-    	if (! $error)
-    	{
-	    	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+		if (! $error)
+		{
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-    	    // Redirect to avoid submit twice on back
-        	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
-        	exit;
-    	}
-    }
-    else    
-    {   
-   	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
-    }
+			// Redirect to avoid submit twice on back
+			header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid?'id='.$projectid:'').($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
+			exit;
+		}
+	}
+	else
+	{
+   		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
+	}
 }
 
 
@@ -271,7 +310,7 @@ $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
 $thirdpartystatic = new Societe($db);
-
+$holiday = new Holiday($db);
 
 $prev = dol_getdate($daytoparse - (24 * 3600));
 $prev_year  = $prev['year'];
@@ -284,49 +323,57 @@ $next_month = $next['mon'];
 $next_day   = $next['mday'];
 
 $title=$langs->trans("TimeSpent");
-if ($mine) $title=$langs->trans("MyTimeSpent");
 
-$usertoprocess = $user;
-
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,(empty($usertoprocess->id)?2:0),1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 if ($id)
 {
-    $project->fetch($id);
-    $project->fetch_thirdparty();
+	$project->fetch($id);
+	$project->fetch_thirdparty();
 }
 
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
-if ($search_task_ref) $morewherefilter.=natural_search("t.ref", $search_task_ref);
-if ($search_task_label) $morewherefilter.=natural_search("t.label", $search_task_label);
-if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
-$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
+
+if ($search_project_ref) $morewherefilter.=natural_search(array("p.ref", "p.title"), $search_project_ref);
+if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
+if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
+if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
+if ($search_declared_progress)  $morewherefilter.=natural_search("t.progress", $search_declared_progress, 1);
+
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+if ($morewherefilter)	// Get all task without any filter, so we can show total of time spent for not visible tasks
+{
+	$tasksarraywithoutfilter=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+}
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
-//var_dump($tasksarray);
+//var_dump($usertoprocess);
 //var_dump($projectsrole);
 //var_dump($taskrole);
 
+llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
-llxHeader("",$title,"");
-
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 $param='';
-$param.=($mode?'&amp;mode='.$mode:'');
-$param.=($search_project_ref?'&amp;search_project_ref='.$search_project_ref:'');
+$param.=($mode?'&mode='.$mode:'');
+$param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
+$param.=($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'');
+$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
+$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
+$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
+$nav.=dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"%A").' ';
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"day")." </span>\n";
 $nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.='<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
+$nav.=' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
 
 $picto='calendarweek';
-
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].($project->id > 0 ? '?id='.$project->id : '').'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -337,17 +384,21 @@ print '<input type="hidden" name="addtimeyear" value="'.$tmp['year'].'">';
 print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
-$head=project_timesheet_prepare_head($mode);
-dol_fiche_head($head, 'inputperday', '', 0, 'task');
+$head=project_timesheet_prepare_head($mode, $usertoprocess);
+dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+print '<div class="hideonsmartphone opacitymedium">';
+if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopenedproject?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
+	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
+	{
+		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+		else print $langs->trans("ProjectsPublicTaskDesc").'.'.($onlyopenedproject?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	}
 }
-if ($mine)
+if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
 }
@@ -355,81 +406,79 @@ else
 {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
+print '</div>';
 
 dol_fiche_end();
 
+print '<div class="floatright right'.($conf->dol_optimize_smallscreen?' centpercent':'').'">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
-// Filter on user
-/*	dol_fiche_head('');
-	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
-	print '<td>';
-	if ($mine) print $user->getLoginUrl(1);
-	print '</td>';
-	print '</tr></table>';
-	dol_fiche_end();
-*/
-
-// Filter on user
-/*	dol_fiche_head('');
-	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
-	print '<td>';
-	if ($mine) print $user->getLoginUrl(1);
-	print '</td>';
-	print '</tr></table>';
-	dol_fiche_end();
-*/
-
-
-// Add a new project/task
-//print '<br>';
-//print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-//print '<input type="hidden" name="action" value="assigntask">';
-//print '<input type="hidden" name="mode" value="'.$mode.'">';
-//print '<input type="hidden" name="year" value="'.$year.'">';
-//print '<input type="hidden" name="month" value="'.$month.'">';
-//print '<input type="hidden" name="day" value="'.$day.'">';
-
-print '<div class="floatright">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
-
-print '<div class="float valignmiddle">';
-print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0);
-print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.$langs->trans("AssignTask").'">';
-//print '</form>';
+print '<div class="colorback float valignmiddle">';
+$titleassigntask = $langs->transnoentities("AssignTaskToMe");
+if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
+print '<div class="taskiddiv inline-block">';
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
+print '</div>';
+print ' ';
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
+print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
+$moreforfilter='';
+
+// Filter on categories
+/*if (! empty($conf->categorie->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
+	$moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
+	$moreforfilter.='</div>';
+}*/
+
+// If the user can view user other than himself
+$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
+$includeonly='hierachyme';
+if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+$moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
+$moreforfilter.='</div>';
+
+if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+{
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('Project'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter.='</div>';
+
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('ThirdParty'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter.='</div>';
+}
+
+if (! empty($moreforfilter))
+{
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
+}
+
+
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("RefTask").'</td>';
-print '<td>'.$langs->trans("LabelTask").'</td>';
-print '<td>'.$langs->trans("ProjectRef").'</td>';
-if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY))
-{
-    print '<td>'.$langs->trans("ThirdParty").'</td>';
-}
-print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
-else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
-print '<td align="center">'.$langs->trans("HourStart").'</td>';
-print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
-print '<td align="right">'.$langs->trans("Note").'</td>';
-print "</tr>\n";
-
-print '<tr class="liste_titre">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+print '<tr class="liste_titre_filter">';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-if (! empty($conf->global->PROJECT_LINES_PERDAY_SHOW_THIRDPARTY)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
+print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -437,26 +486,206 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
 print '<td class="liste_titre nowrap" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
+print '<tr class="liste_titre">';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
+print '<td>'.$langs->trans("Task").'</td>';
+print '<td align="right" class="leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+/*print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
+print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
+print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
+$restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
+
+// Get if user is available or not for each day
+$isavailable=array();
+if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
+{
+	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	if (count($tmparray) >= 2)
+	{
+		$numstartworkingday = $tmparray[0];
+		$numendworkingday = $tmparray[1];
+	}
+}
+
+$statusofholidaytocheck = '3';
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck);	// $daytoparse is a date with hours = 0
+$isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+
+$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+$idw = $tmparray['wday'];
+
+$cssweekend='';
+if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+{
+	$cssweekend='weekend';
+}
+
+$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+$cssonholiday='';
+if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+print '<td class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
+print '<td class="center">'.$langs->trans("Note").'</td>';
+print '<td class="center"></td>';
+print "</tr>\n";
+
+$colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+
+if ($conf->use_javascript_ajax)
+{
+	print '<tr class="liste_total">';
+	print '<td class="liste_total" colspan="'.($colspan-1).'">';
+	print $langs->trans("Total");
+	print '</td>';
+	print '<td class="liste_total leftborder">';
+	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+	print '</td>';
+
+	$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+	$idw = $tmparray['wday'];
+
+	$cssweekend='';
+	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	{
+		$cssweekend='weekend';
+	}
+
+	$cssonholiday='';
+	if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+	elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+	elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+	print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+
+	print '<td class="liste_total"></td>
+                <td class="liste_total"></td>
+                </tr>';
+}
+
 
 if (count($tasksarray) > 0)
 {
+	//var_dump($tasksarray);				// contains only selected tasks
+	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
+	//var_dump($tasksrole);
+
 	$j=0;
-	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
+	$level=0;
+	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0);
+	//var_dump($totalforvisibletasks);
+
+	// Show total for all other tasks
+
+	// Calculate total for all tasks
+	$listofdistinctprojectid=array();	// List of all distinct projects
+	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter))
+	{
+		foreach($tasksarraywithoutfilter as $tmptask)
+		{
+			$listofdistinctprojectid[$tmptask->fk_project]=$tmptask->fk_project;
+		}
+	}
+	//var_dump($listofdistinctprojectid);
+	$totalforeachday=array();
+	foreach($listofdistinctprojectid as $tmpprojectid)
+	{
+		$projectstatic->id=$tmpprojectid;
+		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		for ($idw = 0; $idw < 7; $idw++)
+		{
+			$tmpday=dol_time_plus_duree($daytoparse, $idw, 'd');
+			$totalforeachday[$tmpday]+=$projectstatic->weekWorkLoad[$tmpday];
+		}
+	}
+	//var_dump($totalforeachday);
+
+	// Is there a diff between selected/filtered tasks and all tasks ?
+	$isdiff = 0;
+	if (count($totalforeachday))
+	{
+		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
+		if ($timeonothertasks)
+		{
+			$isdiff=1;
+		}
+	}
+
+	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
+	if ($isdiff)
+	{
+		print '<tr class="oddeven othertaskwithtime">';
+		print '<td colspan="'.($colspan-1).'" class="opacitymedium">';
+		print $langs->trans("OtherFilteredTasks");
+		print '</td>';
+		print '<td class="leftborder"></td>';
+		print '<td class="center">';
+		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
+		//if ($timeonothertasks)
+		//{
+			print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
+			if ($timeonothertasks) print convertSecondToTime($timeonothertasks,'allhourmin');
+			print '"></span>';
+		//}
+		print '</td>';
+		print ' <td class="liste_total"></td>';
+		print ' <td class="liste_total"></td>';
+		print '</tr>';
+	}
+
+	if ($conf->use_javascript_ajax)
+	{
+		print '<tr class="liste_total">';
+		print '<td class="liste_total" colspan="'.($colspan-1).'">';
+		print $langs->trans("Total");
+		print '</td>';
+		print '<td class="liste_total leftborder">';
+		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+		print '</td>';
+
+		$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+		$idw = $tmparray['wday'];
+
+		$cssweekend='';
+		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		{
+			$cssweekend='weekend';
+		}
+
+		$cssonholiday='';
+		if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+		elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+		elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+		print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+
+		print '<td class="liste_total"></td>
+                <td class="liste_total"></td>
+                </tr>';
+	}
 }
 else
 {
-	print '<tr><td colspan="10">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";
 print '</div>';
+
+print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
 print '<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Save").'">';
@@ -464,14 +693,27 @@ print '</div>';
 
 print '</form>';
 
+$modeinput='hours';
 
-print '<script type="text/javascript">';
-print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
-print "});";
-print '</script>';
+if ($conf->use_javascript_ajax)
+{
+	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+	print '<script type="text/javascript">'."\n";
+	print "jQuery(document).ready(function () {\n";
+	print '		jQuery(".timesheetalreadyrecorded").tooltip({
+					show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+					hide: { effect:\'toggle\', delay: 50 },
+					tooltipClass: "mytooltip",
+					content: function () {
+						return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
+					}
+				});'."\n";
 
+	print '    updateTotal(0,\''.$modeinput.'\');';
+	print "\n});\n";
+	print '</script>';
+}
 
+// End of page
 llxFooter();
-
 $db->close();

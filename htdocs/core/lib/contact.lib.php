@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -42,7 +42,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -76,7 +77,7 @@ function contact_prepare_head(Contact $object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->societe->dir_output . "/contact/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$tab][0] = DOL_URL_ROOT.'/contact/document.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Documents");
@@ -94,7 +95,7 @@ function contact_prepare_head(Contact $object)
     }
     $head[$tab][2] = 'agenda';
     $tab++;
-    
+
     // Log
     /*
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;

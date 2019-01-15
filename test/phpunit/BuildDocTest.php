@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -172,7 +174,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobjectcom->initAsSpecimen();
 
         $localobject=new Facture($this->savdb);
-        $localobject->createFromOrder($localobjectcom);
+        $localobject->createFromOrder($localobjectcom, $user);
         $localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
         // Crabe (english)

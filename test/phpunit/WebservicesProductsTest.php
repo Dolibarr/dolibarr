@@ -30,7 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id)) {
@@ -39,6 +39,8 @@ if (empty($user->id)) {
     $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
+$conf->global->MAIN_UMASK='0666';
 
 if (empty($conf->service->enabled))
 {
@@ -68,7 +70,9 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -167,7 +171,9 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
                 'ref'=>'NewProductFromWS'.$datestring,
                 'label'=>'New Product From WS '.$datestring,
                 'type'=>1,
-                'description'=>'This is a new product created from WS PHPUnit test case'
+                'description'=>'This is a new product created from WS PHPUnit test case',
+                'barcode'=>'123456789012',
+                'barcode_type'=>2
             )
         );
         print __METHOD__." call method ".$WS_METHOD."\n";
@@ -318,5 +324,4 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
-
 }

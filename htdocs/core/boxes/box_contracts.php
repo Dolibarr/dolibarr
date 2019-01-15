@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015 Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,31 @@ class box_contracts extends ModeleBoxes
     var $boxlabel="BoxLastContracts";
     var $depends = array("contrat");	// conf->contrat->enabled
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
     var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();
 
+
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    function __construct($db,$param)
+    {
+        global $user;
+
+        $this->db=$db;
+
+        $this->hidden=! ($user->rights->contrat->lire);
+    }
 
     /**
      *  Load data for box to show them later
@@ -64,7 +83,7 @@ class box_contracts extends ModeleBoxes
         	$contractstatic=new Contrat($db);
         	$thirdpartytmp=new Societe($db);
 
-    	    $sql = "SELECT s.nom as name, s.rowid as socid,";
+    	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
     		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
     		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -89,6 +108,7 @@ class box_contracts extends ModeleBoxes
                 while ($line < $num)
                 {
     				$objp = $db->fetch_object($resql);
+
     				$datec=$db->jdate($objp->datec);
     				$dateterm=$db->jdate($objp->fin_validite);
     				$dateclose=$db->jdate($objp->date_cloture);
@@ -101,31 +121,38 @@ class box_contracts extends ModeleBoxes
 
     				$thirdpartytmp->name = $objp->name;
     				$thirdpartytmp->id = $objp->socid;
+    				$thirdpartytmp->email = $objp->email;
+    				$thirdpartytmp->client = $objp->client;
+    				$thirdpartytmp->fournisseur = $objp->fournisseur;
+    				$thirdpartytmp->code_client = $objp->code_client;
+    				$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+    				$thirdpartytmp->code_compta = $objp->code_compta;
+    				$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
     				// fin_validite is no more on contract but on services
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datec,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="nowrap"',
-                        'text' => $contractstatic->getLibStatut(6),
+                        'td' => 'class="nowrap right"',
+                        'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );
 
@@ -134,22 +161,22 @@ class box_contracts extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'align="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
@@ -160,12 +187,11 @@ class box_contracts extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

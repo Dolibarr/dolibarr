@@ -3,7 +3,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +57,8 @@ $endyear=$year;
 /*
  * View
  */
-
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'other'));
 
 $form=new Form($db);
 
@@ -74,7 +72,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier')
 {
 	$title=$langs->trans("BillsStatisticsSuppliers");
-	$dir=$conf->fournisseur->dir_output.'/facture/temp';
+	$dir=$conf->fournisseur->facture->dir_temp;
 }
 
 print load_fiche_titre($title, $mesg, 'title_accountancy.png');
@@ -84,11 +82,11 @@ dol_mkdir($dir);
 $stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
 if ($mode == 'customer')
 {
-    if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
 }
 if ($mode == 'supplier')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
 }
 
 // Build graphic number of object
@@ -225,14 +223,15 @@ if ($mode == 'supplier') $type='supplier_invoice_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
-$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+// We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
+$tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input
 $companies = array();
 
 foreach ($tmp_companies as $value) {
-	$companies[$value['value']] = $value['label'];
+	$companies[$value['key']] = $value['label'];
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -281,6 +280,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -293,15 +293,14 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right"></td>';
@@ -311,8 +310,8 @@ foreach ($data as $val)
 		print '<td align="right"></td>';
 		print '</tr>';
 	}
-	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
@@ -325,13 +324,13 @@ foreach ($data as $val)
 }
 
 print '</table>';
-
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	print $px1->show();
@@ -349,7 +348,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

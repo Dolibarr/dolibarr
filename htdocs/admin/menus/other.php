@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("user","other","admin"));
 
 if (! $user->admin) accessforbidden();
 
@@ -77,11 +76,10 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'misc', $langs->trans("Menus"));
+dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 
 
 // Other Options
-$var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -90,8 +88,7 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Hide unauthorized menu
-$var=!$var;
-print "<tr ".$bc[$var].">";
+print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
@@ -107,6 +104,6 @@ print '</tr>';
 
 print '</table>';
 
-
+// End of page
 llxFooter();
 $db->close();

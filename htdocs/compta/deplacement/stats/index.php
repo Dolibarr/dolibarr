@@ -27,8 +27,8 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies'));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -223,7 +223,7 @@ $h++;
 
 complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -256,6 +256,7 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -288,13 +289,13 @@ foreach ($data as $val)
 }
 
 print '</table>';
-
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -312,7 +313,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

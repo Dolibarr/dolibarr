@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,8 @@ $error=0;
  * View
  */
 
+@set_time_limit(300);
+
 llxHeader();
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
@@ -46,15 +49,12 @@ print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
 print $langs->trans("FileCheckDesc").'<br><br>';
 
 // Version
-$var = true;
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-$var = ! $var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
     // Compare version with last install database version (upgrades never occured)
@@ -67,6 +67,7 @@ if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
 }
 print '</td></tr>'."\n";
 print '</table>';
+print '</div>';
 print '<br>';
 
 
@@ -74,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
+$xmlshortfile = GETPOST('xmlshortfile','alpha')?GETPOST('xmlshortfile','alpha'):'/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX)?'':$conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -85,8 +86,8 @@ if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signa
 
 
 // Test if remote test is ok
-$enableremotecheck = True;
-if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=False;
+$enableremotecheck = true;
+if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=false;
 $enableremotecheck = true;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
@@ -95,13 +96,13 @@ print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile))
 {
     print '<input type="radio" name="target" value="local"'.((! GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"':'').'"> '.$langs->trans("LocalSignature").' = ';
-    print '<input name="xmlshortfile" class="flat minwidth200" value="'.dol_escape_htmltag($xmlshortfile).'">';
+    print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print '<br>';
 }
 else
 {
     print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = ';
-    print '<input name="xmlshortfile" class="flat minwidth200" value="'.dol_escape_htmltag($xmlshortfile).'">';
+    print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
     print '<br>';
 }
@@ -109,7 +110,7 @@ print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck)
 {
     print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"':'').'> '.$langs->trans("RemoteSignature").' = ';
-    print '<input name="xmlremote" class="flat quatrevingtpercent" value="'.dol_escape_htmltag($xmlremote).'"><br>';
+    print '<input name="xmlremote" class="flat minwidth400" value="'.dol_escape_htmltag($xmlremote).'"><br>';
 }
 else
 {
@@ -137,12 +138,12 @@ if (GETPOST('target') == 'local')
 if (GETPOST('target') == 'remote')
 {
     $xmlarray = getURLContent($xmlremote);
-    
+
     // Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
         $xmlfile = $xmlarray['content'];
-        //print "eee".$xmlfile."eee";
+        //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
     }
     else
@@ -151,20 +152,21 @@ if (GETPOST('target') == 'remote')
         setEventMessages($errormsg, null, 'errors');
         $error++;
     }
-}       
-        
+}
 
-if ($xml)
+
+if (! $error && $xml)
 {
     $checksumconcat = array();
     $file_list = array();
     $out = '';
-    
+
     // Forced constants
     if (is_object($xml->dolibarr_constants[0]))
     {
         $out.=load_fiche_titre($langs->trans("ForcedConstants"));
-        
+
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -172,7 +174,6 @@ if ($xml)
         $out.='<td align="center">' . $langs->trans("ExpectedValue") . '</td>';
         $out.='<td align="center">' . $langs->trans("Value") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
 
         $i = 0;
         foreach ($xml->dolibarr_constants[0]->constant as $constant)    // $constant is a simpleXMLElement
@@ -180,16 +181,15 @@ if ($xml)
             $constname=$constant['name'];
             $constvalue=(string) $constant;
             $constvalue = (empty($constvalue)?'0':$constvalue);
-            // Value found                
+            // Value found
             $value='';
             if ($constname && $conf->global->$constname != '') $value=$conf->global->$constname;
             $valueforchecksum=(empty($value)?'0':$value);
-            
+
             $checksumconcat[]=$valueforchecksum;
-            
+
             $i++;
-            $var = !$var;
-            $out.='<tr ' . $bc[$var] . '>';
+            $out.='<tr class="oddeven">';
             $out.='<td>'.$i.'</td>' . "\n";
             $out.='<td>'.$constname.'</td>' . "\n";
             $out.='<td align="center">'.$constvalue.'</td>' . "\n";
@@ -199,13 +199,14 @@ if ($xml)
 
         if ($i==0)
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
+        $out.='</div>';
+
         $out.='<br>';
     }
-    
+
     // Scan htdocs
     if (is_object($xml->dolibarr_htdocs_dir[0]))
     {
@@ -214,7 +215,7 @@ if ($xml)
 
         // Defined qualified files (must be same than into generate_filelist_xml.php)
         $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-        $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+        $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
         $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
         // Fill file_list with files in signature, new files, modified files
@@ -229,17 +230,17 @@ if ($xml)
                 $file_list['added'][]=array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
             }
         }
-        
+
         // Files missings
         $out.=load_fiche_titre($langs->trans("FilesMissing"));
-        
+
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
         if (is_array($tmpfilelist) && count($tmpfilelist))
         {
@@ -247,26 +248,27 @@ if ($xml)
 	        foreach ($tmpfilelist as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
         }
-        else 
+        else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-        }            
+            $out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        }
         $out.='</table>';
+        $out.='</div>';
 
         $out.='<br>';
 
         // Files modified
         $out.=load_fiche_titre($langs->trans("FilesModified"));
-        
+
         $totalsize=0;
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -276,7 +278,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
         {
@@ -284,8 +285,7 @@ if ($xml)
 	        foreach ($tmpfilelist2 as $file)
 	        {
 	            $i++;
-	            $var = !$var;
-	            $out.='<tr ' . $bc[$var] . '>';
+	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
@@ -305,18 +305,20 @@ if ($xml)
             $out.='<td align="right"></td>' . "\n";
             $out.="</tr>\n";
         }
-        else 
+        else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
+        $out.='</div>';
+
         $out.='<br>';
-        
+
         // Files added
         $out.=load_fiche_titre($langs->trans("FilesAdded"));
-        
+
         $totalsize = 0;
+		$out.='<div class="div-table-responsive-no-min">';
         $out.='<table class="noborder">';
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
@@ -326,7 +328,6 @@ if ($xml)
         $out.='<td align="right">' . $langs->trans("Size") . '</td>';
         $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
-        $var = true;
         $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
         if (is_array($tmpfilelist3) && count($tmpfilelist3))
         {
@@ -334,10 +335,15 @@ if ($xml)
             foreach ($tmpfilelist3 as $file)
             {
                 $i++;
-                $var = !$var;
-                $out.='<tr ' . $bc[$var] . '>';
+                $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
-                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td>'.$file['filename'];
+                $out.=PHP_OS;
+                if (! preg_match('/^win/i',PHP_OS)) {
+                	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm');
+                }
+                $out.='</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
@@ -357,20 +363,21 @@ if ($xml)
         }
         else
         {
-            $out.='<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
-        
-     
+        $out.='</div>';
+
+
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
-        }        
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
+        }
     }
     else
     {
@@ -386,9 +393,9 @@ if ($xml)
         $file_list = array();
         $ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
     }*/
-    
-    
-    asort($checksumconcat); // Sort list of checksum        
+
+
+    asort($checksumconcat); // Sort list of checksum
     //var_dump($checksumconcat);
     $checksumget = md5(join(',',$checksumconcat));
     $checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
@@ -397,72 +404,43 @@ if ($xml)
     var_dump($checksumget);
     var_dump($checksumtoget);
     var_dump($checksumget == $checksumtoget);*/
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
-    print $langs->trans("ExpectedChecksum").' = '. ($checksumtoget ? $checksumtoget : $langs->trans("Unknown")) .'<br>';
-    print $langs->trans("CurrentChecksum").' = ';
+
+    $outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
     if ($checksumget == $checksumtoget)
     {
-        if (count($file_list['added'])) print $checksumget.' - <span class="warning">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-        else print '<span class="ok">'.$checksumget.'</span>';
+    	if (count($file_list['added']))
+    	{
+    		$resultcode = 'warning';
+    		$resultcomment='FileIntegrityIsOkButFilesWereAdded';
+    		$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
+    	}
+    	else
+    	{
+    		$resultcode = 'ok';
+    		$resultcomment='Success';
+    		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+    	}
     }
     else
     {
-        print '<span class="error">'.$checksumget.'</span>';
+    	$resultcode = 'error';
+    	$resultcomment='Error';
+    	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
-    
+
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
+    print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
+
     print '<br>';
     print '<br>';
-    
+
     // Output detail
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);
-
-
-/**
- * Function to get list of updated or modified files.
- * $file_list is used as global variable
- *
- * @param	array				$file_list	        Array for response
- * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
- * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
- * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
- * @param   array               $checksumconcat     Array of checksum
- * @return  array               			        Array of filenames
- */
-function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
-{
-    $exclude = 'install';
-
-    foreach ($dir->md5file as $file)    // $file is a simpleXMLElement
-    {
-        $filename = $path.$file['name'];
-        $file_list['insignature'][] = $filename;
-        
-        //if (preg_match('#'.$exclude.'#', $filename)) continue;
-
-        if (!file_exists($pathref.'/'.$filename))
-        {
-            $file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
-        }
-        else
-		{
-            $md5_local = md5_file($pathref.'/'.$filename);
-            if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
-            $checksumconcat[] = $md5_local;
-		}
-    }
-
-    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
-
-    return $file_list;
-}
-

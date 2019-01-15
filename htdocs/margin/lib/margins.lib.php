@@ -124,8 +124,6 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 		if ($product->fetch_product_fournisseur_price($fk_pa))
 		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-				$paht_ret += $product->fourn_unitcharges;
 		}
 		else
 		{

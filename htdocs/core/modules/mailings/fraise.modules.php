@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +35,17 @@ class mailing_fraise extends MailingTargets
 {
     var $name='FundationMembers';                    // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    var $desc='Foundation members with emails (by status)';
+    var $desc='Foundation members with emails';
     // Set to 1 if selector is available for admin users only
     var $require_admin=0;
 
     var $require_module=array('adherent');
     var $picto='user';
 
-    var $db;
-
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
      *    Constructor
@@ -51,7 +54,7 @@ class mailing_fraise extends MailingTargets
      */
     function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -73,7 +76,7 @@ class mailing_fraise extends MailingTargets
         $statssql=array();
 
         $statssql[0] ="SELECT '".$this->db->escape($langs->trans("FundationMembers"))."' as label, count(*) as nb";
-        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1 and entity IN (".getEntity('member').")";
 
         return $statssql;
     }
@@ -91,7 +94,7 @@ class mailing_fraise extends MailingTargets
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '')";
+        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
@@ -107,11 +110,15 @@ class mailing_fraise extends MailingTargets
     function formFilter()
     {
         global $conf, $langs;
-        $langs->load("members");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("members","companies","categories"));
 
         $form=new Form($this->db);
 
         $s='';
+
+        // Status
         $s.=$langs->trans("Status").': ';
         $s.='<select name="filter" class="flat">';
         $s.='<option value="none">&nbsp;</option>';
@@ -121,10 +128,10 @@ class mailing_fraise extends MailingTargets
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
         $s.='</select> ';
         $s.=$langs->trans("Type").': ';
-        $s.='<select name="filtertype" class="flat">';
+        $s.='<select name="filter_type" class="flat">';
         $sql = "SELECT rowid, libelle, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
         $resql = $this->db->query($sql);
         if ($resql)
@@ -150,11 +157,52 @@ class mailing_fraise extends MailingTargets
         }
 
         $s.='</select>';
+
+        $s.=' ';
+
+        $s.=$langs->trans("Category").': ';
+        $s.='<select name="filter_category" class="flat">';
+
+        // Show categories
+        $sql = "SELECT rowid, label, type, visible";
+        $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+        $sql.= " WHERE type = 3";	// We keep only categories for members
+        // $sql.= " AND visible > 0";	// We ignore the property visible because member's categories does not use this property (only products categories use it).
+        $sql.= " AND entity = ".$conf->entity;
+        $sql.= " ORDER BY label";
+
+        //print $sql;
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+        	$num = $this->db->num_rows($resql);
+
+        	$s.='<option value="0">&nbsp;</option>';
+        	if (! $num) $s.='<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
+
+        	$i = 0;
+        	while ($i < $num)
+        	{
+        		$obj = $this->db->fetch_object($resql);
+
+        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+        		$s.='</option>';
+        		$i++;
+        	}
+        }
+        else
+        {
+        	dol_print_error($this->db);
+        }
+
+        $s.='</select>';
+
+
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1,'subscriptionafter',0,0,1,'fraise',1,0,0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1,'subscriptionbefore',0,0,1,'fraise',1,0,0);
 
         return $s;
     }
@@ -172,23 +220,20 @@ class mailing_fraise extends MailingTargets
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Ajoute destinataires dans table des cibles
      *
      *  @param    int        $mailing_id        Id of emailing
-     *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    function add_to_target($mailing_id)
     {
-	    // Deprecation warning
-	    if ($filtersarray) {
-		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
-	    }
-
+        // phpcs:enable
     	global $langs,$_POST;
-		$langs->load("members");
-        $langs->load("companies");
+
+    	// Load translation files required by the page
+        $langs->loadLangs(array("members","companies"));
 
         $cibles = array();
         $now=dol_now();
@@ -200,17 +245,28 @@ class mailing_fraise extends MailingTargets
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
         $sql.= " a.lastname, a.firstname,";
         $sql.= " a.datefin, a.civility as civility_id, a.login, a.societe";    // Other fields
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-        $sql.= " WHERE a.email <> ''";     // Note that null != '' is false
-        $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+        if ($_POST['filter_category'])
+        {
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
+        }
+        $sql.= " , ".MAIN_DB_PREFIX."adherent_type as ta";
+        $sql.= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''";     // Note that null != '' is false
+        $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
+        // Filter on status
         if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
         if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND a.datefin >= '".$this->db->idate($now)."'";
         if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
         if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
+        // Filter on date
         if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
         if ($dateendsubscriptionbefore > 0) $sql.=" AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql.= " AND a.fk_adherent_type = ta.rowid";
-        if ($_POST['filtertype']) $sql.= " AND ta.rowid='".$_POST['filtertype']."'";
+        // Filter on type
+        if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
+        // Filter on category
+        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
         $sql.= " ORDER BY a.email";
         //print $sql;
 
@@ -261,5 +317,4 @@ class mailing_fraise extends MailingTargets
 
         return parent::add_to_target($mailing_id, $cibles);
     }
-
 }

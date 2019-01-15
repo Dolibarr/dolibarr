@@ -16,7 +16,7 @@
 -- ========================================================================
 
 CREATE TABLE llx_supplier_proposaldet (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_supplier_proposal integer NOT NULL,
   fk_parent_line integer DEFAULT NULL,
   fk_product integer DEFAULT NULL,
@@ -51,5 +51,6 @@ CREATE TABLE llx_supplier_proposaldet (
   multicurrency_subprice  double(24,8) DEFAULT 0,
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,
-  multicurrency_total_ttc double(24,8) DEFAULT 0
+  multicurrency_total_ttc double(24,8) DEFAULT 0,
+  fk_unit integer DEFAULT NULL
 ) ENGINE=innodb;

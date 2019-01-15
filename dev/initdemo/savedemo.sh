@@ -3,7 +3,7 @@
 # Script to extrac a database with demo values.
 # Note: "dialog" tool need to be available if no parameter provided.
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: savedemo.sh
@@ -171,6 +171,8 @@ export list="
     --ignore-table=$base.llx_abonne_extrafields 
     --ignore-table=$base.llx_abonne_type
     --ignore-table=$base.llx_abonnement 
+    --ignore-table=$base.llx_accountingaccount 
+    --ignore-table=$base.llx_accountingsystem 
     --ignore-table=$base.llx_advanced_extrafields 
     --ignore-table=$base.llx_advanced_extrafields_options 
     --ignore-table=$base.llx_advanced_extrafields_values
@@ -187,11 +189,16 @@ export list="
 	--ignore-table=$base.llx_bt_webseedfiles
 	--ignore-table=$base.llx_c_civilite
 	--ignore-table=$base.llx_c_dolicloud_plans
+	--ignore-table=$base.llx_c_pays
 	--ignore-table=$base.llx_c_source
+	--ignore-table=$base.llx_c_ticketsup_category
+	--ignore-table=$base.llx_c_ticketsup_severity
+	--ignore-table=$base.llx_c_ticketsup_type
 	--ignore-table=$base.llx_cabinetmed_c_banques
 	--ignore-table=$base.llx_cabinetmed_c_ccam
 	--ignore-table=$base.llx_cabinetmed_c_examconclusion
 	--ignore-table=$base.llx_cabinetmed_cons
+	--ignore-table=$base.llx_cabinetmed_cons_extrafields
 	--ignore-table=$base.llx_cabinetmed_diaglec
 	--ignore-table=$base.llx_cabinetmed_examaut
 	--ignore-table=$base.llx_cabinetmed_exambio
@@ -207,7 +214,18 @@ export list="
 	--ignore-table=$base.llx_dolicloud_customers
 	--ignore-table=$base.llx_dolicloud_stats
 	--ignore-table=$base.llx_dolicloud_emailstemplates
+	--ignore-table=$base.llx_dolireport_column
+	--ignore-table=$base.llx_dolireport_criteria
+	--ignore-table=$base.llx_dolireport_graph
+	--ignore-table=$base.llx_dolireport_plot
+	--ignore-table=$base.llx_dolireport_report
 	--ignore-table=$base.llx_domain
+	--ignore-table=$base.llx_ecommerce_commande
+	--ignore-table=$base.llx_ecommerce_facture
+	--ignore-table=$base.llx_ecommerce_product
+	--ignore-table=$base.llx_ecommerce_site
+	--ignore-table=$base.llx_ecommerce_societe
+	--ignore-table=$base.llx_ecommerce_socpeople
 	--ignore-table=$base.llx_element_rang
 	--ignore-table=$base.llx_entity
 	--ignore-table=$base.llx_filemanager_roots
@@ -215,6 +233,8 @@ export list="
 	--ignore-table=$base.llx_google_maps
 	--ignore-table=$base.llx_milestone
 	--ignore-table=$base.llx_monitoring_probes
+	--ignore-table=$base.llx_m
+	--ignore-table=$base.llx_m_extrafields
 	--ignore-table=$base.llx_notes
 	--ignore-table=$base.llx_pos_cash
 	--ignore-table=$base.llx_pos_control_cash
@@ -231,6 +251,8 @@ export list="
 	--ignore-table=$base.llx_residence
 	--ignore-table=$base.llx_residence_building
 	--ignore-table=$base.llx_residence_building_links
+	--ignore-table=$base.llx_societe_rib2
+	--ignore-table=$base.llx_ticketsup
 	--ignore-table=$base.llx_ultimatepdf
 	--ignore-table=$base.llx_update_modules
 	--ignore-table=$base.llx_ventilation_achat

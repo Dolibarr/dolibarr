@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -108,13 +108,9 @@ if (! empty($newlangid))
 		$outputlangs->setDefaultLang($newlangid);
 	}
 }
-$outputlangs->load("main");
-$outputlangs->load("bills");
-$outputlangs->load("companies");
-$outputlangs->load("banks");
-$outputlangs->load("members");
-$outputlangs->load("compta");
 
+// Load translation files required by the page
+$outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct=new Account($db);
 $result=$acct->fetch('',$bankref);
@@ -262,7 +258,7 @@ if ($resql)
 		$totalbefore = $total;
 		$total = $total + $objp->amount;
 
-		$var=!$var;
+
 
 		// Date operation
 		$dateop=$db->jdate($objp->do);
@@ -289,22 +285,28 @@ if ($resql)
 			{
 				$paymentstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicestatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicestatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicestatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicestatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_supplier')
 			{
 				$paymentsupplierstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentsupplierstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicesupplierstatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicesupplierstatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicesupplierstatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicesupplierstatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_sc')

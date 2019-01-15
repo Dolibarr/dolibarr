@@ -5,7 +5,7 @@ DeleteResource=Eliminar recurso
 ConfirmDeleteResourceElement=¿Está seguro de querer eliminar el recurso de este elemento?
 NoResourceInDatabase=Sin recursos en la base de datos.
 NoResourceLinked=Sin recursos enlazados
-
+ActionsOnResource=Eventos sobre este recurso
 ResourcePageIndex=Listado de recursos
 ResourceSingular=Recurso
 ResourceCard=Ficha recurso
@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Recurso eliminado correctamente
 DictionaryResourceType=Tipo de recursos
 
 SelectResource=Seleccionar recurso
+
+IdResource=Id recurso
+AssetNumber=Número de serie
+ResourceTypeCode=Código tipo recurso
+ImportDataset_resource_1=Recursos

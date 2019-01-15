@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,16 +24,14 @@
  *  \brief      Page to list withdraw requests
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modPrelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -45,16 +43,16 @@ $page =  GETPOST('page','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortfield) $sortfield="f.ref";
 
 
 /*
@@ -68,7 +66,7 @@ $invoicestatic=new Facture($db);
 
 // List of requests
 
-$sql= "SELECT f.facnumber, f.rowid, f.total_ttc,";
+$sql= "SELECT f.ref, f.rowid, f.total_ttc,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande as date_demande,";
 $sql.= " pfd.fk_user_demande";
@@ -106,14 +104,14 @@ if ($resql)
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
-	
+
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Bill"));
-	print_liste_field_titre($langs->trans("Company"));
-    print_liste_field_titre($langs->trans("Amount"));
-	print_liste_field_titre($langs->trans("DateRequest"));
+	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
+	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
 	print_liste_field_titre('');
 	print '</tr>';
 
@@ -124,25 +122,23 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+	print $searchpicto;
 	print '</td>';
 	print '</tr>';
-
-	$var = True;
 
 	$users = array();
 
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+
+		print '<tr class="oddeven">';
 
 		// Ref facture
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
-		$invoicestatic->ref=$obj->facnumber;
+		$invoicestatic->ref=$obj->ref;
 		print $invoicestatic->getNomUrl(1,'withdraw');
 		print '</td>';
 
@@ -154,10 +150,10 @@ if ($resql)
 
         print '<td align="right">'.price($obj->total_ttc).'</td>';
 
-        print '<td align="right">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
 
         print '<td align="right"></td>';
-        
+
 		print '</tr>';
 		$i++;
 	}
@@ -171,5 +167,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

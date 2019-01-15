@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
+$error=GETPOST('error');
+
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
 {
@@ -34,9 +36,8 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","compta","cashdesk"));
 
 
 /*
@@ -44,9 +45,6 @@ $langs->load("cashdesk");
  */
 
 $form = new Form($db);
-
-//header("Content-type: text/html; charset=UTF-8");
-//header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
@@ -57,9 +55,7 @@ print '<body>'."\n";
 
 if (!empty($error))
 {
-	print $error;
-	print '</body></html>';
-	exit;
+	dol_htmloutput_events();
 }
 
 print '<div class="conteneur">'."\n";

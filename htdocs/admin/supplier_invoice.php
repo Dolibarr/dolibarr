@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "orders"));
 
 if (!$user->admin)
 accessforbidden();
@@ -43,7 +43,7 @@ accessforbidden();
 $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
 $action=GETPOST('action', 'alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();
@@ -56,9 +56,12 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
-    $maskvalue=GETPOST('maskinvoice','alpha');
+	$maskconstcredit=GETPOST('maskconstcredit','alpha');
+    $maskinvoice=GETPOST('maskinvoice','alpha');
+	$maskcredit=GETPOST('maskcredit','alpha');
 
-    if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskvalue,'chaine',0,'',$conf->entity);
+    if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+	if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -171,7 +174,7 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT');	// No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -198,14 +201,14 @@ llxHeader("","");
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
 
 print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier invoice numbering module
@@ -232,7 +235,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
 
             while (($file = readdir($handle))!==false)
             {
@@ -250,8 +252,8 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+
+                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -361,7 +363,6 @@ foreach ($dirmodels as $reldir)
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -370,7 +371,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -378,8 +379,8 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new FactureFournisseur($db));
 
-                    $var=!$var;
-                    print "<tr ".$bc[$var].">\n";
+
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -398,7 +399,7 @@ foreach ($dirmodels as $reldir)
                         //if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
                         //{
                             // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">';
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">';
                             print img_picto($langs->trans("Enabled"),'switch_on');
                             print '</a>';
                         /*}
@@ -411,7 +412,7 @@ foreach ($dirmodels as $reldir)
                     else
                     {
                         print '<td align="center">'."\n";
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                         print "</td>";
                     }
 
@@ -421,11 +422,11 @@ foreach ($dirmodels as $reldir)
                     {
                         //print img_picto($langs->trans("Default"),'on');
                         // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
                     }
                     else
                     {
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                     }
                     print '</td>';
 
@@ -471,8 +472,14 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnInvoices").' '.img_info($langs->trans("AddCRIfTooLong")).'</br>';
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -481,7 +488,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';
@@ -505,14 +512,13 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

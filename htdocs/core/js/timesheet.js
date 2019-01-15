@@ -1,5 +1,5 @@
-/* Copyright (C) 2014 delcroip <delcroip@gmail.com>
- * Laurent Destailleur 2015 <eldy@users.sourceforge.net>
+/* Copyright (C) 2014      delcroip            <delcroip@gmail.com>
+ * Copyright (C) 2015-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ function regexEvent(objet,evt,type)
     {
           case 'days':
               var regex= /^[0-9]{1}([.,]{1}[0-9]{1})?$/;
-   
+
               if(regex.test(objet.value) )
-              { 
+              {
                 var tmp=objet.value.replace(',','.');
                 if(tmp<=1.5){
                     var tmpint=parseInt(tmp);
@@ -41,15 +41,20 @@ function regexEvent(objet,evt,type)
               }else{
                  objet.value= '0';
             }
-          break; 
+          break;
           case 'hours':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
               var regex2=/^[0-9]{1,2}$/;
+              var regex3= /^[0-9]{1}([.,]{1}[0-9]{1,2})?$/;
               if(!regex.test(objet.value))
-              { 
+              {
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
-                  else
+                  else if(regex3.test(objet.value)) {
+                    var tmp=parseFloat(objet.value.replace(',','.'));
+                    var rnd=Math.trunc(tmp);
+                    objet.value=rnd+':'+ Math.round(60*(tmp-rnd));
+                  } else
                     objet.value='';
               }
               /* alert(jQuery("#"+id).val()); */
@@ -58,25 +63,25 @@ function regexEvent(objet,evt,type)
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
               var charCode = (evt.which) ? evt.which : event.keyCode;
-              
+
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
                     (charCode === 58) || (charCode==44) )// : & all charcode
               {
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
-         
+
               }else
               {
                   return false;
               }
-                
-              break;    
+
+              break;
           default:
               break;
       }
-}    
-  
+}
+
 
 function pad(n) {
     return (n < 10) ? ("0" + n) : n;
@@ -90,7 +95,7 @@ function parseTime(timeStr, dt)
     if (!dt) {
         dt = new Date();
     }
- 
+
     var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
     if (!time) {
         return -1;
@@ -102,7 +107,7 @@ function parseTime(timeStr, dt)
     else {
         hours += (hours < 12 && time[3]) ? 12 : 0;
     }
- 
+
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
     dt.setSeconds(0, 0);
@@ -113,22 +118,22 @@ function parseTime(timeStr, dt)
 function updateTotal(days,mode)
 {
 	console.log('updateTotal days='+days+' mode='+mode);
-    if(mode=="hours")
+    if (mode=="hours")
     {
         var total = new Date(0);
         total.setHours(0);
-        total.setMinutes(0);   
+        total.setMinutes(0);
         var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
-        { 
-            var id='timespent['+i+']['+days+']';   
+        for (var i=-1; i<nbline; i++)
+        {
+            var id='timespent['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
             {
             	/* alert(element.value);*/
                 if (element.value)
-                {   
+                {
                 	result=parseTime(element.value,taskTime);
                 }
                 else
@@ -142,14 +147,14 @@ function updateTotal(days,mode)
                 }
             }
 
-            var id='timeadded['+i+']['+days+']';   
+            var id='timeadded['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
             {
             	/* alert(element.value);*/
                 if (element.value)
-                {   
+                {
                 	result=parseTime(element.value,taskTime);
                 }
                 else
@@ -163,56 +168,117 @@ function updateTotal(days,mode)
                 }
             }
         }
-        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
+
+        // Add data on the perday view
+        jQuery('.inputhour').each(function( index ) {
+        	if (this.value)
+        	{
+                var taskTime= new Date(0);
+        		/*console.log(total.getHours())
+        		console.log(this.value)
+            	alert(element.value);*/
+                if (this.value)
+                {
+                	console.log(this.value+':00')
+                	result=parseTime(this.value+':00',taskTime);
+                }
+                else
+                {
+                	result=parseTime(this.innerHTML+':00',taskTime);
+                }
+                if (result >= 0)
+                {
+                	total.setHours(total.getHours()+taskTime.getHours());
+                }
+        		console.log(total.getHours())
+            }
+        });
+        // Add data on the perday view
+        jQuery('.inputminute').each(function( index ) {
+        	if (this.value)
+        	{
+                var taskTime= new Date(0);
+        		/* console.log(total.getHours())
+        		console.log(this.value)
+            	alert(element.value);*/
+                if (this.value)
+                {
+                	console.log('00:'+this.value)
+                	result=parseTime('00:'+"00".substring(0, 2 - this.value.length) + this.value,taskTime);
+                }
+                else
+                {
+                	result=parseTime('00:'+"00".substring(0, 2 - this.innerHTML) + this.innerHTML,taskTime);
+                }
+                if (result >= 0)
+                {
+                	total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                }
+        		console.log(total.getMinutes())
+            }
+        });
+
+        if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+days).addClass("bold");
+        else jQuery('.totalDay'+days).removeClass("bold");
+    	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
+
+    	var totalhour = 0;
+    	var totalmin = 0;
+        for (var i=0; i<7; i++)
         {
-        	document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-        	//addText(,total.getHours()+':'+total.getMinutes());
+        	var taskTime= new Date(0);
+        	result=parseTime(jQuery('.totalDay'+i).text(),taskTime);
+        	if (result >= 0)
+        	{
+        		totalhour = totalhour + taskTime.getHours();
+        		totalmin = totalmin + taskTime.getMinutes();
+        	}
         }
+        morehours = Math.floor(totalmin / 60);
+        totalmin = totalmin % 60;
+    	jQuery('.totalDayAll').text(pad(morehours + totalhour)+':'+pad(totalmin));
     }
     else
     {
         var total =0;
         var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
-        { 
-            var id='timespent['+i+']['+days+']';   
-            var taskTime= new Date(0);
-            var element=document.getElementById(id);
-            if(element)
-            {
-                if (element.value)
-                {   
-                    total+=parseInt(element.value);
-
-                   }
-                else
-                {
-                    total+=parseInt(element.innerHTML);
-                }
-            }
-
-            var id='timeadded['+i+']['+days+']';   
-            var taskTime= new Date(0);
-            var element=document.getElementById(id);
-            if(element)
-            {
-                if (element.value)
-                {   
-                    total+=parseInt(element.value);
-
-                   }
-                else
-                {
-                    total+=parseInt(element.innerHTML);
-                }
-            }
-        }
-        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
+        for (var i=-1; i<nbline; i++)
         {
-        	document.getElementById('totalDay['+days+']').innerHTML = total;
-        }
-    }
-    
-}
+            var id='timespent['+i+']['+days+']';
+            var taskTime= new Date(0);
+            var element=document.getElementById(id);
+            if(element)
+            {
+                if (element.value)
+                {
+                    total+=parseInt(element.value);
 
-   
+                   }
+                else
+                {
+                    total+=parseInt(element.innerHTML);
+                }
+            }
+
+            var id='timeadded['+i+']['+days+']';
+            var taskTime= new Date(0);
+            var element=document.getElementById(id);
+            if(element)
+            {
+                if (element.value)
+                {
+                    total+=parseInt(element.value);
+
+                   }
+                else
+                {
+                    total+=parseInt(element.innerHTML);
+                }
+            }
+        }
+
+        if (total) jQuery('.totalDay'+days).addClass("bold");
+        else jQuery('.totalDay'+days).removeClass("bold");
+    	jQuery('.totalDay'+days).text(total);
+    }
+}

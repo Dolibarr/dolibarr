@@ -1,4 +1,4 @@
-// Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+// Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 // Examples
 $(document).ready(function() {
 	// override these in your code to change the default behavior and style
-	$.blockUI.events = {
+	/*$.blockUI.events = {
 
 			// styles applied when using $.growlUI
 			dolEventValidCSS: {
@@ -41,7 +41,7 @@ $(document).ready(function() {
 				'-moz-border-radius':	 '10px',
 				'border-radius': 		 '10px'
 			},
-			
+
 			// styles applied when using $.growlUI
 			dolEventErrorCSS: {
 				width:  	'350px',
@@ -59,35 +59,35 @@ $(document).ready(function() {
 				'border-radius': 		 '10px'
 			}
 
-	};
-	
+	};*/
+
 	$.dolEventValid = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventValid"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
 		if (message) $m.append('<h2>'+message+'</h2>');
 		if (timeout == undefined) timeout = 3000;
 		$.blockUI({
-			message: $m, fadeIn: 200, fadeOut: 700, centerY: false,
+			message: $m, fadeIn: 0, fadeOut: 0, centerY: false,
 			timeout: timeout, showOverlay: false,
 			onUnblock: onClose,
 			css: $.blockUI.events.dolEventValidCSS
 		});
 	};
-	
+
 	$.dolEventError = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventError"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
 		if (message) $m.append('<h2>'+message+'</h2>');
 		if (timeout == undefined) timeout = 0;
 		$.blockUI({
-			message: $m, fadeIn: 200, centerY: false,
+			message: $m, fadeIn: 0, centerY: false,
 			timeout: timeout, showOverlay: false,
 			onUnblock: onClose,
 			css: $.blockUI.events.dolEventErrorCSS
 		});
 		$('.dolEventError').click($.unblockUI);
 	};
-	
+
 	$.pleaseBePatient = function(message) {
 		$.blockUI({
 			message: message,
@@ -98,7 +98,6 @@ $(document).ready(function() {
 				'-webkit-border-radius': '10px',
 				'-moz-border-radius': '10px',
 				'border-radius': '10px',
-				opacity: .5,
 				color: '#fff'
 			}
 		});

@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Lieferung
 DeliveryRef=Fer. Lieferung
-DeliveryCard=Receipt card
+DeliveryCard=Empfangsbeleg
 DeliveryOrder=Lieferschein
 DeliveryDate=Liefertermin
-CreateDeliveryOrder=Generate delivery receipt
+CreateDeliveryOrder=Zustellbeleg erzeugen
 DeliveryStateSaved=Lieferstatus gespeichert.
 SetDeliveryDate=Liefertermin setzen
 ValidateDeliveryReceipt=Lieferschein freigeben
 ValidateDeliveryReceiptConfirm=Sind Sie sicher, dass Sie diesen Lieferschein bestätigen wollen?
 DeleteDeliveryReceipt=Lieferschein löschen
-DeleteDeliveryReceiptConfirm=Möchten Sie diesen Lieferschein <b>%s</b> wirklich löschen?
+DeleteDeliveryReceiptConfirm=Möchten Sie den Lieferschein <b>%s</b> wirklich löschen?
 DeliveryMethod=Versandart
 TrackingNumber=Tracking Nummer
 DeliveryNotValidated=Lieferung nicht validiert

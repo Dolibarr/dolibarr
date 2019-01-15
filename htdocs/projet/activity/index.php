@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,15 @@
  *	\brief      Page activite perso du module projet
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user','int');
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
@@ -37,7 +39,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("projects");
 
 
@@ -58,11 +60,27 @@ $taskstatic=new Task($db);
 $tasktmp=new Task($db);
 
 $title=$langs->trans("Activities");
-if ($mine) $title=$langs->trans("MyActivities");
+//if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print load_fiche_titre($title, '', 'title_project');
+
+// Title for combo list see all projects
+$titleall=$langs->trans("AllAllowedProjects");
+if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
+else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+
+
+$morehtml='';
+$morehtml.='<form name="projectform">';
+$morehtml.='<SELECT name="mode">';
+$morehtml.='<option name="all" value="all"'.($mine?'':' selected').'>'.$titleall.'</option>';
+$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='</SELECT>';
+$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
+//print load_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -74,33 +92,36 @@ else
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// Search project
-if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$listofsearchfields['search_task']=array('text'=>'Task');
+    // Search project
+    if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
+    {
+    	$listofsearchfields['search_task']=array('text'=>'Task');
+    }
+
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
-}
-
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 /* Affichage de la liste des projets d'aujourd'hui */
 print '<table class="noborder" width="100%">';
@@ -124,13 +145,11 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -156,8 +175,11 @@ print "</tr>\n";
 print "</table>";
 
 
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+
 /* Affichage de la liste des projets d'hier */
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
@@ -178,13 +200,11 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
@@ -215,14 +235,14 @@ print "</table>";
 if ($db->type != 'pgsql')
 {
     print '<br>';
-    
+
     // Affichage de la liste des projets de la semaine
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
     print '<td align="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
-    
+
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
     $sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
@@ -234,17 +254,15 @@ if ($db->type != 'pgsql')
     $sql.= " AND task_date >= '".$db->idate(dol_get_first_day($year, $month)).'" AND ...";
     $sql.= " AND p.rowid in (".$projectsListId.")";
     $sql.= " GROUP BY p.rowid, p.ref, p.title";
-    
+
     $resql = $db->query($sql);
     if ( $resql )
     {
     	$total = 0;
-    	$var=true;
-    
+
     	while ($row = $db->fetch_object($resql))
     	{
-    		$var=!$var;
-    		print "<tr ".$bc[$var].">";
+    		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -256,7 +274,7 @@ if ($db->type != 'pgsql')
     		print "</tr>\n";
     		$total += $row->nb;
     	}
-    
+
     	$db->free($resql);
     }
     else
@@ -280,7 +298,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now,"%B %Y").'</td>';
     print '<td align="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
-    
+
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
     $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -292,15 +310,13 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 	$sql.= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
     $sql.= " AND p.rowid in (".$projectsListId.")";
     $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
-    
+
     $resql = $db->query($sql);
     if ( $resql )
     {
-    	$var=false;
-    
     	while ($row = $db->fetch_object($resql))
     	{
-    		print "<tr ".$bc[$var].">";
+    		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
     		$projectstatic->ref=$row->ref;
@@ -309,7 +325,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-    		$var=!$var;
     	}
     	$db->free($resql);
     }
@@ -345,13 +360,12 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql.= " AND p.rowid in (".$projectsListId.")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
-	$var=false;
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
 		while ($row = $db->fetch_object($resql))
 		{
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td>';
 			$projectstatic->id=$row->rowid;
 			$projectstatic->ref=$row->ref;
@@ -361,7 +375,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-			$var=!$var;
 		}
 		$db->free($resql);
 	}
@@ -408,12 +421,12 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
     }
     else dol_print_error($db);
     if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
-    
+
 
 	// Tasks for all resources of all opened projects and time spent for each task/resource
 	// This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
     // Add constant PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA to show this list
-    
+
 	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
 	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
@@ -427,7 +440,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 	    $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ect";
 	}
-	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";  // project i have permission on
 	if ($mine)     // this may duplicate record if we are contact twice
 	{
@@ -438,8 +451,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	$sql.= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
 	$sql.= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
 	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
-
-	$var=true;
 
 	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -467,7 +478,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
@@ -477,7 +487,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			if ($userstatic->id) $username = $userstatic->getNomUrl(0,0);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			//print '<td>'.$username.'</td>';
 			print '<td>';
 			$projectstatic->id=$obj->projectid;
@@ -487,7 +497,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			$projectstatic->public = $obj->public;
 			$projectstatic->dateo = $db->jdate($obj->projdateo);
 			$projectstatic->datee = $db->jdate($obj->projdatee);
-				
+
 			print $projectstatic->getNomUrl(1,'',0,'','<br>');
 			print '</td>';
 			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -514,7 +524,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			$taskstatic->datee = $db->jdate($obj->datee);
 			print '<td align="center">'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datee),'day');
-			print dol_print_date($obj->date_end,'dayhour');			
+			print dol_print_date($obj->date_end,'dayhour');
 			if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
@@ -558,13 +568,11 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 		dol_print_error($db);
 	}
-
 }
 
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

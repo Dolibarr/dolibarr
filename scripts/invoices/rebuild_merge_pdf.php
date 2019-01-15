@@ -34,12 +34,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Include Dolibarr environment
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 // After this $db is an opened handler to database. We close it at end of file.
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php');
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php';
 
 
 // Load main language strings
@@ -289,7 +289,7 @@ function usage()
     print "To exclude deposit invoices, use filter=nodeposit\n";
     print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
     print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
-    print "To regenerate existing PDF, use regenerate=crabe\n";
+    print "To regenerate existing PDF, use regenerate=templatename\n";
     print "To generate invoices in a language, use lang=xx_XX\n";
     print "To set prefix of generated file name, use prefix=myfileprefix\n";
     print "\n";

@@ -33,7 +33,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 	var $boxlabel="BoxProposalsPerMonth";
 	var $depends = array("propal");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -47,9 +50,11 @@ class box_graph_propales_permonth extends ModeleBoxes
 	 */
 	function __construct($db,$param)
 	{
-		global $conf;
+		global $user;
 
 		$this->db=$db;
+
+		$this->hidden=! ($user->rights->propale->lire);
 	}
 
 	/**
@@ -69,6 +74,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		//$propalstatic=new Propal($db);
 
+		$langs->load("propal");
+
 		$text = $langs->trans("BoxProposalsPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
@@ -87,7 +94,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		if ($user->societe_id) $socid=$user->societe_id;
 		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
 
-		if ($user->rights->propal->lire)
+		if ($user->rights->propale->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
@@ -109,7 +116,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot)) $showtot=1;
+			if (empty($shownb) && empty($showtot))  { $shownb=1; $showtot=1; }
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -121,7 +128,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
 				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
@@ -160,7 +167,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
 
@@ -217,13 +224,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$stringtoshow.='<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow.='<input type="hidden" name="page_y" value="">';
 				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
 				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked':'').'> '.$langs->trans("NumberOfProposalsByMonth");
 				$stringtoshow.=' &nbsp; ';
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfProposalsByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
@@ -243,19 +251,20 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
+				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"',	'td' => 'align="left" class="nohover"',
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}
-
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 	}
 
@@ -265,12 +274,11 @@ class box_graph_propales_permonth extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

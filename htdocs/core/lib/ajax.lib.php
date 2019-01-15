@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,24 +27,31 @@
 /**
  *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
- *  This use the jQuery "autocomplete" function.
+ *  This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
  *
- *  @param	string	$selected           Preselecte value
+ *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
  *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array
- *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                          Ex: array('disabled'=>
- *                                          Ex: array('show'=>
- *                                          Ex: array('update_textarea'=>
+ *  @param	array   $ajaxoptions		Multiple options array
+ *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                      - Ex: array('disabled'=> )
+ *                                      - Ex: array('show'=> )
+ *                                      - Ex: array('update_textarea'=> )
+ *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
 {
     if (empty($minLength)) $minLength=1;
+
+    $dataforrenderITem='ui-autocomplete';
+    $dataforitem='ui-autocomplete-item';
+    // Allow two constant to use other values for backward compatibility
+    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem=constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem=constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
@@ -56,17 +63,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).';
 
-					/* Remove product id before select another product use keyup instead of change to avoid loosing the product id. This is needed only for select of predefined product */
-					/* TODO Check if we can remove this */
-					$("input#search_'.$htmlname.'").keydown(function() {
-						$("#'.$htmlname.'").val("");
+					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
+					$("input#search_'.$htmlname.'").keydown(function(e) {
+						if (e.keyCode != 9)		/* If not "Tab" key */
+						{
+							console.log("Clear id previously selected for field '.$htmlname.'");
+							$("#'.$htmlname.'").val("");
+						}
 					});
-
-					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code
-						$("input#search_'.$htmlname.'").change(function() {
-					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
-						$("#'.$htmlname.'").trigger("change");
-					});*/
 
 					// Check options for secondary actions when keyup
 					$("input#search_'.$htmlname.'").keyup(function() {
@@ -140,6 +144,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
+    							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
     							if (ui.item.disabled) {
 									$("#" + options.option_disabled).prop("disabled", true);
     								if (options.error) {
@@ -148,28 +153,32 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     								if (options.warning) {
     									$.jnotify(options.warning, "warning", false);		// Output with jnotify the warning message
     								}
-							} else {
+								} else {
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
     						if (options.disabled) {
+    							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
 									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
+    							console.log("Make action show on each "+options.show)
     							$.each(options.show, function(key, value) {
     								$("#" + value).show().trigger("show");
     							});
     						}
     						// Update an input
     						if (ui.item.update) {
+    							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});
     						}
     						if (ui.item.textarea) {
+    							console.log("Make action textarea on each ui.item.textarea")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -181,12 +190,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
 						return $("<li>")
-						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
@@ -347,6 +357,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
     return $msg;
 }
 
+
 /**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
@@ -358,31 +369,52 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @see selectArrayAjax of html.form.class
  */
 function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
-	
-	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
-	if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
+
+	// select2 disabled for smartphones with standard browser.
+	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
+	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone') return '';
+
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
+	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
+	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    $msg="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'
+					minimumInputLength: '.$minLengthToAutocomplete.',
+					language: select2arrayoflanguage,
+    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					templateResult: function (data, container) {	/* Format visible output into combo list */
+	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+						if (data.element) { $(container).addClass($(data.element).attr("class")); }
+					    //console.log(data.html);
+						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
+					    return data.text;
+					},
+					templateSelection: function (selection) {		/* Format visible output of selected value */
+						return selection.text;
+					},
+					escapeMarkup: function(markup) {
+						return markup;
+					},
+					dropdownCssClass: \'ui-dialog\'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
 
-	if (count($events))
+	if (is_array($events) && count($events))    // If an array of js events to do were provided.
 	{
 		$msg.= '
 			jQuery("#'.$htmlname.'").change(function () {
@@ -400,7 +432,8 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-	    		$.getJSON(url,
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				$.getJSON(url,
 						{
 							action: method,
 							id: id,
@@ -514,7 +547,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- *  @return void
+ *  @return string              html for button on/off
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
 {
@@ -590,4 +623,3 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=a
 
     return $out;
 }
-

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class CommandeStats extends Stats
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element;
 
 	var $socid;
@@ -60,8 +63,8 @@ class CommandeStats extends Stats
 
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-        
+		$this->cachefilesuffix = $mode;
+
 		if ($mode == 'customer')
 		{
 			$object=new Commande($this->db);
@@ -81,8 +84,8 @@ class CommandeStats extends Stats
 			$this->where.= " c.fk_statut > 2";    // Only approved & ordered
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= ' AND c.entity IN ('.getEntity('commande', 1).')';
-		
+		$this->where.= ' AND c.entity IN ('.getEntity('commande').')';
+
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($this->socid)
 		{
@@ -95,9 +98,10 @@ class CommandeStats extends Stats
 	 * Return orders number by month for a year
 	 *
 	 * @param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -109,7 +113,7 @@ class CommandeStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -136,10 +140,11 @@ class CommandeStats extends Stats
 	/**
 	 * Return the orders amount by month for a year
 	 *
-	 * @param	int		$year	Year to scan
-	 * @return	array			Array with amount by month
+	 * @param	int		$year		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -151,7 +156,7 @@ class CommandeStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql);
+		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -217,6 +222,5 @@ class CommandeStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-		
 }
 

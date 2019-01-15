@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ExpeditionStats extends Stats
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element;
 
 	var $socid;
@@ -42,7 +45,7 @@ class ExpeditionStats extends Stats
     var $from;
 	var $field;
     var $where;
-    
+
 
     /**
      * Constructor
@@ -55,13 +58,13 @@ class ExpeditionStats extends Stats
     function __construct($db, $socid, $mode, $userid=0)
     {
 		global $user, $conf;
-    	
+
 		$this->db = $db;
-        
+
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-        
+		$this->cachefilesuffix = $mode;
+
         $object=new Expedition($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -82,9 +85,10 @@ class ExpeditionStats extends Stats
      * Return shipment number by month for a year
      *
 	 * @param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
      */
-    function getNbByMonth($year)
+    function getNbByMonth($year, $format=0)
     {
         global $user;
 
@@ -96,7 +100,7 @@ class ExpeditionStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
     }
 

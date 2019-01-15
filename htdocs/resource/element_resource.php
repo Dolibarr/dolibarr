@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013		Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,18 +23,17 @@
  */
 
 
-$res=0;
-$res=@include("../main.inc.php");                               // For root directory
-if (! $res) $res=@include("../../main.inc.php");        // For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');
@@ -91,7 +90,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 	else
 	{
 		$objstat = fetchObjectByElement($element_id, $element);
-
+		$objstat->element = $element; // For externals module, we need to keep @xx
 		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
 	}
 	if (! $error && $res > 0)
@@ -103,7 +102,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 }
 
 // Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
 {
 	$res = $object->fetch_element_resource($lineid);
 	if($res)
@@ -193,26 +192,49 @@ else
 
 			$head=actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
+			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
+			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out='';
-			$out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out.='<br>';
-			$out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback.=$out;
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', '&element='.$element, 0, '', '');
+			$morehtmlref='<div class="refidno">';
+			// Thirdparty
+			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled))
+			{
+			    $langs->load("projects");
+			    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			    $morehtmlref.=$langs->trans('Project') . ': ';
+		        if (! empty($act->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($act->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $act->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+			}
+			$morehtmlref.='</div>';
+
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
+
+			print '<div class="fichecenter">';
 
 			print '<div class="underbanner clearboth"></div>';
 
@@ -272,18 +294,22 @@ else
 					$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 				}
 			}
+			$listofcontactid=array();	// not used yet
+			$listofotherid=array();	// not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef)?1:0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
-			if (in_array($user->id,array_keys($listofuserid)))
+			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
 				print '<div class="myavailability">';
 				print $langs->trans("MyAvailability").': '.(($act->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 				print '</div>';
-			}
+			}*/
 			print '	</td></tr>';
 
 			print '</table>';
+
+			print '</div>';
 
 			dol_fiche_end();
 		}
@@ -301,7 +327,7 @@ else
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
+			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
 			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
@@ -333,16 +359,16 @@ else
         $fichinter = new Fichinter($db);
         $fichinter->fetch($element_id, $element_ref);
         $fichinter->fetch_thirdparty();
-        
-		if (is_object($fichinter)) 
+
+		if (is_object($fichinter))
 		{
 			$head=fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-			
-			
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -383,9 +409,9 @@ else
 				}
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
-			
+
 			dol_fiche_end();
 		}
 	}
@@ -409,7 +435,7 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
+			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
 
 			$path = '';
 			if(strpos($resource_obj,'@'))
@@ -436,7 +462,6 @@ else
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
 				{
 					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-
 				}
 				else
 				{
@@ -447,6 +472,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

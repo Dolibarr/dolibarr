@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
@@ -28,8 +28,8 @@ create table llx_don
   tms             timestamp,
   fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
   datedon         datetime,                     -- Date of the donation/promise
-  amount          real DEFAULT 0,
-  fk_payment      integer,
+  amount          double(24,8) DEFAULT 0,
+  fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
   firstname       varchar(50),
   lastname        varchar(50),
@@ -51,5 +51,6 @@ create table llx_don
   note_private    text,
   note_public     text,
   model_pdf       varchar(255),
-  import_key      varchar(14)
+  import_key      varchar(14),
+  extraparams	  varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

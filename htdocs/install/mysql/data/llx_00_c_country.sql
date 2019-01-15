@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2014 	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
@@ -232,7 +232,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (20
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (202,'SI','SVN','Slovénie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (203,'SB','SLB','Iles Salomon',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (204,'SO','SOM','Somalie',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (205,'ZA','ZAF','Afrique du Sud',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (205,'ZA','ZAF','South Africa',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (206,'GS','SGS','Iles Géorgie du Sud et Sandwich du Sud',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (207,'LK','LKA','Sri Lanka',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (208,'SD','SDN','Soudan',1,0);
@@ -254,7 +254,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (22
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (224,'TV','TUV','Tuvalu',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (225,'UG','UGA','Ouganda',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (226,'UA','UKR','Ukraine',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (227,'AE','ARE','Émirats arabes unis',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (227,'AE','ARE','United Arab Emirates',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (228,'UM','UMI','Iles mineures éloignées des États-Unis',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (229,'UY','URY','Uruguay',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (230,'UZ','UZB','Ouzbékistan',1,0);

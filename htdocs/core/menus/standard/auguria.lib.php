@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,21 +53,18 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-	$usemenuhider = (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER));
-	
+	$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 	    $showmode=1;
 	    $classname = 'class="tmenu menuhider"';
 	    $idsel='menu';
-	
-	    if (empty($noout)) print_start_menu_entry_auguria($idsel,$classname,$showmode);
-	    if (empty($noout)) print_text_menu_entry_auguria('', 1, '#', $id, $idsel, $classname, $atarget);
-	    if (empty($noout)) print_end_menu_entry_auguria($showmode);
-	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
+
+	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
-	
+
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
 	{
@@ -76,32 +73,42 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
 			$url = $shorturl = $newTabMenu[$i]['url'];
-			
+
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
 			    $tmp=explode('?',$newTabMenu[$i]['url'],2);
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1])?$tmp[1]:'');
 
-				// Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
-			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($newTabMenu[$i]['url'])) 
+				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($newTabMenu[$i]['url']))
 			    {
-			        $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['url'].'&leftmenu=';
+			        $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			    }
-			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($newTabMenu[$i]['url'])) 
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($newTabMenu[$i]['url']))
 			    {
 			        $param.=($param?'&':'').'leftmenu=';
 			    }
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url,1).($param?'?'.$param:'');
-				$shorturl = $shorturl.($param?'?'.$param:'');
+				//$shorturl = $shorturl.($param?'?'.$param:'');
+				$shorturl = $url;
+
+				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/','',$shorturl);
 			}
 
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
-			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
+			// TODO Find a generic solution
+			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
+			{
+			    $search_project_user = GETPOST('search_project_user','int');
+			    if ($search_project_user) $shorturl=preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
+			    else $shorturl=preg_replace('/search_project_user=__search_project_user__/', '', $shorturl);
+			}
 
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
@@ -110,10 +117,18 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		}
 		else if ($showmode == 2) $classname='class="tmenu"';
 
-		if (empty($noout)) print_start_menu_entry_auguria($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget));
-		if (empty($noout)) print_end_menu_entry_auguria($showmode);
-		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), '');
+		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu']?$newTabMenu[$i]['leftmenu']:''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
+	}
+
+	// Sort on position
+	$menu->liste = dol_sort_array($menu->liste, 'position');
+
+	// Output menu entries
+	foreach($menu->liste as $menkey => $menuval)
+	{
+        if (empty($noout)) print_start_menu_entry_auguria($menuval['idsel'],$menuval['classname'],$menuval['enabled']);
+	    if (empty($noout)) print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url']!='#'?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
+	    if (empty($noout)) print_end_menu_entry_auguria($menuval['enabled']);
 	}
 
 	$showmode=1;
@@ -136,9 +151,9 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 function print_start_menu_array_auguria()
 {
     global $conf;
-    
+
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**
@@ -154,7 +169,8 @@ function print_start_menu_entry_auguria($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 
@@ -248,16 +264,16 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+	$usemenuhider = (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
 	global $usemenuhider;
-	
+
 	// Show logo company
 	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		}
 		else
 		{
@@ -269,13 +285,13 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '<div class="menu_titre" id="menu_titre_logo"></div>';
 		print '<div class="menu_top" id="menu_top_logo"></div>';
 		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 70%"></div>'."\n";
 		print '</div>';
 		print '<div class="menu_end" id="menu_end_logo"></div>';
 		print '</div>'."\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))
+	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
@@ -284,7 +300,17 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
         print '</div>'."\n";
         print "<!-- End SearchForm -->\n";
 	}
-	
+
+	if (is_array($moredata) && ! empty($moredata['bookmarks']))
+	{
+	    print "\n";
+	    print "<!-- Begin Bookmarks -->\n";
+	    print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	    print $moredata['bookmarks'];
+	    print '</div>'."\n";
+	    print "<!-- End Bookmarks -->\n";
+	}
+
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db,'auguria');
 	$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
@@ -292,6 +318,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// We update newmenu for special dynamic menus
 	if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank')	// Entry for each bank account
 	{
+	    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';     // Required for to get Account::TYPE_CASH for example
+
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -304,7 +332,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+			if ($numr > 0) 	$newmenu->add('/compta/bank/list.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
 
 			while ($i < $numr)
 			{
@@ -312,7 +340,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
 				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
 				{
-					$newmenu->add('/compta/bank/bankentries.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
 				}
 				$i++;
 			}
@@ -323,8 +351,61 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('',$langs->trans("Journaux"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
+		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
+		// Multi journal
+		$sql = "SELECT rowid, code, label, nature";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " AND active = 1";
+		$sql.= " ORDER BY label DESC";
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$numr = $db->num_rows($resql);
+			$i = 0;
+
+			if ($numr > 0)
+			{
+				while ($i < $numr)
+				{
+					$objp = $db->fetch_object($resql);
+
+					$nature='';
+
+					// Must match array $sourceList defined into journals_list.php
+					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
+					if ($objp->nature == 3 && ! empty($conf->fournisseur->enabled)) $nature="purchases";
+					if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
+					if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
+					if ($objp->nature == 1) $nature="various";
+					if ($objp->nature == 8) $nature="inventory";
+					if ($objp->nature == 9) $nature="hasnew";
+
+					// To enable when page exists
+					if (! empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
+					{
+						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
+					}
+
+					if ($nature)
+					{
+						if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid,dol_trunc($objp->label,25),2,$user->rights->accounting->comptarapport->lire);
+					}
+					$i++;
+				}
+			}
+			else
+			{
+				// Should not happend. Entries are added
+				$newmenu->add('',$langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
+			}
+		}
+		else dol_print_error($db);
+		$db->free($resql);
+
+		/*
 		$sql = "SELECT rowid, label, accountancy_journal";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
@@ -341,7 +422,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
-				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire,'','accountancy','accounting');
+				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid, $langs->trans("Journal").' - '.$objp->label, 1, $user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
 				$i++;
 			}
 		}
@@ -349,9 +430,10 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$db->free($resql);
 
 		// Add other journal
-		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
-		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
-		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire);
+		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
+		*/
 	}
 
 	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
@@ -383,16 +465,17 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	if (! is_array($menu_array)) return 0;
 
 	// Show menu
+	$invert=empty($conf->global->MAIN_MENU_INVERT)?"":"invert";
 	if (empty($noout))
 	{
-		$alt=0; $altok=0; $blockvmenuopened=false;
+		$altok=0; $blockvmenuopened=false; $lastlevel0='';
 		$num=count($menu_array);
-		for ($i = 0; $i < $num; $i++)
+		for ($i = 0; $i < $num; $i++)     // Loop on each menu entry
 		{
 			$showmenu=true;
 			if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
 
-			$alt++;
+			// Begin of new left menu block
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
 				$altok++;
@@ -401,99 +484,123 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				for($j = ($i + 1); $j < $num; $j++)
 				{
 				    if (empty($menu_array[$j]['level'])) $lastopened=false;
-				}				
+				}
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 
-			// Place tabulation
+			// Add tabulation
 			$tabstring='';
 			$tabul=($menu_array[$i]['level'] - 1);
 			if ($tabul > 0)
 			{
 				for ($j=0; $j < $tabul; $j++)
 				{
-					$tabstring.='&nbsp; &nbsp;';
+					$tabstring.='&nbsp;&nbsp;&nbsp;';
 				}
 			}
 
-			// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-			$url=dol_buildpath($menu_array[$i]['url'],1);
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
+			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
-			if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
+			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
+			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
 			{
-				if (! preg_match('/\?/',$url)) $url.='?';
-				else $url.='&';
-				$url.='mainmenu='.$mainmenu;
+				$tmp=explode('?',$menu_array[$i]['url'],2);
+				$url = $shorturl = $tmp[0];
+				$param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
+
+				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
+				if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu']))
+				{
+					$param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
+				}
+				if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu']))
+				{
+					$param.=($param?'&':'').'leftmenu=';
+				}
+				//$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
+				$url = dol_buildpath($url,1).($param?'?'.$param:'');
+				$shorturlwithoutparam = $shorturl;
+				$shorturl = $shorturl.($param?'?'.$param:'');
 			}
 
-			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].' -->'."\n";
 
-			// Menu niveau 0
+			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
+
+			// Menu level 0
 			if ($menu_array[$i]['level'] == 0)
 			{
-				if ($menu_array[$i]['enabled'])
+				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
-					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
+					print '<div class="menu_titre">'.$tabstring;
+					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					else print '<span class="vmenu">';
+					print ($menu_array[$i]['prefix']?$menu_array[$i]['prefix']:'').$menu_array[$i]['titre'];
+					if ($shorturlwithoutparam) print '</a>';
+					else print '</span>';
+					print '</div>'."\n";
+					$lastlevel0='enabled';
 				}
-				else if ($showmenu)
+				else if ($showmenu)                 // Not enabled but visible (so greyed)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+					$lastlevel0='greyed';
+				}
+				else
+				{
+				    $lastlevel0='hidden';
 				}
 				if ($showmenu)
+				{
 					print '<div class="menu_top"></div>'."\n";
+				}
 			}
-			// Menu niveau > 0
+
+			// Menu level > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
-				if ($menu_array[$i]['enabled'])
+				$cssmenu = '';
+				if ($menu_array[$i]['url']) $cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/','',$menu_array[$i]['url']));
+
+				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
-					print '<div class="menu_contenu">'.$tabstring;
-					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
+					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
-					if ($menu_array[$i]['url']) print '</a>';
+					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
 					print '</div>'."\n";
 				}
-				else if ($showmenu)
+				else if ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
 				{
-					print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}
 			}
 
 			// If next is a new block or if there is nothing after
-			if (empty($menu_array[$i+1]['level']))
+			if (empty($menu_array[$i+1]['level']))               // End menu block
 			{
 				if ($showmenu)
 					print '<div class="menu_end"></div>'."\n";
-				if ($blockvmenuopened) { print "</div>\n"; $blockvmenuopened=false; }
+				if ($blockvmenuopened) { print '</div>'."\n"; $blockvmenuopened=false; }
 			}
 		}
-		
-		if ($altok) print '<div class="blockvmenuend"></div>';
+
+		if ($altok) print '<div class="blockvmenuend"></div>';    // End menu block
 	}
 
-	if (is_array($moredata) && ! empty($moredata['bookmarks']))
-	{
-	        print "\n";
-	        print "<!-- Begin Bookmarks -->\n";
-	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-	        print $moredata['bookmarks'];
-	        print '</div>'."\n";
-	        print "<!-- End Bookmarks -->\n";
-	}
-	
 	return count($menu_array);
 }
 

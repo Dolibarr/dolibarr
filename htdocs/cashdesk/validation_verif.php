@@ -32,31 +32,26 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
 
-$action =GETPOST('action');
+$action =GETPOST('action','aZ09');
 $bankaccountid=GETPOST('cashdeskbank');
 
 switch ($action)
 {
-
 	default:
-
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
+	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
-
 	case 'valide_achat':
-        
 	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
-	    
+
 		$company=new Societe($db);
 		$company->fetch($thirdpartyid);
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
 		$invoice->type= Facture::TYPE_STANDARD;
-		
+
 		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
 		// and restore values just after
 		$sav_FACTURE_ADDON='';
@@ -72,7 +67,7 @@ switch ($action)
 			// To force rule only for POS with mercure
 			//...
 		}
-		
+
 		$num=$invoice->getNextNumRef($company);
 
 		// Restore save values
@@ -80,7 +75,7 @@ switch ($action)
 		{
 			$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 		}
-		
+
 		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
@@ -115,13 +110,11 @@ switch ($action)
 
 
 	case 'retour':
-
 		$redirection = 'affIndex.php?menutpl=facturation';
 		break;
 
 
 	case 'valide_facture':
-
 		$now=dol_now();
 
 		// Recuperation de la date et de l'heure
@@ -135,7 +128,7 @@ switch ($action)
 			exit;
 		}
 
-		switch ( $obj_facturation->getSetPaymentMode() )
+		switch ($obj_facturation->getSetPaymentMode() )
 		{
 			case 'DIF':
 				$mode_reglement_id = 0;
@@ -143,7 +136,7 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
@@ -152,11 +145,11 @@ switch ($action)
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 		}
@@ -164,7 +157,6 @@ switch ($action)
 		if (empty($cond_reglement_id)) $cond_reglement_id=0;	// If cond_reglement_id not found
 		$note .= $_POST['txtaNotes'];
 		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
-
 
 		$error=0;
 
@@ -190,6 +182,7 @@ switch ($action)
 			$tmp = getTaxesFromId($tab_liste[$i]['fk_tva']);
 			$vat_rate = $tmp['rate'];
 			$vat_npr = $tmp['npr'];
+			$vat_src_code = $tmp['code'];
 
 			$invoiceline=new FactureLigne($db);
 			$invoiceline->fk_product=$tab_liste[$i]['fk_article'];
@@ -198,15 +191,17 @@ switch ($action)
 			$invoiceline->remise_percent=$tab_liste[$i]['remise_percent'];
 			$invoiceline->price=$tab_liste[$i]['price'];
 			$invoiceline->subprice=$tab_liste[$i]['price'];
-			
+
 			$invoiceline->tva_tx=empty($vat_rate)?0:$vat_rate;	// works even if vat_rate is ''
 			$invoiceline->info_bits=empty($vat_npr)?0:$vat_npr;
-				
+			$invoiceline->vat_src_code=$vat_src_code;
+
 			$invoiceline->total_ht=$tab_liste[$i]['total_ht'];
 			$invoiceline->total_ttc=$tab_liste[$i]['total_ttc'];
 			$invoiceline->total_tva=$tab_liste[$i]['total_vat'];
 			$invoiceline->total_localtax1=$tab_liste[$i]['total_localtax1'];
 			$invoiceline->total_localtax2=$tab_liste[$i]['total_localtax2'];
+
 			$invoice->lines[]=$invoiceline;
 		}
 
@@ -220,6 +215,8 @@ switch ($action)
 		$invoice->note_private=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
+		$invoice->module_source = 'cashdesk';
+		$invoice->pos_source = '0';
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
@@ -230,7 +227,7 @@ switch ($action)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
 				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
-				
+
 				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
 				if ($warehouseidtodecrease > 0)
@@ -258,19 +255,20 @@ switch ($action)
 			}
 			else
 			{
-				$error++;
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
+			    $error++;
 			}
 
 			$id = $invoice->id;
 		}
 		else
 		{
-			$resultcreate=$invoice->create($user,0,0);
+		    $resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
 				if (! empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease=0;	// If a particular stock is defined, we disable choice
-				
+
 				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
 				if ($warehouseidtodecrease > 0)
@@ -290,7 +288,8 @@ switch ($action)
 							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
 							if ($result < 0) {
-								$error++;
+							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+							    $error++;
 							}
 						}
 					}
@@ -327,21 +326,23 @@ switch ($action)
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);
-                  			//print 'eeeee';exit;
+                  			//print 'set paid';exit;
                     	}
-
                     }
 				}
 				else
 				{
-					$error++;
+				    setEventMessages($invoice->error, $invoice->errors, 'errors');
+				    $error++;
 				}
 			}
 			else
 			{
-				$error++;
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
+			    $error++;
 			}
 		}
+
 
 		if (! $error)
 		{
@@ -351,15 +352,16 @@ switch ($action)
 		else
 		{
 			$db->rollback();
-			$redirection = 'affIndex.php?facid='.$id.'&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+			$redirection = 'affIndex.php?facid='.$id.'&error=1&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		break;
 
 		// End of case: valide_facture
 }
 
-
+unset ($_SESSION['serObjFacturation']);
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 header('Location: '.$redirection);
+exit;

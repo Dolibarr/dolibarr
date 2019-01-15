@@ -1,7 +1,6 @@
 <?php
-
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -37,11 +36,30 @@ class box_supplier_orders extends ModeleBoxes
     var $boxlabel="BoxLatestSupplierOrders";
     var $depends = array("fournisseur");
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
     var $info_box_head = array();
     var $info_box_contents = array();
 
+
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    function __construct($db,$param)
+    {
+        global $user;
+
+        $this->db=$db;
+
+        $this->hidden=! ($user->rights->fournisseur->commande->lire);
+    }
 
     /**
      *  Load data into info_box_contents array to show array later.
@@ -68,7 +86,7 @@ class box_supplier_orders extends ModeleBoxes
             $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_client, s.code_fournisseur,";
             $sql.= " s.logo,";
-            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
+            $sql.= " c.rowid, c.ref, c.tms, c.date_commande,";
             $sql.= " c.total_ht,";
             $sql.= " c.tva as total_tva,";
             $sql.= " c.total_ttc,";
@@ -94,43 +112,35 @@ class box_supplier_orders extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
-                    $thirdpartytmp->id = $objp->socid;
+
+					$supplierorderstatic->id = $objp->rowid;
+					$supplierorderstatic->ref = $objp->ref;
+
+					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
-
-                    $tooltip = $langs->trans('SupplierOrder') . ': ' . $objp->ref;
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
+                        'td' => '',
+                        'text' => $supplierorderstatic->getNomUrl(1),
+                    	'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
-                        'text' => $objp->ref,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
-                    );
-
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($date,'day'),
                     );
 
@@ -143,15 +153,15 @@ class box_supplier_orders extends ModeleBoxes
                 }
 
                 if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
                 $db->free($result);
             } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                $this->info_box_contents[0][] = array(
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
@@ -159,9 +169,9 @@ class box_supplier_orders extends ModeleBoxes
         }
         else
         {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            $this->info_box_contents[0][] = array(
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
@@ -172,12 +182,11 @@ class box_supplier_orders extends ModeleBoxes
      * 	@param	array	$head       Array with properties of box title
      * 	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

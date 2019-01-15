@@ -17,8 +17,15 @@
  *
  */
 
-$langs->load("main");
-$langs->load("bills");
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills"));
 
 ?>
 
@@ -41,7 +48,7 @@ $langs->load("bills");
 
 </script>
 
-<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture.php?action=builddoc&facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
+<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture/card.php?action=builddoc&facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
 <br>
 <p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
 

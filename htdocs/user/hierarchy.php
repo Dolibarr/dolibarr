@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,15 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 
-$sall=GETPOST('sall','alpha');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);
@@ -47,10 +47,14 @@ $search_statut=GETPOST('search_statut','int');
 
 if ($search_statut == '') $search_statut='1';
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_statut="";
 }
+
+// Define value to know what current user can do on users
+$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+
 
 
 /*
@@ -62,18 +66,21 @@ $form = new Form($db);
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')','','',0,0,$arrayofjs,$arrayofcss);
-
-print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
-
+llxHeader('',$langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
 // Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
+if (! is_array($user_arbo) && $user_arbo < 0)
+{
+    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
+}
+else
+{
 // Define fulltree array
 $fulltree=$user_arbo;
-
+//var_dump($fulltree);
 // Define data (format for treeview)
 $data=array();
 $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
@@ -91,24 +98,21 @@ foreach($fulltree as $key => $val)
 	$userstatic->admin=$val['admin'];
 	$userstatic->entity=$val['entity'];
 	$userstatic->photo=$val['photo'];
-	
+
 	$entity=$val['entity'];
 	$entitystring='';
 
 	// TODO Set of entitystring should be done with a hook
-	if (is_object($mc))
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
 	{
-		if (! empty($conf->multicompany->enabled))
+		if (empty($entity))
 		{
-			if (empty($entity))
-			{
-				$entitystring=$langs->trans("AllEntities");
-			}
-			else
-			{
-				$mc->getInfo($entity);
-				$entitystring=$mc->label;
-			}
+			$entitystring=$langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($entity);
+			$entitystring=$mc->label;
 		}
 	}
 
@@ -122,7 +126,7 @@ foreach($fulltree as $key => $val)
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
-	
+
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],
@@ -131,21 +135,36 @@ foreach($fulltree as $key => $val)
 	);
 }
 
+//var_dump($data);
+
+$title = $langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView");
+
+$param="search_statut=".urlencode($search_statut);
+
+$newcardbutton='';
+if ($canadduser)
+{
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle">'.$langs->trans('NewUser').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
+$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
+
+print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-
-$param="search_statut=".$search_statut;
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("HierarchicView"));
-print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
-print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
-print '</tr>';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Status
@@ -153,10 +172,18 @@ print '<td class="liste_titre" align="right">';
 print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print '</tr>';
+
+print '<tr class="liste_titre">';
+print_liste_field_titre("HierarchicView");
+print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
+print_liste_field_titre("Status",$_SERVER['PHP_SELF'],"",'',"",'align="right"');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
+print '</tr>';
+
 
 $nbofentries=(count($data) - 1);
 
@@ -185,6 +212,7 @@ else
 
 print "</table>";
 print "</form>\n";
+}
 
 //
 /*print '<script type="text/javascript" language="javascript">
@@ -198,6 +226,6 @@ jQuery(document).ready(function() {
 </script>';
 */
 
+// End of page
 llxFooter();
-
 $db->close();

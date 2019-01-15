@@ -23,7 +23,8 @@ create table llx_societe_remise_except
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   entity					integer DEFAULT 1 NOT NULL,				-- multi company id
-  fk_soc					integer NOT NULL,						-- client
+  fk_soc					integer NOT NULL,						-- customer or supplier
+  discount_type				integer DEFAULT 0 NOT NULL,				-- 0 => customer, 1 => supplier
   datec						datetime,
   amount_ht					double(24,8) NOT NULL,
   amount_tva				double(24,8) DEFAULT 0 NOT NULL,
@@ -33,6 +34,9 @@ create table llx_societe_remise_except
   fk_facture_line			integer,
   fk_facture				integer,
   fk_facture_source			integer,
+  fk_invoice_supplier_line	integer,
+  fk_invoice_supplier		integer,
+  fk_invoice_supplier_source integer,
   description				text NOT NULL,
   multicurrency_amount_ht	double(24,8) DEFAULT 0 NOT NULL,
   multicurrency_amount_tva	double(24,8) DEFAULT 0 NOT NULL,

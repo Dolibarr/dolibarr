@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = "Jade";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-    var $prefix='BL';
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
+
+    public $prefix='BL';
 
 
 	/**
@@ -80,7 +99,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -114,7 +133,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-        $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -133,7 +152,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $date=$object->date_delivery;
         if (empty($date)) $date=dol_now();
         $yymm = strftime("%y%m",$date);
-        
+
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s",$max+1);
 
@@ -142,16 +161,17 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free ref
 	 *
-     *  @param	Societe		$objsoc      	Object thirdparty
+     *  @param  Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Object livraison
-     *  @return string      				Texte descripif
+     *  @return string      				Texte descriptif
      */
     function livraison_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
-
 }

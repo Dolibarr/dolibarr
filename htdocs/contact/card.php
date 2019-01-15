@@ -1,13 +1,15 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,19 +41,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-$langs->load("commercial");
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$confirm	= GETPOST('confirm','alpha');
-$backtopage = GETPOST('backtopage','alpha');
+$confirm		= GETPOST('confirm','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
 $id			= GETPOST('id','int');
 $socid		= GETPOST('socid','int');
 
@@ -76,7 +77,7 @@ if (! empty($canvas))
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard','globalcard'));
 
 
@@ -91,7 +92,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -137,64 +138,66 @@ if (empty($reshook))
     }
 
 
-    // Confirmation desactivation
-    if ($action == 'disable')
-    {
-    	$object->fetch($id);
-    	if ($object->setstatus(0)<0)
-    	{
-    	    setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    	else
-    	{
-        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;
-    	}
-    }
+	// Confirmation desactivation
+	if ($action == 'disable')
+	{
+		$object->fetch($id);
+		if ($object->setstatus(0)<0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		}
+	}
 
-    // Confirmation activation
-    if ($action == 'enable')
-    {
-    	$object->fetch($id);
-        	if ($object->setstatus(1)<0)
-    	{
-    	    setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    	else
-    	{
-        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;
-    	}
-    }
+	// Confirmation activation
+	if ($action == 'enable')
+	{
+		$object->fetch($id);
+		if ($object->setstatus(1)<0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		}
+	}
 
-    // Add contact
-    if ($action == 'add' && $user->rights->societe->contact->creer)
-    {
-        $db->begin();
+	// Add contact
+	if ($action == 'add' && $user->rights->societe->contact->creer)
+	{
+		$db->begin();
 
         if ($canvas) $object->canvas=$canvas;
 
+        $object->entity			= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
         $object->socid			= GETPOST("socid",'int');
-        $object->lastname		= GETPOST("lastname");
-        $object->firstname		= GETPOST("firstname");
+        $object->lastname		= GETPOST("lastname",'alpha');
+        $object->firstname		= GETPOST("firstname",'alpha');
         $object->civility_id	= GETPOST("civility_id",'alpha');
-        $object->poste			= GETPOST("poste");
-        $object->address		= GETPOST("address");
-        $object->zip			= GETPOST("zipcode");
-        $object->town			= GETPOST("town");
+        $object->poste			= GETPOST("poste",'alpha');
+        $object->address		= GETPOST("address",'alpha');
+        $object->zip			= GETPOST("zipcode",'alpha');
+        $object->town			= GETPOST("town",'alpha');
         $object->country_id		= GETPOST("country_id",'int');
-        $object->state_id       = GETPOST("state_id",'int');
-        $object->skype			= GETPOST("skype");
+        $object->state_id		= GETPOST("state_id",'int');
+        $object->skype			= GETPOST("skype",'alpha');
+        $object->twitter		= GETPOST("twitter",'alpha');
+        $object->facebook		= GETPOST("facebook",'alpha');
         $object->email			= GETPOST("email",'alpha');
-        $object->phone_pro		= GETPOST("phone_pro");
-        $object->phone_perso	= GETPOST("phone_perso");
-        $object->phone_mobile	= GETPOST("phone_mobile");
-        $object->fax			= GETPOST("fax");
+        $object->phone_pro		= GETPOST("phone_pro",'alpha');
+        $object->phone_perso	= GETPOST("phone_perso",'alpha');
+        $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+        $object->fax			= GETPOST("fax",'alpha');
         $object->jabberid		= GETPOST("jabberid",'alpha');
-		$object->no_email		= GETPOST("no_email",'int');
         $object->priv			= GETPOST("priv",'int');
-        $object->note_public	= GETPOST("note_public");
-        $object->note_private	= GETPOST("note_private");
+        $object->note_public	= GETPOST("note_public",'none');
+        $object->note_private	= GETPOST("note_private",'none');
         $object->statut			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
@@ -224,7 +227,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array' );
+				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -278,15 +281,13 @@ if (empty($reshook))
             $action = 'edit';
         }
 
+		if (! $error)
+		{
+			$contactid=GETPOST("contactid",'int');
+			$object->fetch($contactid);
 
-        if (! $error)
-        {
-        	$contactid=GETPOST("contactid",'int');
-
-            $object->fetch($contactid);
-
-            // Photo save
-            $dir = $conf->societe->dir_output."/contact/".$object->id."/photos";
+			// Photo save
+			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
             $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
             if (GETPOST('deletephoto') && $object->photo)
             {
@@ -316,7 +317,7 @@ if (empty($reshook))
                             $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
     					    // Create thumbs
-    					    $object->addThumbs($newfile);					    
+    					    $object->addThumbs($newfile);
                         }
                     }
                 }
@@ -341,62 +342,72 @@ if (empty($reshook))
 
 			$object->oldcopy = clone $object;
 
-            $object->old_lastname	= GETPOST("old_lastname");
-            $object->old_firstname	= GETPOST("old_firstname");
+			$object->old_lastname	= GETPOST("old_lastname",'alpha');
+			$object->old_firstname	= GETPOST("old_firstname",'alpha');
 
             $object->socid			= GETPOST("socid",'int');
-            $object->lastname		= GETPOST("lastname");
-            $object->firstname		= GETPOST("firstname");
+            $object->lastname		= GETPOST("lastname",'alpha');
+            $object->firstname		= GETPOST("firstname",'alpha');
             $object->civility_id	= GETPOST("civility_id",'alpha');
-            $object->poste			= GETPOST("poste");
+            $object->poste			= GETPOST("poste",'alpha');
 
-            $object->address		= GETPOST("address");
-            $object->zip			= GETPOST("zipcode");
-            $object->town			= GETPOST("town");
+            $object->address		= GETPOST("address",'alpha');
+            $object->zip			= GETPOST("zipcode",'alpha');
+            $object->town			= GETPOST("town",'alpha');
             $object->state_id   	= GETPOST("state_id",'int');
             $object->fk_departement	= GETPOST("state_id",'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id",'int');
 
             $object->email			= GETPOST("email",'alpha');
             $object->skype			= GETPOST("skype",'alpha');
-            $object->phone_pro		= GETPOST("phone_pro");
-            $object->phone_perso	= GETPOST("phone_perso");
-            $object->phone_mobile	= GETPOST("phone_mobile");
-            $object->fax			= GETPOST("fax");
+            $object->twitter		= GETPOST("twitter",'alpha');
+            $object->facebook		= GETPOST("facebook",'alpha');
+            $object->phone_pro		= GETPOST("phone_pro",'alpha');
+            $object->phone_perso	= GETPOST("phone_perso",'alpha');
+            $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+            $object->fax			= GETPOST("fax",'alpha');
             $object->jabberid		= GETPOST("jabberid",'alpha');
-			$object->no_email		= GETPOST("no_email",'int');
             $object->priv			= GETPOST("priv",'int');
-        	$object->note_public	= GETPOST("note_public");
-       		$object->note_private	= GETPOST("note_private");
+            $object->note_public	= GETPOST("note_public",'none');
+       		$object->note_private	= GETPOST("note_private",'none');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
 
-            $result = $object->update($contactid, $user);
+			$result = $object->update($contactid, $user);
 
 			if ($result > 0) {
 				// Categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_contact';
-				$sql .= ' WHERE fk_socpeople = ' . $object->id;
-				$db->query( $sql );
-
-				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array' );
+				$categories = GETPOST('contcats', 'array');
 				$object->setCategories($categories);
 
-                $object->old_lastname='';
-                $object->old_firstname='';
-                $action = 'view';
-            }
-            else
-            {
-                setEventMessages($object->error, $object->errors, 'errors');
-                $action = 'edit';
-            }
+				$object->old_lastname='';
+				$object->old_firstname='';
+				$action = 'view';
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit';
+			}
+        }
+
+        if (! $error && empty($errors))
+        {
+       		if (! empty($backtopage))
+       		{
+       			header("Location: ".$backtopage);
+       			exit;
+       		}
         }
     }
+
+    // Actions to send emails
+	$trigger_name='CONTACT_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromcontact';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -460,7 +471,8 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        $res=$object->fetch_optionals();
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -522,17 +534,19 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			if (! empty($objsoc)) {
+				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
+            }
 
             dol_fiche_head($head, 'card', '', 0, '');
 
             print '<table class="border" width="100%">';
 
-
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-	        print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname",'alpha')?GETPOST("lastname",'alpha'):$object->lastname).'" autofocus="autofocus"></td>';
             print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
+            print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname",'alpha')?GETPOST("firstname",'alpha'):$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -541,7 +555,7 @@ else
                 {
                     print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
-                    print $objsoc->getNomUrl(1);
+                    print $objsoc->getNomUrl(1, 'contact');
                     print '</td>';
                     print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
@@ -584,8 +598,8 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((GETPOST("zipcode")?GETPOST("zipcode"):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
-            print $formcompany->select_ziptown((GETPOST("town")?GETPOST("town"):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown((GETPOST("zipcode",'alpha')?GETPOST("zipcode",'alpha'):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOST("town",'alpha')?GETPOST("town",'alpha'):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
@@ -597,7 +611,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                }
+                else
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                }
+
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(GETPOST("state_id",'alpha')?GETPOST("state_id",'alpha'):$object->state_id,$object->country_code,'state_id');
@@ -625,11 +647,24 @@ else
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
             print '<tr><td><label for="email">'.$langs->trans("Email").'</label></td>';
-	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
+	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			      {
@@ -637,15 +672,32 @@ else
             }
             print '</tr>';
 
-            // Instant message and no email
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
-
-            // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->socialnetworks->enabled))
             {
-                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
-	            print '<td colspan="3"><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	// Jabber
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Jabber','jabberid', '', $object, 0).'</label></td>';
+            		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
+            	// Skype
+            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            	{
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
+            		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	}
+            	// Twitter
+            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            	{
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
+            		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+            	}
+            	// Facebook
+            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            	{
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+            		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+            	}
             }
 
             // Visibility
@@ -656,23 +708,24 @@ else
 
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
-				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
-					null, '90%' );
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
+            $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            print $hookmanager->resPrint;
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
 
             print "</table><br>";
 
+			print '<hr style="margin-bottom: 20px">';
 
             // Add personnal information
             print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>','','');
@@ -684,11 +737,11 @@ else
             $form=new Form($db);
             if ($object->birthday)
             {
-                print $form->select_date($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
+                print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
             }
             else
             {
-                print $form->select_date('','birthday',0,0,1,"perso", 1, 0, 1);
+                print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
             }
             print '</td>';
 
@@ -786,7 +839,7 @@ else
 	            print $object->ref;
 	            print '</td></tr>';
            	}
-           	
+
             // Lastname
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
             print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["lastname"])?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
@@ -840,7 +893,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                }
+                else
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                }
+
                 print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?GETPOST("country_id"):$object->country_id,'state_id');
                 print '</td></tr>';
             }
@@ -858,7 +919,7 @@ else
 
             // EMail
             print '<tr><td><label for="email">'.$langs->trans("EMail").'</label></td>';
-	        print '<td><input name="email" id="email" type="text" class="flat maxwidthonsmartphone" maxlength="80" value="'.(isset($_POST["email"])?GETPOST("email"):$object->email).'"></td>';
+	        print '<td><input name="email" id="email" type="text" class="flat maxwidthonsmartphone" value="'.(isset($_POST["email"])?GETPOST("email"):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
                 $langs->load("mails");
@@ -871,13 +932,25 @@ else
             }
             print '</tr>';
 
-            // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            // Unsubscribe
+            print '<tr>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			{
@@ -885,11 +958,32 @@ else
 			}
             print '</tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->socialnetworks->enabled))
             {
-                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
-	            print '<td><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
+            	// Jabber ID
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="jabberid">'.$form->editfieldkey('Jabber','jabberid', '', $object, 0).'</label></td>';
+            		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
+            	// Skype
+            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            	{
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
+            		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	}
+            	// Twitter
+            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            	{
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
+            		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+            	}
+            	// Facebook
+            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            	{
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+            		print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+            	}
             }
 
             // Visibility
@@ -917,23 +1011,24 @@ else
             print '</td></tr>';
 
 			// Categories
-			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td>';
+			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td>';
 				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
-				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, 'contact' );
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, 'contact');
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				print $form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				print "</td></tr>";
 			}
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
+            $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            print $hookmanager->resPrint;
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -1020,7 +1115,7 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
-        dol_fiche_head($head, 'card', $title, 0, 'contact');
+        dol_fiche_head($head, 'card', $title, -1, 'contact');
 
         if ($action == 'create_user')
         {
@@ -1037,10 +1132,10 @@ else
             $password=$generated_password;
 
             // Create a form array
-            $formquestion=array(
-            array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
-            //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
+            $formquestion = array(
+                array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+                array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
+                //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
             if (! empty($conf->societe->enabled))
@@ -1049,28 +1144,27 @@ else
                 else $text.=$langs->trans("UserWillBeInternalUser");
             }
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-
         }
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
             $objsoc->fetch($object->socid);
             // Thirdparty
             $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1, 'contact');
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
-        $morehtmlref.='</div>';        
-        
+        $morehtmlref.='</div>';
+
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -1090,53 +1184,49 @@ else
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
-        // Instant message and no email
-        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td></tr>';
+        // Unsubscribe opt-out
         if (!empty($conf->mailing->enabled))
         {
-        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+        	//print 'eee'.$object->email;
+        	$noemail = $object->no_email;
+        	if (empty($noemail) && ! empty($object->email))
+        	{
+        		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+        		//print $sql;
+        		$resql=$db->query($sql);
+        		if ($resql)
+        		{
+        			$obj=$db->fetch_object($resql);
+        			$noemail = $obj->nb;
+        		}
+        	}
+        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
-        // Note Public
-        /*
-        print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td><td>';
-        print nl2br($object->note_public);
-        print '</td></tr>';
-
-        // Note Private
-        print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>';
-        print nl2br($object->note_private);
-        print '</td></tr>';
-        */
-        
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-        
+
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
 			print '<td colspan="3">';
-			print $form->showCategories( $object->id, 'contact', 1 );
+			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
 
-        // Other attributes
-        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
-        {
-        	print $object->showOptionals($extrafields);
-        }
+    	// Other attributes
+    	$cols = 3;
+    	$parameyers=array('socid'=>$socid);
+    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
         $object->load_ref_elements();
 
@@ -1192,10 +1282,10 @@ else
         print '</td></tr>';
 
         print "</table>";
-        
+
         print '</div></div></div>';
         print '<div style="clear:both"></div>';
-                
+
         print dol_fiche_end();
 
         // Barre d'actions
@@ -1203,9 +1293,20 @@ else
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
+		if (empty($reshook) && $action!='presend')
 		{
-        	if ($user->rights->societe->contact->creer)
+			if (! empty($object->email))
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			}
+			else
+			{
+				$langs->load("mails");
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+			}
+
+			if ($user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
@@ -1235,6 +1336,13 @@ else
 
         print "</div>";
 
+	    // Presend form
+	    $modelmail='contact';
+	    $defaulttopic='Information';
+	    $diroutput = $conf->contact->dir_output;
+	    $trackid = 'con'.$object->id;
+
+	    include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
     }
 }
 

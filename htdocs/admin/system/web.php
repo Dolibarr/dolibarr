@@ -40,26 +40,35 @@ if (!$user->admin) accessforbidden();
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("InfoWebServer"));
 
 print load_fiche_titre($langs->trans("InfoWebServer"),'','title_setup');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\"><td>".$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("VirtualServerName")."</td><td>" . $_SERVER["SERVER_NAME"] . "</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("Port")."</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
+print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VirtualServerName")."</td><td>" . $_SERVER["SERVER_NAME"] . "</td></tr>\n";
+print '<tr class="oddeven"><td>'.$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
+print '<tr><td>'.$langs->trans("Port")."</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
+print '<tr><td>'.$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
+print '<tr><td>'.$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
+// Web user group by default
 $labeluser=dol_getwebuser('user');
 $labelgroup=dol_getwebuser('group');
 if ($labeluser && $labelgroup)
 {
-	print "<tr $bc[0]><td>".$langs->trans("WebUserGroup")."</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+}
+// Web user group real (detected by 'id' external command)
+$arrayout=array(); $varout=0;
+exec('id', $arrayout, $varout);
+if (empty($varout))	// Test command is ok. Work only on Linux OS.
+{
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
 }
 print '</table>';
-
+print '</div>';
 
 llxFooter();
 

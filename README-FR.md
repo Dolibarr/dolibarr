@@ -16,8 +16,8 @@ Dolibarr est distribué sous les termes de la licence GNU General Public License
 ## INSTALLER DOLIBARR
 
 Si vous n'avez pas de connaissances techniques, et que vous recherchez
-un programme d'installation qui install Dolibarr ERP/CRM en quelques clics,
-vous devez vous réorienter vers DoliWamp (la version tout-en-un
+un programme d'installation qui installe Dolibarr ERP/CRM en quelques clics,
+vous devez vous ré-orienter vers DoliWamp (la version tout-en-un
 de Dolibarr pour Windows), DoliDeb (la version tout-en-un pour Debian ou
 Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
 OpenSuse, Mandriva ou Mageia).
@@ -25,39 +25,39 @@ OpenSuse, Mandriva ou Mageia).
 Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
 https://www.dolibarr.org/
 
-Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (MariaDb/MySql/PostgreSql),
+Si vous avez déjà installé un serveur Web avec PHP et une base de données (MariaDb/MySql/PostgreSql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
-- Copier le répertoire "dolibarr" et son contenu dans la racine de votre serveur
-  web, ou bien copier le répertoire sur le serveur et configurer ce serveur pour
+- Copiez le répertoire "dolibarr" et son contenu dans la racine de votre serveur
+  web, ou bien copiez le répertoire sur le serveur et configurez ce serveur pour
   utiliser "dolibarr/htdocs" comme racine d'un nouveau virtual host (ce second 
   choix requiert des compétences et habilitations en administration du serveur
   web).
   
-- Créer un fichier vide "htdocs/conf/conf.php" et attribuer les permissions
+- Créez un fichier vide "htdocs/conf/conf.php" et attribuez les permissions
   en lecture et écriture pour le user du serveur web (les permissions en 
   écriture seront supprimées une fois l'installation terminée).
 
-- Depuis votre navigateur, appeler la page "install/" de dolibarr. L'url dépend 
-  du choix fait à la première etape:
+- Depuis votre navigateur, appelez la page "install/" de dolibarr. L'url dépend 
+  du choix fait à la première étape:
    http://localhost/dolibarr/htdocs/install/
   ou
    http://yourdolibarrvirtualhost/install/
    
-- Suivez les instructions fournies par l'installeur...
+- Suivez les instructions fournies par l'installateur...
 
 
 
 ## METTRE A JOUR DOLIBARR
 
-Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
-- Ecraser les vieux fichiers dans le vieux repertoire 'dolibarr' par les fichiers
+Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
+- Ecrasez les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
   
-- Au prochain accès, Dolibarr proposera la page de "mise a jour" des données (si necessaire).
-  Si un fichier install.lock existe pour vérouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transféré sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents") 
-
-*Note: Le processus de migration peut etre lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
+- Au prochain accès, Dolibarr proposera la page de "mise à jour" des données (si nécessaire).
+  Si un fichier install.lock existe pour verrouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transférés sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents") 
+  
+*Note: Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
   
 
 ## CE QUI EST NOUVEAU
@@ -94,36 +94,71 @@ Voir fichier ChangeLog.
 
 - Gestion de marque-pages
 - Gestion des promesses de dons
-- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
 - Rapports
 - Imports/Exports des données
+- Support des codes barres
+- Calcul des marges
 - Connectivité LDAP
-- De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
+- Intégratn de ClickToDial
+- Intégration RSS
+- Intégation Skype
+- Intégration de système de paiements (Paypal, Stripe, Paybox...)
 - …
 
 ### Divers:
 
-- Application multi-utilisateurs avec différents niveaux de permissions par module.
+- Multi-langue.
+- Multi-utilisateurs avec différents niveaux de permissions par module.
+- Multi-devise.
 - Peux être multi-société par ajout du module externe multi-société.
-- Peux-être multi-devise par ajout du module externe multi-devise.
-- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
-- Application simple à utiliser.
 - Plusieurs thèmes visuels.
-- Code simple et facilement personnalisable.
-- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Application simple à utiliser.
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis). 
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
-- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- APIs.
+- Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
+- Support natif de nombreuses fonctions spécifiques aux pays comme:
+	- La tax espagnole TE et ISPF
+	- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
+	- La loi française Finance 2016 et logiciels de caisse
+	- La double taxe canadienne
+	- Le timbre fiscal tunisien
+	- Numérotation de facture de l'argentines (avec type A,B,C...) 
+	- Compatible avec vos processus RGPD 
+	- ...
+- …
+
+### Extension
+
+Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
 
-## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
+## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
-Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
-- Pas encore de compta analytique double-partie (uniquement gestion de trésorerie).
-- Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
+Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 - Dolibarr ne contient pas de module de Gestion de la paie.
-- Les tâches du module de gestion de projets n'ont pas de dépendance entre elle.
-- Dolibarr ne contient pas de Webmail.
+- Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
+- Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore). 
+
+
+## DOCUMENTATION
+
+La documentation utilisateur, développeur et traducteur est disponible sous forme de ressources de la communauté via le site [Wiki](https://wiki.dolibarr.org).
+
+
+## CONTRIBUER
+
+Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
+
+
+## CREDITS
+
+Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
+
+Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
 
 
 ## ACTUALITES ET RESEAUX SOCIAUX

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,20 +21,14 @@
  * \file htdocs/product/ajax/products.php
  * \brief File to return Ajax response on product list request
  */
-if (! defined('NOTOKENRENEWAL'))
-	define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))
-	define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))
-	define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))
-	define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))
-	define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))
-	define('NOCSRFCHECK', '1');
-if (empty($_GET ['keysearch']) && ! defined('NOREQUIREHTML'))
-	define('NOREQUIREHTML', '1');
+
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 require '../../main.inc.php';
 
@@ -51,13 +45,14 @@ $price_by_qty_rowid = GETPOST('pbq', 'int');
 $finished = GETPOST('finished', 'int');
 $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
+$hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
 
 /*
  * View
  */
 
-// print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+// print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog(join(',', $_GET));
 // print_r($_GET);
@@ -110,7 +105,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "product_price ";
 			$sql .= " WHERE fk_product='" . $id . "'";
-			$sql .= " AND entity IN (" . getEntity('productprice', 1) . ")";
+			$sql .= " AND entity IN (" . getEntity('productprice') . ")";
 			$sql .= " AND price_level=" . $price_level;
 			$sql .= " ORDER BY date_price";
 			$sql .= " DESC LIMIT 1";
@@ -160,7 +155,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	}
 
 	echo json_encode($outjson);
-} 
+}
 else
 {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
@@ -171,22 +166,28 @@ else
 	top_httphead();
 
 	if (empty($htmlname))
-		return;
+	{
+		print json_encode(array());
+	    return;
+	}
 
 	$match = preg_grep('/(' . $htmlname . '[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$idprod = (! empty($match[0]) ? $match[0] : '');
-	
-	if (! GETPOST($htmlname) && ! GETPOST($idprod))
-		return;
 
-		// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (GETPOST($idprod) ? GETPOST($idprod) : (GETPOST($htmlname) ? GETPOST($htmlname) : ''));
+	if (GETPOST($htmlname,'alpha') == '' && (! $idprod || ! GETPOST($idprod,'alpha')))
+	{
+		print json_encode(array());
+	    return;
+	}
+
+	// When used from jQuery, the search term is added as GET param "term".
+	$searchkey = (($idprod && GETPOST($idprod,'alpha')) ? GETPOST($idprod,'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', 0, $warehouseStatus);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

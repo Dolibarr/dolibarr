@@ -51,7 +51,8 @@ abstract class CommonObjectLine extends CommonObject
 
 
     /**
-     *	Returns the text label from units dictionary
+     *	Returns the translation key from units dictionary.
+     *  A langs->trans() must be called on result to get translated value.
      *
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
@@ -93,4 +94,3 @@ abstract class CommonObjectLine extends CommonObject
 
 	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }
-

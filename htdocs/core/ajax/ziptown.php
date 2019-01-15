@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010     Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010     Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-204 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog("GET is ".join(',',$_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
 //var_dump($_GET);
@@ -120,6 +120,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			$row_array['selectcountry_id'] = $row['fk_country'];
 			$row_array['state_id'] = $row['fk_county'];
 
+			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
 			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
 
 			array_push($return_arr,$row_array);

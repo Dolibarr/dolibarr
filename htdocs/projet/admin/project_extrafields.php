@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -30,8 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("project");
-$langs->load("admin");
+$langs->loadLangs(array("project", "admin"));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -39,7 +38,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -64,13 +63,13 @@ $textobject=$langs->transnoentitiesnoconv("Project");
 
 llxHeader("",$langs->trans("ProjectsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Projects"), 0, 'project');
+dol_fiche_head($head, 'attributes', $langs->trans("Projects"), -1, 'project');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -113,6 +112,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

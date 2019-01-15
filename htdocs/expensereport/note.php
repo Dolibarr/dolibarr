@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- *  \file       htdocs/commande/note.php
- *  \ingroup    commande
- *  \brief      Fiche de notes sur une commande
+ *  \file       htdocs/expensereport/note.php
+ *  \ingroup    expensereport
+ *  \brief      Tab for notes on expense reports
  */
 
 require '../main.inc.php';
@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -42,7 +40,7 @@ $action=GETPOST('action','alpha');
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'expensereport',$id,'');
+$result=restrictedArea($user,'expensereport',$id,'expensereport');
 
 
 $object = new ExpenseReport($db);
@@ -58,7 +56,7 @@ $permissionnote=$user->rights->expensereport->creer;	// Used by the include of a
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 
 /*
@@ -78,42 +76,27 @@ if ($id > 0 || ! empty($ref))
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), 0, 'trip');
+	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
 	$morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
 
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
-    /*	
-	print '<table class="border" width="100%">';
 
-	// Ref
-	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-	print "</td></tr>";
-
-	print "</table>";
-
-	print '<br>';
-    */
-	 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-	 
+
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
-	
 }
 
-
+// End of page
 llxFooter();
 $db->close();

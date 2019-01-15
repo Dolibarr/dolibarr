@@ -16,4 +16,5 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_product_attribute ADD CONSTRAINT unique_ref UNIQUE (ref);
+ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref);
+

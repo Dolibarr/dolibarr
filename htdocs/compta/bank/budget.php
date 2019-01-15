@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,11 +24,11 @@
  *		\brief      Page de budget
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -70,13 +70,12 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0; $totalnb = 0;
 
-	$var=true;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries.php?bid=$objp->rowid\">$objp->label</a></td>";
+
+		print '<tr class="oddeven">';
+		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td align="right">'.$objp->nombre.'</td>';
 		print '<td align="right">'.price(abs($objp->somme))."</td>";
 		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";
@@ -97,5 +96,6 @@ else
 }
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

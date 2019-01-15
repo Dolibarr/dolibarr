@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load('bills');
+$langs->loadLangs(array("companies", "bills"));
 
 $id = GETPOST("facid",'int')?GETPOST("facid",'int'):GETPOST("id",'int');
 $ref = GETPOST("ref",'alpha');
@@ -46,6 +50,8 @@ $object = new FactureFournisseur($db);
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
@@ -59,16 +65,17 @@ $alreadypaid=$object->getSommePaiement();
 
 $head = facturefourn_prepare_head($object);
 $titre=$langs->trans('SupplierInvoice');
-dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), 0, 'bill');
+dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'bill');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref='<div class="refidno">';
 // Ref supplier
 $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
-// $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 // Project
 if (! empty($conf->projet->enabled))
 {
@@ -119,6 +126,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

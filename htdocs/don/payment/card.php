@@ -28,20 +28,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array("bills","banks","companies"));
 
 // Security check
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
-if ($id > 0) 
+if ($id > 0)
 {
 	$result=$object->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
@@ -77,7 +76,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 	$db->begin();
 
 	$result=$object->valide();
-	
+
 	if ($result > 0)
 	{
 		$db->commit();
@@ -126,7 +125,7 @@ $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
 
 /*
  * Confirm deleting of the payment
@@ -134,7 +133,6 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment'
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	
 }
 
 /*
@@ -144,12 +142,12 @@ if ($action == 'valide')
 {
 	$facid = GETPOST('facid','int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	
 }
 
 
 dol_banner_tab($object,'id','',1,'rowid','id');
 
+print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
@@ -225,14 +223,11 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
 			$don->fetch($objp->did);
@@ -253,7 +248,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	$var=!$var;
+
 
 	print "</table>\n";
 	$db->free($resql);
@@ -264,6 +259,8 @@ else
 }
 
 print '</div>';
+
+dol_fiche_end();
 
 
 /*
@@ -294,7 +291,7 @@ if ($_GET['action'] == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

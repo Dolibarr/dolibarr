@@ -1,9 +1,10 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 4.0.0 or higher.
+-- when current version is 5.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
+-- 							-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
@@ -24,6 +25,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 -- after changing const name, please insure that old constant was rename
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRDPARTY_CREATION_INDIVIDUAL')__; -- under 4.0.1
@@ -31,6 +33,8 @@ UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHE
 -- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
 ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
+
+ALTER TABLE llx_bank_account ADD COLUMN extraparams		varchar(255);	
 
 ALTER TABLE llx_societe ALTER COLUMN fk_stcomm SET DEFAULT 0;
 
@@ -43,6 +47,7 @@ ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_product (fk
 
 ALTER TABLE llx_facture_rec ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_expedition ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
 
@@ -56,6 +61,8 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
+
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
@@ -115,6 +122,8 @@ create table llx_expensereport_extrafields
 ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
 
 ALTER TABLE llx_cotisation RENAME TO llx_subscription;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_cotisation_rowid_seq RENAME TO llx_subscription_rowid_seq;
+
 ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
 ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT '1';
@@ -131,7 +140,7 @@ CREATE TABLE llx_product_lot_extrafields
 
 ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (fk_object);
 
-ALTER TABLE llx_website_page MODIFY content MEDIUMTEXT;
+ALTER TABLE llx_website_page MODIFY COLUMN content MEDIUMTEXT;
 
 CREATE TABLE llx_product_warehouse_properties
 (
@@ -157,20 +166,22 @@ ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (accou
 
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_code_ventilation integer DEFAULT 0;
 
-ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
+ALTER TABLE llx_c_payment_term CHANGE COLUMN fdm type_cdr tinyint;
 
 
 ALTER TABLE llx_facturedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_facturedet_rec ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commandedet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_propaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_unit integer DEFAULT NULL;
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '' AFTER tva_tx;
 
-ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint;
+ALTER TABLE llx_c_payment_term CHANGE COLUMN fdm type_cdr TINYINT;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT 0;
-
 
 create table llx_resource_extrafields
 (
@@ -182,7 +193,7 @@ create table llx_resource_extrafields
 
 ALTER TABLE llx_resource_extrafields ADD INDEX idx_resource_extrafields (fk_object);
 
-INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__,__ENCRYPT('3')__,'chaine','Max length for small lists (tabs)',0);
+INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_SIZE_SHORTLIST_LIMIT')__, __ENCRYPT('3')__, 'chaine', 'Max length for small lists (tabs)', 0, 0);
 
 INSERT INTO llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('EXPEDITION_ADDON_NUMBER')__, __ENCRYPT('mod_expedition_safor')__, 'chaine','Name for numbering manager for shipments',0,1);
 
@@ -200,6 +211,8 @@ ALTER TABLE llx_overwrite_trans ADD COLUMN entity integer DEFAULT 1 NOT NULL AFT
 ALTER TABLE llx_mailing_cibles ADD COLUMN error_text varchar(255);
 
 ALTER TABLE llx_c_actioncomm MODIFY COLUMN type varchar(50) DEFAULT 'system' NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_actioncomm ALTER COLUMN type SET DEFAULT 'system';
+-- VPGSQL8.2 ALTER TABLE llx_c_actioncomm ALTER COLUMN type SET NOT NULL;
 
 create table llx_user_employment
 (
@@ -212,7 +225,7 @@ create table llx_user_employment
   tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
-  job				varchar(128),				-- job position. may be a dictionnary
+  job				varchar(128),				-- job position. may be a dictionary
   status            integer NOT NULL,			-- draft, active, closed
   salary			double(24,8),				-- last and current value stored into llx_user
   salaryextra		double(24,8),				-- last and current value stored into llx_user
@@ -234,12 +247,12 @@ ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_app
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 -- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
-drop table tmp_links_double;
+DROP TABLE tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
-create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
+CREATE TABLE tmp_links_double AS (SELECT objectid, label, MAX(rowid) AS max_rowid, COUNT(rowid) AS count_rowid FROM llx_links WHERE label IS NOT NULL GROUP BY objectid, label HAVING COUNT(rowid) >= 2);
 --select * from tmp_links_double;
-delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);	--update to avoid duplicate, delete to delete
-drop table tmp_links_double;
+DELETE FROM llx_links WHERE (rowid, label) IN (SELECT max_rowid, label FROM tmp_links_double);	--update to avoid duplicate, delete to delete
+DROP TABLE tmp_links_double;
 
 ALTER TABLE llx_links ADD UNIQUE INDEX uk_links (objectid,label);
 
@@ -250,40 +263,19 @@ ALTER TABLE llx_projet_task ADD UNIQUE INDEX uk_projet_task_ref (ref, entity);
 
 ALTER TABLE llx_contrat ADD COLUMN fk_user_modif integer;
 
+UPDATE llx_accounting_account SET account_parent = 0 WHERE account_parent = '';
 
--- Product attributes
-CREATE TABLE llx_product_attribute
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  ref VARCHAR(255) NOT NULL,
-  label VARCHAR(255) NOT NULL,
-  rang INT DEFAULT 0 NOT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-ALTER TABLE llx_product_attribute ADD CONSTRAINT unique_ref UNIQUE (ref);
-CREATE TABLE llx_product_attribute_combination
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_parent INT NOT NULL,
-  fk_product_child INT NOT NULL,
-  variation_price FLOAT NOT NULL,
-  variation_price_percentage INT NULL,
-  variation_weight FLOAT NOT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-CREATE TABLE llx_product_attribute_combination2val
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_prod_combination INT NOT NULL,
-  fk_prod_attr INT NOT NULL,
-  fk_prod_attr_val INT NOT NULL
-);
-CREATE TABLE llx_product_attribute_value
-(
-  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_attribute INT NOT NULL,
-  ref VARCHAR(255) DEFAULT NULL,
-  value VARCHAR(255) DEFAULT NULL,
-  entity INT DEFAULT 1 NOT NULL
-);
-ALTER TABLE llx_product_attribute_value ADD CONSTRAINT unique_ref UNIQUE (fk_product_attribute,ref);
+-- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN date_price DATETIME NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN date_price DROP NOT NULL;
+ALTER TABLE llx_product_price ALTER COLUMN date_price SET DEFAULT NULL;
+ 
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) after tva_tx;
+
+ALTER TABLE llx_events MODIFY COLUMN ip varchar(250);
+
+UPDATE llx_bank SET label= '(SupplierInvoicePayment)' WHERE label= 'Règlement fournisseur';
+UPDATE llx_bank SET label= '(CustomerInvoicePayment)' WHERE label= 'Règlement client';
+

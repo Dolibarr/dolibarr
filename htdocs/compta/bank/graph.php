@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
  *	\brief      Page graph des transactions bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
@@ -92,7 +92,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 
 	$resql = $db->query($sql);
@@ -108,7 +108,7 @@ else
 		dol_print_error($db);
 	}
 	if (empty($min)) $min = dol_now - 3600 * 24;
-	
+
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
@@ -133,7 +133,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
@@ -164,7 +164,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev < '".$year."-".sprintf("%02s",$month)."-01'";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 
@@ -265,7 +265,7 @@ else
 		unset($amounts);
 	}
 
-	// Tableau 2
+	// Graph Balance for the year
 
 	if ($mode == 'standard')
 	{
@@ -276,7 +276,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
@@ -307,7 +307,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev < '".$year."-01-01'";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 
@@ -384,7 +384,7 @@ else
 		$px2->SetTitle($title);
 		$px2->SetWidth($WIDTH);
 		$px2->SetHeight($HEIGHT);
-		$px2->SetType(array('lines','lines','lines'));
+		$px2->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
 		$px2->setBgColor('onglet');
 		$px2->setBgColorGrid(array(255,255,255));
 		$px2->SetHideXGrid(true);
@@ -403,7 +403,7 @@ else
 		unset($amounts);
 	}
 
-	// Tableau 3 - All time line
+	// Graph 3 - Balance for all time line
 
 	if ($mode == 'showalltime')
 	{
@@ -415,7 +415,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 		$sql.= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -500,7 +500,7 @@ else
 		$px3->SetTitle($title);
 		$px3->SetWidth($WIDTH);
 		$px3->SetHeight($HEIGHT);
-		$px3->SetType(array('lines','lines','lines'));
+		$px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
 		$px3->setBgColor('onglet');
 		$px3->setBgColorGrid(array(255,255,255));
 		$px3->SetPrecisionY(0);
@@ -538,7 +538,7 @@ else
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql.= " AND b.amount > 0";
@@ -576,7 +576,7 @@ else
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
 		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
 		$sql.= " AND b.amount < 0";
@@ -656,7 +656,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
 		$sql.= " AND b.amount > 0";
@@ -685,7 +685,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
 		$sql.= " AND b.amount < 0";
@@ -760,7 +760,7 @@ $head=bank_prepare_head($object);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 if ($account)
 {
@@ -829,7 +829,7 @@ if ($mode == 'standard')
 	if ($nextmonth > 12) { $nextmonth=1; $nextyear++; }
 
 	// For month
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous()."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next()."</a>";
+	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
@@ -843,7 +843,7 @@ if ($mode == 'standard')
 
 	// For year
 	$prevyear=$year-1;$nextyear=$year+1;
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next()."</a>";
+	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
@@ -864,7 +864,6 @@ if ($mode == 'showalltime')
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

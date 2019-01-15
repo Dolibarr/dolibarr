@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - products
+Reference=Referenz
 ProductVatMassChange=MwSt-Massenänderung
 LastRecordedProducts=%s zuletzt erfasste Produkte
 CardProduct0=Produkt-Karte
 CardProduct1=Leistungs-Karte
 SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
-CostPriceUsage=In einer zukünftigen Version kann dieser Wert für die Margenberechnung verwendet werden.
 CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
 ServicesArea=Leistungs-Übersicht
 SupplierCard=Lieferantenkarte
@@ -20,6 +20,7 @@ SellingPrices=Verkaufspreise
 BuyingPrices=Einkaufspreise
 CustomerPrices=Kunden Preise
 SuppliersPrices=Lieferanten Preise
+unitS=Zweitens
 ServiceCodeModel=Vorlage für Dienstleistungs-Referenz
 FillBarCodeTypeAndValueFromProduct=Barcode-Typ und -Wert von einem Produkt wählen.
 PriceByCustomer=Unterschiedliche Preise je nach Kunde
@@ -28,7 +29,6 @@ PricingRule=Preisregel für Verkaufspreise
 PriceExpressionEditorHelp2=Sie können auf die ExtraFields mit Variablen wie <b>#extrafield_myextrafieldkey# </b> und globale Variablen mit <b>#global_mycode#</b> zugreifen
 PriceMode=Preisfindungs-Methode
 ComposedProductIncDecStock=Erhöhen/verringern Lagerbestand  bei verknüpften Produkten
-MinCustomerPrice=Mindespreis für Kunden
 AddUpdater=Aktualisierung hinzufügen
 VariableToUpdate=Zu aktualisierende Variablen
 NbOfQtyInProposals=Menge in Angebot

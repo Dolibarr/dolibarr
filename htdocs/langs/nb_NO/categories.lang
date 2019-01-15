@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Merke/Kategori
 Rubriques=Merker/Kategorier
+RubriquesTransactions=Etiketter/Kategorier av transaksjoner
 categories=merker/kategorier
 NoCategoryYet=Ingen merker/kategorier av denne typen er opprettet
 In=I
@@ -84,3 +85,4 @@ CategorieRecursivHelp=Hvis aktivert, vil varen også knyttes til overordnet kate
 AddProductServiceIntoCategory=Legg til følgende vare/tjeneste
 ShowCategory=Vis merke/kategori
 ByDefaultInList=Som standard i liste
+ChooseCategory=Velg kategori

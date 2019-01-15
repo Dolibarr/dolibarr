@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userhome';   // To manage different context of search
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
@@ -30,6 +33,7 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 	exit;
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $canreadperms=true;
@@ -44,6 +48,9 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('userhome'));
 
 
 /*
@@ -62,22 +69,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Search User
-$var=false;
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td><td'.($canreadperms?' rowspan="2"':'').'><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
+print '<tr><td>';
+print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
 
 // Search Group
 if ($canreadperms)
 {
-	$var=false;
-	print '<tr '.$bc[$var].'><td>';
+	print '<tr><td>';
 	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
+print '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table><br>\n";
 print '</form>';
 
@@ -89,7 +95,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
 $sql.= ", u.entity";
 $sql.= ", u.ldap_sid";
 $sql.= ", u.photo";
@@ -101,13 +107,13 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
-{
-	$sql.= " WHERE u.entity IS NOT NULL";
-}
-else
-{
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+if ($reshook > 0) {
+	$sql.=$hookmanager->resPrint;
+} else {
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
@@ -118,27 +124,33 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
-	$var = true;
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td>';
+	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	print '</tr>';
 	$i = 0;
 
 	while ($i < $num && $i < $max)
 	{
 		$obj = $db->fetch_object($resql);
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
-		print '<td>';
-        $fuserstatic->id = $obj->rowid;
-        $fuserstatic->statut = $obj->statut;
-        $fuserstatic->lastname = $obj->lastname;
-        $fuserstatic->firstname = $obj->firstname;
-        $fuserstatic->login = $obj->login;
-        $fuserstatic->photo = $obj->photo;
-        $fuserstatic->admin = $obj->admin;
-        $fuserstatic->email = $obj->email;
-        $fuserstatic->skype = $obj->skype;
-        $fuserstatic->societe_id = $obj->fk_soc;
+		$fuserstatic->id = $obj->rowid;
+		$fuserstatic->statut = $obj->statut;
+		$fuserstatic->lastname = $obj->lastname;
+		$fuserstatic->firstname = $obj->firstname;
+		$fuserstatic->login = $obj->login;
+		$fuserstatic->photo = $obj->photo;
+		$fuserstatic->admin = $obj->admin;
+		$fuserstatic->email = $obj->email;
+		$fuserstatic->skype = $obj->skype;
+		$fuserstatic->societe_id = $obj->fk_soc;
+
+		$companystatic->id=$obj->fk_soc;
+		$companystatic->name=$obj->name;
+		$companystatic->code_client = $obj->code_client;
+		$companystatic->canvas=$obj->canvas;
+
+		print '<tr class="oddeven">';
+		print '<td class="nowraponall">';
         print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
@@ -153,10 +165,6 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_soc)
 		{
-			$companystatic->id=$obj->fk_soc;
-            $companystatic->name=$obj->name;
-            $companystatic->code_client = $obj->code_client;
-            $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
 		else
@@ -213,7 +221,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+	if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}
@@ -227,21 +235,28 @@ if ($canreadperms)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$colspan=2;
+		$colspan=1;
 		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
-		$var = true;
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td>';
+		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 		$i = 0;
+
+		$grouptemp = new UserGroup($db);
 
 		while ($i < $num && (! $max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
 
-			print "<tr ".$bc[$var].">";
-			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
+			$grouptemp->id = $obj->rowid;
+			$grouptemp->name = $obj->name;
+			$grouptemp->note = $obj->note;
+
+			print '<tr class="oddeven">';
+			print '<td>';
+			print $grouptemp->getNomUrl(1);
 			if (! $obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
@@ -271,6 +286,6 @@ if ($canreadperms)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
