@@ -13,6 +13,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Markus Welters        <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -683,13 +684,11 @@ if ($resql)
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
-	// Ref
-	if (! empty($arrayfields['f.ref']['checked']))
-	{
+	// Ref show always
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
-	}
+
 	// Ref customer
 	if (! empty($arrayfields['f.ref_client']['checked']))
 	{
@@ -856,7 +855,7 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($arrayfields['f.ref']['label'],$_SERVER['PHP_SELF'],'f.ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($arrayfields['f.ref']['label'],$_SERVER['PHP_SELF'],'f.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.ref_client']['checked']))         print_liste_field_titre($arrayfields['f.ref_client']['label'],$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.type']['checked']))               print_liste_field_titre($arrayfields['f.type']['label'],$_SERVER["PHP_SELF"],'f.type','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
@@ -938,8 +937,6 @@ if ($resql)
 			}
 
 			print '<tr class="oddeven">';
-			if (! empty($arrayfields['f.ref']['checked']))
-			{
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -958,7 +955,7 @@ if ($resql)
 
 				print "</td>\n";
 				if (! $i) $totalarray['nbfield']++;
-			}
+
 
 			// Customer ref
 			if (! empty($arrayfields['f.ref_client']['checked']))
