@@ -363,6 +363,8 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 	}
 }
 
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+
 // Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
@@ -373,6 +375,9 @@ if (! defined('NOTOKENRENEWAL'))
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
+
+//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.$_SESSION['newtoken'].' '.$_SERVER['SCRIPT_FILENAME']);
+
 // Check token
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
