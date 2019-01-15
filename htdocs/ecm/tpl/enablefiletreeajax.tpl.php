@@ -46,7 +46,7 @@ $(document).ready(function() {
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.(empty($preopened)?'':'&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection)?'':$paramwithoutsection); ?>',
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?token='.urlencode($_SESSION['newtoken']).'&modulepart='.urlencode($module).(empty($preopened)?'':'&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection)?'':$paramwithoutsection); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)

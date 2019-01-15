@@ -379,7 +379,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
 	{
-		print "Access refused by CSRF protection in main.inc.php. Token not provided.\n";
+		print "Access by POST method refused by CSRF protection in main.inc.php. Token not provided.\n";
 		print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
 		die;
 	}
