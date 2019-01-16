@@ -773,10 +773,11 @@ else
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-	print currency_name($conf->currency,1);
+	print currency_name($conf->currency,0);
 	print ' ('.$conf->currency;
 	print ($conf->currency != $langs->getCurrencySymbol($conf->currency) ? ' - '.$langs->getCurrencySymbol($conf->currency) : '');
 	print ')';
+	print ' - '.$langs->trans("PriceFormatInCurrentLanguage", $langs->defaultlang).' : '.price(price2num('99.333333333','MT'), 1, $langs, 1, -1, -1, $conf->currency);
 	print '</td></tr>';
 
 
