@@ -1013,7 +1013,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked =1;
             while ($indiceAsked <= $numAsked)
             {
@@ -1192,7 +1191,7 @@ if ($action == 'create')
 					$line->fetch_optionals($object->id,$extralabelslines);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan),$indiceAsked);
 					print '</tr>';
 				}
 

@@ -142,11 +142,11 @@ if ($result) {
 		$objp = $db->fetch_object($result);
 		print '<tr class="oddeven">';
 
-		print '<td align="left">';
+		print '<td class="left">';
 		print $objp->accounting;
 		print '</td>';
 
-		print '<td align="left">';
+		print '<td class="left">';
 		print '<input name="label" size="30" value="">';
 		print '</td>';
 
