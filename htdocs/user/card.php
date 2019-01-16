@@ -85,7 +85,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
 
-if (! $canreaduser) {
+if (! $canreaduser) {	// TODO security broken with Multicompany
 	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 }
 
