@@ -278,9 +278,15 @@ if (! empty($project_ref) && ! empty($withproject))
 
 // To show all time lines for project
 $projectidforalltimes=0;
-if (GETPOST('projectid','none'))
+if (GETPOST('projectid','int'))
 {
 	$projectidforalltimes=GETPOST('projectid','int');
+}
+elseif (GETPOST('project_ref','alpha'))
+{
+    $projectstatic->fetch(0, GETPOST('project_ref','alpha'));
+    $projectidforalltimes=$projectstatic->id;
+    $withproject=1;
 }
 
 
@@ -544,7 +550,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			else print '0 %';
 		}
 		else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
-		print '</td></tr>';
+		print '</td>';
+
+		print '</tr>';
 
 		print '</table>';
 
@@ -665,7 +673,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -763,6 +771,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td>'.$langs->trans("Note").'</td>';
 			print '<td>'.$langs->trans("NewTimeSpent").'</td>';
 			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+			{
+			    print '<td></td>';
+			}
 			print '<td></td>';
 			print "</tr>\n";
 
@@ -811,6 +823,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="nowrap">';
 			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress, 'progress', 0, 5, 0, 100, 1);
 			print '</td>';
+
+			// Invoiced
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+			{
+			    print '<td></td>';
+			}
 
 			print '<td align="center">';
 			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
@@ -1102,10 +1120,27 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             // Value billed
             if (! empty($arrayfields['valuebilled']['checked']))
             {
-            	print '<td align="right">';
-            	$valuebilled = price2num($task_time->total_ht);
-            	if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
-            	print '</td>';
+                print '<td align="right">';    // invoice_id and invoice_line_id
+                if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+                {
+                    if ($projectstatic->bill_time)
+                    {
+                        if ($task_time->invoice_id)
+                        {
+                            $tmpinvoice->fetch($task_time->invoice_id);
+                            print $tmpinvoice->getNomUrl(1);
+                        }
+                        else
+                        {
+                            print $langs->trans("No");
+                        }
+                    }
+                    else
+                    {
+                        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+                    }
+                }
+                print '</td>';
             	if (! $i) $totalarray['nbfield']++;
             	if (! $i) $totalarray['totalvaluebilledfield']=$totalarray['nbfield'];
             	$totalarray['totalvaluebilled'] += $valuebilled;
