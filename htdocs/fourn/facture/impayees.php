@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira       <viniciusvgn@gmail.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -33,9 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("companies");
-$langs->load("bills");
-
+$langs->loadLangs(array("companies", "bills"));
 
 $socid=GETPOST('socid','int');
 $option = GETPOST('option');
@@ -296,7 +294,6 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

@@ -12,7 +12,7 @@ Event=Etkinlik
 Events=Etkinlikler
 EventsNb=Etkinlik sayısı
 ListOfActions=Etkinlik listesi
-EventReports=Event reports
+EventReports=Etkinlik raporları
 Location=Konum
 ToUserOfGroup=Gruptaki herhangi bir kullanıcı için
 EventOnFullDay=Tam gün etkinliği
@@ -31,14 +31,15 @@ ViewWeek=Hafta görünümü
 ViewPerUser=Kullanıcı görünümü başına
 ViewPerType=Görünüm türüne göre
 AutoActions= Gündemin otomatik doldurulması
-AgendaAutoActionDesc= Burada Dolibarr'ın gündemde bir etkinlik olarak otomatikman oluşturacağı etkinlikleri tanımlayın. Hiçbir şey işaretli değilse, bağlanılan ve görünür olan gündeme yalnızca manuel eylemler dahil olacaktır. Nesneler üzerinde yapılan iş eylemlerinin (doğrulama, durum değişikliği) otomatik izlemeleri kaydedilmeyecektir.
-AgendaSetupOtherDesc= Bu sayfa Dolibarr etkinliklerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Here you can define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow exports of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
 ActionsEvents=Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Üçüncü parti %s oluşturuldu
 ContractValidatedInDolibarr=Doğrulanan firma %s
+CONTRACT_DELETEInDolibarr=Sözleşme %s silindi
 PropalClosedSignedInDolibarr=İmzalan teklif %s
 PropalClosedRefusedInDolibarr=Reddedilen teklif %s
 PropalValidatedInDolibarr=%s Teklifi doğrulandı
@@ -84,13 +85,13 @@ PRODUCT_CREATEInDolibarr=Ürün %s oluşturuldu
 PRODUCT_MODIFYInDolibarr=Ürün %s değiştirildi
 PRODUCT_DELETEInDolibarr=Ürün %s silindi
 EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
-EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_VALIDATEInDolibarr=Gider raporu %s doğrulandı
 EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
 EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
-EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+EXPENSE_REPORT_REFUSEDInDolibarr=Gider raporu %s reddedildi
 PROJECT_CREATEInDolibarr=%s projesi oluşturuldu
-PROJECT_MODIFYInDolibarr=Project %s modified
-PROJECT_DELETEInDolibarr=Project %s deleted
+PROJECT_MODIFYInDolibarr=Proje %s değiştirildi
+PROJECT_DELETEInDolibarr=Proje %s silindi
 ##### End agenda events #####
 AgendaModelModule=Etkinlik için belge şablonları
 DateActionStart=Başlama tarihi
@@ -100,7 +101,7 @@ AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına
 AgendaUrlOptionsNotAdmin=Çıktıyı <b>%s</b> kullanıcısına ait olmayan etkinliklere sınırlamak için <b>logina=!%s</b>.
 AgendaUrlOptions4=Çıktıyı <b>%s</b> kullanıcısına (sahip ve diğerleri) atanmış etkinliklere sınırlamak için <b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -110,9 +111,9 @@ DefaultWorkingHours=Varsayılan günlük çalışma saatleri (Örnek: 9-18)
 # External Sites ical
 ExportCal=Takvim dışaaktar
 ExtSites=Dış takvimleri içeaktar
-ExtSitesEnableThisTool=Gündemde dış takvimleri (genel ayarlarda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Takvimlerin sayısı
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Takvim no. %s
 ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 VisibleTimeRange=Görünür zaman aralığı

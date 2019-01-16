@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -443,11 +443,12 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @return		string						New value for password
+ * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
+ * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
+ * @return		string								New value for password
  * @see dol_hash
  */
-function getRandomPassword($generic=false)
+function getRandomPassword($generic=false, $replaceambiguouschars=null)
 {
 	global $db,$conf,$langs,$user;
 
@@ -506,6 +507,21 @@ function getRandomPassword($generic=false)
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);
+	}
+
+	// Do we have to discard some alphabetic characters ?
+	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0)
+	{
+		$numbers = "ABCDEF";
+		$max = strlen($numbers) - 1;
+		if (function_exists('random_int'))	// Cryptographic random
+		{
+			$generated_password=str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
+		}
+		else
+		{
+			$generated_password=str_replace($replaceambiguouschars, $numbers{mt_rand(0, $max)}, $generated_password);
+		}
 	}
 
 	return $generated_password;

@@ -49,7 +49,11 @@ class PaymentDonation extends CommonObject
 	 */
 	public $rowid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_donation;
+
 	public $datec='';
 	public $tms='';
 	public $datep='';
@@ -57,8 +61,20 @@ class PaymentDonation extends CommonObject
     public $amounts=array();   // Array of amounts
 	public $typepayment;
 	public $num_payment;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 	/**

@@ -85,8 +85,17 @@ class EcmFiles extends CommonObject
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
@@ -171,8 +180,15 @@ class EcmFiles extends CommonObject
 		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
-		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
-		if (! empty($this->ref)) $ref=$this->ref;
+		$ref = '';
+		if (! empty($this->ref))
+		{
+			$ref=$this->ref;
+		}
+		else {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		}
 
 		$maxposition=0;
 		if (empty($this->position))   // Get max used
@@ -879,8 +895,17 @@ class EcmfilesLine
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;

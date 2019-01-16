@@ -11,11 +11,11 @@ URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes 
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles 
+CronJobProfiles=List of predefined cron job profiles
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
@@ -43,7 +43,7 @@ CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=Label
 CronNbRun=No. launches
-CronMaxRun=Max number launch
+CronMaxRun=Maximum number of launches
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card

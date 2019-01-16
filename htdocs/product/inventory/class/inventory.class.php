@@ -114,16 +114,38 @@ class Inventory extends CommonObject
 	 */
 	public $entity;
 
+	/**
+     * @var int ID
+     */
 	public $fk_warehouse;
+
 	public $date_inventory;
 	public $title;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $date_validation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_valid;
+
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -455,7 +477,6 @@ class Inventory extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

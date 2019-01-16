@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  *
@@ -467,6 +467,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Background color THEME_ELDY_BACKBODY
@@ -513,6 +514,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// TopMenuBackgroundColor
@@ -561,6 +563,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// LeftMenuBackgroundColor
@@ -609,6 +612,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// TextTitleColor for title of Pages
@@ -719,6 +723,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// BackgroundTableLineEvenColor
@@ -748,6 +753,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Text LinkColor
@@ -798,6 +804,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Use Hover
@@ -822,22 +829,22 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit)
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
 			print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
 		}
 		else
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
 			if ($color)
 			{
-				if ($color != 'edf4fb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
 			else print $langs->trans("None");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>edf4fb</strong>) ';
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
@@ -866,26 +873,59 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit)
 		{
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='ffefbb';
+			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
 			print $formother->selectColor($color,'THEME_ELDY_USE_CHECKED','formcolor',1).' ';
 		}
 		else
 		{
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='ffefbb';
+			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
 			if ($color)
 			{
-				if ($color != 'ffefbb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
 			else print $langs->trans("None");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>ffefbb</strong>) ';
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
 		print '</tr>';
+	}
+
+	// Use MAIN_OPTIMIZEFORTEXTBROWSER
+	if ($foruserprofile)
+	{
+	    $default=$langs->trans('No');
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+   	    if ($edit)
+   	    {
+   	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
+   	    }
+   	    else
+   	    {
+   	        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+   	        {
+   	            print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
+   	        }
+   	        else
+   	        {
+   	            print yn(1);
+   	            if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
+   	        }
+   	    }
+   	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.yn(0).'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
+	    print '</td>';
+	    print '</tr>';
+	}
+	else
+	{
+	    // TODO
 	}
 
 	print '</table>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -159,7 +159,7 @@ if ($id > 0 || $ref)
     if ((! empty($objproduct->id) || ! empty($objcon->id)) && $permok)
     {
         //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-        if (get_class($objproduct) == 'Product') $out.='&amp;prodid='.$objproduct->id;
+        if (get_class($objproduct) == 'Product') $out.='&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
         $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
     	//$out.=$langs->trans("AddAnAction").' ';
     	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');

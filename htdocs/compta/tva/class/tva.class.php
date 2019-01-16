@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +61,19 @@ class Tva extends CommonObject
      */
     public $label;
 
+    /**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
     /**
@@ -92,9 +104,9 @@ class Tva extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -171,9 +183,9 @@ class Tva extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -508,9 +520,9 @@ class Tva extends CommonObject
         $this->amount=price2num(trim($this->amount));
         $this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_creat=trim($this->fk_user_creat);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 		if (empty($this->datec)) $this->datec = dol_now();
 
         // Check parameters
@@ -652,8 +664,8 @@ class Tva extends CommonObject
 	function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.$id_bank;
-		$sql.= ' WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.(int) $id_bank;
+		$sql.= ' WHERE rowid = '.(int) $this->id;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -758,7 +770,7 @@ class Tva extends CommonObject
 	{
 		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql.= " WHERE t.rowid = ".(int) $id;
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -788,7 +800,6 @@ class Tva extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

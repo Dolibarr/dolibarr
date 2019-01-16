@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print_fiche_titre($langs->trans('MenuReportMonth'));
+print load_fiche_titre($langs->trans('MenuReportMonth'));
 
 $html = new Form($db);
 $formother = new FormOther($db);
@@ -120,7 +121,7 @@ print '</tr>';
 
 if ($num == 0)
 {
-   print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+   print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
 else
 {
@@ -189,7 +190,6 @@ else
          print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }
-
 }
 print '</table>';
 print '</div>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,34 +201,50 @@ if (! empty($conf->paypal->enabled))
 		        $resArray=getDetails($onlinetoken);
 		        //var_dump($resarray);
 
-		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
-		        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-
 		        $ack = strtoupper($resArray["ACK"]);
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
+		        	// Nothing to do
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        }
+		        else
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING);
+		        }
+
+		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
+		        $resArray2=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+		        //var_dump($resarray);
+
+		        $ack = strtoupper($resArray2["ACK"]);
+		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+
 		        	$object->source		= $source;
 		        	$object->ref		= $ref;
 		        	$object->payerID	= $payerID;
 		        	$object->fulltag	= $fulltag;
-		        	$object->resArray	= $resArray;
+		        	$object->resArray	= $resArray2;
 
 		            // resArray was built from a string like that
 		            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-		            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-		            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-		            $TAXAMT=urldecode($resArray["TAXAMT"]);
-		            $NOTE=urldecode($resArray["NOTE"]);
+		            $PAYMENTSTATUS=urldecode($resArray2["PAYMENTSTATUS"]);   // Should contains 'Completed'
+		            $TRANSACTIONID=urldecode($resArray2["TRANSACTIONID"]);
+		            $TAXAMT=urldecode($resArray2["TAXAMT"]);
+		            $NOTE=urldecode($resArray2["NOTE"]);
 
 		            $ispaymentok=true;
 		        }
 		        else
 		        {
+		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING);
+
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
-		            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-		            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-		            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-		            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+		            $ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
+		            $ErrorShortMsg = urldecode($resArray2["L_SHORTMESSAGE0"]);
+		            $ErrorLongMsg = urldecode($resArray2["L_LONGMESSAGE0"]);
+		            $ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 		        }
 		    }
 		    else
@@ -297,7 +313,7 @@ if ($ispaymentok)
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
-		$result1 = $object->fetch(0, $tmptag['MEM']);
+		$result1 = $object->fetch($tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
 		if ($result1 > 0 && $result2 > 0)
@@ -535,7 +551,9 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
+						$moreinheader='X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
 
 						if ($result < 0)
 						{
@@ -570,7 +588,7 @@ if ($ispaymentok)
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$result = $invoice->fetch(0, $tmptag['INV']);
+		$result = $invoice->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -611,7 +629,9 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
-				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_site = $service;
 
 				if (! $error)
 				{
@@ -633,8 +653,8 @@ if ($ispaymentok)
 				{
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
 
 					if ($bankaccountid > 0)
 					{
@@ -649,7 +669,7 @@ if ($ispaymentok)
 						}
 						else
 						{
-							$postactionmessages[] = 'Bank entry of payment created';
+							$postactionmessages[] = 'Bank transaction of payment created';
 							$ispostactionok=1;
 						}
 					}
@@ -758,9 +778,9 @@ if ($ispaymentok)
 		}
 		elseif (in_array('INV', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/compta/facture/card.php?ref=".$tmptag['INV'];
+			$url=$urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
 			$content.='<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";
-			$content.=$companylangs->trans("Invoice").': <strong>'.$tmptag['INV']."</strong><br>\n";
+			$content.=$companylangs->trans("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
@@ -853,10 +873,10 @@ else
     if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
     // TODO Remove local option to keep only the generic one ?
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
-    // Send an email
+    // Send warning of error to administrator
     if ($sendemail)
     {
     	$companylangs = new Translate('', $conf);
@@ -888,7 +908,7 @@ else
         $content="";
         $content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</font>\n";
 
-        $content.="<br>\n";
+        $content.="<br><br>\n";
         $content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";

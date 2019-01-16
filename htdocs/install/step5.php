@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,12 +52,12 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
     }
 }
 
-$langs->load("admin");
-$langs->load("install");
+$langs->loadLangs(array("admin", "install"));
 
 $login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
 $pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
 $pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
+$force_install_lockinstall = (int) (! empty($force_install_lockinstall)?$force_install_lockinstall:(GETPOST('installlock','aZ09')?GETPOST('installlock','aZ09'):(empty($argv[8])?'':$argv[8])));
 
 $success=0;
 

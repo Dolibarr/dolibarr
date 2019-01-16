@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 	Jeremie Ollivier 	<jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 	Laurent Destailleur <eldy@uers.sourceforge.net>
- * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,5 +108,4 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			print '</ul>';
 		}
 	}
-
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,7 +235,6 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$action='';
 			}
 		}
-
 	}
 	else
 	{
@@ -339,7 +338,6 @@ if ($action == 'download')
 		{
 			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile',$remotefile), null, 'errors');
 		}
-
 	}
 	else
 	{
@@ -408,7 +406,6 @@ else
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-
 		}
 
 		// Confirmation de la suppression d'une ligne categorie
@@ -610,7 +607,6 @@ else
 				$i++;
 				$nbofentries++;
 			}
-
 		}
 
 		print "</table>";
@@ -808,7 +804,6 @@ function ftp_isdir($connect_id,$dir)
 	{
 		ftp_cdup($connect_id);
 		return 1;
-
 	}
 	else
 	{

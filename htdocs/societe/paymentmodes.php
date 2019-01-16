@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
@@ -557,7 +557,7 @@ if (empty($reshook))
 			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
 			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
                 }
-     
+
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newcu))
@@ -959,9 +959,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<td>';
 					print '</td>';
 				}
+				// Src ID
 				print '<td>';
-				print $src->id;
+				if (!empty($stripeacc)) $connect=$stripeacc.'/';
+				$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+				if ($servicestatus)
+				{
+					$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+				}
+				print $src->id." <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')."</a>";
 				print '</td>';
+				// Img of credit card
 				print '<td>';
 				if ($src->object=='card')
 				{
@@ -975,8 +983,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
-
-				print'</td><td valign="middle">';
+				print'</td>';
+				print '<td valign="middle">';
 				if ($src->object=='card')
 				{
 					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';

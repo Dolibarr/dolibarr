@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
@@ -45,7 +45,11 @@ class UserGroup extends CommonObject
 	 */
 	public $table_element='usergroup';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
     public $picto='group';
 
@@ -613,13 +617,14 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *        Efface un groupe de la base
+	 *	Delete a group
 	 *
-	 *        @return     <0 if KO, > 0 if OK
+	 *	@param	User	$user		User that delete
+	 *	@return     				<0 if KO, > 0 if OK
 	 */
-	function delete()
+	function delete(User $user)
 	{
-		global $user,$conf,$langs;
+		global $conf,$langs;
 
 		$error=0;
 

@@ -53,6 +53,12 @@ $search_boxvalue=GETPOST('q', 'none');
 $arrayresult=array();
 
 // Define $searchform
+
+if (! empty($conf->adherent->enabled) && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->rights->adherent->lire)
+{
+	$arrayresult['searchintomember']=array('position'=>8, 'shortcut'=>'M', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
+}
+
 if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->rights->societe->lire)
 {
 	$arrayresult['searchintothirdparty']=array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('','object_company').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
@@ -61,11 +67,6 @@ if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE
 if (! empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTACT_DISABLED) && $user->rights->societe->lire)
 {
 	$arrayresult['searchintocontact']=array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('','object_contact').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
-}
-
-if (! empty($conf->adherent->enabled) && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->rights->adherent->lire)
-{
-	$arrayresult['searchintomember']=array('position'=>20, 'shortcut'=>'M', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
 }
 
 if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
@@ -153,6 +154,12 @@ if (empty($reshook))
 	$arrayresult=array_merge($arrayresult, $hookmanager->resArray);
 }
 else $arrayresult=$hookmanager->resArray;
+
+// This allow to keep a search entry to the top
+if(! empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {
+    $key = 'searchinto'.$conf->global->DEFAULT_SEARCH_INTO_MODULE;
+    if(array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -10;
+}
 
 // Sort on position
 $arrayresult = dol_sort_array($arrayresult, 'position');

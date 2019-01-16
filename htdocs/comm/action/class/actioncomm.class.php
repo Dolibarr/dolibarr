@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
+ * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class ActionComm extends CommonObject
      * Id of the event
      * @var int
      */
-	  public $id;
+    public $id;
 
     /**
      * Id of the event. Use $id as possible
@@ -75,26 +76,20 @@ class ActionComm extends CommonObject
      */
     public $ref;
 
-    var $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
-    var $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
-    var $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
-    var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
-    var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+    public $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
+    public $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+    public $type_label;
+    public $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
+    public $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
+    public $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
 
     /**
      * @var string Agenda event label
      */
     public $label;
 
-    /**
-     * @var string
-     * @deprecated Use $label
-     * @see label
-     */
-    public $libelle;
-
-    var $datec;			// Date creation record (datec)
-    var $datem;			// Date modification record (tms)
+    public $datec;			// Date creation record (datec)
+    public $datem;			// Date modification record (tms)
 
     /**
      * Object user that create action
@@ -102,7 +97,7 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see authorid
      */
-    var $author;
+    public $author;
 
     /**
      * Object user that modified action
@@ -110,39 +105,49 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see usermodid
      */
-    var $usermod;
-    var $authorid;		// Id user that create action
-    var $usermodid;		// Id user that modified action
+    public $usermod;
 
-    var $datep;			// Date action start (datep)
-    var $datef;			// Date action end (datep2)
+    /**
+     * Id user that create action
+     * @var int
+     */
+    public $authorid;
+
+    /**
+     * Id user that modified action
+     * @var int
+     */
+    public $usermodid;
+
+    public $datep;			// Date action start (datep)
+    public $datef;			// Date action end (datep2)
 
     /**
      * @var int -1=Unkown duration
      * @deprecated
      */
-    var $durationp = -1;
-    var $fulldayevent = 0;    // 1=Event on full day
+    public $durationp = -1;
+    public $fulldayevent = 0;    // 1=Event on full day
 
     /**
      * Milestone
      * @var int
      * @deprecated Milestone is already event with end date = start date
      */
-    var $punctual = 1;
-    var $percentage;    // Percentage
-    var $location;      // Location
+    public $punctual = 1;
+    public $percentage;    // Percentage
+    public $location;      // Location
 
-	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
-    var $priority;      // Small int (0 By default)
+	public $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
+    public $priority;      // Small int (0 By default)
 
-	var $userassigned = array();	// Array of user ids
-    var $userownerid;	// Id of user owner = fk_user_action into table
-    var $userdoneid;	// Id of user done (deprecated)
+	public $userassigned = array();	// Array of user ids
+    public $userownerid;	// Id of user owner = fk_user_action into table
+    public $userdoneid;	// Id of user done (deprecated)
 
-    var $socpeopleassigned = array(); // Array of contact ids
+    public $socpeopleassigned = array(); // Array of contact ids
 
-    var $otherassigned = array(); // Array of other contact emails (not user, not contact)
+    public $otherassigned = array(); // Array of other contact emails (not user, not contact)
 
 
 	/**
@@ -151,7 +156,7 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see userownerid
      */
-    var $usertodo;
+    public $usertodo;
 
     /**
      * Object user that did action
@@ -159,10 +164,10 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see userdoneid
      */
-    var $userdone;
+    public $userdone;
 
-    var $socid;
-    var $contactid;
+    public $socid;
+    public $contactid;
 
     /**
      * Company linked to action (optional)
@@ -170,7 +175,7 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see socid
      */
-    var $societe;
+    public $societe;
 
     /**
      * Contact linked to action (optional)
@@ -178,28 +183,28 @@ class ActionComm extends CommonObject
      * @deprecated
      * @see contactid
      */
-    var $contact;
+    public $contact;
 
     // Properties for links to other objects
-    var $fk_element;    // Id of record
-    var $elementid;    // Id of record alternative for API
-    var $elementtype;   // Type of record. This if property ->element of object linked to.
+    public $fk_element;    // Id of record
+    public $elementid;    // Id of record alternative for API
+    public $elementtype;   // Type of record. This if property ->element of object linked to.
 
     // Ical
-    var $icalname;
-    var $icalcolor;
+    public $icalname;
+    public $icalcolor;
 
-    var $actions=array();
+    public $actions=array();
 
     // Fields for emails
-    var $email_msgid;
-    var $email_from;
-    var $email_sender;
-    var $email_to;
-    var $email_tocc;
-    var $email_tobcc;
-    var $email_subject;
-    var $errors_to;
+    public $email_msgid;
+    public $email_from;
+    public $email_sender;
+    public $email_to;
+    public $email_tocc;
+    public $email_tobcc;
+    public $email_subject;
+    public $errors_to;
 
 
     /**
@@ -329,7 +334,16 @@ class ActionComm extends CommonObject
         $sql.= "fk_element,";
         $sql.= "elementtype,";
         $sql.= "entity,";
-        $sql.= "extraparams";
+        $sql.= "extraparams,";
+		// Fields emails
+        $sql.= "email_msgid,";
+        $sql.= "email_from,";
+        $sql.= "email_sender,";
+        $sql.= "email_to,";
+        $sql.= "email_tocc,";
+        $sql.= "email_tobcc,";
+        $sql.= "email_subject,";
+        $sql.= "errors_to";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -339,7 +353,7 @@ class ActionComm extends CommonObject
         $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
-        $sql.= " '".$this->db->escape($this->note)."', ";
+        $sql.= " '".$this->db->escape($this->note_private?$this->note_private:$this->note)."', ";
         $sql.= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid:"null").", ";
         $sql.= (isset($user->id) && $user->id > 0 ? $user->id:"null").", ";
         $sql.= ($userownerid>0 ? $userownerid:"null").", ";
@@ -349,7 +363,16 @@ class ActionComm extends CommonObject
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
         $sql.= $conf->entity.",";
-        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null").", ";
+        // Fields emails
+        $sql.= (! empty($this->email_msgid)?"'".$this->db->escape($this->email_msgid)."'":"null").", ";
+        $sql.= (! empty($this->email_from)?"'".$this->db->escape($this->email_from)."'":"null").", ";
+        $sql.= (! empty($this->email_sender)?"'".$this->db->escape($this->email_sender)."'":"null").", ";
+        $sql.= (! empty($this->email_to)?"'".$this->db->escape($this->email_to)."'":"null").", ";
+        $sql.= (! empty($this->email_tocc)?"'".$this->db->escape($this->email_tocc)."'":"null").", ";
+        $sql.= (! empty($this->email_tobcc)?"'".$this->db->escape($this->email_tobcc)."'":"null").", ";
+        $sql.= (! empty($this->email_subject)?"'".$this->db->escape($this->email_subject)."'":"null").", ";
+        $sql.= (! empty($this->errors_to)?"'".$this->db->escape($this->errors_to)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -396,7 +419,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}
@@ -609,6 +631,7 @@ class ActionComm extends CommonObject
                 $this->datem   				= $this->db->jdate($obj->datem);
 
                 $this->note					= $obj->note;
+                $this->note_private			= $obj->note;
                 $this->percentage			= $obj->percentage;
 
                 $this->authorid             = $obj->fk_user_author;
@@ -858,7 +881,7 @@ class ActionComm extends CommonObject
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->db->escape($this->durationp)."'":"null");	// deprecated
-        $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
+        $sql.= ", note = '".$this->db->escape($this->note_private?$this->note_private:$this->note)."'";
         $sql.= ", fk_project =". ($this->fk_project > 0 ? $this->fk_project:"null");
         $sql.= ", fk_soc =". ($socid > 0 ? $socid:"null");
         $sql.= ", fk_contact =". ($contactid > 0 ? $contactid:"null");
@@ -931,7 +954,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}
@@ -1270,7 +1292,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>' . $langs->trans('Type') . ':</b> ' . $labeltype;
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
-
+		if (! empty($this->note))
+			$tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . (dol_textishtml($this->note) ? str_replace(array("\r","\n"), "", $this->note) : $this->note);
 		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1311,10 +1334,10 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+		if ($option == 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
@@ -1675,7 +1698,13 @@ class ActionComm extends CommonObject
     	$this->output = '';
 		$this->error='';
 
-    	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
+    	if (empty($conf->agenda->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+		if (empty($conf->global->AGENDA_REMINDER_EMAIL))
     	{
     		$langs->load("agenda");
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));

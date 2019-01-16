@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,10 @@ $error=0;
  *	Actions
  */
 
+// TODO Replace sendit and confirm_deletefile with
+//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+//include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
 if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
@@ -105,12 +109,40 @@ if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (! $error)
 	{
-	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '', 0);
+		$generatethumbs = 0;
+		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
 	    if ($res > 0)
 	    {
 	       $result=$ecmdir->changeNbOfFiles('+');
 	    }
 	}
+}
+
+// Remove file (code similar but different than actions_linkedfiles.inc.php)
+if ($action == 'confirm_deletefile')
+{
+	if (GETPOST('confirm') == 'yes')
+	{
+		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+		//var_dump(GETPOST('urlfile'));exit;
+
+		$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+		$file = $upload_dir . "/" . GETPOST('urlfile','alpha');
+
+		$ret=dol_delete_file($file);	// This include also the delete from file index in database.
+		if ($ret)
+		{
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
+			$result=$ecmdir->changeNbOfFiles('-');
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
+		}
+
+		clearstatcache();
+	}
+	$action='file_manager';
 }
 
 // Add directory
@@ -133,33 +165,6 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 
 	clearstatcache();
-}
-
-// Remove file (code similar but different than actions_linkedfiles.inc.php)
-if ($action == 'confirm_deletefile')
-{
-    if (GETPOST('confirm') == 'yes')
-    {
-    	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
-		//var_dump(GETPOST('urlfile'));exit;
-
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
-    	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
-
-    	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
-    	if ($ret)
-    	{
-    		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
-    		$result=$ecmdir->changeNbOfFiles('-');
-    	}
-    	else
-    	{
-    		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
-    	}
-
-    	clearstatcache();
-    }
-   	$action='file_manager';
 }
 
 // Remove directory

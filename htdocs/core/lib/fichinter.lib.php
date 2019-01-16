@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
  * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
 
@@ -76,7 +76,6 @@ function fichinter_prepare_head($object)
 				foreach($resources as $resource_obj)
 				{
 					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
-
 				}
 			}
 		}

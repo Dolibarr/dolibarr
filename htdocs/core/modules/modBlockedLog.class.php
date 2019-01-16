@@ -47,7 +47,7 @@ class modBlockedLog extends DolibarrModules
 		// It is used to group modules in module setup page
         $this->family = "base";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '90';
+        $this->module_position = '75';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";

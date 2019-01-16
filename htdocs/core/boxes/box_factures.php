@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,8 +76,10 @@ class box_factures extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $facturestatic=new Facture($db);
+        $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
+
+        $langs->load("bills");
 
 		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
 		$this->info_box_head = array(
@@ -87,14 +89,12 @@ class box_factures extends ModeleBoxes
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT f.rowid as facid";
-            $sql.= ", f.facnumber, f.type, f.total as total_ht";
+            $sql.= ", f.ref, f.type, f.total as total_ht";
             $sql.= ", f.tva as total_tva";
             $sql.= ", f.total_ttc";
             $sql.= ", f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-            $sql.= ", s.nom as name";
-            $sql.= ", s.rowid as socid";
-            $sql.= ", s.code_client";
+            $sql.= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -103,8 +103,8 @@ class box_factures extends ModeleBoxes
 			$sql.= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            else $sql.= " ORDER BY f.tms DESC, f.facnumber DESC ";
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -121,8 +121,9 @@ class box_factures extends ModeleBoxes
                     $datelimite = $db->jdate($objp->datelimite);
                     $date = $db->jdate($objp->df);
                     $datem = $db->jdate($objp->tms);
+
                     $facturestatic->id = $objp->facid;
-                    $facturestatic->ref = $objp->facnumber;
+                    $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
@@ -133,7 +134,14 @@ class box_factures extends ModeleBoxes
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
-
+                    $societestatic->tva_intra = $objp->tva_intra;
+                    $societestatic->email = $objp->email;
+                    $societestatic->idprof1 = $objp->idprof1;
+                    $societestatic->idprof2 = $objp->idprof2;
+                    $societestatic->idprof3 = $objp->idprof3;
+                    $societestatic->idprof4 = $objp->idprof4;
+                    $societestatic->idprof5 = $objp->idprof5;
+                    $societestatic->idprof6 = $objp->idprof6;
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
@@ -185,7 +193,6 @@ class box_factures extends ModeleBoxes
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
-
         } else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'align="left" class="nohover opacitymedium"',

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
@@ -238,6 +238,30 @@ if ($action == 'setforcedate')
     }
 }
 
+if ($action == 'setDefaultPDFModulesByType')
+{
+    $invoicetypemodels =  GETPOST('invoicetypemodels');
+
+    if(!empty($invoicetypemodels) && is_array($invoicetypemodels))
+    {
+        $error = 0;
+
+        foreach ($invoicetypemodels as $type => $value)
+        {
+            $res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type),$value,'chaine',0,'',$conf->entity);
+            if (! $res > 0) $error++;
+        }
+
+        if (! $error)
+        {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
+}
 
 
 /*
@@ -410,7 +434,6 @@ foreach ($dirmodels as $reldir)
                             print '</td>';
 
                             print "</tr>\n";
-
                         }
                     }
                 }
@@ -464,6 +487,8 @@ print '<td align="center" width="32">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
+
+$activatedModels = array();
 
 foreach ($dirmodels as $reldir)
 {
@@ -580,6 +605,47 @@ foreach ($dirmodels as $reldir)
 }
 print '</table>';
 
+if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
+{
+    /*
+     *  Document templates generators
+     */
+    print '<br>';
+    print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"),'','');
+    print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+    print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
+    print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("Name").'</td>';
+    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+    print "</tr>\n";
+
+    $listtype=array(
+        Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+        Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+        Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+        Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+    );
+    if (! empty($conf->global->INVOICE_USE_SITUATION))
+    {
+        $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
+    }
+
+    foreach ($listtype as $type => $trans)
+    {
+        $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
+        $current = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+        print '<tr >';
+        print '<td>'.$trans.'</td>';
+        print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
+        print "</tr>\n";
+    }
+
+    print '</table>';
+    print "</form>";
+}
 
 /*
  *  Modes de reglement
@@ -632,7 +698,7 @@ if (! empty($conf->banque->enabled))
         }
         else
         {
-        	print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+        	print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
         }
     }
 }
@@ -662,6 +728,7 @@ if ($resql)
     $i = 0;
     while ($i < $num)
     {
+
         $row = $db->fetch_row($resql);
 
         print '<option value="'.$row[0].'"';

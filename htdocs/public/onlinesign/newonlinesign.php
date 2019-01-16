@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("errors");
-$langs->load("paybox");     // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
 
 $action=GETPOST('action','alpha');
 
@@ -126,7 +120,6 @@ $creditor = $mysoc->name;
 if ($action == 'dosign')
 {
     // TODO
-
 }
 
 
@@ -262,8 +255,6 @@ if ($source == 'proposal')
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
-
-
 }
 
 

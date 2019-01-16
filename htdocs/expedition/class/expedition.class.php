@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
@@ -50,6 +50,9 @@ class Expedition extends CommonObject
 	 */
 	public $element="shipping";
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_expedition";
 
 	/**
@@ -62,7 +65,11 @@ class Expedition extends CommonObject
 	 */
 	public $table_element_line="expeditiondet";
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -70,14 +77,39 @@ class Expedition extends CommonObject
 	public $picto = 'sending';
 
 	public $socid;
+
+	/**
+	 * @var string Customer ref
+	 */
 	public $ref_customer;
+
+	/**
+	 * @var string internal ref
+	 */
 	public $ref_int;
+
 	public $brouillon;
+
+	/**
+	 * @var int warehouse id
+	 */
 	public $entrepot_id;
 	public $lines=array();
+
+	/**
+	 * @var string Tracking number
+	 */
 	public $tracking_number;
+
+	/**
+	 * @var string Tracking url
+	 */
 	public $tracking_url;
 	public $billed;
+
+	/**
+	 * @var string name of pdf model
+	 */
 	public $model_pdf;
 
 	public $trueWeight;
@@ -117,9 +149,19 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths;			// List of carriers
 
-
+    /**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Closed status
+	 */
 	const STATUS_CLOSED = 2;
 
 
@@ -366,7 +408,6 @@ class Expedition extends CommonObject
 						$this->db->rollback();
 						return -1*$error;
 					}
-
 				}
 				else
 				{
@@ -441,7 +482,7 @@ class Expedition extends CommonObject
 		{
 			if ($detbatch->entrepot_id)
 			{
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->dluo_qty;
+				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
 			}
 		}
 		// create shipment lines
@@ -563,7 +604,7 @@ class Expedition extends CommonObject
 				if ($this->statut == 0) $this->brouillon = 1;
 
 				// Tracking url
-				$this->GetUrlTrackingStatus($obj->tracking_number);
+				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
 				 * Thirparty
@@ -742,7 +783,6 @@ class Expedition extends CommonObject
 				$this->error=$this->db->error();
 				return -2;
 			}
-
 		}
 
 		// Change status of order to "shipment in process"
@@ -963,7 +1003,7 @@ class Expedition extends CommonObject
 						$this->error=$linebatch->error;
 						return -1;
 					}
-					$linebatch->dluo_qty=$value['q'];
+					$linebatch->qty=$value['q'];
 					$tab[]=$linebatch;
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
@@ -972,7 +1012,7 @@ class Expedition extends CommonObject
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
 
-						if ($prod_batch->qty < $linebatch->dluo_qty)
+						if ($prod_batch->qty < $linebatch->qty)
 						{
 							$langs->load("errors");
 							$this->errors[]=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $prod_batch->fk_product);
@@ -1196,7 +1236,7 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						foreach($lotArray as $lot)
 						{
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0)
 							{
 								$error++;$this->errors=$this->errors + $mouvS->errors;
@@ -1896,16 +1936,14 @@ class Expedition extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function GetUrlTrackingStatus($value='')
+	function getUrlTrackingStatus($value='')
 	{
-        // phpcs:enable
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
@@ -2111,7 +2149,6 @@ class Expedition extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror;
@@ -2238,7 +2275,6 @@ class Expedition extends CommonObject
 					$error++;
 				}
    			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror();
@@ -2458,11 +2494,19 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element='expeditiondet';
 
+	/**
+	 * @deprecated
+	 * @see fk_origin_line
+	 */
+	public $origin_line_id;
+
+	/**
+     * @var int ID
+     */
 	public $fk_origin_line;
 
 	/**
-	 * Id of shipment
-	 * @var int
+	 * @var int Id of shipment
 	 */
 	public $fk_expedition;
 
@@ -2471,51 +2515,120 @@ class ExpeditionLigne extends CommonObjectLine
      */
     public $db;
 
-	// From llx_expeditiondet
-	var $qty;
-	var $qty_shipped;
-	var $fk_product;
-	var $detail_batch;
-	/**
-	 * Id of warehouse
-	 * @var int
-	 */
+    /**
+     * @var float qty asked From llx_expeditiondet
+     */
+    public $qty;
+
+    /**
+     * @var float qty shipped
+     */
+    public $qty_shipped;
+
+    /**
+     * @var int Id of product
+     */
+    public $fk_product;
+    public $detail_batch;
+
+    /**
+     * @var int Id of warehouse
+     */
 	public $entrepot_id;
 
 
-	// From llx_commandedet or llx_propaldet
-	var $qty_asked;
+    /**
+     * @var float qty asked From llx_commandedet or llx_propaldet
+     */
+	public $qty_asked;
+
+    /**
+     * @deprecated
+     * @see product_ref
+     */
+    public $ref;
+
+	/**
+	 * @var string product ref
+	 */
 	public $product_ref;
-	public $product_label;
-	public $product_desc;
 
-
-	// Invoicing
-	var $remise_percent;
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
-
-
-	// Deprecated
-	/**
-	 * @deprecated
-	 * @see fk_origin_line
-	 */
-	var $origin_line_id;
-	/**
-	 * @deprecated
-	 * @see product_ref
-	 */
-	var $ref;
 	/**
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;
+	public $libelle;
+
+    /**
+     * @var string product label
+     */
+	public $product_label;
+
+    /**
+     * @var string product description
+     * @deprecated
+     * @see product_desc
+     */
+    public $desc;
+
+    /**
+     * @var string product description
+     */
+	public $product_desc;
+
+    /**
+     * @var float weight
+     */
+    public $weight;
+    public $weight_units;
+
+    /**
+     * @var float weight
+     */
+    public $length;
+    public $length_units;
+
+    /**
+     * @var float weight
+     */
+    public $surface;
+    public $surface_units;
+
+    /**
+     * @var float weight
+     */
+    public $volume;
+    public $volume_units;
+
+	// Invoicing
+	public $remise_percent;
+    public $tva_tx;
+
+    /**
+     * @var float total without tax
+     */
+    public $total_ht;
+
+    /**
+     * @var float total with tax
+     */
+    public $total_ttc;
+
+    /**
+     * @var float total vat
+     */
+    public $total_tva;
+
+    /**
+     * @var float total localtax 1
+     */
+    public $total_localtax1;
+
+    /**
+     * @var float total localtax 2
+     */
+    public $total_localtax2;
+
 
     /**
      *	Constructor
@@ -2566,7 +2679,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param      User	$user			User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, line id >0 if OK
+	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
 	function insert($user=null, $notrigger=0)
 	{
@@ -2763,7 +2876,7 @@ class ExpeditionLigne extends CommonObjectLine
 					$this->errors[]='ErrorBadParameters';
 					$error++;
 				}
-				$qty = price2num($this->detail_batch[0]->dluo_qty);
+				$qty = price2num($this->detail_batch[0]->qty);
 			}
 		}
 		else if (! empty($this->detail_batch))
@@ -2777,7 +2890,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]='ErrorBadParameters';
 				$error++;
 			}
-			$qty = price2num($this->detail_batch->dluo_qty);
+			$qty = price2num($this->detail_batch->qty);
 		}
 
 		// check parameters
@@ -2815,7 +2928,7 @@ class ExpeditionLigne extends CommonObjectLine
 				{
 					if ($expedition_batch_id != $lot->id)
 					{
-						$remainingQty += $lot->dluo_qty;
+						$remainingQty += $lot->qty;
 					}
 				}
 				$qty += $remainingQty;
@@ -2843,7 +2956,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$error++;
 					}
 				}
-				if (! $error && $this->detail_batch->dluo_qty > 0)
+				if (! $error && $this->detail_batch->qty > 0)
 				{
 					// create lot expedition line
 					if (isset($lot->id))
@@ -2853,7 +2966,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->eatby = $lot->eatby;
 						$shipmentLot->sellby = $lot->sellby;
 						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
-						$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
+						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0)
 						{

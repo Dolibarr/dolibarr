@@ -36,8 +36,6 @@ $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$typeconst=array('yesno','texte','chaine');
-
 $action = GETPOST('action','alpha');
 $value = GETPOST('value');
 $label = GETPOST('label','alpha');
@@ -153,44 +151,6 @@ if ($action == 'set_DONATION_MESSAGE')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-// Activate an article
-else if ($action == 'setart200') {
-	$setart200 = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "DONATION_ART200", $setart200, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-else if ($action == 'setart238') {
-	$setart238 = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "DONATION_ART238", $setart238, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-else if ($action == 'setart885') {
-	$setart885 = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "DONATION_ART885", $setart885, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
 }
 
 /*
@@ -399,47 +359,42 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
+	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+	print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
-	if (! empty($conf->global->DONATION_ART200)) {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart200&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart200&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+	print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+  print ajax_constantonoff('DONATION_ART200');
+} else {
+  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+  print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+}
+	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
-	if (! empty($conf->global->DONATION_ART238)) {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart238&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart238&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+	print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+  print ajax_constantonoff('DONATION_ART238');
+} else {
+  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+  print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+}
+	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
-	if (! empty($conf->global->DONATION_ART885)) {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart885&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setart885&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+	print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+  print ajax_constantonoff('DONATION_ART885');
+} else {
+  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+  print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
+}
+	print '</td></tr>';
 	print "</table>\n";
 }
 

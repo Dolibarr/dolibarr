@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
@@ -403,6 +403,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		} elseif ($action == 'RECEPTION_VALIDATE')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("receptions");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	if (empty($object->actionmsg))
+        	{
+        		$object->actionmsg=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	}
+
+        	// Parameters $object->sendtoid defined by caller
+        	//$object->sendtoid=0;
+        }
+		elseif ($action == 'RECEPTION_SENTBYMAIL')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("receptions");
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            }
+
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
 		{
@@ -757,7 +786,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else
+		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    // Load translation files required by the page
@@ -769,7 +798,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->sendtoid=0;
 		}
 
-		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -799,7 +828,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
         }
         // Set societeforaction.
-        if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+        if ($object->socid > 0)			$societeforaction->fetch($object->socid);
+        elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
         $projectid = isset($object->fk_project)?$object->fk_project:0;
         if ($object->element == 'project') $projectid = $object->id;
@@ -811,6 +841,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$elementid = $object->fk_adherent;
         	$elementtype = 'member';
         }
+        //var_dump($societeforaction);var_dump($contactforaction);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -818,7 +849,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode;		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
+		$actioncomm->note        = $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
@@ -831,19 +862,27 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-        // Fields when action is en email (content should be added into note)
-		$actioncomm->email_msgid = $object->email_msgid;
-		$actioncomm->email_from  = $object->email_from;
-		$actioncomm->email_sender= $object->email_sender;
-		$actioncomm->email_to    = $object->email_to;
-		$actioncomm->email_tocc  = $object->email_tocc;
-		$actioncomm->email_tobcc = $object->email_tobcc;
+        // Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
+		$actioncomm->email_msgid   = $object->email_msgid;
+		$actioncomm->email_from    = $object->email_from;
+		$actioncomm->email_sender  = $object->email_sender;
+		$actioncomm->email_to      = $object->email_to;
+		$actioncomm->email_tocc    = $object->email_tocc;
+		$actioncomm->email_tobcc   = $object->email_tobcc;
 		$actioncomm->email_subject = $object->email_subject;
-		$actioncomm->errors_to   = $object->errors_to;
+		$actioncomm->errors_to     = $object->errors_to;
 
-		$actioncomm->fk_element  = $elementid;
-		$actioncomm->elementtype = $elementtype;
+		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		if (! in_array($elementtype, array('societe','contact','project')))
+		{
+			$actioncomm->fk_element  = $elementid;
+			$actioncomm->elementtype = $elementtype;
+		}
 
+		if (property_exists($object,'attachedfiles') && is_array($object->attachedfiles) && count($object->attachedfiles)>0) {
+			$actioncomm->attachedfiles=$object->attachedfiles;
+		}
 		if (property_exists($object,'sendtouserid') && is_array($object->sendtouserid) && count($object->sendtouserid)>0) {
 			$actioncomm->userassigned=$object->sendtouserid;
 		}

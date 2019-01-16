@@ -46,7 +46,11 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+     * @var int ID
+     */
 	public $fk_charge;
+
 	public $datec='';
 	public $tms='';
 	public $datep='';
@@ -59,10 +63,27 @@ class PaymentSocialContribution extends CommonObject
 
     public $amount;            // Total amount of payment
     public $amounts=array();   // Array of amounts
+
+    /**
+     * @var int ID
+     */
 	public $fk_typepaiement;
+
 	public $num_paiement;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 	/**
@@ -174,7 +195,6 @@ class PaymentSocialContribution extends CommonObject
 			{
 				$error++;
 			}
-
 		}
 
 		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);

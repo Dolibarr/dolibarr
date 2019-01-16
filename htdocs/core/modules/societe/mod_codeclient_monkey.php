@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
-		return $this->prefixcustomer.'0901-0001<br>'.$this->prefixsupplier.'0901-0001';
+		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
 
 
@@ -120,19 +120,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		global $db, $conf, $mc;
 
-		$return='000001';
-
 		$field='';
-        $where='';
         $prefix = '';
 		if ($type == 0) {
 			$field = 'code_client';
             $prefix = $this->prefixcustomer;
-			//$where = ' AND client in (1,2)';
 		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
             $prefix = $this->prefixsupplier;
-			//$where = ' AND fournisseur = 1';
 		} else {
             return -1;
         }
@@ -161,8 +156,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$date	= dol_now();
 		$yymm	= strftime("%y%m",$date);
 
-		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		if ($max >= (pow(10, 5) - 1)) $num=$max+1;	// If counter > 99999, we do not format on 5 chars, we take number as it is
+		else $num = sprintf("%05s",$max+1);
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;

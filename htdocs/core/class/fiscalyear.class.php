@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *		\brief      File of class to manage fiscal years
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
  * Class to manage fiscal year
@@ -48,7 +48,11 @@ class Fiscalyear extends CommonObject
 	 */
 	public $fk_element = '';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int ID
@@ -56,14 +60,18 @@ class Fiscalyear extends CommonObject
 	public $rowid;
 
 	/**
-     * @var string fiscal year label
-     */
-    public $label;
+	 * @var string fiscal year label
+	 */
+	public $label;
 
 	public $date_start;
 	public $date_end;
 	public $datec;
 	public $statut;		// 0=open, 1=closed
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $statuts=array();
@@ -74,8 +82,10 @@ class Fiscalyear extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
@@ -155,10 +165,10 @@ class Fiscalyear extends CommonObject
 
 		// Check parameters
 		if (empty($this->date_start) && empty($this->date_end))
-        {
-            $this->error='ErrorBadParameter';
-            return -1;
-        }
+		{
+			$this->error='ErrorBadParameter';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -259,7 +269,7 @@ class Fiscalyear extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Give a label from a status
 	 *
@@ -269,7 +279,7 @@ class Fiscalyear extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -345,5 +355,57 @@ class Fiscalyear extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 *  Return the number of entries by fiscal year
+	 *
+	 *	@param	int		$datestart	Date start to scan
+	 *	@param	int		$dateend	Date end to scan
+	 *	@return	string				Number of entries
+	 */
+	function getAccountancyEntriesByFiscalYear($datestart, $dateend)
+	{
+		global $conf;
+
+		$sql = "SELECT count(DISTINCT piece_num) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql.= " WHERE doc_date >= '".$datestart."' and doc_date <= '".$dateend."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		}
+		else dol_print_error($this->db);
+
+		return $nb;
+	}
+
+	/**
+	 *  Return the number of movements by fiscal year
+	 *
+	 *	@param	int		$datestart	Date start to scan
+	 *	@param	int		$dateend	Date end to scan
+	 *	@return	string				Number of movements
+	 */
+	function getAccountancyMovementsByFiscalYear($datestart, $dateend)
+	{
+		global $conf;
+
+		$sql = "SELECT count(rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql.= " WHERE doc_date >= '".$datestart."' AND doc_date <= '".$dateend."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		}
+		else dol_print_error($this->db);
+
+		return $nb;
 	}
 }

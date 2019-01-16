@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,12 @@ class Address
 
 	public $socid;
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;
@@ -133,7 +138,6 @@ class Address
 				$this->db->rollback();
 				return -2;
 			}
-
 		}
 		else
 		{
@@ -491,7 +495,6 @@ class Address
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -522,7 +525,12 @@ class AddressLine
     public $label;
 
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;

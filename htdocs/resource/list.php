@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,6 @@
  *      \ingroup    resource
  *      \brief      Page to manage resource objects
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
@@ -50,7 +50,8 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+if (! is_array($search_array_options)) $search_array_options = array();
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
@@ -196,7 +197,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -242,14 +243,14 @@ print "</tr>\n";
 
 if ($ret)
 {
-    foreach ($object->lines as $obj)
+	foreach ($object->lines as $resource)
     {
         print '<tr class="oddeven">';
 
         if (! empty($arrayfields['t.ref']['checked']))
         {
         	print '<td>';
-        	print $obj->getNomUrl(5);
+        	print $resource->getNomUrl(5);
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
@@ -257,7 +258,7 @@ if ($ret)
         if (! empty($arrayfields['ty.label']['checked']))
         {
         	print '<td>';
-        	print $obj->type_label;
+        	print $resource->type_label;
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
@@ -266,11 +267,11 @@ if ($ret)
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';
-        print '<a href="./card.php?action=edit&id='.$obj->id.'">';
+        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
         print img_edit();
         print '</a>';
         print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$obj->id.'">';
+        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
         print img_delete();
         print '</a>';
         print '</td>';

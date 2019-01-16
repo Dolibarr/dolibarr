@@ -31,14 +31,15 @@ ViewWeek=Ukesvisning
 ViewPerUser=Visning pr. bruker
 ViewPerType=Pr. type-visning
 AutoActions= Automatisk utfylling
-AgendaAutoActionDesc= Her defineres hendelser som du vil at Dolibarr skal opprette automatisk i agenda. Hvis ingenting er avkrysset, vil bare manuelle handlinger bli inkludert i logg og synlig i agenda. Automatisk sporing av forretningshandlinger gjort på objekter (validering, statusendring ) vil ikke bli lagret.
-AgendaSetupOtherDesc= Her kan du gjøre andre innstillinger i agendamodulen.
+AgendaAutoActionDesc= Her kan du definere hendelser som du vil at Dolibarr skal lage automatisk i Agenda. Hvis ingenting er merket, vil bare manuelle handlinger bli inkludert i loggene og vises i Agenda. Automatisk sporing av virksomhetshandlinger gjort på objekter (validering, statusendring) blir ikke lagret.
+AgendaSetupOtherDesc= Denne siden gir muligheter for å tillate eksport av Dolibarr-hendelsene til en ekstern kalender (thunderbird, google kalender, ...)
 AgendaExtSitesDesc=Denne siden lar deg sette opp eksterne kalendere for å visning i Dolibarr agenda.
 ActionsEvents=Handlinger som Dolibarr automatisk registrerer i agendaen
-EventRemindersByEmailNotEnabled=Hendelsespåminnelser via e-post ble ikke aktivert i oppsett av Agenda-modulen.
+EventRemindersByEmailNotEnabled=Hendelsespåminnelser via e-post ble ikke aktivert i %s moduloppsett.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tredjepart %s opprettet
 ContractValidatedInDolibarr=Kontrakt %s validert
+CONTRACT_DELETEInDolibarr=Kontrakt %s slettet
 PropalClosedSignedInDolibarr=Tilbud %s signert
 PropalClosedRefusedInDolibarr=Tilbud %s avvist
 PropalValidatedInDolibarr=Tilbud godkjent
@@ -100,7 +101,7 @@ AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet a
 AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatisk hendelse.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatiske hendelser.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -110,9 +111,9 @@ DefaultWorkingHours=Standard arbeidstid (f.eks 9-18)
 # External Sites ical
 ExportCal=Eksporter kalender
 ExtSites=Importer eksterne kalendere
-ExtSitesEnableThisTool=Vis eksterne kalendere (definert i global setup) i agenda. Påvirker ikke eksterne kalendere definert av brukere.
+ExtSitesEnableThisTool=Vis eksterne kalendere (definert i global oppsett) i Agenda. Påvirker ikke eksterne kalendere som er definert av brukere.
 ExtSitesNbOfAgenda=Antall kalendere
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Kalender nr. %s
 ExtSiteUrlAgenda=URL til. ical-fil
 ExtSiteNoLabel=Ingen beskrivelse
 VisibleTimeRange=Synlig tidsområde

@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -50,8 +50,16 @@ class User extends CommonObject
 	 */
 	public $table_element='user';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_user';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	public $id=0;
 	public $statut;
@@ -61,10 +69,19 @@ class User extends CommonObject
 	public $gender;
 	public $birth;
 	public $email;
+
 	public $skype;
+	public $twitter;
+	public $facebook;
+
 	public $job;			// job position
 	public $signature;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $state_id;		// The state/department
@@ -106,6 +123,9 @@ class User extends CommonObject
 	public $socid;
 	public $contactid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_member;
 
 	/**
@@ -207,7 +227,8 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook,";
+		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
@@ -312,6 +333,8 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
 				$this->skype		= $obj->skype;
+				$this->twitter		= $obj->twitter;
+				$this->facebook		= $obj->facebook;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -399,45 +422,9 @@ class User extends CommonObject
 				return -2;
 			}
 
-			// Load user->default_values for user. TODO Save this in memcached ?
-			$sql = "SELECT rowid, entity, type, page, param, value";
-			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
-			$sql.= " WHERE entity IN (".$this->entity.",".$conf->entity.")";
-			$sql.= " AND user_id IN (0, ".$this->id.")";
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				while ($obj = $this->db->fetch_object($resql))
-				{
-					if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
-					{
-						// $obj->page is relative URL with or without params
-						// $obj->type can be 'filters', 'sortorder', 'createform', ...
-						// $obj->param is key or param
-						$pagewithoutquerystring=$obj->page;
-						$pagequeries='';
-						if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
-						{
-							$pagewithoutquerystring=$reg[1];
-							$pagequeries=$reg[2];
-						}
-						$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
-						//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
-					}
-				}
-				// Sort by key, so _noquery_ is last
-				if(!empty($this->default_values)) {
-					foreach($this->default_values as $a => $b)
-					{
-						foreach($b as $c => $d)
-						{
-							krsort($this->default_values[$a][$c]);
-						}
-					}
-				}
-				$this->db->free($resql);
-			}
-			else
+			$result = $this->loadDefaultValues();
+
+			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
 				return -3;
@@ -445,6 +432,62 @@ class User extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 *  Load default value in property ->default_values
+	 *
+	 *  @return int						> 0 if OK, < 0 if KO
+	 */
+	function loadDefaultValues()
+	{
+		global $conf;
+
+		// Load user->default_values for user. TODO Save this in memcached ?
+		$sql = "SELECT rowid, entity, type, page, param, value";
+		$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+		$sql.= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")";	// Entity of user (if defined) + current entity
+		$sql.= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")";							// User 0 (all) + me (if defined)
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
+				{
+					// $obj->page is relative URL with or without params
+					// $obj->type can be 'filters', 'sortorder', 'createform', ...
+					// $obj->param is key or param
+					$pagewithoutquerystring=$obj->page;
+					$pagequeries='';
+					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
+					{
+						$pagewithoutquerystring=$reg[1];
+						$pagequeries=$reg[2];
+					}
+					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
+					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
+				}
+			}
+			// Sort by key, so _noquery_ is last
+			if(!empty($this->default_values)) {
+				foreach($this->default_values as $a => $b)
+				{
+					foreach($b as $c => $d)
+					{
+						krsort($this->default_values[$a][$c]);
+					}
+				}
+			}
+			$this->db->free($resql);
+
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**
@@ -741,7 +784,7 @@ class User extends CommonObject
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
 
 		// D'abord les droits utilisateurs
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -795,7 +838,7 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
@@ -847,7 +890,6 @@ class User extends CommonObject
 						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
 						if (!is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = 1;
 					}
-
 				}
 				$i++;
 			}
@@ -963,13 +1005,14 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	Delete the user
+	 *  Delete the user
 	 *
-	 * 		@return		int		<0 if KO, >0 if OK
+	 *	@param		User	$user	User than delete
+	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function delete()
+	function delete(User $user)
 	{
-		global $user,$conf,$langs;
+		global $conf,$langs;
 
 		$error=0;
 
@@ -1207,6 +1250,8 @@ class User extends CommonObject
 		$this->gender		= $contact->gender;
 		$this->email		= $contact->email;
 		$this->skype 		= $contact->skype;
+		$this->twitter 		= $contact->twitter;
+		$this->facebook		= $contact->facebook;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
@@ -1420,7 +1465,11 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+
 		$this->skype        = trim($this->skype);
+		$this->twitter      = trim($this->twitter);
+		$this->facebook     = trim($this->facebook);
+
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
@@ -1454,12 +1503,12 @@ class User extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
-		$sql.= ", employee = ".$this->employee;
+		$sql.= ", employee = ".(int) $this->employee;
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", birth=".(strval($this->birth)!='' ? "'".$this->db->idate($this->birth)."'" : 'null');
-		if (! empty($user->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
+		if (! empty($user->admin)) $sql.= ", admin = ".(int) $this->admin;	// admin flag can be set/unset only by an admin user
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
@@ -1470,6 +1519,8 @@ class User extends CommonObject
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1554,7 +1605,11 @@ class User extends CommonObject
 						$adh->country_id=$this->country_id;
 
 						$adh->email=$this->email;
+
 						$adh->skype=$this->skype;
+						$adh->twitter=$this->twitter;
+						$adh->facebook=$this->facebook;
+
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
@@ -1602,7 +1657,11 @@ class User extends CommonObject
 						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
 
 						$tmpobj->email=$this->email;
+
 						$tmpobj->skype=$this->skype;
+						$tmpobj->twitter=$this->twitter;
+						$tmpobj->facebook=$this->facebook;
+
 						$tmpobj->phone_pro=$this->office_phone;
 						$tmpobj->phone_mobile=$this->user_mobile;
 						$tmpobj->fax=$this->office_fax;
@@ -2184,7 +2243,7 @@ class User extends CommonObject
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
-	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
+	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'firstelselast'=Show firstname or lastname if not defined, 'login'=Show login
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
@@ -2245,7 +2304,7 @@ class User extends CommonObject
 			$label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
 			$label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 			$label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");;
+			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
 		if ($infologin < 0) $label='';
@@ -2301,7 +2360,7 @@ class User extends CommonObject
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle usertext'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' '.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
-			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+			else $result.=$this->getFullName($langs,'',($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
 		$result.=(($option == 'nolink')?'':$linkend);
@@ -2461,13 +2520,15 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
-			'LDAP_FIELD_LOGIN_SAMBA'	=> 'login',
+			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
-			'LDAP_FIELD_FAX'			=> 'office_fax',
+			'LDAP_FIELD_FAX'		=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
-			'LDAP_FIELD_SID'			=> 'ldap_sid',
-			'LDAP_FIELD_SKYPE'		=> 'skype'
+			'LDAP_FIELD_SID'		=> 'ldap_sid',
+			'LDAP_FIELD_SKYPE'		=> 'skype',
+			'LDAP_FIELD_TWITTER'	=> 'twitter',
+			'LDAP_FIELD_FACEBOOK'	=> 'facebook'
 		);
 
 		// Champs
@@ -2578,7 +2639,9 @@ class User extends CommonObject
 		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
-		$this->skype='tom.hanson';
+		$this->skype='skypepseudo';
+		$this->twitter='twitterpseudo';
+		$this->facebook='facebookpseudo';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2628,7 +2691,6 @@ class User extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2732,6 +2794,8 @@ class User extends CommonObject
 		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
 		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
+		$this->twitter=$ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
+		$this->facebook=$ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};
@@ -3136,14 +3200,15 @@ class User extends CommonObject
 	/**
 	 *	Load all objects into $this->users
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
 	{
 		global $conf;
 
@@ -3151,18 +3216,26 @@ class User extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
 		$sql.= " WHERE 1";
 
-		//Manage filter
+		// Manage filter
+		$sqlwhere = array();
 		if (!empty($filter)){
 			foreach($filter as $key => $value) {
-				if (strpos($key,'date')) {
-					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key,'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
-					$sql.= ' AND '.$value;
-				} else {
-					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);

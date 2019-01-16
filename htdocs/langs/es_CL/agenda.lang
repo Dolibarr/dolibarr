@@ -52,7 +52,6 @@ SupplierOrderSentByEMail=Pedido del proveedor %s enviado por EMail
 SupplierInvoiceSentByEMail=Factura del proveedor %s enviado por EMail
 ShippingSentByEMail=Envío %s enviado por EMail
 ShippingValidated=Envío %s validado
-InterventionSentByEMail=Intervención %s enviado por EMail
 ProposalDeleted=Propuesta eliminada
 OrderDeleted=Orden eliminada
 InvoiceDeleted=Factura borrada

@@ -106,6 +106,9 @@ class Asset extends CommonObject
 	 */
 	public $ref;
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
     /**
@@ -129,9 +132,22 @@ class Asset extends CommonObject
 	public $note_private;
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
 
 	// If this object has a subtable with lines
@@ -447,7 +463,6 @@ class Asset extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

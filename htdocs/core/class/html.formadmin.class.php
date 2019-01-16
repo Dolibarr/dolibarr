@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ class FormAdmin
 	 *      @param      int			$showwarning    Show a warning if language is not complete
 	 *      @param		int			$disabled		Disable edit of select
 	 *      @param		string		$morecss		Add more css styles
-	 *      @param      int         $showcode       Add language code into label
+	 *      @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
 	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *      @return		string						Return HTML select string with list of languages
      */
@@ -89,8 +89,9 @@ class FormAdmin
 
 		foreach ($langs_available as $key => $value)
 		{
-		    $valuetoshow=$value;
-		    if ($showcode) $valuetoshow=$key.' - '.$value;
+			$valuetoshow=$value;
+			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
+			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
 
 			if ($filter && is_array($filter))
 			{

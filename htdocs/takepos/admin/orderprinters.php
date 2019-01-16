@@ -3,7 +3,7 @@
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,10 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("main");
-$langs->load("categories");
-$langs->load("takepos");
-$langs->load("printing");
+$langs->loadLangs(array("main"), "categories", "takepos", "printing");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
@@ -51,7 +48,6 @@ if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward 
 /*
  * Actions
  */
-print $action;
 if ($action=="SavePrinter1"){
 	$printedcategories=";";
 	if (is_array($printer1)) foreach ($printer1 as $cat){

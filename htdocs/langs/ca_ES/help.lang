@@ -5,8 +5,8 @@ RemoteControlSupport=Assistència en temps real a distància
 OtherSupport=Altres tipus d'assistència
 ToSeeListOfAvailableRessources=Per contactar/veure els recursos disponibles:
 HelpCenter=Centre  d'assistència
-DolibarrHelpCenter=Centre de suport i ajuda Dolibarr
-ToGoBackToDolibarr=D'altra banda, faci clic <a href="%s">aquí per utilitzar Dolibarr</a>
+DolibarrHelpCenter=Centre d'Ajuda i Suport de Dolibarr
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
 TypeOfSupport=Tipus de suport
 TypeSupportCommunauty=Comunitari (gratuït)
 TypeSupportCommercial=Comercial
@@ -15,12 +15,9 @@ NeedHelpCenter=Necessites ajuda o suport?
 Efficiency=Eficàcia
 TypeHelpOnly=Només ajuda
 TypeHelpDev=Ajuda+Desenvolupament
-TypeHelpDevForm=Ajuda+Desenvolupament+Formació
-ToGetHelpGoOnSparkAngels1=Algunes empreses o independents ofereixen serveis de suport molt ràpid (de vegades d'immediat) i més eficients gràcies a la capacitat de control remot del seu equip per ajudar a diagnosticar i resoldre els seus problemes. Aquesta assistència es pot trobar a la borsa d'assistents de <b>%s</b>:
-ToGetHelpGoOnSparkAngels3=Per accedir a la recerca de <b>assistents disponibles</b>, feu clic aquí
-ToGetHelpGoOnSparkAngels2=En ocasions, cap operador es troba disponible en el moment de la seva recerca, no oblideu canviar el criteri de cerca indicant "tots els disponibles". Pot, doncs, posar-se en contacte en diferit.
-BackToHelpCenter=Sinó, feu clic aquí per <a href="%s"> tornar al centre d'assistència</a>.
-LinkToGoldMember=En cas contrari, podeu trucar immediatament a un dels assistents preseleccionats per Dolibarr per al seu idioma (%s) fent clic en el seu widget (disponibilitat i tarifa màxima actualitzades automàticament):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Idiomes disponibles
-SubscribeToFoundation=Ajuda al projecte Dolibarr, adhereix-te a l'associació
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Per suport oficial de Dolibar amb el teu llenguatge:<br><b><a href="%s" target="_blank">%s</a></b>

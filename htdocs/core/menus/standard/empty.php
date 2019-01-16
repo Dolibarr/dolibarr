@@ -29,7 +29,7 @@ class MenuManager
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $type_user=0;					// Put 0 for internal users, 1 for external users
 	var $atarget="";               		// To store default target to use onto links
 
@@ -311,8 +311,6 @@ class MenuManager
 		                    }
 		                    print '</li>'."\n";
 		                }
-
-
 		            }
 		            //var_dump($submenu);
 		            print '</ul>';
@@ -523,7 +521,7 @@ function print_start_menu_array_empty()
     global $conf;
 
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**

@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
@@ -14,6 +14,7 @@
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +169,12 @@ class Propal extends CommonObject
 	public $remise = 0;
 	public $remise_percent = 0;
 	public $remise_absolue = 0;
+
+	/**
+     * @var int ID
+     */
 	public $fk_address;
+
 	public $address_type;
 	public $address;
 	public $availability_id;
@@ -191,7 +197,11 @@ class Propal extends CommonObject
 	public $specimen;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -429,38 +439,40 @@ class Propal extends CommonObject
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
-		// Clean parameters
-		if (empty($remise_percent)) $remise_percent=0;
-		if (empty($qty)) $qty=0;
-		if (empty($info_bits)) $info_bits=0;
-		if (empty($rang)) $rang=0;
-		if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-
-		$remise_percent=price2num($remise_percent);
-		$qty=price2num($qty);
-		$pu_ht=price2num($pu_ht);
-		$pu_ht_devise=price2num($pu_ht_devise);
-		$pu_ttc=price2num($pu_ttc);
-		$txtva=price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
-		$txlocaltax1=price2num($txlocaltax1);
-		$txlocaltax2=price2num($txlocaltax2);
-		$pa_ht=price2num($pa_ht);
-		if ($price_base_type=='HT')
-		{
-			$pu=$pu_ht;
-		}
-		else
-		{
-			$pu=$pu_ttc;
-		}
-
-		// Check parameters
-		if ($type < 0) return -1;
-
 		if ($this->statut == self::STATUS_DRAFT)
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($remise_percent)) $remise_percent=0;
+			if (empty($qty)) $qty=0;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($rang)) $rang=0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			$pu_ht=price2num($pu_ht);
+			$pu_ht_devise=price2num($pu_ht_devise);
+			$pu_ttc=price2num($pu_ttc);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
+			}
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
+			$pa_ht=price2num($pa_ht);
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
+
+			// Check parameters
+			if ($type < 0) return -1;
+
 			$this->db->begin();
 
 			$product_type=$type;
@@ -865,6 +877,7 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		// Clean parameters
+		if (empty($this->entity)) $this->entity = $conf->entity;
 		if (empty($this->date)) $this->date=$this->datep;
 		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 		if (empty($this->availability_id)) $this->availability_id=0;
@@ -974,7 +987,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
@@ -2422,7 +2435,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function cloture($user, $statut, $note, $notrigger=0)
+	function cloture($user, $statut, $note="", $notrigger=0)
 	{
 		global $langs,$conf;
 
@@ -2467,16 +2480,16 @@ class Propal extends CommonObject
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-			 	// Define output language
-			  	$outputlangs = $langs;
-			   	if (! empty($conf->global->MAIN_MULTILANGS))
-			   	{
-			   		$outputlangs = new Translate("",$conf);
-			   		$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
-			   		$outputlangs->setDefaultLang($newlang);
-			   	}
-			   	//$ret=$object->fetch($id);    // Reload to get new records
-				   $this->generateDocument($modelpdf, $outputlangs);
+				// Define output language
+				$outputlangs = $langs;
+				if (! empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("",$conf);
+					$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
 			}
 
 			if (! $error)
@@ -2484,7 +2497,7 @@ class Propal extends CommonObject
 				$this->oldcopy= clone $this;
 				$this->statut = $statut;
 				$this->date_cloture = $now;
-				$this->note_private = $note;
+				$this->note_private = $newprivatenote;
 			}
 
 			if (! $notrigger && empty($error))
@@ -2495,13 +2508,17 @@ class Propal extends CommonObject
 				// End call triggers
 			}
 
-			if ( ! $error )
+			if (! $error)
 			{
 				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->statut = $this->oldcopy->statut;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
 				$this->db->rollback();
 				return -1;
 			}
@@ -2761,7 +2778,7 @@ class Propal extends CommonObject
 
 		if (count($linkedInvoices) > 0)
 		{
-			$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
+			$sql= "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
@@ -3114,11 +3131,8 @@ class Propal extends CommonObject
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture     = $cluser;
 				}
-
-
 			}
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -3162,7 +3176,7 @@ class Propal extends CommonObject
 			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
 			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
 			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("Opened");
+			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
 			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
 			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
@@ -3418,13 +3432,7 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		$constant = 'PROPALE_ADDON_'.$this->entity;
-
-		if (! empty($conf->global->$constant)) {
-			$classname = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$classname = $conf->global->PROPALE_ADDON;
-		}
+		$classname = $conf->global->PROPALE_ADDON;
 
 		if (! empty($classname))
 		{

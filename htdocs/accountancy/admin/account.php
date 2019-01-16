@@ -38,11 +38,11 @@ $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';   // To manage different context of search
 
-$search_account = GETPOST("search_account");
-$search_label = GETPOST("search_label");
-$search_accountparent = GETPOST("search_accountparent");
-$search_pcgtype = GETPOST("search_pcgtype");
-$search_pcgsubtype = GETPOST("search_pcgsubtype");
+$search_account = GETPOST('search_account','alpha');
+$search_label = GETPOST('search_label','alpha');
+$search_accountparent = GETPOST('search_accountparent','alpha');
+$search_pcgtype = GETPOST('search_pcgtype','alpha');
+$search_pcgsubtype = GETPOST('search_pcgsubtype','alpha');
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();

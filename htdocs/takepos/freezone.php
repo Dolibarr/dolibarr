@@ -27,8 +27,7 @@ if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 
 require '../main.inc.php';	// Load $user and permissions
 
-$langs->load("bills");
-$langs->load("cashdesk");
+$langs->loadLangs(array("bills", "cashdesk"));
 
 $place = GETPOST('place','int');
 

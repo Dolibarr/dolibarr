@@ -105,7 +105,6 @@ $contact_fields = array(
 	'birthday' => array('name'=>'birthday','type'=>'xsd:string'),
 	'default_lang' => array('name'=>'default_lang','type'=>'xsd:string'),
 	'note' => array('name'=>'note','type'=>'xsd:string'),
-	'no_email' => array('name'=>'no_email','type'=>'xsd:string'),
 	'ref_facturation' => array('name'=>'ref_facturation','type'=>'xsd:string'),
 	'ref_contrat' => array('name'=>'ref_contrat','type'=>'xsd:string'),
 	'ref_commande' => array('name'=>'ref_commande','type'=>'xsd:string'),
@@ -295,7 +294,6 @@ function getContact($authentication,$id,$ref_ext)
 	            	'birthday' => $contact->birthday,
 	            	'default_lang' => $contact->default_lang,
 	            	'note' => $contact->note,
-	            	'no_email' => $contact->no_email,
 	            	'ref_facturation' => $contact->ref_facturation,
 	            	'ref_contrat' => $contact->ref_contrat,
 	            	'ref_commande' => $contact->ref_commande,
@@ -406,7 +404,6 @@ function createContact($authentication,$contact)
 		$newobject->birthday=$contact['birthday'];
 		$newobject->default_lang=$contact['default_lang'];
 		$newobject->note=$contact['note'];
-		$newobject->no_email=$contact['no_email'];
 		$newobject->ref_facturation=$contact['ref_facturation'];
 		$newobject->ref_contrat=$contact['ref_contrat'];
 		$newobject->ref_commande=$contact['ref_commande'];
@@ -496,7 +493,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		//$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
+		//$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
 		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -557,7 +554,6 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 					'birthday' => $contact->birthday?$contact->birthday:'',
 					'default_lang' => $contact->default_lang?$contact->default_lang:'',
 					'note' => $contact->note?$contact->note:'',
-					'no_email' => $contact->no_email?$contact->no_email:'',
 					'ref_facturation' => $contact->ref_facturation?$contact->ref_facturation:'',
 					'ref_contrat' => $contact->ref_contrat?$contact->ref_contrat:'',
 					'ref_commande' => $contact->ref_commande?$contact->ref_commande:'',

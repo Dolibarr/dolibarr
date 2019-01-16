@@ -36,8 +36,12 @@ AlreadyInGeneralLedger=Enregistrement déjà présent dans le grand livre
 NotYetInGeneralLedger=Pas encore envoyé dans le grand livre
 GroupIsEmptyCheckSetup=Le groupe est vide. Vérifier la configuration du groupe personnalisé
 DetailByAccount=Afficher le détail par compte
-AccountWithNonZeroValues=Comptes avec valeurs non nulles
+AccountWithNonZeroValues=Comptes avec des valeurs non nulles
 ListOfAccounts=Liste des comptes
+CountriesInEEC=Pays de la CEE
+CountriesNotInEEC=Pays hors CEE
+CountriesInEECExceptMe=Pays de la CEE sauf %s
+CountriesExceptMe=Tous les pays sauf %s
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
@@ -55,7 +59,7 @@ AccountancyAreaDescChartModel=Étape %s : Créer un modèle de plan de compte de
 AccountancyAreaDescChart=Étape %s : Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescDefault=ÉTAPE %s: Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
+AccountancyAreaDescDefault=Étape %s: Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
@@ -130,7 +134,7 @@ ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits & services da
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer la description du compte des produits & services dans les listes à n caractères (Idéalement = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes de la comptabilité générale (Si vous définissez la valeur à 6 ici, le compte « 706 » apparaîtra comme « 706000 » à l'écran)
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes comptables de Tiers (Si vous définissez la valeur à 6 ici, le compte « 401 » apparaîtra comme « 401000 » à l'écran)
-ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la fin d'un compte comptable. Nécessaire par certains pays (comme la Suisse). Si conservé à Non (par défaut), vous pouvez définir les 2 paramètres suivants pour demander à l'application d'ajouter des zéros virtuels.
+ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la fin d'un compte comptable. Nécessaire pour certains pays (comme la Suisse). Si conservé à Non (par défaut), vous pouvez définir les 2 paramètres suivants pour demander à l'application d'ajouter des zéros virtuels.
 BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'export brouillon sur les journaux comptables
 
@@ -139,7 +143,7 @@ ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
 ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
-ACCOUNTING_HAS_NEW_JOURNAL=Journal des A -nouveaux
+ACCOUNTING_HAS_NEW_JOURNAL=Journal des A-nouveaux
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
@@ -156,6 +160,7 @@ Docref=Référence
 LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
+LetteringCode=Code de lettrage
 Codejournal=Journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
@@ -198,7 +203,7 @@ PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 
 Pcgtype=Groupe de comptes comptables
 Pcgsubtype=Sous-groupe de comptes comptables
-PcgtypeDesc=Le groupe et le sous-groupe d'un compte comptable sont prédéfinis comme critère de 'filtre' et 'regroupement' pour certains rapports comptables. Par exemple, 'INCOME' or 'EXPENSE' sont regroupés pour construire le rapport des recettes/dépenses.
+PcgtypeDesc=Les groupes et sous-groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «REVENU» ou «CHARGES» sont utilisés en tant que groupes pour la comptabilité des produits afin de générer le rapport dépenses / revenus.
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -221,6 +226,7 @@ AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crébit = %s
+Balancing=Équilibrage
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être journalisées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà comptabilisées.
@@ -229,6 +235,7 @@ ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte
 ChangeBinding=Changer les liens
 Accounted=Comptabilisé
 NotYetAccounted=Pas encore comptabilisé
+AccountantFiles = Justificatifs comptablilité
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
@@ -247,7 +254,7 @@ AccountingJournalType5=Note de frais
 AccountingJournalType8=Inventaire
 AccountingJournalType9=A-nouveaux
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
-AccountingAccountForSalesTaxAreDefinedInto=Remarque: Le compte de comptabilité pour la TVA est défini dans le menu <b> %s </b> - <b> %s </b>
+AccountingAccountForSalesTaxAreDefinedInto=Remarque: Le compte comptable pour la TVA est défini dans le menu <b> %s </b> - <b> %s </b>
 
 ## Export
 ExportDraftJournal=Exporter le journal brouillon
@@ -262,7 +269,8 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris
-Modelcsv_configurable=Export configurable
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Exportation FEC (Art. L47 A) (Test)
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -296,7 +304,7 @@ BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
-UseMenuToSetBindindManualy=L'autodection n'est pas possible, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement
+UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
 
 ## Import
 ImportAccountingEntries=Écritures comptables

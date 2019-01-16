@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,14 +134,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		$constant = 'PROPALE_SAPHIR_MASK_'.$propal->entity;
-
 		// On defini critere recherche compteur
-		if (! empty($conf->global->$constant)) {
-			$mask = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$mask = $conf->global->PROPALE_SAPHIR_MASK;
-		}
+		$mask = $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
 		{
@@ -149,8 +143,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		// Use object entity ID
-		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+		// Get entities
+		$entity = getEntity('proposalnumber', 1, $propal);
 
 		$date = $propal->date;
 

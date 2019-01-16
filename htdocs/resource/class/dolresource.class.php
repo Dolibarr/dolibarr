@@ -47,7 +47,12 @@ class Dolresource extends CommonObject
 	public $element_type;
 	public $busy;
 	public $mandatory;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_create;
+
 	public $type_label;
 	public $tms='';
 
@@ -379,7 +384,6 @@ class Dolresource extends CommonObject
 				if($obj->element_id && $obj->element_type) {
 					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
 				}
-
     		}
     		$this->db->free($resql);
 
@@ -641,7 +645,6 @@ class Dolresource extends CommonObject
 					if($obj->element_id && $obj->element_type)
 						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
         			$this->lines[] = $line;
-
    				}
    				$this->db->free($resql);
    			}

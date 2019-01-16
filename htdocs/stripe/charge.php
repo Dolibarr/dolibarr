@@ -221,7 +221,6 @@ if (!$rowid)
 	    } elseif ($charge->paid=='1'){
 
         print img_picto($langs->trans("".$charge->status.""),'statut4');
-             
 	    } else {
 	    	$label="Message: ".$charge->failure_message."<br>";
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";

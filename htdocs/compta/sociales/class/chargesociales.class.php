@@ -64,7 +64,15 @@ class ChargeSociales extends CommonObject
     public $date_creation;
     public $date_modification;
     public $date_validation;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
+    /**
+     * @var int ID
+     */
 	public $fk_project;
 
 
@@ -360,7 +368,6 @@ class ChargeSociales extends CommonObject
             {
                 return 0;
             }
-
         }
         else
         {
@@ -619,7 +626,6 @@ class ChargeSociales extends CommonObject
             }
 
             $this->db->free($result);
-
         }
         else
         {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
@@ -82,9 +82,16 @@ else    // For no ajax call
             dol_print_error($db,$ecmdir->error);
             exit;
         }
+
+        $relativepath=$ecmdir->getRelativePath();	// Example   'mydir/'
     }
-    $relativepath=$ecmdir->getRelativePath();
-    $upload_dir = $rootdirfordoc.'/'.$relativepath;
+	elseif (GETPOST('section_dir'))
+	{
+		$relativepath=GETPOST('section_dir');
+	}
+	//var_dump($section.'-'.GETPOST('section_dir').'-'.$relativepath);
+
+	$upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
 if (empty($url))
@@ -172,7 +179,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -203,6 +210,8 @@ if ($type == 'directory')
     else if ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
     else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
+	// Auto area for holiday
+    else if ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))
@@ -226,7 +235,18 @@ if ($type == 'directory')
     {
     	if ($module == 'medias')
     	{
-    		$relativepath=GETPOST('file','alpha');
+    		/*
+    		   $_POST is array like
+    		  'token' => string '062380e11b7dcd009d07318b57b71750' (length=32)
+			  'action' => string 'file_manager' (length=12)
+			  'website' => string 'template' (length=8)
+			  'pageid' => string '124' (length=3)
+			  'section_dir' => string 'mydir/' (length=3)
+			  'section_id' => string '0' (length=1)
+			  'max_file_size' => string '2097152' (length=7)
+			  'sendit' => string 'Envoyer fichier' (length=15)
+    		 */
+    		$relativepath=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
     		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
@@ -269,14 +289,14 @@ if ($type == 'directory')
 
     	if ($module == 'medias')
     	{
-    		$useinecm = 2;
+    		$useinecm = 6;
     		$modulepart='medias';
         	$perm=($user->rights->website->write || $user->rights->emailing->creer);
         	$title='none';
     	}
     	else
     	{
-    		$useinecm = 1;
+    		$useinecm = 5;
     		$modulepart='ecm';
         	$perm=$user->rights->ecm->upload;
         	$title='';	// Use default

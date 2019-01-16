@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
 -- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -50,6 +50,7 @@ create table llx_societe
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
+  
   skype                    varchar(255),                        		--
   twitter                  varchar(255),                        		--
   facebook                 varchar(255),                        		--
@@ -58,6 +59,7 @@ create table llx_societe
   googleplus               varchar(255),                        		--
   youtube                  varchar(255),                        		--
   whatsapp                 varchar(255),                        		--
+  
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status

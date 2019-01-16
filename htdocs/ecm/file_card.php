@@ -390,7 +390,6 @@ if ($action == 'edit')
 if ($action == 'delete_file')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
-
 }
 
 if ($action != 'edit')
@@ -411,7 +410,7 @@ if ($action != 'edit')
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 */
 	print '</div>';

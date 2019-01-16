@@ -297,7 +297,6 @@ class Orders extends DolibarrApi
 
         if ($updateRes > 0) {
             return $updateRes;
-
         } else {
 			throw new RestException(400, $this->commande->error);
         }
@@ -793,7 +792,6 @@ class Orders extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, $field ." field missing");
             $commande[$field] = $data[$field];
-
         }
         return $commande;
     }

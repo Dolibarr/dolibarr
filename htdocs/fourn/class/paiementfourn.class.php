@@ -2,10 +2,11 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,7 @@ class PaiementFourn extends Paiement
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
+				$this->num_paiement   = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
@@ -262,7 +264,6 @@ class PaiementFourn extends Paiement
 							$this->error=$this->db->lasterror();
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -572,13 +573,17 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$result='';
+
 		$text=$this->ref;   // Sometimes ref contains label
 		if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
 			if ($reg[1]=='paiement') $reg[1]='Payment';
 			$text=$langs->trans($reg[1]);
 		}
-		$label = $langs->trans("ShowPayment").': '.$text;
+
+		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+		$label.= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
+		$label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
@@ -612,6 +617,7 @@ class PaiementFourn extends Paiement
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->facid = 1;
+		$this->socid = 1;
 		$this->datepaye = $nownotime;
 	}
 
@@ -655,14 +661,12 @@ class PaiementFourn extends Paiement
 			}
 
 			// For compatibility
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
 				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
 				$classname = preg_replace('/\-.*$/','',$classname);
 				// Include file with class
-				foreach ($conf->file->dol_document_root as $dirroot)
-				{
+				foreach ($conf->file->dol_document_root as $dirroot) {
 					$dir = $dirroot."/core/modules/supplier_payment/";
 
 					// Load file with numbering class (if found)
@@ -672,8 +676,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				dol_print_error('',"Failed to include file ".$file);
 				return '';
 			}
