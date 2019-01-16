@@ -396,12 +396,12 @@ if ($result)
 		print $product_static->getNomUrl(1);
 		print '</td>';
 
-		print '<td style="text-align:left;">'.$obj->label.'</td>';
+		print '<td class="left">'.$obj->label.'</td>';
 
 		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC))
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
-    		// print '<td style="text-align:left;">' . $obj->description . '</td>';
+    		// print '<td class="left">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
     		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
