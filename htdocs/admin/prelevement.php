@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/admin/prelevement.php
  *	\ingroup    prelevement
- *	\brief      Page configuration des prelevements
+ *	\brief      Page to setup Withdrawals
  */
 
 require '../main.inc.php';

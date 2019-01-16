@@ -103,7 +103,7 @@ SEPAFRST=SEPA FRST
 ExecutionDate=Execution date
 CreateForSepa=Create direct debit file
 ICS=Creditor Identifier CI
-END_TO_END=EndToEndId" SEPA XML tag - Unique id assigned per transaction
+END_TO_END="EndToEndId" SEPA XML tag - Unique id assigned per transaction
 USTRD="Unstructured" SEPA XML tag
 ADDDAYS=Add days to Execution Date
 
