@@ -4312,7 +4312,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
- *		@see	price2num					Revert function of price
+ *		@see	price2num()					Revert function of price
  */
 function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
@@ -4375,7 +4375,11 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
 		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
-		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		$listoflanguagesbefore=array('nl_NL');
+		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
+		{
+		    $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		}
 		else
 		{
 			$tmpcur=$outlangs->getCurrencySymbol($currency_code);
@@ -5834,7 +5838,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'member')
+			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
@@ -5862,9 +5866,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (! empty($conf->expedition->enabled))
 			{
-				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+			    $substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
 			}
 		}
