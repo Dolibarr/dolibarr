@@ -348,7 +348,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         if (! $error)
         {
             // Send confirmation Email
-            if ($object->email && $sendalsoemail)
+            if ($object->email && $sendalsoemail)   // $object is 'Adherent'
             {
             	$subject = '';
             	$msg= '';
