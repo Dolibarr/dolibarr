@@ -829,9 +829,9 @@ if (empty($reshook))
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
 
 		$db->begin();
-
+		
 		$error = 0;
-
+		$originentity = GETPOST('originentity');
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -910,6 +910,9 @@ if (empty($reshook))
 
 			if (! $error)
 			{
+				if(!empty($originentity)){
+					$object->entity = $originentity;
+				}
 				$object->socid				= GETPOST('socid','int');
 				$object->number				= $_POST['ref'];
 				$object->date				= $dateinvoice;
@@ -2600,7 +2603,6 @@ if ($action == 'create')
 
 	// Load objectsrc
 	$remise_absolue = 0;
-
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -2722,6 +2724,7 @@ if ($action == 'create')
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
+	print '<input type="hidden" name="originentity" value="' . GETPOST('originentity') . '">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
 
 	dol_fiche_head('');
@@ -4802,7 +4805,7 @@ else if ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'' . $object->id . '&amp;action=create&amp;type=2'.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
 			}
 

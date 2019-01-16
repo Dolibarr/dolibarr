@@ -947,7 +947,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromClone($socid=0)
 	{
-		global $user,$hookmanager;
+		global $user,$hookmanager, $conf;
 
 		$error=0;
 
@@ -3349,8 +3349,10 @@ class Facture extends CommonInvoice
 
 			$mybool=false;
 
+			
 			$file = $conf->global->FACTURE_ADDON.".php";
 			$classname = $conf->global->FACTURE_ADDON;
+			
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3383,7 +3385,7 @@ class Facture extends CommonInvoice
                     }
 				}
 			}
-
+			
 			if (! $mybool)
 			{
 				dol_print_error('',"Failed to include file ".$file);
@@ -3485,7 +3487,7 @@ class Facture extends CommonInvoice
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.fk_soc = s.rowid";
 		if (! $user->rights->societe->client->voir && ! $socid) //restriction
 		{
@@ -3557,7 +3559,7 @@ class Facture extends CommonInvoice
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.paye = 0";					// Pas classee payee completement
 		$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
 		$sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement
@@ -3606,7 +3608,7 @@ class Facture extends CommonInvoice
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
-		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 		//  $sql.= " WHERE f.fk_statut >= 1";
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
@@ -3822,7 +3824,7 @@ class Facture extends CommonInvoice
 			$clause = " AND";
 		}
 		$sql.= $clause." f.paye=0";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
 
@@ -4070,7 +4072,7 @@ class Facture extends CommonInvoice
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." f.entity = ".$conf->entity;
+		$sql.= " ".$clause." f.entity IN (".getEntity('invoice').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
