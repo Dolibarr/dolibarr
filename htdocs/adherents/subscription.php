@@ -558,7 +558,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         if (! $error)
         {
             // Send confirmation Email
-            if ($object->email && $_POST["sendmail"])
+            if ($object->email && $_POST["sendmail"])   // $object is 'Adherent'
             {
                 $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
                 $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
