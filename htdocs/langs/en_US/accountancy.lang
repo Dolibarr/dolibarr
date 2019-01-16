@@ -42,6 +42,7 @@ CountriesInEEC=Countries in EEC
 CountriesNotInEEC=Countries not in EEC
 CountriesInEECExceptMe=Countries in EEC except %s
 CountriesExceptMe=All countries except %s
+AccountantFiles=Export accounting documents
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup

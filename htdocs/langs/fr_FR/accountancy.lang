@@ -235,7 +235,7 @@ ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte
 ChangeBinding=Changer les liens
 Accounted=Comptabilisé
 NotYetAccounted=Pas encore comptabilisé
-AccountantFiles = Justificatifs comptablilité
+AccountantFiles=Export pièces/justificatifs
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories

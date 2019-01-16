@@ -32,10 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
-restrictedArea($user,'banque');
+$langs->loadLangs(array("accountancy","bills"));
 
-$langs->load("accountancy");
-if (! empty($conf->facture->enabled)) $langs->load("bills");
 $date_start =GETPOST('date_start','alpha');
 $date_startDay= GETPOST('date_startday','int');
 $date_startMonth= GETPOST('date_startmonth','int');
@@ -48,13 +46,10 @@ $date_stopYear= GETPOST('date_stopyear','int');
 //FIXME doldate
 $date_stop=($date_stopDay)?dol_mktime(0,0,0,$date_stopMonth,$date_stopDay,$date_stopYear):strtotime($date_stop);
 $action =GETPOST('action','alpha');
-// Security check
-//if ($user->societe_id) $id=$user->societe_id;
-//$result = restrictedArea($user, 'societe', $id, '&societe');
-//$object = new Societe($db);
-//if ($id > 0) $object->fetch($id);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('comptafilescard','globalcard'));
+$hookmanager->initHooks(array('comptafileslist','globallist'));
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -66,10 +61,20 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.datef,f.rowid"; // Set here default search field
 if (! $sortorder) $sortorder="DESC";
+
+
 $arrayfields=array(
     'date'=>array('label'=>"Date", 'checked'=>1),
     //...
 );
+
+// Security check
+if (empty($conf->compta->enabled) && empty($conf->accounting->enabled)) {
+    accessforbidden();
+}
+if ($user->societe_id > 0)
+    accessforbidden();
+
 
 
 /*
@@ -124,34 +129,34 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 case "Invoice":
                     $subdir=dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->facture->dir_output.'/'.$subdir;
-                    $link="../../document.php?modulepart=facture&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=facture&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 case "InvoiceSupplier":
                     $tmpinvoicesupplier->fetch($objd->id);
                     $subdir=get_exdir(0,0,0,1,$tmpinvoicesupplier,'invoice_supplier').'/'.dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-                    $link="../../document.php?modulepart=facture_fournisseur&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 case "Expense":
                     $subdir=dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-                    $link="../../document.php?modulepart=expensereport&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=expensereport&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 case "Salary":
                     $subdir=dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
-                    $link="../../document.php?modulepart=salaries&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=salaries&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 case "Donation":
                     $tmpdonation->fetch($objp->id);
                     $subdir=get_exdir(0,0,0,1,$tmpdonation,'donation'). '/'. dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->don->dir_output . '/' . $subdir;
-                    $link="../../document.php?modulepart=don&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=don&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 case "SocialContributions":
                     $subdir=dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->tax->dir_output . '/' . $subdir;
-                    $link="../../document.php?modulepart=tax&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=tax&file=".str_replace('/','%2F',$subdir).'%2F';
                     break;
                 default:
                     $subdir='';
@@ -215,7 +220,7 @@ if ($result && $action == "dl")
     dol_delete_file($zip);
 
     $log='date,type,ref,total,paid,filename,item_id'."\n";
-    $zipname = $conf->accounting->dir_temp.'/'.($date_start)."-".($date_stop).'_export.zip';
+    $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.($date_start)."-".($date_stop).'_export.zip';
 
     $zip = new ZipArchive;
     $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
@@ -267,9 +272,17 @@ dol_fiche_end();
 
 if (!empty($date_start) && !empty($date_stop))
 {
+    $param='action=searchfiles';
+    $param.='&date_startday='.GETPOST('date_startday','int');
+    $param.='&date_startmonth='.GETPOST('date_startmonth','int');
+    $param.='&date_startyear='.GETPOST('date_startyear','int');
+    $param.='&date_stopday='.GETPOST('date_stopday','int');
+    $param.='&date_stopmonth='.GETPOST('date_stopmonth','int');
+    $param.='&date_stopyear='.GETPOST('date_stopyear','int');
+
     print '<form name="dl" action="?action=dl" method="POST" >'."\n";
 
-    echo dol_print_date($date_start)." - ".dol_print_date($date_stop);
+    echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 
     print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'dayxcard').'" />';
     print '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
@@ -292,8 +305,8 @@ if (!empty($date_start) && !empty($date_stop))
     print '<tr class="liste_titre">';
     print_liste_field_titre($arrayfields['date']['label'],$_SERVER["PHP_SELF"],"date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
     print '<td>'.$langs->trans("Type").'</td>';
-    print '<td align="right">'.$langs->trans("Ref").'</td>';
-    print '<td>'.$langs->trans("File").'</td>';
+    print '<td>'.$langs->trans("Ref").'</td>';
+    print '<td>'.$langs->trans("Link").'</td>';
     print '<td>'.$langs->trans("Paid").'</td>';
     print '<td align="right">'.$langs->trans("Debit").'</td>';
     print '<td align="right">'.$langs->trans("Credit").'</td>';
@@ -334,7 +347,7 @@ if (!empty($date_start) && !empty($date_stop))
                             print '<td aling="left">'.$data['ref'].'</td>';
 
                             // File link
-                            print '<td><a href='.$data['link'].">".$data['name']."</a></td>\n";
+                            print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
 
                             print '<td aling="left">'.$data['paid'].'</td>';
                             print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
