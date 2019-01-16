@@ -389,6 +389,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
 print '</td><td class="liste_titre" align="right">';
@@ -408,6 +409,7 @@ print_liste_field_titre("CronDtEnd",$_SERVER["PHP_SELF"],"t.dateend","",$param,'
 print_liste_field_titre("CronMaxRun",$_SERVER["PHP_SELF"],"t.maxrun","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("CronNbRun",$_SERVER["PHP_SELF"],"t.nbrun","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("CronDtLastLaunch",$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("CronDtLastResult",$_SERVER["PHP_SELF"],"t.datelastresult","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("CronLastResult",$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("CronLastOutput",$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronDtNextLaunch",$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
@@ -506,10 +508,17 @@ if ($num > 0)
 		if (!empty($obj->nbrun)) {print $obj->nbrun;} else {print '0';}
 		print '</td>';
 
+		// Date start last run
 		print '<td class="center">';
-		if(!empty($obj->datelastrun)) {print dol_print_date($db->jdate($obj->datelastrun),'dayhour');}
+		if (!empty($obj->datelastrun)) {print dol_print_date($db->jdate($obj->datelastrun),'dayhoursec');}
 		print '</td>';
 
+		// Date end last run
+		print '<td class="center">';
+		if (!empty($obj->datelastresult)) {print dol_print_date($db->jdate($obj->datelastresult),'dayhoursec');}
+		print '</td>';
+
+		// Return code of last run
 		print '<td class="center">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) print $obj->lastresult;
@@ -517,6 +526,7 @@ if ($num > 0)
 		}
 		print '</td>';
 
+		// Output of last run
 		print '<td>';
 		if(!empty($obj->lastoutput)) {print dol_trunc(nl2br($obj->lastoutput),50);}
 		print '</td>';
