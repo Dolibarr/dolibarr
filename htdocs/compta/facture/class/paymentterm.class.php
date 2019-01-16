@@ -167,7 +167,7 @@ class PaymentTerm // extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " t.entity";
+		$sql.= " t.entity,";
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
