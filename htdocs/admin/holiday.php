@@ -221,8 +221,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (substr($file, 0, 12) == 'mod_holiday_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -309,7 +307,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 
 print load_fiche_titre($langs->trans("TemplatePDFHolidays"),'','');
 
-// Defini tableau def des modeles
+// Defined model definition table
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -405,7 +403,7 @@ foreach ($dirmodels as $reldir)
 	                                print "</td>";
 	                            }
 
-	                            // Defaut
+	                            // Default
 	                            print '<td align="center">';
 	                            if ($conf->global->HOLIDAY_ADDON_PDF == $name)
 	                            {
