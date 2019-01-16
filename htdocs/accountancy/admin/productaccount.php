@@ -396,12 +396,12 @@ if ($result)
 		print $product_static->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="left">'.$obj->label.'</td>';
+		print '<td style="text-align:left;">'.$obj->label.'</td>';
 
 		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC))
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
-    		// print '<td align="left">' . $obj->description . '</td>';
+    		// print '<td style="text-align:left;">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
     		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
@@ -414,7 +414,7 @@ if ($result)
 			print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
-		print '<td align="left">';
+		print '<td style="text-align:left;">';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 		    print length_accountg($obj->accountancy_code_buy);
 		    if ($obj->accountancy_code_buy && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
@@ -430,7 +430,7 @@ if ($result)
 		$defaultvalue='';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     		// Accounting account buy
-			print '<td align="left">';
+			print '<td style="text-align:left;">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy;
 			$codesell=length_accountg($obj->accountancy_code_buy);
@@ -439,7 +439,7 @@ if ($result)
 			print '</td>';
 		} else {
 			// Accounting account sell
-			print '<td align="left">';
+			print '<td style="text-align:left;">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodsell;
 			$codesell=length_accountg($obj->accountancy_code_sell);

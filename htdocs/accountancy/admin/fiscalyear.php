@@ -144,9 +144,9 @@ if ($result)
 			$fiscalyearstatic->id = $obj->rowid;
 			print '<tr class="oddeven">';
 			print '<td><a href="fiscalyear_card.php?id=' . $obj->rowid . '">' . img_object($langs->trans("ShowFiscalYear"), "technic") . ' ' . $obj->rowid . '</a></td>';
-			print '<td align="left">' . $obj->label . '</td>';
-			print '<td align="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
-			print '<td align="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
+			print '<td style="text-align:left;">' . $obj->label . '</td>';
+			print '<td style="text-align:left;">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
+			print '<td style="text-align:left;">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
 			print '<td align="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
 			print '<td align="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
 			print '<td align="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';

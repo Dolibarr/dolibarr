@@ -203,7 +203,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
-		print '<td align="left">';
+		print '<td style="text-align:left;">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
@@ -280,7 +280,7 @@ if ($resql) {
 		else print length_accountg($row[0]);
 		print '</td>';
 
-		print '<td align="left">';
+		print '<td style="text-align:left;">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
