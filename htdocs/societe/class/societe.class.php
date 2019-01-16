@@ -6,7 +6,7 @@
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
@@ -86,7 +86,7 @@ class Societe extends CommonObject
 		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1,  'notnull'=>1,  'index'=>1, 'position'=>20),
 		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'datec'			=>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
 		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
 		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
@@ -1436,7 +1436,7 @@ class Societe extends CommonObject
 		}
 
 		// Use first price level if level not defined for third party
-		if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->price_level)) $this->price_level=1;
+		if ((! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && empty($this->price_level)) $this->price_level=1;
 
 		return $result;
 	}
@@ -3304,12 +3304,13 @@ class Societe extends CommonObject
 	/**
 	 *  Create a third party into database from a member object
 	 *
-	 *  @param	Adherent	$member		Object member
-	 * 	@param	string	$socname		Name of third party to force
-	 *	@param	string	$socalias	Alias name of third party to force
-	 *  @return int					<0 if KO, id of created account if OK
+	 *  @param	Adherent	$member			Object member
+	 * 	@param	string		$socname		Name of third party to force
+	 *	@param	string		$socalias		Alias name of third party to force
+	 *  @param	string		$customercode	Customer code
+	 *  @return int							<0 if KO, id of created account if OK
 	 */
-	function create_from_member(Adherent $member, $socname='', $socalias='')
+	function create_from_member(Adherent $member, $socname='', $socalias='', $customercode='')
 	{
         // phpcs:enable
 		global $user,$langs;
@@ -3337,7 +3338,7 @@ class Societe extends CommonObject
 		$this->facebook=$member->facebook;
 
 		$this->client = 1;				// A member is a customer by default
-		$this->code_client = -1;
+		$this->code_client = ($customercode?$customercode:-1);
 		$this->code_fournisseur = -1;
 
 		$this->db->begin();
@@ -3873,6 +3874,7 @@ class Societe extends CommonObject
 	     */
 		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
 		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason

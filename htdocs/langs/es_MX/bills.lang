@@ -45,7 +45,6 @@ BillTo=Hacia
 StandingOrder=Orden de domiciliación bancaria
 SupplierBillsToPay=Facturas de proveedores no pagadas
 CustomerBillsUnpaid=Facturas de clientes no pagadas
-CreditNote=Nota de crédito
 ReasonDiscount=Razón
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito

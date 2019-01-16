@@ -1,7 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
-AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Quotations
 Module20Desc=Management of quotations
 Permission21=Read quotations
@@ -16,6 +13,4 @@ ProposalsNumberingModules=Quotation numbering models
 ProposalsPDFModules=Quotation documents models
 FreeLegalTextOnProposal=Free text on quotations
 WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)
-ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
-FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (quotations, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
 MailToSendProposal=Customer quotations

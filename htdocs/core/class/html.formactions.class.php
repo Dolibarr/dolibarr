@@ -243,13 +243,13 @@ class FormActions
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
-					print '<td>'.$ref.'</td>';
+					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
 	        		{
 	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
-	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
+	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
 	        		}
 	        		print '</td>';
 					// Type
@@ -332,7 +332,7 @@ class FormActions
         // phpcs:enable
         global $langs,$user,$form,$conf;
 
-        if (! is_object($form)) $form=new Form($db);
+        if (! is_object($form)) $form=new Form($this->db);
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -357,7 +357,7 @@ class FormActions
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

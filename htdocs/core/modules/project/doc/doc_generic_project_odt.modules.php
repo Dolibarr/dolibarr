@@ -164,27 +164,27 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_tasks($task,$outputlangs)
+	function get_substitutionarray_tasks(Task $task,$outputlangs)
 	{
         // phpcs:enable
 		global $conf;
 
 		$resarray = array(
-		'task_ref'=>$task->ref,
-		'task_fk_project'=>$task->fk_project,
-		'task_projectref'=>$task->projectref,
-		'task_projectlabel'=>$task->projectlabel,
-		'task_label'=>$task->label,
-		'task_description'=>$task->description,
-		'task_fk_parent'=>$task->fk_parent,
-		'task_duration'=>$task->duration,
-		'task_duration_hour'=>convertSecondToTime($task->duration,'all'),
-		'task_progress'=>$task->progress,
-		'task_public'=>$task->public,
-		'task_date_start'=>dol_print_date($task->date_start,'day'),
-		'task_date_end'=>dol_print_date($task->date_end,'day'),
-		'task_note_private'=>$task->note_private,
-		'task_note_public'=>$task->note_public
+			'task_ref'=>$task->ref,
+			'task_fk_project'=>$task->fk_project,
+			'task_projectref'=>$task->projectref,
+			'task_projectlabel'=>$task->projectlabel,
+			'task_label'=>$task->label,
+			'task_description'=>$task->description,
+			'task_fk_parent'=>$task->fk_parent,
+			'task_duration'=>$task->duration,
+			'task_duration_hour'=>convertSecondToTime($task->duration,'all'),
+			'task_progress'=>$task->progress,
+			'task_public'=>$task->public,
+			'task_date_start'=>dol_print_date($task->date_start,'day'),
+			'task_date_end'=>dol_print_date($task->date_end,'day'),
+			'task_note_private'=>$task->note_private,
+			'task_note_public'=>$task->note_public
 		);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -750,6 +750,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$num = $this->db->num_rows($resql);
 							$i = 0;
 							$tasks = array();
+							$row=array();
 							$listlinestasktime = $listlines->__get('taskstimes');
 							if (empty($num)) {
 								$row['rowid']='';
@@ -796,7 +797,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 								if (!empty($row['thm'])) {
 									$row['amountht']=($row['task_duration'] / 3600) * $row['thm'];
 									$defaultvat = get_default_tva($mysoc, $mysoc);
-									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');;
+									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');
 								} else {
 									$row['amountht']=0;
 									$row['amountttc']=0;
@@ -1064,7 +1065,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListSocialContributionAssociatedProject",
 						'class' => 'ChargeSociales',
 						'table' => 'chargesociales',
-						'urlnew' => DOL_URL_ROOT . '/compta/sociales/card.php?action=create&projectid=' . $id,
+						'urlnew' => DOL_URL_ROOT . '/compta/sociales/card.php?action=create&projectid=' . $object->id,
 						'test' => $conf->tax->enabled && $user->rights->tax->charges->lire
 					),
 					'stock_mouvement' => array(

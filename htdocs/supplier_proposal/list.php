@@ -10,6 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2016	   Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2018	   Charlene Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,11 +74,14 @@ $search_btn=GETPOST('button_search','alpha');
 $search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
+$day=GETPOST("day");
 $yearvalid=GETPOST("yearvalid");
 $monthvalid=GETPOST("monthvalid");
+$dayvalid=GETPOST("dayvalid");
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -122,10 +126,10 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'p.ref'=>'Ref',
+	'sp.ref'=>'Ref',
 	's.nom'=>'Supplier',
 	'pd.description'=>'Description',
-	'p.note_public'=>'NotePublic',
+	'sp.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
@@ -195,8 +199,10 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_author='';
 	$yearvalid='';
 	$monthvalid='';
+	$dayvalid='';
 	$year='';
 	$month='';
+	$day='';
 	$search_status='';
 	$object_statut='';
 }
@@ -217,6 +223,7 @@ if (empty($reshook))
  * View
  */
 
+
 $now=dol_now();
 
 $form = new Form($db);
@@ -227,7 +234,7 @@ $companystatic=new Societe($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('',$langs->trans('CommRequest'),$help_url);
+//llxHeader('',$langs->trans('CommRequest'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -282,32 +289,8 @@ if ($search_montant_ttc != '') $sql.= natural_search("sp.total", $search_montant
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
 if ($search_status >= 0 && $search_status != '') $sql.= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
-if ($month > 0)
-{
-	if ($year > 0 && empty($day))
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-	else if ($year > 0 && ! empty($day))
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-	else
-	$sql.= " AND date_format(sp.date_livraison, '%m') = '".$month."'";
-}
-else if ($year > 0)
-{
-	$sql.= " AND sp.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-}
-if ($monthvalid > 0)
-{
-	if ($yearvalid > 0 && empty($dayvalid))
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,$monthvalid,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,$monthvalid,false))."'";
-	else if ($yearvalid > 0 && ! empty($dayvalid))
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $monthvalid, $dayvalid, $yearvalid))."' AND '".$db->idate(dol_mktime(23, 59, 59, $monthvalid, $dayvalid, $yearvalid))."'";
-	else
-	$sql.= " AND date_format(sp.date_valid, '%m') = '".$monthvalid."'";
-}
-else if ($yearvalid > 0)
-{
-	$sql.= " AND sp.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,1,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,12,false))."'";
-}
+$sql.= dolSqlDateFilter("sp.date_livraison", $day, $month, $year);
+$sql.= dolSqlDateFilter("sp.date_valid", $dayvalid, $monthvalid, $yearvalid);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
@@ -359,6 +342,19 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+
+		$id = $obj->rowid;
+
+		header("Location: ".DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$id);
+
+		exit;
+	}
+
+	llxHeader('',$langs->trans('CommRequest'),$help_url);
+
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -381,6 +377,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 		//'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);

@@ -24,7 +24,8 @@ CREATE TABLE llx_emailcollector_emailcollectoraction(
 	tms timestamp NOT NULL, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	import_key varchar(14), 
+	position integer DEFAULT 0,
+	import_key varchar(14),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

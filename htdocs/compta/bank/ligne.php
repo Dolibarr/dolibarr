@@ -341,16 +341,26 @@ if ($result)
             {
                 if ($key) print '<br>';
                 if ($links[$key]['type']=='payment') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$links[$key]['url_id'].'">';
+                    require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+                    $paymenttmp=new Paiement($db);
+                    $paymenttmp->fetch($links[$key]['url_id']);
+                    $paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
+                    /*print '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
-                    print '</a>';
+                    print '</a>';*/
+                    print $paymenttmp->getNomUrl(1);
                 }
                 else if ($links[$key]['type']=='payment_supplier') {
-                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$links[$key]['url_id'].'">';
+                    require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+                    $paymenttmp=new PaiementFourn($db);
+                    $paymenttmp->fetch($links[$key]['url_id']);
+                    $paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
+                    /*print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPayment'),'payment').' ';
                     print $langs->trans("Payment");
-                    print '</a>';
+                    print '</a>';*/
+                    print $paymenttmp->getNomUrl(1);
                 }
                 else if ($links[$key]['type']=='company') {
                     $societe=new Societe($db);
@@ -596,7 +606,7 @@ if ($result)
             $langs->load('categories');
 
             // Bank line
-            print '<tr><td class="toptd">' . fieldLabel('RubriquesTransactions', 'custcats') . '</td><td>';
+            print '<tr><td class="toptd">' . $form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0) . '</td><td>';
             $cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
             print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
             print "</td></tr>";

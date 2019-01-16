@@ -194,7 +194,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 	        // Security:
 	        // Disallow file with some extensions. We rename them.
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-	        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+	        if (preg_match('/(\.htm|\.html|\.php|\.pl|\.cgi)$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
 	            $filenameto.= '.noexe';
 	        }
@@ -217,11 +217,14 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 			            {
 			            	// Define if we have to generate thumbs or not
 			            	$generatethumbs = 1;
-			            	if (GETPOST('section_dir')) $generatethumbs=0;
+			            	// When we rename a file from the file manager in ecm, we must not regenerate thumbs (not a problem, we do pass here)
+			            	// When we rename a file from the website module, we must not regenerate thumbs (module = medias in such a case)
+			            	// but when we rename from a tab "Documents", we must regenerate thumbs
+			            	if (GETPOST('modulepart') == 'medias') $generatethumbs=0;
 
 			            	if ($generatethumbs)
 			            	{
-				            	if ($object->id)
+			            		if ($object->id)
 				            	{
 				                	$object->addThumbs($destpath);
 				            	}

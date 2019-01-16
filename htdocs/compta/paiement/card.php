@@ -107,7 +107,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 	$db->begin();
 
     $object->fetch($id);
-	if ($object->valide() > 0)
+	if ($object->valide($user) > 0)
 	{
 		$db->commit();
 
@@ -157,7 +157,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-    $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+	$datepaye = dol_mktime(GETPOST('datephour','int'), GETPOST('datepmin','int'), GETPOST('datepsec','int'), GETPOST('datepmonth','int'), GETPOST('datepday','int'), GETPOST('datepyear','int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -191,17 +191,13 @@ $head = payment_prepare_head($object);
 
 dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
-/*
- * Confirmation de la suppression du paiement
- */
+// Confirmation de la suppression du paiement
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 }
 
-/*
- * Confirmation de la validation du paiement
- */
+// Confirmation de la validation du paiement
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
@@ -220,12 +216,17 @@ print '<table class="border centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+print $form->editfieldval("Date", 'datep', $object->date, $object,$user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.'</td></tr>';
+print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
+print $object->num_paiement?' - '.$object->num_paiement:'';
+print '</td></tr>';
+
+// Amount
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
@@ -306,9 +307,6 @@ print '<tr><td class="tdtop">'.$form->editfieldkey("Comments",'note',$object->no
 print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
-// Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
-
 print '</table>';
 
 print '</div>';
@@ -320,7 +318,7 @@ dol_fiche_end();
  * List of invoices
  */
 
-$sql = 'SELECT f.rowid as facid, f.facnumber,f.entity, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
 $sql.= ' AND f.fk_soc = s.rowid';
@@ -349,7 +347,6 @@ if ($resql)
     print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
     print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
     print '<td align="right">'.$langs->trans('Status').'</td>';
-	
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -380,8 +377,8 @@ if ($resql)
 			print '<td>';
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
-			
-			// Entity
+
+			// Expected to pay
 			if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
 				print '<td>';
 				$mc->getInfo($objp->entity);
@@ -451,7 +448,7 @@ if ($user->societe_id == 0 && $action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

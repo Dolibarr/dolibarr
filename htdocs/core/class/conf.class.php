@@ -238,7 +238,11 @@ class Conf
 		{
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret) $mc = new ActionsMulticompany($db);
+			if ($ret)
+			{
+				$mc = new ActionsMulticompany($db);
+				$this->mc = $mc;
+			}
 		}
 
 		// Clean some variables
@@ -424,10 +428,11 @@ class Conf
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
 		// societe
-		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))		$this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))		$this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
-		if (empty($this->global->CHEQUERECEIPTS_ADDON))           $this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		if (empty($conf->global->TICKETSUP_ADDON))				$this->global->TICKETSUP_ADDON='mod_ticket_simple';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
@@ -453,7 +458,11 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
-			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+			if(empty($this->reception->enabled))$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+			else {
+				$this->global->STOCK_CALCULATE_ON_RECEPTION=1;
+				$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE=0;
+			}
 		}
 
 		// conf->currency

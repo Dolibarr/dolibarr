@@ -91,7 +91,7 @@ print '</td></tr></table><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql.= " pfd.date_demande, pfd.amount,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
@@ -120,7 +120,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             $invoicestatic->id=$obj->rowid;
-            $invoicestatic->ref=$obj->facnumber;
+            $invoicestatic->ref=$obj->ref;
             $invoicestatic->statut=$obj->fk_statut;
             $invoicestatic->paye=$obj->paye;
             $invoicestatic->type=$obj->type;

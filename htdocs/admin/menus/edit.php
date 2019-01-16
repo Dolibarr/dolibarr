@@ -96,6 +96,7 @@ if ($action == 'update')
             $menu->perms=GETPOST('perms','alpha');
             $menu->target=GETPOST('target','alpha');
             $menu->user=GETPOST('user','alpha');
+            $menu->mainmenu=GETPOST('propertymainmenu','alpha');
             if (is_numeric(GETPOST('menuIdParent','alpha')))
             {
             	$menu->fk_menu=GETPOST('menuIdParent','alpha');
@@ -123,14 +124,11 @@ if ($action == 'update')
 	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
         $action = "edit";
-    }
-    else
-    {
+
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
     }
-
-    if ($_GET['return'])
+    else
     {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
@@ -215,6 +213,7 @@ if ($action == 'add')
         $menu->perms=GETPOST('perms','alpha');
         $menu->target=GETPOST('target','alpha');
         $menu->user=GETPOST('user','alpha');
+        $menu->mainmenu=GETPOST('propertymainmenu','alpha');
         if (is_numeric(GETPOST('menuId','int')))
         {
         	$menu->fk_menu=GETPOST('menuId','int');
@@ -289,10 +288,13 @@ if ($action == 'create')
     		{
 				jQuery("#menuId").prop("disabled", true);
 	    		jQuery("#menuId").val(\'\');
+				jQuery("#propertymainmenu").removeAttr("disabled");
+	    		jQuery("#propertymainmenu").val(\'\');
 			}
-    		else
+    		if (jQuery("#topleft").val() == \'left\')
     		{
 				jQuery("#menuId").removeAttr("disabled");
+				jQuery("#propertymainmenu").prop("disabled", true);
     		}
     	}
     	init_topleft();
@@ -338,7 +340,7 @@ if ($action == 'create')
     print '</td>';
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
-    //User
+    // User
     print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
     print '<td><select class="flat" name="user">';
     print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
@@ -362,8 +364,14 @@ if ($action == 'create')
         print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected':'').'>'.$langs->trans('Left').'</option>';
         print '</select>';
     }
-    //	print '<input type="text" size="50" name="type" value="'.$type.'">';
     print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
+
+    // Mainmenu code
+    print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
+   	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):'').'"></td>';
+    print '<td>';
+    print $langs->trans("Example").': mytopmenukey';
+    print '</td></tr>';
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
@@ -373,23 +381,23 @@ if ($action == 'create')
     }
     else
     {
-        print '<td><input type="text" size="48" id="menuId" name="menuId" value="'.(GETPOST("menuId", 'int')?GETPOST("menuId", 'int'):'').'"></td>';
+        print '<td><input type="text" class="minwidth300" id="menuId" name="menuId" value="'.(GETPOST("menuId", 'int')?GETPOST("menuId", 'int'):'').'"></td>';
     }
     print '<td>'.$langs->trans('DetailMenuIdParent');
     print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
     print '</td></tr>';
 
     // Title
-    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.dol_escape_htmltag(GETPOST("titre",'alpha')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre",'alpha')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
     // URL
-    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.GETPOST("url",'alpha').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url",'alpha').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Langs
-    print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+    print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
     // Position
-    print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.dol_escape_htmltag(isset($_POST["position"])?$_POST["position"]:100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(isset($_POST["position"])?$_POST["position"]:100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -398,10 +406,10 @@ if ($action == 'create')
     print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
-    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.GETPOST("enabled",'alpha').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled')?GETPOST("enabled",'alpha'):'1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
     // Perms
-    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.GETPOST('perms','alpha').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms')?GETPOST('perms','alpha'):'1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
     print '</table>';
 
@@ -455,13 +463,30 @@ elseif ($action == 'edit')
     // Type
     print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
+    // Mainmenu code
+    if ($menu->type == 'top')
+    {
+	    print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
+	    /*if ($parent_rowid)
+	     {
+	     print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
+	     }
+	     else
+	     {*/
+	    print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):$menu->mainmenu).'"></td>';
+	    //}
+	    print '<td>';
+	    print $langs->trans("Example").': mytopmenukey';
+	    print '</td></tr>';
+    }
+
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent');
     print '</td>';
     $valtouse=$menu->fk_menu;
     if ($menu->fk_mainmenu) $valtouse='fk_mainmenu='.$menu->fk_mainmenu;
     if ($menu->fk_leftmenu) $valtouse.='&fk_leftmenu='.$menu->fk_leftmenu;
-    print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" size="48"></td>';
+    print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" class="minwidth300"></td>';
     print '<td>'.$langs->trans('DetailMenuIdParent');
     print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
     print '</td></tr>';
@@ -470,16 +495,16 @@ elseif ($action == 'edit')
     //print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
     // Title
-    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.dol_escape_htmltag($menu->titre).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->titre).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
     // Url
     print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="quatrevingtpercent" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Langs
-    print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+    print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
     // Position
-    print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="minwidth100" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -488,12 +513,12 @@ elseif ($action == 'edit')
     print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
-    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
+    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
     if (! empty($menu->enabled)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled,1)).')';
     print '</td></tr>';
 
     // Perms
-    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
+    print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
     if (! empty($menu->perms)) print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms,1)).')';
     print '</td></tr>';
 

@@ -61,7 +61,7 @@ class Interfaces
      *   @param		string		$action     Trigger event code
      *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
      *   @param     User		$user       Objet user
-     *   @param     Lang		$langs      Objet lang
+     *   @param     Translate	$langs      Objet lang
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
@@ -86,6 +86,7 @@ class Interfaces
             global $db;
             $user = new User($db);
         }
+        //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
 
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
@@ -93,6 +94,7 @@ class Interfaces
         $modules = array();
         $orders = array();
 		$i=0;
+
 
 		$dirtriggers=array_merge(array('/core/triggers'),$conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)

@@ -291,6 +291,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$heightforinfotot = 8;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -372,7 +373,7 @@ class pdf_rouget extends ModelePdfExpedition
 					// Tracking number
 					if (! empty($object->tracking_number))
 					{
-						$object->GetUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus($object->tracking_number);
 						if (! empty($object->tracking_url))
 						{
 							if ($object->shipping_method_id > 0)

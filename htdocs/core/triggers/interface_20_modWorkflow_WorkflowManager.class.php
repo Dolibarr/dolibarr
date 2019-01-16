@@ -315,6 +315,33 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		}
         	}
         }
+		 // classify billed reception
+        if ($action == 'BILL_SUPPLIER_VALIDATE')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
+
+        	if (! empty($conf->reception->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
+        	{
+        		$object->fetchObjectLinked('','reception',$object->id,$object->element);
+        		if (! empty($object->linkedObjects))
+        		{
+        		    $totalonlinkedelements=0;
+        		    foreach($object->linkedObjects['reception'] as $element)
+        		    {
+        		        if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+        		    }
+        		    dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+        		    if ($totalonlinkedelements == $object->total_ht)
+        		    {
+        		        foreach($object->linkedObjects['reception'] as $element)
+        		        {
+        		            $ret=$element->set_billed();
+        		        }
+        		    }
+        		}
+        		return $ret;
+        	}
+		}
 
         return 0;
     }

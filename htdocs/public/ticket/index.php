@@ -61,7 +61,7 @@ if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 } else {
     print '<div style="margin: 0 auto; width:60%">';
     print '<p style="text-align: center">' . ($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
-    print '<div class="corps">';
+    print '<div class="ticketform">';
     print '<div class="index_create"><a href="create_ticket.php" class="button orange bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</strong></a></div>';
     print '<div class="index_display"><a href="list.php" class="button blue bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("ShowListTicketWithTrackId")) . '</strong></a></div>';
     print '<div class="index_display"><a href="view.php" class="button blue bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")) . '</strong></a></div>';

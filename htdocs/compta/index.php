@@ -136,7 +136,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-    $sql = "SELECT f.facnumber";
+    $sql = "SELECT f.ref";
     $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
@@ -177,7 +177,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->total_ht=$obj->total_ht;
 				$facturestatic->total_tva=$obj->total_tva;
@@ -320,7 +320,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql.= ", f.date_lim_reglement as datelimite";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
@@ -339,7 +339,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerLastModified',$parameters);
 	$sql.=$hookmanager->resPrint;
 
-	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql.= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql.= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql.= " cc.rowid, cc.code";
 	$sql.= " ORDER BY f.tms DESC ";
@@ -365,7 +365,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->total_ht=$obj->total_ht;
 				$facturestatic->total_tva=$obj->total_tva;
@@ -399,8 +399,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-				$filename=dol_sanitizeFileName($obj->facnumber);
-				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -812,7 +812,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql.= ", f.date_lim_reglement as datelimite";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -831,9 +831,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerUnpaid',$parameters);
 	$sql.=$hookmanager->resPrint;
 
-	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql.= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql.= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
-	$sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
+	$sql.= " ORDER BY f.datef ASC, f.ref ASC";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -858,7 +858,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->total_ht=$obj->total_ht;
 				$facturestatic->total_tva=$obj->total_tva;
@@ -891,8 +891,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				}
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-				$filename=dol_sanitizeFileName($obj->facnumber);
-				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td></tr></table>';

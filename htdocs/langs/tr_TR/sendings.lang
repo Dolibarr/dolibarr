@@ -53,10 +53,10 @@ LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyatın oluşturulması sipariş kartından yapılmıştır.
 ShipmentLine=Sevkiyat kalemi
 ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInSuppliersOrdersRunning=Açık satın alma siparişlerindeki ürün miktarı
 ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
-NoProductToShipFoundIntoStock=Bu <b>%s</b> deposunda sevk edilecek hiç mal bulunamadı. Stoğu düzeltin ya da bir başka depo seçmek için geri gidin.
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Ağırlık/Hac.
 ValidateOrderFirstBeforeShipment=Sevkiyatları yapabilmek için önce siparişi doğrulamlısınız.
 

@@ -47,7 +47,7 @@ $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
-$colorbacklinepairhover='238,246,252';    // line pair
+$colorbacklinepairhover='230,237,244';	// line hover
 $colorbacklinebreak='214,218,220';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
@@ -59,19 +59,24 @@ $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
-session_cache_limiter(false);
+session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
-if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login'],'',1);
+// and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
+if (empty($user->id) && ! empty($_SESSION['dol_login']))
+{
+	$user->fetch('',$_SESSION['dol_login'],'',1);
+	$user->getrights();
+}
 
 
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
 if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If theme was forced on URL
@@ -144,12 +149,12 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 //$colortopbordertitle1=$colorbackhmenu1;
@@ -451,7 +456,7 @@ select.flat, form.flat select {
 	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .opacityhigh {
 	opacity: 0.2;
@@ -862,9 +867,7 @@ select.flat.selectlimit {
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #055;
 }
-.fa-trash, .fa-crop, .fa-pencil {
-	font-size: 1.4em;
-}
+
 .fa-15 {
 	font-size: 1.5em;
 }
@@ -907,8 +910,9 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    /* min-width: 170px; */
-    width: 170px;
+    min-width: 168px;
+    max-width: 169px;
+    /* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -1073,9 +1077,12 @@ select.selectarrowonleft option {
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
-     }
-     input[type=text], input[type=password] {
+    }
+    input[type=text], input[type=password] {
 		max-width: 180px;
+	}
+    .vmenu .searchform input {
+		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
 	}
 
     .hideonsmartphone { display: none; }
@@ -1146,6 +1153,11 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
@@ -1371,6 +1383,23 @@ div.secondcolumn div.box {
 	div.secondcolumn div.box {
 		padding-left: 0px;
 	}
+}
+
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1599px)
+{
+    div.fichehalfleft-lg {
+    	float: none;
+    	width: auto;
+    }
+    div.fichehalfright-lg {
+    	float: none;
+    	width: auto;
+    }
+
+    .fichehalfright-lg .ficheaddleft{
+    	padding-left:0;
+    }
 }
 
 /* For table into table into card */
@@ -1822,6 +1851,14 @@ foreach($mainmenuusedarray as $val)
 		print "}\n";
 	}
 }
+$j=0;
+while ($j++ < 4)
+{
+	$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+	print "div.mainmenu.generic".$j." {\n";
+	print "	background-image: url(".$url.");\n";
+	print "}\n";
+}
 // End of part to add more div class css
 ?>
 
@@ -2023,7 +2060,6 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
-	font-weight: normal !important;
 }
 .login_block_getinfo {
 	text-align: center;
@@ -2033,7 +2069,6 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
-	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
@@ -2057,7 +2092,6 @@ img.login, img.printer, img.entity {
 	width: 16px;
     height: 16px;
     border-radius: 8px;
-    background-size: contain;
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -2306,7 +2340,6 @@ div.tabs {
     padding-right: 6px !important;
 	clear:both;
 	height:100%;
-	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -2464,7 +2497,7 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction {
-	background: rgb(230, 236, 230)
+	background: rgb(225, 231, 225)
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
@@ -2522,7 +2555,7 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    background: rgb(239, 232, 230);
+    background: rgb(234, 228, 225);
     /* border: 1px solid #633; */
     color: #633;
 }
@@ -3410,7 +3443,7 @@ table.noborder.boxtable tr td {
     border-bottom-width: 0 !important;
 }
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
-    min-width: 300px;
+    min-width: 275px;	/* increasing this, make chart on box not side by side on laptops */
 }
 .tdboxstats {
 	text-align: center;
@@ -3885,7 +3918,7 @@ tr.visible {
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
-	background: #eee;
+	background: #e6e6e6;
 	display: inline-block;
 }
 .websitebar .buttonDelete, .websitebar .button {
@@ -4686,7 +4719,6 @@ div.dataTables_length select {
 }
 .select2-default {
     color: #999 !important;
-    /*opacity: 0.2;*/
 }
 .select2-choice, .select2-container .select2-choice {
 	border-bottom: solid 1px rgba(0,0,0,.4);
@@ -4827,7 +4859,7 @@ a span.select2-chosen
 	cursor: default;
 }
 .select2-container-disabled .select2-choice .select2-arrow b {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
@@ -4852,11 +4884,11 @@ a span.select2-chosen
 }
 .select2-container--default .select2-selection--single .select2-selection__placeholder {
 	color: unset;
-	opacity: 0.5;
+	opacity: 0.4;
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;

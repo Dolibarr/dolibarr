@@ -185,11 +185,14 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Name
-    print '<tr><td>'. fieldLabel('Name','name',1).'</td><td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td></tr>';
+	print '<tr>';
+	print '<td>'. $form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td>';
+	print '</tr>';
 
 	// Address
 	print '<tr>';
-	print '<td>'.fieldLabel('Address','address',0).'</td>';
+	print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	print '<td>';
 	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address','alpha') . '">';
 	print '</td>';
@@ -197,18 +200,23 @@ if ($action == 'create')
 
 	// Zipcode
 	print '<tr>';
-	print '<td>'.fieldLabel('Zip','zipcode',0).'</td>';
+	print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(GETPOST('zipcode', 'alpha'), 'zipcode', array (
+	print $formcompany->select_ziptown(
+		GETPOST('zipcode', 'alpha'),
+		'zipcode',
+		array (
 			'town',
 			'selectcountry_id'
-	), 6);
+		),
+		6
+	);
 	print '</td>';
 	print '</tr>';
 
 	// Town
 	print '<tr>';
-	print '<td>'.fieldLabel('Town','town',0).'</td>';
+	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
@@ -219,7 +227,7 @@ if ($action == 'create')
 
 	// Country
 	print '<tr>';
-	print '<td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
+	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
 	print $form->select_country(GETPOST('country_id','int')>0?GETPOST('country_id','int'):$mysoc->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
@@ -228,7 +236,7 @@ if ($action == 'create')
 
 	// Status
     print '<tr>';
-    print '<td>'.fieldLabel('Status','status',1).'</td>';
+    print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td>';
 	print $form->selectarray('status',$status2label,GETPOST('status','alpha'));
     print '</td></tr>';
@@ -272,30 +280,30 @@ if (($id || $ref) && $action == 'edit')
             print '</td></tr>';
 
             // Name
-            print '<tr><td>'.fieldLabel('Name','name',1).'</td><td>';
+            print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
 
 			// Address
-			print '<tr><td>'.fieldLabel('Address','address',0).'</td>';
+			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 			print '<td>';
 			print '<input name="address" id="address" size="32" value="' . $object->address . '">';
 			print '</td></tr>';
 
 			// Zipcode / Town
-			print '<tr><td>'.fieldLabel('Zip','zipcode',0).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
 					'selectcountry_id'
 			), 6) . '</tr>';
-			print '<tr><td>'.fieldLabel('Town','town',0).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
 					'selectcountry_id'
 			)) . '</td></tr>';
 
 			// Country
-			print '<tr><td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print $form->select_country($object->fk_country,'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
@@ -303,7 +311,7 @@ if (($id || $ref) && $action == 'edit')
 			print '</tr>';
 
 			// Status
-			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td><td>';
 			print $form->selectarray('status',$status2label,$object->status);
 			print '</td></tr>';
 

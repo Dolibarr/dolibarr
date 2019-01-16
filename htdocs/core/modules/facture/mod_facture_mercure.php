@@ -138,7 +138,9 @@ class mod_facture_mercure extends ModeleNumRefFactures
     function getNextValue($objsoc, $invoice, $mode='next')
     {
     	global $db,$conf;
+
     	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+
         // Get Mask value
         $mask = '';
         if (is_object($invoice) && $invoice->type == 1)
@@ -157,13 +159,17 @@ class mod_facture_mercure extends ModeleNumRefFactures
             $this->error='NotConfigured';
             return 0;
         }
+
     	$where='';
     	//if ($facture->type == 2) $where.= " AND type = 2";
     	//else $where.=" AND type != 2";
+
     	// Get entities
     	$entity = getEntity('invoicenumber', 1, $invoice);
-    	$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$invoice->date,$mode,false,null,$entity);
+
+    	$numFinal=get_next_value($db,$mask,'facture','ref',$where,$objsoc,$invoice->date,$mode,false,null,$entity);
     	if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
+
     	return  $numFinal;
     }
 

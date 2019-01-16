@@ -31,18 +31,19 @@ ViewWeek=Nedēļas skats
 ViewPerUser=Katra lietotāja skats
 ViewPerType=Viena veida skats
 AutoActions= Automātiskā aizpildīšana
-AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
-AgendaSetupOtherDesc= Šī lapa sniedz iespējas, lai ļautu eksportēt savu Dolibarr notikumiem uz ārēju kalendāru (Thunderbird, Google Calendar, ...)
+AgendaAutoActionDesc= Šeit jūs varat definēt notikumus, kurus Dolibarr vēlaties automātiski izveidot programmā. Ja nekas nav atzīmēts, logos tiks iekļautas tikai rokasgrāmatas un parādīsies programmā. Automātiska biznesa darbību veikšana objektos (validācija, statusa maiņa) netiks saglabāta.
+AgendaSetupOtherDesc= Šajā lapā ir iespējas, kā atļaut eksportēt jūsu Dolibarr notikumus ārējā kalendārā (pērkona negaiss, kalendārs google ...)
 AgendaExtSitesDesc=Šī lapa ļauj atzīt ārējos avotus kalendārus, lai redzētu savus notikumus uz Dolibarr kārtībā.
 ActionsEvents=Pasākumi, par kuriem Dolibarr radīs prasību kārtībā automātiski
-EventRemindersByEmailNotEnabled=Pasākumu atgādinājumus pa e-pastu netika aktivizēts Agenda moduļa iestatījumos.
+EventRemindersByEmailNotEnabled=Pasākumu atgādinājumi pa e-pastu netika iespējoti %s moduļa iestatījumos.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Trešā puse izveidota %s
 ContractValidatedInDolibarr=Līgumi %s apstiprināti
+CONTRACT_DELETEInDolibarr=Līgums %s svītrots
 PropalClosedSignedInDolibarr=Piedāvājumi %s parakstīti
 PropalClosedRefusedInDolibarr=Piedāvājums %s atteikts
 PropalValidatedInDolibarr=Priekšlikums %s apstiprināts
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
+PropalClassifiedBilledInDolibarr=Priekšlikums %s klasificēts samaksāts
 InvoiceValidatedInDolibarr=Rēķins %s apstiprināts
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Rēķins %s doties atpakaļ uz melnrakstu
@@ -54,8 +55,8 @@ MemberModifiedInDolibarr=Dalībnieks %s labots
 MemberResiliatedInDolibarr=Dalībnieks %s ir izbeigts
 MemberDeletedInDolibarr=Dalībnieks %s dzēsts
 MemberSubscriptionAddedInDolibarr=Abonements %s dalībniekam %s pievienots
-MemberSubscriptionModifiedInDolibarr=Abonements %s biedram %s ir modificēts
-MemberSubscriptionDeletedInDolibarr=Abonements %s biedram %s svītrots
+MemberSubscriptionModifiedInDolibarr=Abonements %s biedram %s ir labots
+MemberSubscriptionDeletedInDolibarr=Abonements %s dalībniekam %s dzēsts
 ShipmentValidatedInDolibarr=Sūtījums %s apstiprināts
 ShipmentClassifyClosedInDolibarr=Sūtījums %s, kas klasificēts kā rēķins
 ShipmentUnClassifyCloseddInDolibarr=Sūtījums %s klasificēts atkārtoti atvērts
@@ -74,7 +75,7 @@ OrderSentByEMail=Klienta pasūtījums %s nosūtīts pa e-pastu
 InvoiceSentByEMail=Klienta rēķins %s nosūtīts pa e-pastu
 SupplierOrderSentByEMail=Piegādātāja pasūtījums %s nosūtīts pa e-pastu
 SupplierInvoiceSentByEMail=Piegādātāja rēķins %s nosūtīts pa e-pastu
-ShippingSentByEMail=Shipment %s sent by EMail
+ShippingSentByEMail=Sūtījums %s nosūtīts pa e-pastu
 ShippingValidated= Sūtījums %s apstiprināts
 InterventionSentByEMail=Intervention %s sent by EMail
 ProposalDeleted=Piedāvājums dzēsts
@@ -83,10 +84,10 @@ InvoiceDeleted=Rēķins dzēsts
 PRODUCT_CREATEInDolibarr=Produkts %s ir izveidots
 PRODUCT_MODIFYInDolibarr=Produkts %s ir labots
 PRODUCT_DELETEInDolibarr=Produkts %s dzēsts
-EXPENSE_REPORT_CREATEInDolibarr=Izdevēja ziņojums %s izveidots
+EXPENSE_REPORT_CREATEInDolibarr=Izdevumu pārskats %s izveidots
 EXPENSE_REPORT_VALIDATEInDolibarr=Izdevumu pārskats %s ir apstiprināts
 EXPENSE_REPORT_APPROVEInDolibarr=Izdevumu pārskats %s ir apstiprināts
-EXPENSE_REPORT_DELETEInDolibarr=Izdevumu pārskats %s svītrots
+EXPENSE_REPORT_DELETEInDolibarr=Izdevumu pārskats %s dzēsts
 EXPENSE_REPORT_REFUSEDInDolibarr=Izdevumu pārskats %s noraidītie
 PROJECT_CREATEInDolibarr=Projekts %s izveidots
 PROJECT_MODIFYInDolibarr=Projekts %s ir labots
@@ -97,10 +98,10 @@ DateActionStart=Sākuma datums
 DateActionEnd=Beigu datums
 AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu produkciju:
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </ b>, lai ierobežotu izvadi uz darbībām, kas nav lietotāja īpašumā <b> %s </ b>.
+AgendaUrlOptionsNotAdmin=<b>logina =! %s</b>, lai ierobežotu izvadi darbībām, kas nav lietotāja īpašumā <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b>, lai ierobežotu izlaidi darbībām, kas saistītas ar projektu <b> __ PROJECT_ID __ </ b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b>, lai izslēgtu automātisku notikumu.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>, lai izslēgtu automātiskus notikumus.
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
@@ -110,7 +111,7 @@ DefaultWorkingHours=Noklusējuma darba stundas dienā (Piemēram: 9-18)
 # External Sites ical
 ExportCal=Eksportēt kalendāru
 ExtSites=Importēt ārējos kalendārus
-ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
+ExtSitesEnableThisTool=Rādiet ārējos kalendārus (definēti vispārējā iestatījumā) programmā. Neietekmē lietotāja definētie ārējie kalendāri.
 ExtSitesNbOfAgenda=Kalendāru skaits
 AgendaExtNb=Kalendāra Nr. %s
 ExtSiteUrlAgenda=URL, lai piekļūtu. ICal failam

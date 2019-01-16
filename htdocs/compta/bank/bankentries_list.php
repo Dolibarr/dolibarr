@@ -640,7 +640,7 @@ if ($resql)
 	    }
 
 		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
-		if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1)
+		if (! empty($conf->global->BANK_REPORT_LAST_NUM_RELEVE))
 		{
 			print '
 			    <script type="text/javascript">

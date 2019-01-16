@@ -617,13 +617,14 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *        Efface un groupe de la base
+	 *	Delete a group
 	 *
-	 *        @return     <0 if KO, > 0 if OK
+	 *	@param	User	$user		User that delete
+	 *	@return     				<0 if KO, > 0 if OK
 	 */
-	function delete()
+	function delete(User $user)
 	{
-		global $user,$conf,$langs;
+		global $conf,$langs;
 
 		$error=0;
 

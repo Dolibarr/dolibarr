@@ -375,7 +375,7 @@ if ($resql)
 			$staticmember->lastname=$obj->lastname;
 			$staticmember->firstname=$obj->firstname;
 			if (! empty($obj->fk_soc)) {
-				$staticmember->socid = $obj->fk_soc;
+				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
 				$staticmember->name=$staticmember->thirdparty->name;
 			} else {

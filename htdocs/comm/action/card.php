@@ -432,8 +432,8 @@ if ($action == 'update')
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
-		$object->note        = GETPOST("note");
-		$object->pnote       = GETPOST("note");
+		$object->note        = GETPOST("note","none");	// deprecated
+		$object->note_private= GETPOST("note","none");
 		$object->fk_element	 = GETPOST("fk_element");
 		$object->elementtype = GETPOST("elementtype");
 
@@ -1302,7 +1302,6 @@ if ($id > 0)
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
-
 		// Object linked
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
@@ -1610,8 +1609,9 @@ if ($id > 0)
 		print ($object->priority?$object->priority:'');
 		print '</td></tr>';
 
-		// Object linked
-		if (! empty($object->fk_element) && ! empty($object->elementtype))
+		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		if (! empty($object->fk_element) && ! empty($object->elementtype) && ! in_array($object->elementtype, array('societe','contact','project')))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -1658,7 +1658,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
 
 			if ($user->rights->agenda->allactions->create ||
@@ -1668,7 +1668,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			if ($user->rights->agenda->allactions->delete ||
@@ -1678,7 +1678,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}
 		}
 	}

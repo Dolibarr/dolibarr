@@ -23,7 +23,7 @@
  *    \brief      File Class ticket
  */
 
-require_once "ticket.class.php";
+require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
@@ -1212,7 +1212,7 @@ class ActionsTicket
         $this->viewTicketOriginalMessage($user, $action);
 
         if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-            print_titre($langs->trans('TicketMailExchanges'));
+            print load_fiche_titre($langs->trans('TicketMailExchanges'));
 
             print '<table class="border" style="width:100%;">';
 

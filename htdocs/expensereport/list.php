@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2015           Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018           Ferran Marcet	     <fmarcet@2byte.es>
+ * Copyright (C) 2018           Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +77,8 @@ $search_amount_ttc = GETPOST('search_amount_ttc','alpha');
 $search_status = (GETPOST('search_status','intcomma')!=''?GETPOST('search_status','intcomma'):GETPOST('statut','intcomma'));
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
+$day_start    = GETPOST("day_start","int");
+$day_end      = GETPOST("day_end","int");
 $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
 $optioncss    = GETPOST('optioncss','alpha');
@@ -158,8 +161,10 @@ if (empty($reshook))
 	    $search_status="";
 	    $month_start="";
 	    $year_start="";
+		$day ="";
 	    $month_end="";
 	    $year_end="";
+	    $day_end = "";
 	    $toselect='';
 	    $search_array_options=array();
 	}
@@ -271,34 +276,10 @@ if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
 if (!empty($search_ref)) $sql.= natural_search('d.ref', $search_ref);
 // Date Start
-if ($month_start > 0)
-{
-    if ($year_start > 0 && empty($day))
-    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,false))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,false))."'";
-    else if ($year_start > 0 && ! empty($day))
-    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_start, $day, $year_start))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_start, $day, $year_start))."'";
-    else
-    $sql.= " AND date_format(d.date_debut, '%m') = '".$month_start."'";
-}
-else if ($year_start > 0)
-{
-	$sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,false))."' AND '".$db->idate(dol_get_last_day($year_start,12,false))."'";
-}
-// Date Start
-if ($month_end > 0)
-{
-    if ($year_end > 0 && empty($day))
-    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,false))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,false))."'";
-    else if ($year_end > 0 && ! empty($day))
-    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_end, $day, $year_end))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_end, $day, $year_end))."'";
-    else
-    $sql.= " AND date_format(d.date_fin, '%m') = '".$month_end."'";
-}
-else if ($year_end > 0)
-{
-	$sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,false))."' AND '".$db->idate(dol_get_last_day($year_end,12,false))."'";
-}
-// Amount
+$sql.= dolSqlDateFilter("d.date_debut",	$day_start, $month_start, $year_start);
+// Date End
+$sql.= dolSqlDateFilter("d.date_fin", $day_end, $month_end, $year_end);
+
 if ($search_amount_ht != '') $sql.= natural_search('d.total_ht', $search_amount_ht, 1);
 if ($search_amount_ttc != '') $sql.= natural_search('d.total_ttc', $search_amount_ttc, 1);
 // User
@@ -359,6 +340,7 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
+		'generate_doc'=>$langs->trans("Generate"),
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
@@ -538,6 +520,9 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
+		print '<input class="flat width25" type="text" maxlength="2" name="day_start" value="'.dol_escape_htmltag($day_start).'">';
+
     	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
     	$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
     	print '</td>';
@@ -546,7 +531,9 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY))
+		print '<input class="flat width25" type="text" maxlength="2" name="day_end" value="'.dol_escape_htmltag($day_end).'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
     	print '</td>';
     }

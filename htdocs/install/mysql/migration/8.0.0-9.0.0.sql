@@ -133,6 +133,7 @@ ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website ADD COLUMN maincolor varchar(16);
 ALTER TABLE llx_website ADD COLUMN maincolorbis varchar(16);
 
+ALTER TABLE llx_website_page ADD COLUMN image varchar(255);
 
 CREATE TABLE llx_takepos_floor_tables(
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -146,9 +147,13 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
+-- DROP TABLE llx_emailcollector_emailcollectorfilter;
+-- DROP TABLE llx_emailcollector_emailcollectoraction;
+-- DROP TABLE llx_emailcollector_emailcollector;
 
 CREATE TABLE llx_emailcollector_emailcollector(
         -- BEGIN MODULEBUILDER FIELDS
@@ -158,7 +163,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         label varchar(255),
         description text,
         host varchar(255),
-        user varchar(128),
+        login varchar(128),
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
@@ -176,24 +181,10 @@ CREATE TABLE llx_emailcollector_emailcollector(
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 
-
-CREATE TABLE llx_emailcollector_emailcollectoraction(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_emailcollector INTEGER NOT NULL,
-	type varchar(128) NOT NULL,
-	actionparam varchar(255) NULL,
-	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
-	fk_user_creat integer NOT NULL,
-	fk_user_modif integer,
-	import_key varchar(14),
-	status integer NOT NULL
-	-- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
 
 CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	-- BEGIN MODULEBUILDER FIELDS
@@ -210,6 +201,22 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+CREATE TABLE llx_emailcollector_emailcollectoraction(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	actionparam varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	position integer DEFAULT 0,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD CONSTRAINT fk_emailcollectorfilter_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
 
@@ -220,6 +227,32 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcolle
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
 ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);
 
+ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
+
+DROP TABLE llx_ticket_logs;
 
 
+CREATE TABLE llx_pos_cash_fence(
+	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
+	entity INTEGER DEFAULT 1 NOT NULL,
+	ref VARCHAR(64),
+	label VARCHAR(255),
+	opening double(24,8) default 0,
+	cash double(24,8) default 0,
+	card double(24,8) default 0,
+	cheque double(24,8) default 0,
+	status INTEGER,
+	date_creation DATETIME NOT NULL,
+	date_valid DATETIME,
+	day_close INTEGER,
+	month_close INTEGER,
+	year_close INTEGER,
+	posmodule VARCHAR(30),
+	posnumber VARCHAR(30),
+	fk_user_creat integer,
+	fk_user_valid integer,
+	tms TIMESTAMP NOT NULL,
+	import_key VARCHAR(14)
+) ENGINE=innodb;
 

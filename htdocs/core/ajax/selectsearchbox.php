@@ -155,6 +155,12 @@ if (empty($reshook))
 }
 else $arrayresult=$hookmanager->resArray;
 
+// This allow to keep a search entry to the top
+if(! empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {
+    $key = 'searchinto'.$conf->global->DEFAULT_SEARCH_INTO_MODULE;
+    if(array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -10;
+}
+
 // Sort on position
 $arrayresult = dol_sort_array($arrayresult, 'position');
 

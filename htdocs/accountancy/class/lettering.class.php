@@ -211,7 +211,7 @@ class Lettering extends BookKeeping
 				}
 
 				if (count($ids) > 1) {
-					$result = $this->updatelettrage($ids);
+					$result = $this->updateLettering($ids);
 				}
 			}
 		}

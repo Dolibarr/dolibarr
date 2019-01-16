@@ -117,7 +117,7 @@ if ($id > 0)
 
 		$TData = array();
 
-		$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.datef as df,";
+		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.amount, f.datef as df,";
 		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql.= " u.login, u.rowid as userid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
