@@ -439,7 +439,7 @@ if ($result)
 			print '</td>';
 		} else {
 			// Accounting account sell
-			print '<td style="text-align:left;">';
+			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodsell;
 			$codesell=length_accountg($obj->accountancy_code_sell);
