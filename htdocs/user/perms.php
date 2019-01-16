@@ -58,11 +58,6 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->user->self_advance->readperms))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
-{
-	$feature2='';
-	$canreaduser=1;
-}
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();

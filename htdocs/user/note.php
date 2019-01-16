@@ -45,7 +45,7 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessfor
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id) $feature2=''; // A user can always read its own card
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
