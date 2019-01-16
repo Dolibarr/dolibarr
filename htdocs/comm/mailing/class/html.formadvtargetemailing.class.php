@@ -16,9 +16,9 @@
  */
 
 /**
- * \file    comm/mailing/class/html.formadvtragetemaling.class.php
+ * \file    comm/mailing/class/html.formadvtargetemailing.class.php
  * \ingroup mailing
- * \brief   Fichier de la classe des fonctions predefinie de composants html advtargetemaling
+ * \brief   Fichier de la classe des fonctions predefinies de composant html advtargetemailing
  */
 
 /**
@@ -26,7 +26,11 @@
  */
 class FormAdvTargetEmailing extends Form
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -174,7 +178,6 @@ class FormAdvTargetEmailing extends Form
 				$label = $obj_usr->firstname . " " . $obj_usr->name . " (" . $obj_usr->login . ')';
 
 				$options_array [$obj_usr->rowid] = $label;
-
 			}
 			$this->db->free ( $resql_usr );
 		} else {
@@ -319,7 +322,6 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-
 		}
 		else
 		{
@@ -374,10 +376,10 @@ class FormAdvTargetEmailing extends Form
 	/**
 	 *  Return combo list of categories
 	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 * 	@param	int	$type	type
-	 *  @return	string HTML combo
+	 *  @param  string	$htmlname  		Name of categorie
+	 * 	@param	array	$selected_array	Value selected
+	 * 	@param	int		$type			Type
+	 *  @return	string 					HTML combo
 	 */
 	public function multiselectCategories($htmlname='',$selected_array = array(), $type=0)
 	{
@@ -407,7 +409,6 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-
 		}
 		else
 		{

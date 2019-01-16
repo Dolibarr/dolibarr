@@ -3,7 +3,7 @@ PayBoxSetup=Podešavanje PayBox modula
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
 PaymentForm=Obrazac plaćanja
-WelcomeOnPaymentPage=Dobro došli na naš servis online plaćanja
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Ova stranica vam dozvoljava da vršite online plaćanje prema %s
 ThisIsInformationOnPayment=This is information on payment to do
 ToComplete=Za završiti
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user inte
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ova stranica potvrđuje da je vaše plaćanje pohranjeno. Hvala Vam.
-YourPaymentHasNotBeenRecorded=Vaša uplata nije pohranjena i transakcija je otkazana. Hvala Vam.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametri računa
 UsageParameter=Parametri korištenja
 InformationToFindParameters=Pomoć za pronalaženje podataka o računu %s

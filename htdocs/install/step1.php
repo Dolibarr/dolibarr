@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,9 +36,7 @@ $action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$a
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "errors"));
 
 // Dolibarr pages directory
 $main_dir = GETPOST('main_dir')?GETPOST('main_dir'):(empty($argv[3])?'':$argv[3]);
@@ -485,13 +483,12 @@ if (! $error && $db->connected && $action == "set")
             		'products' => 'product',
             		'projects' => 'project',
             		'proposals' => 'proposal',
-            		'shipment' => 'shipment',
-            		'supplier_proposal' => 'supplier_proposal',
+            		'shipments' => 'shipment',
+            		'supplier_proposals' => 'supplier_proposal',
             		'tasks' => 'task_summary',
             		'thirdparties' => 'thirdparty',
             		'usergroups' => 'usergroups',
             		'users' => 'user',
-            		'usergroups' => 'usergroups',
             	);
             	foreach($docs as $cursordir => $cursorfile)
             	{

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
@@ -477,7 +477,6 @@ if (empty($reshook))
                     $action = 'edit';
                 }
             }
-
         }
     }
 
@@ -977,7 +976,7 @@ else
 	        }
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
-	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+            print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1047,7 +1046,7 @@ else
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->select_measuring_units("weight_units","weight");
+            print $formproduct->select_measuring_units("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1067,11 +1066,14 @@ else
                 print $formproduct->select_measuring_units("surface_units","surface");
                 print '</td></tr>';
             }
-            // Volume
-            print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
-            print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-            print $formproduct->select_measuring_units("volume_units","volume");
-            print '</td></tr>';
+            if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
+            {
+                // Volume
+                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
+                print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
+                print $formproduct->select_measuring_units("volume_units","volume");
+                print '</td></tr>';
+            }
         }
 
         // Units
@@ -1340,7 +1342,7 @@ else
 		        }
 		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 	            $formbarcode = new FormBarCode($db);
-		        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+                print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1636,7 +1638,7 @@ else
 				}
                 if ($action == 'editbarcodetype')
                 {
-                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
+                    print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
                 }
                 else
                 {
@@ -1679,10 +1681,13 @@ else
 			print '</td><td colspan="2">';
 			if (! empty($conf->accounting->enabled))
 			{
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->accountancy_code_sell,1);
+				if (! empty($object->accountancy_code_sell))
+				{
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch('',$object->accountancy_code_sell,1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+					print $accountingaccount->getNomUrl(0,1,1,'',1);
+				}
 			} else {
 				print $object->accountancy_code_sell;
 			}
@@ -1698,10 +1703,13 @@ else
 					print '</td><td colspan="2">';
 					if (! empty($conf->accounting->enabled))
 					{
-						$accountingaccount2 = new AccountingAccount($db);
-						$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
+						if (! empty($object->accountancy_code_sell_intra))
+						{
+							$accountingaccount2 = new AccountingAccount($db);
+							$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
 
-						print $accountingaccount2->getNomUrl(0,1,1,'',1);
+							print $accountingaccount2->getNomUrl(0,1,1,'',1);
+						}
 					} else {
 						print $object->accountancy_code_sell_intra;
 					}
@@ -1714,10 +1722,13 @@ else
 				print '</td><td colspan="2">';
 				if (! empty($conf->accounting->enabled))
 				{
-					$accountingaccount3 = new AccountingAccount($db);
-					$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
+					if (! empty($object->accountancy_code_sell_export))
+					{
+						$accountingaccount3 = new AccountingAccount($db);
+						$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
 
-					print $accountingaccount3->getNomUrl(0,1,1,'',1);
+						print $accountingaccount3->getNomUrl(0,1,1,'',1);
+					}
 				} else {
 					print $object->accountancy_code_sell_export;
 				}
@@ -1730,10 +1741,13 @@ else
 			print '</td><td colspan="2">';
 			if (! empty($conf->accounting->enabled))
 			{
-				$accountingaccount4 = new AccountingAccount($db);
-				$accountingaccount4->fetch('',$object->accountancy_code_buy,1);
+				if (! empty($object->accountancy_code_buy))
+				{
+					$accountingaccount4 = new AccountingAccount($db);
+					$accountingaccount4->fetch('',$object->accountancy_code_buy,1);
 
-				print $accountingaccount4->getNomUrl(0,1,1,'',1);
+					print $accountingaccount4->getNomUrl(0,1,1,'',1);
+				}
 			} else {
 				print $object->accountancy_code_buy;
 			}
@@ -1928,7 +1942,6 @@ else
 
             dol_fiche_end();
         }
-
     }
     else if ($action != 'create')
     {
@@ -2024,12 +2037,12 @@ if ($action != 'create' && $action != 'edit')
             }
             else
     		{
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
             }
         }
         else
     	{
-            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
         }
     }
 

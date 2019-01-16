@@ -250,9 +250,7 @@ function getCategory($authentication,$id)
 								'dir' => $pdir,
 								'photos' => $fille->liste_photos($dir,$nbmax=10)
 							);
-
 						}
-
 					}
 
 			    // Create

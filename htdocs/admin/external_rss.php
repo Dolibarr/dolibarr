@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,10 +242,10 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-	    preg_match('/^([0-9]+)/i',$obj->note,$reg);
+		preg_match('/^([0-9]+)/i',$obj->note,$reg);
 		$idrss = $reg[1];
-        $keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
-        $keyrsstitle="EXTERNAL_RSS_URLRSS_".$idrss;
+		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
+		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
         //print "x".$idrss;
 
         $rssparser=new RssParser($db);

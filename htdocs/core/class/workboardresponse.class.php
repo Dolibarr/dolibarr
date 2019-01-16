@@ -72,5 +72,4 @@ class WorkboardResponse
 	 * @var int
 	 */
 	public $total = 0;
-
 }

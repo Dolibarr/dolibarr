@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -810,7 +810,7 @@ if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 }
 
 
-// clean_linked_elements: Check and clean linked elements
+// clean_product_stock_negative_if_batch
 if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
@@ -834,12 +834,13 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
                 $obj=$db->fetch_object($resql);
                 print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
 
+                // TODO
             }
         }
     }
 }
 
-// clean_linked_elements: Check and clean linked elements
+// set_empty_time_spent_amount
 if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
@@ -896,11 +897,10 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
     {
         dol_print_error($db);
     }
-
 }
 
 
-// clean_old_module_entries: Clean data into const when files of module were removed without being
+// force_disable_of_modules_not_found
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
@@ -1071,7 +1071,7 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 
 
 
-// clean_linked_elements: Check and clean linked elements
+// force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';

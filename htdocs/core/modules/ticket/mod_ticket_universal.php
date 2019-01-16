@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
  */
 class mod_ticket_universal extends ModeleNumRefTicket
 {
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+
+    /**
+     * @var string Error code (or message)
+     */
     public $error = '';
-    public $nom = 'Universal';
-    public $name = 'Universal';
+
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Universal';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Universal';
 
     /**
      *  Renvoi la description du modele de numerotation
@@ -43,8 +61,8 @@ class mod_ticket_universal extends ModeleNumRefTicket
     {
         global $conf, $langs;
 
-        $langs->load("ticket");
-        $langs->load("admin");
+        // Load translation files required by the page
+        $langs->loadLangs(array("ticket","admin"));
 
         $form = new Form($this->db);
 
@@ -121,5 +139,4 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         return $numFinal;
     }
-
 }

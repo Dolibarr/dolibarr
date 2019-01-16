@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
- * 
+ *
  * Get a distant dump file and load it into a mysql database
  */
 
@@ -74,7 +74,7 @@ $tables=array(
 
 $year=2010;
 $currentyear=$tmp['year'];
-while ($year <= $currentyear) 
+while ($year <= $currentyear)
 {
     //$year=2021;
     $delta=($currentyear - $year);
@@ -84,7 +84,7 @@ while ($year <= $currentyear)
     {
         foreach($tables as $tablekey => $tableval)
         {
-            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." "; 
+            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
             //$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
             $resql = $db->query($sql);
@@ -110,14 +110,14 @@ while ($year <= $currentyear)
                         //print $sql2."\n";
                         $resql2 = $db->query($sql2);
                         if (! $resql2) dol_print_error($db);
-                    }            
+                    }
                     $i++;
                 }
             }
             else dol_print_error($db);
         }
     }
-    
+
     $year++;
 }
 

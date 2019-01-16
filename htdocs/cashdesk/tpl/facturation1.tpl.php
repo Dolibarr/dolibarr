@@ -2,7 +2,8 @@
 /* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,8 @@ if (empty($langs) || ! is_object($langs))
 	exit;
 }
 
-
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 // Object $form must de defined
 
@@ -90,7 +89,6 @@ $langs->load("cashdesk");
 							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
-
 						}
 					?>
 				</select>
@@ -204,7 +202,7 @@ $langs->load("cashdesk");
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
 			print $langs->trans("DateDue").' :';
-			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
+			print $form->selectDate(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0);
 			print '</div>';
 			?>
 		</div>

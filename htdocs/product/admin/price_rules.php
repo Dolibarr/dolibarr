@@ -92,7 +92,6 @@ if ($_POST) {
 				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
 			}
 		}
-
 	}
 
 	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');

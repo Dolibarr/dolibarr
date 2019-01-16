@@ -226,12 +226,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error || $mailfile->errors) 
-                {
+                if ($mailfile->error || $mailfile->errors) {
                     setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                } 
-                else 
-                {
+                } else {
                     $result = $mailfile->sendfile();
                 }
                 if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -290,12 +287,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error || $mailfile->errors) 
-                    {
+	                if ($mailfile->error || $mailfile->errors) {
                         setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                    } 
-	                else 
-	                {
+                    } else {
 	                    $result = $mailfile->sendfile();
 	                }
 	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -316,9 +310,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
             setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
         }
-    } 
-    else 
-    {
+    } else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
 }

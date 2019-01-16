@@ -108,13 +108,9 @@ if (! empty($newlangid))
 		$outputlangs->setDefaultLang($newlangid);
 	}
 }
-$outputlangs->load("main");
-$outputlangs->load("bills");
-$outputlangs->load("companies");
-$outputlangs->load("banks");
-$outputlangs->load("members");
-$outputlangs->load("compta");
 
+// Load translation files required by the page
+$outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct=new Account($db);
 $result=$acct->fetch('',$bankref);

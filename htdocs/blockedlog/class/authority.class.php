@@ -52,9 +52,7 @@ class BlockedLogAuthority
 	 */
     public function __construct($db)
     {
-
     	$this->db = $db;
-
 	}
 
 	/**
@@ -75,7 +73,6 @@ class BlockedLogAuthority
 
 		foreach($blocks as &$b) {
 			$this->blockchain.=$b->signature;
-
 		}
 
 		return $this->blockchain;
@@ -90,7 +87,6 @@ class BlockedLogAuthority
     {
 
 		return md5($this->signature.$this->blockchain);
-
 	}
 
 	/**
@@ -103,7 +99,6 @@ class BlockedLogAuthority
     {
 
 		return ($hash === $this->getBlockchainHash() );
-
 	}
 
 	/**
@@ -116,7 +111,6 @@ class BlockedLogAuthority
     {
 
 		$this->blockchain.=$block;
-
 	}
 
 	/**
@@ -197,7 +191,6 @@ class BlockedLogAuthority
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -252,7 +245,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -291,7 +283,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -327,18 +318,14 @@ class BlockedLogAuthority
 			if($res === 'blockalreadyadded' || $res === 'blockadded') {
 
 				$block->setCertified();
-
 			}
 			else {
 
 				$this->error = $langs->trans('ImpossibleToContactAuthority ',$url);
 				return -1;
 			}
-
-
 		}
 
 		return 1;
 	}
-
 }

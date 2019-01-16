@@ -72,7 +72,9 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -183,19 +185,16 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
-
                 }
                 elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
                 {
                     // Test for data files only
-
                 }
                 else
                 {
                     if (preg_match('/\.key\.sql$/',$file))
                     {
                         // Test for key files only
-
                     }
                     else
                     {
@@ -247,5 +246,4 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
 
         return;
     }
-
 }

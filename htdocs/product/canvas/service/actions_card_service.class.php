@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@ class ActionsCardService
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -73,6 +74,7 @@ class ActionsCardService
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
@@ -217,7 +219,6 @@ class ActionsCardService
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
@@ -273,6 +274,7 @@ class ActionsCardService
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -284,6 +286,7 @@ class ActionsCardService
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf;
 		global $search_categ,$sall,$sref,$search_barcode,$snom,$catid;
 
@@ -363,6 +366,4 @@ class ActionsCardService
 			print $sql;
 		}
 	}
-
 }
-

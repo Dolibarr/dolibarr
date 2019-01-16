@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,26 +33,34 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
-	var $id;
-	var $length;
-	var $length2; // didn't overright display
-	var $NbMaj;
-	var $NbNum;
-	var $NbSpe;
-	var $NbRepeat;
-	var $WithoutAmbi;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $db;
-	var $conf;
-	var $lang;
-	var $user;
+	public $length;
+	public $length2; // didn't overright display
+	public $NbMaj;
+	public $NbNum;
+	public $NbSpe;
+	public $NbRepeat;
+	public $WithoutAmbi;
 
-	var $Maj;
-	var $Min;
-	var $Nb;
-	var $Spe;
-	var $Ambi;
-	var $All;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
+
+	public $Maj;
+	public $Min;
+	public $Nb;
+	public $Spe;
+	public $Ambi;
+	public $All;
 
 	/**
 	 *	Constructor
@@ -105,7 +113,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
-
 	}
 
 	/**

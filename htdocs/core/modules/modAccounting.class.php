@@ -45,7 +45,7 @@ class modAccounting extends DolibarrModules
 		$this->numero = 50400;
 
 		$this->family = "financial";
-		$this->module_position = 610;
+		$this->module_position = '61';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Advanced accounting management";
@@ -80,7 +80,7 @@ class modAccounting extends DolibarrModules
 				"MAIN_COMPANY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
-				"With this constants on, third party code is always required whatever is numbering module behaviour", 0, 'current', 0
+				"With this constants on, third party code is always required whatever is numbering module behaviour", 0, 'current', 1
 		);
 		$this->const[2] = array(
 				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
@@ -287,6 +287,5 @@ class modAccounting extends DolibarrModules
 			'aa.account_parent'=>array('rule'=>'zeroifnull'),
 		);
 		$this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
-
 	}
 }

@@ -50,6 +50,15 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
 		<severity>0</severity>
     </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed">
+		<severity>0</severity>
+    </rule>
 
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
@@ -158,6 +167,23 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
+    <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
 
     <!-- Rules from PEAR Standard -->
@@ -222,9 +248,9 @@
 	<!--<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
         <severity>0</severity>
     </rule>-->
-    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+    <!--<rule ref="PEAR.Commenting.FunctionComment.Missing">
         <severity>0</severity>
-    </rule>
+    </rule>-->
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
@@ -347,16 +373,19 @@
         <severity>0</severity>
 	</rule>
 
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
+    <!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
+    </rule>-->
+	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
         <severity>0</severity>
-	</rule>
+	</rule>-->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
+
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
 
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">

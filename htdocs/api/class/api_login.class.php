@@ -26,6 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class Login
 {
 
+    /**
+     * Constructor of the class
+     */
     function __construct()
     {
 		global $db;

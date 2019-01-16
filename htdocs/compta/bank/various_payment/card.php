@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/index.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -154,7 +155,8 @@ if (empty($reshook))
 			if ($ret > 0)
 			{
 				$db->commit();
-				header("Location: index.php");
+				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
+				header("Location: ".$urltogo);
 				exit;
 			}
 			else
@@ -189,7 +191,7 @@ if (empty($reshook))
 				if ($result >= 0)
 				{
 					$db->commit();
-					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
+					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 					exit;
 				}
 				else
@@ -220,7 +222,7 @@ if (empty($reshook))
 llxHeader("",$langs->trans("VariousPayment"));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
@@ -254,32 +256,32 @@ if ($action == 'create')
 
 	// Date payment
 	print '<tr><td>';
-	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
-	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
+	print $form->selectDate((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
-	print fieldLabel('Label','label',1).'</td><td>';
+	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="label" id="label" class="minwidth300" value="'.($label?$label:$langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
 	// Sens
 	print '<tr><td>';
-	print fieldLabel('Sens','sens',1).'</td><td>';
+	print $form->editfieldkey('Sens', 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
     $sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
     print $form->selectarray('sens',$sensarray,$sens);
 	print '</td></tr>';
 
 	// Amount
 	print '<tr><td>';
-	print fieldLabel('Amount','amount',1).'</td><td>';
+	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.$amount.'">';
 	print '</td></tr>';
 
@@ -287,14 +289,14 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
-		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		$form->select_comptes($accountid,"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
-	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements($paymenttype, "paymenttype");
 	print '</td></tr>';
 
@@ -375,7 +377,7 @@ if ($id)
 	{
 		$langs->load("projects");
 		$morehtmlref.=$langs->trans('Project') . ' ';
-		if ($user->rights->tax->charges->creer)
+		if ($user->rights->banque->modifier)
 		{
 			if ($action != 'classify')
 				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -394,16 +396,14 @@ if ($id)
 			if (! empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-				$morehtmlref.=$proj->ref;
-				$morehtmlref.='</a>';
+				$morehtmlref.=$proj->getNomUrl(1);
 			} else {
 				$morehtmlref.='';
 			}
 		}
 	}
 	$morehtmlref.='</div>';
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -489,12 +489,12 @@ if ($id)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

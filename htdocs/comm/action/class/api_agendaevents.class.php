@@ -219,7 +219,7 @@ class AgendaEvents extends DolibarrApi
 
 
     /**
-     * Update Agenda Event general fields (won't touch lines of expensereport)
+     * Update Agenda Event general fields
      *
      * @param int   $id             Id of Agenda Event to update
      * @param array $request_data   Datas
@@ -236,20 +236,20 @@ class AgendaEvents extends DolibarrApi
 		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
 
-        $result = $this->expensereport->fetch($id);
+        $result = $this->actioncomm->fetch($id);
         if ( ! $result ) {
-            throw new RestException(404, 'expensereport not found');
+            throw new RestException(404, 'actioncomm not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('actioncomm',$this->actioncomm->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
-            $this->expensereport->$field = $value;
+            $this->actioncomm->$field = $value;
         }
 
-        if ($this->expensereport->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if ($this->actioncomm->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
 
         return false;
@@ -293,7 +293,6 @@ class AgendaEvents extends DolibarrApi
                 'message' => 'Agenda Event deleted'
             )
         );
-
     }
 
     /**
@@ -310,7 +309,6 @@ class AgendaEvents extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $event[$field] = $data[$field];
-
         }
         return $event;
     }

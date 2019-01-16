@@ -88,7 +88,6 @@ if ($_POST) {
 		header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		exit();
 	}
-
 }
 
 if ($confirm == 'yes') {
@@ -133,11 +132,10 @@ if ($confirm == 'yes') {
 $langs->load('products');
 
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
-$var = false;
 
 llxHeader('', $title);
 
-//print_fiche_titre($title);
+//print load_fiche_titre($title);
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
@@ -243,7 +241,7 @@ if ($action == 'edit') { ?>
 
 	<?php
 
-	print_fiche_titre($langs->trans("PossibleValues"));
+	print load_fiche_titre($langs->trans("PossibleValues"));
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -302,4 +300,4 @@ if ($action == 'edit') { ?>
 
 // End of page
 llxFooter();
-$db->close();;
+$db->close();

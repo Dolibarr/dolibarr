@@ -483,7 +483,6 @@ class Projects extends DolibarrApi
                 'message' => 'Project deleted'
             )
         );
-
     }
 
     /**
@@ -599,7 +598,6 @@ class Projects extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $object[$field] = $data[$field];
-
         }
         return $object;
     }

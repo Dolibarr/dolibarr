@@ -7,7 +7,7 @@ BankName=اسم المصرف
 FinancialAccount=الحساب
 BankAccount=الحساب المصرفي
 BankAccounts=الحسابات المصرفية
-BankAccountsAndGateways=Bank accounts | Gateways
+BankAccountsAndGateways=Bank | Gateways
 ShowAccount=عرض الحساب
 AccountRef=مرجع الحساب المالي
 AccountLabel=بطاقة الحساب المالي
@@ -46,7 +46,7 @@ BankAccountDomiciliation=عنوان الحساب
 BankAccountCountry=بلد حساب
 BankAccountOwner=اسم صاحب الحساب
 BankAccountOwnerAddress=عنوان مالك الحساب
-RIBControlError=فشل التحقق من سلامة القيم. وهذا يعني أن المعلومات الخاصة برقم الحساب هذا غير كاملة أو خاطئة (راجع البلد والأرقام و إيبان).
+RIBControlError=Integrity check of values fails. This means the information for this account number is incomplete or incorrect (check country, numbers and IBAN).
 CreateAccount=إنشاء حساب
 NewBankAccount=حساب جديد
 NewFinancialAccount=حساب مالي جديد
@@ -76,6 +76,7 @@ TransactionsToConciliate=قيود للتسويات
 Conciliable=يمكن أن يتم تسويتة
 Conciliate=التسوية
 Conciliation=تسوية
+SaveStatementOnly=Save statement only
 ReconciliationLate=التسوية في وقت متأخر
 IncludeClosedAccount=وتشمل حسابات مغلقة
 OnlyOpenedAccount=الحسابات المفتوحة فقط
@@ -104,7 +105,7 @@ SocialContributionPayment=مدفوعات الضرائب الاجتماعية / �
 BankTransfer=حوالة مصرفية
 BankTransfers=حوالات المصرفية
 MenuBankInternalTransfer=حوالة داخلية
-TransferDesc=التحويل من حساب إلى آخر، سوف يقوم دوليبار بكتابة سجلين (مدين في حساب المصدر و دائن في حساب الهدف، نفس المبلغ (باستثناء العلامة)، سيتم استخدام البطاقة و التاريخ لهذه المعاملة)
+TransferDesc=Transfer from one account to another one, Dolibarr will write two records (a debit in source account and a credit in target account). The same amount (except sign), label and date will be used for this transaction)
 TransferFrom=من
 TransferTo=إلى
 TransferFromToDone=التحويل من <b>%s</b>إلى <b>%s</b>من <b>%s</b>%s قد تم تسجيلة.
@@ -116,7 +117,7 @@ ConfirmDeleteCheckReceipt=هل انت متأكد أنك تريد حذف هذا �
 BankChecks=الشيكات المصرفية
 BankChecksToReceipt=شيكات في انتظار الإيداع
 ShowCheckReceipt=عرض إيصال إيداع شيكات
-NumberOfCheques=عدد الشيكات
+NumberOfCheques=No. of check
 DeleteTransaction=حذف المعاملة
 ConfirmDeleteTransaction=هل تريد بالتأكيد حذف هذه المعاملة؟
 ThisWillAlsoDeleteBankRecord=سيؤدي هذا أيضا إلى حذف القيد البنكي الذي تم إنشاؤه
@@ -135,8 +136,8 @@ BankTransactionLine=قيد البنك
 AllAccounts=All bank and cash accounts
 BackToAccount=عودة إلى الحساب
 ShowAllAccounts=عرض لجميع الحسابات
-FutureTransaction=المعاملة أجلة. لا يوجد فرصة للتسوية.
-SelectChequeTransactionAndGenerate=تحديد / تصفية الشيكات ليتم تضمينها في ايصال ايداع الشيكات وانقر على  "إنشاء".
+FutureTransaction=Transaction in future. No way to reconcile.
+SelectChequeTransactionAndGenerate=Select/filter checks to include in the check deposit receipt and click on "Create".
 InputReceiptNumber=اختيار كشف الحساب البنكي ذات الصلة مع التسوية. استخدام قيمة رقمية للفرز: شهر سنة أو يوم شهر سنة
 EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
 ToConciliate=للتسوية؟
@@ -153,7 +154,7 @@ RejectCheckDate=تاريخ إرجاع الشيك
 CheckRejected=تم إرجاع الشيك
 CheckRejectedAndInvoicesReopened=تم ارجاع الشيك وإعادة فتح الفواتير
 BankAccountModelModule=نماذج مستندات للحسابات البنكية
-DocumentModelSepaMandate=نموذج تفويض سيبا. مفيدة للبلدان الأوروبية في السوق الأوروبية المشتركة فقط.
+DocumentModelSepaMandate=Template of SEPA mandate. Useful for European countries in EEC only.
 DocumentModelBan=نموذج لطباعة صفحة تحتوي على معلومات BAN .
 NewVariousPayment=مدفوعات متنوعة جديدة
 VariousPayment=مدفوعات متنوعة
@@ -162,4 +163,5 @@ ShowVariousPayment=عرض الدفعات المتنوعة
 AddVariousPayment=إضافة دفعات متنوعة
 SEPAMandate=SEPA mandate
 YourSEPAMandate=تفويض سيبا الخاص بك
-FindYourSEPAMandate=هذا هو تفويض سيبا الخاصة بك لتخويل شركتنا لتقديم أمر الخصم المباشر إلى البنك الذي تتعامل معه. شكرا للعودة وقعت (فحص الوثيقة الموقعة) أو إرسالها عن طريق البريد إلى
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
+AutoReportLastAccountStatement=Automaticaly fill the field 'numero of bank statement' with last statement numero when making reconciliation

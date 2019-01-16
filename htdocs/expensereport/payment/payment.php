@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +150,6 @@ if ($action == 'add_payment')
                         $error++;
                     }
                 }
-
             }
 
     	    if (! $error)
@@ -186,6 +186,20 @@ if ($action == 'create' || empty($action))
 	$expensereport->fetch($id, $ref);
 
 	$total = $expensereport->total_ttc;
+
+	// autofill remainder amount
+	if (! empty($conf->use_javascript_ajax))
+		{
+			print "\n".'<script type="text/javascript" language="javascript">';
+			//Add js for AutoFill
+			print ' $(document).ready(function () {';
+			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                            var amount = $(this).data("value");
+							document.getElementById($(this).data(\'rowid\')).value = amount ;
+						});';
+			print '	});'."\n";
+			print '	</script>'."\n";
+		}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
@@ -235,7 +249,7 @@ if ($action == 'create' || empty($action))
     print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -298,7 +312,12 @@ if ($action == 'create' || empty($action))
 		if ($sumpaid < $objp->total_ttc)
 		{
 			$namef = "amount_".$objp->id;
-			print '<input type="text" size="8" name="'.$namef.'">';
+			$nameRemain = "remain_".$objp->id; // autofill remainder amount
+			if (!empty($conf->use_javascript_ajax)) // autofill remainder amount
+					print img_picto("Auto fill",'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+			$remaintopay=$objp->total_ttc - $sumpaid; // autofill remainder amount
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		}
 		else
 		{

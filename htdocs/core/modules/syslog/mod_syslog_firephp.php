@@ -126,8 +126,8 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 			if (is_object($langs))   // $langs may not be defined yet.
 			{
 				$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
-			} 
-			else 
+			}
+			else
 			{
 				$errors[] = "ErrorFailedToOpenFile " . self::$firephp_class_path;
 			}

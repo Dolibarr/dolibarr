@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@ print '<table summary="listofattributes" class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td align="left">'.$langs->trans("Position");
-print '<span class="nowrap"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" alt="" title="A-Z" class="imgdown"></span>';
+print '<span class="nowrap">';
+print img_picto('A-Z', '1downarrow.png');
+print '</span>';
 print '</td>';
 print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
 print '<td>'.$langs->trans("TranslationString").'</td>';

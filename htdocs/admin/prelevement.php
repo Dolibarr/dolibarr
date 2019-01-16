@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -232,13 +232,13 @@ print '</td>';
 print '</tr>';
 
 //EntToEnd
-print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("END_TO_END").'</td>';
+print '<tr class="pair"><td>'.$langs->trans("END_TO_END").'</td>';
 print '<td align="left">';
 print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->END_TO_END.'" size="15" ></td>';
 print '</td></tr>';
 
 //USTRD
-print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("USTRD").'</td>';
+print '<tr class="pair"><td>'.$langs->trans("USTRD").'</td>';
 print '<td align="left">';
 print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->USTRD.'" size="15" ></td>';
 print '</td></tr>';
@@ -432,7 +432,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (".getEntity('facture').")";
+    $sql.= " WHERE entity IN (".getEntity('invoice').")";
 
     $resql=$db->query($sql);
     if ($resql)
@@ -465,7 +465,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var = false;
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
@@ -511,7 +510,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	{
 	    $num = $db->num_rows($resql);
 	    $i = 0;
-	    $var = false;
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);

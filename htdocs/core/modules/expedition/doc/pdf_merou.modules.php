@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García       <marcosgdf@gmail.com>
  *
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to build sending documents with model Merou 
+ *	Class to build sending documents with model Merou
  */
 class pdf_merou extends ModelePdfExpedition
 {
@@ -41,17 +41,17 @@ class pdf_merou extends ModelePdfExpedition
      * @var DoliDb Database handler
      */
     public $db;
-	
+
 	/**
      * @var string model name
      */
     public $name;
-	
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-	
+
 	/**
      * @var string document type
      */
@@ -61,8 +61,8 @@ class pdf_merou extends ModelePdfExpedition
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 4); 
-	
+	public $phpmin = array(5, 4);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
@@ -73,37 +73,37 @@ class pdf_merou extends ModelePdfExpedition
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	 * Issuer
 	 * @var Societe
@@ -142,6 +142,7 @@ class pdf_merou extends ModelePdfExpedition
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -155,6 +156,7 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$hookmanager;
 
 		$object->fetch_thirdparty();
@@ -162,10 +164,10 @@ class pdf_merou extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
-		// Translations
+
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
-		
+
 		if ($conf->expedition->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -227,6 +229,7 @@ class pdf_merou extends ModelePdfExpedition
 				$heightforinfotot = 0;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
                 $pdf->SetAutoPageBreak(1,0);
 
 			    if (class_exists('TCPDF'))
@@ -331,7 +334,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->SetDrawColor(120,120,120);
 					$pdf->Rect(10+3, $curY, 3, 3);
 					$pdf->Rect(20+3, $curY, 3, 3);
-					
+
 					//Insertion de la reference du produit
 					$pdf->SetXY(30, $curY);
 					$pdf->SetFont('','B', $default_font_size - 3);
@@ -424,7 +427,7 @@ class pdf_merou extends ModelePdfExpedition
                     @chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-                
+
 				return 1;
 			}
 			else
@@ -456,7 +459,7 @@ class pdf_merou extends ModelePdfExpedition
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -642,7 +645,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		if (! empty($object->tracking_number))
 		{
-			$object->GetUrlTrackingStatus($object->tracking_number);
+			$object->getUrlTrackingStatus($object->tracking_number);
 			if (! empty($object->tracking_url))
 			{
 				if ($object->shipping_method_id > 0)

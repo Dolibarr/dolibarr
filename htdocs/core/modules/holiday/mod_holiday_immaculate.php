@@ -30,10 +30,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Immaculate';
-	var $code_auto=1;
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Immaculate';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Immaculate';
+
+	public $code_auto=1;
 
 	/**
 	 *	Return default description of numbering model
@@ -42,7 +62,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -118,15 +138,17 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		return  $numFinal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Return next value
+	 *  Return next value
 	 *
-	 *	@param	User		$fuser     	User object
-	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *  @param  User		$fuser     	User object
+	 *  @param  Object		$objforref	Holiday object
+	 *  @return string      			Value if OK, 0 if KO
 	 */
     function holiday_get_num($fuser, $objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($fuser, $objforref);
     }
 }

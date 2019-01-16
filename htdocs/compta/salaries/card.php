@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
+/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ $projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', 'payment');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
 
@@ -62,7 +63,7 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
 
 if ($cancel)
 {
-	header("Location: index.php");
+	header("Location: list.php");
 	exit;
 }
 
@@ -138,7 +139,7 @@ if ($action == 'add' && empty($cancel))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -173,7 +174,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/salaries/list.php');
 				exit;
 			}
 			else
@@ -254,44 +255,44 @@ if ($action == 'create')
 
 	// Date payment
 	print '<tr><td>';
-	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
-	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
+	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Employee
 	print '<tr><td>';
-	print fieldLabel('Employee','fk_user',1).'</td><td>';
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive=0;	// We keep active and unactive users
 	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
-	print fieldLabel('Label','label',1).'</td><td>';
+	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
 	print '<tr><td>';
-	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
-	print $form->select_date($datesp,"datesp",'','','','add');
+	print $form->editfieldkey('DateStartPeriod', 'datesp', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate($datesp, "datesp", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
-	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
-	print $form->select_date($dateep,"dateep",'','','','add');
+	print $form->editfieldkey('DateEndPeriod', 'dateep', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Amount
 	print '<tr><td>';
-	print fieldLabel('Amount','amount',1).'</td><td>';
+	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
@@ -311,14 +312,14 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
-		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
-	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
 	print '</td></tr>';
 
@@ -364,7 +365,7 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 
@@ -476,12 +477,12 @@ if ($id)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

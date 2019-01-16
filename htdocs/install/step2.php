@@ -46,8 +46,7 @@ $action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$a
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
-$langs->load("admin");
-$langs->load("install");
+$langs->loadLangs(array("admin", "install"));
 
 $choix=0;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
@@ -490,7 +489,6 @@ if ($action == "set")
                 print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
                 $ok = 1 ;
             }
-
         }
     }
 

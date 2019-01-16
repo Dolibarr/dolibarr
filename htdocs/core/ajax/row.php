@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2015 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2015 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,8 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST['table_element_line']) && ! empty($_POST['table_element_line']))
-	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])) && (isset($_POST['element_id']) && ! empty($_POST['element_id'])) )
+if ((! empty($_POST['roworder'])) && (! empty($_POST['table_element_line']))
+	&& (! empty($_POST['fk_element'])) && (! empty($_POST['element_id'])))
 {
 	$roworder=GETPOST('roworder','alpha',2);
 	$table_element_line=GETPOST('table_element_line','alpha',2);
@@ -53,6 +53,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 
 	$rowordertab = explode(',',$roworder);
+	$newrowordertab = array();
 	foreach($rowordertab as $value)
 	{
 		if (! empty($value)) $newrowordertab[] = $value;
@@ -62,6 +63,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
 	$row->id = $element_id;
+
 	$row->line_ajaxorder($newrowordertab);		// This update field rank or position in table row->table_element_line
 
 	// Reorder line to have position of children lines sharing same counter than parent lines

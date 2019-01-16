@@ -200,13 +200,13 @@ if ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
 	$where.= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
-	$doc_number='f.facnumber';
+	$doc_number='f.ref';
 	$thirdTypeSelect='customer';
 }
 if ($type_element == 'propal')
@@ -361,7 +361,7 @@ if ($sql_select)
 {
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
-	
+
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
@@ -384,7 +384,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
     print '<td class="liste_titre nowrap center">'; // date
-    print $formother->select_month($month?$month:-1,'month',1);
+    print $formother->select_month($month?$month:-1, 'month', 1, 0, 'valignmiddle');
     $formother->select_year($year?$year:-1,'year',1, 20, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -554,7 +554,6 @@ if ($sql_select)
 				{
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
-
 			} else {
 
 				if (! empty($objp->label) || ! empty($objp->description))

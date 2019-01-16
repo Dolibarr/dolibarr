@@ -165,7 +165,6 @@ if (empty($conf) || ! is_object($conf))
 				<?php } ?>
 			</tr>
 			<?php $i++;
-
         }
 
 		_footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual);
@@ -202,7 +201,7 @@ if (empty($conf) || ! is_object($conf))
 			<?php if ($can_validate == 1) { ?>
 
 				<!-- <a href="<?php echo $view_url; ?>?id=<?php echo $object->id; ?>&action=exportCSV" class="butAction"><?php echo $langs->trans('ExportCSV') ?></a> -->
-				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused"><?php echo $langs->trans('Delete') ?></a>
+				<a href="#" title="<?php echo $langs->trans('InventoryAlreadyValidated'); ?>" class="butActionRefused classfortooltip"><?php echo $langs->trans('Delete') ?></a>
 
 			<?php } ?>
 		</div>

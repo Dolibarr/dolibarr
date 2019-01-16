@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Laurent Destailleur <eldy@destailleur.fr>
  *
@@ -18,8 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
+if (empty($object) || ! is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }

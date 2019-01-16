@@ -1,13 +1,14 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015	   Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2012	   Cedric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016-2018 Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +46,8 @@ if (! empty($conf->contrat->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 }
 
-
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array("interventions","admin","compta","bills"));
 
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
@@ -62,7 +60,7 @@ $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 if ($page == -1)
 	$page = 0 ;
 
-$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if ($sortorder == "")
@@ -101,7 +99,7 @@ if ($action == 'add') {
 		$action = "create";
 		$error++;
 	}
-	
+
 	if (! GETPOST('socid')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Customer")), null, 'errors');
 		$action = "create";
@@ -144,7 +142,7 @@ if ($action == 'add') {
 
 		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
-		
+
 		if ($object->create($user) > 0) {
 			$id = $object->id;
 			$action = '';
@@ -154,11 +152,11 @@ if ($action == 'add') {
 		}
 	}
 } elseif ($action == 'createfrommodel') {
-	$newinter = new fichinter($db);
-	
+	$newinter = new Fichinter($db);
+
 	// on récupère les enregistrements
 	$object->fetch($id);
-	
+
 
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
@@ -167,22 +165,22 @@ if ($action == 'add') {
 		$newinter->fk_contrat=$object->fk_contrat;
 	} else
 		$newinter->socid=GETPOST("socid");
-	
+
 	$newinter->entity=$object->entity;
 	$newinter->duree=$object->duree;
-	
+
 	$newinter->description=$object->description;
 	$newinter->note_private=$object->note_private;
 	$newinter->note_public=$object->note_public;
-	
+
 	// on créer un nouvelle intervention
 	$extrafields = new ExtraFields($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($newinter->table_element);
-	$array_options = $extrafields->getOptionalsFromPost($extralabels);
+	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
 	$newinter->array_options = $array_options;
 
 	$newfichinterid = $newinter->create($user);
-	
+
 	if ($newfichinterid > 0) {
 		// on ajoute les lignes de détail ensuite
 		foreach ($object->lines as $ficheinterligne)
@@ -205,14 +203,14 @@ if ($action == 'add') {
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 } elseif ($action == 'setfrequency' && $user->rights->ficheinter->creer) {
-	// Set frequency and unit frequency	
+	// Set frequency and unit frequency
 	$object->fetch($id);
 	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 } elseif ($action == 'setdate_when' && $user->rights->ficheinter->creer) {
 	// Set next date of execution
 	$object->fetch($id);
 	$date = dol_mktime(
-					GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, 
+					GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0,
 					GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear')
 	);
 	if (!empty($date)) $object->setNextDate($date);
@@ -239,7 +237,7 @@ if (! empty($conf->projet->enabled))
 $now = dol_now();
 $tmparray=dol_getdate($now);
 $today = dol_mktime(
-				23, 59, 59, 
+				23, 59, 59,
 				$tmparray['mon'], $tmparray['mday'], $tmparray['year']
 );   // Today is last second of current day
 
@@ -265,7 +263,7 @@ if ($action == 'create') {
 		$rowspan=4;
 		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
 		if (! empty($conf->contrat->enabled) && $object->fk_contrat > 0) $rowspan++;
-		
+
 		print '<table class="border" width="100%">';
 
 		$object->fetch_thirdparty();
@@ -297,12 +295,12 @@ if ($action == 'create') {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 			print '<td colspan="3">'.convertSecondToTime(
-							$object->duration, 'all', 
+							$object->duration, 'all',
 							$conf->global->MAIN_DURATION_OF_WORKDAY
 			).'</td>';
 			print '</tr>';
 		}
-		
+
 		// Project
 		if (! empty($conf->projet->enabled)) {
 			$formproject = new FormProjets($db);
@@ -345,7 +343,7 @@ if ($action == 'create') {
 		print "</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;";
 		print $form->selectarray(
-						'unit_frequency', 
+						'unit_frequency',
 						array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')),
 						(GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m')
 		);
@@ -357,7 +355,7 @@ if ($action == 'create') {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(
 							12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')
 			) : -1);
-		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -422,8 +420,7 @@ if ($action == 'create') {
 				$i++;
 			}
 			$db->free($result);
-
-		} else 
+		} else
 			print $db->error();
 		print "</table>";
 
@@ -441,7 +438,6 @@ if ($action == 'create') {
 	}
 	else
 		dol_print_error('', "Error, no invoice ".$object->id);
-
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'title_commercial.png');
 	dol_fiche_head('');
@@ -465,7 +461,7 @@ if ($action == 'create') {
 } else {
 	/*
 	 * View mode
-	 * 
+	 *
 	 */
 	if ($id > 0) {
 		if ($object->fetch($id) > 0) {
@@ -496,7 +492,7 @@ if ($action == 'create') {
 						$morehtmlref.=img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
-						
+
 						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref.='<input type="hidden" name="action" value="classin">';
 						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -511,7 +507,7 @@ if ($action == 'create') {
 										$object->socid, $object->fk_project,
 										'none', 0, 0, 0, 1
 						);
-					}	
+					}
 				} else {
 					if (! empty($object->fk_project)) {
 						$proj = new Project($db);
@@ -566,7 +562,7 @@ if ($action == 'create') {
 				if ($action == 'contrat') {
 					$formcontract= new Formcontract($db);
 					$formcontract->formSelectContract(
-									$_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, 
+									$_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid,
 									$object->fk_contrat, 'contratid', 0, 1
 					);
 				} else {
@@ -576,11 +572,9 @@ if ($action == 'create') {
 						print $contratstatic->getNomUrl(0, '', 1);
 					} else
 						print "&nbsp;";
-
 				}
 				print '</td>';
 				print '</tr>';
-
 			}
 			print "</table>";
 			print '</div>';
@@ -593,9 +587,9 @@ if ($action == 'create') {
 
 			$title = $langs->trans("Recurrence");
 			print load_fiche_titre($title, '', 'calendar');
-	
+
 			print '<table class="border" width="100%">';
-	
+
 			// if "frequency" is empty or = 0, the reccurence is disabled
 			print '<tr><td style="width: 50%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -615,26 +609,26 @@ if ($action == 'create') {
 				print '<tr><td>';
 				print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;";
 				print $form->selectarray(
-								'unit_frequency', 
-								array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), 
+								'unit_frequency',
+								array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')),
 								($object->unit_frequency?$object->unit_frequency:'m')
 				);
 				print '</td>';
 				print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
-				if ($object->frequency > 0) 
+				if ($object->frequency > 0)
 					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
-				else 
+				else
 					print $langs->trans("NotARecurringInterventionalTemplate");
 			}
 			print '</td></tr>';
-	
+
 			// Date when
 			print '<tr><td>';
 			if ( $user->rights->ficheinter->creer && ($action == 'date_when' || $object->frequency > 0)) {
 				print $form->editfieldkey(
-								$langs->trans("NextDateToExecution"), 'date_when', $object->date_when, 
+								$langs->trans("NextDateToExecution"), 'date_when', $object->date_when,
 								$object, $user->rights->facture->creer, 'day'
 				);
 			} else {
@@ -649,12 +643,12 @@ if ($action == 'create') {
 			}
 			print '</td>';
 			print '</tr>';
-	
+
 			// Max period / Rest period
 			print '<tr><td>';
 			if ($user->rights->ficheinter->creer && ($action == 'nb_gen_max' || $object->frequency > 0)) {
 				print $form->editfieldkey(
-								$langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, 
+								$langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max,
 								$object, $user->rights->facture->creer
 				);
 			} else
@@ -672,29 +666,29 @@ if ($action == 'create') {
 
 			print '</td>';
 			print '</tr>';
-	
+
 			print '</table>';
-	
+
 			// Frequencry/Recurring section
 			if ($object->frequency > 0) {
 				print '<br>';
 				if (empty($conf->cron->enabled)) {
 					$txtinfoadmin=$langs->trans(
-									"EnableAndSetupModuleCron", 
+									"EnableAndSetupModuleCron",
 									$langs->transnoentitiesnoconv("Module2300Name")
 					);
 					print info_admin($txtinfoadmin);
 				}
 				print '<div class="underbanner clearboth"></div>';
 				print '<table class="border centpercent">';
-	
+
 				// Nb of generation already done
 				print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';
 				print '<td>';
 				print $object->nb_gen_done?$object->nb_gen_done:'0';
 				print '</td>';
 				print '</tr>';
-	
+
 				// Date last
 				print '<tr><td>';
 				print $langs->trans("DateLastGeneration");
@@ -733,7 +727,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-				
+
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type=$object->lines[$i]->product_type;
@@ -777,7 +771,6 @@ if ($action == 'create') {
 			print '</div>';
 		} else
 			print $langs->trans("ErrorRecordNotFound");
-
 	} else {
 		/*
 		 *  List mode
@@ -785,7 +778,7 @@ if ($action == 'create') {
 		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, ";
 		$sql.= " f.duree, f.fk_contrat, f.fk_projet, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql.= " f.date_last_gen, f.date_when, f.datec";
-		 
+
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql.= " , ".MAIN_DB_PREFIX."societe as s ";
 		if (! $user->rights->societe->client->voir && ! $socid) {
@@ -810,7 +803,7 @@ if ($action == 'create') {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			print_barre_liste(
-							$langs->trans("RepeatableInterventional"), $page, 
+							$langs->trans("RepeatableInterventional"), $page,
 							$_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder,
 							'', $num, '', 'title_commercial.png'
 			);
@@ -821,12 +814,12 @@ if ($action == 'create') {
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print_liste_field_titre(
-							$langs->trans("Ref"), $_SERVER['PHP_SELF'], "f.titre", "", "", 
+							$langs->trans("Ref"), $_SERVER['PHP_SELF'], "f.titre", "", "",
 							'width="200px" align="left"', $sortfiled, $sortorder
 			);
 
 			print_liste_field_titre(
-							$langs->trans("Company"), $_SERVER['PHP_SELF'], "s.nom", "", "", 
+							$langs->trans("Company"), $_SERVER['PHP_SELF'], "s.nom", "", "",
 							'width="200px" align="left"', $sortfiled, $sortorder
 			);
 			if (! empty($conf->contrat->enabled))
@@ -844,7 +837,7 @@ if ($action == 'create') {
 				);
 			print_liste_field_titre(
 							$langs->trans("Duration"), $_SERVER['PHP_SELF'],
-							'f.duree', '', '', 
+							'f.duree', '', '',
 							'width="50px" align="right"', $sortfiled, $sortorder
 			);
 			// Recurring or not
@@ -873,7 +866,7 @@ if ($action == 'create') {
 			print "</tr>\n";
 
 
-// les filtres à faire ensuite
+			// les filtres à faire ensuite
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
@@ -900,8 +893,8 @@ if ($action == 'create') {
 					}
 					if (! empty($conf->projet->enabled)) {
 						print '<td>';
-						if ($objp->fk_project >0) {
-							$projectstatic->fecth($objp->fk_projet);
+						if ($objp->fk_project > 0) {
+							$projectstatic->fetch($objp->fk_projet);
 							print $projectstatic->getNomUrl(1);
 						}
 						print '</td>';
@@ -910,7 +903,7 @@ if ($action == 'create') {
 					print '<td align=right>'.convertSecondToTime($objp->duree).'</td>';
 
 					print '<td align="center">'.yn($objp->frequency?1:0).'</td>';
-					
+
 					print '<td align="center">';
 					if ($objp->frequency) {
 						print $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') ;
@@ -933,7 +926,7 @@ if ($action == 'create') {
 						print '<span class="opacitymedium">'.$langs->trans('NA').'</span>';
 						print '</td>';
 					}
-					
+
 					if ($user->rights->ficheinter->creer) {
 						// Action column
 						print '<td align="center">';
@@ -953,7 +946,7 @@ if ($action == 'create') {
 						$i++;
 					}
 				}
-			} else 
+			} else
 				print '<tr class="oddeven"><td colspan="6">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";

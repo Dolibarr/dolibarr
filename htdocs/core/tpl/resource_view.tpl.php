@@ -98,7 +98,6 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</form>';
 		}
 	}
-
 }
 else {
 	print '<form class="tagtr oddeven">';

@@ -27,7 +27,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormMailing extends Form
 {
-	public $errors=array();
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 	/**
 	 * Output a select with destinaries status

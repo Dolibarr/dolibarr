@@ -77,7 +77,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param int	  $y		   y position in user units
 	 * @param int	  $w		   width in user units
 	 * @param int	  $h		   height in user units
-     * @return void
+	 * @return void
 	 */
 	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)
 	{
@@ -266,6 +266,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -278,6 +279,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 */
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;

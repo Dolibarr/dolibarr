@@ -816,7 +816,6 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			{
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-
 			}
 		}
 		else

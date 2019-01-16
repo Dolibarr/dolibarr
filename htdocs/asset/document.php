@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       document.php
+ *  \file       htdocs/asset/document.php
  *  \ingroup    asset
  *  \brief      Tab for documents linked to Assets
  */
@@ -95,7 +95,7 @@ if ($object->id)
 	 * Show tabs
 	 */
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = AssetsPrepareHead($object);
+	$head = asset_prepare_head($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 

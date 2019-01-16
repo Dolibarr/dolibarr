@@ -146,6 +146,7 @@ if ($year)
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
+
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)

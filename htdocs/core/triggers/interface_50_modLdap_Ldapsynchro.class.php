@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,16 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 {
 	public $family = 'ldap';
 	public $description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -437,9 +446,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 					{
-						$membertype=new AdherentType($this->db);
 						if ($object->typeid > 0)
 						{
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+							$membertype=new AdherentType($this->db);
 							$membertype->fetch($object->typeid);
 							$membertype->listMembersForMemberType('', 1);
 
@@ -556,6 +566,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 					{
+						require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 						/*
 						 * Change member info
 						 */
@@ -680,6 +692,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					{
 						if ($object->typeid > 0)
 						{
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 							/*
 							 * Remove member in member type
 							 */
@@ -799,5 +813,4 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 		return $result;
 	}
-
 }

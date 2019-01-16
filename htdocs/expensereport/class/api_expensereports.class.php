@@ -445,7 +445,6 @@ class ExpenseReports extends DolibarrApi
                 'message' => 'Expense Report deleted'
             )
         );
-
     }
 
     /**
@@ -523,7 +522,6 @@ class ExpenseReports extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $expensereport[$field] = $data[$field];
-
         }
         return $expensereport;
     }

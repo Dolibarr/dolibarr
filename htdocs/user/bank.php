@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
@@ -48,13 +48,12 @@ $cancel = GETPOST('cancel','alpha');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-// Ok if user->rights->salaries->read or user->rights->salaries->payment->write or user->rights->hrm->read
+// Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 $ok=false;
 if ($user->id == $id) $ok=true; // A user can always read its own card
-if ($user->rights->salaries->read) $ok=true;
-if ($user->rights->salaries->payment->write) $ok=true;
-if ($user->rights->hrm->read) $ok=true;
+if (! empty($user->rights->salaries->read)) $ok=true;
+if (! empty($user->rights->hrm->read)) $ok=true;
 if (! $ok)
 {
 	accessforbidden();
@@ -195,7 +194,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -293,7 +292,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 * Last salaries
 	 */
 	if (! empty($conf->salaries->enabled) &&
-		($user->rights->salaries->read || ($user->rights->salaries->read && $object->id == $user->id))
+		($user->rights->salaries->read && $object->id == $user->id)
 		)
 	{
 		$salary = new PaymentSalary($db);
@@ -312,7 +311,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/index.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 

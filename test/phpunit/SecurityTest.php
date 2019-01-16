@@ -72,6 +72,8 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -258,17 +260,21 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     {
         global $conf;
 
-        $genpass1=getRandomPassword(true);    // Should be a string return by dol_hash (if no option set, will be md5)
+        $genpass1=getRandomPassword(true);				// Should be a string return by dol_hash (if no option set, will be md5)
+        print __METHOD__." genpass1=".$genpass1."\n";
+        $this->assertEquals(strlen($genpass1), 32);
+
+        $genpass1=getRandomPassword(true, array('I'));	// Should be a string return by dol_hash (if no option set, will be md5)
         print __METHOD__." genpass1=".$genpass1."\n";
         $this->assertEquals(strlen($genpass1), 32);
 
         $conf->global->USER_PASSWORD_GENERATED='None';
-        $genpass2=getRandomPassword(false);  // Should be an empty string
+        $genpass2=getRandomPassword(false);				// Should return an empty string
         print __METHOD__." genpass2=".$genpass2."\n";
         $this->assertEquals($genpass2, '');
 
         $conf->global->USER_PASSWORD_GENERATED='Standard';
-        $genpass3=getRandomPassword(false);
+        $genpass3=getRandomPassword(false);				// Should return a password of 8 chars
         print __METHOD__." genpass3=".$genpass3."\n";
         $this->assertEquals(strlen($genpass3), 8);
 
@@ -294,5 +300,4 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$result=restrictedArea($user,'societe');
 		$this->assertEquals(1,$result);
     }
-
 }

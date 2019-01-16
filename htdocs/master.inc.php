@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
  * Copyright (C) 2006		Andre Cianfarani		<andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
@@ -80,7 +80,7 @@ if (! empty($dolibarr_main_document_root_alt))
 	{
 		if (preg_match('/^http(s)?:/',$value))
 		{
-			// TODO: Make this a warning rather than an error since the correct value can be derived in most cases
+			// Show error message
 			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
 			print '<b>Error:</b><br>'."\n";
 			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";

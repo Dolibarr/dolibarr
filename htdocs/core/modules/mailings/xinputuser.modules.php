@@ -37,7 +37,7 @@ class mailing_xinputuser extends MailingTargets
 	var $require_admin=0;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
 	var $tooltip='UseFormatInputEmailToTarget';
-	
+
 
 	/**
 	 *	Constructor
@@ -108,15 +108,16 @@ class mailing_xinputuser extends MailingTargets
 		return $s;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
+	function add_to_target($mailing_id)
 	{
+        // phpcs:enable
 		global $conf,$langs,$_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -153,12 +154,9 @@ class mailing_xinputuser extends MailingTargets
 		}
 		else
 		{
-		   	$langs->load("errors");
-		   	$this->error = $langs->trans("ErrorBadEmail",$email);
+            $langs->load("errors");
+            $this->error = $langs->trans("ErrorBadEmail",$email);
 			return -1;
 		}
-
 	}
-
 }
-

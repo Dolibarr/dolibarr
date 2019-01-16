@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills"));
 
 $action=GETPOST('action','alpha');
 $id=GETPOST('id','int');
@@ -117,7 +116,6 @@ if ($id)
 
 
     dol_fiche_end();
-
 }
 
 // End of page

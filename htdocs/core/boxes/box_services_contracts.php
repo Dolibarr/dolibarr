@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,11 @@ class box_services_contracts extends ModeleBoxes
 	var $boxlabel="BoxLastProductsInContract";
 	var $depends = array("service","contrat");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	var $param;
 
 	var $info_box_head = array();
@@ -84,8 +88,8 @@ class box_services_contracts extends ModeleBoxes
 		    $thirdpartytmp = new Societe($db);
 		    $productstatic = new Product($db);
 
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql.= " c.rowid, c.ref, c.statut as contract_status,";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+			$sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
 			$sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
 			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
@@ -123,9 +127,18 @@ class box_services_contracts extends ModeleBoxes
                     $contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
 					$contractstatic->ref=$objp->ref;
+					$contractstatic->ref_customer=$objp->ref_customer;
+					$contractstatic->ref_supplier=$objp->ref_supplier;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
+					$thirdpartytmp->email = $objp->email;
+					$thirdpartytmp->client = $objp->client;
+					$thirdpartytmp->fournisseur = $objp->fournisseur;
+					$thirdpartytmp->code_client = $objp->code_client;
+					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
@@ -177,7 +190,7 @@ class box_services_contracts extends ModeleBoxes
 					}
 
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $s,
 					'asis' => 1
                     );
@@ -187,7 +200,7 @@ class box_services_contracts extends ModeleBoxes
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $thirdpartytmp->getNomUrl(1),
 					'asis' => 1
                     );
@@ -218,7 +231,6 @@ class box_services_contracts extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
-
 	}
 
 	/**
@@ -233,6 +245,5 @@ class box_services_contracts extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

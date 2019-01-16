@@ -24,8 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-$langs->load("products");
-$langs->load('other');
+$langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
@@ -124,7 +123,6 @@ if ($_POST) {
 		}
 
 		$db->rollback();
-
 	} else {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
@@ -160,7 +158,7 @@ if (! empty($id) || ! empty($ref)) {
 		dol_fiche_end();
 	}
 
-	print_fiche_titre($langs->trans('ProductCombinationGenerator'));
+	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
 
 	$dictionary_attr = array();
 
@@ -374,7 +372,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-	// End of page
-    llxFooter();
-    $db->close();
+  // End of page
+  llxFooter();
 }
+
+$db->close();

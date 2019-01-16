@@ -42,6 +42,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new PaymentExpenseReport($db);
 
+if ($id > 0)
+{
+	$result=$object->fetch($id);
+	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+}
+
+
 /*
  * Actions
  */
@@ -77,10 +84,10 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 		$db->commit();
 
 		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
+		foreach($factures as $invoiceid)
 		{
 			$fac = new Facture($db);
-			$fac->fetch($id);
+			$fac->fetch($invoiceid);
 
 			$outputlangs = $langs;
 			if (! empty($_REQUEST['lang_id']))
@@ -110,12 +117,6 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 
 llxHeader('', $langs->trans("ExpenseReportPayment"));
 
-if ($id > 0)
-{
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
-}
-
 $form = new Form($db);
 
 $head = payment_expensereport_prepare_head($object);
@@ -128,7 +129,6 @@ dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'pay
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*
@@ -138,7 +138,6 @@ if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
 }
 
 $linkback = '';
@@ -265,9 +264,11 @@ if ($resql)
 			print '<td align="center">'.$expensereport->getLibStatut(4,$objp->amount).'</td>';
 
 			print "</tr>\n";
+
 			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
 			{
-				$disable_delete = 1;
+				$disable_delete = 2;
+				$title_button = $langs->trans("CantRemovePaymentWithOneInvoicePaid");
 			}
 			$total = $total + $objp->amount;
 			$i++;
@@ -303,7 +304,7 @@ if ($action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

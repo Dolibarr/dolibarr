@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,16 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public $error='';
 
-	var $driverlabel=array();
-	var $driverversion=array();
+	public $driverlabel=array();
 
-	var $liblabel=array();
-	var $libversion=array();
+	public $driverversion=array();
+
+	public $liblabel=array();
+
+	public $libversion=array();
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -51,6 +54,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
@@ -162,7 +166,4 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	{
 		return $this->libversion[$key];
 	}
-
 }
-
-

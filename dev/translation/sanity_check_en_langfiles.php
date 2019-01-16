@@ -295,6 +295,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^SubmitTranslation/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^ModuleCompanyCode/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/InDolibarr$/', $value)) $qualifiedforclean=0;
 	    // admin.lang
 	    if (preg_match('/^DAV_ALLOW_PUBLIC_DIR/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DAV_ALLOW_ECM_DIR/i', $value)) $qualifiedforclean=0;

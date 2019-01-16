@@ -50,13 +50,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $filesuffix='', $paymentbankid='', $thirdpartiesid='', $fileprefix='mergedpdf')
 {
-	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
+	$sql = "SELECT DISTINCT f.rowid, f.ref";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sqlwhere='';
 	$sqlorder='';
 	if (in_array('all',$filter))
 	{
-		$sqlorder = " ORDER BY f.facnumber ASC";
+		$sqlorder = " ORDER BY f.ref ASC";
 	}
 	if (in_array('date',$filter))
 	{
@@ -175,11 +175,11 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					$filename=$conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
 					if ($regenerate || ! dol_is_file($filename))
 					{
-	            	    if ($usestdout) print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
+	            	    if ($usestdout) print "Build PDF for invoice ".$obj->ref." - Lang = ".$outputlangs->defaultlang."\n";
 	    				$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
 					}
 					else {
-					    if ($usestdout) print "PDF for invoice ".$obj->facnumber." already exists\n";
+					    if ($usestdout) print "PDF for invoice ".$obj->ref." already exists\n";
 					}
 
 					// Add file into files array

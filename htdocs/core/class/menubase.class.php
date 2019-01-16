@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +29,49 @@
  */
 class Menubase
 {
-    public $db;							// To store db handler
-    public $error;							// To return error code (or message)
-    public $errors=array();				// To return several error codes (or messages)
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    public $id;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $menu_handler;
     public $module;
     public $type;
     public $mainmenu;
+
+    /**
+     * @var int ID
+     */
     public $fk_menu;
+
+    /**
+     * @var string fk_mainmenu
+     */
     public $fk_mainmenu;
+
+    /**
+     * @var string fk_leftmenu
+     */
     public $fk_leftmenu;
+
+    /**
+     * @var int position
+     */
     public $position;
     public $url;
     public $target;
@@ -84,10 +115,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
+        $this->fk_menu = (int) $this->fk_menu;          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -95,7 +126,7 @@ class Menubase
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
-        $this->position=trim($this->position);
+        if (empty($this->position)) $this->position=0;
         if (! $this->level) $this->level=0;
 
         // Check parameters
@@ -128,7 +159,7 @@ class Menubase
         $sql = "SELECT count(*)";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
-        $sql.= " AND fk_menu = ".((int) $this->db->escape($this->fk_menu));
+        $sql.= " AND fk_menu = ".((int) $this->fk_menu);
         $sql.= " AND position = ".((int) $this->position);
         $sql.= " AND url = '".$this->db->escape($this->url)."'";
         $sql.= " AND entity = ".$conf->entity;
@@ -225,10 +256,10 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
-        $this->fk_menu=trim($this->fk_menu);
+        $this->fk_menu = (int) $this->fk_menu;
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
-        $this->position=trim($this->position);
+        $this->position = (int) $this->position;
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -247,7 +278,7 @@ class Menubase
         $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-        $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
+        $sql.= " fk_menu=".$this->fk_menu.",";
         $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
         $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
@@ -558,7 +589,6 @@ class Menubase
 
             $a = 0;
             $b = 0;
-            $oldrowid=0;
             while ($a < $numa)
             {
                 //$objm = $this->db->fetch_object($resql);
@@ -683,6 +713,4 @@ class Menubase
             }
         }
    }
-
 }
-

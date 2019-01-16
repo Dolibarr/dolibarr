@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009		Meos
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-$langs->load("products");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("products","other"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
@@ -81,6 +81,12 @@ elseif ($modulepart == 'societe')
 {
 	$result=restrictedArea($user,'societe',$id,'societe');
 	if (! $user->rights->societe->lire) accessforbidden();
+	$accessallowed=1;
+}
+elseif ($modulepart == 'tax')
+{
+	$result=restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+	if (! $user->rights->tax->charges->lire) accessforbidden();
 	$accessallowed=1;
 }
 elseif ($modulepart == 'ticket')
@@ -177,6 +183,17 @@ elseif ($modulepart == 'expensereport')
         $dir=$conf->expensereport->dir_output;	// By default
     }
 }
+elseif ($modulepart == 'tax')
+{
+	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+	$object = new ChargeSociales($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->tax->dir_output;	// By default
+	}
+}
 elseif ($modulepart == 'ticket')
 {
 	require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -200,7 +217,8 @@ if (empty($backtourl))
     else if (in_array($modulepart, array('member')))        $backtourl=DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('project')))       $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('societe')))       $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('ticket')))     $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('tax')))           $backtourl=DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('ticket')))        $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
@@ -226,6 +244,7 @@ if ($cancel)
 if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
 {
 	$fullpath=$dir."/".$original_file;
+
 	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
 
 	if ($result == $fullpath)
@@ -294,6 +313,8 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 if ($action == 'confirm_crop')
 {
 	$fullpath=$dir."/".$original_file;
+
+	//var_dump($_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result=dol_imageResizeOrCrop($fullpath,1,$_POST['w'],$_POST['h'],$_POST['x'],$_POST['y']);
 
 	if ($result == $fullpath)
@@ -419,9 +440,9 @@ if (! empty($conf->use_javascript_ajax))
 	// If image is too large, we use another scale.
 	if (! empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth']/2)))
 	{
-		$widthforcrop=round($_SESSION['dol_screenwidth']/2);
+		$ratioforcrop=2;
+		$widthforcrop=round($_SESSION['dol_screenwidth'] / $ratioforcrop);
 		$refsizeforcrop='screenwidth';
-		$ratioforcrop=1;
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -448,7 +469,7 @@ if (! empty($conf->use_javascript_ajax))
 	      <input type="hidden" id="action" name="action" value="confirm_crop" />
 	      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
 	      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
-	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" />
+	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- field used by core/lib/lib_photoresize.js -->
           <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 	      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 	      <br>

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@ class ActionsCardCompany extends ActionsCardCommon
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -77,6 +78,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
@@ -179,7 +181,6 @@ class ActionsCardCompany extends ActionsCardCommon
 				{
 					$this->tpl['tva_intra'] = $s;
 				}
-
 			}
 			else
 			{
@@ -218,6 +219,4 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-
 }
-

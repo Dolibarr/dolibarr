@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
@@ -67,6 +67,8 @@ $entitytoicon = array(
 	'category'     => 'category',
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
+    'reception'=> 'sending',
+    'reception_line'=> 'sending',
 	'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
 	'holiday'      => 'holiday',
@@ -123,14 +125,14 @@ $entitytolang = array(
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $array_filtervalue=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
-$datatoexport=GETPOST("datatoexport");
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$step=GETPOST("step")?GETPOST("step"):1;
-$export_name=GETPOST("export_name");
-$hexa=GETPOST("hexa");
-$exportmodelid=GETPOST("exportmodelid");
-$field=GETPOST("field");
+$datatoexport=GETPOST("datatoexport","aZ09");
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$step=GETPOST("step","int")?GETPOST("step","int"):1;
+$export_name=GETPOST("export_name","alphanohtml");
+$hexa=GETPOST("hexa","alpha");
+$exportmodelid=GETPOST("exportmodelid","int");
+$field=GETPOST("field","alpa");
 
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
@@ -208,7 +210,6 @@ if ($action=='selectfield')     // Selection of field at step 2
 
 	    setEventMessages($warnings, null, 'warnings');
     }
-
 }
 if ($action=='unselectfield')
 {
@@ -624,11 +625,11 @@ if ($step == 2 && $datatoexport)
         }
    		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
-		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("SourceExample").':</b> '.$objexport->array_export_examplevalues[0][$code].'<br>';
 		}
     	if (! empty($objexport->array_export_TypeFields[0][$code]))
 		{
-		    $htmltext.=$langs->trans("Type").': <b>'.$objexport->array_export_TypeFields[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
 		}
 
 		if (isset($array_selected[$code]) && $array_selected[$code])
@@ -679,11 +680,10 @@ if ($step == 2 && $datatoexport)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
 	}
 
     print '</div>';
-
 }
 
 if ($step == 3 && $datatoexport)
@@ -858,7 +858,6 @@ if ($step == 3 && $datatoexport)
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
-
 }
 
 if ($step == 4 && $datatoexport)
@@ -1162,7 +1161,6 @@ if ($step == 5 && $datatoexport)
     if ($action == 'remove_file')
     {
     	print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
     }
 
     print '<div class="fichecenter">';

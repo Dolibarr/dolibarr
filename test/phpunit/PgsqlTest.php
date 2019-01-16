@@ -62,6 +62,8 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -167,13 +169,13 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
-    	
+
         // Test GROUP_CONCAT (with SEPARATOR)
 		$sql="SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
-    	
+
     	return $result;
     }
 }

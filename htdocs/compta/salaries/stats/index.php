@@ -41,18 +41,6 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-// Other security check
-$childids = $user->getAllChildIds();
-$childids[]=$user->id;
-if ($userid > 0)
-{
-	if (empty($user->rights->salaries->payment->readall) && ! in_array($userid, $childids))
-	{
-		accessforbidden();
-		exit;
-	}
-}
-
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
@@ -77,11 +65,6 @@ print load_fiche_titre($title, $mesg);
 dol_mkdir($dir);
 
 $useridtofilter=$userid;	// Filter from parameters
-if (empty($useridtofilter))
-{
-	$useridtofilter=$childids;
-	if (! empty($user->rights->salaries->payment->readall)) $useridtofilter=0;
-}
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
 
@@ -204,7 +187,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
+complete_head_from_modules($conf,$langs,null,$head,$h,'salaries_stats');
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -214,7 +197,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
@@ -231,8 +214,9 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
-print '<table class="border" width="100%">';
-print '<tr>';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
 print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
@@ -247,14 +231,16 @@ foreach ($data as $val)
 	{
 		// If we have empty year
 		$oldyear--;
-		print '<tr height="24">';
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right">0</td>';
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
-	print '<tr height="24">';
+
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
@@ -264,6 +250,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

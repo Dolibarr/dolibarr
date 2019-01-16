@@ -254,7 +254,7 @@ class DolibarrApi
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
 	    $ok=0;
-	    $i=0; $nb=count($tmp);
+	    $i=0; $nb=strlen($tmp);
 	    $counter=0;
 	    while ($i < $nb)
 	    {
@@ -271,6 +271,7 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Function to forge a SQL criteria
 	 *
@@ -279,6 +280,7 @@ class DolibarrApi
 	 */
 	static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);

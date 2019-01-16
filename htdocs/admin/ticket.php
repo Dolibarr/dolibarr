@@ -54,11 +54,11 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    if (!$error) 
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } 
-    else 
+    }
+    else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -253,7 +253,7 @@ dol_fiche_end();
  * Projects Numbering model
  */
 
-print_titre($langs->trans("TicketNumberingModules"));
+print load_fiche_titre($langs->trans("TicketNumberingModules"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -353,7 +353,7 @@ if (!$conf->use_javascript_ajax) {
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
-print_titre($langs->trans("TicketParamPublicInterface"));
+print load_fiche_titre($langs->trans("TicketParamPublicInterface"));
 
 print '<table class="noborder" width="100%">';
 
@@ -422,7 +422,7 @@ print '</tr>';
 
 print '</table><br>';
 
-print_titre($langs->trans("TicketParams"));
+print load_fiche_titre($langs->trans("TicketParams"));
 print '<table class="noborder" width="100%">';
 
 // Activate email notifications
@@ -515,7 +515,7 @@ if (!$conf->use_javascript_ajax) {
 }
 
 // Admin var of module
-print_titre($langs->trans("TicketParamMail"));
+print load_fiche_titre($langs->trans("TicketParamMail"));
 
 print '<table class="noborder" width="100%">';
 

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2015      Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018		Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("holiday");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "holiday"));
 
 if (!$user->admin) accessforbidden();
 
@@ -76,8 +75,8 @@ else if ($action == 'specimen') // For contract
 {
 	$modele= GETPOST('module','alpha');
 
-	$contract = new Contrat($db);
-	$contract->initAsSpecimen();
+	$holiday = new Holiday($db);
+	$holiday->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -99,7 +98,7 @@ else if ($action == 'specimen') // For contract
 
 		$module = new $classname($db);
 
-		if ($module->write_file($contract,$langs) > 0)
+		if ($module->write_file($holiday,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=holiday&file=SPECIMEN.pdf");
 			return;
@@ -272,7 +271,7 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc,$contract);
+						$nextval=$module->getNextValue($mysoc,$holiday);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
@@ -299,8 +298,13 @@ foreach ($dirmodels as $reldir)
 
 print '</table><br>';
 
+
+
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+
 /*
- *  Documents models for Contracts
+ *  Documents models for Holidays
  */
 
 print load_fiche_titre($langs->trans("TemplatePDFHolidays"),'','');
@@ -341,7 +345,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -379,7 +382,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -459,9 +461,9 @@ foreach ($dirmodels as $reldir)
 print '</table>';
 print "<br>";
 
+
 /*
  * Other options
- *
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -474,7 +476,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
-$var=true;
 
 $substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
@@ -482,7 +483,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
 print '<br>';
@@ -514,6 +514,8 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
+}
+
 
 dol_fiche_end();
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
 	if ($period) print $period;
-	if ($variante) print '<td>'.$periodlink.'</td>';
+	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
 	print '</td>';
 	print '</tr>';
 

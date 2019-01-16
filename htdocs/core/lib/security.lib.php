@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ function dol_encode($chain, $key='1')
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
 		$output_tab=array();
-	    $strlength=dol_strlen($chain);
+		$strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength; $i++)
 		{
 			$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
@@ -142,7 +142,7 @@ function dol_hash($chain, $type='0')
  *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function.
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
- * 	@param 		string		$chain		String to hash
+ * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
@@ -174,18 +174,19 @@ function dol_verifyHash($chain, $hash, $type='0')
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+ *  @param	int		$isdraft		1=The object with id=$objectid is a draft
  * 	@return	int						Always 1, die process if not allowed
  *  @see dol_check_secure_access_document
  */
-function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $isdraft=0)
 {
 	global $db, $conf;
 	global $hookmanager;
 
-    //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
-    //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
-    //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-    //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
+	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
+	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
+	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
 	// Get more permissions checks from hooks
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
@@ -196,225 +197,225 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
 	// Features/modules to check
-    $featuresarray = array($features);
-    if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
-    else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
+	$featuresarray = array($features);
+	if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
+	else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
 
-    // More subfeatures to check
-    if (! empty($feature2)) $feature2 = explode("|", $feature2);
+	// More subfeatures to check
+	if (! empty($feature2)) $feature2 = explode("|", $feature2);
 
-    // More parameters
-    $params = explode('&', $tableandshare);
-    $dbtablename=(! empty($params[0]) ? $params[0] : '');
-    $sharedelement=(! empty($params[1]) ? $params[1] : $dbtablename);
+	// More parameters
+	$params = explode('&', $tableandshare);
+	$dbtablename=(! empty($params[0]) ? $params[0] : '');
+	$sharedelement=(! empty($params[1]) ? $params[1] : $dbtablename);
 
 	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	// Check read permission from module
-    $readok=1; $nbko=0;
-    foreach ($featuresarray as $feature)	// first we check nb of test ko
-    {
-        $featureforlistofmodule=$feature;
-        if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
-        if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
-    	{
-    		$readok=0; $nbko++;
-    		continue;
-    	}
+	$readok=1; $nbko=0;
+	foreach ($featuresarray as $feature)	// first we check nb of test ko
+	{
+		$featureforlistofmodule=$feature;
+		if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
+		if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+		{
+			$readok=0; $nbko++;
+			continue;
+		}
 
-        if ($feature == 'societe')
-        {
-            if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) { $readok=0; $nbko++; }
-        }
-        else if ($feature == 'contact')
-        {
-            if (! $user->rights->societe->contact->lire) { $readok=0; $nbko++; }
-        }
-        else if ($feature == 'produit|service')
-        {
-            if (! $user->rights->produit->lire && ! $user->rights->service->lire) { $readok=0; $nbko++; }
-        }
-        else if ($feature == 'prelevement')
-        {
-            if (! $user->rights->prelevement->bons->lire) { $readok=0; $nbko++; }
-        }
-        else if ($feature == 'cheque')
-        {
-            if (! $user->rights->banque->cheque) { $readok=0; $nbko++; }
-        }
-        else if ($feature == 'projet')
-        {
-            if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) { $readok=0; $nbko++; }
-        }
-        else if (! empty($feature2))	// This should be used for future changes
-        {
-        	$tmpreadok=1;
-        	foreach($feature2 as $subfeature)
-        	{
-        		if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $tmpreadok=0; }
-        		else if (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $tmpreadok=0; }
-        		else { $tmpreadok=1; break; } // Break is to bypass second test if the first is ok
-        	}
-        	if (! $tmpreadok)	// We found a test on feature that is ko
-        	{
-        		$readok=0;	// All tests are ko (we manage here the and, the or will be managed later using $nbko).
-        		$nbko++;
-        	}
-        }
-        else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
-        {
-            if (empty($user->rights->$feature->lire)
-            && empty($user->rights->$feature->read)
-            && empty($user->rights->$feature->run)) { $readok=0; $nbko++; }
-        }
-    }
+		if ($feature == 'societe')
+		{
+			if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) { $readok=0; $nbko++; }
+		}
+		else if ($feature == 'contact')
+		{
+			if (! $user->rights->societe->contact->lire) { $readok=0; $nbko++; }
+		}
+		else if ($feature == 'produit|service')
+		{
+			if (! $user->rights->produit->lire && ! $user->rights->service->lire) { $readok=0; $nbko++; }
+		}
+		else if ($feature == 'prelevement')
+		{
+			if (! $user->rights->prelevement->bons->lire) { $readok=0; $nbko++; }
+		}
+		else if ($feature == 'cheque')
+		{
+			if (! $user->rights->banque->cheque) { $readok=0; $nbko++; }
+		}
+		else if ($feature == 'projet')
+		{
+			if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) { $readok=0; $nbko++; }
+		}
+		else if (! empty($feature2))	// This should be used for future changes
+		{
+			$tmpreadok=1;
+			foreach($feature2 as $subfeature)
+			{
+				if (! empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) { $tmpreadok=0; }
+				else if (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) { $tmpreadok=0; }
+				else { $tmpreadok=1; break; } // Break is to bypass second test if the first is ok
+			}
+			if (! $tmpreadok)	// We found a test on feature that is ko
+			{
+				$readok=0;	// All tests are ko (we manage here the and, the or will be managed later using $nbko).
+				$nbko++;
+			}
+		}
+		else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
+		{
+			if (empty($user->rights->$feature->lire)
+				&& empty($user->rights->$feature->read)
+				&& empty($user->rights->$feature->run)) { $readok=0; $nbko++; }
+		}
+	}
 
-    // If a or and at least one ok
-    if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $readok=1;
+	// If a or and at least one ok
+	if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $readok=1;
 
-    if (! $readok) accessforbidden();
-    //print "Read access is ok";
+	if (! $readok) accessforbidden();
+	//print "Read access is ok";
 
-    // Check write permission from module
-    $createok=1; $nbko=0;
-    if (GETPOST('action','aZ09')  == 'create')
-    {
-        foreach ($featuresarray as $feature)
-        {
-            if ($feature == 'contact')
-            {
-                if (! $user->rights->societe->contact->creer) { $createok=0; $nbko++; }
-            }
-            else if ($feature == 'produit|service')
-            {
-                if (! $user->rights->produit->creer && ! $user->rights->service->creer) { $createok=0; $nbko++; }
-            }
-            else if ($feature == 'prelevement')
-            {
-                if (! $user->rights->prelevement->bons->creer) { $createok=0; $nbko++; }
-            }
-            else if ($feature == 'commande_fournisseur')
-            {
-                if (! $user->rights->fournisseur->commande->creer) { $createok=0; $nbko++; }
-            }
-            else if ($feature == 'banque')
-            {
-                if (! $user->rights->banque->modifier) { $createok=0; $nbko++; }
-            }
-            else if ($feature == 'cheque')
-            {
-                if (! $user->rights->banque->cheque) { $createok=0; $nbko++; }
-            }
-            else if (! empty($feature2))	// This should be used
-            {
-            	foreach($feature2 as $subfeature)
-            	{
-                        if (empty($user->rights->$feature->$subfeature->creer)
-                        && empty($user->rights->$feature->$subfeature->write)
-                        && empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
-            		else { $createok=1; break; } // Break to bypass second test if the first is ok
-            	}
-            }
-            else if (! empty($feature))		// This is for old permissions ('creer' or 'write')
-            {
-                //print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
-                if (empty($user->rights->$feature->creer)
-                && empty($user->rights->$feature->write)
-                && empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
-            }
-        }
+	// Check write permission from module (we need to know write permission to create but also to delete drafts record)
+	$createok=1; $nbko=0;
+	if (GETPOST('action','aZ09')  == 'create' || ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete'))
+	{
+		foreach ($featuresarray as $feature)
+		{
+			if ($feature == 'contact')
+			{
+				if (! $user->rights->societe->contact->creer) { $createok=0; $nbko++; }
+			}
+			else if ($feature == 'produit|service')
+			{
+				if (! $user->rights->produit->creer && ! $user->rights->service->creer) { $createok=0; $nbko++; }
+			}
+			else if ($feature == 'prelevement')
+			{
+				if (! $user->rights->prelevement->bons->creer) { $createok=0; $nbko++; }
+			}
+			else if ($feature == 'commande_fournisseur')
+			{
+				if (! $user->rights->fournisseur->commande->creer) { $createok=0; $nbko++; }
+			}
+			else if ($feature == 'banque')
+			{
+				if (! $user->rights->banque->modifier) { $createok=0; $nbko++; }
+			}
+			else if ($feature == 'cheque')
+			{
+				if (! $user->rights->banque->cheque) { $createok=0; $nbko++; }
+			}
+			else if (! empty($feature2))	// This should be used
+			{
+				foreach($feature2 as $subfeature)
+				{
+					if (empty($user->rights->$feature->$subfeature->creer)
+						&& empty($user->rights->$feature->$subfeature->write)
+						&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
+						else { $createok=1; break; } // Break to bypass second test if the first is ok
+				}
+			}
+			else if (! empty($feature))		// This is for old permissions ('creer' or 'write')
+			{
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
+				if (empty($user->rights->$feature->creer)
+					&& empty($user->rights->$feature->write)
+					&& empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
+			}
+		}
 
-	    // If a or and at least one ok
-	    if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $createok=1;
+		// If a or and at least one ok
+		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $createok=1;
 
-        if (! $createok) accessforbidden();
-        //print "Write access is ok";
-    }
+		if (GETPOST('action','aZ09') == 'create' && ! $createok) accessforbidden();
+		//print "Write access is ok";
+	}
 
-    // Check create user permission
-    $createuserok=1;
-    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
-    {
-        if (! $user->rights->user->user->creer) $createuserok=0;
+	// Check create user permission
+	$createuserok=1;
+	if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
+	{
+		if (! $user->rights->user->user->creer) $createuserok=0;
 
-        if (! $createuserok) accessforbidden();
-        //print "Create user access is ok";
-    }
+		if (! $createuserok) accessforbidden();
+		//print "Create user access is ok";
+	}
 
-    // Check delete permission from module
-    $deleteok=1; $nbko=0;
-    if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
-    {
-        foreach ($featuresarray as $feature)
-        {
-            if ($feature == 'contact')
-            {
-                if (! $user->rights->societe->contact->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'produit|service')
-            {
-                if (! $user->rights->produit->supprimer && ! $user->rights->service->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'commande_fournisseur')
-            {
-                if (! $user->rights->fournisseur->commande->supprimer) $deleteok=0;
-            }
-            else if ($feature == 'banque')
-            {
-                if (! $user->rights->banque->modifier) $deleteok=0;
-            }
-            else if ($feature == 'cheque')
-            {
-                if (! $user->rights->banque->cheque) $deleteok=0;
-            }
-            else if ($feature == 'ecm')
-            {
-                if (! $user->rights->ecm->upload) $deleteok=0;
-            }
-            else if ($feature == 'ftp')
-            {
-                if (! $user->rights->ftp->write) $deleteok=0;
-            }else if ($feature == 'salaries')
-            {
-                if (! $user->rights->salaries->delete) $deleteok=0;
-            }
-            else if ($feature == 'salaries')
-            {
-                if (! $user->rights->salaries->delete) $deleteok=0;
-            }
-            else if (! empty($feature2))	// This should be used for future changes
-            {
-            	foreach($feature2 as $subfeature)
-            	{
-            		if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
-            		else { $deleteok=1; break; } // For bypass the second test if the first is ok
-            	}
-            }
-            else if (! empty($feature))		// This is for old permissions
-            {
-                //print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
-                if (empty($user->rights->$feature->supprimer)
-                && empty($user->rights->$feature->delete)
-                && empty($user->rights->$feature->run)) $deleteok=0;
-            }
-        }
+	// Check delete permission from module
+	$deleteok=1; $nbko=0;
+	if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
+	{
+		foreach ($featuresarray as $feature)
+		{
+			if ($feature == 'contact')
+			{
+				if (! $user->rights->societe->contact->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'produit|service')
+			{
+				if (! $user->rights->produit->supprimer && ! $user->rights->service->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'commande_fournisseur')
+			{
+				if (! $user->rights->fournisseur->commande->supprimer) $deleteok=0;
+			}
+			else if ($feature == 'banque')
+			{
+				if (! $user->rights->banque->modifier) $deleteok=0;
+			}
+			else if ($feature == 'cheque')
+			{
+				if (! $user->rights->banque->cheque) $deleteok=0;
+			}
+			else if ($feature == 'ecm')
+			{
+				if (! $user->rights->ecm->upload) $deleteok=0;
+			}
+			else if ($feature == 'ftp')
+			{
+				if (! $user->rights->ftp->write) $deleteok=0;
+			}else if ($feature == 'salaries')
+			{
+				if (! $user->rights->salaries->delete) $deleteok=0;
+			}
+			else if ($feature == 'salaries')
+			{
+				if (! $user->rights->salaries->delete) $deleteok=0;
+			}
+			else if (! empty($feature2))	// This should be used for permissions on 2 levels
+			{
+				foreach($feature2 as $subfeature)
+				{
+					if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
+					else { $deleteok=1; break; } // For bypass the second test if the first is ok
+				}
+			}
+			else if (! empty($feature))		// This is used for permissions on 1 level
+			{
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
+				if (empty($user->rights->$feature->supprimer)
+					&& empty($user->rights->$feature->delete)
+					&& empty($user->rights->$feature->run)) $deleteok=0;
+			}
+		}
 
-	    // If a or and at least one ok
-	    if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $deleteok=1;
+		// If a or and at least one ok
+		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $deleteok=1;
 
-        if (! $deleteok) accessforbidden();
-        //print "Delete access is ok";
-    }
+		if (! $deleteok && ! ($isdraft && $createok)) accessforbidden();
+		//print "Delete access is ok";
+	}
 
-    // If we have a particular object to check permissions on, we check this object
-    // is linked to a company allowed to $user.
-    if (! empty($objectid) && $objectid > 0)
-    {
-        $ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-        return $ok ? 1 : accessforbidden();
-    }
+	// If we have a particular object to check permissions on, we check this object
+	// is linked to a company allowed to $user.
+	if (! empty($objectid) && $objectid > 0)
+	{
+		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
+		return $ok ? 1 : accessforbidden();
+	}
 
-    return 1;
+	return 1;
 }
 
 /**
@@ -576,8 +577,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		{
 			if (! empty($conf->projet->enabled) && empty($user->rights->projet->all->lire))
 			{
-			    $task = new Task($db);
-			    $task->fetch($objectid);
+				$task = new Task($db);
+				$task->fetch($objectid);
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic=new Project($db);
@@ -662,32 +663,33 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
         $langs=new Translate('',$conf);
+        $langs->setDefaultLang();
     }
 
-    $langs->load("errors");
+	$langs->load("errors");
 
-    if ($printheader)
-    {
-        if (function_exists("llxHeader")) llxHeader('');
-        else if (function_exists("llxHeaderVierge")) llxHeaderVierge('');
-    }
-    print '<div class="error">';
-    if (! $message) print $langs->trans("ErrorForbidden");
-    else print $message;
-    print '</div>';
-    print '<br>';
-    if (empty($showonlymessage))
-    {
-        if ($user->login)
-        {
-            print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-            print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
-        }
-        else
-        {
-            print $langs->trans("ErrorForbidden3");
-        }
-    }
-    if ($printfooter && function_exists("llxFooter")) llxFooter();
-    exit(0);
+	if ($printheader)
+	{
+		if (function_exists("llxHeader")) llxHeader('');
+		else if (function_exists("llxHeaderVierge")) llxHeaderVierge('');
+	}
+	print '<div class="error">';
+	if (! $message) print $langs->trans("ErrorForbidden");
+	else print $message;
+	print '</div>';
+	print '<br>';
+	if (empty($showonlymessage))
+	{
+		if ($user->login)
+		{
+			print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+			print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+		}
+		else
+		{
+			print $langs->trans("ErrorForbidden3");
+		}
+	}
+	if ($printfooter && function_exists("llxFooter")) llxFooter();
+	exit(0);
 }

@@ -66,7 +66,7 @@ $title = $langs->trans('NewProductAttribute');
 
 llxHeader('', $title);
 
-print_fiche_titre($title);
+print load_fiche_titre($title);
 
 dol_fiche_head();
 

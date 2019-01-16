@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,8 @@
 /**
  * 	\defgroup   produit     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
- *  \file       htdocs/core/modules/modAttributes.class.php
+ *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
- *  \brief      File to describe module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -110,4 +109,3 @@ class modVariants extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 	}
 }
-

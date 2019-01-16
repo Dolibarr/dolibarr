@@ -60,7 +60,7 @@ class modModuleBuilder extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array('setup@modulebuilder');
+        $this->config_page_url = array('setup.php@modulebuilder');
 
         // Dependencies
         //-------------
@@ -98,6 +98,5 @@ class modModuleBuilder extends DolibarrModules
             'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
-
     }
 }

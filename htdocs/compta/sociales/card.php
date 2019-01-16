@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
+ * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ if (! empty($conf->accounting->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills'));
+$langs->loadLangs(array('compta', 'bills', 'banks'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -332,7 +332,7 @@ if ($action == 'create')
 	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
 	print '</td>';
    	print '<td>';
-	print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -342,7 +342,7 @@ if ($action == 'create')
 	print $langs->trans("DateDue");
 	print '</td>';
 	print '<td>';
-	print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print "</tr>\n";
 
@@ -481,7 +481,7 @@ if ($id > 0)
 		}
 		$morehtmlref.='</div>';
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -502,7 +502,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -514,10 +514,9 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
-		}
-		else {
+		} else {
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
 		}
 
