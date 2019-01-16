@@ -5867,7 +5867,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'member')
+			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
@@ -5895,9 +5895,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (! empty($conf->expedition->enabled))
 			{
-				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+			    $substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
 			}
 		}
