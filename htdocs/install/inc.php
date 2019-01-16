@@ -196,7 +196,7 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-	if (! is_object($langs))
+	if (! isset($langs) || ! is_object($langs))
 	{
 		$langs = new Translate('..', $conf);
 		$langs->setDefaultLang('auto');
