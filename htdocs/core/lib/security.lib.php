@@ -263,7 +263,6 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 				$readok=0;	// All tests are ko (we manage here the and, the or will be managed later using $nbko).
 				$nbko++;
 			}
-			var_dump($readok);
 		}
 		else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
 		{
