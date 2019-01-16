@@ -1,0 +1,7 @@
+linters:
+    phpcs:
+        standard: 'PSR2'
+        ignore: 'htdocs/includes/**'
+        extensions: 'php'
+        tab_width: 4
+        fixer: true
