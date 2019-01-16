@@ -1271,10 +1271,10 @@ else if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	// Contrat
+	// Contract
 	if ($conf->contrat->enabled)
 	{
-		$langs->load('contrat');
+		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
 

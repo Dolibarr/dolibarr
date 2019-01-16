@@ -791,7 +791,6 @@ if ($resql)
 	print "</tr>\n";
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{

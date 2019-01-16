@@ -195,7 +195,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
@@ -266,7 +266,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
