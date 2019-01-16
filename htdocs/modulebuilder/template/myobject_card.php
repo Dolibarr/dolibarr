@@ -118,7 +118,7 @@ if (empty($reshook))
 	$error=0;
 
 	$permissiontoadd = $user->rights->mymodule->write;
-	$permissiontodelete = $user->rights->mymodule->delete;
+	$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 	if (empty($backtopage)) {
 	    if (empty($id)) $backtopage = $backurlforlist;
