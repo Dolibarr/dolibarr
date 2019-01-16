@@ -1844,6 +1844,8 @@ FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>VALUE:abc<br>REGEX:SUBJECT:([^\s]*)<br>REGEX:BODY:My company name is\s([^\s]*)
+OpeningHours=Opening hours
+OpeningHoursDesc=Enter here the regular opening hours of your company.
 ##### Resource ####
 ResourceSetup=Configuration of Resource module
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/admin/accountant.php
+ *	\file       htdocs/admin/openinghours.php
  *	\ingroup    accountant
  *	\brief      Setup page to configure accountant / auditor
  */
@@ -82,7 +82,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
 
 $head = company_admin_prepare_head();
 
-dol_fiche_head($head, 'schedule', $langs->trans("Company"), -1, 'company');
+dol_fiche_head($head, 'openinghours', $langs->trans("Company"), -1, 'company');
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -90,7 +90,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print '<span class="opacitymedium">'.$langs->trans("ScheduleDesc")."</span><br>\n";
+print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')
