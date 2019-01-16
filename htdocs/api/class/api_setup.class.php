@@ -326,6 +326,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of event
      * @param string    $module     To filter on module events
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
@@ -388,6 +389,7 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
      * @param string    $module     To filter on module events
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
@@ -448,6 +450,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
@@ -459,7 +462,7 @@ class Setup extends DolibarrApi
     {
         $list = array();
  //TODO link with multicurrency module
-        $sql = "SELECT code_iso, label, unicode";
+        $sql = "SELECT t.code_iso, t.label, t.unicode";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
         $sql.= " WHERE t.active = ".$active;
         // Add sql filters
@@ -584,6 +587,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $zipcode    To filter on zipcode
      * @param string    $town       To filter on city name
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of towns
      *
@@ -708,6 +712,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
@@ -767,6 +772,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
@@ -826,6 +832,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
