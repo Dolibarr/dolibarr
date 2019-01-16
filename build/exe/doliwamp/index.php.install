@@ -527,7 +527,7 @@ a:hover {
 </head>
 
 <body>
-<table width="100%"><tr><td align="left">
+<table width="100%"><tr><td style="text-align:left;">
 	<img src="index.php?img=pngLogo">
 </td>
 <td align="right">
