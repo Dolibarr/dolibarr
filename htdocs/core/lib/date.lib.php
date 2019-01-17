@@ -165,6 +165,7 @@ function convertTime2Seconds($iHours=0, $iMinutes=0, $iSeconds=0)
  *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
  *                                          - 'allwithouthour': total delay days without hour part like "2 days",
  *                                          - 'allhourmin': total delay with format hours:min like "60:30",
+ *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
  *                                          - 'allhour': total delay hours without min/sec like "60:30",
  *                                          - 'fullhour': total delay hour decimal like "60.5" for 60:30,
  *                                          - 'hour': only hours part "12",
@@ -185,7 +186,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
+    if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec')
 	{
 		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
@@ -232,11 +233,15 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 				$sTime.= dol_print_date($iSecond,'hourduration',true);
 			}
 		}
-		if ($format == 'allhourmin')
+		elseif ($format == 'allhourminsec')
+		{
+		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60))).':'.sprintf("%02d",((int) ($iSecond % 60)));
+		}
+		elseif ($format == 'allhourmin')
 		{
 		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
 		}
-		if ($format == 'allhour')
+		elseif ($format == 'allhour')
 		{
 			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}

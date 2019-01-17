@@ -409,7 +409,7 @@ print_liste_field_titre("CronDtEnd",$_SERVER["PHP_SELF"],"t.dateend","",$param,'
 print_liste_field_titre("CronMaxRun",$_SERVER["PHP_SELF"],"t.maxrun","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("CronNbRun",$_SERVER["PHP_SELF"],"t.nbrun","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("CronDtLastLaunch",$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre("CronDtLastResult",$_SERVER["PHP_SELF"],"t.datelastresult","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("CronLastResult",$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("CronLastOutput",$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronDtNextLaunch",$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
@@ -437,6 +437,9 @@ if ($num > 0)
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
+
+		$datelastrun = $db->jdate($obj->datelastrun);
+		$datelastresult = $db->jdate($obj->datelastresult);
 
 		print '<tr class="oddeven">';
 
@@ -510,12 +513,15 @@ if ($num > 0)
 
 		// Date start last run
 		print '<td class="center">';
-		if (!empty($obj->datelastrun)) {print dol_print_date($db->jdate($obj->datelastrun),'dayhoursec');}
+		if (!empty($datelastrun)) {print dol_print_date($datelastrun,'dayhoursec');}
 		print '</td>';
 
-		// Date end last run
+		// Duration
 		print '<td class="center">';
-		if (!empty($obj->datelastresult)) {print dol_print_date($db->jdate($obj->datelastresult),'dayhoursec');}
+		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
+		    print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
+		    //print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
+		}
 		print '</td>';
 
 		// Return code of last run
