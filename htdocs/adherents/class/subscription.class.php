@@ -55,6 +55,7 @@ class Subscription extends CommonObject
 	/**
      * @var int ID
      */
+	public $fk_type;
 	public $fk_adherent;
 
 	public $amount;
@@ -102,8 +103,16 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
+        if ($this->fk_type == NULL) {
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		$member=new Adherent($this->db);
+		$result=$member->fetch($this->fk_adherent);
+    $type=$member->typeid;
+    } else {
+    $type=$this->fk_type;
+    }
+    $sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
@@ -147,7 +156,7 @@ class Subscription extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-        $sql ="SELECT rowid, fk_adherent, datec,";
+        $sql ="SELECT rowid, fk_type, fk_adherent, datec,";
 		$sql.=" tms,";
 		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
@@ -166,7 +175,8 @@ class Subscription extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 
-				$this->fk_adherent    = $obj->fk_adherent;
+				$this->fk_type        = $obj->fk_type;
+        $this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
 				$this->dateh          = $this->db->jdate($obj->dateh);
@@ -203,6 +213,7 @@ class Subscription extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
+    $sql .= " fk_type = ".$this->fk_type.",";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = '".price2num($this->amount)."',";
