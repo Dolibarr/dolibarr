@@ -173,8 +173,8 @@ if ($resql)
 		print $result;
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;
