@@ -48,7 +48,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
-$colorbacklinebreak='214,218,220';		// line break
+$colorbacklinebreak='239,231,224';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
@@ -3109,11 +3109,12 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
-div.colorback
+div.colorback	/* for the form "assign user" on time spent view */
 {
-	background: rgb(<?php echo $colorbacktitle1; ?>);
+	background: #f8f8f8;
 	padding: 10px;
 	margin-top: 5px;
+	border: 1px solid #bbb;
 }
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
