@@ -731,7 +731,7 @@ if ($resql)
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
 		$formother->select_year($search_year_lim?$search_year_lim:-1,'search_year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
-		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
+		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Alert");
 		print '</td>';
 	}
 	// Project
@@ -993,7 +993,7 @@ if ($resql)
 				print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
 				if ($facturestatic->hasDelay())
 				{
-					print img_warning($langs->trans('Late'));
+				    print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
