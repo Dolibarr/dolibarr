@@ -584,7 +584,7 @@ if ($rowid > 0)
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc,'socid','',1);
 			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
 		else
