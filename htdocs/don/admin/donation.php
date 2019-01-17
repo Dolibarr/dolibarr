@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
+ * Copyright (C) 2019       Thibault FOUCART			<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +151,37 @@ if ($action == 'set_DONATION_MESSAGE')
     else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+/*
+ * Action
+ */
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+{
+    $code=$reg[1];
+    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+{
+    $code=$reg[1];
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else
+    {
+        dol_print_error($db);
     }
 }
 
@@ -317,11 +349,24 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
 print '<tr class="oddeven">';
+print '<td colspan="2">';
+print $form->textwithpicto($langs->trans("DonationUserThirdparties"), $langs->trans("DonationUserThirdpartiesDesc"));
+print '</td>';
+print '<td align="center">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
+}
+print "</td>\n";
+print "</tr>\n";
 
+print '<tr class="oddeven">';
 print '<td>';
 $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">' . $label . '</label></td>';
-print '<td>';
+print '<td align="center">';
 if (! empty($conf->accounting->enabled))
 {
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
@@ -330,7 +375,7 @@ else
 {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
 }
-print '</td><td align="right">';
+print '</td><td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
@@ -342,7 +387,7 @@ print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
-print '</td><td align="right">';
+print '</td><td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 
