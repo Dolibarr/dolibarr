@@ -76,7 +76,7 @@ $fieldstosearchall = array(
 );
 $arrayfields=array(
 	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-  'd.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	'd.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
 	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
 	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
 	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
@@ -115,17 +115,17 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
-      $search="";
-    	$search_type="";
-      $search_ref="";
-      $search_lastname="";
-    	$search_firstname="";
-    	$search_login="";
-      $search_note="";
-    	$search_amount="";
-    	$search_account="";
-      $toselect='';
-      $search_array_options=array();
+	    $search="";
+	    $search_type="";
+	    $search_ref="";
+	    $search_lastname="";
+	    $search_firstname="";
+	    $search_login="";
+	    $search_note="";
+	    $search_amount="";
+	    $search_account="";
+	    $toselect='';
+	    $search_array_options=array();
     }
 }
 
@@ -471,13 +471,14 @@ while ($i < min($num, $limit))
 		print '<td>'.$subscription->getNomUrl(1).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-  // Type
-  if (! empty($arrayfields['d.fk_type']['checked']))
+	
+	// Type
+	if (! empty($arrayfields['d.fk_type']['checked']))
 	{
-    print '<td>';
-    if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
-    print '</td>';
-    if (! $i) $totalarray['nbfield']++;
+	print '<td>';
+	if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
+	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Lastname
