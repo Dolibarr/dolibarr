@@ -159,6 +159,13 @@ $message='';
 $url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
 $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'WebDAV',$url);
 $message.='<br>';
+if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+{
+	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
+	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+	$message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'WebDAV public',$url);
+	$message.='<br>';
+}
 print $message;
 
 // End of page

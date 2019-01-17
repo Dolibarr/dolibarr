@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 
 
 $user = new User($db);
-if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
+if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 {
 	$user->fetch('',$_SERVER['PHP_AUTH_USER']);
 	$user->getrights();
@@ -47,14 +48,17 @@ if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 $langs->loadLangs(array("main","other"));
 
 
-if(empty($conf->dav->enabled))
+if (empty($conf->dav->enabled))
 	accessforbidden();
 
 
+$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
+
 // settings
-$publicDir = $conf->dav->dir_output.'/public';
-$privateDir = $conf->dav->dir_output.'/private';
-$tmpDir = $conf->dav->dir_temp;
+$publicDir = $conf->dav->multidir_output[$entity].'/public';
+$privateDir = $conf->dav->multidir_output[$entity].'/private';
+$ecmDir = $conf->ecm->multidir_output[$entity];
+$tmpDir = $conf->dav->multidir_temp[$entity];
 //var_dump($tmpDir);exit;
 
 // Authentication callback function
@@ -100,14 +104,14 @@ $nodes = array();
 // Public dir
 if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
-	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+	$nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
 }
 // Private dir
-$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/private');
+$nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
 // ECM dir
 if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
 {
-	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/ecm');
+	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
 }
 
 
