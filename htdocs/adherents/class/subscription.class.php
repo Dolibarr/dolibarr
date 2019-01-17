@@ -105,7 +105,7 @@ class Subscription extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
-		if ($this->fk_type == NULL) {
+		if ($this->fk_type == null) {
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $member=new Adherent($this->db);
 $result=$member->fetch($this->fk_adherent);
