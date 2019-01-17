@@ -266,7 +266,7 @@ $title=$langs->trans("ComptaFiles").' - '.$langs->trans("List");
 print '<form name="searchfiles" action="?action=searchfiles'.$tail.'" method="POST" >'."\n";
 print $langs->trans("ReportPeriod").': '.$form->select_date($date_start,'date_start',0,0,0,"",1,1,1);
 print ' - '.$form->select_date($date_stop,'date_stop',0,0,0,"",1,1,1)."\n</a>";
-print '<input class="butAction" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
+print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
 
 dol_fiche_end();
 
