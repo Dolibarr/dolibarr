@@ -248,7 +248,7 @@ foreach ($syslogModules as $moduleName)
 	}
 	print '</td>';
 
-	print '<td align="left">';
+	print '<td class="left">';
 	if ($module->getInfo())
 	{
 		print $form->textwithpicto('', $module->getInfo(), 1, 'help');

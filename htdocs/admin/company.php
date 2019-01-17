@@ -647,14 +647,14 @@ if ($action == 'edit' || $action == 'updateedit')
 		print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
 		if(! isOnlyOneLocalTax(1))
 		{
-			print '<tr><td align="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
+			print '<tr><td class="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
 			$formcompany->select_localtax(1,$conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
 		    print '</td></tr>';
 		}
 
 		$opcions=array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"),$langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"),$langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
-		print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
+		print '<tr><td class="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
 		print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
 		print '</td></tr>';
 		print "</table>";
@@ -691,11 +691,11 @@ if ($action == 'edit' || $action == 'updateedit')
 		print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
 		if(! isOnlyOneLocalTax(2))
 		{
-		    print '<tr><td align="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+		    print '<tr><td class="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
 		    $formcompany->select_localtax(2,$conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 			print '</td></tr>';
 		}
-		print '<tr><td align="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
+		print '<tr><td class="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 		print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
 		print '</td></tr>';
 		print "</table>";
@@ -1092,7 +1092,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
 		}
-		print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+		print '<tr><td class="left">'.$langs->trans("CalcLocaltax").': ';
 		if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0)
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
@@ -1146,7 +1146,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
 		}
-		print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+		print '<tr><td class="left">'.$langs->trans("CalcLocaltax").': ';
 		if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0)
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");

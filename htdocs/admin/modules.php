@@ -864,9 +864,9 @@ if ($mode == 'marketplace')
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
-    print "<tr class=\"oddeven\">\n";
+    print '<tr class="oddeven">'."\n";
     $url='https://www.dolistore.com';
-    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
@@ -1088,7 +1088,7 @@ if ($mode == 'develop')
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td align="left">';
+	print '<td class="left">';
 	//span class="fa fa-bug"></span>
 	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
@@ -1099,7 +1099,7 @@ if ($mode == 'develop')
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url='https://partners.dolibarr.org';
-	print '<td align="left">';
+	print '<td class="left">';
 	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';

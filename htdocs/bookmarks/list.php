@@ -132,7 +132,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		// Id
-		print '<td align="left">';
+		print '<td class="left">';
 		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->rowid."</a>";
 		print '</td>';
 
