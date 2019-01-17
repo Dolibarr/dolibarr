@@ -1113,6 +1113,8 @@ class Commande extends CommonOrder
 
 			if (! $error)
 			{
+				// force load new object before launch hook 
+				$this->fetch($this->id);
 				// Hook of thirdparty module
 				if (is_object($hookmanager))
 				{
