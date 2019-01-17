@@ -1302,6 +1302,8 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
+			// force load new object before launch hook 
+			$this->fetch($this->id);
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
