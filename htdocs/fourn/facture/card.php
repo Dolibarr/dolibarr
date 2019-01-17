@@ -863,7 +863,7 @@ if (empty($reshook))
 					$object->origin    = GETPOST('origin');
 					$object->origin_id = GETPOST('originid');
 
-					
+
 					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
 					$classname = ucfirst($subelement);
 					if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
@@ -1653,7 +1653,7 @@ if ($action == 'create')
 			$projectid = $originid;
 			$element = 'projet';
 		}
-      
+
 			// For compatibility
 			if ($element == 'order')    {
 				$element = $subelement = 'commande';
@@ -2413,7 +2413,7 @@ else
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-    	print '<table class="border" width="100%">';
+    	print '<table class="border tableforfield" width="100%">';
 
         // Type
         print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';

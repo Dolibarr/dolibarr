@@ -1872,7 +1872,7 @@ elseif (! empty($object->id))
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Date
 	if ($object->methode_commande_id > 0)
@@ -2092,7 +2092,7 @@ elseif (! empty($object->id))
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	if (!empty($conf->multicurrency->enabled))
 	{
@@ -2364,7 +2364,7 @@ elseif (! empty($object->id))
 				}
 
 				// Ship
-				
+
 				if (! empty($conf->stock->enabled) && (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
 				{
 					if (in_array($object->statut, array(3,4,5))) {

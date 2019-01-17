@@ -1237,7 +1237,7 @@ else if ($id > 0 || ! empty($ref))
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield" width="100%">';
 
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
@@ -1323,7 +1323,7 @@ else if ($id > 0 || ! empty($ref))
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
     if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
     {

@@ -829,7 +829,7 @@ if (empty($reshook))
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
 
 		$db->begin();
-		
+
 		$error = 0;
 		$originentity = GETPOST('originentity');
 		// Fill array 'array_options' with data from add form
@@ -3748,7 +3748,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Type
 	print '<tr><td class="titlefield">' . $langs->trans('Type') . '</td><td>';

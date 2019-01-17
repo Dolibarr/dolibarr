@@ -1459,7 +1459,7 @@ else
 		print '<div class="underbanner clearboth"></div>';
 
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Ligne info remises tiers
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
