@@ -12,7 +12,9 @@ For Developers:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* GetUrlTrackingStatus were renamed into getUrlTrackingStatus
+* Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus.
+* API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
+
 
 
 ***** ChangeLog for 9.0.0 compared to 8.0.0 *****
