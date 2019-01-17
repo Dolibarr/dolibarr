@@ -510,10 +510,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-left: 5px;
 	margin-right: 5px;
     font-family: <?php print $fontlist ?>;
-	border-color: #c5c5c5;
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 3px 14px;
+	padding: 4px 14px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -524,12 +522,14 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
-	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	border: 1px solid #bbbbbb;
-	border-bottom-color: #a2a2a2;
+	border: 1px solid #aaa;
 	-webkit-border-radius: 2px;
-	border-radius: 2px;
+	border-radius: 1px;
+
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #444;
 }
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -3114,7 +3114,7 @@ div.colorback	/* for the form "assign user" on time spent view */
 	background: #f8f8f8;
 	padding: 10px;
 	margin-top: 5px;
-	border: 1px solid #bbb;
+	border: 1px solid #ddd;
 }
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
