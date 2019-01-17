@@ -313,13 +313,13 @@ if ($rowid && $action != 'edit')
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
     print '<td class="valeur">';
-      if (  ! empty($object->fk_type) ) { 
-      $adht->fetch($object->fk_type); 
+    if (  ! empty($object->fk_type) ) {
+      $adht->fetch($object->fk_type);
     print $adht->getNomUrl(1);
       } else {
-    print $langs->trans("NoType"); 
+    print $langs->trans("NoType");
       }
-    print '</td></tr>';    
+    print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
