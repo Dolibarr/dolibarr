@@ -1586,7 +1586,7 @@ else
         print '<div class="fichehalfleft">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1716,10 +1716,11 @@ else
         print '</table>';
 
         print '</div>';
-        print '<div class="fichehalfright"><div class="ficheaddleft">';
 
+        print '<div class="fichehalfright"><div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+
+        print '<table class="border tableforfield tableforfield" width="100%">';
 
 		// Birthday
 		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
