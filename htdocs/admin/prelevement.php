@@ -214,32 +214,32 @@ print "</tr>";
 
 // Bank account (from Banks module)
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 
 // ICS
 print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
 print '</td></tr>';
 
 //User
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td>';
 print '</tr>';
 
 //EntToEnd
 print '<tr class="pair"><td>'.$langs->trans("END_TO_END").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->END_TO_END.'" size="15" ></td>';
 print '</td></tr>';
 
 //USTRD
 print '<tr class="pair"><td>'.$langs->trans("USTRD").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->USTRD.'" size="15" ></td>';
 print '</td></tr>';
 
@@ -485,7 +485,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '<td align="right">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
-    print '<tr class="impair"><td align="left">';
+    print '<tr class="impair"><td class="left">';
     print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
     print '</td>';
 
