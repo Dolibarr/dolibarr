@@ -104,15 +104,16 @@ class Subscription extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
-        if ($this->fk_type == NULL) {
+
+		if ($this->fk_type == NULL) {
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		$member=new Adherent($this->db);
-		$result=$member->fetch($this->fk_adherent);
-    $type=$member->typeid;
-    } else {
-    $type=$this->fk_type;
-    }
-    $sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
+$member=new Adherent($this->db);
+$result=$member->fetch($this->fk_adherent);
+$type=$member->typeid;
+} else {
+$type=$this->fk_type;
+}
+		$sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
@@ -176,7 +177,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 				$this->ref            = $obj->rowid;
 
 				$this->fk_type        = $obj->fk_type;
-        $this->fk_adherent    = $obj->fk_adherent;
+				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
 				$this->dateh          = $this->db->jdate($obj->dateh);
@@ -213,7 +214,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
-    $sql .= " fk_type = ".$this->fk_type.",";
+		$sql .= " fk_type = ".$this->fk_type.",";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = '".price2num($this->amount)."',";
