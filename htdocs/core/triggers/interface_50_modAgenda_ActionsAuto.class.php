@@ -812,6 +812,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$elementid = $object->fk_adherent;
         	$elementtype = 'member';
         }
+        //var_dump($societeforaction);var_dump($contactforaction);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';

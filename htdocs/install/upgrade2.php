@@ -4859,6 +4859,7 @@ function migrate_user_photospath()
 			} else {
 				$dir = $conf->user->multidir_output[$entity];	// $conf->user->multidir_output[] for each entity is construct by the multicompany module
 			}
+
 			if ($dir)
 			{
 				//print "Process user id ".$fuser->id."<br>\n";
@@ -4868,6 +4869,7 @@ function migrate_user_photospath()
 				$origin_osencoded=dol_osencode($origin);
 
 				dol_mkdir($destin);
+
 				//echo '<hr>'.$origin.' -> '.$destin;
 				if (dol_is_dir($origin))
 				{

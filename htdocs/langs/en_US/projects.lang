@@ -56,6 +56,7 @@ WorkloadNotDefined=Workload not defined
 NewTimeSpent=Time spent
 MyTimeSpent=My time spent
 BillTime=Bill the time spent
+BillTimeShort=Bill time
 Tasks=Tasks
 Task=Task
 TaskDateStart=Task start date
