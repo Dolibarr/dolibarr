@@ -154,7 +154,7 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-  	$object->fk_soc      = GETPOST("fk_soc",'int');
+  		$object->fk_soc      = GETPOST("fk_soc",'int');
 		$object->firstname   = GETPOST("firstname",'alpha');
 		$object->lastname    = GETPOST("lastname",'alpha');
 		$object->societe     = GETPOST("societe",'alpha');
