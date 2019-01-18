@@ -537,7 +537,7 @@ if ( $object->fk_soc && ! empty($conf->societe->enabled) && ! empty($conf->globa
 	$result=$company->fetch($object->fk_soc);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-  
+
 } else {
 	$langs->load("companies");
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
@@ -699,7 +699,7 @@ if ($object->fk_soc) {
 	$result=$company->fetch($object->fk_soc);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-  
+
 } else {
 
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
