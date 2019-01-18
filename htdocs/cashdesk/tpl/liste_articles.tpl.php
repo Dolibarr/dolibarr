@@ -46,8 +46,7 @@ $societe = new Societe($db);
 $societe->fetch($thirdpartyid);
 /** end add Ditto */
 
-$tab=array();
-$tab = $_SESSION['poscart'];
+$tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
 
 $tab_size=count($tab);
 if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
