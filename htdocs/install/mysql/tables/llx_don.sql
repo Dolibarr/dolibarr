@@ -31,6 +31,7 @@ create table llx_don
   amount          double(24,8) DEFAULT 0,
   fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
+  fk_soc      	  integer NULL, 
   firstname       varchar(50),
   lastname        varchar(50),
   societe         varchar(50),
@@ -38,7 +39,7 @@ create table llx_don
   zip             varchar(30),
   town            varchar(50),
   country         varchar(50),					-- Deprecated - Replace with fk_country
-  fk_country	  integer        NOT NULL,
+  fk_country      integer NOT NULL,
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),
