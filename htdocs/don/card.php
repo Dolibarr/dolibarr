@@ -537,7 +537,6 @@ if ( $object->fk_soc && ! empty($conf->societe->enabled) && ! empty($conf->globa
 	$result=$company->fetch($object->fk_soc);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-
 } else {
 
 	$langs->load("companies");
@@ -700,13 +699,11 @@ if ($object->fk_soc) {
 	$result=$company->fetch($object->fk_soc);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-
 } else {
 
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
-
 }
 
 	// Payment mode
