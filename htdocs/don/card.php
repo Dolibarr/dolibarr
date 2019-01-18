@@ -107,8 +107,8 @@ if ($action == 'update')
 		$object->amount      = price2num(GETPOST("amount",'alpha'));
 		$object->town        = GETPOST("town",'alpha');
 		$object->zip         = GETPOST("zipcode",'alpha');
-    $object->country_id  = GETPOST('country_id', 'int');
-    $object->email       = GETPOST("email",'alpha');
+		$object->country_id  = GETPOST('country_id', 'int');
+		$object->email       = GETPOST("email",'alpha');
 		$object->date        = $donation_date;
 		$object->public      = GETPOST("public",'alpha');
 		$object->fk_project  = GETPOST("fk_project",'alpha');
@@ -117,7 +117,7 @@ if ($action == 'update')
 		$object->modepaymentid = GETPOST('modepayment','int');
 
 		// Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0)
@@ -162,9 +162,9 @@ if ($action == 'add')
 		$object->amount      = price2num(GETPOST("amount",'alpha'));
 		$object->zip         = GETPOST("zipcode",'alpha');
 		$object->town        = GETPOST("town",'alpha');
-    $object->country_id  = GETPOST('country_id', 'int');
-    $object->email       = GETPOST("email",'alpha');
-		$object->date        = $donation_date;
+		$object->country_id  = GETPOST('country_id', 'int');
+		$object->email	     = GETPOST('email', 'int');
+    		$object->date        = $donation_date;
 		$object->note_private= GETPOST("note_private",'none');
 		$object->note_public = GETPOST("note_public",'none');
 		$object->public      = GETPOST("public",'alpha');
