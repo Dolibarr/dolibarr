@@ -294,7 +294,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 
 		        print '<tr class="oddeven">';
-		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+		        print '<td class="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
 
@@ -303,7 +303,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        // Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-		        print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 		        // Date
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
@@ -423,14 +423,14 @@ while($j<$numlt)
 				$total = $total + $obj->amount;
 
 				print '<tr class="oddeven">';
-				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+				print '<td class="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
 
 				// Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-				print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 				print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print '<td align="right">'.price($obj->amount)."</td>";
@@ -508,14 +508,14 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
                 print '<tr class="oddeven">';
 
-                print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
+                print '<td class="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 
                 print "<td>".$obj->label."</td>\n";
 
                 // Ref payment
                 $sal_static->id=$obj->rowid;
                 $sal_static->ref=$obj->rowid;
-                print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
+                print '<td class="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
                 // Date
                 print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";

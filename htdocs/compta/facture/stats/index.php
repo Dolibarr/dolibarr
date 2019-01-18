@@ -255,7 +255,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Status
-	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 	if ($mode == 'customer')
 	{
 	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
