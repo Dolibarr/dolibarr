@@ -367,7 +367,7 @@ class Don extends CommonObject
         $sql.= ", entity";
         $sql.= ", amount";
         $sql.= ", fk_payment";
-        $sql.= ", fk_soc";        
+        $sql.= ", fk_soc"; 
         $sql.= ", firstname";
         $sql.= ", lastname";
         $sql.= ", societe";
@@ -390,7 +390,7 @@ class Don extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
-        $sql.= ", '".$this->fk_soc."'";        
+        $sql.= ", '".$this->fk_soc."'";
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
@@ -673,7 +673,7 @@ class Don extends CommonObject
                 $this->date_valid     = $this->db->jdate($obj->date_valid);
                 $this->datem          = $this->db->jdate($obj->datem);
                 $this->date           = $this->db->jdate($obj->datedon);
-                $this->fk_soc         = $obj->fk_soc;               
+                $this->fk_soc         = $obj->fk_soc;           
                 $this->firstname      = $obj->firstname;
                 $this->lastname       = $obj->lastname;
                 $this->societe        = $obj->societe;
