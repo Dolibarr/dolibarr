@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2019      Markus Welters       <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *	\file       htdocs/admin/prelevement.php
  *	\ingroup    prelevement
- *	\brief      Page configuration des prelevements
+ *	\brief      Page to setup Withdrawals
  */
 
 require '../main.inc.php';
@@ -88,6 +89,12 @@ if ($action == "set")
     if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
     {
         $res = dolibarr_set_const($db, "USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+
+    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
+    {
+        $res = dolibarr_set_const($db, "ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
 
@@ -243,6 +250,11 @@ print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->USTRD.'" size="15" ></td>';
 print '</td></tr>';
 
+//ADDDAYS
+print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
+print '<td align="left">';
+print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->ADDDAYS.'" size="15" ></td>';
+print '</td></tr>';
 print '</table>';
 print '<br>';
 

@@ -67,7 +67,7 @@ if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
 	$bprev = new BonPrelevement($db);
-        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->ADDDAYS), GETPOST('reyear'));
 
         $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
 	if ($result < 0)
