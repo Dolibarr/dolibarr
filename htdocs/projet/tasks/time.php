@@ -37,14 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 // Load translation files required by the page
 $langs->load('projects');
 
-$id=GETPOST('id','int');
-$projectid=GETPOST('projectid','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$cancel=GETPOST('cancel','alpha');
-$withproject=GETPOST('withproject','int');
-$project_ref=GETPOST('project_ref','alpha');
+$action     = GETPOST('action','alpha');
+$massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
+$confirm    = GETPOST('confirm','alpha');
+$cancel     = GETPOST('cancel','alpha');
+$toselect   = GETPOST('toselect', 'array');												// Array of ids of elements selected into a list
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
+
+$id         = GETPOST('id','int');
+$projectid  = GETPOST('projectid','int');
+$ref        = GETPOST('ref','alpha');
+$withproject= GETPOST('withproject','int');
+$project_ref= GETPOST('project_ref','alpha');
 
 $search_day=GETPOST('search_day','int');
 $search_month=GETPOST('search_month','int');
@@ -57,6 +62,7 @@ $search_value=GETPOST('search_value','int');
 $search_task_ref=GETPOST('search_task_ref','alpha');
 $search_task_label=GETPOST('search_task_label','alpha');
 $search_user=GETPOST('search_user','int');
+$search_valuebilled=GETPOST('search_valuebilled', 'int');
 
 // Security check
 $socid=0;
@@ -116,6 +122,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $search_task_ref='';
     $search_task_label='';
     $search_user=0;
+    $search_valuebilled='';
     $toselect='';
     $search_array_options=array();
     $action='';
@@ -293,6 +300,8 @@ elseif (GETPOST('project_ref','alpha'))
 /*
  * View
  */
+
+$arrayofselected=is_array($toselect)?$toselect:array();
 
 llxHeader("",$langs->trans("Task"));
 
@@ -683,6 +692,17 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        }
 	    }
 
+	    if (! empty($withproject) && $projectstatic->bill_time)
+	    {
+	        $arrayofmassactions =  array(
+    	        'generateinvoice'=>$langs->trans("GenerateInvoice"),
+    	        //'builddoc'=>$langs->trans("PDFMerge"),
+    	    );
+    	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+    	    if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+    	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+	    }
+
 		/*
 		 *  List of time spent
 		 */
@@ -703,6 +723,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($search_task_ref) $sql .= natural_search('pt.ref', $search_task_ref);
 		if ($search_task_label) $sql .= natural_search('pt.label', $search_task_label);
 		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
+		if ($search_valuebilled == '1') $sql .= ' AND t.invoice_id > 0';
+		if ($search_valuebilled == '0') $sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
 		if ($search_month > 0)
 		{
 			if ($search_year > 0 && empty($search_day))
@@ -732,7 +754,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				$title=$langs->trans("ListTaskTimeUserProject");
 			    //$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
+			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
 			}
 
 			$i = 0;
@@ -827,7 +849,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Invoiced
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 			{
-			    print '<td></td>';
+			    print '<td>';
+			    print '</td>';
 			}
 
 			print '<td align="center">';
@@ -842,11 +865,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 
-		$arrayofselected=is_array($toselect)?$toselect:array();
-
 		$param='';
-		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 		if ($search_month > 0) $param.= '&search_month='.urlencode($search_month);
 		if ($search_year > 0) $param.= '&search_year='.urlencode($search_year);
 		if ($search_user > 0) $param.= '&search_user='.urlencode($search_user);
@@ -862,15 +883,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($id) $param.='&id='.urlencode($id);
 		if ($projectid) $param.='&projectid='.urlencode($projectid);
 		if ($withproject) $param.='&withproject='.urlencode($withproject);
-
-
-		$arrayofmassactions =  array(
-		    //'presend'=>$langs->trans("SendByMail"),
-		    //'builddoc'=>$langs->trans("PDFMerge"),
-		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
@@ -933,7 +945,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		// Value in main currency
         if (! empty($arrayfields['value']['checked'])) print '<td class="liste_titre"></td>';
         // Value billed
-        if (! empty($arrayfields['valuebilled']['checked'])) print '<td class="liste_titre"></td>';
+        if (! empty($arrayfields['valuebilled']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno('search_valuebilled', $search_valuebilled, 1, false, 1).'</td>';
+
         /*
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -960,7 +973,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if (! empty($arrayfields['t.note']['checked']))           print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$param,'',$sortfield,$sortorder);
 		if (! empty($arrayfields['t.task_duration']['checked']))  print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$param,'align="right"',$sortfield,$sortorder);
 		if (! empty($arrayfields['value']['checked']))            print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['valuebilled']['checked']))      print_liste_field_titre($arrayfields['valuebilled']['label'],$_SERVER['PHP_SELF'],'il.total_ht','',$param,'align="right"',$sortfield,$sortorder);
+		if (! empty($arrayfields['valuebilled']['checked']))      print_liste_field_titre($arrayfields['valuebilled']['label'],$_SERVER['PHP_SELF'],'il.total_ht','',$param,'align="center"',$sortfield,$sortorder);
 		/*
     	// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1117,10 +1130,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			$totalarray['totalvalue'] += $value;
             }
 
-            // Value billed
+            // Invoiced - Value billed
             if (! empty($arrayfields['valuebilled']['checked']))
             {
-                print '<td align="right">';    // invoice_id and invoice_line_id
+                print '<td align="center">';    // invoice_id and invoice_line_id
                 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
                 {
                     if ($projectstatic->bill_time)
@@ -1186,6 +1199,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_delete();
 					print '</a>';
+
+					if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					{
+					    $selected=0;
+					    if (in_array($task_time->rowid, $arrayofselected)) $selected=1;
+					    print '&nbsp;';
+					    print '<input id="cb'.$task_time->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$task_time->rowid.'"'.($selected?' checked="checked"':'').'>';
+					}
 			    }
 			}
         	print '</td>';
@@ -1509,7 +1530,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		        }
 		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';
 		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';
-		        elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td align="right">'.price($totalarray['totalvaluebilled']).'</td>';
+		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td align="center">'.price($totalarray['totalvaluebilled']).'</td>';
 		        else print '<td></td>';
 		    }
 		    print '</tr>';
