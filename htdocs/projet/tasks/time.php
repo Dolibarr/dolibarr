@@ -576,7 +576,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<!-- List of time spent for task -->'."\n";
 
 		$title=$langs->trans("ListTaskTimeForTask");
-		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
+		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', 0, 1);
 		print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
 
 		/*
@@ -703,6 +703,41 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	    }
 
+	    $param='';
+	    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	    if ($search_month > 0) $param.= '&search_month='.urlencode($search_month);
+	    if ($search_year > 0) $param.= '&search_year='.urlencode($search_year);
+	    if ($search_user > 0) $param.= '&search_user='.urlencode($search_user);
+	    if ($search_task_ref != '') $param.= '&search_task_ref='.urlencode($search_task_ref);
+	    if ($search_task_label != '') $param.= '&search_task_label='.urlencode($search_task_label);
+	    if ($search_note != '') $param.= '&search_note='.urlencode($search_note);
+	    if ($search_duration != '') $param.= '&amp;search_field2='.urlencode($search_duration);
+	    if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	    /*
+	     // Add $param from extra fields
+	     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	     */
+	    if ($id) $param.='&id='.urlencode($id);
+	    if ($projectid) $param.='&projectid='.urlencode($projectid);
+	    if ($withproject) $param.='&withproject='.urlencode($withproject);
+
+	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
+	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
+	    elseif ($action == 'createtime' && empty($id) && $user->rights->projet->lire) print '<input type="hidden" name="action" value="addtimespent">';
+	    else print '<input type="hidden" name="action" value="list">';
+	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	    print '<input type="hidden" name="page" value="'.$page.'">';
+
+	    print '<input type="hidden" name="id" value="'.$id.'">';
+	    print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
+	    print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+
 		/*
 		 *  List of time spent
 		 */
@@ -711,10 +746,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " pt.ref, pt.label,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
-		$sql .= " il.fk_facture as invoice_id, il.total_ht";
+		$sql .= " il.fk_facture as invoice_id, inv.fk_statut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
-		$sql .= ", ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture,";
+		$sql .= " ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
 		else $sql.= " AND pt.fk_projet IN (".$projectidforalltimes.")";
@@ -738,23 +774,49 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		{
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 		}
-
+        //$sql .= ' GROUP BY t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm, pt.ref, pt.label, u.lastname, u.firstname, u.login, u.photo, u.statut, il.fk_facture';
 		$sql .= $db->order($sortfield, $sortorder);
 
-		$resql = $db->query($sql);
-		if ($resql)
+		// Count total nb of records
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
-			$num = $db->num_rows($resql);
-			$totalnboflines=$num;
+		    $resql = $db->query($sql);
+		    $nbtotalofrecords = $db->num_rows($resql);
+		    if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
+		    {
+		        $page = 0;
+		        $offset = 0;
+		    }
+		}
+		// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+		if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+		{
+		    $num = $nbtotalofrecords;
+		}
+		else
+		{
+		    $sql.= $db->plimit($limit+1, $offset);
 
+		    $resql=$db->query($sql);
+		    if (! $resql)
+		    {
+		        dol_print_error($db);
+		        exit;
+		    }
+
+		    $num = $db->num_rows($resql);
+		}
+
+		if ($num >= 0)
+		{
 			if (! empty($projectidforalltimes))
 			{
 				print '<!-- List of time spent for project -->'."\n";
 
 				$title=$langs->trans("ListTaskTimeUserProject");
-			    //$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
-			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
 			}
 
 			$i = 0;
@@ -771,18 +833,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			dol_print_error($db);
 		}
 
-
 		/*
 		 * Form to add time spent
 		 */
 		if ($action == 'createtime' && empty($id) && $user->rights->projet->lire)
 		{
-			print '<!-- form to add time spent -->'."\n";
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addtimespent">';
-			print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
-			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+			print '<!-- table to add time spent -->'."\n";
 
 			print '<table class="noborder nohover" width="100%">';
 
@@ -859,46 +915,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
-			print '</table></form>';
+			print '</table>';
 
 			print '<br>';
 		}
-
-
-		$param='';
-		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-		if ($search_month > 0) $param.= '&search_month='.urlencode($search_month);
-		if ($search_year > 0) $param.= '&search_year='.urlencode($search_year);
-		if ($search_user > 0) $param.= '&search_user='.urlencode($search_user);
-		if ($search_task_ref != '') $param.= '&search_task_ref='.urlencode($search_task_ref);
-		if ($search_task_label != '') $param.= '&search_task_label='.urlencode($search_task_label);
-		if ($search_note != '') $param.= '&search_note='.urlencode($search_note);
-		if ($search_duration != '') $param.= '&amp;search_field2='.urlencode($search_duration);
-		if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-		/*
-		// Add $param from extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-		*/
-		if ($id) $param.='&id='.urlencode($id);
-		if ($projectid) $param.='&projectid='.urlencode($projectid);
-		if ($withproject) $param.='&withproject='.urlencode($withproject);
-
-
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
-        if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-		if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
-		elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
-		else print '<input type="hidden" name="action" value="list">';
-	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	    print '<input type="hidden" name="page" value="'.$page.'">';
-
-		print '<input type="hidden" name="id" value="'.$id.'">';
-		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
-		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 		$moreforfilter = '';
 
@@ -916,6 +936,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 		$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+		$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
         print '<div class="div-table-responsive">';
 		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -957,7 +978,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print $hookmanager->resPrint;
 		// Action column
 		print '<td class="liste_titre center">';
-		$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+		$searchpicto=$form->showFilterButtons();
 		print $searchpicto;
 		print '</td>';
 		print '</tr>'."\n";
@@ -996,6 +1017,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$totalarray=array();
 		foreach ($tasks as $task_time)
 		{
+		    if ($i >= $limit) break;
+
 			print '<tr class="oddeven">';
 
 			$date1=$db->jdate($task_time->task_date);
