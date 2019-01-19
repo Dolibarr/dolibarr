@@ -593,7 +593,6 @@ class Website extends CommonObject
 			{
 				// Delete old file
 				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
-				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 				dol_delete_file($filetplold);
 
 				// Create new file
@@ -633,7 +632,7 @@ class Website extends CommonObject
 		    if (! $res > 0)
 		    {
 		        $error++;
-		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 
 		    if (! $error)
