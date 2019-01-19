@@ -276,8 +276,8 @@ before_script:
 script:
 - |
   echo "Checking webserver availability by a wget -O - http://127.0.0.1"
-  # Ensure we catch errors
-  set -e
+  # Ensure we stop on error with set -e
+  set +e
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - http://127.0.0.1 > test.html
   head test.html
