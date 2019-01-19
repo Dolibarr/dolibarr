@@ -447,6 +447,8 @@ class WebsitePage extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		unset($object->context['createfromclone']);
+
 		// End
 		if (!$error) {
 			$this->db->commit();

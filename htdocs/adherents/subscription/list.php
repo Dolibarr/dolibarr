@@ -25,6 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -38,6 +39,7 @@ $toselect = GETPOST('toselect', 'array');
 $filter=GETPOST("filter","alpha");
 $statut=(GETPOSTISSET("statut")?GETPOST("statut","alpha"):1);
 $search_ref=GETPOST('search_ref','alpha');
+$search_type=GETPOST('search_type','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');
 $search_firstname=GETPOST('search_firstname','alpha');
 $search_login=GETPOST('search_login','alpha');
@@ -74,10 +76,11 @@ $fieldstosearchall = array(
 );
 $arrayfields=array(
 	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	'd.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
 	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
 	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
 	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	't.libelle'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'd.bank'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'enabled'=>(! empty($conf->banque->enabled))),
 	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
 	 'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
@@ -112,16 +115,17 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
-        $search="";
-    	$search_ref="";
-        $search_lastname="";
-    	$search_firstname="";
-    	$search_login="";
-        $search_note="";
-    	$search_amount="";
-    	$search_account="";
-       	$toselect='';
-       	$search_array_options=array();
+	    $search="";
+	    $search_type="";
+	    $search_ref="";
+	    $search_lastname="";
+	    $search_firstname="";
+	    $search_login="";
+	    $search_note="";
+	    $search_amount="";
+	    $search_account="";
+	    $toselect='';
+	    $search_array_options=array();
     }
 }
 
@@ -139,7 +143,7 @@ $now=dol_now();
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo,";
-$sql.= " c.rowid as crowid, c.subscription,";
+$sql.= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql.= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql.= " c.fk_bank as bank, c.note,";
 $sql.= " b.fk_account";
@@ -157,6 +161,7 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql.= " AND (c.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
+if ($search_type) $sql.= natural_search(array('c.fk_type'), $search_type);
 if ($search_lastname) $sql.= natural_search(array('d.lastname','d.societe'), $search_lastname);
 if ($search_firstname) $sql.= natural_search(array('d.firstname'), $search_firstname);
 if ($search_login) $sql.= natural_search('d.login', $search_login);
@@ -220,6 +225,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($statut != '')    $param.="&statut=".urlencode($statut);
+if ($search_type) $param.="&search_type=".urlencode($search_type);
 if ($date_select)     $param.="&date_select=".urlencode($date_select);
 if ($search_lastname) $param.="&search_lastname=".urlencode($search_lastname);
 if ($search_login)    $param.="&search_login=".urlencode($search_login);
@@ -295,6 +301,14 @@ if (! empty($arrayfields['d.ref']['checked']))
 {
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
+}
+
+// Type
+if (! empty($arrayfields['d.fk_type']['checked']))
+{
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'" size="7">';
+  print'</td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
@@ -379,6 +393,10 @@ if (! empty($arrayfields['d.ref']['checked']))
 {
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
 }
+if (! empty($arrayfields['d.fk_type']['checked']))
+{
+	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.fk_type",$param,"","",$sortfield,$sortorder);
+}
 if (! empty($arrayfields['d.lastname']['checked']))
 {
 	print_liste_field_titre("LastName",$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
@@ -441,7 +459,9 @@ while ($i < min($num, $limit))
 	$adherent->statut=$obj->statut;
 	$adherent->login=$obj->login;
 	$adherent->photo=$obj->photo;
-
+  
+  $adht = new AdherentType($db);
+	$adht->fetch($obj->fk_type);
 
 	print '<tr class="oddeven">';
 
@@ -450,6 +470,14 @@ while ($i < min($num, $limit))
 	{
 		print '<td>'.$subscription->getNomUrl(1).'</td>';
 		if (! $i) $totalarray['nbfield']++;
+	}
+  // Type
+  if (! empty($arrayfields['d.fk_type']['checked']))
+	{
+    print '<td>';
+    if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
+    print '</td>';
+    if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Lastname
@@ -568,8 +596,8 @@ if (isset($totalarray['pos']))
 		{
 			if ($i == 1)
 			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
 			else print '<td></td>';
 		}

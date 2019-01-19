@@ -202,7 +202,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd)
 	{
 		if ($object->id > 0)
 		{
-			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later if error
 			$orig = clone $object;
 
 			$result=$object->createFromClone($user, $object->id);

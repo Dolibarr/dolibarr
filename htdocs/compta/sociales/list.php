@@ -287,8 +287,8 @@ if ($resql)
 		if (isset($totalarray['totalttcfield']))
 		{
 		    print '<tr class="liste_total">';
-            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
             print '<td></td>';
             print '<td></td>';
             print '<td></td>';

@@ -206,7 +206,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$i++;
 			}
 
-			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
@@ -293,7 +293,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$i++;
 			}
 
-			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
@@ -406,7 +406,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td align="left">';
+				print '<td class="left">';
                 print $thirdpartystatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -774,7 +774,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 
 				print '</td>';
 
-				print '<td align="left">';
+				print '<td class="left">';
                 print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -898,7 +898,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td align="left">' ;
+				print '<td class="left">' ;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->datelimite),'day').'</td>';

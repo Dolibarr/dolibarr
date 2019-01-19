@@ -971,6 +971,7 @@ class Ticket extends CommonObject
         // Clear fields
         // ...
         // Create clone
+        $object->context['createfromclone'] = 'createfromclone';
         $result = $object->create($user);
 
         // Other options
@@ -981,6 +982,8 @@ class Ticket extends CommonObject
 
         if (!$error) {
         }
+
+        unset($object->context['createfromclone']);
 
         // End
         if (!$error) {
