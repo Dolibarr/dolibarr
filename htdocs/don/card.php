@@ -163,7 +163,7 @@ if ($action == 'add')
 		$object->zip         = GETPOST("zipcode",'alpha');
 		$object->town        = GETPOST("town",'alpha');
 		$object->country_id  = GETPOST('country_id', 'int');
-		$object->email	     = GETPOST('email', 'int');
+		$object->email	     = GETPOST('email', 'alpha');
     		$object->date        = $donation_date;
 		$object->note_private= GETPOST("note_private",'none');
 		$object->note_public = GETPOST("note_public",'none');
