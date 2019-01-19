@@ -1066,8 +1066,6 @@ class Commande extends CommonOrder
 
 		$error=0;
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// get lines so they will be clone
@@ -1108,6 +1106,7 @@ class Commande extends CommonOrder
 			$this->ref_client         = '';
 
 			// Create clone
+			$this->context['createfromclone'] = 'createfromclone';
 			$result=$this->create($user);
 			if ($result < 0) $error++;
 

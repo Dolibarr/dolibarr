@@ -247,6 +247,8 @@ class EmailCollectorAction extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+	    unset($object->context['createfromclone']);
+
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
