@@ -83,20 +83,20 @@ if ($action == "set")
     }
     if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
     {
-        $res = dolibarr_set_const($db, "END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
     if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
     {
-        $res = dolibarr_set_const($db, "USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
 
     if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
     {
-        $res = dolibarr_set_const($db, "ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
-    }
+    } else
 
     if (! $error)
 	{
@@ -241,19 +241,20 @@ print '</tr>';
 //EntToEnd
 print '<tr class="pair"><td>'.$langs->trans("END_TO_END").'</td>';
 print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->END_TO_END.'" size="15" ></td>';
+print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
 print '</td></tr>';
 
 //USTRD
 print '<tr class="pair"><td>'.$langs->trans("USTRD").'</td>';
 print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->USTRD.'" size="15" ></td>';
+print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
 print '</td></tr>';
 
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td align="left">';
-print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->ADDDAYS.'" size="15" ></td>';
+if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
+print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
 print '</table>';
 print '<br>';
