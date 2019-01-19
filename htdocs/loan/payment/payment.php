@@ -278,7 +278,7 @@ if ($action == 'create')
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td align="left">'.$langs->trans("DateDue").'</td>';
+	print '<td class="left">'.$langs->trans("DateDue").'</td>';
 	print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
