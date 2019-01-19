@@ -4744,6 +4744,11 @@ abstract class CommonObject
 								//var_dump($extrafields->attributes[$this->table_element]['type'][$key]);
 								$this->array_options["options_".$key]=$this->db->jdate($value);
 							}
+							// If field is a computed field, value must become result of compute
+							else if (! empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key]))
+							{
+								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+							}
 							else
 							{
 								$this->array_options["options_".$key]=$value;
