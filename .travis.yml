@@ -37,6 +37,7 @@ php:
 - '7.0'
 - '7.1'
 - '7.2'
+- '7.3'
 - nightly
 
 env:
@@ -76,6 +77,8 @@ matrix:
   - php: '7.0'
     env: DB=postgresql
   - php: '7.1'
+    env: DB=postgresql
+  - php: '7.2'
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
