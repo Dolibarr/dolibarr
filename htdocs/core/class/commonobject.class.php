@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -4126,7 +4126,7 @@ abstract class CommonObject
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td align="left">'.$langs->trans('Unit').'</td>';
+			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
