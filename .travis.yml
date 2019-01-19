@@ -281,7 +281,7 @@ script:
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - http://127.0.0.1 > test.html
   head test.html
-  sudo cat /var/log/apache2/error.log
+  sudo cat /var/log/apache2/travis_error_log
   set +e
   echo
 
@@ -379,7 +379,7 @@ after_failure:
   done
   # Apache log file
   echo "Debugging informations for file apache error.log"
-  sudo cat /var/log/apache2/error.log
+  sudo cat /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
