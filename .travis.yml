@@ -229,9 +229,11 @@ before_script:
     echo '$'dolibarr_main_db_user=\'travis\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_port=\'3306\'';' >> $CONF_FILE
     fi
     if [ "$DB" = 'postgresql' ]; then
       echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+      echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
     fi
     # TODO: SQLite
     echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
@@ -370,7 +372,7 @@ after_success:
 after_failure:
 - |
   echo Failure detected, so we show samples of log to help diagnose
-  # This part of code is executed only if previous commande that fails are enclosed with set +e
+  # This part of code is executed only if previous command that fails are enclosed with set +e
   # Upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
