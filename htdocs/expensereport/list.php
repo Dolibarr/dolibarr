@@ -3,9 +3,9 @@
  * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015           Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018           Ferran Marcet	     <fmarcet@2byte.es>
- * Copyright (C) 2018           Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
+ * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,7 +682,7 @@ if ($resql)
 			}
 			// User
 			if (! empty($arrayfields['user']['checked'])) {
-			    print '<td align="left">';
+			    print '<td class="left">';
     			$usertmp->id=$obj->id_user;
     			$usertmp->lastname=$obj->lastname;
     			$usertmp->firstname=$obj->firstname;
@@ -805,8 +805,8 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
 	        elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
