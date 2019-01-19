@@ -281,7 +281,7 @@ script:
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - http://127.0.0.1 > test.html
   head test.html
-  tail /var/log/apache2/error.log
+  sudo cat /var/log/apache2/error.log
   set +e
   echo
 
