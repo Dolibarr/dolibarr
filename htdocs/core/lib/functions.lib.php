@@ -616,7 +616,7 @@ if (! function_exists('dol_getprefix'))
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
      *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual server.
+     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
      *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
