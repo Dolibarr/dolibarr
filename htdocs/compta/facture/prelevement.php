@@ -575,7 +575,7 @@ if ($object->id > 0)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print '<td align="left">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td align="center">'.$langs->trans("User").'</td>';
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
@@ -607,7 +607,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result_sql);
 
 			print '<tr class="oddeven">';
-			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
@@ -657,7 +657,7 @@ if ($object->id > 0)
 
 			print '<tr class="oddeven">';
 
-			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
