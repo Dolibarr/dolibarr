@@ -181,7 +181,7 @@ function dol_verifyHash($chain, $hash, $type='0')
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null, $isdraft=0)
 {
-	global $db, $conf, $user;
+	global $db, $conf;
 	global $hookmanager;
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
