@@ -25,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 if (! empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -34,6 +35,7 @@ if (! empty($conf->banque->enabled)) {
 $langs->loadLangs(array("companies","members","bills","users"));
 
 $adh = new Adherent($db);
+$adht = new AdherentType($db);
 $object = new Subscription($db);
 $errmsg='';
 
@@ -102,6 +104,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $canc
 			// Modifie valeures
 			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$object->fk_type=$_POST["typeid"];
 			$object->note=$_POST["note"];
 			$object->amount=$_POST["amount"];
 			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
@@ -202,6 +205,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
+    // Type
+	print '<tr>';
+	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
+	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->fk_type));
+	print'</td></tr>';
+
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
@@ -299,6 +308,18 @@ if ($rowid && $action != 'edit')
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
+    
+    // Type
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Type").'</td>';
+    print '<td class="valeur">';
+    if (  ! empty($object->fk_type) ) {
+      $adht->fetch($object->fk_type);
+    print $adht->getNomUrl(1);
+      } else {
+    print $langs->trans("NoType");
+      }
+    print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
