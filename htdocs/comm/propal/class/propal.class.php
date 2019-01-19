@@ -1222,8 +1222,6 @@ class Propal extends CommonObject
 
 		dol_include_once('/projet/class/project.class.php');
 
-		$this->context['createfromclone']='createfromclone';
-
 		$error=0;
 		$now=dol_now();
 
@@ -1284,6 +1282,7 @@ class Propal extends CommonObject
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
 
 		// Create clone
+		$this->context['createfromclone']='createfromclone';
 		$result=$clonedObj->create($user);
 		if ($result < 0) $error++;
 		else

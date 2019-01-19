@@ -421,8 +421,6 @@ class PaymentExpenseReport extends CommonObject
 
 		$object=new PaymentExpenseReport($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -434,6 +432,7 @@ class PaymentExpenseReport extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -446,11 +445,9 @@ class PaymentExpenseReport extends CommonObject
 		if (! $error)
 		{
 
-
-
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

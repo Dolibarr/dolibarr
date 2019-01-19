@@ -598,6 +598,7 @@ class Website extends CommonObject
 
 				// Create new file
 				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl)
 				{
@@ -645,6 +646,8 @@ class Website extends CommonObject
 		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {

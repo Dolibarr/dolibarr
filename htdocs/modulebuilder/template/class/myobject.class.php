@@ -276,6 +276,8 @@ class MyObject extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+	    unset($object->context['createfromclone']);
+
 	    // End
 	    if (!$error) {
 	        $this->db->commit();

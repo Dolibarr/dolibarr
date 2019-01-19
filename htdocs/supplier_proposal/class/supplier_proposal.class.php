@@ -1176,6 +1176,7 @@ class SupplierProposal extends CommonObject
         $this->ref = $modSupplierProposal->getNextValue($objsoc,$this);
 
         // Create clone
+        $this->context['createfromclone'] = 'createfromclone';
         $result=$this->create($user);
         if ($result < 0) $error++;
 
@@ -1190,6 +1191,8 @@ class SupplierProposal extends CommonObject
                 if ($reshook < 0) $error++;
             }
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)

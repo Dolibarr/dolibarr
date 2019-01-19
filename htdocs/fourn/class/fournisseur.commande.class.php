@@ -1417,8 +1417,6 @@ class CommandeFournisseur extends CommonOrder
 
         $error=0;
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -1439,6 +1437,7 @@ class CommandeFournisseur extends CommonOrder
         $this->date_approve2      = '';
 
         // Create clone
+        $this->context['createfromclone'] = 'createfromclone';
         $result=$this->create($user);
         if ($result < 0) $error++;
 
