@@ -211,6 +211,7 @@ before_script:
     fi
     if [ "$DB" = 'postgresql' ]; then
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_35 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
+      echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
     fi
     # TODO: SQLite
@@ -280,6 +281,7 @@ script:
   # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - http://127.0.0.1 > test.html
   head test.html
+  tail /var/log/apache2/error.log
   set +e
   echo
 
