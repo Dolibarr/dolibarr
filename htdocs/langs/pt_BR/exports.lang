@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - exports
-ExportsArea=Área de exportações
 ImportArea=Área de importação
 NewImport=Nova importação
-ExportableDatas=Conjunto de dados que podem ser exportados
 ImportableDatas=Conjunto de dados que podem ser importados
 SelectExportDataSet=Escolha um conjunto predefinido de dados que deseja exportar...
 SelectImportDataSet=Escolha um conjunto predefinido de dados que deseja importar...
@@ -13,7 +11,6 @@ ImportModelName=Nome do perfil de importação
 ImportModelSaved=Perfil de importação guardado com o nome de <b>%s</b>.
 DatasetToImport=Conjunto de dados a importar
 NowClickToGenerateToBuildExportFile=Agora, faça click em "Gerar" para gerar o arquivo exportação...
-AvailableFormats=Formatos disponíveis
 FormatedImport=Assistente de importação
 FormatedImportDesc2=O primeiro passo consiste em escolher o tipo de dado que deve importar, logo o arquivo e a continuação escolher os campos que deseja importar.
 FormatedExport=Assistente de exportação
@@ -22,7 +19,6 @@ FormatedExportDesc3=Uma vez selecionados os dados, é possível escolher o forma
 NoImportableData=Não existe tipo de dados importavel (não existe nenhum módulo com definições de dados importavel ativado)
 FileSuccessfullyBuilt=Arquivo gerado
 SQLUsedForExport=Pedido de SQL usado para construir exportação de arquivo
-LineId=Id da Linha
 LineLabel=Rótulo de linha
 LineDescription=Descrição da Linha
 LineUnitPrice=Preço Unitário da Linha

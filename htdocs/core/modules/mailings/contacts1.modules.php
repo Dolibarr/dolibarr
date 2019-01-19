@@ -331,10 +331,9 @@ class mailing_contacts1 extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
-	 *  @param  array	$filtersarray   Optional filter data (deprecated)
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
+	function add_to_target($mailing_id)
 	{
         // phpcs:enable
 		global $conf, $langs;

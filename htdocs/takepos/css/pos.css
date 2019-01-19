@@ -27,10 +27,11 @@ button.calcbutton {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:180%;
 	overflow: visible; /* removes extra width in IE */
 	width:24%;
 	height:24%;
+	font-weight: bold;
+	color: #555555;
 }
 
 button.calcbutton2 {
@@ -41,9 +42,24 @@ button.calcbutton2 {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width:24%;
+	height:24%;
+	font-weight: bold;
+	color: #555555;
+}
+
+button.calcbutton3 {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	font-size:120%;
+	overflow: visible; /* removes extra width in IE */
+	width:12%;
 	height:24%;
 }
 
@@ -55,7 +71,6 @@ button.actionbutton {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:100%;
 	overflow: visible; /* removes extra width in IE */
 	width:32%;
 	height:32%;
@@ -86,6 +101,11 @@ div.wrapper2{
 	text-align: center;
 }
 
+button:active{
+    background:black;
+	color: white;
+}
+
 div.description{
 	position:absolute; /* absolute position (so we can position it where we want)*/
 	bottom:0px; /* position will be on bottom */
@@ -94,7 +114,6 @@ div.description{
 	/* styling bellow */
 	background-color:black;
 	font-family: 'tahoma';
-	font-size:100%;
 	color:white;
 	opacity:0.8; /* transparency */
 	filter:alpha(opacity=80); /* IE transparency */
@@ -110,5 +129,59 @@ div.description{
 p.description_content{
 	padding:10px;
 	margin:0px;
-	
+
+}
+
+@media screen and (min-width: 892px) {
+	.calcbutton{
+		font-size: 18px;
+	}
+	.calcbutton2{
+		font-size: 14px;
+	}
+	.actionbutton{
+		font-size: 13px;
+	}
+	div.description{
+		font-size: 15px;
+	}
+	.invoice{
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 891px) and (min-width: 386px) {
+	.calcbutton{
+		font-size: 12px;
+	}
+	.calcbutton2{
+		font-size: 9px;
+	}
+	.actionbutton{
+		font-size: 12px;
+	}
+	div.description{
+		font-size: 13px;
+	}
+	.invoice{
+		font-size: 12px;
+	}
+}
+
+@media screen and (max-width: 385px){
+	.calcbutton{
+		font-size: 8px;
+	}
+	.calcbutton2{
+		font-size: 7px;
+	}
+	.actionbutton{
+		font-size: 10px;
+	}
+	div.description{
+		font-size: 11px;
+	}
+	.invoice{
+		font-size: 10px;
+	}
 }

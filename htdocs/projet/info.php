@@ -18,8 +18,8 @@
 
 /**
  *      \file       htdocs/projet/info.php
- *      \ingroup    commande
- *		\brief      Page with info on project
+ *      \ingroup    project
+ *		\brief      Page with events on project
  */
 
 require '../main.inc.php';
@@ -34,7 +34,7 @@ $langs->load("projects");
 $id     = GETPOST('id','int');
 $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action','aZ09');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
@@ -50,15 +50,14 @@ $pagenext = $page + 1;
 
 if (GETPOST('actioncode','array'))
 {
-    $actioncode=GETPOST('actioncode','array',3);
-    if (! count($actioncode)) $actioncode='0';
+	$actioncode=GETPOST('actioncode','array',3);
+	if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
-
 
 // Security check
 $id = GETPOST("id",'int');
@@ -71,7 +70,7 @@ if (!$user->rights->projet->lire)	accessforbidden();
 
 
 /*
- *	Actions
+ * Actions
  */
 
 $parameters=array('id'=>$socid);
@@ -81,8 +80,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
-    $actioncode='';
-    $search_agenda_label='';
+	$actioncode='';
+	$search_agenda_label='';
 }
 
 
@@ -170,7 +169,7 @@ if (! empty($conf->agenda->enabled))
     }
     else
     {
-        $morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 

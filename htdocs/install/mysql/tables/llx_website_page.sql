@@ -26,6 +26,7 @@ CREATE TABLE llx_website_page
 	aliasalt      varchar(255),
 	title         varchar(255),						
 	description   varchar(255),						
+	image         varchar(255),						
 	keywords      varchar(255),
 	lang          varchar(6),
 	fk_page       integer,          

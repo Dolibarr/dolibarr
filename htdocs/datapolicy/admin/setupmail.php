@@ -91,9 +91,6 @@ $head = datapolicyAdminPrepareHead();
 dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 
-
-
-
 print "<script type='text/javascript'>
         $(document).ready(function(){
          $('#default_lang').change(function(){
@@ -108,7 +105,7 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
 if ($conf->global->MAIN_MULTILANGS) {
-    print '<tr><td>' . fieldLabel('DefaultLang', 'default_lang') . '</td><td colspan="3" class="maxwidthonsmartphone">' . "\n";
+    print '<tr><td>' . $form->editfieldkey('DefaultLang', 'default_lang', '', null, 0) . '</td><td colspan="3" class="maxwidthonsmartphone">' . "\n";
     print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
     print '</tr>';
 }

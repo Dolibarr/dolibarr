@@ -550,7 +550,7 @@ foreach ($accounts as $key=>$type)
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
-		print '<td align="right">';
+		print '<td align="right" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -588,8 +588,8 @@ if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	/
         $i++;
         if ($i == 1)
         {
-            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
         }
         elseif ($totalarray['totalbalancefield'] == $i) print '<td align="right">'.price($totalarray['totalbalance'], 0, $langs, 0, 0, -1, $lastcurrencycode).'</td>';
         else print '<td></td>';

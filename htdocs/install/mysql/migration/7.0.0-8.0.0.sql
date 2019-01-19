@@ -218,7 +218,9 @@ UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
-   
+
+ALTER TABLE llx_ticket_msg DROP FOREIGN KEY fk_ticket_msg_fk_track_id;
+
 -- Module ticket
 CREATE TABLE llx_ticket
 (
@@ -265,17 +267,6 @@ CREATE TABLE llx_ticket_msg
 
 ALTER TABLE llx_ticket_msg ADD CONSTRAINT fk_ticket_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticket_logs
-(
-	rowid       integer AUTO_INCREMENT PRIMARY KEY,
-	entity		integer DEFAULT 1,
-	fk_track_id   varchar(128),
-	fk_user_create	integer,
-	datec datetime,
-	message	text
-)ENGINE=innodb;
-
-ALTER TABLE llx_ticket_logs ADD CONSTRAINT fk_ticket_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
 CREATE TABLE llx_ticket_extrafields
 (
@@ -568,3 +559,4 @@ ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
 UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
+DROP TABLE llx_ticket_logs;

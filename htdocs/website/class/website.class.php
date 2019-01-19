@@ -79,16 +79,13 @@ class Website extends CommonObject
 	 * @var mixed
 	 */
 	public $date_creation;
-
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
+	public $date_modification;
 
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
+	public $fk_user_creat;
 
 	/**
 	 * @var string
@@ -169,7 +166,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -525,6 +522,7 @@ class Website extends CommonObject
         global $hookmanager, $langs;
 		global $dolibarr_main_data_root;
 
+		$now = dol_now();
 		$error=0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -560,6 +558,8 @@ class Website extends CommonObject
 		$object->ref=$newref;
 		$object->fk_default_home=0;
 		$object->virtualhost='';
+		$object->date_creation = $now;
+		$object->fk_user_creat = $user->id;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -880,7 +880,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, image, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
 			$line.= " VALUES(";
 			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
@@ -889,6 +889,7 @@ class Website extends CommonObject
 			$line.= "'".$this->db->escape($objectpageold->aliasalt)."', ";
 			$line.= "'".$this->db->escape($objectpageold->title)."', ";
 			$line.= "'".$this->db->escape($objectpageold->description)."', ";
+			$line.= "'".$this->db->escape($objectpageold->image)."', ";
 			$line.= "'".$this->db->escape($objectpageold->keywords)."', ";
 			$line.= "'".$this->db->escape($objectpageold->status)."', ";
 			$line.= "'".$this->db->idate($objectpageold->date_creation)."', ";
@@ -1066,6 +1067,10 @@ class Website extends CommonObject
 			}
 		}
 
+		// Regenerate index page to point to new index page
+		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
+
 		if ($error)
 		{
 			$this->db->rollback();
@@ -1188,16 +1193,19 @@ class Website extends CommonObject
 			$out.= '</li></a>';
 		}
 		$i=0;
-		foreach($languagecodes as $languagecode)
+		if (is_array($languagecodes))
 		{
-			if ($languagecode == $languagecodeselected) continue;	// Already output
-			$shortcode = strtolower(substr($languagecode, -2));
-			$label = $weblangs->trans("Language_".$languagecode);
-			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
-			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out.= '</li></a>';
-			$i++;
+    		foreach($languagecodes as $languagecode)
+    		{
+    			if ($languagecode == $languagecodeselected) continue;	// Already output
+    			$shortcode = strtolower(substr($languagecode, -2));
+    			$label = $weblangs->trans("Language_".$languagecode);
+    			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+    			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+    			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+    			$out.= '</li></a>';
+    			$i++;
+    		}
 		}
 		$out.= '</ul>';
 

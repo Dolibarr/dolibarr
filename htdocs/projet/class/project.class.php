@@ -179,6 +179,10 @@ class Project extends CommonObject
 
         $now=dol_now();
 
+        // Clean parameters
+        $this->note_private = dol_substr($this->note_private, 0, 65535);
+        $this->note_public = dol_substr($this->note_public, 0, 65535);
+
         // Check parameters
         if (!trim($this->ref))
         {
@@ -193,6 +197,7 @@ class Project extends CommonObject
             return -1;
         }
 
+        // Create project
         $this->db->begin();
 
         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "projet (";
@@ -211,6 +216,8 @@ class Project extends CommonObject
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
         $sql.= ", bill_time";
+        $sql.= ", note_private";
+        $sql.= ", note_public";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -228,6 +235,8 @@ class Project extends CommonObject
         $sql.= ", " . (strcmp($this->opp_amount,'') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount,'') ? price2num($this->budget_amount) : 'null');
         $sql.= ", " . ($this->bill_time ? 1 : 0);
+        $sql.= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
+        $sql.= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 

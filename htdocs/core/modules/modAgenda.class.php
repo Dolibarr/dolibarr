@@ -210,7 +210,7 @@ class modAgenda extends DolibarrModules
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/index.php',
 													'langs'=>'agenda',
-													'position'=>15,
+													'position'=>86,
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
 													'target'=>'',
@@ -244,7 +244,7 @@ class modAgenda extends DolibarrModules
 		// Calendar
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 													'type'=>'left',
-													'titre'=>'Agenda',
+													'titre'=>'Calendar',
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
 													'langs'=>'agenda',

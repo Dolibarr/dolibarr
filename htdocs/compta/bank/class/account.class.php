@@ -256,7 +256,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 * Shows the account number in the appropiate format
+	 * Shows the account number in the appropriate format
 	 *
 	 * @return string
 	 */
@@ -419,7 +419,7 @@ class Account extends CommonObject
 	 */
 	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='', $datev=null)
 	{
-		// Deprecatîon warning
+		// Deprecation warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__ . ": using numeric operations is deprecated", LOG_WARNING);
 		}
@@ -430,7 +430,7 @@ class Account extends CommonObject
 
 		$now=dol_now();
 
-		if (is_numeric($oper))    // Clean oper to have a code instead of a rowid
+		if (is_numeric($oper))    // Clean operation to have a code instead of a rowid
 		{
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
 			$sql.= " WHERE id=".$oper;
@@ -1471,7 +1471,7 @@ class Account extends CommonObject
 	{
 		$country_code=$this->getCountryCode();
 
-		if (in_array($country_code,array('CH','FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ...
+		if (in_array($country_code,array('FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ... - Not valid for CH
 		if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
 		return 0;
 	}

@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2018 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
@@ -14,6 +14,7 @@
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,9 +86,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-if (!$canreaduser) {
+
+if (! $canreaduser) {
 	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 }
+
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 // Load translation files required by page
@@ -144,16 +147,26 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
+	{
+		if ($id <> $user->id)
+		{
+			if (! GETPOSTISSET('token'))
+			{
+				print 'Error, token required for this critical operation';
+				exit;
+			}
+
 			$object = new User($db);
 			$object->fetch($id);
-			$result = $object->delete();
+
+			$result = $object->delete($user);
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
-				header("Location: index.php?restore_lastsearch_values=1");
+				setEventMessages($langs->trans("RecordDeleted"), null);
+				header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
 				exit;
 			}
 		}
@@ -192,33 +205,35 @@ if (empty($reshook)) {
 			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
 			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'alpha');
-			$object->address = GETPOST('address', 'alpha');
-			$object->zip = GETPOST('zipcode', 'alpha');
-			$object->town = GETPOST('town', 'alpha');
+			$object->address = GETPOST('address', 'alphanohtml');
+			$object->zip = GETPOST('zipcode', 'alphanohtml');
+			$object->town = GETPOST('town', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
-			$object->office_phone = GETPOST("office_phone", 'alpha');
-			$object->office_fax = GETPOST("office_fax", 'alpha');
-			$object->user_mobile = GETPOST("user_mobile");
-			$object->skype = GETPOST("skype", 'alpha');
-			$object->twitter = GETPOST("twitter", 'alpha');
-			$object->facebook = GETPOST("facebook", 'alpha');
+			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
+			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
+			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
+
+			$object->skype = GETPOST("skype", 'alphanohtml');
+			$object->twitter = GETPOST("twitter", 'alphanohtml');
+			$object->facebook = GETPOST("facebook", 'alphanohtml');
+
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
-			$object->signature = GETPOST("signature");
-			$object->accountancy_code = GETPOST("accountancy_code");
-			$object->note = GETPOST("note");
-			$object->ldap_sid = GETPOST("ldap_sid");
-			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-			$object->employee = GETPOST('employee');
+			$object->signature = GETPOST("signature", 'none');
+			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+			$object->note = GETPOST("note", 'none');
+			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
+			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->employee = GETPOST('employee', 'alphanohtml');
 
-			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-			$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
-			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->dateemployment = $dateemployment;
 
@@ -341,14 +356,14 @@ if (empty($reshook)) {
 				$object->pass = GETPOST("password",'none');
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
-				$object->address = GETPOST('address', 'alpha');
-				$object->zip = GETPOST('zipcode', 'alpha');
-				$object->town = GETPOST('town', 'alpha');
+				$object->address = GETPOST('address', 'alphanohtml');
+				$object->zip = GETPOST('zipcode', 'alphanohtml');
+				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
-				$object->office_phone = GETPOST("office_phone", 'alpha');
-				$object->office_fax = GETPOST("office_fax", 'alpha');
-				$object->user_mobile = GETPOST("user_mobile");
+				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
+				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
+				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
@@ -358,7 +373,7 @@ if (empty($reshook)) {
 				$object->accountancy_code = GETPOST("accountancy_code",'alpha');
 				$object->openid = GETPOST("openid",'alpha');
 				$object->fk_user = GETPOST("fk_user",'int') > 0 ? GETPOST("fk_user",'int') : 0;
-				$object->employee = GETPOST('employee');
+				$object->employee = GETPOST('employee','int');
 
 				$object->thm = GETPOST("thm",'alphanohtml') != '' ? GETPOST("thm",'alphanohtml') : '';
 				$object->tjm = GETPOST("tjm",'alphanohtml') != '' ? GETPOST("tjm",'alphanohtml') : '';
@@ -448,14 +463,14 @@ if (empty($reshook)) {
 
 				if (!$error && !count($object->errors)) {
 					if (GETPOST('deletephoto') && $object->photo) {
-						$fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
-						$dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
+						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/'.$object->photo;
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
 					if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
-						$dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
+						$dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 
 						dol_mkdir($dir);
 
@@ -609,7 +624,7 @@ if (empty($reshook)) {
 	$trigger_name='USER_SENTBYMAIL';
 	$paramname='id';    // Name of param key to open the card
 	$mode='emailfromuser';
-	$trackid='use'.$object->id;
+	$trackid='use'.$id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
@@ -933,23 +948,23 @@ if ($action == 'create' || $action == 'adduserldap')
 
 
 	// Address
-	print '<tr><td class="tdtop titlefieldcreate">'.fieldLabel('Address','address').'</td>';
+	print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print $object->address;
 	print '</textarea></td></tr>';
 
 	// Zip
-	print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+	print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 	print '</td></tr>';
 
 	// Town
-	print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+	print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td>'.fieldLabel('Country','selectcountry_id').'</td><td class="maxwidthonsmartphone">';
+	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 	print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
@@ -957,7 +972,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// State
 	if (empty($conf->global->USER_DISABLE_STATE))
 	{
-		print '<tr><td>'.fieldLabel('State','state_id').'</td><td class="maxwidthonsmartphone">';
+		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 		print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
 		print '</td></tr>';
 	}
@@ -1090,7 +1105,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Categories
 	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	{
-		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
+		print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
 			null, '90%' );
@@ -1246,7 +1261,7 @@ else
 		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 		{
 			$object->getrights();
-			if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 		}
 
 		// Connexion ldap
@@ -1416,7 +1431,7 @@ else
 			}
 			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
 			{
-				if ($object->pass) $valuetoshow.= preg_replace('/./i','*',$object->pass);
+				if ($object->pass) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').preg_replace('/./i','*',$object->pass);
 				else
 				{
 					if ($user->admin) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
@@ -1725,14 +1740,14 @@ else
 				else
 				{
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 				if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
 					if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
 					}
 					else
 					{
@@ -1750,7 +1765,7 @@ else
 				{
 					if ($object->statut == 0)
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
 					}
 					elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
 					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
@@ -1760,13 +1775,13 @@ else
 
 					if ($object->statut == 0)
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
 					}
 					else if (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
 					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 					{
 						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';
-						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a></div>';
 					}
 				}
 
@@ -1792,7 +1807,7 @@ else
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
 					}
 				}
 			}
@@ -2122,7 +2137,7 @@ else
 			{
 				$type=0;
 				if ($object->contactid) $type=$object->contactid;
-				print $form->selectcontacts(0,$type,'contactid',2,'','',1,'',false,1);
+				print $form->selectcontacts(0, $type, 'contactid', 2, '', '', 1, '', false, 1);
 			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 			}
 		   	print '</td></tr>';
@@ -2134,13 +2149,21 @@ else
 		   	print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
 		   	print '</td></tr>';
 
-		   	// Employee
-		   	print '<tr>';
-		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-		   	print $form->selectyesno("employee",$object->employee,1);
-		   	print '</td></tr>';
+            // Employee
+            print '<tr>';
+            print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
+            if ($caneditfield) {
+                 print $form->selectyesno("employee", $object->employee, 1);
+			} else {
+				if ($object->employee){
+					print $langs->trans("Yes");
+				} else {
+					print $langs->trans("No");
+				}
+			}
+		    print '</td></tr>';
 
-		   	// Hierarchy
+		    // Hierarchy
 		   	print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
 		   	print '<td>';
 		   	if ($caneditfield)
@@ -2162,23 +2185,23 @@ else
 
 
 			// Address
-			print '<tr><td class="tdtop titlefield">'.fieldLabel('Address','address').'</td>';
+			print '<tr><td class="tdtop titlefield">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 			print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 
 			// Zip
-			print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 			print '</td></tr>';
 
 			// Town
-			print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
 			print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
@@ -2186,7 +2209,7 @@ else
 			// State
 			if (empty($conf->global->USER_DISABLE_STATE))
 			{
-				print '<tr><td class="tdoverflow">'.fieldLabel('State','state_id').'</td><td>';
+				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
 				print '</td></tr>';
 			}
@@ -2341,7 +2364,12 @@ else
 			{
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				if ($caneditfield)
+				{
+					print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				}else{
+					print $formother->showColor($object->color, '');
+				}
 				print '</td></tr>';
 			}
 
@@ -2356,7 +2384,7 @@ else
 			// Categories
 			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
 			{
-				print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
+				print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td>';
 				print '<td>';
 				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
 				$c = new Categorie( $db );
@@ -2364,7 +2392,12 @@ else
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				if ($caneditfield)
+				{
+					print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				}else{
+					print $form->showCategories( $object->id, 'user', 1 );
+				}
 				print "</td></tr>";
 			}
 
@@ -2447,7 +2480,12 @@ else
 			print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
-				print $object->showOptionals($extrafields,'edit');
+				if ($caneditfield)
+				{
+					print $object->showOptionals($extrafields,'edit');
+				}else{
+					print $object->showOptionals($extrafields,'view');
+				}
 			}
 
 			// Signature
@@ -2496,7 +2534,11 @@ else
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				if($caneditfield){
+					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				}else{
+					print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2506,7 +2548,12 @@ else
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				if($caneditfield)
+				{
+					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				}else{
+					print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2521,21 +2568,36 @@ else
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 			print '<td>';
-			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			if($caneditfield)
+			{
+				print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			}else{
+				print price2num($object->weeklyhours);
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			}else{
+				print dol_print_date($object->dateemployment, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employmentEnd
 			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			}else{
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -2543,7 +2605,12 @@ else
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			if($caneditfield)
+			{
+				echo $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			}else{
+				print dol_print_date($object->birth, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 

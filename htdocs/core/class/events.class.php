@@ -76,9 +76,9 @@ class Events // extends CommonObject
 
 	// List of all Audit/Security events supported by triggers
 	public $eventstolog=array(
-		/*array('id'=>'USER_LOGIN',             'test'=>1),
+		array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
-	    array('id'=>'USER_LOGOUT',            'test'=>1),*/
+	    array('id'=>'USER_LOGOUT',            'test'=>1),
 		array('id'=>'USER_CREATE',            'test'=>1),
 		array('id'=>'USER_MODIFY',            'test'=>1),
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
@@ -137,6 +137,7 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description=trim($this->description);
+		if (empty($this->user_agent) && !empty($_SERVER['HTTP_USER_AGENT'])) $this->user_agent=$_SERVER['HTTP_USER_AGENT'];
 
 		// Check parameters
 		if (empty($this->description)) { $this->error='ErrorBadValueForParameterCreateEventDesc'; return -1; }
@@ -153,8 +154,8 @@ class Events // extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " '".$this->db->escape($_SERVER['REMOTE_ADDR'])."',";
-		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".$this->db->escape(dol_trunc($_SERVER['HTTP_USER_AGENT'],250))."'":'NULL').",";
+		$sql.= " '".$this->db->escape(getUserRemoteIP())."',";
+		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent,250))."'" : 'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
 		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";

@@ -171,7 +171,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 	else $sql.= " AND f.type IN (0,1,2,3,5)";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 else if ($modecompta=="RECETTES-DEPENSES")
@@ -186,7 +186,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql.= " WHERE p.rowid = pf.fk_paiement";
 	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 else if ($modecompta=="BOOKKEEPING")
@@ -541,14 +541,14 @@ print '</div>';
  // Factures non reglees
  // Y a bug ici. Il faut prendre le reste a payer et non le total des factures non reglees !
 
- $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
+ $sql = "SELECT f.ref, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
  $sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
  if ($socid)
  {
  $sql .= " AND f.fk_soc = $socid";
  }
- $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.rowid, f.total_ttc";
+ $sql .= " GROUP BY f.ref,f.rowid,s.nom, s.rowid, f.total_ttc";
 
  $resql=$db->query($sql);
  if ($resql)

@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -59,6 +59,9 @@ class Adherent extends CommonObject
 
 	public $mesgs;
 
+    /**
+     * @var string login of member
+     */
 	public $login;
 
 	//! Clear password in memory
@@ -68,29 +71,70 @@ class Adherent extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
+    /**
+     * @var string company name
+     * @deprecated
+     */
 	public $societe;
 
 	/**
-	 * @var Societe $company {@type Societe}
+	 * @var string company name
 	 */
 	public $company;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
 
 	/**
 	 * @var string Address
 	 */
 	public $address;
 
-	public $zip;
+    /**
+     * @var string zipcode
+     */
+    public $zip;
+
+    /**
+     * @var string town
+     */
 	public $town;
 
-	public $state_id;              // Id of department
-	public $state_code;            // Code of department
-	public $state;                 // Label of department
+    /**
+     * @var int Id of state
+     */
+    public $state_id;
 
+    /**
+     * @var string Code of state
+     */
+    public $state_code;
+
+    /**
+     * @var string Label of state
+     */
+	public $state;
+
+    /**
+     * @var string email
+     */
 	public $email;
 
-	public $skype;
-	public $twitter;
+    /**
+     * @var string skype account
+     */
+    public $skype;
+
+    /**
+     * @var string twitter account
+     */
+    public $twitter;
+
+    /**
+     * @var string facebook account
+     */
 	public $facebook;
 
     /**
@@ -120,29 +164,33 @@ class Adherent extends CommonObject
 
 	public $morphy;
 	public $public;
-	public $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-	public $photo;
+
+    // -1:brouillon, 0:resilie, >=1:valide,paye
+    // def in common object
+    //public $statut;
+
+    public $photo;
 
 	public $datec;
 	public $datem;
 	public $datevalid;
 
+	public $gender;
 	public $birth;
 
-	public $note_public;
-	public $note_private;
+    /**
+     * @var int id type member
+     */
+	public $typeid;
 
-	public $typeid;			// Id type adherent
-	public $type;				// Libelle type adherent
+    /**
+     * @var string label type member
+     */
+	public $type;
 	public $need_subscription;
 
 	public $user_id;
 	public $user_login;
-
-	/**
-	 * @var int Thirdparty ID
-	 */
-    public $fk_soc;
 
 	public $datefin;	// From member table
 
@@ -155,7 +203,10 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 	public $subscriptions=array();
 
-	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
+    /**
+     * @var Adherent To contains a clone of this when we need to save old properties of object
+     */
+	public $oldcopy;
 
 	/**
 	 * @var int Entity
@@ -274,23 +325,25 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray=array(
+		    '__ID__'=>$this->id,
+		    '__MEMBER_ID__'=>$this->id,
 			'__CIVILITY__'=>$this->getCivilityLabel(),
-			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
+			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
-			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
-			'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-			'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-			'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
-			'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
-			'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
-			'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
-			'__PHONE__'=>$msgishtml?dol_htmlentitiesbr($this->phone):$this->phone,
-			'__PHONEPRO__'=>$msgishtml?dol_htmlentitiesbr($this->phone_perso):$this->phone_perso,
-			'__PHONEMOBILE__'=>$msgishtml?dol_htmlentitiesbr($this->phone_mobile):$this->phone_mobile,
+			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):($this->societe?$this->societe:''),
+			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):($this->address?$this->address:''),
+			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):($this->zip?$this->zip:''),
+			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):($this->town?$this->town:''),
+			'__COUNTRY__'=>$msgishtml?dol_htmlentitiesbr($this->country):($this->country?$this->country:''),
+			'__EMAIL__'=>$msgishtml?dol_htmlentitiesbr($this->email):($this->email?$this->email:''),
+			'__BIRTH__'=>$msgishtml?dol_htmlentitiesbr($birthday):($birthday?$birthday:''),
+			'__PHOTO__'=>$msgishtml?dol_htmlentitiesbr($this->photo):($this->photo?$this->photo:''),
+			'__LOGIN__'=>$msgishtml?dol_htmlentitiesbr($this->login):($this->login?$this->login:''),
+			'__PASSWORD__'=>$msgishtml?dol_htmlentitiesbr($this->pass):($this->pass?$this->pass:''),
+			'__PHONE__'=>$msgishtml?dol_htmlentitiesbr($this->phone):($this->phone?$this->phone:''),
+			'__PHONEPRO__'=>$msgishtml?dol_htmlentitiesbr($this->phone_perso):($this->phone_perso?$this->phone_perso:''),
+			'__PHONEMOBILE__'=>$msgishtml?dol_htmlentitiesbr($this->phone_mobile):($this->phone_mobile?$this->phone_mobile:'')
 		);
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
@@ -457,17 +510,18 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
 		// Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
-		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
-		$this->address=($this->address?$this->address:$this->address);
-		$this->zip=($this->zip?$this->zip:$this->zip);
-		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
+		$this->lastname     = trim($this->lastname)?trim($this->lastname):trim($this->lastname);
+		$this->firstname    = trim($this->firstname)?trim($this->firstname):trim($this->firstname);
+		$this->gender       = trim($this->gender);
+		$this->address      = ($this->address?$this->address:$this->address);
+		$this->zip          = ($this->zip?$this->zip:$this->zip);
+		$this->town         = ($this->town?$this->town:$this->town);
+		$this->country_id   = ($this->country_id > 0?$this->country_id:$this->country_id);
+		$this->state_id     = ($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
-		$this->note_public=($this->note_public?$this->note_public:$this->note_public);
-		$this->note_private=($this->note_private?$this->note_private:$this->note_private);
+		$this->note_public  = ($this->note_public?$this->note_public:$this->note_public);
+		$this->note_private = ($this->note_private?$this->note_private:$this->note_private);
 
 		// Check parameters
 		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -483,6 +537,7 @@ class Adherent extends CommonObject
 		$sql.= " civility = ".($this->civility_id?"'".$this->db->escape($this->civility_id)."'":"null");
 		$sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
+		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
 		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
 		$sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
@@ -589,15 +644,17 @@ class Adherent extends CommonObject
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;
+						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
 						$luser->societe_id=$this->societe;
 
 						$luser->birth=$this->birth;
-                                                $luser->address=$this->address;
-                                                $luser->zip=$this->zip;
-                                                $luser->town=$this->town;
-                                                $luser->country_id=$this->country_id;
-                                                $luser->state_id=$this->state_id;
+
+						$luser->address=$this->address;
+						$luser->zip=$this->zip;
+						$luser->town=$this->town;
+						$luser->country_id=$this->country_id;
+						$luser->state_id=$this->state_id;
 
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
@@ -647,13 +704,14 @@ class Adherent extends CommonObject
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
-						$lthirdparty->country_id=$this->country_id;
 						//$lthirdparty->phone_mobile=$this->phone_mobile;
 
-						$result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
+						$result=$lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update');	// Use sync to 0 to avoid cyclic updates
+
 						if ($result < 0)
 						{
 							$this->error=$lthirdparty->error;
+							$this->errors=$lthirdparty->errors;
 							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
 							$error++;
 						}
@@ -1129,7 +1187,7 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
 		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1176,6 +1234,7 @@ class Adherent extends CommonObject
 				$this->civility_id		= $obj->civility_id;
 				$this->firstname		= $obj->firstname;
 				$this->lastname			= $obj->lastname;
+				$this->gender			= $obj->gender;
 				$this->login			= $obj->login;
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
@@ -1983,8 +2042,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
-		if (! empty($this->societe))
-			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->societe;
+		if (! empty($this->company))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->company;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
@@ -2288,6 +2347,7 @@ class Adherent extends CommonObject
 		$this->civility_id = 0;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
+		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
 		$this->societe = 'Societe ABC';
@@ -2656,7 +2716,7 @@ class Adherent extends CommonObject
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
 		}
-		
+
 		$now = dol_now();
 		$nbok = 0;
 		$nbko = 0;
@@ -2760,9 +2820,9 @@ class Adherent extends CommonObject
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
 									$actionmsg = dol_concatdesc($actionmsg, $message);
 								}
-								
+
 								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-								
+
 	    						// Insert record of emails sent
 	    						$actioncomm = new ActionComm($this->db);
 
@@ -2787,10 +2847,10 @@ class Adherent extends CommonObject
 	    						$actioncomm->email_tobcc = $sendtobcc;
 	    						$actioncomm->email_subject = $subject;
 	    						$actioncomm->errors_to   = '';
-	    						
+
 	    						$actioncomm->fk_element  = $adherent->id;
 	    						$actioncomm->elementtype = $adherent->element;
-	    						
+
 	    						$actioncomm->extraparams = $extraparams;
 
 	    						$actioncomm->create($user);

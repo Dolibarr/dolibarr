@@ -303,7 +303,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 					foreach($cpts as $i => $cpt)
 					{
-						$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN=0;
@@ -371,7 +371,7 @@ else
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	$sql.= " GROUP BY name, socid";
 	$sql.= $db->order($sortfield, $sortorder);
@@ -991,7 +991,7 @@ else
 				$sql.= " AND f.type IN (0,1,2,3,5)";
 		    if (! empty($date_start) && ! empty($date_end))
 		    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		    $sql.= " AND f.entity = ".$conf->entity;
+		    $sql.= " AND f.entity IN (".getEntity('invoice').")";
 		    $sql.= " GROUP BY dm";
 		    $newsortfield = $sortfield;
 		    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';

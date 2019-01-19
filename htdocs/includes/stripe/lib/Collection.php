@@ -14,9 +14,6 @@ namespace Stripe;
  */
 class Collection extends StripeObject
 {
-
-    const OBJECT_NAME = "list";
-
     use ApiOperations\Request;
 
     protected $_requestParams = [];

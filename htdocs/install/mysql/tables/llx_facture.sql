@@ -26,7 +26,7 @@ create table llx_facture
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  facnumber				varchar(30)        NOT NULL,			-- invoice reference number
+  ref				varchar(30)        NOT NULL,			-- invoice reference number
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)

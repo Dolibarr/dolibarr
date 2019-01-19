@@ -133,7 +133,7 @@ if ($socid)
     /*	}
     	else
     	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
+        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 

@@ -13,20 +13,16 @@ namespace Stripe;
  * @property int $created
  * @property string $currency
  * @property string $failure_balance_transaction
- * @property string $failure_reason
+ * @property string failure_reason
  * @property StripeObject $metadata
- * @property string $reason
- * @property string $receipt_number
- * @property string $source_transfer_reversal
+ * @property mixed $reason
+ * @property mixed $receipt_number
  * @property string $status
  *
  * @package Stripe
  */
 class Refund extends ApiResource
 {
-
-    const OBJECT_NAME = "refund";
-
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Retrieve;

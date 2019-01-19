@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ $place = GETPOST('place','int');
 if ($place=="") $place="0";
 $action = GETPOST('action','alpha');
 
-$langs->loadLangs(array("bills","orders","commercial","cashdesk"));
+$langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 
 /*
@@ -46,6 +47,10 @@ $langs->loadLangs(array("bills","orders","commercial","cashdesk"));
 // Title
 $title='TakePOS - Dolibarr '.DOL_VERSION;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title='TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+$head='<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
@@ -62,6 +67,7 @@ var categories = JSON.parse( '<?php echo json_encode($categories);?>' );
 var currentcat;
 var pageproducts=0;
 var pagecategories=0;
+var pageactions=0;
 var place="<?php echo $place;?>";
 var editaction="qty";
 var editnumber="";
@@ -76,12 +82,12 @@ function PrintCategories(first){
 
 function MoreCategories(moreorless){
 	if (moreorless=="more"){
-		$('#catimg15').animate({opacity: '0.5'}, 100);
+		$('#catimg15').animate({opacity: '0.5'}, 1);
 		$('#catimg15').animate({opacity: '1'}, 100);
 		pagecategories=pagecategories+1;
 	}
 	if (moreorless=="less"){
-		$('#catimg14').animate({opacity: '0.5'}, 100);
+		$('#catimg14').animate({opacity: '0.5'}, 1);
 		$('#catimg14').animate({opacity: '1'}, 100);
 		if (pagecategories==0) return; //Return if no less pages
 		pagecategories=pagecategories-1;
@@ -103,34 +109,41 @@ function MoreCategories(moreorless){
 }
 
 function LoadProducts(position){
-    $('#catimg'+position).animate({opacity: '0.5'}, 100);
+    $('#catimg'+position).animate({opacity: '0.5'}, 1);
 	$('#catimg'+position).animate({opacity: '1'}, 100);
 	currentcat=$('#catdiv'+position).data('rowid');
     if (currentcat=="") return;
 	pageproducts=0;
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		for (i = 0; i < 30; i++) {
-			if (typeof (data[i]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+		idata=0; //product data counter
+		ishow=0; //product to show counter
+		while (idata < 30) {
+			if (typeof (data[idata]) == "undefined") {
+				$("#prodesc"+ishow).text(""); 
+				$("#proimg"+ishow).attr("src",""); 
+				$("#prodiv"+ishow).data("rowid","");
+				ishow++; //Next product to show after print data product
 			}
-			$("#prodesc"+i).text(data[parseInt(i)]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['id']);
-			$("#prodiv"+i).data("rowid",data[i]['id']);
+			else if ((data[idata]['status']) == "1") {
+				//Only show products with status=1 (for sell)
+				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				ishow++; //Next product to show after print data product
+			}
+			idata++; //Next data everytime
 		}
 	});
 }
 
 function MoreProducts(moreorless){
 	if (moreorless=="more"){
-		$('#proimg31').animate({opacity: '0.5'}, 100);
+		$('#proimg31').animate({opacity: '0.5'}, 1);
 		$('#proimg31').animate({opacity: '1'}, 100);
 		pageproducts=pageproducts+1;
 	}
 	if (moreorless=="less"){
-		$('#proimg30').animate({opacity: '0.5'}, 100);
+		$('#proimg30').animate({opacity: '0.5'}, 1);
 		$('#proimg30').animate({opacity: '1'}, 100);
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
@@ -140,22 +153,29 @@ function MoreProducts(moreorless){
 			pageproducts=pageproducts-1;
 			return;
 		}
-		for (i = 0; i < 30; i++) {
-			if (typeof (data[i+(30*pageproducts)]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+		idata=30*pageproducts; //product data counter
+		ishow=0; //product to show counter
+		while (idata < 30) {
+			if (typeof (data[idata]) == "undefined") {
+				$("#prodesc"+ishow).text(""); 
+				$("#proimg"+ishow).attr("src",""); 
+				$("#prodiv"+ishow).data("rowid","");
+				ishow++; //Next product to show after print data product
 			}
-			$("#prodesc"+i).text(data[parseInt(i+(30*pageproducts))]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i+(30*pageproducts)]['id']);
-			$("#prodiv"+i).data("rowid",data[i+(30*pageproducts)]['id']);
+			else if ((data[idata]['status']) == "1") {
+				//Only show products with status=1 (for sell)
+				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				ishow++; //Next product to show after print data product
+			}
+			idata++; //Next data everytime
 		}
 	});
 }
 
 function ClickProduct(position){
-    $('#proimg'+position).animate({opacity: '0.5'}, 100);
+    $('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	idproduct=$('#prodiv'+position).data('rowid');
     if (idproduct=="") return;
@@ -292,6 +312,37 @@ function TakeposPrintingOrder(){
 	});
 }
 
+function TakeposPrintingTemp(){
+	$("#poslines").load("invoice.php?action=temp&place="+place, function() {
+		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+	});
+}
+
+function OpenDrawer(){
+	$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+			data: "opendrawer"
+		});
+}
+
+function MoreActions(totalactions){
+	if (pageactions==0){
+		pageactions=1;
+		for (i = 0; i <= totalactions; i++){
+			if (i<9) $("#action"+i).hide();
+			else $("#action"+i).show();
+		}
+	}
+	else if (pageactions==1){
+		pageactions=0;
+		for (i = 0; i <= totalactions; i++){ 
+			if (i<9) $("#action"+i).show();
+			else $("#action"+i).hide();
+		}
+	}		
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -304,7 +355,7 @@ $( document ).ready(function() {
 <div id="poslines" style="position:absolute; top:2%; left:0.5%; height:36%; width:31%; overflow: auto;">
 </div>
 
-<div style="position:absolute; top:1%; left:32.5%; height:37%; width:32.5%;">
+<div style="position:absolute; top:1%; left:32.5%; height:37%; width:32.5%; font-size: 0;">
     <button type="button" class="calcbutton" onclick="Edit(7);">7</button>
     <button type="button" class="calcbutton" onclick="Edit(8);">8</button>
     <button type="button" class="calcbutton" onclick="Edit(9);">9</button>
@@ -339,19 +390,39 @@ $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
                    'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+
+//BAR RESTAURANT specified menu
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
 	$menus[$r++]=array('title'=>$langs->trans("Floors"),
 					'action'=>'Floors();');
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS){
 		$menus[$r++]=array('title'=>$langs->trans("Order"),
-						'action'=>'TakeposPrintingOrder();');
+		'action'=>'TakeposPrintingOrder();');
 	}
+	//add temp ticket button
+	if ($conf->global->TAKEPOS_BAR_RESTAURANT){
+		if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
+		else $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'Print(placeid);');
+	}
+}
+
+if ($conf->global->TAKEPOSCONNECTOR){
+	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
+					'action'=>'OpenDrawer();');
 }
 ?>
 <div style="position:absolute; top:1%; left:65.5%; height:37%; width:32.5%;">
 <?php
+$i = 0;
 foreach($menus as $menu) {
-    echo '<button type="button" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	$i++;
+	if (count($menus)>9 and $i==9)
+	{
+		echo '<button type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
+		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	}
+    else if ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+	else echo '<button type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 }
 ?>
 </div>
@@ -398,6 +469,3 @@ while ($count<32)
 llxFooter();
 
 $db->close();
-
-
-

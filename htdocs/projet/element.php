@@ -218,7 +218,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Bill time
-if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
 	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
 	print yn($object->bill_time);
@@ -299,7 +299,7 @@ $listofreferent=array(
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
-	'datefieldname'=>'date',
+	'datefieldname'=>'date_valid',
 	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id,	// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',

@@ -669,7 +669,7 @@ if (! empty($id) && $action != 'edit')
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield" width="100%">';
 
 	// Date
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td colspan="2">';
@@ -795,7 +795,7 @@ if (! empty($id) && $action != 'edit')
 	{
 		if ($remaintopay == 0)
 		{
-			print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
 		}
 		else
 		{
@@ -818,12 +818,12 @@ if (! empty($id) && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 		}
 	}
 	else
 	{
-		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 	}
 
 	print "</div>";

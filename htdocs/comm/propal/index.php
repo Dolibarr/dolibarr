@@ -353,7 +353,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";

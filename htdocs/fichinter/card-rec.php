@@ -399,7 +399,6 @@ if ($action == 'create') {
 				print '<td align="center">'.$langs->trans("Duration").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
 				print '<tr class="oddeven">';
@@ -543,9 +542,9 @@ if ($action == 'create') {
 
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
-			// Contrat
+			// Contract
 			if (! empty($conf->contrat->enabled)) {
-				$langs->load('contrat');
+				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
 

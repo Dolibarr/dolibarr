@@ -1335,11 +1335,11 @@ else
 		print '</td><td>';
 		if ($action == 'editmode')
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		}
 		else
 		{
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -1476,7 +1476,7 @@ else
 			print '<tr><td>';
 			print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
 			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
 		else
@@ -1674,7 +1674,7 @@ else
 			{
 				if (! empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
 				}
 				else
 				{
@@ -1684,13 +1684,13 @@ else
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 				}
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateBill").'</a></div>';
 			}
 		}
 

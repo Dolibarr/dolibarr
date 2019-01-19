@@ -131,8 +131,14 @@ if (! empty($hashp))
 	if ($result > 0)
 	{
 		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
-		$moduleparttocheck = $tmp[0];
-		if ($modulepart)	// Not required for link using public hashp
+		// filepath can be 'users/X' or 'X/propale/PR11111'
+		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+		{
+			$tmp = explode('/', $tmp[1], 2);
+		}
+		$moduleparttocheck = $tmp[0];	// moduleparttocheck is first part of path
+
+		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
 		{
 			if ($moduleparttocheck == $modulepart)
 			{

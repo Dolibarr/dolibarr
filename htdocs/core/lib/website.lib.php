@@ -35,6 +35,8 @@
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 {
+	$nbrep = 0;
+
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
 	if ($removephppart) $replacewith='';
@@ -59,7 +61,12 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	//$replacewith='<span class="phptag">...php...</span>';
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
-	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
+	/*if ($content === null) {
+		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
+	}*/
+	$content = dolStripPhpCode($content, $replacewith);
+	//var_dump($content);
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
@@ -85,6 +92,45 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	return $content;
+}
+
+
+/**
+ * Remove PHP code part from a string.
+ *
+ * @param 	string	$str			String to clean
+ * @param	string	$replacewith	String to use as replacement
+ * @return 	string					Result string without php code
+ */
+function dolStripPhpCode($str, $replacewith='')
+{
+	$newstr = '';
+
+	//split on each opening tag
+	$parts = explode('<?php',$str);
+	if (!empty($parts))
+	{
+		$i=0;
+		foreach($parts as $part)
+		{
+			if ($i == 0) 	// The first part is never php code
+			{
+				$i++;
+				$newstr .= $part;
+				continue;
+			}
+			//split on closing tag
+			$partlings = explode('?>', $part);
+			if (!empty($partlings))
+			{
+				//remove content before closing tag
+				if (count($partlings) > 1) $partlings[0] = '';
+				//append to out string
+				$newstr .= $replacewith.implode('',$partlings);
+			}
+		}
+	}
+	return $newstr;
 }
 
 
@@ -166,6 +212,10 @@ function dolWebsiteOutput($content)
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
+
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
 		else
@@ -175,6 +225,10 @@ function dolWebsiteOutput($content)
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1medias/\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
@@ -687,15 +741,9 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 
 	dol_delete_file($filewrapper);
-	$wrappercontent = '<?php'."\n";
-	$wrappercontent.= "// BEGIN PHP File generated to provide a wrapper.php - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$wrappercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-	$wrappercontent.= '$original_file=str_replace("../","/", GETPOST("file","alpha"));'."\n";
-	$wrappercontent.= 'if ($_GET["modulepart"] == "mycompany" && preg_match(\'/^\/?logos\//\', $original_file)) readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));'."\n";
-	$wrappercontent.= "else print 'Bad value for modulepart or file';\n";
-	$wrappercontent.= 'if (is_object($db)) $db->close();'."\n";
-	$wrappercontent.= '// END PHP ?>'."\n";
+
+	$wrappercontent=file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+
 	$result2 = file_put_contents($filewrapper, $wrappercontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));

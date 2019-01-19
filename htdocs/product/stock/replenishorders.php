@@ -57,7 +57,7 @@ $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';
 if (!$sortfield) $sortfield = 'cf.date_creation';
-$page = GETPOST("page");
+$page = GETPOST('page','int') ? GETPOST('page','int') : 0;
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
 
@@ -119,7 +119,7 @@ $sql.= ' WHERE cf.fk_soc = s.rowid ';
 $sql.= ' AND cf.entity = ' . $conf->entity;
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
-} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
     $sql .= ' AND cf.fk_statut < 6';	// We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
     $sql .= ' AND cf.fk_statut < 5';

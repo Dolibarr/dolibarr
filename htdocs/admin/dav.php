@@ -83,7 +83,16 @@ if ($action == 'edit')
 
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+		print '</td><td>';
+		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		{
+			print $form->selectyesno($key, $conf->global->$key, 1);
+		}
+		else
+		{
+			print '<input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '">';
+		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -104,7 +113,16 @@ else
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
+		print '</td><td>';
+		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		{
+			print yn($conf->global->$key);
+		}
+		else
+		{
+			print $conf->global->$key;
+		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -141,6 +159,13 @@ $message='';
 $url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
 $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'WebDAV',$url);
 $message.='<br>';
+if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+{
+	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
+	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+	$message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'WebDAV public',$url);
+	$message.='<br>';
+}
 print $message;
 
 // End of page

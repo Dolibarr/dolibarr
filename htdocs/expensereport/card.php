@@ -289,7 +289,7 @@ if (empty($reshook))
         if (! $error)
         {
             // Actions on extra fields
-           	$result = $object->insertExtraFields('FICHINTER_MODIFY');
+           	$result = $object->insertExtraFields('EXPENSEREPORT_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1925,7 +1925,7 @@ else
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
+				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->payment_type;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 						if (! empty($conf->banque->enabled))
 						{
@@ -1953,17 +1953,28 @@ else
 				        $totalpaid += $objp->amount;
 				        $i++;
 				    }
+				    $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
 
-				    if ($object->paid == 0)
+				    $remaintopay = price2num($object->total_ttc - $totalpaid);
+				    $resteapayeraffiche = $remaintopay;
+
+				    $cssforamountpaymentcomplete = 'amountpaymentcomplete';
+
+				    if ($object->status == ExpenseReport::STATUS_REFUSED)
 				    {
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
-
-				        $remaintopay = $object->total_ttc - $totalpaid;
-
-				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
-				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td><td></td></tr>';
+				    	$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				    	$resteapayeraffiche = 0;
 				    }
+			    	elseif ($object->paid == 0)
+			    	{
+			    		$cssforamountpaymentcomplete = 'amountpaymentneutral';
+			    	}
+			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
+
+			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
+			        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayeraffiche).'</td><td></td></tr>';
+
 				    $db->free($resql);
 				}
 				else
@@ -2266,7 +2277,7 @@ if ($action != 'create' && $action != 'edit')
 		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 		//} else
-		//	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
+		//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
 	}
 
 
@@ -2364,7 +2375,7 @@ if ($action != 'create' && $action != 'edit')
 		// Pay
 		if ($remaintopay == 0)
 		{
-			print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
 		}
 		else
 		{

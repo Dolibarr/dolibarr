@@ -83,8 +83,8 @@ if ($result)
 		$localtax_static->ref=$obj->rowid;
 		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="left">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
-        print '<td align="left">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+        print '<td class="left">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
+        print '<td class="left">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
         $total = $total + $obj->amount;
 
         print "<td align=\"right\">".price($obj->amount)."</td>";

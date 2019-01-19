@@ -10,6 +10,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1289,9 +1290,9 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-	                
+
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
-	                
+
 	                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
@@ -1504,42 +1505,47 @@ class CommandeFournisseur extends CommonOrder
         dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-        // Clean parameters
-        if (! $qty) $qty=1;
-        if (! $info_bits) $info_bits=0;
-        if (empty($txtva)) $txtva=0;
-        if (empty($txlocaltax1)) $txlocaltax1=0;
-        if (empty($txlocaltax2)) $txlocaltax2=0;
-		if (empty($remise_percent)) $remise_percent=0;
+		if ($this->statut == self::STATUS_DRAFT)
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-        $remise_percent=price2num($remise_percent);
-        $qty=price2num($qty);
-        $pu_ht=price2num($pu_ht);
-        $pu_ht_devise=price2num($pu_ht_devise);
-        $pu_ttc=price2num($pu_ttc);
-        $txtva = price2num($txtva);
-        $txlocaltax1 = price2num($txlocaltax1);
-        $txlocaltax2 = price2num($txlocaltax2);
-        if ($price_base_type=='HT')
-        {
-            $pu=$pu_ht;
-        }
-        else
-        {
-            $pu=$pu_ttc;
-        }
-        $desc=trim($desc);
+			// Clean parameters
+			if (! $qty) $qty=1;
+			if (! $info_bits) $info_bits=0;
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
+			if (empty($remise_percent)) $remise_percent=0;
 
-        // Check parameters
-        if ($qty < 1 && ! $fk_product)
-        {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
-            return -1;
-        }
-        if ($type < 0) return -1;
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			$pu_ht=price2num($pu_ht);
+			$pu_ht_devise=price2num($pu_ht_devise);
+			$pu_ttc=price2num($pu_ttc);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
+			}
+			$txlocaltax1 = price2num($txlocaltax1);
+			$txlocaltax2 = price2num($txlocaltax2);
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
+			$desc=trim($desc);
 
-        if ($this->statut == self::STATUS_DRAFT)
-        {
+			// Check parameters
+			if ($qty < 1 && ! $fk_product)
+			{
+				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
+				return -1;
+			}
+			if ($type < 0) return -1;
+
+
             $this->db->begin();
 
             if ($fk_product > 0)
@@ -1605,10 +1611,9 @@ class CommandeFournisseur extends CommonOrder
                 $product_type = $type;
             }
 
-            // Calcul du total TTC et de la TVA pour la ligne a partir de
-            // qty, pu, remise_percent et txtva
-            // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-            // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+            if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+            	$pu = 0;
+            }
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
 
@@ -1620,9 +1625,10 @@ class CommandeFournisseur extends CommonOrder
                 $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
 
-            if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
-                $pu = 0;
-            }
+            // Calcul du total TTC et de la TVA pour la ligne a partir de
+            // qty, pu, remise_percent et txtva
+            // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+            // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
 
@@ -2005,7 +2011,7 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Get list of order methods
      *
-     *	@return 0 if Ok, <0 if Ko
+     *	@return int 0 if OK, <0 if KO
      */
     function get_methodes_commande()
     {
@@ -2037,7 +2043,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-	 * Return array of dispathed lines waiting to be approved for this order
+	 * Return array of dispatched lines waiting to be approved for this order
      *
      * @since 8.0 Return dispatched quantity (qty).
 	 *
@@ -2358,6 +2364,8 @@ class CommandeFournisseur extends CommonOrder
         for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
+            $libelle = '';
+            $ref = '';
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
                 $libelle  = $prod->libelle;
@@ -3137,6 +3145,54 @@ class CommandeFournisseur extends CommonOrder
     		}
     	}
     	return 0;
+    }
+	
+    /**
+     *	Load array this->receptions of lines of shipments with nb of products sent for each order line
+     *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
+     *
+     *	@param      int		$filtre_statut      Filter on shipment status
+     * 	@return     int                			<0 if KO, Nb of lines found if OK
+     */
+    function loadReceptions($filtre_statut=-1)
+    {
+        $this->receptions = array();
+
+        $sql = 'SELECT cd.rowid, cd.fk_product,';
+        $sql.= ' sum(cfd.qty) as qty';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as cfd,';
+        if ($filtre_statut >= 0) $sql.= ' '.MAIN_DB_PREFIX.'reception as e,';
+        $sql.= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
+        $sql.= ' WHERE';
+        if ($filtre_statut >= 0) $sql.= ' cfd.fk_reception = e.rowid AND';
+        $sql.= ' cfd.fk_commandefourndet = cd.rowid';
+        $sql.= ' AND cd.fk_commande =' .$this->id;
+        if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
+        if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
+        $sql.= ' GROUP BY cd.rowid, cd.fk_product';
+        
+
+        dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                empty($this->receptions[$obj->rowid])?$this->receptions[$obj->rowid] = $obj->qty:$this->receptions[$obj->rowid] += $obj->qty;
+                $i++;
+            }
+            $this->db->free();
+			
+            return $num;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
     }
 }
 

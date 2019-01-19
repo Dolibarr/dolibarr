@@ -1053,7 +1053,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+		if (preg_match('/(\.htm|\.html|\.php|\.pl|\.cgi)$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
@@ -2119,6 +2119,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (empty($conf->multicompany->enabled)) $entity=1;
 		else $entity=0;
 	}
+	// Fix modulepart
+	if ($modulepart == 'users') $modulepart='user';
+
 	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
@@ -2806,6 +2809,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
+		}
+		else if (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg))
+		{
+			if (empty($conf->{$reg[1]}->dir_output))	// modulepart not supported
+			{
+				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				exit;
+			}
+			if ($fuser->rights->{$reg[1]}->{$lire} || preg_match('/^specimen/i', $original_file))
+			{
+				$accessallowed=1;
+			}
+			$original_file=$conf->{$reg[1]}->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		}
 		else
 		{

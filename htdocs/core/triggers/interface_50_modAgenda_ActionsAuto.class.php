@@ -403,6 +403,35 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		} elseif ($action == 'RECEPTION_VALIDATE')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+        	$langs->load("receptions");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	if (empty($object->actionmsg))
+        	{
+        		$object->actionmsg=$langs->transnoentities("ReceptionValidated",($object->newref?$object->newref:$object->ref));
+        	}
+
+        	// Parameters $object->sendtoid defined by caller
+        	//$object->sendtoid=0;
+        }
+		elseif ($action == 'RECEPTION_SENTBYMAIL')
+        {
+            $langs->load("agenda");
+            $langs->load("other");
+            $langs->load("receptions");
+
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+                $object->actionmsg=$langs->transnoentities("ReceptionSentByEMail",$object->ref);
+            }
+
+            // Parameters $object->sendtoid defined by caller
+            //$object->sendtoid=0;
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
 		{
@@ -757,7 +786,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else
+		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    // Load translation files required by the page
@@ -769,7 +798,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->sendtoid=0;
 		}
 
-		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -799,7 +828,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
         }
         // Set societeforaction.
-        if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+        if ($object->socid > 0)			$societeforaction->fetch($object->socid);
+        elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
         $projectid = isset($object->fk_project)?$object->fk_project:0;
         if ($object->element == 'project') $projectid = $object->id;
@@ -811,6 +841,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$elementid = $object->fk_adherent;
         	$elementtype = 'member';
         }
+        //var_dump($societeforaction);var_dump($contactforaction);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -841,8 +872,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->email_subject = $object->email_subject;
 		$actioncomm->errors_to     = $object->errors_to;
 
-		$actioncomm->fk_element  = $elementid;
-		$actioncomm->elementtype = $elementtype;
+		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		if (! in_array($elementtype, array('societe','contact','project')))
+		{
+			$actioncomm->fk_element  = $elementid;
+			$actioncomm->elementtype = $elementtype;
+		}
 
 		if (property_exists($object,'attachedfiles') && is_array($object->attachedfiles) && count($object->attachedfiles)>0) {
 			$actioncomm->attachedfiles=$object->attachedfiles;

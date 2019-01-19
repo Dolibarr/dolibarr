@@ -177,7 +177,7 @@ class ProjectStats extends Stats
 		if (! empty($this->status))
 			$sqlwhere[] = " t.fk_opp_status IN (" . $this->status . ")";
 
-		if (! $user->rights->projet->all->lire) $sqlwhere[] = " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
+		if (! $user->rights->projet->all->lire) $sqlwhere[] = " t.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 
 		if (count($sqlwhere) > 0) {
 			$sqlwhere_str = ' WHERE ' . implode(' AND ', $sqlwhere);

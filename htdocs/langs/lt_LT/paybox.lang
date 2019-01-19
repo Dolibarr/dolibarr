@@ -3,7 +3,7 @@ PayBoxSetup=Paybox modulio nustatymas
 PayBoxDesc=Šis modulis siūlo puslapius, leidžiančius mokėjimą <a href="http://www.paybox.com" target="_blank">Paybox</a> klientams. Tai gali būti naudojama nemokamam mokėjimui arba  tam tikram specifiniam Dolibarr mokėjimui (sąskaitos-faktūros, užskymas, ...)
 FollowingUrlAreAvailableToMakePayments=Sekantys URL siūlo puslapį klientui Dolibarr objektų mokėjimui
 PaymentForm=Mokėjimo forma
-WelcomeOnPaymentPage=Sveiki atvykę į mūsų interneto mokėjimo paslaugą
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Šis ekranas leidžia atlikti internetinį mokėjimą į %s
 ThisIsInformationOnPayment=Tai informacija apie reikalingą atlikti mokėjimą
 ToComplete=Užbaigti
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartoto
 ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
-SetupPayBoxToHavePaymentCreatedAutomatically=Nustatyti savo Paybox su URL <b>%s</b>, kad mokėjimas būtų sukuriamas automatiškai, kai patvirtintas per PayBox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
-YourPaymentHasNotBeenRecorded=Mokėjimas nebuvo įregistruotas ir operacija buvo atšaukta. Ačiū.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Sąskaitos parametrai
 UsageParameter=Naudojimo parametrai
 InformationToFindParameters=Padėti rasti savo %s sąskaitos informaciją

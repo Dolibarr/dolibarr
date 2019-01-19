@@ -990,7 +990,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($bentityon) // only if entity enable
     	$sql.= " AND entity IN (".getEntity($sharetable).")";
     else if (! empty($forceentity))
-    	$sql.= " AND entity = ".(int) $forceentity;
+    	$sql.= " AND entity IN (".$forceentity.")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1039,7 +1039,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	if ($bentityon) // only if entity enable
         	$sql.= " AND entity IN (".getEntity($sharetable).")";
         else if (! empty($forceentity))
-        	$sql.= " AND entity = ".(int) $forceentity;
+        	$sql.= " AND entity IN (".$forceentity.")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1095,7 +1095,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             if ($bentityon) // only if entity enable
             	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
             else if (! empty($forceentity))
-            	$sql.= " AND entity = ".(int) $forceentity;
+            	$sql.= " AND entity IN (".$forceentity.")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";

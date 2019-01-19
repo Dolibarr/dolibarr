@@ -4,6 +4,7 @@
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2018           charlene Benke	     <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ if (! $sortfield) $sortfield="d.dated";
 
 $year=GETPOST("year");
 $month=GETPOST("month");
+$day=GETPOST("day");
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
@@ -64,6 +66,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	// $search_amount="";
 	$year="";
 	$month="";
+	$day="";
 }
 
 /*
@@ -102,20 +105,7 @@ if ($search_company)
 {
     $sql .= natural_search('s.nom', $search_company);
 }
-// if ($search_amount)		$sql.=" AND d.km='".$db->escape(price2num(trim($search_amount)))."'";
-if ($month > 0)
-{
-    if ($year > 0 && empty($day))
-    $sql.= " AND d.dated BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
-    $sql.= " AND d.dated BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-    else
-    $sql.= " AND date_format(d.dated, '%m') = '".$month."'";
-}
-else if ($year > 0)
-{
-	$sql.= " AND d.dated BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
-}
+$sql.= dolSqlDateFilter("d.dated", $day, $month, $year);
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);

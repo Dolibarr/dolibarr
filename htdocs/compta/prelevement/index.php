@@ -91,7 +91,7 @@ print '</td></tr></table><br>';
 /*
  * Invoices waiting for withdraw
  */
-$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql.= " pfd.date_demande, pfd.amount,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
@@ -99,7 +99,7 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
 $sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -120,7 +120,7 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             $invoicestatic->id=$obj->rowid;
-            $invoicestatic->ref=$obj->facnumber;
+            $invoicestatic->ref=$obj->ref;
             $invoicestatic->statut=$obj->fk_statut;
             $invoicestatic->paye=$obj->paye;
             $invoicestatic->type=$obj->type;

@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- *
+ * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -150,7 +151,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
  * @return     int						Time into seconds
  * @see convertSecondToTime
  */
-function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
+function convertTime2Seconds($iHours=0, $iMinutes=0, $iSeconds=0)
 {
 	$iResult=($iHours*3600)+($iMinutes*60)+$iSeconds;
 	return $iResult;
@@ -164,6 +165,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
  *                                          - 'allwithouthour': total delay days without hour part like "2 days",
  *                                          - 'allhourmin': total delay with format hours:min like "60:30",
+ *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
  *                                          - 'allhour': total delay hours without min/sec like "60:30",
  *                                          - 'fullhour': total delay hour decimal like "60.5" for 60:30,
  *                                          - 'hour': only hours part "12",
@@ -184,7 +186,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin')
+    if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec')
 	{
 		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
@@ -231,11 +233,15 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 				$sTime.= dol_print_date($iSecond,'hourduration',true);
 			}
 		}
-		if ($format == 'allhourmin')
+		elseif ($format == 'allhourminsec')
+		{
+		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60))).':'.sprintf("%02d",((int) ($iSecond % 60)));
+		}
+		elseif ($format == 'allhourmin')
 		{
 		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
 		}
-		if ($format == 'allhour')
+		elseif ($format == 'allhour')
 		{
 			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}
@@ -273,6 +279,35 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
     return trim($sTime);
 }
 
+
+/**
+ * Generate a SQL string to make a filter into a range (for second of date until last second of date)
+ *
+ * @param      string	$datefield		Name of SQL field where apply sql date filter
+ * @param      int		$day_date		Day date
+ * @param      int		$month_date		Month date
+ * @param      int		$year_date		Year date
+ * @return     string	$sqldate		String with SQL filter
+ */
+function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
+{
+	global $db;
+	$sqldate="";
+	if ($month_date > 0) {
+		if ($year_date > 0 && empty($day_date)) {
+			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
+			$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, false))."'";
+		} else if ($year_date > 0 && ! empty($day_date)) {
+			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
+			$sqldate.= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
+		} else
+			$sqldate.= " AND date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
+	} else if ($year_date > 0){
+		$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
+		$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
+	}
+	return $sqldate;
+}
 
 /**
  *	Convert a string date into a GM Timestamps date

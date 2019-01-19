@@ -1564,201 +1564,214 @@ class FactureFournisseur extends CommonInvoice
     	dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-        // Clean parameters
-        if (empty($remise_percent)) $remise_percent=0;
-        if (empty($qty)) $qty=0;
-        if (empty($info_bits)) $info_bits=0;
-        if (empty($rang)) $rang=0;
-        if (empty($ventil)) $ventil=0;
-        if (empty($txtva)) $txtva=0;
-        if (empty($txlocaltax1)) $txlocaltax1=0;
-        if (empty($txlocaltax2)) $txlocaltax2=0;
+		if ($this->statut == self::STATUS_DRAFT)
+		{
+			// Clean parameters
+			if (empty($remise_percent)) $remise_percent=0;
+			if (empty($qty)) $qty=0;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($rang)) $rang=0;
+			if (empty($ventil)) $ventil=0;
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
 
-        $this->db->begin();
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			$pu=price2num($pu);
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
+			}
 
-        if ($fk_product > 0)
-        {
-        	if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
-        	{
-        		// Check quantity is enough
-        		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
-        		$prod = new Product($this->db, $fk_product);
-        		if ($prod->fetch($fk_product) > 0)
-        		{
-        			$product_type = $prod->type;
-        			$label = $prod->label;
-        			$fk_prod_fourn_price = 0;
+	        $this->db->begin();
 
-        			// We use 'none' instead of $ref_supplier, because $ref_supplier may not exists anymore. So we will take the first supplier price ok.
-        			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-        			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
-        			if ($result > 0)
-        			{
-        				$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-        				$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
-        				// is remise percent not keyed but present for the product we add it
-        				if ($remise_percent == 0 && $prod->remise_percent !=0)
-        					$remise_percent =$prod->remise_percent;
-        			}
-        			if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
-        			{
-        				$langs->load("errors");
-        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
-        				$this->db->rollback();
-        				dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
-        				//$pu    = $prod->fourn_pu;     // We do not overwrite unit price
-        				//$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
-        				return -1;
-        			}
-        			if ($result == -1)
-        			{
-        				$langs->load("errors");
-        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
-        				$this->db->rollback();
-        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-        				return -1;
-        			}
-        			if ($result < -1)
-        			{
-        				$this->error=$prod->error;
-        				$this->db->rollback();
-        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
-        				return -1;
-        			}
-        		}
-        		else
-        		{
-        			$this->error=$prod->error;
-        			$this->db->rollback();
-        			return -1;
-        		}
-        	}
+	        if ($fk_product > 0)
+	        {
+	        	if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
+	        	{
+	        		// Check quantity is enough
+	        		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
+	        		$prod = new Product($this->db, $fk_product);
+	        		if ($prod->fetch($fk_product) > 0)
+	        		{
+	        			$product_type = $prod->type;
+	        			$label = $prod->label;
+	        			$fk_prod_fourn_price = 0;
+
+	        			// We use 'none' instead of $ref_supplier, because $ref_supplier may not exists anymore. So we will take the first supplier price ok.
+	        			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+	        			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+	        			if ($result > 0)
+	        			{
+	        				$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+	        				$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+	        				// is remise percent not keyed but present for the product we add it
+	        				if ($remise_percent == 0 && $prod->remise_percent !=0)
+	        					$remise_percent =$prod->remise_percent;
+	        			}
+	        			if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+	        			{
+	        				$langs->load("errors");
+	        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+	        				$this->db->rollback();
+	        				dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+	        				//$pu    = $prod->fourn_pu;     // We do not overwrite unit price
+	        				//$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+	        				return -1;
+	        			}
+	        			if ($result == -1)
+	        			{
+	        				$langs->load("errors");
+	        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+	        				$this->db->rollback();
+	        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
+	        				return -1;
+	        			}
+	        			if ($result < -1)
+	        			{
+	        				$this->error=$prod->error;
+	        				$this->db->rollback();
+	        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
+	        				return -1;
+	        			}
+	        		}
+	        		else
+	        		{
+	        			$this->error=$prod->error;
+	        			$this->db->rollback();
+	        			return -1;
+	        		}
+	        	}
+	        }
+	        else
+	        {
+	        	$product_type = $type;
+	        }
+
+	        if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+	        	$pu = 0;
+	        }
+
+	        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
+
+	        // Clean vat code
+	        $vat_src_code='';
+	        if (preg_match('/\((.*)\)/', $txtva, $reg))
+	        {
+	        	$vat_src_code = $reg[1];
+	        	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+	        }
+
+	        // Calcul du total TTC et de la TVA pour la ligne a partir de
+	        // qty, pu, remise_percent et txtva
+	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+
+	        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+	        $total_ht  = $tabprice[0];
+	        $total_tva = $tabprice[1];
+	        $total_ttc = $tabprice[2];
+	        $total_localtax1 = $tabprice[9];
+	        $total_localtax2 = $tabprice[10];
+			$pu_ht = $tabprice[3];
+
+			// MultiCurrency
+			$multicurrency_total_ht  = $tabprice[16];
+			$multicurrency_total_tva = $tabprice[17];
+			$multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise = $tabprice[19];
+
+			// Check parameters
+			if ($type < 0) return -1;
+
+			if ($rang < 0)
+			{
+				$rangmax = $this->line_max();
+				$rang = $rangmax + 1;
+			}
+
+			// Insert line
+			$this->line=new SupplierInvoiceLine($this->db);
+
+			$this->line->context = $this->context;
+
+			$this->line->fk_facture_fourn=$this->id;
+			//$this->line->label=$label;	// deprecated
+			$this->line->desc=$desc;
+			$this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
+			$this->line->ref_supplier=$ref_supplier;
+
+			$this->line->vat_src_code=$vat_src_code;
+			$this->line->tva_tx=$txtva;
+			$this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+			$this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
+			$this->line->localtax1_type = $localtaxes_type[0];
+			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->fk_product=$fk_product;
+			$this->line->product_type=$type;
+			$this->line->remise_percent=$remise_percent;
+			$this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->date_start=$date_start;
+			$this->line->date_end=$date_end;
+			$this->line->ventil=$ventil;
+			$this->line->rang=$rang;
+			$this->line->info_bits=$info_bits;
+			$this->line->total_ht=       (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
+			$this->line->total_tva=      $total_tva;
+			$this->line->total_localtax1=$total_localtax1;
+			$this->line->total_localtax2=$total_localtax2;
+			$this->line->total_ttc=      (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ttc):$total_ttc);
+			$this->line->special_code=$this->special_code;
+			$this->line->fk_parent_line=$this->fk_parent_line;
+			$this->line->origin=$this->origin;
+			$this->line->origin_id=$origin_id;
+			$this->line->fk_unit=$fk_unit;
+
+			// Multicurrency
+			$this->line->fk_multicurrency			= $this->fk_multicurrency;
+			$this->line->multicurrency_code			= $this->multicurrency_code;
+			$this->line->multicurrency_subprice		= $pu_ht_devise;
+			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
+			}
+
+			$result=$this->line->insert($notrigger);
+			if ($result > 0)
+			{
+				// Reorder if child line
+				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+
+				// Mise a jour informations denormalisees au niveau de la facture meme
+				$result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return $this->line->id;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$this->line->error;
+				$this->errors=$this->line->errors;
+				$this->db->rollback();
+				return -2;
+			}
         }
         else
         {
-        	$product_type = $type;
-        }
-
-
-        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
-
-        // Clean vat code
-        $vat_src_code='';
-        if (preg_match('/\((.*)\)/', $txtva, $reg))
-        {
-            $vat_src_code = $reg[1];
-            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-        }
-
-        $remise_percent=price2num($remise_percent);
-        $qty=price2num($qty);
-        $pu=price2num($pu);
-        $txtva=price2num($txtva);
-        $txlocaltax1=price2num($txlocaltax1);
-        $txlocaltax2=price2num($txlocaltax2);
-
-        if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
-            $pu = 0;
-        }
-
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
-        $total_ht  = $tabprice[0];
-        $total_tva = $tabprice[1];
-        $total_ttc = $tabprice[2];
-        $total_localtax1 = $tabprice[9];
-        $total_localtax2 = $tabprice[10];
-		$pu_ht = $tabprice[3];
-
-        // MultiCurrency
-        $multicurrency_total_ht  = $tabprice[16];
-        $multicurrency_total_tva = $tabprice[17];
-        $multicurrency_total_ttc = $tabprice[18];
-		$pu_ht_devise = $tabprice[19];
-
-        // Check parameters
-        if ($type < 0) return -1;
-
-        if ($rang < 0)
-        {
-        	$rangmax = $this->line_max();
-        	$rang = $rangmax + 1;
-        }
-
-        // Insert line
-        $this->line=new SupplierInvoiceLine($this->db);
-
-        $this->line->context = $this->context;
-
-        $this->line->fk_facture_fourn=$this->id;
-        //$this->line->label=$label;	// deprecated
-        $this->line->desc=$desc;
-        $this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
-		$this->line->ref_supplier=$ref_supplier;
-
-        $this->line->vat_src_code=$vat_src_code;
-        $this->line->tva_tx=$txtva;
-        $this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
-        $this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
-        $this->line->localtax1_type = $localtaxes_type[0];
-        $this->line->localtax2_type = $localtaxes_type[2];
-        $this->line->fk_product=$fk_product;
-        $this->line->product_type=$type;
-        $this->line->remise_percent=$remise_percent;
-        $this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
-        $this->line->date_start=$date_start;
-        $this->line->date_end=$date_end;
-        $this->line->ventil=$ventil;
-        $this->line->rang=$rang;
-        $this->line->info_bits=$info_bits;
-        $this->line->total_ht=       (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
-        $this->line->total_tva=      $total_tva;
-        $this->line->total_localtax1=$total_localtax1;
-        $this->line->total_localtax2=$total_localtax2;
-        $this->line->total_ttc=      (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ttc):$total_ttc);
-        $this->line->special_code=$this->special_code;
-        $this->line->fk_parent_line=$this->fk_parent_line;
-        $this->line->origin=$this->origin;
-        $this->line->origin_id=$origin_id;
-        $this->line->fk_unit=$fk_unit;
-
-        // Multicurrency
-        $this->line->fk_multicurrency			= $this->fk_multicurrency;
-        $this->line->multicurrency_code			= $this->multicurrency_code;
-        $this->line->multicurrency_subprice		= $pu_ht_devise;
-        $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-        $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-        $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
-
-        if (is_array($array_options) && count($array_options)>0) {
-            $this->line->array_options=$array_options;
-        }
-
-        $result=$this->line->insert($notrigger);
-        if ($result > 0)
-        {
-            // Reorder if child line
-            if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
-
-            // Mise a jour informations denormalisees au niveau de la facture meme
-            $result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
-            if ($result > 0)
-            {
-                $this->db->commit();
-                return $this->line->id;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                return -1;
-            }
-        }
-        else
-        {
-            $this->error=$this->line->error;
-            $this->errors=$this->line->errors;
-            $this->db->rollback();
-            return -2;
+        	return 0;
         }
     }
 
@@ -2022,7 +2035,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *
 	 *	@param      int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+     *                                  <0 if error
      */
 	function list_replacable_supplier_invoices($socid=0)
 	{
@@ -2050,9 +2064,11 @@ class FactureFournisseur extends CommonInvoice
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$return[$obj->rowid]=array(	'id' => $obj->rowid,
-				'ref' => $obj->ref,
-				'status' => $obj->fk_statut);
+				$return[$obj->rowid]=array(
+                    'id' => $obj->rowid,
+				    'ref' => $obj->ref,
+				    'status' => $obj->fk_statut
+                );
 			}
 			//print_r($return);
 			return $return;
@@ -2071,7 +2087,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
 	 *
 	 *	@param		int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+     *                                  <0 if error
 	 */
 	function list_qualified_avoir_supplier_invoices($socid=0)
 	{
@@ -2083,10 +2100,10 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.paye, pf.fk_paiementfourn";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
 		$sql.= " WHERE f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
-		$sql.= " AND ff.type IS NULL";									// Renvoi vrai si pas facture de remplacement
+        $sql.= " AND NOT EXISTS (SELECT rowid from ".MAIN_DB_PREFIX."facture_fourn as ff WHERE f.rowid = ff.fk_facture_source";
+        $sql.= " AND ff.type=".self::TYPE_REPLACEMENT.")";
 		$sql.= " AND f.type != ".self::TYPE_CREDIT_NOTE;				// Type non 2 si facture non avoir
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.ref";
@@ -2885,6 +2902,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 			}
 		}
 
+		$this->deleteObjectLinked();
+
 		if (!$error) {
 			// Supprime ligne
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
@@ -3108,10 +3127,10 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= " ".$this->product_type.",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".price2num($this->subprice).",";
-        $sql.= " ".price2num($this->total_ttc/$this->qty).",";
+        $sql.= " ".(! empty($this->qty)?price2num($this->total_ttc / $this->qty):price2num($this->total_ttc)).",";
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").",";
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").",";
-        $sql.= ' '.(!empty($this->fk_code_ventilation)?$this->fk_code_ventilation:0).',';
+        $sql.= ' '.(! empty($this->fk_code_ventilation)?$this->fk_code_ventilation:0).',';
         $sql.= ' '.$this->rang.',';
         $sql.= ' '.$this->special_code.',';
         $sql.= " '".$this->db->escape($this->info_bits)."',";

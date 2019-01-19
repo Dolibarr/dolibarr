@@ -39,6 +39,7 @@
 //if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
 //if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
 //if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
+//if (! defined("XFRAMEOPTIONS_ALLOWALL"))   define('XFRAMEOPTIONS_ALLOWALL',1);		// Do not add the HTTP header 'X-Frame-Options: SAMEORIGIN' but 'X-Frame-Options: ALLOWALL'
 
 // Load Dolibarr environment
 $res=0;
@@ -88,13 +89,13 @@ $pagenext = $page + 1;
 //if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object=new MyObject($db);
+$object = new MyObject($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');	// Load $extrafields->attributes['myobject']
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -352,6 +353,12 @@ $newcardbutton='';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 //}
+//else
+//{
+//    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('New');
+//    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+//    $newcardbutton.= '</a>';
+//}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
@@ -474,11 +481,14 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-		$cssforfield='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-		if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-		if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-		if (! empty($arrayfields['t.'.$key]['checked']))
+	    $cssforfield='';
+	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+
+	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+
+	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
 			if ($cssforfield || $val['css']) print ' class="';

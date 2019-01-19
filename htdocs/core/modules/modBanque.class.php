@@ -178,13 +178,13 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array("bch.rowid"=>"DepositId","bch.ref"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
-			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","f.facnumber"=>"InvoiceRef"
+			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","f.ref"=>"InvoiceRef"
 			);
 		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date",
-			"bch.date_bordereau"=>"Date","bch.rowid"=>"Numeric","bch.ref"=>"Numeric","bch.ref_ext"=>"Text","bch.amount"=>"Numeric","bch.nbcheque"=>"Numeric","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","f.facnumber"=>"Text"
+			"bch.date_bordereau"=>"Date","bch.rowid"=>"Numeric","bch.ref"=>"Numeric","bch.ref_ext"=>"Text","bch.amount"=>"Numeric","bch.nbcheque"=>"Numeric","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","f.ref"=>"Text"
 			);
 		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
-			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.facnumber"=>"invoice");
+			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.ref"=>"invoice");
 		$this->export_special_array[$r]=array('b.amount'=>'NULLIFNEG');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

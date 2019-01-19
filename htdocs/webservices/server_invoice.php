@@ -426,9 +426,9 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql ='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
+		$sql ='SELECT f.rowid as facid, ref as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.=" WHERE f.entity = ".$conf->entity;
+		$sql.=" WHERE f.entity IN (".getEntity('invoice').")";
 		if ($idthirdparty != 'all' ) $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
 
 		$resql=$db->query($sql);

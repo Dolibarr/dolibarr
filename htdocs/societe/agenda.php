@@ -96,8 +96,6 @@ if (empty($reshook))
  *	View
  */
 
-$contactstatic = new Contact($db);
-
 $form = new Form($db);
 
 if ($socid > 0)

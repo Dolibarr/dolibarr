@@ -176,7 +176,7 @@ print '</form>';
 
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
 if ($id > 0) $sql.= " d.fk_product,";
-if ($id > 0) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
+if ($id > 0) $sql.= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " SUM(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql.= " SUM(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
@@ -189,7 +189,7 @@ if (! empty($TSelectedCats)) {
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=p.rowid';
 }
 $sql.= " WHERE f.fk_soc = s.rowid";
-$sql.= ' AND f.entity IN ('.getEntity('facture').')';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
@@ -204,7 +204,7 @@ if (!empty($enddate))
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
-if ($id > 0) $sql.= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity, d.fk_product, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+if ($id > 0) $sql.= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity, d.fk_product, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut";
 else $sql.= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, p.entity";
 $sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
@@ -233,7 +233,7 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
-  		print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$id,'',$sortfield,$sortorder);
+  		print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.ref","","&amp;id=".$id,'',$sortfield,$sortorder);
   		print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$id,'align="center"',$sortfield,$sortorder);
   	}
   	else
@@ -277,7 +277,7 @@ if ($result)
 			if ($id > 0) {
 				print '<td>';
 				$invoicestatic->id=$objp->facid;
-				$invoicestatic->ref=$objp->facnumber;
+				$invoicestatic->ref=$objp->ref;
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
 				print "<td align=\"center\">";

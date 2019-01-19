@@ -3,7 +3,7 @@ PayBoxSetup=Paybox модул за настройка
 PayBoxDesc=В този модул се предлагат страници, които да дават възможност за заплащане на <a href="http://www.paybox.com" target="_blank">Paybox</a> от клиентите. Това може да се използва за плащане или за плащане на даден обект Dolibarr (фактура, поръчка, ...)
 FollowingUrlAreAvailableToMakePayments=Следните интернет адреси са на разположение, за да предложи на клиента да направи плащане по Dolibarr обекти
 PaymentForm=Формуляра за плащане
-WelcomeOnPaymentPage=Добре дошли на нашия онлайн платежни услуги
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Този екран ви позволи да направите онлайн плащане на %s.
 ThisIsInformationOnPayment=Това е информация за плащане, за да се направи
 ToComplete=За да завършите
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL да предложи %s онлайн 
 ToOfferALinkForOnlinePaymentOnContractLine=URL да предложи %s онлайн интерфейс ползвател на платежни за договор линия
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL да предложи %s онлайн интерфейс ползвател на платежни за безплатен сума
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL да предложи %s онлайн интерфейс ползвател на платежни за член абонамент
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Можете също да добавите URL параметър <b>и етикет = <i>стойност</i></b> на която и да е от тези URL (задължително само за безплатно плащане), за да добавите свой ​​собствен етикет за коментар на плащане.
-SetupPayBoxToHavePaymentCreatedAutomatically=Настройте Paybox с URL <b>%s</b> да има плащане създава автоматично, когато валидирани от Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Тази страница потвърждава, че плащането е било записано. Благодаря.
-YourPaymentHasNotBeenRecorded=Плащането не е записана и сделката е била анулирана. Благодаря.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Отчитат параметри
 UsageParameter=Употреба параметри
 InformationToFindParameters=Помощ &quot;, за да намерите информация за %s сметка

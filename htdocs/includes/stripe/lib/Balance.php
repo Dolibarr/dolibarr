@@ -7,7 +7,6 @@ namespace Stripe;
  *
  * @property string $object
  * @property array $available
- * @property array $connect_reserved
  * @property bool $livemode
  * @property array $pending
  *
@@ -15,9 +14,6 @@ namespace Stripe;
  */
 class Balance extends SingletonApiResource
 {
-
-    const OBJECT_NAME = "balance";
-
     /**
      * @param array|string|null $opts
      *

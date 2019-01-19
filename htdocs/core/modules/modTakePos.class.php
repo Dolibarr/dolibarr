@@ -53,7 +53,7 @@ class modTakePos extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "portal";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '60';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -102,9 +102,9 @@ class modTakePos extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("cashdesk");
-		$this->phpmin = array(5,43);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
@@ -195,27 +195,15 @@ class modTakePos extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 
-		/*$r=0;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read myobject of TakePos';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
+		$r=0;
 
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update myobject of TakePos';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
+		$this->rights[$r][0] = 50151;
+		$this->rights[$r][1] = 'Use point of sale';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'use';
 
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete myobject of TakePos';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		*/
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
@@ -226,7 +214,7 @@ class modTakePos extends DolibarrModules
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>'PointOfSale',
+								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
 								'url'=>'/takepos/takepos.php',

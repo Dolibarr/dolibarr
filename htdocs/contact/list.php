@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "suppliers"));
+$langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -158,6 +158,7 @@ $arrayfields=array(
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
 	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
+	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
@@ -322,6 +323,7 @@ if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip",$search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town",$search_town);
+
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
 if ($search_import_key)             $sql.= natural_search("p.import_key",$search_import_key);
 if ($type == "o")        // filtre sur type
@@ -821,10 +823,17 @@ while ($i < min($num,$limit))
 		print '<td>'.dol_print_email($obj->email,$obj->rowid,$obj->socid,'AC_EMAIL',18).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
+
 	// Skype
 	if (! empty($arrayfields['p.skype']['checked']))
 	{
 		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->skype,$obj->rowid,$obj->socid,'skype').'</td>'; }
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Jabber
+	if (! empty($arrayfields['p.jabberid']['checked']))
+	{
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->jabberid,$obj->rowid,$obj->socid,'jabberid').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Twitter

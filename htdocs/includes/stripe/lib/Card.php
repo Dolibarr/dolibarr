@@ -7,7 +7,6 @@ namespace Stripe;
  *
  * @property string $id
  * @property string $object
- * @property string $account
  * @property string $address_city
  * @property string $address_country
  * @property string $address_line1
@@ -16,13 +15,10 @@ namespace Stripe;
  * @property string $address_state
  * @property string $address_zip
  * @property string $address_zip_check
- * @property string[] $available_payout_methods
  * @property string $brand
  * @property string $country
- * @property string $currency
  * @property string $customer
  * @property string $cvc_check
- * @property bool $default_for_currency
  * @property string $dynamic_last4
  * @property int $exp_month
  * @property int $exp_year
@@ -31,16 +27,12 @@ namespace Stripe;
  * @property string $last4
  * @property StripeObject $metadata
  * @property string $name
- * @property string $recipient
  * @property string $tokenization_method
  *
  * @package Stripe
  */
 class Card extends ApiResource
 {
-
-    const OBJECT_NAME = "card";
-
     use ApiOperations\Delete;
     use ApiOperations\Update;
 

@@ -22,15 +22,11 @@ namespace Stripe;
  * @property int $quantity
  * @property string $subscription
  * @property string $subscription_item
- * @property int $unit_amount
  *
  * @package Stripe
  */
 class InvoiceItem extends ApiResource
 {
-
-    const OBJECT_NAME = "invoiceitem";
-
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;

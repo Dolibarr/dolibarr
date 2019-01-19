@@ -213,9 +213,9 @@ class modFacture extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.facnumber'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
@@ -226,8 +226,8 @@ class modFacture extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'f.rowid'=>'Numeric', 'f.facnumber'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'none.rest'=>"NumericCompute", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric',
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'none.rest'=>"NumericCompute", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'fd.rowid'=>'Numeric', 'fd.label'=>'Text', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
@@ -265,7 +265,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('facture').')';
+		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
 		$r++;
 
@@ -277,9 +277,9 @@ class modFacture extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.facnumber'=>"InvoiceRef",  'f.ref_client'=>'RefCustomer',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef",  'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
 			'p.amount'=>'AmountPayment', 'pf.amount'=>'AmountPaymentDistributedOnInvoice', 'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber',
@@ -288,8 +288,8 @@ class modFacture extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'f.rowid'=>"Numeric", 'f.facnumber'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'none.rest'=>'NumericCompute', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status',
+			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'none.rest'=>'NumericCompute', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
 			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'
@@ -320,7 +320,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture').')';
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('invoice').')';
 		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 	}
