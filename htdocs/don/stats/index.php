@@ -237,17 +237,17 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<table class="border" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
 	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);

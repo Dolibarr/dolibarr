@@ -490,8 +490,6 @@ class ActionComm extends CommonObject
     {
         global $db, $user, $langs, $conf, $hookmanager;
 
-        $this->context['createfromclone']='createfromclone';
-
         $error=0;
         $now=dol_now();
 
@@ -524,7 +522,8 @@ class ActionComm extends CommonObject
 		}
 
         // Create clone
-        $result=$this->create($fuser);
+		$this->context['createfromclone']='createfromclone';
+		$result=$this->create($fuser);
         if ($result < 0) $error++;
 
         if (! $error)

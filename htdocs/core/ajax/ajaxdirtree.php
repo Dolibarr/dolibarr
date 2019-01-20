@@ -274,7 +274,7 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 			print '<table class="nobordernopadding"><tr><td>';
 			print $val['cachenbofdoc'];
 			print '</td>';
-			print '<td align="left">';
+			print '<td class="left">';
 			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
 			print '</td>';
 
@@ -420,7 +420,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						print '<table class="nobordernopadding"><tr>';
 
-						/*print '<td align="left">';
+						/*print '<td class="left">';
 						 print dol_escape_htmltag($file);
 						 print '</td>';*/
 
@@ -428,7 +428,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print '<td align="right">';
 						print (isset($val['cachenbofdoc']) && $val['cachenbofdoc']  >= 0)?$val['cachenbofdoc']:'&nbsp;';
 						print '</td>';
-						print '<td align="left">';
+						print '<td class="left">';
 						if ($nbofsubdir > 0  && $nboffilesinsubdir > 0) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
 						print '</td>';
 

@@ -121,11 +121,11 @@ SubscriptionReminderEmail=Rappel de cotisation
 YourMembershipWasCanceled=Votre adhésion a été annulée
 CardContent=Contenu de votre fiche adhérent
 # Text of email templates
-ThisIsContentOfYourMembershipRequestWasReceived=Nous vous informons que votre demande d'adhésion a bien été reçue. <br> <br>
+ThisIsContentOfYourMembershipRequestWasReceived=Nous vous informons que votre demande d'adhésion a bien été reçue.<br><br>
 ThisIsContentOfYourMembershipWasValidated=Nous vous informons que votre adhésion a été validé avec les informations suivantes:<br><br>
 ThisIsContentOfYourSubscriptionWasRecorded=Nous vous informons que votre nouvelle cotisation a été enregistrée.<br><br>
-ThisIsContentOfSubscriptionReminderEmail=Nous voulons vous informer que votre adhésion est sur le point d'expirer. Nous espérons que vous pourrez la renouveler, votre soutien nous ait précieux <br> <br>
-ThisIsContentOfYourCard=Ceci est un rappel des informations que nous avons vos concernant. N'hésitez pas à nous contacter en cas d'erreur.<br><br>
+ThisIsContentOfSubscriptionReminderEmail=Nous voulons vous informer que votre adhésion est sur le point d'expirer. Nous espérons que vous pourrez la renouveler, votre soutien nous ait précieux<br><br>
+ThisIsContentOfYourCard=Ceci est un rappel des informations que nous avons vous concernant. N'hésitez pas à nous contacter en cas d'erreur.<br><br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Sujet de l'email reçu en cas d'auto-inscription d'un invité
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Email reçu en cas d'auto-inscription d'un invité
 DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Modèle Email à utiliser pour envoyer un email à un adhérent sur auto-adhésion de l'adhérent

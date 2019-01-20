@@ -113,9 +113,9 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
-            print '<td align="left">'.$obj->address.'</td>';
-			print '<td align="left">'.$obj->zip.'</td>';
-			print '<td align="left">'.$obj->town.'</td>';
+            print '<td class="left">'.$obj->address.'</td>';
+			print '<td class="left">'.$obj->zip.'</td>';
+			print '<td class="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
 			print $establishmentstatic->getLibStatut(5);

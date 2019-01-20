@@ -250,8 +250,8 @@ if ($modecompta == 'CREANCES-DETTES')
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
@@ -292,9 +292,9 @@ if ($resql) {
 	while ( $obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' .$obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
@@ -312,7 +312,7 @@ if ($resql) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
@@ -328,8 +328,8 @@ if ($resql) {
 
 
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("PurchasebyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
@@ -371,9 +371,9 @@ if ($resql2) {
 	while ( $obj = $db->fetch_object($resql2)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' . $obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
@@ -391,7 +391,7 @@ if ($resql2) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);

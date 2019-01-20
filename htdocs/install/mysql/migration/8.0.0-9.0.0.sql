@@ -256,3 +256,6 @@ CREATE TABLE llx_pos_cash_fence(
 	import_key VARCHAR(14)
 ) ENGINE=innodb;
 
+-- Withdrawals / Prelevements
+UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END');
+UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD');
