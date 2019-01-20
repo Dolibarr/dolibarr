@@ -53,6 +53,9 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed">
 		<severity>0</severity>
     </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
+		<severity>0</severity>
+    </rule>
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass">
 		<severity>0</severity>
     </rule>

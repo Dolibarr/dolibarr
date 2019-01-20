@@ -843,7 +843,7 @@ class SupplierProposal extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $langs,$conf,$mysoc,$hookmanager;
+        global $langs, $conf, $mysoc, $hookmanager;
         $error=0;
 
         $now=dol_now();
