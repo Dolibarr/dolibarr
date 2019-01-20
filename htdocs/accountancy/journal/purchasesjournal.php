@@ -879,7 +879,7 @@ if (empty($action) || $action == 'view') {
 				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
 				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
-					print '<span class="error">'.$langs->trans("MainAccountForSupplierssNotDefined").'</span>';
+					print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
 				}
 				else print $accountoshow;
 				print '</td>';
