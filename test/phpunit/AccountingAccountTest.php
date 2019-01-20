@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AccountingAccountTest extends PHPUnit_Framework_TestCase
+class AccountingAccountTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -138,6 +138,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $localobject->account_category = 0;
         $localobject->pcg_type = 'XXXXX';
         $localobject->pcg_subtype = 'XXXXX';
+        $localobject->account_number = '411123456';
         $localobject->account_parent = 0;
         $localobject->label = 'Account specimen';
         $localobject->active = 0;
