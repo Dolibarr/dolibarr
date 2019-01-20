@@ -349,6 +349,7 @@ script:
   set +e
   echo
   #cat /tmp/dolibarr_install.log
+  cat $TRAVIS_BUILD_DIR/upgrade600700-2.log
 
 - |
   echo "Unit testing"
