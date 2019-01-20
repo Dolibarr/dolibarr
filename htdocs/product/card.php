@@ -1182,7 +1182,7 @@ else
 			} else {
 				$accountancy_code_sell = (GETPOST('accountancy_code_sell','alpha')?(GETPOST('accountancy_code_sell','alpha')):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell,'alpha'', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
 
 			if ($conf->global->MAIN_FEATURES_LEVEL)
