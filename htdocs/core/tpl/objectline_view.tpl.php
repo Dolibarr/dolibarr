@@ -68,7 +68,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php echo $line->id?>" class="drag drop oddeven" <?php echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+	<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php
@@ -183,7 +183,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	}
 	// VAT Rate
 	?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php
+	<td class="linecolvat nowrap right"><?php $coldisplay++; ?><?php
 	$positiverates='';
 	if (price2num($line->tva_tx))          $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
 	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
@@ -193,17 +193,17 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 	?></td>
 
-	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
+	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
+	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
+	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
 
-	<td align="right" class="linecolqty nowrap"><?php $coldisplay++; ?>
+	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 			// I comment this because it shows info even when not required
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
@@ -216,7 +216,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td align="left" class="linecoluseunit nowrap">';
+		print '<td class="linecoluseunit nowrap left">';
 		$label = $line->getLabelOfUnit('short');
 		if ($label !== '') {
 			print $langs->trans($label);
@@ -226,7 +226,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	?>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td class="linecoldiscount" align="right"><?php
+	<td class="linecoldiscount right><?php
 		$coldisplay++;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		echo dol_print_reduction($line->remise_percent,$langs);
@@ -237,7 +237,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="linecolcycleref nowrap">' . $line->situation_percent . '%</td>';
+		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -246,33 +246,33 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
   		?>
 
   	<?php if (!empty($user->rights->margins->creer)) { ?>
-  	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php } ?>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }
     if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
     <?php }
   	}
   	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
+	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="linecolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+	<td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+		<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
         <?php if ($outputalsopricetotalwithtax) { ?>
-        <td align="right" class="linecolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
+        <td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
         <?php } ?>
 
 
 	<?php
 	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
-	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
+	<td class="linecoledit center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
@@ -281,7 +281,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		<?php } ?>
 	</td>
 
-	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
+	<td class="linecoldelete center"><?php $coldisplay++; ?>
 		<?php
 		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
@@ -293,7 +293,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	<?php
 	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
-	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
+	<td class="linecolmove tdlineupdown center"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
 		<?php echo img_up('default',0,'imgupforline'); ?>
@@ -306,13 +306,13 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td <?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
 	<?php  if($action == 'selectlines'){ ?>
-	<td class="linecolcheck" align="center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
+	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>
 
 </tr>

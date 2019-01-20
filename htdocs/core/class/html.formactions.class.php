@@ -218,14 +218,14 @@ class FormActions
         	$total = 0;
 
         	print '<div class="div-table-responsive-no-min">';
-        	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
+        	print '<table class="centpercent noborder'.($morecss?' '.$morecss:'').'">';
         	print '<tr class="liste_titre">';
         	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'class="center"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'class="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
         	print "\n";
 
@@ -273,7 +273,7 @@ class FormActions
 	        		// Label
 	        		print '<td>'.$label.'</td>';
 	        		// Date
-	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
+	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{
 		        		$tmpa=dol_getdate($action->datep);
@@ -285,7 +285,7 @@ class FormActions
 		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
-	        		print '<td align="right">';
+	        		print '<td class="right">';
 	        		if (! empty($action->author->id))
 	        		{
 	        			print $action->getLibStatut(3);
