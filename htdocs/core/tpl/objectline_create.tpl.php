@@ -35,7 +35,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || ! is_object($object))
 {
-	print "Error, template page can't be called as URL";
+	print "Error: this template page cannot be called directly as an URL";
 	exit;
 }
 
@@ -100,7 +100,7 @@ if ($nolinesbefore) {
 ?>
 <tr class="liste_titre<?php echo (($nolinesbefore || $object->element=='contrat')?'':' liste_titre_add_') ?> nodrag nodrop">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum" align="center"></td>
+	<td class="linecolnum" style="text-align: center"></td>
 	<?php } ?>
 	<td class="linecoldescription minwidth500imp">
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
@@ -111,34 +111,34 @@ if ($nolinesbefore) {
 	?>
 		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 	<?php } ?>
-	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
-	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
+	<td class="linecolvat" style="text-align: right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
+	<td class="linecoluht" style="text-align: right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
-	<td class="linecoluht_currency" align="right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
+	<td class="linecoluht_currency" style="text-align: right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td class="linecoluttc" align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
+	<td class="linecoluttc" style="text-align: right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
-	<td class="linecolqty" align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<td class="linecolqty" style="text-align: right"><?php echo $langs->trans('Qty'); ?></td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td class="linecoluseunit" align="left">';
+		print '<td class="linecoluseunit" style="text-align: left">';
 		print '<span id="title_units">';
 		print $langs->trans('Unit');
 		print '</span></td>';
 	}
 	?>
-	<td class="linecoldiscount" align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
+	<td class="linecoldiscount" style="text-align: right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if ($this->situation_cycle_ref) {
-		print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
+		print '<td class="linecolcycleref" style="text-align: right">' . $langs->trans('Progress') . '</td>';
 	}
 	if (! empty($usemargins))
 	{
 		if (!empty($user->rights->margins->creer)) {
 		?>
-		<td align="right" class="margininfos linecolmargin1">
+		<td style="text-align: right" class="margininfos linecolmargin1">
 		<?php
 		}
 		else $colspan++;
@@ -150,8 +150,8 @@ if ($nolinesbefore) {
 		?>
 		</td>
 		<?php
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right" class="margininfos linecolmargin2"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right" class="margininfos linecolmargin2"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td style="text-align: right" class="margininfos linecolmargin2"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td style="text-align: right" class="margininfos linecolmargin2"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -165,7 +165,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="nobottom linecolnum" align="center" width="5"></td>
+	<td class="nobottom linecolnum" style="text-align: center"></td>
 	<?php
 }
 else {
@@ -259,13 +259,13 @@ else {
 		}
 		else
 		{
-			// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+			// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
 		    if ($senderissupplier != 2)
 		    {
     			$ajaxoptions=array(
     					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
     					'option_disabled' => 'idthatdoesnotexists',					// html id to disable once select is done
-    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for exemple shown we select a disabled option into combo)
+    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
     			);
     			$alsoproductwithnosupplierprice=0;
 		    }
@@ -318,7 +318,7 @@ else {
 	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
 
-	// Show autofill date for recuring invoices
+	// Show autofill date for recurring invoices
 	if (! empty($conf->service->enabled) && $object->element == 'facturerec')
 	{
 		echo '<div class="divlinefordates"><br>';
@@ -336,35 +336,35 @@ else {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
+		<td class="nobottom linecolresupplier" valign="top"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
 	<?php } ?>
 
-	<td class="nobottom linecolvat" align="right"><?php
+	<td class="nobottom linecolvat" style="text-align: right" valign="top"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx",'alpha',2):-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
-	<td class="nobottom linecoluht" align="right">
+	<td class="nobottom linecoluht" style="text-align: right" valign="top">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
 
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
-	<td class="nobottom linecoluht_currency" align="right">
+	<td class="nobottom linecoluht_currency" style="text-align: right" valign="top">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
 
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td class="nobottom linecoluttc" align="right">
+	<td class="nobottom linecoluttc" style="text-align: right" valign="top">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
-	<td class="nobottom linecolqty" align="right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
+	<td class="nobottom linecolqty" style="text-align: right" valign="top"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td class="nobottom linecoluseunit" align="left">';
+		print '<td class="nobottom linecoluseunit" style="text-align: left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
@@ -373,17 +373,17 @@ else {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	?>
-	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount" style="text-align: right" valign="top"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nobottom nowrap" align="right"><input class="falt right" type="text" size="1" value="0" name="progress">%</td>';
+		print '<td class="nobottom nowrap" style="text-align: right"><input class="falt right" type="text" size="1" value="0" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
 		if (!empty($user->rights->margins->creer)) {
 		?>
-		<td align="right" class="nobottom margininfos linecolmargin">
+		<td style="text-align: right" class="nobottom margininfos linecolmargin">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
@@ -399,23 +399,23 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td align="right" class="nobottom nowrap margininfos"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate",'alpha',2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td style="text-align: right" class="nobottom nowrap margininfos"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate",'alpha',2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td align="right" class="nobottom nowrap margininfos"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td style="text-align: right" class="nobottom nowrap margininfos"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
 		else
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $coldisplay++;
-			if (! empty($conf->global->DISPLAY_MARK_RATES))   $coldisplay++;
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) $coldisplay++;
 		}
 	}
 	?>
-	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+	<td class="nobottom linecoledit" style="text-align: center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 </tr>
@@ -495,7 +495,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		echo ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
 	};
-	print '<script type="text/javascript">';
+	print '<script>';
 	if (!$date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
@@ -520,7 +520,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 }
 ?>
 
-<script type="text/javascript">
+<script>
 
 <?php
 if (! empty($usemargins) && $user->rights->margins->creer)
@@ -810,7 +810,7 @@ function setforfree() {
 	jQuery("#prod_entry_mode_predef").prop('checked',false).change();
 	jQuery("#price_ht").show();
 	jQuery("#multicurrency_price_ht").show();
-	jQuery("#price_ttc").show();	// May no exists
+	jQuery("#price_ttc").show();	// May not exist
 	jQuery("#fourn_ref").show();
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
@@ -820,10 +820,10 @@ function setforfree() {
 	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
 	jQuery("#title_up_ttc_currency").show();
-	jQuery("#np_marginRate").show();	// May no exists
-	jQuery("#np_markRate").show();	// May no exists
-	jQuery(".np_marginRate").show();	// May no exists
-	jQuery(".np_markRate").show();	// May no exists
+	jQuery("#np_marginRate").show();	// May not exist
+	jQuery("#np_markRate").show();	// May not exist
+	jQuery(".np_marginRate").show();	// May not exist
+	jQuery(".np_markRate").show();	// May not exist
 	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
@@ -834,7 +834,7 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
 	jQuery("#price_ht").val('').hide();
 	jQuery("#multicurrency_price_ht").hide();
-	jQuery("#price_ttc").hide();	// May no exists
+	jQuery("#price_ttc").hide();	// May not exist
 	jQuery("#fourn_ref").hide();
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
@@ -843,10 +843,10 @@ function setforpredef() {
 	jQuery("#title_up_ht_currency").hide();
 	jQuery("#title_up_ttc").hide();
 	jQuery("#title_up_ttc_currency").hide();
-	jQuery("#np_marginRate").hide();	// May no exists
-	jQuery("#np_markRate").hide();	// May no exists
-	jQuery(".np_marginRate").hide();	// May no exists
-	jQuery(".np_markRate").hide();	// May no exists
+	jQuery("#np_marginRate").hide();	// May not exist
+	jQuery("#np_markRate").hide();	// May not exist
+	jQuery(".np_marginRate").hide();	// May not exist
+	jQuery(".np_markRate").hide();	// May not exist
 	jQuery("#units, #title_units").hide();
 
 	jQuery('#trlinefordates').show();
