@@ -368,7 +368,7 @@ after_script:
 - |
   echo "After script - Output 50 latest lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
-  tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_success:
 - |
