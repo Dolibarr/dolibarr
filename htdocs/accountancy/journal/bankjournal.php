@@ -786,17 +786,17 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
-	print '"' . html_entity_decode($langs->trans("BankId")).'"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Date")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("PaymentMode")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("AccountAccounting")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("LedgerAccount")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("SubledgerAccount")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Label")). '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Debit")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Credit")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Journal"))  . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Note"))  . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("BankId").'"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Date") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("PaymentMode") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("AccountAccounting") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("LedgerAccount") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("SubledgerAccount") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Label"). '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Debit") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Credit") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Journal")  . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Note")  . '"' . $sep;
 	print "\n";
 
 

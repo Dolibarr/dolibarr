@@ -434,13 +434,12 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
-	print '"' . $langs->trans("Date") . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Piece")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("AccountAccounting")) . '"' . $sep;
-	//	print '"' . html_entity_decode($langs->trans("SubledgerAccount")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("LabelOperation")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Debit")) . '"' . $sep;
-	print '"' . html_entity_decode($langs->trans("Credit")) . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Date") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Piece") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("AccountAccounting") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("LabelOperation") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Debit") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Credit") . '"' . $sep;
 	print "\n";
 
 	foreach ( $taber as $key => $val ) {
