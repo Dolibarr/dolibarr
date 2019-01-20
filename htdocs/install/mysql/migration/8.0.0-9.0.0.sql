@@ -255,3 +255,5 @@ CREATE TABLE llx_pos_cash_fence(
 	import_key VARCHAR(14)
 ) ENGINE=innodb;
 
+-- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;
