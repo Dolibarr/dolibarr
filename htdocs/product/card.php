@@ -1192,7 +1192,7 @@ else
 				{
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td>';
-					if($type = 0) 
+					if($type = 0)
 					{
 						$accountancy_code_sell_intra = (GETPOST('accountancy_code_sell_intra','alpha')?(GETPOST('accountancy_code_sell_intra','alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
 					} else {
