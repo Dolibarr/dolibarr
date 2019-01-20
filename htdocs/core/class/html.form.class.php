@@ -10,7 +10,7 @@
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -244,7 +244,7 @@ class Form
 				}
 				if (empty($notabletag)) $ret.='</td>';
 
-				if (empty($notabletag)) $ret.='<td align="left">';
+				if (empty($notabletag)) $ret.='<td class="left">';
 				//else $ret.='<div class="clearboth"></div>';
 			   	$ret.='<input type="submit" class="button'.(empty($notabletag)?'':' ').'" name="modify" value="'.$langs->trans("Modify").'">';
 			   	if (preg_match('/ckeditor|textarea/',$typeofdata) && empty($notabletag)) $ret.='<br>'."\n";
@@ -3861,11 +3861,11 @@ class Form
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					elseif ($input['type'] == 'password')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					elseif ($input['type'] == 'select')
 					{
@@ -3877,7 +3877,7 @@ class Form
 					elseif ($input['type'] == 'checkbox')
 					{
 						$more.='<tr>';
-						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td align="left">';
+						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td class="left">';
 						$more.='<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
 						if (! is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') $more.=' checked';
 						if (is_bool($input['value']) && $input['value']) $more.=' checked';
@@ -3904,7 +3904,7 @@ class Form
 					elseif ($input['type'] == 'date')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
-						$more.='<td align="left">';
+						$more.='<td class="left">';
 						$more.=$this->selectDate($input['value'],$input['name'],0,0,0,'',1,0);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
@@ -3916,14 +3916,14 @@ class Form
 					elseif ($input['type'] == 'other')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td align="left">';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
 
 					elseif ($input['type'] == 'onecolumn')
 					{
-						$more.='<tr><td colspan="2" align="left">';
+						$more.='<tr><td colspan="2" class="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
@@ -4286,7 +4286,7 @@ class Form
 			$ret.='<tr><td>';
 			$ret.=$this->selectDate($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0);
 			$ret.='</td>';
-			$ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret.='<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			$ret.='</tr></table></form>';
 		}
 		else
@@ -4575,7 +4575,7 @@ class Form
 				print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
 			}
 			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
 		else
@@ -6543,9 +6543,9 @@ class Form
 					print '<tr class="liste_titre">';
 					print '<td class="nowrap"></td>';
 					print '<td align="center">' . $langs->trans("Ref") . '</td>';
-					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
+					print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
 					print '<td align="right">' . $langs->trans("AmountHTShort") . '</td>';
-					print '<td align="left">' . $langs->trans("Company") . '</td>';
+					print '<td class="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
 					while ($i < $num)
 					{
