@@ -258,3 +258,7 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;
+
+-- Withdrawals / Prelevements
+UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
+UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';
