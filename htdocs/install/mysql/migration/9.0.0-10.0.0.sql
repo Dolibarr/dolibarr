@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+DROP TABLE llx_ticket_logs;
+
 CREATE TABLE llx_pos_cash_fence(
 	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
 	entity INTEGER DEFAULT 1 NOT NULL,

@@ -1409,11 +1409,11 @@ else
 		$morehtmlref.='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->contrat->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
 		// Ref supplier
 		$morehtmlref.='<br>';
 		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
@@ -1625,7 +1625,7 @@ else
 					// Quantite
 					print '<td align="center">'.$objp->qty.'</td>';
 					// Unit
-					if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
+					if($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
 					// Remise
 					if ($objp->remise_percent > 0)
 					{
@@ -1752,7 +1752,7 @@ else
 					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
-						print '<td align="left">';
+						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
 					}

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -455,6 +455,46 @@ abstract class CommonObject
 	function errorsToString()
 	{
 		return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
+	}
+
+	/**
+	 * Return customer ref for screen output.
+	 *
+	 * @param  string      $objref        Customer ref
+	 * @return string                     Customer ref formated
+	 */
+	function getFormatedCustomerRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedCustomerRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
+	}
+
+	/**
+	 * Return supplier ref for screen output.
+	 *
+	 * @param  string      $objref        Supplier ref
+	 * @return string                     Supplier ref formated
+	 */
+	function getFormatedSupplierRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedSupplierRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
 	}
 
 	/**
