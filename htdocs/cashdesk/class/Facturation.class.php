@@ -211,8 +211,7 @@ class Facturation
         $total_localtax1 = 0;
         $total_localtax2 = 0;
 
-        $tab=array();
-        $tab = $_SESSION['poscart'];
+        $tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
 
         $tab_size=count($tab);
         for($i=0;$i < $tab_size;$i++)

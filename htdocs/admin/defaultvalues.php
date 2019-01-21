@@ -376,6 +376,11 @@ if ($result)
     		print '</td>';
 		}
 
+		if (! empty($conf->multicompany->enabled) && !$user->entity)
+		{
+		    print '<td></td>';
+		}
+
 		// Actions
 		print '<td align="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)

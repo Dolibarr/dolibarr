@@ -2,6 +2,7 @@
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
+ * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -516,7 +517,9 @@ if ($massaction == 'confirm_createbills')
 		$objecttmp = new Facture($db);
 		if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 		else {
-
+			// Load extrafields of order
+			$cmd->fetch_optionals();
+			
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = Facture::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -532,6 +535,8 @@ if ($massaction == 'confirm_createbills')
 			$objecttmp->date = $datefacture;
 			$objecttmp->origin    = 'commande';
 			$objecttmp->origin_id = $id_order;
+
+			$objecttmp->array_options = $cmd->array_options;	// Copy extrafields
 
 			$res = $objecttmp->create($user);
 
@@ -682,6 +687,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error && $validate_invoices)
 	{
 		$massaction = $action = 'builddoc';
+
 		foreach($TAllFact as &$objecttmp)
 		{
 			$result = $objecttmp->validate($user);
@@ -693,12 +699,18 @@ if ($massaction == 'confirm_createbills')
 			}
 
 			$id = $objecttmp->id; // For builddoc action
+			$object = $objecttmp;
 
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
 			$permissioncreate=$user->rights->facture->creer;
+
+			// Call action to build doc
+			$savobject = $object;
+      			$object = $objecttmp;
 			include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+			$object = $savobject;
 		}
 
 		$massaction = $action = 'confirm_createbills';

@@ -462,6 +462,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Background color THEME_ELDY_BACKBODY
@@ -508,6 +509,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// TopMenuBackgroundColor
@@ -556,6 +558,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// LeftMenuBackgroundColor
@@ -604,6 +607,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// TextTitleColor for title of Pages
@@ -714,6 +718,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// BackgroundTableLineEvenColor
@@ -743,6 +748,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Text LinkColor
@@ -793,6 +799,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
+		print '</tr>';
 	}
 
 	// Use Hover
@@ -838,6 +845,39 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print '</span>';
 		print '</td>';
 		print '</tr>';
+	}
+
+	// Use MAIN_OPTIMIZEFORTEXTBROWSER
+	if ($foruserprofile)
+	{
+	    $default=$langs->trans('No');
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+   	    if ($edit)
+   	    {
+   	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
+   	    }
+   	    else
+   	    {
+   	        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+   	        {
+   	            print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
+   	        }
+   	        else
+   	        {
+   	            print yn(1);
+   	            if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
+   	        }
+   	    }
+   	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.yn(0).'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
+	    print '</td>';
+	    print '</tr>';
+	}
+	else
+	{
+	    // TODO
 	}
 
 	print '</table>';
