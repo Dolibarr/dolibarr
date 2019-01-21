@@ -2950,7 +2950,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='', $morecss='')
+function img_picto($titlealt, $picto, $moreatt='', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='', $morecss='')
 {
 	global $conf, $langs;
 
@@ -3074,14 +3074,22 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
-
+			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
+            //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
             $reg=array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
-				$morecss.= ($morecss?' ':'').$reg[1];
-			}
+                $morecss .= ($morecss ? ' ' : '') . $reg[1];
+                $moreatt = str_replace('class="'.$reg[1].'"','', $moreatt);
+            }
+            if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
+                $morestyle = ' '. $reg[1];
+                $moreatt = str_replace('style="'.$reg[1].'"','', $moreatt);
+            }
+            $moreatt=trim($moreatt);
+
 			$fa='fa';
 			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
-			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:'').'>';
+            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '') . ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3130,7 +3138,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
+		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
     return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
 }
 
@@ -3285,7 +3293,7 @@ function img_edit_remove($titlealt = 'default', $other='')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit($titlealt = 'default', $float = 0, $other = 'class="pictoedit"')
+function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
 	global $conf, $langs;
 
