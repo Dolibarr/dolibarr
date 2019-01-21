@@ -144,8 +144,9 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
         $localobject->active = 0;
         $result=$localobject->create($user);
 
-        $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
         return $result;
     }
 
@@ -169,8 +170,9 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
         $localobject=new AccountingAccount($this->savdb);
         $result=$localobject->fetch($id);
 
-        $this->assertLessThan($result, 0);
         print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+
         return $localobject;
     }
 
@@ -194,8 +196,9 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
     	$localobject->label='New label';
     	$result=$localobject->update($user);
 
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+
     	return $localobject->id;
     }
 
@@ -222,6 +225,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
+
         return $result;
     }
 }
