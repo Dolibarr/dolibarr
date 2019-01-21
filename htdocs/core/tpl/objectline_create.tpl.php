@@ -57,7 +57,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
 // Define colspan for button Add
-$colspan = 3;	// Col total ht + col edit + col delete
+$colspan = 3;	// Columns: total ht + col edit + col delete
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
 if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 
@@ -113,7 +114,7 @@ if ($nolinesbefore) {
 	<?php } ?>
 	<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { //steve remove colspan  $colspan++; ?>
 	<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -348,7 +349,7 @@ else {
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {// $colspan++; //steve remove colspan++: already set?>
 	<td class="nobottom linecoluht_currency right valigntop">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
