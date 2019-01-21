@@ -289,6 +289,12 @@ class Account extends ApiResource
                 $update['legal_entity'] = $entityUpdate;
             }
         }
+        if (isset($this->_values['individual'])) {
+            $individual = $this['individual'];
+            if (($individual instanceof Person) && !isset($update['individual'])) {
+                $update['individual'] = $individual->serializeParameters($force);
+            }
+        }
         return $update;
     }
 

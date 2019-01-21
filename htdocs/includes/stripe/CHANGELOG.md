@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.28.1 - 2019-01-21
+* [#580](https://github.com/stripe/stripe-php/pull/580) Properly serialize `individual` on `Account` objects
+
 ## 6.28.0 - 2019-01-03
 * [#576](https://github.com/stripe/stripe-php/pull/576) Add support for iterating directly over `Collection` instances
 

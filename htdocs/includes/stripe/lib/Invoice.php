@@ -20,6 +20,7 @@ namespace Stripe;
  * @property string $currency
  * @property string $customer
  * @property int $date
+ * @property string $default_source
  * @property string $description
  * @property Discount $discount
  * @property int $due_date
