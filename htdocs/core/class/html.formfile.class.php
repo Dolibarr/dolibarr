@@ -171,7 +171,7 @@ class FormFile
 			{
 				$out .= '<tr>';
    				if (! empty($options)) $out .= '<td>'.$options.'</td>';
-				$out .= '<td valign="middle" class="nowrap">';
+				$out .= '<td class="nowrap valignmiddle">';
 				$out .= '<input type="checkbox" checked class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 				$out .= '</td>';
 				$out .= '</tr>';
@@ -341,7 +341,7 @@ class FormFile
 		{
 			$out.='<div id="show_files"><br></div>'."\n";
 			$title=$langs->trans("MassFilesArea").' <a href="" id="togglemassfilesarea" ref="shown">('.$langs->trans("Hide").')</a>';
-			$title.='<script type="text/javascript" language="javascript">
+			$title.='<script>
 				jQuery(document).ready(function() {
 					jQuery(\'#togglemassfilesarea\').click(function() {
 						if (jQuery(\'#togglemassfilesarea\').attr(\'ref\') == "shown")
@@ -657,12 +657,12 @@ class FormFile
 
 			$out.= load_fiche_titre($titletoshow, '', '');
 			$out.= '<div class="div-table-responsive-no-min">';
-			$out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
+			$out.= '<table class="liste formdoc noborder centpercent">';
 
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th align="center" colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone">';
+			$out.= '<th colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (! empty($modellist))
@@ -753,7 +753,7 @@ class FormFile
 				$headershown=1;
 				$out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
 				$out.= '<div class="div-table-responsive-no-min">';
-				$out.= '<table class="noborder" summary="listofdocumentstable" id="'.$modulepart.'_table" width="100%">'."\n";
+				$out.= '<table class="noborder centpercent" id="'.$modulepart.'_table">'."\n";
 			}
 
 			// Loop on each file found
@@ -785,11 +785,11 @@ class FormFile
 
 					// Show file size
 					$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-					$out.= '<td align="right" class="nowrap">'.dol_print_size($size,1,1).'</td>';
+					$out.= '<td class="nowrap right">'.dol_print_size($size,1,1).'</td>';
 
 					// Show file date
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
+					$out.= '<td class="nowrap right">'.dol_print_date($date, 'dayhour', 'tzuser').'</td>';
 
 					if ($delallowed || $printer || $morepicto)
 					{
@@ -805,7 +805,7 @@ class FormFile
 						}
 						if ($printer)
 						{
-							//$out.= '<td align="right">';
+							//$out.= '<td class="right">';
 							$out.= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out.= ($param?'&amp;'.$param:'');
 							$out.= '">'.img_picto($langs->trans("PrintFile", $relativepath),'printer.png').'</a>';
@@ -846,7 +846,7 @@ class FormFile
 					$out.=$file->label;
 					$out.='</a>';
 					$out.='</td>';
-					$out.='<td align="right">';
+					$out.='<td class="right">';
 					$out.=dol_print_date($file->datea,'dayhour');
 					$out.='</td>';
 					if ($delallowed || $printer || $morepicto) $out.='<td></td>';
@@ -1132,10 +1132,10 @@ class FormFile
 
 			print '<tr class="liste_titre nodrag nodrop">';
 			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
-			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre('Date',$url,"date","",$param,'align="center"',$sortfield,$sortorder);
-			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('',$url,"","",$param,'align="center"');					// Preview
+			print_liste_field_titre('Documents2',$url,"name","",$param,'class="left"',$sortfield,$sortorder);
+			print_liste_field_titre('Size',$url,"size","",$param,'class="right"',$sortfield,$sortorder);
+			print_liste_field_titre('Date',$url,"date","",$param,'class="center"',$sortfield,$sortorder);
+			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('',$url,"","",$param,'class="center"');					// Preview
 			print_liste_field_titre('');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
@@ -1211,7 +1211,7 @@ class FormFile
 					$sizetoshow = dol_print_size($file['size'],1,1);
 					$sizetoshowbytes = dol_print_size($file['size'],0,1);
 
-					print '<td align="right" width="80px">';
+					print '<td class="right" style="width: 80px">';
 					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
 					else {
 						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
@@ -1219,13 +1219,13 @@ class FormFile
 					print '</td>';
 
 					// Date
-					print '<td align="center" width="140px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';	// 140px = width for date with PM format
+					print '<td class="center" style="width: 140px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';	// 140px = width for date with PM format
 
 					// Preview
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5|| $useinecm == 6)
 					{
 						$fileinfo = pathinfo($file['name']);
-						print '<td align="center">';
+						print '<td class="center">';
 						if (image_format_supported($file['name']) > 0)
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
@@ -1246,7 +1246,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img border="0" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6)? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+							print '<img class="photo" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6)? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -1254,7 +1254,7 @@ class FormFile
 					}
 
 					// Hash of file (only if we are in a mode where a scan of dir were done and we have id of file in ECM table)
-					print '<td align="center">';
+					print '<td class="center">';
 					if ($relativedir && $filearray[$key]['rowid'] > 0)
 					{
 						if ($editline)
@@ -1333,7 +1333,7 @@ class FormFile
 						if (empty($disablemove))
 						{
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
-								print '<td align="center" class="linecolmove tdlineupdown">';
+								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
 								}
@@ -1343,7 +1343,7 @@ class FormFile
 								print '</td>';
 							}
 							else {
-							   	print '<td align="center"'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+							   	print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"').'>';
 							   	print '</td>';
 							}
 					   }
@@ -1452,10 +1452,10 @@ class FormFile
 		print '<tr class="liste_titre">';
 		$sortref="fullname";
 		if ($modulepart == 'invoice_supplier') $sortref='level1name';
-		print_liste_field_titre("Ref",$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre("Documents2",$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre("Size",$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre("Date",$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Ref",$url,$sortref,"",$param,'class="left"',$sortfield,$sortorder);
+		print_liste_field_titre("Documents2",$url,"name","",$param,'class="left"',$sortfield,$sortorder);
+		print_liste_field_titre("Size",$url,"size","",$param,'class="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Date",$url,"date","",$param,'class="center"',$sortfield,$sortorder);
 		print_liste_field_titre('','','');
 		print '</tr>'."\n";
 
@@ -1627,9 +1627,9 @@ class FormFile
 				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
-				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
-				print '<td align="right">';
+				print '<td class="right">'.dol_print_size($file['size'],1,1).'</td>';
+				print '<td class="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+				print '<td class="right">';
 				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
@@ -1728,7 +1728,7 @@ class FormFile
 			"name",
 			"",
 			$param,
-			'align="left"',
+			'class="left"',
 			$sortfield,
 			$sortorder
 		);
@@ -1738,7 +1738,7 @@ class FormFile
 			"",
 			"",
 			"",
-			'align="right"'
+			'class="right"'
 		);
 		print_liste_field_titre(
 			$langs->trans("Date"),
@@ -1746,7 +1746,7 @@ class FormFile
 			"date",
 			"",
 			$param,
-			'align="center"',
+			'class="center"',
 			$sortfield,
 			$sortorder
 		);
@@ -1756,7 +1756,7 @@ class FormFile
 			"",
 			"",
 			$param,
-			'align="center"'
+			'class="center"'
 		);
 		print_liste_field_titre('','','');
 		print '</tr>';
@@ -1778,9 +1778,9 @@ class FormFile
 				print '<td>';
 				print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
 				print '</td>';
-				print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
-				print '<td align="right"></td>';
-				print '<td align="right">';
+				print '<td class="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
+				print '<td class="right"></td>';
+				print '<td class="right">';
 				print '<input type="submit" name="save" class="button" value="' . dol_escape_htmltag($langs->trans('Save')) . '">';
 				print '<input type="submit" name="cancel" class="button" value="' . dol_escape_htmltag($langs->trans('Cancel')) . '">';
 				print '</td>';
@@ -1793,10 +1793,10 @@ class FormFile
 				print $link->label;
 				print '</a>';
 				print '</td>'."\n";
-				print '<td align="right"></td>';
-				print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
-				print '<td align="center"></td>';
-				print '<td align="right">';
+				print '<td class="right"></td>';
+				print '<td class="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
+				print '<td class="center"></td>';
+				print '<td class="right">';
 				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink" >' . img_edit() . '</a>';	// id= is included into $param
 				if ($permtodelete) {
 					print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
