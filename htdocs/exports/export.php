@@ -1219,15 +1219,13 @@ if ($step == 5 && $datatoexport)
 
     print '<br>';
 
-    print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
-
     // List of available export formats
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
-    print '<td>'.$langs->trans("LibraryUsed").'</td>';
-    print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
-    print '</tr>'."\n";
+    $htmltabloflibs = '<table class="noborder" width="100%">';
+    $htmltabloflibs.= '<tr class="liste_titre">';
+    $htmltabloflibs.= '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
+    $htmltabloflibs.= '<td>'.$langs->trans("LibraryUsed").'</td>';
+    $htmltabloflibs.= '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+    $htmltabloflibs.= '</tr>'."\n";
 
     $liste=$objmodelexport->liste_modeles($db);
     $listeall=$liste;
@@ -1239,16 +1237,20 @@ if ($step == 5 && $datatoexport)
     		unset($liste[$key]);
     	}
 
-        print '<tr class="oddeven">';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
+    	$htmltabloflibs.= '<tr class="oddeven">';
+    	$htmltabloflibs.= '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    print $form->textwithpicto($label,$text).'</td>';
-        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
-        print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
-        print '</tr>'."\n";
+	    $htmltabloflibs.= $form->textwithpicto($label,$text).'</td>';
+	    $htmltabloflibs.= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
+	    $htmltabloflibs.= '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+	    $htmltabloflibs.= '</tr>'."\n";
     }
-    print '</table>';
+    $htmltabloflibs.= '</table>';
+
+    print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
+    //print $htmltabloflibs;
+    print '<br>';
 
     print '</div>';
 
@@ -1270,7 +1272,7 @@ if ($step == 5 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    print $formfile->showdocuments('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
+    print $formfile->showdocuments('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1,0,0,0,'',$langs->trans('Files'), '', '', '');
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

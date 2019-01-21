@@ -1122,11 +1122,11 @@ if ($action == 'create')
                 {
 					if (empty($conf->productbatch->enabled))
 					{
-                    	print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
+                    	print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 					}
 					else
 					{
-						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
+						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
                 }
                 print "</tr>\n";
@@ -1248,7 +1248,7 @@ if ($action == 'create')
 						// Stock
 						if (! empty($conf->stock->enabled))
 						{
-							print '<td align="left">';
+							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 							{
 								// Show warehouse combo list
@@ -1334,7 +1334,7 @@ if ($action == 'create')
 								print '</td>';
 
 								print '<!-- Show details of lot -->';
-								print '<td align="left">';
+								print '<td class="left">';
 
 								print $staticwarehouse->getNomUrl(0).' / ';
 
@@ -1364,7 +1364,7 @@ if ($action == 'create')
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 
-							print '<td align="left">';
+							print '<td class="left">';
 							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 							print '</td></tr>';
 						}
@@ -1412,7 +1412,7 @@ if ($action == 'create')
 								// Stock
 								if (! empty($conf->stock->enabled))
 								{
-									print '<td align="left">';
+									print '<td class="left">';
 									if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 									{
 										print $tmpwarehouseObject->getNomUrl(0).' ';
@@ -1495,7 +1495,7 @@ if ($action == 'create')
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 
-									print '<td align="left">';
+									print '<td class="left">';
 
 									print $tmpwarehouseObject->getNomUrl(0).' / ';
 
@@ -1539,7 +1539,7 @@ if ($action == 'create')
 						}
 						print '</td>';
 
-						print '<td align="left">';
+						print '<td class="left">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 							$warehouse_selected_id = GETPOST('entrepot_id','int');
@@ -2052,12 +2052,12 @@ else if ($id || $ref)
 			}
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
 			if (! empty($conf->productbatch->enabled))
 			{
-				print '<td align="left">'.$langs->trans("Batch").'</td>';
+				print '<td class="left">'.$langs->trans("Batch").'</td>';
 			}
 		}
 		print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
@@ -2313,7 +2313,7 @@ else if ($id || $ref)
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
 				{
-					print '<td align="left">';
+					print '<td class="left">';
 					if ($lines[$i]->entrepot_id > 0)
 					{
 						$entrepot = new Entrepot($db);

@@ -49,7 +49,7 @@ print '<div class="div-table-responsive">';
 print '<table summary="listofattributes" class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td align="left">'.$langs->trans("Position");
+print '<td class="left">'.$langs->trans("Position");
 print '<span class="nowrap">';
 print img_picto('A-Z', '1downarrow.png');
 print '</span>';

@@ -217,9 +217,9 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			//print '<td align="left">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="left">'.$langs->trans("SendingSheet").'</td>';
-			print '<td align="left">'.$langs->trans("Description").'</td>';
+			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
+			print '<td class="left">'.$langs->trans("SendingSheet").'</td>';
+			print '<td class="left">'.$langs->trans("Description").'</td>';
 			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td align="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
