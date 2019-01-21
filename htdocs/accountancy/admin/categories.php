@@ -171,7 +171,7 @@ if ($action == 'display' || $action == 'delete') {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
-				print '<td align="right">';
+				print '<td class="right">';
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
 				print img_delete($langs->trans("DeleteFromCat")).' ';
 				print $langs->trans("DeleteFromCat")."</a>";
