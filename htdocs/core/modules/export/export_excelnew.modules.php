@@ -77,7 +77,7 @@ class ExportExcelnew extends ModeleExports
 		global $conf, $langs;
 		$this->db = $db;
 
-		$this->id='excelnew';                  // Same value then xxx in file name export_xxx.modules.php
+		$this->id='excel2007new';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel 2007 by PHPSpreadSheet';             // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
@@ -195,46 +195,35 @@ class ExportExcelnew extends ModeleExports
 		$ret=1;
 
     	$outputlangs->load("exports");
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
-            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
-            require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
-		    $this->workbook = new writeexcel_workbookbig($file);
-    		$this->workbook->set_tempdir($conf->export->dir_temp);			// Set temporary directory
-    		$this->workbook->set_sheetname($outputlangs->trans("Sheet"));
-    		$this->worksheet = &$this->workbook->addworksheet();
-		}
-		else
-		{
-            //require_once PHPEXCEL_PATH.'PHPExcel.php';
-            //require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-		    require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/autoloader.php';
-		    require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
-		    require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
-		    if ($this->id == 'excel2007')
-		    {
-	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
-	            {
-	            	$langs->load("errors");
-	            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
-	            	return -1;
-	            }
-		    }
+        //require_once PHPEXCEL_PATH.'PHPExcel.php';
+        //require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
+	    require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/autoloader.php';
+	    require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
+	    require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
-            //$this->workbook = new PHPExcel();
-            $this->workbook = new Spreadsheet();
-            $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
-            //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
-            $this->workbook->getProperties()->setTitle($outputlangs->trans("Export").' - '.$file);
-            $this->workbook->getProperties()->setSubject($outputlangs->trans("Export").' - '.$file);
-            $this->workbook->getProperties()->setDescription($outputlangs->trans("Export").' - '.$file);
+	    if ($this->id == 'excel2007new')
+	    {
+            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
+            {
+            	$langs->load("errors");
+            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+            	return -1;
+            }
+	    }
 
-            $this->workbook->setActiveSheetIndex(0);
-            $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
-            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
-		}
+        //$this->workbook = new PHPExcel();
+        $this->workbook = new Spreadsheet();
+        $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - '.DOL_APPLICATION_TITLE.' '.DOL_VERSION);
+        //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
+        $this->workbook->getProperties()->setTitle(basename($file));
+        $this->workbook->getProperties()->setSubject(basename($file));
+        $this->workbook->getProperties()->setDescription(DOL_APPLICATION_TITLE.' '.DOL_VERSION);
+
+        $this->workbook->setActiveSheetIndex(0);
+        $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
+        $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
+
 		return $ret;
 	}
 
@@ -270,22 +259,8 @@ class ExportExcelnew extends ModeleExports
 		global $conf;
 
 		// Create a format for the column headings
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
-		    $outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-
-		    $formatheader =$this->workbook->addformat();
-    		$formatheader->set_bold();
-    		$formatheader->set_color('blue');
-    		//$formatheader->set_size(12);
-    		//$formatheader->set_font("Courier New");
-    		//$formatheader->set_align('center');
-		}
-		else
-		{
-            $this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
-            $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-		}
+        $this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
+        $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
@@ -326,12 +301,6 @@ class ExportExcelnew extends ModeleExports
         // phpcs:enable
 		global $conf;
 
-		// Create a format for the column headings
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-		{
-		    $outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
-		}
-
 		// Define first row
 		$this->col=0;
 
@@ -364,52 +333,20 @@ class ExportExcelnew extends ModeleExports
 
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
 			{
-        		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-        		{
-            		$formatdate=$this->workbook->addformat();
-            		$formatdate->set_num_format('yyyy-mm-dd');
-            		//$formatdate->set_num_format(0x0f);
-        		    $arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
-    				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
-    				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
-    				$this->worksheet->write($this->row, $this->col, $newvalue, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($formatdate));
-        		}
-        		else
-        		{
         		    $newvalue=dol_stringtotime($newvalue);
         		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
         		    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
         		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-        		}
 			}
 			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i',$newvalue))
 			{
-				if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    		    {
-            		$formatdatehour=$this->workbook->addformat();
-            		$formatdatehour->set_num_format('yyyy-mm-dd hh:mm:ss');
-            		//$formatdatehour->set_num_format(0x0f);
-            		$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
-    				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
-    				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
-    		        $this->worksheet->write($this->row, $this->col, $newvalue, $formatdatehour);
-    		    }
-    		    else
-    		    {
         		    $newvalue=dol_stringtotime($newvalue);
         		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
         		    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
         		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
-    		    }
 			}
 			else
 			{
-				if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    		    {
-			        $this->worksheet->write($this->row, $this->col, $newvalue);
-    		    }
-    		    else
-				{
     		    	if ($typefield == 'Text' || $typefield == 'TextAuto')
     		    	{
     		    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
@@ -422,7 +359,6 @@ class ExportExcelnew extends ModeleExports
     		    	{
     		    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
     		    	}
-    		    }
 			}
 			$this->col++;
 		}
