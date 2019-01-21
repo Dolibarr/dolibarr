@@ -29,13 +29,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentDonation extends CommonObject
 {
-	public $element='payment_donation';			//!< Id that identify managed objects
-	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
-    public $picto = 'payment';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_donation';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_donation';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_donation;
+
 	public $datec='';
 	public $tms='';
 	public $datep='';
@@ -43,8 +61,20 @@ class PaymentDonation extends CommonObject
     public $amounts=array();   // Array of amounts
 	public $typepayment;
 	public $num_payment;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 	/**
@@ -68,7 +98,7 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
 	function create($user, $notrigger=false)
@@ -389,8 +419,6 @@ class PaymentDonation extends CommonObject
 
 		$object=new PaymentDonation($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -402,6 +430,7 @@ class PaymentDonation extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -414,11 +443,9 @@ class PaymentDonation extends CommonObject
 		if (! $error)
 		{
 
-
-
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -445,6 +472,7 @@ class PaymentDonation extends CommonObject
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -454,7 +482,8 @@ class PaymentDonation extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-	    global $langs;
+        // phpcs:enable
+        global $langs;
 
 	    return '';
 	}
@@ -482,8 +511,6 @@ class PaymentDonation extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -570,6 +597,7 @@ class PaymentDonation extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between the donation payment and the generated line in llx_bank
 	 *
@@ -578,6 +606,7 @@ class PaymentDonation extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);

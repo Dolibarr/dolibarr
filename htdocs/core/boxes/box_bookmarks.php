@@ -33,7 +33,11 @@ class box_bookmarks extends ModeleBoxes
 	var $boxlabel="BoxMyLastBookmarks";
 	var $depends = array("bookmark");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -157,6 +161,5 @@ class box_bookmarks extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

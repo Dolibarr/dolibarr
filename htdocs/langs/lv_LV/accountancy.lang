@@ -2,7 +2,7 @@
 Accounting=Grāmatvedība
 ACCOUNTING_EXPORT_SEPARATORCSV=Eksportējamā faila kolonnu atdalītājs
 ACCOUNTING_EXPORT_DATE=Eksportējamā faila datuma formāts
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_PIECE=Eksportēt vienību skaitu
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Eksports ar globālo kontu
 ACCOUNTING_EXPORT_LABEL=Eksportēt etiķeti
 ACCOUNTING_EXPORT_AMOUNT=Eksporta summa
@@ -38,6 +38,10 @@ GroupIsEmptyCheckSetup=Grupa ir tukša, pārbaudiet personalizētās grāmatved�
 DetailByAccount=Parādīt detalizētu informāciju par kontu
 AccountWithNonZeroValues=Konti, kuriem nav nulles vērtības
 ListOfAccounts=Kontu saraksts
+CountriesInEEC=Valstis EEK
+CountriesNotInEEC=Valstis, kas nav EEK valstīs
+CountriesInEECExceptMe=Valstis EEK, izņemot %s
+CountriesExceptMe=Visas valstis, izņemot %s
 
 MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
 MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
@@ -135,7 +139,7 @@ BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kont�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
 
 ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Sociālais žurnāls
@@ -156,15 +160,16 @@ Docref=Atsauce
 LabelAccount=Konta nosaukums
 LabelOperation=Etiķetes darbība
 Sens=Sens
+LetteringCode=Burtu kods
 Codejournal=Žurnāls
 NumPiece=Gabala numurs
 TransactionNumShort=Num. darījums
-AccountingCategory=Personalized groups
+AccountingCategory=Personalizētas grupas
 GroupByAccountAccounting=Grupēt pēc grāmatvedības konta
 AccountingAccountGroupsDesc=Šeit jūs varat definēt dažas grāmatvedības kontu grupas. Tie tiks izmantoti personificētiem grāmatvedības pārskatiem.
 ByAccounts=Pēc kontiem
 ByPredefinedAccountGroups=Iepriekš definētās grupas
-ByPersonalizedAccountGroups=Personificētās grupas
+ByPersonalizedAccountGroups=Personalizētās grupas
 ByYear=Pēc gada
 NotMatch=Nav iestatīts
 DeleteMvt=Delete Ledger lines
@@ -204,7 +209,7 @@ TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 
 DescVentilCustomer=Aplūkojiet šeit klienta rēķina līniju sarakstu, kas saistītas (vai nav) ar produktu grāmatvedības kontu
-DescVentilMore=Vairumā gadījumu, ja jūs izmantojat iepriekš definētus produktus vai pakalpojumus, un produkta / pakalpojuma kartē norādiet konta numuru, programma varēs veikt visu saistību starp jūsu rēķina līnijām un jūsu kontu plāna grāmatvedības kontu, tikai vienu klikšķi, izmantojot pogu <strong> "%s" </ strong>. Ja konts nav iestatīts uz produktu / pakalpojumu kartēm vai ja jums joprojām ir dažas rindiņas, kurām nav saistības nevienā kontā, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
+DescVentilMore=Vairumā gadījumu, ja jūs izmantojat iepriekš definētus produktus vai pakalpojumus, un produkta / pakalpojuma kartē norādiet konta numuru, programma varēs veikt visu saistību starp jūsu rēķina līnijām un jūsu kontu plāna grāmatvedības kontu, tikai vienu klikšķi, izmantojot pogu <strong> "%s" </ strong>. Ja konts nav iestatīts uz produktu / pakalpojumu kartēm vai ja jums joprojām ir dažas līnijas, kurām nav saistības ar kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
 DescVentilDoneCustomer=Konsultējieties šeit ar rindu rēķinu klientu sarakstu un to produktu uzskaites kontu
 DescVentilTodoCustomer=Piesaistiet rēķina līnijas, kas vēl nav saistītas ar produkta grāmatvedības kontu
 ChangeAccount=Izmainiet produktu / pakalpojumu grāmatvedības kontu izvēlētajām līnijām ar šādu grāmatvedības kontu:
@@ -221,6 +226,7 @@ AutomaticBindingDone=Automātiska piesaistīšana pabeigta
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Kustība nav pareizi sabalansēta. Debit = %s | Kredīts = %s
+Balancing=Līdzsvarošana
 FicheVentilation=Iesiešanas kartiņa
 GeneralLedgerIsWritten=Darījumi ir rakstīti grāmatvedībā
 GeneralLedgerSomeRecordWasNotRecorded=Daži darījumi nevarēja tikt publicēti žurnālā. Ja nav citas kļūdas ziņojuma, iespējams, ka tie jau tika publicēti.
@@ -232,7 +238,7 @@ NotYetAccounted=Vēl nav uzskaitīti virsgrāmatā
 
 ## Admin
 ApplyMassCategories=Pielietot masu sadaļas
-AddAccountFromBookKeepingWithNoCategories=Pieejamais aprēķins vēl nav personalizētajā grupā
+AddAccountFromBookKeepingWithNoCategories=Pieejamais konts, kas vēl nav personalizētajā grupā
 CategoryDeleted=Grāmatvedības konta kategorija ir noņemta
 AccountingJournals=Grāmatvedības žurnāli
 AccountingJournal=Grāmatvedības žurnāls
@@ -247,7 +253,7 @@ AccountingJournalType5=Izdevumu pārskats
 AccountingJournalType8=Inventārs
 AccountingJournalType9=Ir jauns
 ErrorAccountingJournalIsAlreadyUse=Šis žurnāls jau ir izmantots
-AccountingAccountForSalesTaxAreDefinedInto=Piezīme. Pārdošanas nodokļa grāmatvedības konts ir norādīts izvēlnē <b> %s </ b> - <b> %s </ b>.
+AccountingAccountForSalesTaxAreDefinedInto=Piezīme. Pārdošanas nodokļa grāmatvedības konts ir norādīts izvēlnē <b> %s </b>- <b> %s </b>.
 
 ## Export
 ExportDraftJournal=Eksporta žurnāla projekts
@@ -262,7 +268,8 @@ Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Eksports uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
 Modelcsv_agiris=Eksports uz Agirisu
-Modelcsv_configurable=Eksportēt konfigurējams
+Modelcsv_configurable=Eksportēt CSV konfigurējamu
+Modelcsv_FEC=Eksporta FEC (L47 A pants) (pārbaude)
 ChartofaccountsId=Kontu konts. Id
 
 ## Tools - Init accounting account on product / service
@@ -289,18 +296,18 @@ Formula=Formula
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Daži obligāti uzstādīšanas soļi nav pabeigti, lūdzu, aizpildiet tos
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
-ErrorInvoiceContainsLinesNotYetBounded=Jūs mēģināt žurnalizēt dažas rindiņas <strong> %s </ strong>, bet citas rindas vēl nav saistītas ar grāmatvedības kontu. Visu rēķinu līniju žurnālu publicēšana par šo rēķinu tiek noraidīta.
+ErrorInvoiceContainsLinesNotYetBounded=Jūs mēģināt žurnalizēt dažas rindiņas <strong> %s </strong>, bet citas rindas vēl nav saistītas ar grāmatvedības kontu. Visu rēķinu līniju žurnālu publicēšana par šo rēķinu tiek noraidīta.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Dažas rēķina rindiņas nav saistītas ar grāmatvedības kontu.
 ExportNotSupported=Izveidotais eksporta formāts šajā lapā netiek atbalstīts
-BookeppingLineAlreayExists=Jau esošas līnijas grāmatvedībā
+BookeppingLineAlreayExists=Rindas, kas jau pastāv grāmatvedībā
 NoJournalDefined=Nav definēts žurnāls
 Binded=Līnijas saistītas
 ToBind=Rindiņas saistīt
-UseMenuToSetBindindManualy=Autodekcija nav iespējama, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
+UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
 
-WarningReportNotReliable=Brīdinājums, šis pārskats nav balstīts uz grāmatvedi, tāpēc grāmatvedībā nav modificēta darījuma modificēšana. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
+WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
 InventoryJournal=Inventāra žurnāls

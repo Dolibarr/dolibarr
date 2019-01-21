@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
@@ -311,7 +311,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/index.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -558,6 +558,6 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>
 
 if ($id && $action == 'create' && $user->rights->user->user->creer) print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

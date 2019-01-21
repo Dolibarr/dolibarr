@@ -45,7 +45,7 @@ if (! $user->rights->accounting->bind->write)
     accessforbidden();
 
 // search & action GETPOST
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
@@ -62,8 +62,8 @@ $search_current_account_valid = GETPOST('search_current_account_valid', 'alpha')
 if ($search_current_account_valid == '') $search_current_account_valid='withoutvalidaccount';
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
-$btn_changeaccount = GETPOST('changeaccount');
-$btn_changetype = GETPOST('changetype');
+$btn_changeaccount = GETPOST('changeaccount', 'alpha');
+$btn_changetype = GETPOST('changetype', 'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield",'alpha');
@@ -173,7 +173,6 @@ if ($action == 'update') {
 
 				$cpt++;
 			}
-
 		}
 
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
@@ -397,12 +396,12 @@ if ($result)
 		print $product_static->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="left">'.$obj->label.'</td>';
+		print '<td class="left">'.$obj->label.'</td>';
 
 		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC))
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
-    		// print '<td align="left">' . $obj->description . '</td>';
+    		// print '<td class="left">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
     		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
@@ -415,7 +414,7 @@ if ($result)
 			print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 		    print length_accountg($obj->accountancy_code_buy);
 		    if ($obj->accountancy_code_buy && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
@@ -431,7 +430,7 @@ if ($result)
 		$defaultvalue='';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     		// Accounting account buy
-			print '<td align="left">';
+			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy;
 			$codesell=length_accountg($obj->accountancy_code_buy);
@@ -440,7 +439,7 @@ if ($result)
 			print '</td>';
 		} else {
 			// Accounting account sell
-			print '<td align="left">';
+			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodsell;
 			$codesell=length_accountg($obj->accountancy_code_sell);
@@ -495,5 +494,6 @@ if ($result)
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

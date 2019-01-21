@@ -34,14 +34,17 @@ class ActionCommReminder extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'actioncomm_reminder';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'actioncomm_reminder';
+
 	/**
 	 * @var array  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+
 	/**
 	 * @var string String with name of icon for actioncommreminder. Must be the part after the 'object_' into object_actioncommreminder.png
 	 */
@@ -78,13 +81,28 @@ class ActionCommReminder extends CommonObject
 		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"m, h, d, w",),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $dateremind;
 	public $typeremind;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $offsetvalue;
 	public $offsetunit;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -165,6 +183,7 @@ class ActionCommReminder extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -174,43 +193,38 @@ class ActionCommReminder extends CommonObject
 	 */
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Done');
-			if ($status == 0) return $langs->trans('ToDo');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Done');
-			if ($status == 0) return $langs->trans('ToDo');
+			elseif ($status == 0) return $langs->trans('ToDo');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
-			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
-			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
-			if ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
+			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
-			if ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
+			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
 		}
 	}
 
@@ -224,6 +238,4 @@ class ActionCommReminder extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
-

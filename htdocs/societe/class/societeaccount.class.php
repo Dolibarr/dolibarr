@@ -39,14 +39,17 @@ class SocieteAccount extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'societeaccount';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_account';
+
 	/**
 	 * @var array  Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+
 	/**
 	 * @var string String with name of icon for societeaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -84,7 +87,7 @@ class SocieteAccount extends CommonObject
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
 		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>1, 'index'=>1),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -96,23 +99,52 @@ class SocieteAccount extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $key_account;
+	public $login;
 	public $pass_encoding;
 	public $pass_crypted;
 	public $pass_temp;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $site;
 	public $date_last_login;
 	public $date_previous_login;
 	public $note_private;
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -208,6 +240,8 @@ class SocieteAccount extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+	    unset($object->context['createfromclone']);
+
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
@@ -256,8 +290,6 @@ class SocieteAccount extends CommonObject
 	 */
 	public function getCustomerAccount($id, $site, $status=0)
 	{
-		global $conf;
-
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
@@ -266,7 +298,7 @@ class SocieteAccount extends CommonObject
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 		//$sql.= " ORDER BY sa.key_account DESC";
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -391,6 +423,7 @@ class SocieteAccount extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -400,43 +433,44 @@ class SocieteAccount extends CommonObject
 	 */
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
 
@@ -486,7 +520,6 @@ class SocieteAccount extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

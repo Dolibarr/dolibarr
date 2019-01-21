@@ -89,6 +89,14 @@ print '<br>';
 
 // Show info setup module
 print img_picto('','puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
+
+/*
+$nbofactivatedmodules=count($conf->modules);
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
+if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+print '<br>'.$moreinfo;
+*/
+
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");
@@ -114,7 +122,6 @@ if (empty($reshook))
 	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -259,7 +259,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        $total = $total + $obj->amount;
 
 		        print '<tr class="oddeven">';
-		        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+		        print '<td class="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 		        print "<td>".$obj->label."</td>\n";
 
@@ -268,7 +268,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        // Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-		        print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 		        print '<td align="right">'.price($obj->amount)."</td>";
@@ -360,7 +360,7 @@ while($j<$numlt)
 				$total = $total + $obj->amount;
 
 				print '<tr class="oddeven">';
-				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+				print '<td class="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 				print "<td>".$obj->label."</td>\n";
 
@@ -369,7 +369,7 @@ while($j<$numlt)
 				// Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
-				print '<td align="left">'.$tva_static->getNomUrl(1)."</td>\n";
+				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 				print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
 				print '<td align="right">'.price($obj->amount)."</td>";
@@ -405,7 +405,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
         print "<br>";
 
-        print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+        print load_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
         $sql = "SELECT s.rowid, s.amount, s.label, s.datep as datep, s.datev as datev, s.datesp, s.dateep, s.salary, u.salary as current_salary";
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
@@ -442,7 +442,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
                 print '<tr class="oddeven">';
 
-                print '<td align="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
+                print '<td class="left">'.dol_print_date($db->jdate($obj->dateep),'day').'</td>'."\n";
 
                 print "<td>".$obj->label."</td>\n";
 
@@ -451,7 +451,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
                 // Ref payment
                 $sal_static->id=$obj->rowid;
                 $sal_static->ref=$obj->rowid;
-                print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
+                print '<td class="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
                 print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
                 print '<td align="right">'.price($obj->amount)."</td>";
@@ -480,7 +480,6 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
-			if ($obj) 
+			if ($obj)
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
@@ -145,7 +146,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		else
 		{
 			$error++;
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 
@@ -250,7 +251,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		}
 		else
 		{
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 }
@@ -303,7 +304,7 @@ if (GETPOST('withtab','alpha'))
 	dol_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<span class="opacitymedium">'.$langs->trans("FingerprintsDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
 
 print '<br>';
 
@@ -341,7 +342,7 @@ for ($month = 1 ; $month <= 12 ; $month++)
 }
 $retstring.="</select>";
 print $retstring;
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport','int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
@@ -372,10 +373,10 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
-$form->select_date($search_start,'search_start');
+print $form->selectDate($search_start,'search_start');
 //print '<br>';
 //print $langs->trans("to").': ';
-$form->select_date($search_end,'search_end');
+print $form->selectDate($search_end,'search_end');
 print '</td>';
 
 // User
@@ -443,7 +444,6 @@ if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
-
 }
 else
 {
@@ -537,7 +537,6 @@ if (is_array($blocks))
 			print '<td></td>';
 
 			print '</tr>';
-
 		}
 	}
 }
@@ -607,5 +606,6 @@ if (GETPOST('withtab','alpha'))
 
 print '<br><br>';
 
+// End of page
 llxFooter();
 $db->close();

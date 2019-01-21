@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class modPropale extends DolibarrModules
 		$this->numero = 20;
 
 		$this->family = "crm";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des propositions commerciales";
@@ -63,9 +63,12 @@ class modPropale extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/propale/temp");
 
-		// Dependancies
-		$this->depends = array("modSociete");
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array("modSociete");		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
 		$this->langfiles = array("propal","bills","companies","deliveries","products");
 
@@ -230,8 +233,13 @@ class modPropale extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect='societe'; $keyforelement='societe'; $keyforaliasextra='extra4';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s ';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
+
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'propal as c';
@@ -288,6 +296,5 @@ class modPropale extends DolibarrModules
 		);
 
 		return $this->_init($sql,$options);
-
 	}
 }

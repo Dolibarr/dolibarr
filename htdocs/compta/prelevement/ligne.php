@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  *	\brief      card of withdraw line
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -88,7 +89,6 @@ if ($action == 'confirm_rejet')
 				header("Location: ligne.php?id=".$id);
 				exit;
 			}
-
 		}
 		else
 		{
@@ -196,7 +196,7 @@ if ($id)
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
-		print $form->select_date('','','','','',"confirm_rejet");
+		print $form->selectDate('', '', '', '', '', "confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
@@ -235,12 +235,12 @@ if ($id)
 			}
 			else
 			{
-				print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
+				print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
 			}
 		}
 		else
 		{
-			print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
+			print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 
@@ -261,7 +261,7 @@ if ($id)
 	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";
+	$sql.= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
 	$sql.= " , s.rowid as socid, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -272,7 +272,7 @@ if ($id)
 	$sql.= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	$sql.= " AND pl.rowid=".$id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY $sortfield $sortorder ";
@@ -334,6 +334,6 @@ if ($id)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

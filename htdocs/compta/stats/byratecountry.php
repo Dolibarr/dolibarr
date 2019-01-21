@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018        Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,7 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start; $prevquarter=$q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -230,7 +231,7 @@ else if ($modecompta=="BOOKKEEPINGCOLLECTED")
 
 
 }
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
@@ -249,8 +250,8 @@ if ($modecompta == 'CREANCES-DETTES')
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
@@ -280,7 +281,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 } else {
 	$sql.= " AND f.type IN (0,1,2,3,5)";
 }
-$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";
+$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
 $sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
 
 dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
@@ -291,9 +292,9 @@ if ($resql) {
 	while ( $obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' .$obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
@@ -311,7 +312,7 @@ if ($resql) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
@@ -321,15 +322,14 @@ if ($resql) {
 	}
 	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
-
 } else {
 	print $db->lasterror(); // Show last sql error
 }
 
 
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("PurchasebyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
@@ -371,9 +371,9 @@ if ($resql2) {
 	while ( $obj = $db->fetch_object($resql2)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' . $obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
@@ -391,7 +391,7 @@ if ($resql2) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
@@ -405,7 +405,6 @@ if ($resql2) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
 } else {
 	// $modecompta != 'CREANCES-DETTES'
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
@@ -414,7 +413,6 @@ print "</table>\n";
 	print '<br>'.$langs->trans("TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant") . '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -385,5 +385,4 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

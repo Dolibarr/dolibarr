@@ -397,7 +397,7 @@ print '<br><br>';
  */
 //if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 //{
-print load_fiche_titre($langs->trans("BankAccountReleveModule"), '', '');
+print load_fiche_titre($langs->trans("Other"), '', '');
 
 
 print "<table class=\"noborder\" width=\"100%\">\n";
@@ -420,7 +420,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print '</a>';
     print '</td>';
 }
-else 
+else
 {
     print '<td align="center">' . "\n";
     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setreportlastnumreleve">' . img_picto($langs->trans("Disabled"),
@@ -432,6 +432,6 @@ print "</tr>\n";
 print '</table>';
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

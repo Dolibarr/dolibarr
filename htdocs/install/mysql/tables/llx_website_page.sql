@@ -26,16 +26,17 @@ CREATE TABLE llx_website_page
 	aliasalt      varchar(255),
 	title         varchar(255),						
 	description   varchar(255),						
+	image         varchar(255),						
 	keywords      varchar(255),
 	lang          varchar(6),
 	fk_page       integer,          
 	htmlheader	  text,
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
-	grabbed_from   varchar(255),
-    fk_user_create integer,
-    fk_user_modif  integer,
-    date_creation  datetime,
-	tms            timestamp,
-    import_key     varchar(14)      -- import key
+	grabbed_from  varchar(255),
+    fk_user_creat integer,
+    fk_user_modif integer,
+    date_creation datetime,
+	tms           timestamp,
+    import_key    varchar(14)      -- import key
 ) ENGINE=innodb;

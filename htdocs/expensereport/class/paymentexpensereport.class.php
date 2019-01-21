@@ -30,26 +30,62 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentExpenseReport extends CommonObject
 {
-	public $element='payment_expensereport';			//!< Id that identify managed objects
-	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
-    public $picto = 'payment';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_expensereport';
 
-	var $rowid;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_expensereport';
 
-	var $fk_expensereport;
-	var $datec='';
-	var $tms='';
-	var $datep='';
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepayment;
-	var $num_payment;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
-        //Unknow field
-        var $chid;
-        var $total;
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var int ID
+     */
+	public $fk_expensereport;
+
+	public $datec='';
+	public $tms='';
+	public $datep='';
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+
+    /**
+     * @var int ID
+     */
+	public $fk_typepayment;
+
+	public $num_payment;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+    //Unknow field
+    public $chid;
+    public $total;
 
 	/**
 	 *	Constructor
@@ -129,7 +165,6 @@ class PaymentExpenseReport extends CommonObject
 			{
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)
@@ -238,7 +273,6 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
-
 
 
 		// Check parameters
@@ -387,8 +421,6 @@ class PaymentExpenseReport extends CommonObject
 
 		$object=new PaymentExpenseReport($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -400,6 +432,7 @@ class PaymentExpenseReport extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -412,11 +445,9 @@ class PaymentExpenseReport extends CommonObject
 		if (! $error)
 		{
 
-
-
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -443,15 +474,17 @@ class PaymentExpenseReport extends CommonObject
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$statut        	Id statut
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;
 
 	    return '';
@@ -480,8 +513,6 @@ class PaymentExpenseReport extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -505,7 +536,7 @@ class PaymentExpenseReport extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);
@@ -598,6 +629,7 @@ class PaymentExpenseReport extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between the expense report payment and the generated line in llx_bank
 	 *
@@ -606,6 +638,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);

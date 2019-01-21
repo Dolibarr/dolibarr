@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +31,41 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
  */
 class Notify
 {
-	var $id;
-	var $db;
-	var $error;
-	var $errors=array();
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $author;
-	var $ref;
-	var $date;
-	var $duree;
-	var $note;
-	var $fk_project;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	public $author;
+	public $ref;
+	public $date;
+	public $duree;
+	public $note;
+
+	/**
+     * @var int Project ID
+     */
+    public $fk_project;
 
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
+	// @TODO defined also into interface_50_modNotificiation_Notificiation.class.php
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -56,7 +77,11 @@ class Notify
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_REFUSE',
-		'SHIPPING_VALIDATE'
+		'SHIPPING_VALIDATE',
+		'EXPENSE_REPORT_VALIDATE',
+		'EXPENSE_REPORT_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE'
 	);
 
 
@@ -320,22 +345,27 @@ class Notify
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
+		$sql = '';
+
 		// Check notification per third party
-		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-		$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-		$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-		$sql.= " AND n.fk_soc = s.rowid";
-		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-		$sql .= " AND s.rowid = ".$object->socid;
+		if ($object->socid > 0)
+		{
+			$sql.= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+			$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+			$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+			$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+			$sql.= " ".MAIN_DB_PREFIX."societe as s";
+			$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql.= " AND n.fk_soc = s.rowid";
+			if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+			else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+			$sql .= " AND s.rowid = ".$object->socid;
+
+			$sql.= "\nUNION\n";
+		}
 
 		// Check notification per user
-		$sql.= "\nUNION\n";
-
 		$sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
@@ -343,12 +373,20 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
 		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+		else $sql.= " AND a.code = '".$this->db->escape($notifcode)."'";	// New usage
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
+			$projtitle='';
+			if (! empty($object->fk_project))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$proj = new Project($this->db);
+				$proj->fetch($object->fk_project);
+				$projtitle='('.$proj->title.')';
+			}
 
 			if ($num > 0)
 			{
@@ -371,7 +409,7 @@ class Notify
 							$outputlangs->loadLangs(array("main","other"));
 						}
 
-						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -445,6 +483,26 @@ class Notify
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
 								break;
+							case 'EXPENSE_REPORT_VALIDATE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated",$newref);
+								break;
+							case 'EXPENSE_REPORT_APPROVE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved",$newref);
+								break;
+							case 'HOLIDAY_VALIDATE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated",$newref);
+								break;
+							case 'HOLIDAY_APPROVE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved",$newref);
+								break;
 						}
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
@@ -491,12 +549,10 @@ class Notify
 							if ($obj->type_target == 'touserid') {
 	 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-
 							}
 							else {
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-
 							}
 							if (! $this->db->query($sql))
 							{
@@ -553,7 +609,7 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
@@ -634,6 +690,26 @@ class Notify
 						$dir_output = $conf->expedition->dir_output.'/sending/';
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+						break;
+					case 'EXPENSE_REPORT_VALIDATE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated",$newref);
+						break;
+					case 'EXPENSE_REPORT_APPROVE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved",$newref);
+						break;
+					case 'HOLIDAY_VALIDATE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated",$newref);
+						break;
+					case 'HOLIDAY_APPROVE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved",$newref);
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
@@ -717,6 +793,4 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
-
 }
-

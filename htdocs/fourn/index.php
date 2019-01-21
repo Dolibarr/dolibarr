@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("suppliers");
-$langs->load("orders");
-$langs->load("companies");
+$langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOST("socid", 'int');
@@ -205,7 +203,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$i++;
 			}
 
-			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 
@@ -260,7 +258,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
-		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 		print "</tr>\n";
 	}
@@ -313,6 +311,6 @@ if (count($companystatic->SupplierCategories))
 //print "</td></tr></table>\n";
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

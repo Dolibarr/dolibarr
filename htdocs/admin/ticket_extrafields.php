@@ -16,9 +16,9 @@
  */
 
 /**
- *      \file       ticket/admin/ticket_extrafields.php
- *        \ingroup    ticket
- *        \brief      Page to setup extra fields of ticket
+ *      \file       admin/ticket_extrafields.php
+ *      \ingroup    ticket
+ *      \brief      Page to setup extra fields of ticket
  */
 
 require '../main.inc.php';
@@ -92,7 +92,7 @@ if ($action != 'create' && $action != 'edit') {
 
 if ($action == 'create') {
     print "<br>";
-    print_titre($langs->trans('NewAttribute'));
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     include DOL_DOCUMENT_ROOT . '/core/tpl/admin_extrafields_add.tpl.php';
 }
@@ -104,11 +104,11 @@ if ($action == 'create') {
 /* ************************************************************************** */
 if ($action == 'edit' && !empty($attrname)) {
     print "<br>";
-    print_titre($langs->trans("FieldEdition", $attrname));
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     include DOL_DOCUMENT_ROOT . '/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

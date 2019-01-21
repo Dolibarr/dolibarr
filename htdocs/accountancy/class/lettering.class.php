@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +19,27 @@
  */
 
 /**
- * \file accountancy/class/bookkeeping.class.php
- * \ingroup Advanced accountancy
- * \brief 	File of class for lettering
+ * \file      	htdocs/accountancy/class/lettering.class.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		File of class for lettering
  */
+
 include_once DOL_DOCUMENT_ROOT . "/accountancy/class/bookkeeping.class.php";
 include_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
 include_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
 
 /**
- * Class lettering
+ * Class Lettering
  */
-class lettering extends BookKeeping
+class Lettering extends BookKeeping
 {
 	/**
-	 * lettrageTiers
+	 * letteringThirdparty
 	 *
 	 * @param int $socid Thirdparty id
-	 * @return void
+	 * @return int 1 OK, <0 error
 	 */
-	public function lettrageTiers($socid)
+	public function letteringThirdparty($socid)
 	{
 		global $conf;
 
@@ -46,6 +48,7 @@ class lettering extends BookKeeping
 		$object = new Societe($this->db);
 		$object->id = $socid;
 		$object->fetch($socid);
+
 
 		if ($object->code_compta == '411CUSTCODE') {
 			$object->code_compta = '';
@@ -154,7 +157,7 @@ class lettering extends BookKeeping
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
 					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
-					$sql .= " AND fac.entity = ".$conf->entity;
+					$sql .= " AND fac.entity IN (".getEntity('invoice',0).")";// We don't share object for accountancy
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
 						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
@@ -182,7 +185,7 @@ class lettering extends BookKeeping
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
 						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
-						$sql .= " AND fac.entity = ".$conf->entity;
+						$sql .= " AND fac.entity IN (".getEntity('invoice',0).")";// We don't share object for accountancy
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
 							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
@@ -208,7 +211,7 @@ class lettering extends BookKeeping
 				}
 
 				if (count($ids) > 1) {
-					$result = $this->updatelettrage($ids);
+					$result = $this->updateLettering($ids);
 				}
 			}
 		}
@@ -229,7 +232,7 @@ class lettering extends BookKeeping
 	 * @param boolean $notrigger no trigger
  	 * @return number
 	 */
-	public function updateLettrage($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
 		$lettre = 'AAA';

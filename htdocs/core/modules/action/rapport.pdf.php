@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,19 +35,33 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 class CommActionRapport
 {
-	var $db;
-	var $description;
-	var $date_edition;
-	var $year;
-	var $month;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $title;
-	var $subject;
+	/**
+	 * @var string description
+	 */
+	public $description;
 
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	public $date_edition;
+
+	public $year;
+
+	public $month;
+
+	public $title;
+
+	public $subject;
+
+	public $marge_gauche;
+
+	public	$marge_droite;
+
+	public	$marge_haute;
+
+	public	$marge_basse;
 
 
 	/**
@@ -59,9 +73,10 @@ class CommActionRapport
 	 */
 	function __construct($db, $month, $year)
 	{
-		global $conf,$langs;
-		$langs->load("commercial");
-		$langs->load("projects");
+		global $conf, $langs;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","projects"));
 
 		$this->db = $db;
 		$this->description = "";
@@ -84,6 +99,7 @@ class CommActionRapport
         $this->subject=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *      Write the object to document file to disk
      *
@@ -94,17 +110,15 @@ class CommActionRapport
 	 */
 	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
         $dir = $conf->agenda->dir_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
@@ -345,4 +359,3 @@ class CommActionRapport
 		return $y;
 	}
 }
-

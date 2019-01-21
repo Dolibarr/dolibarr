@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/expedition/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -237,17 +237,17 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
 	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
@@ -259,6 +259,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -298,6 +300,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -358,6 +361,6 @@ print '</table>';
 print '<br>';
 print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal apenas
 ONLINE_PAYMENT_CSS_URL=URL opcional de CSS na página de pagamento
 ThisIsTransactionId=Eis o id da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adicionar URL do pagamento Paypal quando se envia o documento por e-mail
-YouAreCurrentlyInSandboxMode=No momento você está no %s modo "caixa de areia"
 NewOnlinePaymentFailed=Foi tentado novo pagamento online, mas sem hêxito
 ONLINE_PAYMENT_SENDEMAIL=Endereço e-mail para aviso apos o pagamento (positivo ou nao)
 ReturnURLAfterPayment=Retornar ao URL após o pagamento

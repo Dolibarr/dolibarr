@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2019      Markus Welters       <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *	\file       htdocs/admin/prelevement.php
  *	\ingroup    prelevement
- *	\brief      Page configuration des prelevements
+ *	\brief      Page to setup Withdrawals
  */
 
 require '../main.inc.php';
@@ -80,6 +81,22 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
+    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
+    {
+        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
+    {
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+
+    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
+    {
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    } else
 
     if (! $error)
 	{
@@ -204,23 +221,41 @@ print "</tr>";
 
 // Bank account (from Banks module)
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 
 // ICS
 print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
 print '</td></tr>';
 
 //User
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td>';
 print '</tr>';
 
+//EntToEnd
+print '<tr class="pair"><td>'.$langs->trans("END_TO_END").'</td>';
+print '<td class="left">';
+print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
+print '</td></tr>';
+
+//USTRD
+print '<tr class="pair"><td>'.$langs->trans("USTRD").'</td>';
+print '<td class="left">';
+print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
+print '</td></tr>';
+
+//ADDDAYS
+print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
+print '<td align="left">';
+if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
+print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
+print '</td></tr>';
 print '</table>';
 print '<br>';
 
@@ -410,7 +445,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (".getEntity('facture').")";
+    $sql.= " WHERE entity IN (".getEntity('invoice').")";
 
     $resql=$db->query($sql);
     if ($resql)
@@ -443,7 +478,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var = false;
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
@@ -464,7 +498,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '<td align="right">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
-    print '<tr class="impair"><td align="left">';
+    print '<tr class="impair"><td class="left">';
     print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
     print '</td>';
 
@@ -489,7 +523,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	{
 	    $num = $db->num_rows($resql);
 	    $i = 0;
-	    $var = false;
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
@@ -511,5 +544,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 }
 */
 
+// End of page
 llxFooter();
 $db->close();

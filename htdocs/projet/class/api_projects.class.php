@@ -98,7 +98,8 @@ class Projects extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -214,7 +215,8 @@ class Projects extends DolibarrApi
      *
      * @url	GET {id}/tasks
      */
-    function getLines($id, $includetimespent=0) {
+    function getLines($id, $includetimespent=0)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->lire) {
 		  	throw new RestException(401);
 		  }
@@ -256,7 +258,8 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function getRoles($id, $userid=0) {
+    function getRoles($id, $userid=0)
+    {
         global $db;
 
         if(! DolibarrApiAccess::$user->rights->projet->lire) {
@@ -300,7 +303,8 @@ class Projects extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -362,7 +366,8 @@ class Projects extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -418,7 +423,8 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -477,7 +483,6 @@ class Projects extends DolibarrApi
                 'message' => 'Project deleted'
             )
         );
-
     }
 
     /**
@@ -535,7 +540,8 @@ class Projects extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 
@@ -592,7 +598,6 @@ class Projects extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $object[$field] = $data[$field];
-
         }
         return $object;
     }

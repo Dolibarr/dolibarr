@@ -2,11 +2,11 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014-2018 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -47,7 +47,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'bills', 'companies'));
+$langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -352,7 +352,10 @@ if (empty($reshook))
 					break;
 				}
 
-				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+				if($object->multiprices[$key]!=$newprice || $object->multiprices_min[$key]!=$newprice_min || $object->multiprices_base_type[$key]!=$val['price_base_type'])
+       				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+				else $res=0;
+
 
 				if ($res < 0) {
 					$error ++;
@@ -466,7 +469,7 @@ if (empty($reshook))
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessage('delete_price_by_qty Missing Ids','errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 
@@ -479,7 +482,7 @@ if (empty($reshook))
 
 		$result = $db->query($sql);
 		} else {
-			setEventMessage('delete_all_price_by_qty Missing Ids','errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 
@@ -786,7 +789,6 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
         	else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
         	print '</td></tr>';
 		}
-
 	}
 	else
 	{
@@ -1110,30 +1112,33 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-	{
-    	if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
-    	}
-	}
+    if ($object->isVariant()) {
+		if ($user->rights->produit->creer || $user->rights->service->creer) {
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
+		}
+	} else {
+		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+			}
+		}
 
-	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-	 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
-	  	}
-	}
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+			}
+		}
 
-	if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
-    	}
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+			}
 
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
-    	}
-	}
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+			}
+		}
+    }
 
 	print "\n</div>\n";
 }
@@ -1408,7 +1413,6 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 		print '</form>';
-
 	}
 }
 
@@ -2194,6 +2198,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

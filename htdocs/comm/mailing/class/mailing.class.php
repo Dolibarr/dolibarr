@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,44 +31,55 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Mailing extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='mailing';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='mailing';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='email';
 
-	var $titre;
-	var $sujet;
-	var $body;
-	var $nbemail;
-	var $bgcolor;
-	var $bgimage;
+	public $titre;
+	public $sujet;
+	public $body;
+	public $nbemail;
+	public $bgcolor;
+	public $bgimage;
 
-	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+	public $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
-	var $email_from;
-	var $email_replyto;
-	var $email_errorsto;
+	public $email_from;
+	public $email_replyto;
+	public $email_errorsto;
 
-	var $joined_file1;
-	var $joined_file2;
-	var $joined_file3;
-	var $joined_file4;
+	public $joined_file1;
+	public $joined_file2;
+	public $joined_file3;
+	public $joined_file4;
 
-	var $user_creat;
-	var $user_valid;
+	public $user_creat;
+	public $user_valid;
 
-	var $date_creat;
-	var $date_valid;
+	public $date_creat;
+	public $date_valid;
 
-	var $extraparams=array();
+	public $extraparams=array();
 
 	public $statut_dest=array();
 	public $statuts=array();
 
 
-	/**
+    /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
+     *  @param      DoliDb      $db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -85,7 +96,6 @@ class Mailing extends CommonObject
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe';    // Read but ask to not be contacted anymore
-
 	}
 
 	/**
@@ -269,8 +279,6 @@ class Mailing extends CommonObject
 
 		$object=new Mailing($this->db);
 
-		$object->context['createfromclone']='createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -304,6 +312,7 @@ class Mailing extends CommonObject
 		}
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -335,7 +344,6 @@ class Mailing extends CommonObject
 				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
 				$sql.= " WHERE fk_mailing = ".$fromid;
 
-				dol_syslog(get_class($this)."::createFromClone", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
@@ -352,7 +360,6 @@ class Mailing extends CommonObject
 							'source_id'=>$obj->source_id,
 							'source_type'=>$obj->source_type);
 						}
-
 					}
 				}
 				else
@@ -363,7 +370,6 @@ class Mailing extends CommonObject
 
 				$mailing_target->add_to_target($object->id, $target_array);
 			}
-
 		}
 
 		unset($object->context['createfromclone']);
@@ -432,6 +438,7 @@ class Mailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete targets emailing
 	 *
@@ -439,6 +446,7 @@ class Mailing extends CommonObject
 	 */
 	function delete_targets()
 	{
+        // phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " WHERE fk_mailing = ".$this->id;
 
@@ -456,6 +464,7 @@ class Mailing extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Change status of each recipient
 	 *
@@ -464,6 +473,7 @@ class Mailing extends CommonObject
 	 */
 	function reset_targets_status($user)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " SET statut = 0";
 		$sql.= " WHERE fk_mailing = ".$this->id;
@@ -517,6 +527,81 @@ class Mailing extends CommonObject
 
 
 	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to ('nolink', ...)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $db, $conf, $langs, $hookmanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+
+		$result = '';
+		$companylink = '';
+
+		$label = '<u>' . $langs->trans("ShowEmailing") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+
+		$url = DOL_URL_ROOT.'/comm/mailing/card.php?id='.$this->id;
+
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
+
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowEmailing");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+			/*
+			 $hookmanager->initHooks(array('myobjectdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		global $action;
+		$hookmanager->initHooks(array('emailingdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
+
+		return $result;
+	}
+
+	/**
 	 *  Return label of status of emailing (draft, validated, ...)
 	 *
 	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
@@ -527,6 +612,7 @@ class Mailing extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -536,39 +622,36 @@ class Mailing extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('mails');
 
-		if ($mode == 0)
+		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
-		{
-			return $langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
@@ -596,39 +679,39 @@ class Mailing extends CommonObject
 		{
 			return $langs->trans('MailingStatusError');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans('MailingStatusSent');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
@@ -636,6 +719,4 @@ class Mailing extends CommonObject
 		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
 	}
-
 }
-

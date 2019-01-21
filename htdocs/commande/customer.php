@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       		<regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
@@ -173,8 +173,8 @@ if ($resql)
 		print $result;
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
-		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;
@@ -190,7 +190,7 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();
 

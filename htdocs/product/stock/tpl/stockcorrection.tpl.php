@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +20,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || ! is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -119,11 +119,11 @@ if (empty($conf) || ! is_object($conf))
 			print '<tr>';
 			print '<td>'.$langs->trans("EatByDate").'</td><td>';
 			$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-			$form->select_date($eatbyselected,'eatby','','',1,"");
+			print $form->selectDate($eatbyselected,'eatby','','',1,"");
 			print '</td>';
 			print '<td>'.$langs->trans("SellByDate").'</td><td>';
 			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
-			$form->select_date($sellbyselected,'sellby','','',1,"");
+			print $form->selectDate($sellbyselected,'sellby','','',1,"");
 			print '</td>';
 			print '</tr>';
 		}

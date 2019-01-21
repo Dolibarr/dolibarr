@@ -139,7 +139,6 @@ foreach ($list as $key)
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
     print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';
-
 }
 
 print '</table>'."\n";
@@ -150,6 +149,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-
+// End of page
 llxFooter();
 $db->close();

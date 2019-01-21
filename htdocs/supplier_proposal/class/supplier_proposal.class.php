@@ -3,11 +3,11 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
@@ -45,16 +45,34 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class SupplierProposal extends CommonObject
 {
-    public $element='supplier_proposal';
-    public $table_element='supplier_proposal';
-    public $table_element_line='supplier_proposaldet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposal';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposal';
+
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line='supplier_proposaldet';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
     public $fk_element='fk_supplier_proposal';
+
     public $picto='propal';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -66,24 +84,25 @@ class SupplierProposal extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $socid;		// Id client
+    public $socid;		// Id client
 
 	/**
 	 * @deprecated
 	 * @see user_author_id
 	 */
-    var $author;
-    var $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
-    var $date;						// Date of proposal
-    var $date_livraison;
+    public $author;
+
+    public $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
+    public $date;						// Date of proposal
+    public $date_livraison;
 
 	/**
 	 * @deprecated
 	 * @see date_creation
 	 */
-	var $datec;
+	public $datec;
 
 	/**
 	 * Creation date
@@ -95,7 +114,7 @@ class SupplierProposal extends CommonObject
 	 * @deprecated
 	 * @see date_validation
 	 */
-	var $datev;
+	public $datev;
 
 	/**
 	 * Validation date
@@ -104,70 +123,80 @@ class SupplierProposal extends CommonObject
 	public $date_validation;
 
 
-    var $user_author_id;
-    var $user_valid_id;
-    var $user_close_id;
+    public $user_author_id;
+    public $user_valid_id;
+    public $user_close_id;
 
 	/**
 	 * @deprecated
 	 * @see price_ht
 	 */
-    var $price;
+    public $price;
+
 	/**
 	 * @deprecated
 	 * @see total_tva
 	 */
-    var $tva;
+    public $tva;
+
 	/**
 	 * @deprecated
 	 * @see total_ttc
 	 */
-    var $total;
+    public $total;
 
-    var $cond_reglement_code;
-    var $mode_reglement_code;
-    var $remise = 0;
-    var $remise_percent = 0;
-    var $remise_absolue = 0;
+    public $cond_reglement_code;
+    public $mode_reglement_code;
+    public $remise = 0;
+    public $remise_percent = 0;
+    public $remise_absolue = 0;
 
-    var $products=array();
-    var $extraparams=array();
+    public $products=array();
+    public $extraparams=array();
 
-    var $lines = array();
-    var $line;
+    public $lines = array();
+    public $line;
 
-    var $labelstatut=array();
-    var $labelstatut_short=array();
+    public $labelstatut=array();
+    public $labelstatut_short=array();
 
-    var $nbtodo;
-    var $nbtodolate;
+    public $nbtodo;
+    public $nbtodolate;
 
-    var $specimen;
+    public $specimen;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	/**
+     * @var int ID
+     */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Signed quote
 	 */
 	const STATUS_SIGNED = 2;
+
 	/**
 	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
+
 	/**
 	 * Billed or closed/processed quote
 	 */
@@ -195,9 +224,10 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Add line into array products
-     *	$this->client doit etre charge
+     *  $this->client doit etre charge
      *
      * 	@param  int		$idproduct       	Product Id to add
      * 	@param  int		$qty             	Quantity
@@ -209,6 +239,7 @@ class SupplierProposal extends CommonObject
      */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
+        // phpcs:enable
         global $conf, $mysoc;
 
         if (! $qty) $qty = 1;
@@ -250,6 +281,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Adding line of fixed discount in the proposal in DB
      *
@@ -258,6 +290,7 @@ class SupplierProposal extends CommonObject
      */
     function insert_discount($idremise)
     {
+        // phpcs:enable
         global $langs;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -810,7 +843,7 @@ class SupplierProposal extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $langs,$conf,$mysoc,$hookmanager;
+        global $langs, $conf, $mysoc, $hookmanager;
         $error=0;
 
         $now=dol_now();
@@ -1064,6 +1097,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
      *
@@ -1073,6 +1107,7 @@ class SupplierProposal extends CommonObject
      */
     function create_from($user)
     {
+        // phpcs:enable
         $this->products=$this->lines;
 
         return $this->create($user);
@@ -1141,6 +1176,7 @@ class SupplierProposal extends CommonObject
         $this->ref = $modSupplierProposal->getNextValue($objsoc,$this);
 
         // Create clone
+        $this->context['createfromclone'] = 'createfromclone';
         $result=$this->create($user);
         if ($result < 0) $error++;
 
@@ -1155,6 +1191,8 @@ class SupplierProposal extends CommonObject
                 if ($reshook < 0) $error++;
             }
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)
@@ -1493,6 +1531,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set delivery date
      *
@@ -1502,6 +1541,7 @@ class SupplierProposal extends CommonObject
      */
     function set_date_livraison($user, $date_livraison)
     {
+        // phpcs:enable
         if (! empty($user->rights->supplier_proposal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
@@ -1522,6 +1562,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set an overall discount on the proposal
      *
@@ -1531,6 +1572,7 @@ class SupplierProposal extends CommonObject
      */
     function set_remise_percent($user, $remise)
     {
+        // phpcs:enable
         $remise=trim($remise)?trim($remise):0;
 
         if (! empty($user->rights->supplier_proposal->creer))
@@ -1555,6 +1597,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set an absolute overall discount on the proposal
      *
@@ -1564,6 +1607,7 @@ class SupplierProposal extends CommonObject
      */
     function set_remise_absolue($user, $remise)
     {
+        // phpcs:enable
         $remise=trim($remise)?trim($remise):0;
 
         if (! empty($user->rights->supplier_proposal->creer))
@@ -1689,7 +1733,6 @@ class SupplierProposal extends CommonObject
                 {
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-
             }
             if ($statut == 4)
             {
@@ -1775,7 +1818,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User	$user					Object user
      *	@return     int         					<0 if KO, >0 if OK
      */
-     function updatePriceFournisseur($idProductFournPrice, $product, $user) {
+    function updatePriceFournisseur($idProductFournPrice, $product, $user)
+    {
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 
@@ -1787,7 +1831,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
 	 /**
      *	Create ProductFournisseur
@@ -1796,7 +1840,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User		$user		Object user
      *	@return     int         			<0 if KO, >0 if OK
      */
-	 function createPriceFournisseur($product, $user) {
+    function createPriceFournisseur($product, $user)
+    {
 	 	$price=price2num($product->subprice*$product->qty,'MU');
 	    $qty=price2num($product->qty);
 		$unitPrice = price2num($product->subprice,'MU');
@@ -1823,16 +1868,18 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Set draft status
+     *  Set draft status
      *
      *	@param		User	$user		Object user that modify
      *	@return		int					<0 if KO, >0 if OK
      */
     function set_draft($user)
     {
+        // phpcs:enable
         global $conf,$langs;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
@@ -1851,6 +1898,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of askprice (eventually filtered on user) into an array
      *
@@ -1866,6 +1914,7 @@ class SupplierProposal extends CommonObject
      */
     function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datec', $sortorder='DESC')
     {
+        // phpcs:enable
         global $conf,$user;
 
         $ga = array();
@@ -2091,11 +2140,8 @@ class SupplierProposal extends CommonObject
                     $cluser->fetch($obj->fk_user_cloture);
                     $this->user_cloture     = $cluser;
                 }
-
-
             }
             $this->db->free($result);
-
         }
         else
         {
@@ -2115,15 +2161,17 @@ class SupplierProposal extends CommonObject
         return $this->LibStatut($this->statut,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *    	Return label of a status (draft, validated, ...)
+     *  Return label of a status (draft, validated, ...)
      *
-     *    	@param      int			$statut		id statut
-     *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *    	@return     string		Label
+     *  @param      int			$statut		id statut
+     *  @param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @return     string      Label
      */
 	function LibStatut($statut,$mode=1)
     {
+        // phpcs:enable
     	// Init/load array of translation of status
     	if (empty($this->labelstatut) || empty($this->labelstatut_short))
     	{
@@ -2143,30 +2191,32 @@ class SupplierProposal extends CommonObject
 
     	$statuttrans='';
 		if ($statut==0) $statuttrans='statut0';
-		if ($statut==1) $statuttrans='statut1';
-		if ($statut==2) $statuttrans='statut3';
-		if ($statut==3) $statuttrans='statut5';
-		if ($statut==4) $statuttrans='statut6';
+		elseif ($statut==1) $statuttrans='statut1';
+		elseif ($statut==2) $statuttrans='statut3';
+		elseif ($statut==3) $statuttrans='statut5';
+		elseif ($statut==4) $statuttrans='statut6';
 
 		if ($mode == 0)	return $this->labelstatut[$statut];
-		if ($mode == 1)	return $this->labelstatut_short[$statut];
-		if ($mode == 2)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
-		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
+		elseif ($mode == 2)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
+		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
+		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
+		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *      @param          User	$user   Object user
      *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-     *      @return         int     		<0 if KO, >0 if OK
+     *      @return         int             <0 if KO, >0 if OK
      */
     function load_board($user,$mode)
     {
+        // phpcs:enable
         global $conf, $user, $langs;
 
         $now=dol_now();
@@ -2318,6 +2368,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Charge indicateurs this->nb de tableau de bord
      *
@@ -2325,6 +2376,7 @@ class SupplierProposal extends CommonObject
      */
     function load_state_board()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $this->nb=array();
@@ -2625,7 +2677,6 @@ class SupplierProposal extends CommonObject
 
 	    return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }
 
 
@@ -2634,26 +2685,58 @@ class SupplierProposal extends CommonObject
  */
 class SupplierProposalLine extends CommonObjectLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    public $element='supplier_proposaldet';
-    public $table_element='supplier_proposaldet';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-    var $oldline;
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposaldet';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposaldet';
+
+    public $oldline;
 
     // From llx_supplier_proposaldet
-    var $rowid; // deprecated
-    var $id;
-    var $fk_supplier_proposal;
-    var $fk_parent_line;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id produit predefini
+    public $rowid; // deprecated
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var int ID
+     */
+    public $fk_supplier_proposal;
+
+    /**
+     * @var int ID
+     */
+    public $fk_parent_line;
+
+    public $desc;          	// Description ligne
+
+    /**
+     * @var int ID
+     */
+    public $fk_product;		// Id produit predefini
+
 	/**
 	 * @deprecated
 	 * @see product_type
 	 */
-	var $fk_product_type;
+	public $fk_product_type;
 	/**
 	 * Product type
 	 * @var int
@@ -2661,89 +2744,106 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
     public $product_type = Product::TYPE_PRODUCT;
 
-    var $qty;
-    var $tva_tx;
-    var $subprice;
-    var $remise_percent;
-    var $fk_remise_except;
+    public $qty;
+    public $tva_tx;
+    public $subprice;
+    public $remise_percent;
 
-    var $rang = 0;
+    /**
+     * @var int ID
+     */
+    public $fk_remise_except;
 
-	var $fk_fournprice;
-	var $pa_ht;
-	var $marge_tx;
-	var $marque_tx;
+    public $rang = 0;
 
-    var $special_code;	// Tag for special lines (exlusive tags)
+    /**
+     * @var int ID
+     */
+	public $fk_fournprice;
+
+	public $pa_ht;
+	public $marge_tx;
+	public $marque_tx;
+
+    public $special_code;	// Tag for special lines (exlusive tags)
     // 1: frais de port
     // 2: ecotaxe
     // 3: option line (when qty = 0)
 
-    var $info_bits = 0;	// Liste d'options cumulables:
+    public $info_bits = 0;	// Liste d'options cumulables:
     // Bit 0: 	0 si TVA normal - 1 si TVA NPR
     // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-    var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-    var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
+    public $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
+    public $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+    public $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	/**
 	 * @deprecated
 	 * @see remise_percent, fk_remise_except
 	 */
-    var $remise;
+    public $remise;
+
 	/**
 	 * @deprecated
 	 * @see subprice
 	 */
-    var $price;
+    public $price;
 
     // From llx_product
 	/**
 	 * @deprecated
 	 * @see product_ref
 	 */
-	var $ref;
+	public $ref;
+
 	/**
 	 * Product reference
 	 * @var string
 	 */
 	public $product_ref;
+
 	/**
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;
+	public $libelle;
+
 	/**
 	 *  Product label
 	 * @var string
 	 */
 	public $product_label;
+
 	/**
 	 * Product description
 	 * @var string
 	 */
 	public $product_desc;
 
-    var $localtax1_tx;		// Local tax 1
-    var $localtax2_tx;		// Local tax 2
-    var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-    var $total_localtax1;  	// Line total local tax 1
-    var $total_localtax2;	// Line total local tax 2
+    public $localtax1_tx;		// Local tax 1
+    public $localtax2_tx;		// Local tax 2
+    public $localtax1_type;	// Local tax 1 type
+	public $localtax2_type;	// Local tax 2 type
+    public $total_localtax1;  	// Line total local tax 1
+    public $total_localtax2;	// Line total local tax 2
 
-    var $skip_update_total; // Skip update price total for special lines
+    public $skip_update_total; // Skip update price total for special lines
 
-    var $ref_fourn;
-    var $ref_supplier;
+    public $ref_fourn;
+    public $ref_supplier;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_subprice;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	/**
+     * @var int ID
+     */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
     /**
      * 	Class line Contructor
@@ -3146,6 +3246,7 @@ class SupplierProposalLine extends CommonObjectLine
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Update DB line fields total_xxx
      *	Used by migration
@@ -3154,6 +3255,7 @@ class SupplierProposalLine extends CommonObjectLine
      */
     function update_total()
     {
+        // phpcs:enable
         $this->db->begin();
 
         // Mise a jour ligne en base
@@ -3178,6 +3280,4 @@ class SupplierProposalLine extends CommonObjectLine
             return -2;
         }
     }
-
 }
-

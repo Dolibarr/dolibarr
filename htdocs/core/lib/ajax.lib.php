@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,12 +35,12 @@
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array
- *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                          Ex: array('disabled'=> )
- *                                          Ex: array('show'=> )
- *                                          Ex: array('update_textarea'=> )
- *                                          Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ *  @param	array   $ajaxoptions		Multiple options array
+ *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                      - Ex: array('disabled'=> )
+ *                                      - Ex: array('show'=> )
+ *                                      - Ex: array('update_textarea'=> )
+ *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -377,7 +377,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 
 	// select2 disabled for smartphones with standard browser.
 	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
-	if (! empty($conf->browser->phone)) return '';
+	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone') return '';
 
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
@@ -623,4 +623,3 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=a
 
     return $out;
 }
-

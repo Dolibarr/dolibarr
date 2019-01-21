@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +109,7 @@ if ($nolinesbefore) {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
+		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
@@ -159,6 +161,7 @@ if ($nolinesbefore) {
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
+// Adds a line numbering column
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
@@ -182,7 +185,7 @@ else {
 		if ($object->element == 'contrat')
 		{
 			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
-			else $forceall=0;
+			else if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=3;
 		}
 
 		// Free line
@@ -227,7 +230,7 @@ else {
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
-			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToSell');
+			else if ((empty($conf->product->enabled) && ! empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
 			else echo $langs->trans('PredefinedProductsAndServicesToSell');
 		}
 		else
@@ -272,7 +275,7 @@ else {
 		        $alsoproductwithnosupplierprice=1;
 		    }
 
-			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
+		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';
@@ -481,16 +484,16 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
-		$form->select_date($date_start,"date_start",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_start,"date_start",$usehm,$usehm,1,"addproduct");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		$form->select_date($date_end,"date_end",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_end,"date_end",$usehm,$usehm,1,"addproduct");
 	}
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		echo $form->select_date($date_start,'date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
+		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
 		echo ' '.$langs->trans('to').' ';
-		echo $form->select_date($date_end,'date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
+		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1, 1, "addproduct", 1, 0);
 	};
 	print '<script type="text/javascript">';
 	if (!$date_start) {

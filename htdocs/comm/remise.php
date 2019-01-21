@@ -129,8 +129,9 @@ if ($socid > 0)
 
     	print '</form>';
 
-    	llxFooter();
-    	$db->close();
+    	// End of page
+        llxFooter();
+        $db->close();
     	exit;
     }
 
@@ -226,7 +227,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -239,7 +240,7 @@ if ($socid > 0)
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-	    			print '<td align="left">'.$obj->note.'</td>';
+	    			print '<td class="left">'.$obj->note.'</td>';
 	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 	    			print '</tr>';
 	    			$i++;
@@ -285,7 +286,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -298,7 +299,7 @@ if ($socid > 0)
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-					print '<td align="left">'.$obj->note.'</td>';
+					print '<td class="left">'.$obj->note.'</td>';
 					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 					print '</tr>';
 					$i++;
@@ -324,5 +325,6 @@ if ($socid > 0)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
 if (GETPOST('btn_view_ticket_list')) {
@@ -121,8 +121,8 @@ if ($action == "view_ticketlist") {
         }
     }
 
-    if ($error) {
-        setEventMessage($object->errors, 'errors');
+    if ($error || $errors) {
+        setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
     }
 }
@@ -182,7 +182,7 @@ if ($action == "view_ticketlist")
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
         $extralabels = $extrafields->fetch_name_optionals_label('ticket');
-        $search_array_options = $extrafields->getOptionalsFromPost($extralabels, '', 'search_');
+        $search_array_options = $extrafields->getOptionalsFromPost('ticket', '', 'search_');
 
         $filter = array();
         $param = '';

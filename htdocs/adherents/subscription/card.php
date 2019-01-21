@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +25,17 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 if (! empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills","users"));
 
 $adh = new Adherent($db);
+$adht = new AdherentType($db);
 $object = new Subscription($db);
 $errmsg='';
 
@@ -103,6 +104,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $canc
 			// Modifie valeures
 			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$object->fk_type=$_POST["typeid"];
 			$object->note=$_POST["note"];
 			$object->amount=$_POST["amount"];
 			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
@@ -192,7 +194,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     print "\n";
 	print '<table class="border" width="100%">';
@@ -203,6 +205,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
+    // Type
+	print '<tr>';
+	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
+	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->fk_type));
+	print'</td></tr>';
+
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
@@ -211,13 +219,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($object->dateh,'datesub',1,1,0,'update',1);
+	print $form->selectDate($object->dateh, 'datesub', 1, 1, 0, 'update', 1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($object->datef,'datesubend',0,0,0,'update',1);
+	print $form->selectDate($object->datef, 'datesubend', 0, 0, 0, 'update', 1);
 	print '</td>';
     print '</tr>';
 
@@ -291,7 +299,7 @@ if ($rowid && $action != 'edit')
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'rowid', $linkback, 1);
 
@@ -300,6 +308,18 @@ if ($rowid && $action != 'edit')
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
+    
+    // Type
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Type").'</td>';
+    print '<td class="valeur">';
+    if (  ! empty($object->fk_type) ) {
+      $adht->fetch($object->fk_type);
+    print $adht->getNomUrl(1);
+      } else {
+    print $langs->trans("NoType");
+      }
+    print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
@@ -369,7 +389,7 @@ if ($rowid && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
 		}
 	}
 
@@ -417,7 +437,6 @@ if ($rowid && $action != 'edit')
     print '</div></div></div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

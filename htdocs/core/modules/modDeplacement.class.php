@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class modDeplacement extends DolibarrModules
 		$this->numero = 75 ;
 
 		$this->family = "hr";
-		$this->module_position = 41;
+		$this->module_position = '41';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des notes de frais et deplacements";		// Si traduction Module75Desc non trouvee
@@ -139,7 +139,7 @@ class modDeplacement extends DolibarrModules
     		$childids = $user->getAllChildIds();
     		$childids[]=$user->id;
 
-    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .=' AND d.fk_user IN ('.join(',',$childids).')';
 		}
 	}
 

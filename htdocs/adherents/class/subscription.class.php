@@ -32,17 +32,38 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Subscription extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='subscription';
-	public $table_element='subscription';
-    public $picto='payment';
 
-	var $datec;				// Date creation
-	var $datem;				// Date modification
-	var $dateh;				// Subscription start date (date subscription)
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-	var $amount;
-	var $fk_bank;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='subscription';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
+
+	public $datec;				// Date creation
+	public $datem;				// Date modification
+	public $dateh;				// Subscription start date (date subscription)
+	public $datef;				// Subscription end date
+
+	/**
+     * @var int ID
+     */
+	public $fk_type;
+	public $fk_adherent;
+
+	public $amount;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
 
 
 	/**
@@ -82,8 +103,17 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
+
+		if ($this->fk_type == null) {
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+$member=new Adherent($this->db);
+$result=$member->fetch($this->fk_adherent);
+$type=$member->typeid;
+} else {
+$type=$this->fk_type;
+}
+		$sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
@@ -127,7 +157,7 @@ class Subscription extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-        $sql ="SELECT rowid, fk_adherent, datec,";
+        $sql ="SELECT rowid, fk_type, fk_adherent, datec,";
 		$sql.=" tms,";
 		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
@@ -146,6 +176,7 @@ class Subscription extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 
+				$this->fk_type        = $obj->fk_type;
 				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
@@ -183,6 +214,7 @@ class Subscription extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
+		$sql .= " fk_type = ".$this->fk_type.",";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = '".price2num($this->amount)."',";
@@ -317,11 +349,14 @@ class Subscription extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *  @param	int  	$notooltip		1=Disable tooltip
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int  	$notooltip					1=Disable tooltip
+	 *	@param	string	$option						Page for link ('', 'nolink', ...)
+	 *  @param  string  $morecss        			Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $notooltip=0)
+	function getNomUrl($withpicto=0, $notooltip=0, $option='', $morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs;
 
@@ -330,8 +365,18 @@ class Subscription extends CommonObject
 		$langs->load("members");
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
+		$linkend = '</a>';
 
 		$picto='payment';
 
@@ -355,6 +400,7 @@ class Subscription extends CommonObject
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -363,6 +409,7 @@ class Subscription extends CommonObject
 	 */
 	function LibStatut($statut)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load("members");
 	    return '';
@@ -394,7 +441,6 @@ class Subscription extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

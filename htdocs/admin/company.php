@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -50,6 +50,7 @@ $error=0;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admincompany','globaladmin'));
 
+
 /*
  * Actions
  */
@@ -73,6 +74,8 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
+
+	$db->begin();
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
@@ -172,11 +175,24 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'int'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'aZ09'),'chaine',0,'',$conf->entity);
+	// Sale tax options
+	$usevat = GETPOST("optiontva",'aZ09');
+	$uselocaltax1 = GETPOST("optionlocaltax1",'aZ09');
+	$uselocaltax2 = GETPOST("optionlocaltax2",'aZ09');
+	if ($uselocaltax1 == 'localtax1on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseASecondTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
+	if ($uselocaltax2 == 'localtax2on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseAThirdTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
 
-	// Local taxes
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", GETPOST("optionlocaltax1",'aZ09'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", GETPOST("optionlocaltax2",'aZ09'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2,'chaine',0,'',$conf->entity);
 
 	if($_POST["optionlocaltax1"]=="localtax1on")
 	{
@@ -188,7 +204,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1",  GETPOST("clt1",'aZ09'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1",'aZ09'),'chaine',0,'',$conf->entity);
 	}
 	if($_POST["optionlocaltax2"]=="localtax2on")
 	{
@@ -200,7 +216,16 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2",  GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 
 	if ($action != 'updateedit' && ! $error)
@@ -397,7 +422,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
 			print ' &nbsp; ';
-			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
 		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -585,7 +610,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -594,7 +619,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -622,14 +647,14 @@ if ($action == 'edit' || $action == 'updateedit')
 		print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
 		if(! isOnlyOneLocalTax(1))
 		{
-			print '<tr><td align="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
+			print '<tr><td class="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
 			$formcompany->select_localtax(1,$conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
 		    print '</td></tr>';
 		}
 
 		$opcions=array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"),$langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"),$langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
-		print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
+		print '<tr><td class="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
 		print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
 		print '</td></tr>';
 		print "</table>";
@@ -666,11 +691,11 @@ if ($action == 'edit' || $action == 'updateedit')
 		print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
 		if(! isOnlyOneLocalTax(2))
 		{
-		    print '<tr><td align="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+		    print '<tr><td class="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
 		    $formcompany->select_localtax(2,$conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 			print '</td></tr>';
 		}
-		print '<tr><td align="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
+		print '<tr><td class="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 		print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
 		print '</td></tr>';
 		print "</table>";
@@ -748,10 +773,11 @@ else
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-	print currency_name($conf->currency,1);
+	print currency_name($conf->currency,0);
 	print ' ('.$conf->currency;
 	print ($conf->currency != $langs->getCurrencySymbol($conf->currency) ? ' - '.$langs->getCurrencySymbol($conf->currency) : '');
 	print ')';
+	print ' - '.$langs->trans("PriceFormatInCurrentLanguage", $langs->defaultlang).' : '.price(price2num('99.333333333','MT'), 1, $langs, 1, -1, -1, $conf->currency);
 	print '</td></tr>';
 
 
@@ -765,7 +791,13 @@ else
 
 	// Web
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>';
+	$arrayofurl = preg_split('/\s/', $conf->global->MAIN_INFO_SOCIETE_WEB);
+	foreach($arrayofurl as $urltoshow)
+	{
+		if ($urltoshow) print dol_print_url($urltoshow,'_blank',80);
+	}
+	print '</td></tr>';
 
 	// Barcode
 	if (! empty($conf->barcode->enabled))
@@ -791,7 +823,7 @@ else
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
-		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
 	else
 	{
@@ -1017,7 +1049,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1027,7 +1059,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1060,7 +1092,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
 		}
-		print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+		print '<tr><td class="left">'.$langs->trans("CalcLocaltax").': ';
 		if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0)
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
@@ -1114,7 +1146,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("LTRate").': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
 		}
-		print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+		print '<tr><td class="left">'.$langs->trans("CalcLocaltax").': ';
 		if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0)
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
@@ -1153,7 +1185,6 @@ else
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

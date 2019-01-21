@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
@@ -132,16 +132,13 @@ if (empty($reshook))
  *	View
  */
 
+$form = new Form($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-$form = new Form($db);
-$formcompany = new FormCompany($db);
-
-$countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 if ($socid > 0)
 {
@@ -259,20 +256,16 @@ else
     	//print '<div class="tabsAction">';
         //print '</div>';
 
-
-    	$morehtmlcenter='';
-        if (! empty($conf->agenda->enabled))
-        {
-        	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-        	{
-            	$morehtmlcenter.= '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
-        	}
-        	else
-        	{
-            	$morehtmlcenter.= '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
-        	}
-        }
-
+    	$newcardbutton='';
+    	if (! empty($conf->agenda->enabled))
+    	{
+    		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
+    		{
+    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+    			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    			$newcardbutton.= '</a>';
+    		}
+    	}
 
         if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
        	{
@@ -282,7 +275,8 @@ else
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
             if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-            print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+            print load_fiche_titre($langs->trans("ActionsOnContact"), $newcardbutton, '');
+            //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
 
             // List of all actions
     		$filters=array();

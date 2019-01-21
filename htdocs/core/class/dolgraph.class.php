@@ -39,42 +39,46 @@
  */
 class DolGraph
 {
-	var $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
-	var $mode='side';		    // Mode bars graph: side, depth
+	public $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
+	public $mode='side';		    // Mode bars graph: side, depth
 	private $_library='jflot';	// Graphic library to use (jflot, artichow)
 
 	//! Array of data
-	var $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
-	var $title;				// Title of graph
-	var $cssprefix='';		// To add into css styles
-	var $width=380;
-	var $height=200;
-	var $MaxValue=0;
-	var $MinValue=0;
-	var $SetShading=0;
+	public $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
+	public $title;				// Title of graph
+	public $cssprefix='';		// To add into css styles
+	public $width=380;
+	public $height=200;
+	public $MaxValue=0;
+	public $MinValue=0;
+	public $SetShading=0;
 
-	var $PrecisionY=-1;
+	public $PrecisionY=-1;
 
-	var $horizTickIncrement=-1;
-	var $SetNumXTicks=-1;
-	var $labelInterval=-1;
+	public $horizTickIncrement=-1;
+	public $SetNumXTicks=-1;
+	public $labelInterval=-1;
 
-	var $hideXGrid=false;
-	var $hideYGrid=false;
+	public $hideXGrid=false;
+	public $hideYGrid=false;
 
-	var $Legend=array();
-	var $LegendWidthMin=0;
-	var $showlegend=1;
-	var $showpointvalue=1;
-	var $showpercent=0;
-	var $combine=0;				// 0.05 if you want to combine records < 5% into "other"
-	var $graph;     			// Objet Graph (Artichow, Phplot...)
-	var $error;
+	public $Legend=array();
+	public $LegendWidthMin=0;
+	public $showlegend=1;
+	public $showpointvalue=1;
+	public $showpercent=0;
+	public $combine=0;				// 0.05 if you want to combine records < 5% into "other"
+	public $graph;     			// Objet Graph (Artichow, Phplot...)
 
-	var $bordercolor;			// array(R,G,B)
-	var $bgcolor;				// array(R,G,B)
-	var $bgcolorgrid=array(255,255,255);			// array(R,G,B)
-	var $datacolor;				// array(array(R,G,B),...)
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $bordercolor;			// array(R,G,B)
+	public $bgcolor;				// array(R,G,B)
+	public $bgcolorgrid=array(255,255,255);			// array(R,G,B)
+	public $datacolor;				// array(array(R,G,B),...)
 
 	private $stringtoshow;      // To store string to output graph into HTML page
 
@@ -124,6 +128,7 @@ class DolGraph
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set Y precision
 	 *
@@ -132,10 +137,12 @@ class DolGraph
 	 */
 	function SetPrecisionY($which_prec)
 	{
+        // phpcs:enable
 		$this->PrecisionY = $which_prec;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
@@ -144,10 +151,12 @@ class DolGraph
 	 */
 	function SetHorizTickIncrement($xi)
 	{
+        // phpcs:enable
 		$this->horizTickIncrement = $xi;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
@@ -156,10 +165,12 @@ class DolGraph
 	 */
 	function SetNumXTicks($xt)
 	{
+        // phpcs:enable
 		$this->SetNumXTicks = $xt;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set label interval to reduce number of labels
 	 *
@@ -168,10 +179,12 @@ class DolGraph
 	 */
 	function SetLabelInterval($x)
 	{
+        // phpcs:enable
 		$this->labelInterval = $x;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Hide X grid
 	 *
@@ -180,10 +193,12 @@ class DolGraph
 	 */
 	function SetHideXGrid($bool)
 	{
+        // phpcs:enable
 		$this->hideXGrid = $bool;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Hide Y grid
 	 *
@@ -192,10 +207,12 @@ class DolGraph
 	 */
 	function SetHideYGrid($bool)
 	{
+        // phpcs:enable
 		$this->hideYGrid = $bool;
 		return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set y label
 	 *
@@ -204,9 +221,11 @@ class DolGraph
 	 */
 	function SetYLabel($label)
 	{
+        // phpcs:enable
 		$this->YLabel = $label;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set width
 	 *
@@ -215,9 +234,11 @@ class DolGraph
 	 */
 	function SetWidth($w)
 	{
+        // phpcs:enable
 		$this->width = $w;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set title
 	 *
@@ -226,9 +247,11 @@ class DolGraph
 	 */
 	function SetTitle($title)
 	{
+        // phpcs:enable
 		$this->title = $title;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set data
 	 *
@@ -238,9 +261,11 @@ class DolGraph
 	 */
 	function SetData($data)
 	{
+        // phpcs:enable
 		$this->data = $data;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set data
 	 *
@@ -249,9 +274,11 @@ class DolGraph
 	 */
 	function SetDataColor($datacolor)
 	{
+        // phpcs:enable
 		$this->datacolor = $datacolor;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set type
 	 *
@@ -260,9 +287,11 @@ class DolGraph
 	 */
 	function SetType($type)
 	{
+        // phpcs:enable
 		$this->type = $type;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set legend
 	 *
@@ -271,9 +300,11 @@ class DolGraph
 	 */
 	function SetLegend($legend)
 	{
+        // phpcs:enable
 		$this->Legend = $legend;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set min width
 	 *
@@ -282,9 +313,11 @@ class DolGraph
 	 */
 	function SetLegendWidthMin($legendwidthmin)
 	{
+        // phpcs:enable
 		$this->LegendWidthMin = $legendwidthmin;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set max value
 	 *
@@ -293,9 +326,11 @@ class DolGraph
 	 */
 	function SetMaxValue($max)
 	{
+        // phpcs:enable
 		$this->MaxValue = $max;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Get max value
 	 *
@@ -303,9 +338,11 @@ class DolGraph
 	 */
 	function GetMaxValue()
 	{
+        // phpcs:enable
 		return $this->MaxValue;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set min value
 	 *
@@ -314,9 +351,11 @@ class DolGraph
 	 */
 	function SetMinValue($min)
 	{
+        // phpcs:enable
 		$this->MinValue = $min;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Get min value
 	 *
@@ -324,9 +363,11 @@ class DolGraph
 	 */
 	function GetMinValue()
 	{
+        // phpcs:enable
 		return $this->MinValue;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set height
 	 *
@@ -335,9 +376,11 @@ class DolGraph
 	 */
 	function SetHeight($h)
 	{
+        // phpcs:enable
 		$this->height = $h;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set shading
 	 *
@@ -346,9 +389,11 @@ class DolGraph
 	 */
 	function SetShading($s)
 	{
+        // phpcs:enable
 		$this->SetShading = $s;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Set shading
 	 *
@@ -357,9 +402,11 @@ class DolGraph
 	 */
 	function SetCssPrefix($s)
 	{
+        // phpcs:enable
 		$this->cssprefix = $s;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Reset bg color
 	 *
@@ -367,9 +414,11 @@ class DolGraph
 	 */
 	function ResetBgColor()
 	{
+        // phpcs:enable
 		unset($this->bgcolor);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Reset bgcolorgrid
 	 *
@@ -377,6 +426,7 @@ class DolGraph
 	 */
 	function ResetBgColorGrid()
 	{
+        // phpcs:enable
 		unset($this->bgcolorgrid);
 	}
 
@@ -425,6 +475,7 @@ class DolGraph
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define background color of complete image
 	 *
@@ -433,6 +484,7 @@ class DolGraph
 	 */
 	function SetBgColor($bg_color = array(255,255,255))
 	{
+        // phpcs:enable
 		global $theme_bgcolor,$theme_bgcoloronglet;
 
 		if (! is_array($bg_color))
@@ -453,6 +505,7 @@ class DolGraph
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define background color of grid
 	 *
@@ -461,6 +514,7 @@ class DolGraph
 	 */
 	function SetBgColorGrid($bg_colorgrid = array(255,255,255))
 	{
+        // phpcs:enable
 		global $theme_bgcolor,$theme_bgcoloronglet;
 
 		if (! is_array($bg_colorgrid))
@@ -481,6 +535,7 @@ class DolGraph
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Reset data color
 	 *
@@ -488,9 +543,11 @@ class DolGraph
 	 */
 	function ResetDataColor()
 	{
+        // phpcs:enable
 		unset($this->datacolor);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Get max value
 	 *
@@ -498,6 +555,7 @@ class DolGraph
 	 */
 	function GetMaxValueInData()
 	{
+        // phpcs:enable
 		$k = 0;
 		$vals = array();
 
@@ -516,6 +574,7 @@ class DolGraph
 		return $vals[0];
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
@@ -523,6 +582,7 @@ class DolGraph
 	 */
 	function GetMinValueInData()
 	{
+        // phpcs:enable
 		$k = 0;
 		$vals = array();
 
@@ -541,6 +601,7 @@ class DolGraph
 		return $vals[0];
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return max value of all data
 	 *
@@ -548,6 +609,7 @@ class DolGraph
 	 */
 	function GetCeilMaxValue()
 	{
+        // phpcs:enable
 		$max = $this->GetMaxValueInData();
 		if ($max != 0) $max++;
 		$size=dol_strlen(abs(ceil($max)));
@@ -564,6 +626,7 @@ class DolGraph
 		return $res;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
@@ -571,6 +634,7 @@ class DolGraph
 	 */
 	function GetFloorMinValue()
 	{
+        // phpcs:enable
 		$min = $this->GetMinValueInData();
 		if ($min == '') $min=0;
 		if ($min != 0) $min--;
@@ -618,6 +682,7 @@ class DolGraph
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph onto disk using Artichow library and return img string to it
 	 *
@@ -627,6 +692,7 @@ class DolGraph
 	 */
 	private function draw_artichow($file,$fileurl)
 	{
+        // phpcs:enable
 		global $artichow_defaultfont;
 
 		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
@@ -638,7 +704,7 @@ class DolGraph
 		// Create graph
 		$classname='';
 		if (! isset($this->type[0]) || $this->type[0] == 'bars')  $classname='BarPlot';    // Only one type (first one) is supported by artichow
-		else if ($this->type[0] == 'lines') $classname='LinePlot';
+		else if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname='LinePlot';
 		else $classname='TypeUnknown';
 		include_once ARTICHOW_PATH.$classname.'.class.php';
 
@@ -743,7 +809,7 @@ class DolGraph
 				$plot->SetYMin($this->MinValue);
 			}
 
-			if ($this->type[0] == 'lines')
+			if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')
 			{
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
@@ -774,8 +840,8 @@ class DolGraph
 			// solve a bug in Artichow with UTF8
 			if (count($this->Legend))
 			{
-				if ($this->type[0] == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
-				if ($this->type[0] == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
+				if ($this->type[0] == 'bars')  										$group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
+				if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')	$group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
 			}
 			$group->add($plot);
 
@@ -797,6 +863,7 @@ class DolGraph
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph using JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
@@ -813,8 +880,9 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_jflot($file,$fileurl)
+	private function draw_jflot($file, $fileurl)
 	{
+        // phpcs:enable
 		global $artichow_defaultfont;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type)." this->MaxValue=".$this->MaxValue);
@@ -959,19 +1027,22 @@ class DolGraph
 		else
 		{
 			// Add code to support tooltips
+		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow.='
 			function showTooltip_'.$tag.'(x, y, contents) {
-				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
+				$(\'<div class="graph-tooltip-inner" id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
 					position: \'absolute\',
 					display: \'none\',
-					top: y + 5,
-					left: x + 5,
-					border: \'1px solid #ddd\',
-					padding: \'2px\',
-					\'background-color\': \'#ffe\',
+					top: y + 10,
+					left: x + 15,
+					border: \'1px solid #000\',
+					padding: \'5px\',
+					\'background-color\': \'#000\',
+					\'color\': \'#fff\',
+					\'font-weight\': \'bold\',
 					width: 200,
 					opacity: 0.80
-				}).appendTo("body").fadeIn(20);
+				}).appendTo("body").fadeIn(100);
 			}
 
 			var previousPoint = null;
@@ -1012,12 +1083,13 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow.=', '."\n";
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
-				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->stringtoshow.='lines: { show: true, fill: false }, ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
 			}
-			$this->stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			// shadowSize: 0 -> Drawing is faster without shadows
+			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
 
 			// Xaxis
 			$this->stringtoshow.=', xaxis: { ticks: ['."\n";
@@ -1036,11 +1108,10 @@ class DolGraph
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#e6e6e6\', tickColor  : \'#e6e6e6\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
-
 		}
 
 		$this->stringtoshow.='plotWithOptions_'.$tag.'();'."\n";
@@ -1093,6 +1164,4 @@ class DolGraph
 		}
 		return 0;
 	}
-
 }
-

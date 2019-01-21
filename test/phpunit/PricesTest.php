@@ -353,5 +353,4 @@ class PricesTest extends PHPUnit_Framework_TestCase
         //$this->assertEquals(0.25,$newlocalobject->total_tva);
         //$this->assertEquals(2.73,$newlocalobject->total_ttc);
     }
-
 }

@@ -130,31 +130,31 @@ class ExportTest extends PHPUnit_Framework_TestCase
     public function testExportOther()
     {
         global $conf,$user,$langs,$db;
-    
+
         $model='csv';
-    
+
         // Creation of class to export using model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once $dir.$file;
         $objmodel = new $classname($this->db);
-    
+
         // First test without option USE_STRICT_CSV_RULES
         unset($conf->global->USE_STRICT_CSV_RULES);
-        
+
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
-        
+
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
-        
+
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
@@ -166,48 +166,47 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
-        
+
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-        
+
         // Same tests with strict mode
         $conf->global->USE_STRICT_CSV_RULES=1;
-        
+
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
-        
+
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
-        
+
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside"');
-        
+
         $valtotest='A string with " inside and '."\r\n".' carriage returns';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
-        
+
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-        
     }
-    
+
     /**
      * Test export function for a personalized dataset
      *
@@ -218,16 +217,16 @@ class ExportTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
-        $sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+        $sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
         $objexport=new Export($db);
         //$objexport->load_arrays($user,$datatoexport);
 
         // Define properties
         $datatoexport='test';
-        $array_selected = array("f.facnumber"=>1, "f.total"=>2, "f.tva"=>3);
-        $array_export_fields = array("f.facnumber"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
-        $array_alias = array("f_facnumber"=>"facnumber", "f_total"=>"total", "f_tva"=>"tva");
+        $array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+        $array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+        $array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
         $objexport->array_export_fields[0]=$array_export_fields;
         $objexport->array_export_alias[0]=$array_alias;
 
@@ -267,18 +266,18 @@ class ExportTest extends PHPUnit_Framework_TestCase
     {
     	global $conf,$user,$langs,$db;
 /*
-    	$sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+    	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
     	$objexport=new Export($db);
     	//$objexport->load_arrays($user,$datatoexport);
 
     	// Define properties
     	$datatoexport='test_filtered';
-    	$array_selected = array("f.facnumber"=>1, "f.total"=>2, "f.tva"=>3);
-    	$array_export_fields = array("f.facnumber"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+    	$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+    	$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
     	$array_filtervalue = array("f.total" => ">100");
     	$array_filtered = array("f.total" => 1);
-    	$array_alias = array("f_facnumber"=>"facnumber", "f_total"=>"total", "f_tva"=>"tva");
+    	$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
     	$objexport->array_export_fields[0]=$array_export_fields;
     	$objexport->array_export_alias[0]=$array_alias;
 
@@ -355,5 +354,4 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
         return true;
     }
-    
 }

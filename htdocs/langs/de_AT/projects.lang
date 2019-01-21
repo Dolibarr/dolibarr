@@ -7,7 +7,6 @@ TasksDesc=Diese Ansicht zeigt alle Aufgaben (Ihre Benutzerberechtigung erlaubt I
 NoProject=Kein Projekt definiert
 RefTask=Aufgaben Nr.
 MyActivities=Meine Tätigkeiten
-ListFichinterAssociatedProject=Liste der mit diesem Projekt verknüpften Eingriffe
 CloseAProject=Schließe Projekt
 ReOpenAProject=Öffne Projekt
 DoNotShowMyTasksOnly=Zeige auch die Aufgaben Anderer

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -26,6 +26,9 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+if (! empty($conf->categorie->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
@@ -65,7 +68,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('user');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 $userstatic=new User($db);
 $companystatic = new Societe($db);
@@ -123,6 +126,8 @@ $search_thirdparty=GETPOST('search_thirdparty','alpha');
 $search_supervisor=GETPOST('search_supervisor','intcomma');
 $search_previousconn=GETPOST('search_previousconn','alpha');
 $optioncss = GETPOST('optioncss','alpha');
+$search_categ = GETPOST("search_categ",'int');
+$catid = GETPOST('catid','int');
 
 // Default search
 if ($search_statut == '') $search_statut='1';
@@ -165,6 +170,7 @@ if (empty($reshook))
 		$search_date_creation="";
 		$search_date_update="";
 		$search_array_options=array();
+        $search_categ=0;
 	}
 }
 
@@ -172,6 +178,8 @@ if (empty($reshook))
 /*
  * View
  */
+
+$htmlother=new FormOther($db);
 
 $user2=new User($db);
 
@@ -193,6 +201,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -216,6 +225,10 @@ if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code",
 if ($search_email != '')             $sql.= natural_search("u.email", $search_email);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND u.statut IN (".$db->escape($search_statut).")";
 if ($sall)                           $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if ($catid > 0)     $sql.= " AND cu.fk_categorie = ".$catid;
+if ($catid == -2)   $sql.= " AND cu.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cu.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ == -2) $sql.= " AND cu.fk_categorie IS NULL";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -253,21 +266,22 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('',$langs->trans("ListOfUsers"));
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($sall != '') $param.='&sall='.urlencode($sall);
-if ($search_user != '') $param.="&search_user=".$search_user;
-if ($search_login != '') $param.="&search_login=".$search_login;
-if ($search_lastname != '') $param.="&search_lastname=".$search_lastname;
-if ($search_firstname != '') $param.="&search_firstname=".$search_firstname;
-if ($search_gender != '') $param.="&search_gender=".$search_gender;
-if ($search_employee != '') $param.="&search_employee=".$search_employee;
-if ($search_accountancy_code != '') $param.="&search_accountancy_code=".$search_accountancy_code;
-if ($search_email != '') $param.="&search_email=".$search_email;
-if ($search_supervisor > 0) $param.="&search_supervisor=".$search_supervisor;
-if ($search_statut != '') $param.="&search_statut=".$search_statut;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
-if ($mode != '')      $param.='&mode='.$mode;
+if ($search_user != '') $param.="&search_user=".urlencode($search_user);
+if ($search_login != '') $param.="&search_login=".urlencode($search_login);
+if ($search_lastname != '') $param.="&search_lastname=".urlencode($search_lastname);
+if ($search_firstname != '') $param.="&search_firstname=".urlencode($search_firstname);
+if ($search_gender != '') $param.="&search_gender=".urlencode($search_gender);
+if ($search_employee != '') $param.="&search_employee=".urlencode($search_employee);
+if ($search_accountancy_code != '') $param.="&search_accountancy_code=".urlencode($search_accountancy_code);
+if ($search_email != '') $param.="&search_email=".urlencode($search_email);
+if ($search_supervisor > 0) $param.="&search_supervisor=".urlencode($search_supervisor);
+if ($search_statut != '') $param.="&search_statut=".urlencode($search_statut);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($mode != '')      $param.='&mode='.urlencode($mode);
+if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -296,6 +310,15 @@ $morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/hierarchy.php'.
 
 print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $morehtmlright.' '.$newcardbutton, '', $limit);
 
+if (! empty($catid))
+{
+    print "<div id='ways'>";
+    $c = new Categorie($db);
+    $ways = $c->print_all_ways(' &gt; ','user/list.php');
+    print " &gt; ".$ways[0]."<br>\n";
+    print "</div><br>";
+}
+
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -304,7 +327,29 @@ if ($sall)
 
 $moreforfilter='';
 
+// Filter on categories
+if (! empty($conf->categorie->enabled))
+{
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.=$langs->trans('Categories'). ': ';
+    $moreforfilter.=$htmlother->select_categories(Categorie::TYPE_USER,$search_categ,'search_categ',1);
+    $moreforfilter.='</div>';
+}
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+else $moreforfilter=$hookmanager->resPrint;
+
+if ($moreforfilter)
+{
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    print $moreforfilter;
+    print '</div>';
+}
+
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 
@@ -629,5 +674,6 @@ print "</form>\n";
 
 $db->free($result);
 
+// End of page
 llxFooter();
 $db->close();

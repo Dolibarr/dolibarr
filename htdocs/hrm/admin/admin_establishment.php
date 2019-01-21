@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
@@ -113,9 +113,9 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
-            print '<td align="left">'.$obj->address.'</td>';
-			print '<td align="left">'.$obj->zip.'</td>';
-			print '<td align="left">'.$obj->town.'</td>';
+            print '<td class="left">'.$obj->address.'</td>';
+			print '<td class="left">'.$obj->zip.'</td>';
+			print '<td class="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
 			print $establishmentstatic->getLibStatut(5);
@@ -124,7 +124,6 @@ if ($result)
 
             $i++;
         }
-
     }
     else
     {
@@ -145,5 +144,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

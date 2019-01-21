@@ -24,9 +24,9 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -34,8 +34,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Opensurveysondage extends CommonObject
 {
-	public $element='opensurvey_sondage';			//!< Id that identify managed objects
-	public $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='opensurvey_sondage';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='opensurvey_sondage';
+
     public $picto = 'opensurvey';
 
 	public $id_sondage;
@@ -44,6 +52,10 @@ class Opensurveysondage extends CommonObject
 	 * @see description
 	 */
 	public $commentaires;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $mail_admin;
@@ -99,7 +111,6 @@ class Opensurveysondage extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -127,7 +138,6 @@ class Opensurveysondage extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_sondage(";
-
 		$sql.= "id_sondage,";
 		$sql.= "commentaires,";
 		$sql.= "fk_user_creat,";
@@ -140,7 +150,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= "allow_spy,";
 		$sql.= "sujet";
         $sql.= ") VALUES (";
-
 		$sql.= "'".$this->db->escape($this->id_sondage)."',";
 		$sql.= " ".(empty($this->commentaires)?'NULL':"'".$this->db->escape($this->commentaires)."'").",";
 		$sql.= " ".$user->id.",";
@@ -152,7 +161,6 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
 		$sql.= " ".$this->db->escape($this->allow_spy).",";
 		$sql.= " '".$this->db->escape($this->sujet)."'";
-
 		$sql.= ")";
 
 		$this->db->begin();
@@ -218,7 +226,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.sujet,";
 		$sql.= " t.tms";
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
-        $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
+        $sql.= " WHERE t.id_sondage = '".$this->db->escape($id ? $id : $numsurvey)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -348,10 +356,15 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsondage			Num sondage admin to delete
      *  @return	int					 		<0 if KO, >0 if OK
      */
-    function delete(User $user, $notrigger, $numsondage)
+    function delete(User $user, $notrigger=0, $numsondage='')
     {
 		global $conf, $langs;
 		$error=0;
+
+		if (empty($numsondage))
+		{
+		    $numsondage = $this->id_sondage;
+		}
 
 		$this->db->begin();
 
@@ -459,6 +472,7 @@ class Opensurveysondage extends CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return array of lines
 	 *
@@ -466,6 +480,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
@@ -614,6 +629,7 @@ class Opensurveysondage extends CommonObject
 	    return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of status
 	 *
@@ -623,6 +639,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	function LibStatut($status,$mode)
 	{
+        // phpcs:enable
 	    global $langs, $conf;
 
 	    //print 'x'.$status.'-'.$billed;
@@ -663,5 +680,4 @@ class Opensurveysondage extends CommonObject
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
-
 }

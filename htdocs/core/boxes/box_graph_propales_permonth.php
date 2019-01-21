@@ -33,7 +33,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 	var $boxlabel="BoxProposalsPerMonth";
 	var $depends = array("propal");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -256,7 +259,6 @@ class box_graph_propales_permonth extends ModeleBoxes
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}
-
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
@@ -278,6 +280,5 @@ class box_graph_propales_permonth extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

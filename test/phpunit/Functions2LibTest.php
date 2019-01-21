@@ -140,7 +140,6 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      */
     public function testIsValidMailDomain()
     {
-
     }
 
     /**
@@ -243,10 +242,9 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(2,$result,$ip);
 
-    	$ip='192.168.0.0';
-    	$result=is_ip($ip);
+        $ip='192.168.0.0';
+        $result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2,$result,$ip);
-
+        $this->assertEquals(2,$result,$ip);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -43,7 +43,7 @@ if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->expedition->enabled))    require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if (! empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -52,17 +52,19 @@ if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (! empty($conf->facture->enabled))  	    $langs->load("bills");
-if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
-if (! empty($conf->propal->enabled))   	    $langs->load("propal");
+if (! empty($conf->facture->enabled))		$langs->load("bills");
+if (! empty($conf->commande->enabled))		$langs->load("orders");
+if (! empty($conf->propal->enabled))		$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
 if (! empty($conf->don->enabled))			$langs->load("donations");
 if (! empty($conf->loan->enabled))			$langs->load("loan");
+if (! empty($conf->salaries->enabled))		$langs->load("salaries");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -215,6 +217,14 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
+// Bill time
+if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	print yn($object->bill_time);
+	print '</td></tr>';
+}
+
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -289,7 +299,7 @@ $listofreferent=array(
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
-	'datefieldname'=>'date',
+	'datefieldname'=>'date_valid',
 	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id,	// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
@@ -439,6 +449,19 @@ $listofreferent=array(
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
 	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
+'salaries'=>array(
+	'name'=>"Salaries",
+	'title'=>"ListSalariesAssociatedProject",
+	'class'=>'PaymentSalary',
+	'table'=>'payment_salary',
+	'datefieldname'=>'datev',
+	'margin'=>'minus',
+	'disableamount'=>0,
+	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
+	'lang'=>'salaries',
+	'buttonnew'=>'AddSalaryPayment',
+	'testnew'=>$user->rights->salaries->write,
+	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
 'variouspayment'=>array(
 	'name'=>"VariousPayments",
 	'title'=>"ListVariousPaymentsAssociatedProject",
@@ -474,7 +497,6 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 if(!empty($hookmanager->resArray)) {
 
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
-
 }
 
 if ($action=="addelement")
@@ -514,10 +536,10 @@ if (! $showdatefilter)
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
 	print '<td>'.$langs->trans("From").' ';
-	print $form->select_date($dates,'dates',0,0,1,'',1,0,1);
+	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0);
 	print '</td>';
 	print '<td>'.$langs->trans("to").' ';
-	print $form->select_date($datee,'datee',0,0,1,'',1,0,1);
+	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0);
 	print '</td>';
 	print '<td>';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
@@ -533,11 +555,8 @@ if (! $showdatefilter)
 
 // Show balance for whole project
 
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("proposals");
-$langs->load("margins");
+$langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
+
 if (!empty($conf->stock->enabled)) $langs->load('stocks');
 
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
@@ -559,11 +578,12 @@ foreach ($listofreferent as $key => $value)
 	$datefieldname=$value['datefieldname'];
 	$qualified=$value['test'];
 	$margin = $value['margin'];
+	$project_field = $value['project_field'];
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
 	{
 		$element = new $classname($db);
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
@@ -674,8 +694,8 @@ foreach ($listofreferent as $key => $value)
 // and the final balance
 print '<tr class="liste_total">';
 print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td align="right" >'.price($balance_ht).'</td>';
-print '<td align="right" >'.price($balance_ttc).'</td>';
+print '<td align="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td align="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";
@@ -698,9 +718,10 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
+	$project_field=$value['project_field'];
+
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
-
 
 	if ($qualified)
 	{
@@ -723,7 +744,7 @@ foreach ($listofreferent as $key => $value)
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename,$exclude_select_element))
        	{
-			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300',-2,!empty($project_field)?$project_field:'fk_projet');
 			if (! $selectList || ($selectList<0))
 			{
 				setEventMessages($formproject->error,$formproject->errors,'errors');
@@ -774,7 +795,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') print '';		// if $key == 'project_task', we don't want details per user
 		elseif (in_array($tablename, array('payment_various'))) print '';						// if $key == 'payment_various', we don't have any thirdparty
-		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement'))) print $langs->trans("User");
+		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement','payment_salary'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		// Amount HT
@@ -791,7 +812,7 @@ foreach ($listofreferent as $key => $value)
 		else print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee,!empty($project_field)?$project_field:'fk_projet');
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$total_ht = 0;
@@ -859,7 +880,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print img_picto($langs->trans('Unlink'), 'unlink');
+						print '</a>';
 					}
 				}
 				print "</td>\n";
@@ -872,7 +895,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-				    // Show ref with link
+					// Show ref with link
 					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
@@ -882,16 +905,16 @@ foreach ($listofreferent as $key => $value)
 
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
-					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
+					$filedir=$conf->{$element_doc}->multidir_output[$element->entity] . '/' . dol_sanitizeFileName($element->ref);
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc='commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					}
 					else if ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2,0,0,$element,'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
 					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
@@ -907,6 +930,7 @@ foreach ($listofreferent as $key => $value)
 				$date=''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif ($tablename == 'stock_mouvement') $date = $element->datem;
+				elseif ($tablename == 'payment_salary') $date = $element->datev;
 				elseif ($tablename == 'payment_various') $date = $element->datev;
 				elseif ($tablename == 'chargesociales') $date = $element->date_ech;
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
@@ -952,6 +976,12 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
+				else if ($tablename == 'payment_salary')
+				{
+					$tmpuser=new User($db);
+					$tmpuser->fetch($element->fk_user);
+					print $tmpuser->getNomUrl(1,'',48);
+				}
 				else if ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
                 	if ($element->fk_user_author > 0)
@@ -973,7 +1003,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ht_by_line=null;
 				    $othermessage='';
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ht_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
@@ -1014,7 +1044,7 @@ foreach ($listofreferent as $key => $value)
 				if (empty($value['disableamount']))
 				{
 				    $total_ttc_by_line=null;
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ttc_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
@@ -1163,10 +1193,8 @@ if ($conf->use_javascript_ajax)
 	print $comboenhancement;
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 

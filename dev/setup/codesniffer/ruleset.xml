@@ -4,6 +4,7 @@
 	<description>Dolibarr coding standard.</description>
 
 	<exclude-pattern type="relative">build/html</exclude-pattern>
+	<exclude-pattern type="relative">build/aps</exclude-pattern>
 	<exclude-pattern type="relative">documents</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/custom</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
@@ -11,43 +12,29 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*.min.css</exclude-pattern>
+	<exclude-pattern type="relative">*.js</exclude-pattern>
 
 		<!-- List of all tests -->
 
-	
+
 	<!-- Rules from Internal Standard -->
-	
+
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
 	</rule>
 
-	
-	<!-- Rules from Generic Standard -->
-		
-	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
 
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCatch">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIf">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElse">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElseif">
-		<severity>0</severity>
-	</rule>
-	
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
-		<severity>0</severity>
-	</rule>
+	<!-- Rules from Generic Standard -->
+
+	<rule ref="Generic.CodeAnalysis.EmptyStatement">
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIf"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElse"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElseif"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedForeach"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.NotAllowed"/>
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning"/>
+    </rule>
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
@@ -63,7 +50,22 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
 		<severity>0</severity>
     </rule>
-
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed">
+		<severity>0</severity>
+    </rule>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed">
+		<severity>0</severity>
+    </rule>
+    
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
     <!--
@@ -147,7 +149,7 @@
     <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
         <severity>0</severity>
     </rule>
-	
+
 	<rule ref="Generic.PHP.DisallowShortOpenTag" />
 
     <rule ref="Generic.PHP.ForbiddenFunctions" />
@@ -163,7 +165,7 @@
 	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
         <severity>0</severity>
 	</rule>
-    
+
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
@@ -171,7 +173,24 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
+    <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
 
     <!-- Rules from PEAR Standard -->
 
@@ -186,7 +205,7 @@
     <rule ref="PEAR.Commenting.ClassComment.Missing">
         <severity>0</severity>
     </rule>
-    
+
     <rule ref="PEAR.Commenting.ClassComment.MissingTag">
 		<severity>0</severity>
     </rule>
@@ -206,14 +225,14 @@
     <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
         <severity>0</severity>
     </rule>
-        
+
     <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
         <severity>0</severity>
     </rule>
-        
 
-   
-    <!-- 
+
+
+    <!--
     <rule ref="PEAR.Commenting.FileComment" />
     <rule ref="PEAR.Commenting.FileComment.WrongStyle">
         <severity>0</severity>
@@ -225,20 +244,20 @@
         <severity>0</severity>
     </rule>
     -->
-    
+
     <rule ref="PEAR.Commenting.FunctionComment" />
 
     <rule ref="PEAR.Commenting.FunctionComment.Empty">
         <severity>5</severity>
     </rule>
-    
-	<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+
+	<!--<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
         <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+    </rule>-->
+    <!--<rule ref="PEAR.Commenting.FunctionComment.Missing">
         <severity>0</severity>
-    </rule>
-    
+    </rule>-->
+
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
@@ -254,11 +273,11 @@
     <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
         <severity>0</severity>
     </rule>
-    
+
     <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
         <severity>0</severity>
     </rule>
-    
+
     <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
         <severity>0</severity>
     </rule>
@@ -285,7 +304,20 @@
 	<!-- <rule ref="PEAR.ControlStructures.MultiLineCondition" /> -->
 
 	<!-- Test if () are removed for includes -->
-	<!-- <rule ref="PEAR.Files.IncludingFile"/> -->
+	<rule ref="PEAR.Files.IncludingFile" />
+    <!-- Disable some error messages that we do not want. -->
+    <rule ref="PEAR.Files.IncludingFile.UseInclude">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Files.IncludingFile.UseRequire">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Files.IncludingFile.UseRequireOnce">
+        <severity>0</severity>
+    </rule>
 
 	<rule ref="PEAR.Formatting.MultiLineAssignment" />
 
@@ -315,14 +347,14 @@
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
         <severity>0</severity>
     </rule>
-	
+
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
 	<rule ref="PEAR.NamingConventions.ValidClassName" />
 	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
         <severity>0</severity>
 	</rule>
-	
+
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCapital">
         <severity>0</severity>
 	</rule>
@@ -330,7 +362,7 @@
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
         <severity>0</severity>
 	</rule>
-	
+
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
 
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore">
@@ -347,31 +379,37 @@
         <severity>0</severity>
 	</rule>
 
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
+    <!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
-	</rule>
+    </rule>-->
+	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
+        <severity>0</severity>
+	</rule>-->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
+
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
         <severity>0</severity>
     </rule>
-	
+
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
 	<!-- Need to be commented to be disabled
 	<rule ref="PEAR.WhiteSpace.ScopeClosingBrace">
         <severity>0</severity>
     </rule>
-	
+
     <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Line">
         <severity>0</severity>
     </rule>
 	-->
-    
+
     <!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
 

@@ -137,7 +137,6 @@ if ( $nbr_enreg > 1 )
 	{
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
-
 }
 else if ( $nbr_enreg == 1 )
 {
@@ -163,4 +162,4 @@ $obj_facturation->paiementLe('RESET');
 
 
 // Affichage des templates
-require ('tpl/facturation1.tpl.php');
+require 'tpl/facturation1.tpl.php';

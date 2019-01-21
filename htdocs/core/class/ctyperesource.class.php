@@ -19,7 +19,7 @@
  */
 
 /**
- * \file    resource/ctyperesource.class.php
+ * \file    htdocs/core/class/ctyperesource.class.php
  * \ingroup resource
  */
 
@@ -36,6 +36,7 @@ class Ctyperesource
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ctyperesource';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -46,15 +47,14 @@ class Ctyperesource
 	 */
 	public $lines = array();
 
-	/**
-	 */
-
 	public $code;
-	public $label;
-	public $active;
 
 	/**
-	 */
+     * @var string Type resource label
+     */
+    public $label;
+
+	public $active;
 
 
 	/**
@@ -127,15 +127,15 @@ class Ctyperesource
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			//if (!$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
+			//  // Call triggers
+			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  if ($result < 0) $error++;
+			//  // End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -188,8 +188,6 @@ class Ctyperesource
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
-
-
 			}
 
 			// Retrieve all extrafields for invoice
@@ -269,8 +267,6 @@ class Ctyperesource
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
-
-
 			}
 			$this->db->free($resql);
 
@@ -331,15 +327,15 @@ class Ctyperesource
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
-		}
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
 
 		// Commit or rollback
 		if ($error) {
@@ -369,17 +365,15 @@ class Ctyperesource
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
-		}
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
 
 		// If you need to delete child tables to, you can insert them here
 
@@ -433,6 +427,7 @@ class Ctyperesource
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -442,6 +437,8 @@ class Ctyperesource
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
+		unset($object->context['createfromclone']);
+
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -450,7 +447,7 @@ class Ctyperesource
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -468,7 +465,6 @@ class Ctyperesource
 		$this->label = '';
 		$this->active = '';
 	}
-
 }
 
 /**
@@ -480,16 +476,20 @@ class CtyperesourceLine
 	 * @var int ID
 	 */
 	public $id;
+
 	/**
 	 * @var mixed Sample line property 1
 	 */
-
 	public $code;
-	public $label;
+
+	/**
+     * @var string Type resource line label
+     */
+    public $label;
+
 	public $active;
 
 	/**
 	 * @var mixed Sample line property 2
 	 */
-
 }

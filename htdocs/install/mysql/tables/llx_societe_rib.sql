@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
 --
@@ -41,10 +41,12 @@ create table llx_societe_rib
   proprio        varchar(60),
   owner_address  varchar(255),
   default_rib    smallint NOT NULL DEFAULT 0,
+  
   -- For BAN direct debit feature  
   rum            varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum		 date,							-- Date of mandate
   frstrecur      varchar(16) default 'FRST',    -- 'FRST' or 'RECUR'
+  
   --For credit card
   last_four varchar(4),										-- last 4
   card_type varchar(255),									-- card type 'VISA', 'MC' , ...
@@ -52,6 +54,7 @@ create table llx_societe_rib
   exp_date_month INTEGER,
   exp_date_year INTEGER,
   country_code varchar(10),
+  
   --For Paypal
   approved INTEGER DEFAULT 0,
   email varchar(255),
@@ -60,9 +63,12 @@ create table llx_societe_rib
   preapproval_key varchar(255),
   starting_date date,
   total_amount_of_all_payments double(24,8),
+  
   --For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
 
+  comment        varchar(255),
+  ipaddress      varchar(68),
   status integer NOT NULL DEFAULT 1,						-- 1=ACTIVE, 0=IN_TRASH
   import_key     varchar(14)    -- import key
 )ENGINE=innodb;

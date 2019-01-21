@@ -25,9 +25,18 @@ include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class
  */
 class Dolistore
 {
-	// params
-	public $start;       // beginning of pagination
-	public $end;         // end of pagination
+    /**
+     * beginning of pagination
+     * @var int
+     */
+
+     public $start;
+    /**
+     * end of pagination
+     * @var int
+     */
+    public $end;
+
 	public $per_page;    // pagination: display per page
 	public $categorie;   // the current categorie
 	public $search;      // the search keywords
@@ -56,7 +65,7 @@ class Dolistore
 
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
-		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5);	// Into table ps_lang of Prestashop - 1
+		$lang_array = array('en'=>0, 'fr'=>1, 'es'=>2, 'it'=>3, 'de'=>4);	// Into table ps_lang of Prestashop - 1
 		if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
 		$this->lang = $lang_array[$lang];
 	}
@@ -154,6 +163,7 @@ class Dolistore
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return tree of Dolistore categories. $this->categories must have been loaded before.
 	 *
@@ -162,6 +172,7 @@ class Dolistore
 	 */
 	function get_categories($parent = 0)
 	{
+        // phpcs:enable
 		if (!isset($this->categories)) die('not possible');
 		if ($parent != 0) {
 			$html = '<ul>';
@@ -201,6 +212,7 @@ class Dolistore
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of product formated for output
 	 *
@@ -208,6 +220,7 @@ class Dolistore
 	 */
 	function get_products()
 	{
+        // phpcs:enable
 		global $langs, $conf;
 		$html       = "";
 		$parity     = "pair";
@@ -282,18 +295,41 @@ class Dolistore
 		return $html;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * get previous link
+     *
+     * @param   string    $text     symbol previous
+     * @return  string              html previous link
+     */
 	function get_previous_link($text = '<<')
 	{
+        // phpcs:enable
 		return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * get next link
+     *
+     * @param   string    $text     symbol next
+     * @return  string              html next link
+     */
 	function get_next_link($text = '>>')
 	{
+        // phpcs:enable
 		return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
 	}
 
-	function get_previous_url()
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+   /**
+     * get previous url
+     *
+     * @return string    previous url
+     */
+    function get_previous_url()
 	{
+        // phpcs:enable
 		$param_array = array();
 		if ($this->start < $this->per_page) {
 			$sub = 0;
@@ -309,8 +345,15 @@ class Dolistore
 		return $this->url."&".$param;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * get next url
+     *
+     * @return string    next url
+     */
 	function get_next_url()
 	{
+        // phpcs:enable
 		$param_array = array();
 		if (count($this->products) < $this->per_page) {
 			$add = 0;
@@ -326,8 +369,17 @@ class Dolistore
 		return $this->url."&".$param;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * version compare
+     *
+     * @param   string  $v1     version 1
+     * @param   string  $v2     version 2
+     * @return int              result of compare
+     */
 	function version_compare($v1, $v2)
 	{
+        // phpcs:enable
 		$v1       = explode('.', $v1);
 		$v2       = explode('.', $v2);
 		$ret      = 0;
@@ -355,4 +407,3 @@ class Dolistore
 		return $ret;
 	}
 }
-

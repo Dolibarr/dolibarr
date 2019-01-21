@@ -22,7 +22,7 @@ $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
 $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
 
 
-#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
+#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
 "SF"=>"git ssh rsync",
@@ -36,8 +36,8 @@ $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpd
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
-"APS"=>"zip",
+"DEB"=>"dpkg dpatch",
+"FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
 );
@@ -142,7 +142,6 @@ $FILENAMETGZ         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEXZ          = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEDEB         = "see later";
-$FILENAMEAPS         = "$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
 # For RPM
 $ARCH='noarch';
@@ -536,6 +535,8 @@ if ($nboftargetok) {
    	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 
 		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/abricot*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/allscreens*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
@@ -550,12 +551,14 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ndf*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nomenclature*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/of/`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/oscim*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/accountingexport*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
@@ -586,6 +589,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Examples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/unitTests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/license.md`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/dav/tests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/LICENSE`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
@@ -692,7 +696,7 @@ if ($nboftargetok) {
 			print "Go to directory $BUILDROOT\n";
 			$olddir=getcwd();
 			chdir("$BUILDROOT");
-			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEAPS.xz \*";
+			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEXZ.xz \*";
 			print $cmd."\n";
 			$ret= `$cmd`;
 			chdir("$olddir");
@@ -1033,92 +1037,6 @@ if ($nboftargetok) {
 			next;
 		}
 		
-		if ($target eq 'APS') 
-		{
-			$NEWDESTI=$DESTI;
-			if ($NEWDESTI =~ /stable/)
-			{
-				mkdir($DESTI.'/package_aps');
-				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
-			} 
-			
-			$newbuild = $BUILD;
-			$newbuild =~ s/(dev|alpha)/0/gi;                # dev
-			$newbuild =~ s/beta/1/gi;                       # beta
-			$newbuild =~ s/rc./2/gi;                        # rc
-			if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-			# now newbuild is 0-0 or 0-3 for example
-			$REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
-			if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
-			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
-			
-			print "Remove target $FILENAMEAPS.zip...\n";
-			unlink "$NEWDESTI/$FILENAMEAPS.zip";
-
-			#rmdir "$BUILDROOT/$PROJECT.tmp";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-			print "Create directory $BUILDROOT/$PROJECT.tmp\n";
-			$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp"`;
-			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
-			$ret=`$cmd`;
-
-			print "Remove other files\n";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
-
-            $APSVERSION="1.2";
-            print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
-            open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";
-            while (<SPECFROM>) {
-                $newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
-                $newbuild =~ s/beta/1/gi;                       # beta
-                $newbuild =~ s/rc./2/gi;                        # rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-                # now newbuild is 0-0 or 0-3 for example
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
-                $_ =~ s/__RELEASE__/$RPMSUBVERSION/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure.php\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure.php\"";
-            $ret=`$cmd`;
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
-            $ret=`$cmd`;
- 
-            print "Remove other files\n";
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
-            
-            print "Build APP-LIST.xml files\n";
-            
-            print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
- 
-            print "Go to directory $BUILDROOT/$PROJECT.tmp\/$PROJECT\n";
-            $olddir=getcwd();
-            chdir("$BUILDROOT\/$PROJECT.tmp\/$PROJECT");
-            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip \*";
-            print $cmd."\n";
-            $ret= `$cmd`;
-            chdir("$olddir");
-                        
-    		# Move to final dir
-            print "Move $BUILDROOT/$FILENAMEAPS.zip to $NEWDESTI/$FILENAMEAPS.zip\n";
-            $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$NEWDESTI/$FILENAMEAPS.zip"`;
-            next;
-    	}
-
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
@@ -1140,7 +1058,7 @@ if ($nboftargetok) {
     		$ret=`cat "$SOURCE/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
 
     		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"\n";
-    		$cmd= "ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			print "$cmd\n";
 			$ret= `$cmd`;
 			#print "$ret\n";

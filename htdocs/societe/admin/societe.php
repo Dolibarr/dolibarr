@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("admin");
-$langs->load('other');
+$langs->loadLangs(array("admin", "companies", "other"));
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
@@ -182,6 +181,21 @@ if ($action=="setaddrefinlist") {
 	}
 }
 
+//Activate Set adress in list
+if ($action=="setaddadressinlist") {
+	$val = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Ask For Preferred Shipping Method
 if ($action=="setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value','int');
@@ -195,6 +209,21 @@ if ($action=="setaskforshippingmet") {
 	{
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+}
+
+//Activate "Disable prospect/customer type"
+if ($action=="setdisableprospectcustomer") {
+    $setdisableprospectcustomer = GETPOST('value','int');
+    $res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer,'yesno',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 //Activate ProfId unique
@@ -298,11 +327,13 @@ $head = societe_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), -1, 'company');
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+foreach ($conf->modules_parts['models'] as $mo)		$dirsociete[]=$mo.'core/modules/societe/';	//Add more models
 
 // Module to manage customer/supplier code
 
 print load_fiche_titre($langs->trans("CompanyCodeChecker"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
@@ -374,7 +405,7 @@ foreach ($dirsociete as $dirroot)
     }
 }
 print '</table>';
-
+print '</div>';
 
 print "<br>";
 
@@ -383,6 +414,7 @@ print "<br>";
 
 print load_fiche_titre($langs->trans("AccountCodeManager"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -444,6 +476,7 @@ foreach ($dirsociete as $dirroot)
     }
 }
 print "</table>\n";
+print '</div>';
 
 
 /*
@@ -475,6 +508,7 @@ else
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -590,12 +624,14 @@ foreach ($dirsociete as $dirroot)
 	}
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 //IDProf
 print load_fiche_titre($langs->trans("CompanyIdProfChecker"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -682,8 +718,10 @@ foreach($profid as $key => $val)
 	$i++;
 }
 
-print "</table><br>\n";
+print "</table>\n";
+print '</div>';
 
+print "<br>\n";
 
 print load_fiche_titre($langs->trans("Other"),'','');
 
@@ -694,6 +732,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
@@ -718,7 +757,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -742,7 +781,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -759,11 +798,27 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';
@@ -779,12 +834,29 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+// Disable Prospect/Customer thirdparty type
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';
 print '</tr>';
@@ -829,13 +901,13 @@ print '</tr>';
 */
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *     \brief      Page liste des factures prelevees
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -134,7 +134,6 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-
     }
   	else
     {
@@ -145,7 +144,7 @@ if ($prev_id > 0 || $ref)
 
 // List of invoices
 $sql = "SELECT pf.rowid,";
-$sql.= " f.rowid as facid, f.facnumber as ref, f.total_ttc,";
+$sql.= " f.rowid as facid, f.ref as ref, f.total_ttc,";
 $sql.= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -156,7 +155,7 @@ $sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($prev_id) $sql.= " AND p.rowid=".$prev_id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= $db->order($sortfield,$sortorder);
@@ -296,7 +295,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

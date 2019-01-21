@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,11 @@ class FactureStats extends Stats
     var $socid;
     var $userid;
 
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
+	
     var $from;
     var $field;
     var $where;
@@ -76,7 +80,7 @@ class FactureStats extends Stats
 		}
 
 		$this->where = " f.fk_statut > 0";
-		$this->where.= " AND f.entity = ".$conf->entity;
+		$this->where.= " AND f.entity IN (".getEntity('invoice').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($mode == 'customer') $this->where.=" AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		if ($this->socid)
@@ -220,7 +224,5 @@ class FactureStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-
-
 }
 

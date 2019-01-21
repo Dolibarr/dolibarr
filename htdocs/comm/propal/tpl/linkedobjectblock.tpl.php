@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -57,7 +57,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
             {
                 $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';  
+                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
             }
         ?>
         </td>

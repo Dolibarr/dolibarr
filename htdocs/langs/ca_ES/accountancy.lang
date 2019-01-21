@@ -36,11 +36,15 @@ AlreadyInGeneralLedger=Registrat en el Llibre Major
 NotYetInGeneralLedger=No s'ha registrat en el Llibre Major
 GroupIsEmptyCheckSetup=El grup està buit, comproveu la configuració del grup de comptabilitat personalitzat
 DetailByAccount=Mostra detalls per compte
-AccountWithNonZeroValues=Comptes amb valors no nuls
+AccountWithNonZeroValues=Compte amb valors no nuls
 ListOfAccounts=Llista de comptes
+CountriesInEEC=Països a la CEE
+CountriesNotInEEC=Països no integrats a la CEE
+CountriesInEECExceptMe=Països a la CEE excepte %s
+CountriesExceptMe=Tots els països, excepte %s
 
 MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
-MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
+MainAccountForSuppliersNotDefined=Compte comptable principal per a proveïdors no definit a la configuració
 MainAccountForUsersNotDefined=Compte comptable per a usuaris no de definit en la configuració
 MainAccountForVatPaymentNotDefined=Compte comptable per a IVA no definida en la configuració
 
@@ -55,10 +59,10 @@ AccountancyAreaDescChartModel=PAS %s: Crear un model de pla de comptes des del m
 AccountancyAreaDescChart=PAS %s: Crear o comprovar el contingut del seu pla de comptes des del menú %s
 
 AccountancyAreaDescVat=PAS %s: Defineix comptes comptables per cada tipus d'IVA. Per això, utilitzeu l'entrada del menú %s.
-AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
+AccountancyAreaDescDefault=STEP %s: Definir comptes comptables predeterminats. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescExpenseReport=PAS %s: Defineix els comptes comptables per defecte per a cada tipus d'informe de despeses. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescSal=PAS %s: Defineix comptes comptables per defecte per al pagament de salaris. Per això, utilitzeu l'entrada del menú %s.
-AccountancyAreaDescContrib=PAS %s: Defineix comptes comptables per defecte per despeses especials (impostos diversos). Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescContrib=PAS %s: defineix comptes de comptabilitat per defecte per a despeses especials (impostos diversos). Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescDonation=PAS %s: Defineix comptes comptables per defecte per a les donacions. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescMisc=PAS %s: Defineix el compte comptable obligatori per defecte i els comptes comptables per defecte pels assentaments diversos. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescLoan=PAS %s: Defineix comptes comptables per defecte per als préstecs. Per això, utilitzeu l'entrada del menú %s.
@@ -156,6 +160,7 @@ Docref=Referència
 LabelAccount=Etiqueta de compte
 LabelOperation=Etiqueta de l'operació
 Sens=Significat
+LetteringCode=Codi de retolació
 Codejournal=Diari
 NumPiece=Número de peça
 TransactionNumShort=Número de transacció
@@ -172,7 +177,7 @@ DelYear=Any a eliminar
 DelJournal=Diari per esborrar
 ConfirmDeleteMvt=Això eliminarà totes les línies del Llibre Major de l'any i/o d'un diari específic. Es requereix com a mínim un criteri.
 ConfirmDeleteMvtPartial=Això eliminarà l'assentament del Llibre Major (se suprimiran totes les línies relacionades amb el mateix assentament)
-FinanceJournal=Finance journal
+FinanceJournal=Diari de finances
 ExpenseReportsJournal=Informe-diari de despeses
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 DescJournalOnlyBindedVisible=Aquesta és una vista de registres que estan comptabilitzats a un compte comptable i que poden registrar-se al Llibre major.
@@ -189,7 +194,7 @@ ListeMvts=Llista de moviments
 ErrorDebitCredit=El dèbit i el crèdit no poden tenir valors alhora
 AddCompteFromBK=Afegeix comptes comptables al grup
 ReportThirdParty=Llista el compte del tercer
-DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
+DescThirdPartyReport=Consulteu aquí la llista dels clients i proveïdors de tercers i els seus comptes comptables
 ListAccounts=Llistat dels comptes comptables
 UnknownAccountForThirdparty=Compte comptable de tercer desconeguda, utilitzarem %s
 UnknownAccountForThirdpartyBlocking=Compte comptable de tercer desconegut. Error de bloqueig
@@ -198,7 +203,7 @@ PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
 
 Pcgtype=Grup de compte
 Pcgsubtype=Subgrup de compte
-PcgtypeDesc=El grup i el subgrup del compte s'utilitzen com a criteris de "filtre" i "agrupació" predefinits per a alguns informes comptables. Per exemple, "INCOME" o "EXPENSE" s'utilitzen com a grups per als comptes comptables de productes per generar l'informe de despeses/ingressos.
+PcgtypeDesc=El grup i el subconjunt del compte s'utilitzen com a criteris de "filtre" i "agrupació" predefinits per a alguns informes comptables. Per exemple, "INGRÉS" o "DESPESA" s'utilitzen com a grups per als comptes comptables de productes per generar l'informe de despeses / ingressos.
 
 TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
@@ -209,8 +214,8 @@ DescVentilDoneCustomer=Consulta aquí la llista de línies de factures de client
 DescVentilTodoCustomer=Comptabilitza les línies de factura encara no comptabilitzades amb un compte comptable de producte
 ChangeAccount=Canvia el compte comptable de producte/servei per les línies seleccionades amb el següent compte comptable:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
+DescVentilSupplier=Consulteu aquí la llista de línies de factures del proveïdor vinculades o que encara no estan vinculades a un compte de comptabilitat de producte
+DescVentilDoneSupplier=Consulteu aquí la llista de les línies de venedors de factures i el seu compte comptable
 DescVentilTodoExpenseReport=Línies d'informes de despeses comptabilitzades encara no comptabilitzades amb un compte comptable de tarifa
 DescVentilExpenseReport=Consulteu aquí la llista de les línies d'informe de despeses vinculada (o no) a un compte comptable corresponent a tarifa
 DescVentilExpenseReportMore=Si tu poses el compte comptable sobre les línies del informe per tipus de despesa, l'aplicació serà capaç de fer tots els vincles entre les línies del informe i els comptes comptables del teu pla comptable, només amb un clic amb el botó <strong>"%s"</strong>. Si el compte no estava al diccionari de tarifes o si encara hi ha línies no vinculades a cap compte, hauràs de fer-ho manualment a partir del menú "<strong>%s</strong>".
@@ -221,6 +226,7 @@ AutomaticBindingDone=Comptabilització automàtica realitzada
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no pots eliminar aquest compte comptable perquè està en ús
 MvtNotCorrectlyBalanced=Assentament comptabilitzat incorrectament. Deure = %s | Haver = %s
+Balancing=Saldo
 FicheVentilation=Fitxa de comptabilització
 GeneralLedgerIsWritten=Els assentaments s'han escrit al Llibre Major
 GeneralLedgerSomeRecordWasNotRecorded=Alguns dels assentaments no van poder ser registrats al diari. Si no hi ha cap altre missatge d'error, probablement és perquè ja es van registrar al diari.
@@ -262,7 +268,8 @@ Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
 Modelcsv_ebp=Exporta cap a EBP
 Modelcsv_cogilog=Exporta cap a Cogilog
 Modelcsv_agiris=Exporta a Agiris
-Modelcsv_configurable=Exportació configurable
+Modelcsv_configurable=Exporta CSV configurable
+Modelcsv_FEC=Exportació FEC (Art. L47 A) (prova)
 ChartofaccountsId=Id pla comptable
 
 ## Tools - Init accounting account on product / service
@@ -296,10 +303,10 @@ BookeppingLineAlreayExists=Les línies ja existeixen en la comptabilitat
 NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
-UseMenuToSetBindindManualy=No es possible auto-detectar, utilitzeu el menú <a href="%s">%s</a> per fer l'enllaç manualment
+UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a href="%s"> %s </a> per fer l'enllaç manualment
 
 ## Import
-ImportAccountingEntries=Accounting entries
+ImportAccountingEntries=Entrades de comptabilitat
 
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses

@@ -6,5 +6,3 @@ NewCheckDepositOn=Create receipt for deposit to account: %s
 NoWaitingChecks=No cheques awaiting deposit.
 DateChequeReceived=Cheque reception date
 NbOfCheques=Number of cheques
-SeeReportInInputOutputMode=See %sanalysis of payments%s for a calculation on actual payments made even if they are not yet accounted in Ledger.
-SeeReportInDueDebtMode=See %sanalysis of invoices%s for a calculation based on known recorded invoices even if they are not yet accounted in Ledger.

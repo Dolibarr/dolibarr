@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +182,6 @@ if ($result)
       print '</tr>';
 	  $i++;
 	}
-
     }
   else
     {
@@ -210,7 +209,6 @@ if ($langs->file_exists("html/spam.html",0)) {
     print '<br>';
  }
 
-
+// End of page
 llxFooter();
-
 $db->close();

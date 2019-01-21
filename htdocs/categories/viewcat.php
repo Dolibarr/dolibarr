@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -168,7 +168,6 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 			setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
-
 }
 
 
@@ -697,6 +696,6 @@ if ($type == Categorie::TYPE_PROJECT)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

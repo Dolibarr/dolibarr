@@ -49,6 +49,7 @@ $endyear=$year;
 
 $object_status=GETPOST('object_status');
 
+// Load translation files required by the page
 $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 
 
@@ -232,22 +233,22 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
-	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
     $filter = 's.client in (1,2,3)';
 	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
-	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	// Status
-	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 	$tmp = $objectstatic->LibStatut(0);		// To load $this->statuts_short
 	$liststatus=$objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
 	print '</td></tr>';
 	// Year
-	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
+	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
@@ -259,6 +260,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -305,6 +307,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

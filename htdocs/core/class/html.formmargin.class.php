@@ -28,8 +28,15 @@
  */
 class FormMargin
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -40,8 +47,6 @@ class FormMargin
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -275,6 +280,5 @@ class FormMargin
 		print '</table>';
 		print '</div>';
 	}
-
 }
 

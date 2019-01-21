@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param	DoliDB  $db     			Database handler
+     *  @param  integer $maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         global $conf;
 
         $type='donation';
@@ -63,7 +68,10 @@ abstract class ModeleDon extends CommonDocGenerator
  */
 abstract class ModeleNumRefDons
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
      * 	Return if a module can be used or not
@@ -138,4 +146,3 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 }
-

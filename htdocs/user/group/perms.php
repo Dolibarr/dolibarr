@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,7 +231,14 @@ if ($object->id > 0)
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    if ($caneditperms) print '<td width="24">&nbsp</td>';
+    if ($caneditperms)
+    {
+    	print '<td align="center" class="nowrap">';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+    	print '/';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+    	print '</td>';
+    }
     print '<td align="center" width="24">&nbsp;</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
@@ -342,5 +349,6 @@ if ($object->id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

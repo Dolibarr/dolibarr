@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -46,6 +47,10 @@ class Productlot extends CommonObject
 
 	public $picto='barcode';
 
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
     public $ismultientitymanaged = 1;
 
 	/**
@@ -54,21 +59,32 @@ class Productlot extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var int Entity
 	 */
-
 	public $entity;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
 	public $datec = '';
 	public $tms = '';
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
 
 	/**
-	 */
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	public $import_key;
 
 
 	/**
@@ -99,19 +115,19 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -280,19 +296,19 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -342,9 +358,6 @@ class Productlot extends CommonObject
 		}
 
 		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
 			// Call triggers
 			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
 			if ($result < 0) { $error++; }
@@ -379,8 +392,8 @@ class Productlot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
+		//if (!$error) {
+			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -388,8 +401,8 @@ class Productlot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
-			}
-		}
+			//}
+		//}
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -441,6 +454,7 @@ class Productlot extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -449,6 +463,8 @@ class Productlot extends CommonObject
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
@@ -474,6 +490,7 @@ class Productlot extends CommonObject
 	    return $this->LibStatut(0,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -483,6 +500,7 @@ class Productlot extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;
 
 	    //$langs->load('stocks');
@@ -569,17 +587,15 @@ class Productlot extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->entity = '';
-		$this->fk_product = '';
+		$this->entity = null;
+		$this->fk_product = null;
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
 		$this->datec = '';
 		$this->tms = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_user_creat = null;
+		$this->fk_user_modif = null;
 		$this->import_key = '';
 	}
-
 }
-

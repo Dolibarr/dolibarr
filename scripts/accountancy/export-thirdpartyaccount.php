@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +25,11 @@
  * \brief		Page to detect empty accounting account
  */
 
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("main");
-$langs->load("accountancy");
+$langs->loadLangs(array("companies", "compta", "main", "accountancy"));
 
 // Security check
 if (!$user->admin)
@@ -102,7 +100,7 @@ $periodlink = '';
 $exportlink = '';
 
 $nom = $langs->trans("ReportThirdParty");
-$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $description = $langs->trans("DescThirdPartyReport");
 $builddate=dol_now();
 
@@ -130,7 +128,7 @@ $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
 if (! empty($date_start) && ! empty($date_end))
 	$sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
-$sql .= " AND f.entity = " . $conf->entity;
+$sql .= " AND f.entity IN (".getEntity('invoice',0).")";
 if ($socid)
 	$sql .= " AND f.fk_soc = " . $socid;
 $sql .= " GROUP BY name";

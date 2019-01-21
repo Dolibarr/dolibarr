@@ -53,7 +53,7 @@ class PrestaShopWebservice
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * 	$ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -69,7 +69,8 @@ class PrestaShopWebservice
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
-	function __construct($url, $key, $debug = true) {
+    function __construct($url, $key, $debug = true)
+    {
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
@@ -82,6 +83,7 @@ class PrestaShopWebservice
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
+     * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -175,7 +177,6 @@ class PrestaShopWebservice
 		{
 			$this->printDebug('HTTP REQUEST HEADER', curl_getinfo($session, CURLINFO_HEADER_OUT));
 			$this->printDebug('HTTP RESPONSE HEADER', $header);
-
 		}
 		$status_code = curl_getinfo($session, CURLINFO_HTTP_CODE);
 		if ($status_code === 0)
@@ -279,7 +280,7 @@ class PrestaShopWebservice
 	 * </p>
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -383,7 +384,7 @@ class PrestaShopWebservice
 		else
 			throw new PrestaShopWebserviceException('Bad parameters given');
 
-		$request = self::executeRequest($url,  array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
+		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
 		self::checkStatusCode($request['status_code']);// check the response validity
 		return self::parseXML($request['response']);
 	}

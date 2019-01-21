@@ -74,6 +74,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','products','supplier_proposal','interventions'));
 	}
 
@@ -139,6 +140,10 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
+	elseif ($object->element == 'contact')
+	{
+		$liste['contact'] = $object->getFullName($langs)." <".$object->email.">";
+	}
 	elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";
@@ -168,7 +173,6 @@ if ($action == 'presend')
 			$formmail->withtouser = $listeuser;
 			$formmail->withtoccuser = $listeuser;
 		}
-
 	}
 
 	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;

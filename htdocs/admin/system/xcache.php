@@ -76,6 +76,6 @@ if ($action == 'clear')
 }
 */
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -3,7 +3,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * 	\ingroup    banque
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php";
@@ -105,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
         dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
-        // Construit liste des fichiers
+        // Build file list
         $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
                 $sortfield,
                 (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -147,7 +147,6 @@ else {
     exit;
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

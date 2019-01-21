@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +353,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
@@ -530,7 +530,6 @@ if (! empty($conf->propal->enabled))
 //print '</td></tr></table>';
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -19,7 +19,6 @@ SellingPriceHT=Verkaufspreis (netto)
 SellingPriceTTC=Verkaufspreis (brutto)
 MinPrice=Preisuntergrenze
 CantBeLessThanMinPrice=Der aktuelle Verkaufspreis unterschreitet die Preisuntergrenze dieses Produkts (%s ohne MwSt.)
-ContractStatusClosed=geschlossen
 NoMatchFound=Keine Treffer gefunden
 ProductAssociationList=Liste der verknüpften Produkte/Services: Name des Produkts/des Service (Stückzahl)
 DeleteProduct=Produkt/Service löschen
