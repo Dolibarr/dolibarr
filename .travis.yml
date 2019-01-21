@@ -214,9 +214,11 @@ before_script:
       #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
       echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
+      echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql travis
-      echo 'select * from information_schema.table_constraints;' | psql travis
-      echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql travis
+      #echo 'select * from INFORMATION_SCHEMA.COLUMNS where table_name = 'llx_accountingaccount' | psql travis
+      #echo 'select * from information_schema.table_constraints;' | psql travis
+      #echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql travis
     fi
     # TODO: SQLite
     echo
@@ -317,7 +319,7 @@ script:
 - |
   echo "Upgrading Dolibarr"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
-  set +e
+  set -e
   cd htdocs/install
   php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
   php upgrade2.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-2.log
@@ -364,7 +366,7 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set +e
+  set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
   echo "Phpunit return code = $phpunitresult"
@@ -372,9 +374,10 @@ script:
 
 after_script:
 - |
-  echo "After script - Output 50 latest lines of dolibarr.log"
+  echo "After script - Output lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
-  cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_success:
 - |
