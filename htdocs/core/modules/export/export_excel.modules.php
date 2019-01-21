@@ -236,11 +236,11 @@ class ExportExcel extends ModeleExports
 		    }
 
             $this->workbook = new PHPExcel();
-            $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
+            $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - '.DOL_APPLICATION_TITLE.' '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
-            $this->workbook->getProperties()->setTitle($outputlangs->trans("Export").' - '.$file);
-            $this->workbook->getProperties()->setSubject($outputlangs->trans("Export").' - '.$file);
-            $this->workbook->getProperties()->setDescription($outputlangs->trans("Export").' - '.$file);
+            $this->workbook->getProperties()->setTitle(basename($file));
+            $this->workbook->getProperties()->setSubject(basename($file));
+            $this->workbook->getProperties()->setDescription(DOL_APPLICATION_TITLE.' '.DOL_VERSION);
 
             $this->workbook->setActiveSheetIndex(0);
             $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
