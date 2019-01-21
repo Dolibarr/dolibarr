@@ -337,30 +337,30 @@ else {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="nobottom linecolresupplier valigntop"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
 	<?php } ?>
 
-	<td class="nobottom linecolvat right valigntop"><?php
+	<td class="nobottom linecolvat right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx",'alpha',2):-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
-	<td class="nobottom linecoluht right valigntop">
+	<td class="nobottom linecoluht right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
 
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="nobottom linecoluht_currency right valigntop">
+	<td class="nobottom linecoluht_currency right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
 
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td class="nobottom linecoluttc right valigntop">
+	<td class="nobottom linecoluttc right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
 	</td>
 	<?php } ?>
-	<td class="nobottom linecolqty right valigntop"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
+	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
@@ -374,7 +374,7 @@ else {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	?>
-	<td class="nobottom nowrap linecoldiscount right valigntop"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
