@@ -226,7 +226,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	?>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td class="linecoldiscount right><?php
+	<td class="linecoldiscount right"><?php
 		$coldisplay++;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		echo dol_print_reduction($line->remise_percent,$langs);
