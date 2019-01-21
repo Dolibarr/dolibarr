@@ -211,9 +211,12 @@ before_script:
       mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
-      #pgloader mysql://root:pass@127.0.0.1/dolibarr_35 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
+      #pgloader mysql://root:pass@127.0.0.1/dolibarr_9 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
       echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
+      echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql travis
+      echo 'select * from information_schema.table_constraints;' | psql travis
+      echo 'ALTER TABLE "llx_accounting_account" DROP CONSTRAINT "idx_16390_primary"' | psql travis
     fi
     # TODO: SQLite
     echo
@@ -361,7 +364,7 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set -e
+  set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
   echo "Phpunit return code = $phpunitresult"
@@ -371,7 +374,7 @@ after_script:
 - |
   echo "After script - Output 50 latest lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
-  tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_success:
 - |
