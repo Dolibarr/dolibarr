@@ -859,8 +859,16 @@ if ($rowid > 0)
 			{
 				$tmpcompany = new Societe($db);
 				$tmpcompany->name=$companyname;
-				$customercode = $tmpcompany->get_codeclient($tmpcompany,0);
-				$formquestion[]=array('label' => $langs->trans("CustomerCode"), 'type' => 'text', 'name' => 'customercode', 'value' => $customercode, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"');
+                $tmpcompany->get_codeclient($tmpcompany, 0);
+				$customercode = $tmpcompany->code_client;
+				$formquestion[]=array(
+                    'label' => $langs->trans("CustomerCode"),
+                    'type' => 'text',
+                    'name' => 'customercode',
+                    'value' => $customercode,
+                    'morecss' => 'minwidth300',
+                    'moreattr' => 'maxlength="128"',
+                );
 			}
 			// @TODO Add other extrafields mandatory for thirdparty creation
 
