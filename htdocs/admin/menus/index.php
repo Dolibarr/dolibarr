@@ -266,7 +266,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
 print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
 print '</tr>';
 
@@ -326,7 +326,7 @@ if ($conf->use_javascript_ajax)
 			    'position'=>$menu['position'],
 				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
 						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
-						'</td><td align="right">'.
+						'</td><td class="right">'.
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
@@ -373,7 +373,7 @@ if ($conf->use_javascript_ajax)
 
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
-    	print '<td align="right"></td>';
+    	print '<td class="right"></td>';
     	print '</tr>';
 
     	print '<tr>';
