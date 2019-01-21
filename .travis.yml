@@ -319,7 +319,7 @@ script:
 - |
   echo "Upgrading Dolibarr"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
-  set +e
+  set -e
   cd htdocs/install
   php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
   php upgrade2.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-2.log
@@ -363,7 +363,7 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set +e
+  set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
   echo "Phpunit return code = $phpunitresult"
@@ -371,9 +371,10 @@ script:
 
 after_script:
 - |
-  echo "After script - Output 50 latest lines of dolibarr.log"
+  echo "After script - Output lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
-  cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_success:
 - |
