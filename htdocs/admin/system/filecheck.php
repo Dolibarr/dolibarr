@@ -338,7 +338,6 @@ if (! $error && $xml)
                 $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
                 $out.='<td>'.$file['filename'];
-                $out.=PHP_OS;
                 if (! preg_match('/^win/i',PHP_OS)) {
                 	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.'/'.$file['filename']);
                 	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm');
