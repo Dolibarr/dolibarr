@@ -1105,7 +1105,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Note
             if (! empty($arrayfields['t.note']['checked']))
             {
-                print '<td align="left">';
+                print '<td class="left">';
     			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
     				print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1320,7 +1320,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Note
 			    if (! empty($arrayfields['t.note']['checked']))
 			    {
-			        print '<td align="left">';
+			        print '<td class="left">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1468,7 +1468,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Note
 			    if (! empty($arrayfields['t.note']['checked']))
 			    {
-			        print '<td align="left">';
+			        print '<td class="left">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1548,8 +1548,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		        $i++;
 		        if ($i == 1)
 		        {
-		            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-		            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		        }
 		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';
 		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';

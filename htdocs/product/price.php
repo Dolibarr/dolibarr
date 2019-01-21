@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2014-2018 	Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014-2019 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -1395,7 +1395,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			}
 			if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 			{
-				print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+				print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 			}
 			print '</td>';
 
@@ -1710,7 +1710,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
 		print '</td></tr>';
 
@@ -1801,7 +1801,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
 		print '</tr>';
 

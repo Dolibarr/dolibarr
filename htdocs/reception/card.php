@@ -1002,13 +1002,13 @@ if ($action == 'create')
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
-					print '<td align="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
+					print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
                 }
 				if (!empty($conf->productbatch->enabled))
 				{
-					print '<td align="left">'.$langs->trans("batch_number").'</td>';
-					print '<td align="left">'.$langs->trans("EatByDate").'</td>';
-					print '<td align="left">'.$langs->trans("SellByDate").'</td>';
+					print '<td class="left">'.$langs->trans("batch_number").'</td>';
+					print '<td class="left">'.$langs->trans("EatByDate").'</td>';
+					print '<td class="left">'.$langs->trans("SellByDate").'</td>';
 				}
                 print "</tr>\n";
             }
@@ -1139,7 +1139,7 @@ if ($action == 'create')
 						// Stock
 						if (! empty($conf->stock->enabled))
 						{
-							print '<td align="left">';
+							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 							{
 								// Show warehouse combo list
@@ -1687,12 +1687,12 @@ else if ($id || $ref)
 			}
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
 			if (! empty($conf->productbatch->enabled))
 			{
-				print '<td align="left">'.$langs->trans("Batch").'</td>';
+				print '<td class="left">'.$langs->trans("Batch").'</td>';
 			}
 		}
 		print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
@@ -1919,7 +1919,7 @@ else if ($id || $ref)
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
 				{
-					print '<td align="left">';
+					print '<td class="left">';
 
 					if ($lines[$i]->fk_entrepot > 0)
 					{
