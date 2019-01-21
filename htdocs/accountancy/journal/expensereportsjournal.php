@@ -601,8 +601,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -644,8 +644,8 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $accountingaccount->label . "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
@@ -677,8 +677,8 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print '</td>';
 			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print '<td class="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+			print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";
 		}
 
@@ -709,8 +709,8 @@ if (empty($action) || $action == 'view') {
 				print '</td>';
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 			}

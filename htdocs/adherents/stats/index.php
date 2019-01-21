@@ -171,9 +171,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -189,9 +189,9 @@ foreach ($data as $val)
         print $oldyear;
         print '</a>';
         print '</td>';
-        print '<td align="right">0</td>';
-        print '<td align="right">0</td>';
-        print '<td align="right">0</td>';
+        print '<td class="right">0</td>';
+        print '<td class="right">0</td>';
+        print '<td class="right">0</td>';
         print '</tr>';
     }
     print '<tr class="oddeven" height="24">';
@@ -200,9 +200,9 @@ foreach ($data as $val)
     print $year;
     //print '</a>';
     print '</td>';
-    print '<td align="right">'.$val['nb'].'</td>';
-    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
     print '</tr>';
     $oldyear=$year;
 }

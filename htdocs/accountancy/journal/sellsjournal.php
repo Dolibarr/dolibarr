@@ -725,8 +725,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -776,8 +776,8 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
-			print '<td align="right"></td>';
-			print '<td align="right"></td>';
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
 			print "</tr>";
 
 			continue;
@@ -797,8 +797,8 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
-			print '<td align="right"></td>';
-			print '<td align="right"></td>';
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
 			print "</tr>";
 		}
 
@@ -829,8 +829,8 @@ if (empty($action) || $action == 'view') {
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -861,8 +861,8 @@ if (empty($action) || $action == 'view') {
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
-				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -895,8 +895,8 @@ if (empty($action) || $action == 'view') {
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 					print "</td>";
-					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
