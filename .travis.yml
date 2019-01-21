@@ -215,6 +215,8 @@ before_script:
       echo pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
       echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql travis
+      echo 'select * from information_schema.table_constraints;' | psql travis
+      echo 'idx_16390_primary
     fi
     # TODO: SQLite
     echo
