@@ -1118,8 +1118,6 @@ class Fichinter extends CommonObject
 
 		$error=0;
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -1158,6 +1156,7 @@ class Fichinter extends CommonObject
 		$this->ref_client         = '';
 
 		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
 		$result=$this->create($user);
 		if ($result < 0) $error++;
 

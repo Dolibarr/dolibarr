@@ -369,6 +369,7 @@ class Cchargesociales
 		// ...
 
 		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -378,6 +379,8 @@ class Cchargesociales
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		unset($this->context['createfromclone']);
+
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -386,7 +389,7 @@ class Cchargesociales
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 

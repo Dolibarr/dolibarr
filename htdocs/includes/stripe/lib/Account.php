@@ -11,6 +11,7 @@ namespace Stripe;
  * @property string $business_name
  * @property string $business_primary_color
  * @property string $business_url
+ * @property mixed $capabilities
  * @property bool $charges_enabled
  * @property string $country
  * @property int $created
@@ -20,7 +21,7 @@ namespace Stripe;
  * @property bool $details_submitted
  * @property string $display_name
  * @property string $email
- * @property mixed $external_accounts
+ * @property Collection $external_accounts
  * @property mixed $legal_entity
  * @property StripeObject $metadata
  * @property mixed $payout_schedule
@@ -28,16 +29,22 @@ namespace Stripe;
  * @property bool $payouts_enabled
  * @property string $product_description
  * @property string $statement_descriptor
+ * @property mixed $support_address
  * @property string $support_email
  * @property string $support_phone
+ * @property string $support_url
  * @property string $timezone
  * @property mixed $tos_acceptance
+ * @property string $type
  * @property mixed $verification
  *
  * @package Stripe
  */
 class Account extends ApiResource
 {
+
+    const OBJECT_NAME = "account";
+
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;
@@ -61,6 +68,7 @@ class Account extends ApiResource
 
     const PATH_EXTERNAL_ACCOUNTS = '/external_accounts';
     const PATH_LOGIN_LINKS = '/login_links';
+    const PATH_PERSONS = '/persons';
 
     public function instanceUrl()
     {
@@ -102,6 +110,21 @@ class Account extends ApiResource
     }
 
     /**
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return Collection The list of persons.
+     */
+    public function persons($params = null, $options = null)
+    {
+        $url = $this->instanceUrl() . '/persons';
+        list($response, $opts) = $this->_request('get', $url, $params, $options);
+        $obj = Util\Util::convertToStripeObject($response, $opts);
+        $obj->setLastResponse($response);
+        return $obj;
+    }
+
+    /**
      * @param array|null $clientId
      * @param array|string|null $opts
      *
@@ -113,7 +136,7 @@ class Account extends ApiResource
             'client_id' => $clientId,
             'stripe_user_id' => $this->id,
         ];
-        OAuth::deauthorize($params, $opts);
+        return OAuth::deauthorize($params, $opts);
     }
 
     /**
@@ -191,6 +214,69 @@ class Account extends ApiResource
         return self::_createNestedResource($id, static::PATH_LOGIN_LINKS, $params, $opts);
     }
 
+    /**
+     * @param array|null $id The ID of the account on which to create the person.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Person
+     */
+    public static function createPerson($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_PERSONS, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the account to which the person belongs.
+     * @param array|null $personId The ID of the person to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Person
+     */
+    public static function retrievePerson($id, $personId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_PERSONS, $personId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the account to which the person belongs.
+     * @param array|null $personId The ID of the person to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Person
+     */
+    public static function updatePerson($id, $personId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_PERSONS, $personId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the account to which the person belongs.
+     * @param array|null $personId The ID of the person to delete.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Person
+     */
+    public static function deletePerson($id, $personId, $params = null, $opts = null)
+    {
+        return self::_deleteNestedResource($id, static::PATH_PERSONS, $personId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the account on which to retrieve the persons.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Person
+     */
+    public static function allPersons($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_PERSONS, $params, $opts);
+    }
+
     public function serializeParameters($force = false)
     {
         $update = parent::serializeParameters($force);
@@ -224,7 +310,9 @@ class Account extends ApiResource
             $update = ($v instanceof StripeObject) ? $v->serializeParameters() : $v;
 
             if ($update !== []) {
-                if (!$originalValue || ($update != $legalEntity->serializeParamsValue($originalValue[$i], null, false, true))) {
+                if (!$originalValue ||
+                    !array_key_exists($i, $originalValue) ||
+                    ($update != $legalEntity->serializeParamsValue($originalValue[$i], null, false, true))) {
                     $updateArr[$i] = $update;
                 }
             }

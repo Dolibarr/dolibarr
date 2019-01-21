@@ -22,6 +22,10 @@ if (!defined('CURL_SSLVERSION_TLSv1_2')) {
 }
 // @codingStandardsIgnoreEnd
 
+if (!defined('CURL_HTTP_VERSION_2TLS')) {
+    define('CURL_HTTP_VERSION_2TLS', 4);
+}
+
 class CurlClient implements ClientInterface
 {
     private static $instance;
@@ -37,6 +41,10 @@ class CurlClient implements ClientInterface
     protected $defaultOptions;
 
     protected $userAgentInfo;
+
+    protected $enablePersistentConnections = null;
+
+    protected $curlHandle = null;
 
     /**
      * CurlClient constructor.
@@ -56,6 +64,15 @@ class CurlClient implements ClientInterface
         $this->defaultOptions = $defaultOptions;
         $this->randomGenerator = $randomGenerator ?: new Util\RandomGenerator();
         $this->initUserAgentInfo();
+
+        // TODO: curl_reset requires PHP >= 5.5.0. Once we drop support for PHP 5.4, we can simply
+        // initialize this to true.
+        $this->enablePersistentConnections = function_exists('curl_reset');
+    }
+
+    public function __destruct()
+    {
+        $this->closeCurlHandle();
     }
 
     public function initUserAgentInfo()
@@ -75,6 +92,22 @@ class CurlClient implements ClientInterface
     public function getUserAgentInfo()
     {
         return $this->userAgentInfo;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getEnablePersistentConnections()
+    {
+        return $this->enablePersistentConnections;
+    }
+
+    /**
+     * @param boolean $enable
+     */
+    public function setEnablePersistentConnections($enable)
+    {
+        $this->enablePersistentConnections = $enable;
     }
 
     // USER DEFINED TIMEOUTS
@@ -123,6 +156,8 @@ class CurlClient implements ClientInterface
             $opts = $this->defaultOptions;
         }
 
+        $params = Util\Util::objectsToIds($params);
+
         if ($method == 'get') {
             if ($hasFile) {
                 throw new Error\Api(
@@ -131,16 +166,16 @@ class CurlClient implements ClientInterface
             }
             $opts[CURLOPT_HTTPGET] = 1;
             if (count($params) > 0) {
-                $encoded = Util\Util::urlEncode($params);
+                $encoded = Util\Util::encodeParameters($params);
                 $absUrl = "$absUrl?$encoded";
             }
         } elseif ($method == 'post') {
             $opts[CURLOPT_POST] = 1;
-            $opts[CURLOPT_POSTFIELDS] = $hasFile ? $params : Util\Util::urlEncode($params);
+            $opts[CURLOPT_POSTFIELDS] = $hasFile ? $params : Util\Util::encodeParameters($params);
         } elseif ($method == 'delete') {
             $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             if (count($params) > 0) {
-                $encoded = Util\Util::urlEncode($params);
+                $encoded = Util\Util::encodeParameters($params);
                 $absUrl = "$absUrl?$encoded";
             }
         } else {
@@ -156,7 +191,7 @@ class CurlClient implements ClientInterface
         }
 
         // Create a callback to capture HTTP headers for the response
-        $rheaders = [];
+        $rheaders = new Util\CaseInsensitiveArray();
         $headerCallback = function ($curl, $header_line) use (&$rheaders) {
             // Ignore the HTTP request line (HTTP/1.1 200 OK)
             if (strpos($header_line, ":") === false) {
@@ -193,6 +228,9 @@ class CurlClient implements ClientInterface
             $opts[CURLOPT_SSL_VERIFYPEER] = false;
         }
 
+        // For HTTPS requests, enable HTTP/2, if supported
+        $opts[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_2TLS;
+
         list($rbody, $rcode) = $this->executeRequestWithRetries($opts, $absUrl);
 
         return [$rbody, $rcode, $rheaders];
@@ -209,17 +247,19 @@ class CurlClient implements ClientInterface
             $rcode = 0;
             $errno = 0;
 
-            $curl = curl_init();
-            curl_setopt_array($curl, $opts);
-            $rbody = curl_exec($curl);
+            $this->resetCurlHandle();
+            curl_setopt_array($this->curlHandle, $opts);
+            $rbody = curl_exec($this->curlHandle);
 
             if ($rbody === false) {
-                $errno = curl_errno($curl);
-                $message = curl_error($curl);
+                $errno = curl_errno($this->curlHandle);
+                $message = curl_error($this->curlHandle);
             } else {
-                $rcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                $rcode = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
             }
-            curl_close($curl);
+            if (!$this->getEnablePersistentConnections()) {
+                $this->closeCurlHandle();
+            }
 
             if ($this->shouldRetry($errno, $rcode, $numRetries)) {
                 $numRetries += 1;
@@ -330,5 +370,38 @@ class CurlClient implements ClientInterface
         $sleepSeconds = max(Stripe::getInitialNetworkRetryDelay(), $sleepSeconds);
 
         return $sleepSeconds;
+    }
+
+    /**
+     * Initializes the curl handle. If already initialized, the handle is closed first.
+     */
+    private function initCurlHandle()
+    {
+        $this->closeCurlHandle();
+        $this->curlHandle = curl_init();
+    }
+
+    /**
+     * Closes the curl handle if initialized. Do nothing if already closed.
+     */
+    private function closeCurlHandle()
+    {
+        if (!is_null($this->curlHandle)) {
+            curl_close($this->curlHandle);
+            $this->curlHandle = null;
+        }
+    }
+
+    /**
+     * Resets the curl handle. If the handle is not already initialized, or if persistent
+     * connections are disabled, the handle is reinitialized instead.
+     */
+    private function resetCurlHandle()
+    {
+        if (!is_null($this->curlHandle) && $this->getEnablePersistentConnections()) {
+            curl_reset($this->curlHandle);
+        } else {
+            $this->initCurlHandle();
+        }
     }
 }

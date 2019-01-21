@@ -478,10 +478,10 @@ if ($sall)
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 if ($search_fk_status == 'non_closed') {
-    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=-1' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
+    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=-1' . ($projectid ? '&projectid='.$projectid : 0) . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
     $param .= '&search_fk_status=non_closed';
 } else {
-    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=non_closed' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewNonClosedOnly') . '</a></div>';
+    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=non_closed' . ($projectid ? '&projectid='.$projectid : 0) . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewNonClosedOnly') . '</a></div>';
     $param .= '&search_fk_status=-1';
 }
 print '</div>';

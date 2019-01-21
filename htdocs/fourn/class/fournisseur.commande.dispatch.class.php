@@ -496,6 +496,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -508,8 +509,9 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (! $error)
 		{
 
-
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

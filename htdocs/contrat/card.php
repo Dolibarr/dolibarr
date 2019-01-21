@@ -1625,7 +1625,7 @@ else
 					// Quantite
 					print '<td align="center">'.$objp->qty.'</td>';
 					// Unit
-					if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
+					if($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
 					// Remise
 					if ($objp->remise_percent > 0)
 					{
@@ -1752,7 +1752,7 @@ else
 					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
-						print '<td align="left">';
+						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
 					}
