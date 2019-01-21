@@ -158,13 +158,13 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
+print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 	if ($j > 12) $j-=12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
@@ -211,10 +211,10 @@ if ($resql) {
 		else print $row[1];
 		print '</td>';
 		for($i = 2; $i <= 12; $i ++) {
-			print '<td align="right">' . price($row[$i]) . '</td>';
+			print '<td class="right">' . price($row[$i]) . '</td>';
 		}
-		print '<td align="right">' . price($row[13]) . '</td>';
-		print '<td align="right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="right">' . price($row[13]) . '</td>';
+		print '<td class="right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -234,13 +234,13 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '',
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
+print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 	if ($j > 12) $j-=12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
@@ -289,10 +289,10 @@ if ($resql) {
 		print '</td>';
 
 		for($i = 2; $i <= 12; $i++) {
-			print '<td align="right">' . price($row[$i]) . '</td>';
+			print '<td class="right">' . price($row[$i]) . '</td>';
 		}
-		print '<td align="right">' . price($row[13]) . '</td>';
-		print '<td align="right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="right">' . price($row[13]) . '</td>';
+		print '<td class="right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -313,13 +313,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
+	print '<tr class="liste_titre"><td width="400" class="left">' . $langs->trans("TotalVente") . '</td>';
 	for($i = 1; $i <= 12; $i ++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 		if ($j > 12) $j-=12;
-		print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+		print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
-	print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+	print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 	$sql = "SELECT '" . $langs->trans("TotalVente") . "' AS total,";
 	for($i = 1; $i <= 12; $i ++) {
@@ -348,9 +348,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		while ($row = $db->fetch_row($resql)) {
 			print '<tr><td>' . $row[0] . '</td>';
 			for($i = 1; $i <= 12; $i ++) {
-				print '<td align="right">' . price($row[$i]) . '</td>';
+				print '<td class="right">' . price($row[$i]) . '</td>';
 			}
-			print '<td align="right"><b>' . price($row[13]) . '</b></td>';
+			print '<td class="right"><b>' . price($row[13]) . '</b></td>';
 			print '</tr>';
 		}
 		$db->free($resql);
@@ -369,9 +369,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		for($i = 1; $i <= 12; $i ++) {
 			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 			if ($j > 12) $j-=12;
-			print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+			print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 		}
-		print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+		print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 		$sql = "SELECT '" . $langs->trans("Vide") . "' AS marge,";
 		for($i = 1; $i <= 12; $i ++) {
@@ -401,9 +401,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 				print '<tr><td>' . $row[0] . '</td>';
 				for($i = 1; $i <= 12; $i ++) {
-					print '<td align="right">' . price(price2num($row[$i])) . '</td>';
+					print '<td class="right">' . price(price2num($row[$i])) . '</td>';
 				}
-				print '<td align="right"><b>' . price(price2num($row[13])) . '</b></td>';
+				print '<td class="right"><b>' . price(price2num($row[13])) . '</b></td>';
 				print '</tr>';
 			}
 			$db->free($resql);
