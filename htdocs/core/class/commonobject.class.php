@@ -458,6 +458,46 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Return customer ref for screen output.
+	 *
+	 * @param  string      $objref        Customer ref
+	 * @return string                     Customer ref formated
+	 */
+	function getFormatedCustomerRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedCustomerRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
+	}
+
+	/**
+	 * Return supplier ref for screen output.
+	 *
+	 * @param  string      $objref        Supplier ref
+	 * @return string                     Supplier ref formated
+	 */
+	function getFormatedSupplierRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedSupplierRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
+	}
+
+	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
