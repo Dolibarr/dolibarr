@@ -574,7 +574,7 @@ if (! function_exists('dol_getprefix'))
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
      *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with one root dir or two instances in virtual servers.
+     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
      *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
@@ -592,16 +592,16 @@ if (! function_exists('dol_getprefix'))
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
-			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
-			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-			// Use this for a "readable" cookie name
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
+			// Use this for a "readable" key
 			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
 
@@ -1333,7 +1333,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			}
 			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			//}
 		}
 	}
@@ -1352,7 +1352,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			}
 			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 			$nophoto='/public/theme/common/nophoto.png';
-			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' style="width: '.$width.'px"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			//}
 		}
 	}
@@ -1455,7 +1455,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 					$nophoto=img_picto('', 'object_'.$picto, '', false, 1);
 				}
 				$morehtmlleft.='<!-- No photo to show -->';
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.$nophoto.'"></div></div>';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo"'.($width?' style="width: '.$width.'px"':'').' src="'.$nophoto.'"></div></div>';
 
 				$morehtmlleft.='</div>';
 			}
@@ -1553,7 +1553,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.='</div>';
 	}
 
-	print '<div class="'.($onlybanner?'arearefnobottom ':'arearef ').'heightref valignmiddle" width="100%">';
+	print '<div class="'.($onlybanner?'arearefnobottom ':'arearef ').'heightref valignmiddle centpercent">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
@@ -2950,7 +2950,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='', $morecss='')
+function img_picto($titlealt, $picto, $moreatt='', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='', $morecss='')
 {
 	global $conf, $langs;
 
@@ -3074,14 +3074,22 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
-
+			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
+            //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
             $reg=array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
-				$morecss.= ($morecss?' ':'').$reg[1];
-			}
+                $morecss .= ($morecss ? ' ' : '') . $reg[1];
+                $moreatt = str_replace('class="'.$reg[1].'"','', $moreatt);
+            }
+            if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
+                $morestyle = ' '. $reg[1];
+                $moreatt = str_replace('style="'.$reg[1].'"','', $moreatt);
+            }
+            $moreatt=trim($moreatt);
+
 			$fa='fa';
 			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
-			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:'').'>';
+            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '') . ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3130,7 +3138,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
+		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
     return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
 }
 
@@ -3285,7 +3293,7 @@ function img_edit_remove($titlealt = 'default', $other='')
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
-function img_edit($titlealt = 'default', $float = 0, $other = 'class="pictoedit"')
+function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
 	global $conf, $langs;
 
@@ -4029,18 +4037,18 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 	if ($picto == 'setup') $picto='title_generic.png';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding valignmiddle">';
 	$return.= '<div class="titre inline-block">'.$titre.'</div>';
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
 	{
-		$return.= '<td class="nobordernopadding" align="center" valign="middle">'.$morehtmlcenter.'</td>';
+		$return.= '<td class="nobordernopadding center valignmiddle>'.$morehtmlcenter.'</td>';
 	}
 	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right wordbreak" align="right" valign="middle">'.$morehtmlright.'</td>';
+		$return.= '<td class="nobordernopadding titre_right wordbreak right valignmiddle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -4091,10 +4099,10 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table border="0" class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into load_fiche_tire
+	print '<table class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px; border: 0"><tr>';	// maring bottom must be same than into load_fiche_tire
 
 	// Left
-	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone left valignmiddle" style="width: 40px">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
@@ -4108,7 +4116,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 
 	// Right
-	print '<td class="nobordernopadding valignmiddle" align="right">';
+	print '<td class="nobordernopadding valignmiddle right">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
@@ -4222,7 +4230,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 		if ($conf->use_javascript_ajax)
 		{
 			print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
-            		<script type="text/javascript">
+            		<script>
                 	jQuery(document).ready(function () {
             	  		jQuery(".selectlimit").change(function() {
                             console.log("Change limit. Send submit");
@@ -4312,7 +4320,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
- *		@see	price2num					Revert function of price
+ *		@see	price2num()					Revert function of price
  */
 function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
@@ -4375,7 +4383,11 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
 		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
-		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		$listoflanguagesbefore=array('nl_NL');
+		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
+		{
+		    $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		}
 		else
 		{
 			$tmpcur=$outlangs->getCurrencySymbol($currency_code);
@@ -5834,7 +5846,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'member')
+			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
@@ -5862,9 +5874,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (! empty($conf->expedition->enabled))
 			{
-				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+			    $substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
 			}
 		}
@@ -6435,7 +6447,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 	{
 		if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
 		{
-			$return = '<script type="text/javascript">
+			$return = '<script>
 					$(document).ready(function() {
 						var block = '.(! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI)?"true":"false").'
 						if (block) {
@@ -7150,7 +7162,7 @@ function printCommonFooter($zone='private')
 		print "\n";
 		if (! empty($conf->use_javascript_ajax))
 		{
-			print '<script type="text/javascript" language="javascript">'."\n";
+			print '<script>'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
@@ -7352,7 +7364,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 function dol_set_focus($selector)
 {
 	print "\n".'<!-- Set focus onto a specific field -->'."\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
+	print '<script>jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
 }
 
 
@@ -7637,7 +7649,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 function ajax_autoselect($htmlname, $addlink='')
 {
 	global $langs;
-	$out = '<script type="text/javascript">
+	$out = '<script>
                jQuery(document).ready(function () {
 				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
 				});

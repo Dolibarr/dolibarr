@@ -286,7 +286,7 @@ if ($mode)
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td align="center">'.$label2.'</td>';
-    print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
     print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
     print '</tr>';
 
@@ -297,7 +297,7 @@ if ($mode)
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
-        print '<td align="right">'.$val['nb'].'</td>';
+        print '<td class="right">'.$val['nb'].'</td>';
         print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
         print '</tr>';
         $oldyear=$year;

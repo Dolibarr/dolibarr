@@ -215,7 +215,7 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
@@ -223,11 +223,19 @@ class modFacture extends DolibarrModules
 			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
 			'p.accountancy_code_sell'=>'ProductAccountancySellCode'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+		    $this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+		    $this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+		    $this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'none.rest'=>"NumericCompute", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric',
+			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'none.rest'=>"NumericCompute", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'fd.rowid'=>'Numeric', 'fd.label'=>'Text', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
@@ -279,17 +287,25 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef",  'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'none.rest'=>'Rest', 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
 			'p.amount'=>'AmountPayment', 'pf.amount'=>'AmountPaymentDistributedOnInvoice', 'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber',
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+		    $this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+		    $this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+		    $this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'none.rest'=>'NumericCompute', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status',
+			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'none.rest'=>'NumericCompute', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
 			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'

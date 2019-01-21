@@ -8,7 +8,7 @@
  * Copyright (C) 2012	   Cedric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016-2018 Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +399,6 @@ if ($action == 'create') {
 				print '<td align="center">'.$langs->trans("Duration").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
 				print '<tr class="oddeven">';
@@ -543,9 +542,9 @@ if ($action == 'create') {
 
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
-			// Contrat
+			// Contract
 			if (! empty($conf->contrat->enabled)) {
-				$langs->load('contrat');
+				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
 
@@ -614,7 +613,7 @@ if ($action == 'create') {
 								($object->unit_frequency?$object->unit_frequency:'m')
 				);
 				print '</td>';
-				print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
 				if ($object->frequency > 0)

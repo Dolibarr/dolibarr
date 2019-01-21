@@ -669,7 +669,7 @@ if (! empty($id) && $action != 'edit')
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield" width="100%">';
 
 	// Date
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td colspan="2">';

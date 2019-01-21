@@ -444,7 +444,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         // Progression
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-        print $langs->trans('Progression') . '</td><td align="left">';
+        print $langs->trans('Progression') . '</td><td class="left">';
         print '</td>';
         if ($action != 'progression' && $object->fk_statut < 8 && !$user->societe_id) {
             print '<td align="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';

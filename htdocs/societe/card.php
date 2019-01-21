@@ -10,7 +10,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -2335,7 +2335,7 @@ else
 			        print '<tr><td>'.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editRE')
 			        {
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }
@@ -2352,7 +2352,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td>'.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editIRPF'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
@@ -2373,7 +2373,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td> '.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editRE'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
@@ -2395,7 +2395,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td> '.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editIRPF'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{

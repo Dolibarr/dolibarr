@@ -159,8 +159,8 @@ if($calc ==0 || $calc == 2)
 {
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print '<td align="left">'.$langs->trans("Num")."</td>";
-	print '<td align="left">'.$langs->trans("Customer")."</td>";
+	print '<td class="left">'.$langs->trans("Num")."</td>";
+	print '<td class="left">'.$langs->trans("Customer")."</td>";
 	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 	print "<td align=\"right\">".$vatcust."</td>";
@@ -240,8 +240,8 @@ if($calc ==0 || $calc == 2)
 if($calc ==0 || $calc == 1){
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print '<td align="left">'.$langs->trans("Num")."</td>";
-	print '<td align="left">'.$langs->trans("Supplier")."</td>";
+	print '<td class="left">'.$langs->trans("Num")."</td>";
+	print '<td class="left">'.$langs->trans("Supplier")."</td>";
 	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 	print "<td align=\"right\">".$vatsup."</td>";

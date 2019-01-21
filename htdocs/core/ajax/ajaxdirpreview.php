@@ -289,14 +289,14 @@ if ($type == 'directory')
 
     	if ($module == 'medias')
     	{
-    		$useinecm = 2;
+    		$useinecm = 6;
     		$modulepart='medias';
         	$perm=($user->rights->website->write || $user->rights->emailing->creer);
         	$title='none';
     	}
     	else
     	{
-    		$useinecm = 1;
+    		$useinecm = 5;
     		$modulepart='ecm';
         	$perm=$user->rights->ecm->upload;
         	$title='';	// Use default

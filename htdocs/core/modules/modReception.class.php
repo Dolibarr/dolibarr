@@ -50,10 +50,9 @@ class modReception extends DolibarrModules
 		$this->description = "Gestion des réceptions fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = "sending";
 
 		// Data directories to create when module is enabled

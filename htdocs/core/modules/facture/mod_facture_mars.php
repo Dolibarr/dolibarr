@@ -152,7 +152,6 @@ class mod_facture_mars extends ModeleNumRefFactures
 	function getNextValue($objsoc, $invoice, $mode='next')
 	{
 		global $db;
-
 		$prefix=$this->prefixinvoice;
 
 		if ($invoice->type == 1) $prefix=$this->prefixreplacement;
@@ -166,7 +165,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE ref LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-
+		
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
@@ -190,7 +189,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-
+			 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)

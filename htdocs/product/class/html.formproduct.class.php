@@ -40,8 +40,8 @@ class FormProduct
 	public $error='';
 
 	// Cache arrays
-	var $cache_warehouses=array();
-	var $cache_lot=array();
+	public $cache_warehouses=array();
+	public $cache_lot=array();
 
 
 	/**
@@ -266,7 +266,7 @@ class FormProduct
             print '<tr><td>';
             print $this->selectWarehouses($selected, $htmlname, '', $addempty);
             print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
         } else {
             if ($selected) {

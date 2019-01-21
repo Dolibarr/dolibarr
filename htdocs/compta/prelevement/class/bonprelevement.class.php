@@ -699,7 +699,7 @@ class BonPrelevement extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		//$sql.= " ,".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql.= " WHERE f.fk_statut = 1";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
@@ -740,7 +740,7 @@ class BonPrelevement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		$sql.= " WHERE f.fk_statut = 1";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
@@ -1591,6 +1591,7 @@ class BonPrelevement extends CommonObject
 	function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
 	{
         // phpcs:enable
+        global $conf;
 		$CrLf = "\n";
 		$Rowing = sprintf("%06d", $row_idfac);
 
@@ -1605,7 +1606,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
 	//	$XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
-		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->END_TO_END != "" ) ? $conf->global->END_TO_END : ('AS-'.dol_trunc($row_ref,20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "" ) ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref,20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='				</PmtId>'.$CrLf;
 		$XML_DEBITOR .='				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 		$XML_DEBITOR .='				<DrctDbtTx>'.$CrLf;
@@ -1638,7 +1639,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='				<RmtInf>'.$CrLf;
 	//	$XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
 	//	$XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
-		$XML_DEBITOR .='					<Ustrd>'.(($conf->global->USTRD != "" ) ? $conf->global->USTRD : dol_trunc($row_ref, 135) ).'</Ustrd>'.$CrLf;        // 140 max
+		$XML_DEBITOR .='					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "" ) ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135) ).'</Ustrd>'.$CrLf;        // 140 max
 		$XML_DEBITOR .='				</RmtInf>'.$CrLf;
 		$XML_DEBITOR .='			</DrctDbtTxInf>'.$CrLf;
 		return $XML_DEBITOR;

@@ -450,7 +450,7 @@ class Paiement extends CommonObject
 				}
 			}
 
-			if (! $error)
+			if (! $error)    // All payments into $this->amounts were recorded without errors
 			{
 				// Appel des triggers
 				$result=$this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
@@ -804,23 +804,55 @@ class Paiement extends CommonObject
     function update_date($date)
     {
         // phpcs:enable
-        if (!empty($date) && $this->statut!=1)
+        $error=0;
+
+        if (!empty($date) && $this->statut != 1)
         {
+            $this->db->begin();
+
+            dol_syslog(get_class($this)."::update_date with date = ".$date, LOG_DEBUG);
+
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_date", LOG_DEBUG);
             $result = $this->db->query($sql);
-            if ($result)
+            if (! $result)
             {
-            	$this->datepaye = $date;
+                $error++;
+                $this->error='Error -1 '.$this->db->error();
+            }
+
+            $type = $this->element;
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+            $sql.= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
+            $sql.= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$type."' AND url_id = ".$this->id.")";
+            $sql.= " AND rappro = 0";
+
+            $result = $this->db->query($sql);
+            if (! $result)
+            {
+                $error++;
+                $this->error='Error -1 '.$this->db->error();
+            }
+
+            if (! $error)
+            {
+
+            }
+
+            if (! $error)
+            {
+                $this->datepaye = $date;
                 $this->date = $date;
+
+                $this->db->commit();
                 return 0;
             }
             else
             {
-                $this->error='Error -1 '.$this->db->error();
+                $this->db->rollback();
                 return -2;
             }
         }
@@ -1139,7 +1171,9 @@ class Paiement extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+        $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+        $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();

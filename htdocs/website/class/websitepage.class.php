@@ -410,6 +410,8 @@ class WebsitePage extends CommonObject
 	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
 	{
 		global $hookmanager, $langs;
+
+		$now = dol_now();
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -428,6 +430,7 @@ class WebsitePage extends CommonObject
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
+		$object->date_creation = $now;
 		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
@@ -443,6 +446,8 @@ class WebsitePage extends CommonObject
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {

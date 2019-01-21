@@ -204,7 +204,7 @@ if ($type_element == 'invoice')
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
-	$where.= " AND f.entity = ".$conf->entity;
+	$where.= " AND f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='customer';
@@ -594,7 +594,7 @@ if ($sql_select)
 		*/
 		print '</td>';
 
-		//print '<td align="left">'.$prodreftxt.'</td>';
+		//print '<td class="left">'.$prodreftxt.'</td>';
 
 		print '<td align="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;

@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
+NEW: Experimental module "Vendor receptions"
 
 For Developers:
 
@@ -11,7 +12,9 @@ For Developers:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* GetUrlTrackingStatus were renamed into getUrlTrackingStatus
+* Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus.
+* API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
+
 
 
 ***** ChangeLog for 9.0.0 compared to 8.0.0 *****
@@ -92,6 +95,7 @@ NEW: The binding step in accountancy has a country filter with autocompletion
 NEW: Top menu is always on screen with MD theme.
 NEW: Withdraw request massaction can include already partially paid invoices
 NEW: Option "Simplify interface for blind persons"
+NEW: Generic cash fence feature (compatible with several POS modules)
 
 For developers:
 NEW: Add lib for multiselect with checkboxes

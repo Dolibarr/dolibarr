@@ -299,7 +299,7 @@ $listofreferent=array(
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
-	'datefieldname'=>'date',
+	'datefieldname'=>'date_valid',
 	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id,	// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
@@ -674,7 +674,7 @@ foreach ($listofreferent as $key => $value)
 
 			print '<tr class="oddeven">';
 			// Module
-			print '<td align="left">'.$name.'</td>';
+			print '<td class="left">'.$name.'</td>';
 			// Nb
 			print '<td align="right">'.$i.'</td>';
 			// Amount HT
@@ -968,7 +968,7 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
 				// Third party or user
-                print '<td align="left">';
+                print '<td class="left">';
                 if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
                 else if ($tablename == 'expensereport_det')
                 {

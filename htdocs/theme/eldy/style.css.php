@@ -48,7 +48,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
-$colorbacklinebreak='214,218,220';		// line break
+$colorbacklinebreak='239,231,224';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
@@ -456,7 +456,7 @@ select.flat, form.flat select {
 	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .opacityhigh {
 	opacity: 0.2;
@@ -510,10 +510,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-left: 5px;
 	margin-right: 5px;
     font-family: <?php print $fontlist ?>;
-	border-color: #c5c5c5;
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 3px 14px;
+	padding: 4px 14px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -524,12 +522,14 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
-	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	border: 1px solid #bbbbbb;
-	border-bottom-color: #a2a2a2;
+	border: 1px solid #aaa;
 	-webkit-border-radius: 2px;
-	border-radius: 2px;
+	border-radius: 1px;
+
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #444;
 }
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -1153,6 +1153,11 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
@@ -1391,7 +1396,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    
+
     .fichehalfright-lg .ficheaddleft{
     	padding-left:0;
     }
@@ -3104,11 +3109,12 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
-div.colorback
+div.colorback	/* for the form "assign user" on time spent view */
 {
-	background: rgb(<?php echo $colorbacktitle1; ?>);
+	background: #f8f8f8;
 	padding: 10px;
 	margin-top: 5px;
+	border: 1px solid #ddd;
 }
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
@@ -4714,7 +4720,6 @@ div.dataTables_length select {
 }
 .select2-default {
     color: #999 !important;
-    /*opacity: 0.2;*/
 }
 .select2-choice, .select2-container .select2-choice {
 	border-bottom: solid 1px rgba(0,0,0,.4);
@@ -4855,7 +4860,7 @@ a span.select2-chosen
 	cursor: default;
 }
 .select2-container-disabled .select2-choice .select2-arrow b {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 3px;
@@ -4880,11 +4885,11 @@ a span.select2-chosen
 }
 .select2-container--default .select2-selection--single .select2-selection__placeholder {
 	color: unset;
-	opacity: 0.5;
+	opacity: 0.4;
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;

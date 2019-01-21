@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2019 	   Markus Welters       <markus@welters.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_LEVEL','7','chaine','Level of debug info to show',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0,0);
 
--- Hidden but specific to one entity 
+-- Hidden but specific to one entity
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_OVERWRITE_TRANSLATION','1','chaine','Enable translation overwrite',0,1);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_DEFAULT_VALUES','1','chaine','Enable default value overwrite',0,1);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0,1);

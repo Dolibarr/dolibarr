@@ -1329,7 +1329,7 @@ if (empty($reshook))
 	    $fromElement = GETPOST('fromelement');
 	    $fromElementid = GETPOST('fromelementid');
 	    $importLines = GETPOST('line_checkbox');
-	    
+
 	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
 	    {
 	        if($fromElement == 'commande')
@@ -1381,9 +1381,9 @@ if (empty($reshook))
 	                $fk_prev_id = '';
 	                $fk_unit = $originLine->fk_unit;
 	                $pu_ht_devise = $originLine->multicurrency_subprice;
-	                
+
 	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label,$array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
-	                
+
 	                if($res > 0){
 	                    $importCount++;
 	                }else{
@@ -1394,14 +1394,14 @@ if (empty($reshook))
 	                $error++;
 	            }
 	        }
-	        
+
 	        if($error)
 	        {
 	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
 	        }
 	    }
 	}
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
@@ -2117,7 +2117,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		if ($soc->outstanding_limit)
 		{
@@ -2396,7 +2396,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
@@ -2669,7 +2669,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-			
+
 			$compatibleImportElementsList = false;
 			if($user->rights->commande->creer
 			    && $object->statut == Commande::STATUS_DRAFT)

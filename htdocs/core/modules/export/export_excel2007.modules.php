@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excel.modules.php
+ *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  *	\author	    Laurent Destailleur

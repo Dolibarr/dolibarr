@@ -359,7 +359,7 @@ print '<table class="noborder" width="100%">';
 
 // Activate public interface
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsActivatePublicInterface") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_ENABLE_PUBLIC_INTERFACE');
 } else {
@@ -367,14 +367,14 @@ if ($conf->use_javascript_ajax) {
     print $form->selectarray("TICKET_ENABLE_PUBLIC_INTERFACE", $arrval, $conf->global->TICKET_ENABLE_PUBLIC_INTERFACE);
 }
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketsActivatePublicInterfaceHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Check if email exists
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailMustExist") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_EMAIL_MUST_EXISTS');
 } else {
@@ -391,7 +391,7 @@ print '</tr>';
 {
 	// Show logo for module
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
-	print '<td align="left">';
+	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
 	    print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
 	} else {
@@ -407,7 +407,7 @@ print '</tr>';
 
 // Show logo for company
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_SHOW_COMPANY_LOGO');
 } else {
@@ -427,7 +427,7 @@ print '<table class="noborder" width="100%">';
 
 // Activate email notifications
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsDisableEmail") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_DISABLE_ALL_MAILS');
 } else {
@@ -442,7 +442,7 @@ print '</tr>';
 
 // Activate log by email
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLogEnableEmail") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
 } else {
@@ -459,7 +459,7 @@ print '</tr>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
-	print '<td align="left">';
+	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
 	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 	} else {
@@ -475,7 +475,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 
 // Limiter la vue des tickets à ceux assignés à l'utilisateur
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_LIMIT_VIEW_ASSIGNED_ONLY');
 } else {
@@ -495,7 +495,7 @@ if (!$conf->use_javascript_ajax) {
 
 // Auto assign ticket at user who created it
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
 } else {
@@ -535,7 +535,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 
 // Email d'envoi des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
@@ -544,7 +544,7 @@ print '</tr>';
 
 // Email de réception des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationTo") . '</td>';
-print '<td align="left">';
+print '<td class="left">';
 print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="' . (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM) . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');

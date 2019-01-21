@@ -902,11 +902,6 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
-        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_logs";
-        	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
-        	$resql = $this->db->query($sql);
-        }
-        if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_msg";
         	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
         	$resql = $this->db->query($sql);
@@ -971,6 +966,7 @@ class Ticket extends CommonObject
         // Clear fields
         // ...
         // Create clone
+        $object->context['createfromclone'] = 'createfromclone';
         $result = $object->create($user);
 
         // Other options
@@ -981,6 +977,8 @@ class Ticket extends CommonObject
 
         if (!$error) {
         }
+
+        unset($object->context['createfromclone']);
 
         // End
         if (!$error) {
@@ -1668,7 +1666,7 @@ class Ticket extends CommonObject
             dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
             return -1;
         }*/
-        
+
         return 0;
     }
 

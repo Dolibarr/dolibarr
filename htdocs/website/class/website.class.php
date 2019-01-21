@@ -79,16 +79,13 @@ class Website extends CommonObject
 	 * @var mixed
 	 */
 	public $date_creation;
-
-	/**
-	 * @var mixed
-	 */
-	public $tms = '';
+	public $date_modification;
 
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
+	public $fk_user_creat;
 
 	/**
 	 * @var string
@@ -169,7 +166,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
-		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
+		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
 		$this->db->begin();
@@ -525,6 +522,7 @@ class Website extends CommonObject
         global $hookmanager, $langs;
 		global $dolibarr_main_data_root;
 
+		$now = dol_now();
 		$error=0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -560,6 +558,8 @@ class Website extends CommonObject
 		$object->ref=$newref;
 		$object->fk_default_home=0;
 		$object->virtualhost='';
+		$object->date_creation = $now;
+		$object->fk_user_creat = $user->id;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -593,11 +593,11 @@ class Website extends CommonObject
 			{
 				// Delete old file
 				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
-				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 				dol_delete_file($filetplold);
 
 				// Create new file
 				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl)
 				{
@@ -632,7 +632,7 @@ class Website extends CommonObject
 		    if (! $res > 0)
 		    {
 		        $error++;
-		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 
 		    if (! $error)
@@ -645,6 +645,8 @@ class Website extends CommonObject
 		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
@@ -1193,16 +1195,19 @@ class Website extends CommonObject
 			$out.= '</li></a>';
 		}
 		$i=0;
-		foreach($languagecodes as $languagecode)
+		if (is_array($languagecodes))
 		{
-			if ($languagecode == $languagecodeselected) continue;	// Already output
-			$shortcode = strtolower(substr($languagecode, -2));
-			$label = $weblangs->trans("Language_".$languagecode);
-			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
-			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out.= '</li></a>';
-			$i++;
+    		foreach($languagecodes as $languagecode)
+    		{
+    			if ($languagecode == $languagecodeselected) continue;	// Already output
+    			$shortcode = strtolower(substr($languagecode, -2));
+    			$label = $weblangs->trans("Language_".$languagecode);
+    			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+    			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+    			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+    			$out.= '</li></a>';
+    			$i++;
+    		}
 		}
 		$out.= '</ul>';
 

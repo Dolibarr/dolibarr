@@ -319,13 +319,13 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
-		print '<td align="right">' . price($objp->total_ht) . '</td>';
+		print '<td class="right">' . price($objp->total_ht) . '</td>';
 
 		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
 		print '<td>' . $codeCompta . '</td>';
 
-		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
+		print '<td class="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
 		print img_edit();
 		print '</a></td>';
 

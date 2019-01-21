@@ -122,6 +122,12 @@ if ($id > 0 || ! empty($ref))
     $search_account = $object->id;     // Force the search field on id of account
 }
 
+if (! ($object->id > 0) )
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -1514,8 +1520,8 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
