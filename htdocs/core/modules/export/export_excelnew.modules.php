@@ -83,6 +83,7 @@ class ExportExcelnew extends ModeleExports
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
 		$this->version='1.30';             // Driver version
+		$this->phpmin = array(5,6);		   // Minimum version of PHP required by module
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 
