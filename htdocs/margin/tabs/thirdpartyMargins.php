@@ -199,7 +199,6 @@ if ($socid > 0)
 
     	if ($num > 0)
     	{
-    		$var=True;
     		while ($i < $num /*&& $i < $conf->liste_limit*/)
     		{
     			$objp = $db->fetch_object($result);
@@ -207,7 +206,10 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-
+    			$sign = '';
+    			if ($objp->type == Facture::TYPE_CREDIT_NOTE){
+    			    $sign = '-';
+    			}
 
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -219,11 +221,11 @@ if ($socid > 0)
     			print dol_print_date($db->jdate($objp->datef),'day')."</td>";
     			print "<td align=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
     			print "<td align=\"right\">".price(($objp->type == 2 ? -1 : 1) * $objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-    			print "<td align=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+    			print "<td align=\"right\">".$sign.price($objp->marge, null, null, null, null, $rounding)."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($marginRate === '')?'n/a':$sign.price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
     			if (! empty($conf->global->DISPLAY_MARK_RATES))
-    				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+    			    print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;

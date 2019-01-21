@@ -36,13 +36,8 @@ if (! empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/c
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("trips");
-$langs->load("holiday");
-$langs->load("salaries");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id','int');
 $bankid = GETPOST('bankid','int');
@@ -53,13 +48,12 @@ $cancel = GETPOST('cancel','alpha');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-// Ok if user->rights->salaries->read or user->rights->salaries->payment->write or user->rights->hrm->read
+// Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 $ok=false;
 if ($user->id == $id) $ok=true; // A user can always read its own card
-if ($user->rights->salaries->read) $ok=true;
-if ($user->rights->salaries->payment->write) $ok=true;
-if ($user->rights->hrm->read) $ok=true;
+if (! empty($user->rights->salaries->read)) $ok=true;
+if (! empty($user->rights->hrm->read)) $ok=true;
 if (! $ok)
 {
 	accessforbidden();
@@ -200,7 +194,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -298,7 +292,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 * Last salaries
 	 */
 	if (! empty($conf->salaries->enabled) &&
-		($user->rights->salaries->read || ($user->rights->salaries->read && $object->id == $user->id))
+		($user->rights->salaries->read && $object->id == $user->id)
 		)
 	{
 		$salary = new PaymentSalary($db);
@@ -486,7 +480,7 @@ if ($id && ($action == 'edit' || $action == 'create' ) && $user->rights->user->u
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 

@@ -267,7 +267,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            if (! in_array($code,array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
 
            			if ($type=='boolean') {
         				$typedb='int';
@@ -811,7 +811,7 @@ if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 }
 
 
-// clean_linked_elements: Check and clean linked elements
+// clean_product_stock_negative_if_batch
 if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
@@ -835,12 +835,13 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
                 $obj=$db->fetch_object($resql);
                 print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
 
+                // TODO
             }
         }
     }
 }
 
-// clean_linked_elements: Check and clean linked elements
+// set_empty_time_spent_amount
 if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
@@ -901,7 +902,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 }
 
 
-// clean_old_module_entries: Clean data into const when files of module were removed without being
+// force_disable_of_modules_not_found
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
@@ -1072,28 +1073,49 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 
 
 
-// clean_linked_elements: Check and clean linked elements
+// force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
 
     if ($db->type == "mysql" || $db->type == "mysqli")
     {
-        $listoftables = $db->DDLListTables($db->database_name);
+    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables','alpha');
+
+    	$listoftables = $db->DDLListTables($db->database_name);
+
+        // Disable foreign key checking for avoid errors
+    	if ($force_utf8_on_tables == 'confirmed')
+    	{
+    		$sql='SET FOREIGN_KEY_CHECKS=0';
+    		print '<!-- '.$sql.' -->';
+    		$resql = $db->query($sql);
+    	}
 
         foreach($listoftables as $table)
         {
+        	// do not convert llx_const if mysql encrypt/decrypt is used
+        	if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) continue;
+
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
             print '<!-- '.$sql.' -->';
-            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+            if ($force_utf8_on_tables == 'confirmed')
             {
             	$resql = $db->query($sql);
             	print ' - Done ('.($resql?'OK':'KO').')';
             }
             else print ' - Disabled';
             print '</td></tr>';
+        }
+
+        // Enable foreign key checking
+        if ($force_utf8_on_tables == 'confirmed')
+        {
+        	$sql='SET FOREIGN_KEY_CHECKS=1';
+        	print '<!-- '.$sql.' -->';
+        	$resql = $db->query($sql);
         }
     }
     else

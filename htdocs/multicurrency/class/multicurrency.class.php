@@ -626,24 +626,38 @@ class MultiCurrency extends CommonObject
 	{
 		global $db,$conf;
 		
-		$TRate = $response->quotes;
-		$timestamp = $response->timestamp;
+		$ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+                $response = json_decode($response);
+
+                if ($response->success)
+                {
 		
-		if (self::recalculRates($TRate) >= 0) 
-		{
-			foreach ($TRate as $currency_code => $rate)
+			$TRate = $response->quotes;
+			$timestamp = $response->timestamp;
+
+			if (self::recalculRates($TRate) >= 0) 
 			{
-				$code = substr($currency_code, 3, 3);
-				$obj = new MultiCurrency($db);
-				if ($obj->fetch(null, $code) > 0)
+				foreach ($TRate as $currency_code => $rate)
 				{
-					$obj->updateRate($rate);
-				}
-				else 
-				{
-					self::addRateFromDolibarr($code, $rate);
-				}
-			}	
+					$code = substr($currency_code, 3, 3);
+					$obj = new MultiCurrency($db);
+					if ($obj->fetch(null, $code) > 0)
+					{
+						$obj->updateRate($rate);
+					}
+					else 
+					{
+						self::addRateFromDolibarr($code, $rate);
+					}
+				}	
+			}
+		}
+		else
+		{
+			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 		}
 	}
 	

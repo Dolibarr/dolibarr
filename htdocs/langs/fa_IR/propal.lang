@@ -33,6 +33,7 @@ PropalStatusSigned=امضا (نیازهای حسابداری و مدیریت)
 PropalStatusNotSigned=امضا نشده (بسته شده)
 PropalStatusBilled=ثبت شده در صورتحساب یا لیست
 PropalStatusDraftShort=پیش نویس
+PropalStatusValidatedShort=اعتبار
 PropalStatusClosedShort=بسته
 PropalStatusSignedShort=امضاء شده
 PropalStatusNotSignedShort=امضا نشده
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 ماه
 TypeContact_propal_internal_SALESREPFOLL=نماینده زیر تا پیشنهاد
 TypeContact_propal_external_BILLING=تماس با فاکتور به مشتری
 TypeContact_propal_external_CUSTOMER=تماس با مشتری را در پی بالا پیشنهاد
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=یک مدل پیشنهاد کامل (logo. ..)
 DefaultModelPropalCreate=ایجاد مدل پیش فرض

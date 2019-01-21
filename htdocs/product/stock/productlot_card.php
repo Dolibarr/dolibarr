@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,24 +24,16 @@
  *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res) die("Include of main fails");
-// Change this following line to use the correct relative path from htdocs
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php');
-include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-dol_include_once('/product/stock/class/productlot.class.php');
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("stock");
-$langs->load("other");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('stock', 'other', 'productbatch'));
 
 // Get parameters
 $id			= GETPOST('id','int');
@@ -70,6 +63,7 @@ if ($user->societe_id > 0)
 
 $object = new ProductLot($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -84,7 +78,8 @@ if ($id || $ref)
         $productid=$tmp[0];
         $batch=$tmp[1];
     }
-    $object->fetch($id, $productid, $batch);
+	$object->fetch($id, $productid, $batch);
+	$object->ref = $object->batch; // For document management ( it use $object->ref)
 }
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
@@ -95,6 +90,9 @@ $permissionnote = $user->rights->stock->creer; 		// Used by the include of actio
 $permissiondellink = $user->rights->stock->creer; 	// Used by the include of actions_dellink.inc.php
 $permissionedit = $user->rights->stock->creer; 		// Used by the include of actions_lineupdown.inc.php
 
+$usercanread = $user->rights->produit->lire;
+$usercancreate = $user->rights->produit->creer;
+$usercandelete = $user->rights->produit->supprimer;
 
 /*
  * Actions
@@ -122,27 +120,22 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
 
         if (! $error)
         {
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('productlotdao'));
-            $parameters = array('id' => $object->id);
-            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-            // some hooks
-            if (empty($reshook)) {
-                $result = $object->insertExtraFields();
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-            } else if ($reshook < 0)
-                $error++;
+            // Actions on extra fields
+            $result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
 
         if ($error)
@@ -258,6 +251,12 @@ if (empty($reshook))
 			else setEventMessages($object->error, null, 'errors');
 		}
 	}
+
+	// Actions to build doc
+    $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+    $permissioncreate = $usercancreate;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 }
 
 
@@ -305,7 +304,7 @@ if ($action == 'create')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals();
 
     //print load_fiche_titre($langs->trans("Batch"));
 
@@ -390,6 +389,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
 	print '<br>';
 	print '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
+
+	print '<br>';
+}
+
+
+
+/*
+ * Documents generes
+ */
+
+if (empty($action))
+{
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
+
+    // Documents
+	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
+    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed=$usercanread;
+    $delallowed=$usercancreate;
+
+    print $formfile->showdocuments('product_batch',dol_sanitizeFileName($object->ref),$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+    $somethingshown=$formfile->numoffiles;
+
+    print '</div>';
 
 }
 

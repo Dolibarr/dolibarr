@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename='PayBox';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paybox");
-$langs->load("paypal");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 
 if (!$user->admin)
   accessforbidden();
@@ -55,6 +53,8 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
@@ -98,7 +98,7 @@ if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE=$I
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'title_setup');
 
 $h = 0;
@@ -183,6 +183,15 @@ print '<br>'.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
+
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
@@ -212,8 +221,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 // Payment token for URL

@@ -25,17 +25,14 @@
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php");
-require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT . "/core/class/html.formfile.class.php");
+require_once DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/core/class/html.formfile.class.php";
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-
-
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'companies', 'other'));
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
@@ -127,7 +124,7 @@ if ($id > 0 || !empty($ref)) {
 
         print '<table class="border" width="100%">';
         print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
-        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' . $totalsize . ' ' . $langs->trans("bytes") . '</td></tr>';
+        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize,1,1).'</td></tr>';
         print "</table>\n";
 
         print '</div>';

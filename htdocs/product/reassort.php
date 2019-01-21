@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -54,9 +54,11 @@ $fourn_id = GETPOST("fourn_id",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+if (empty($page) || $page < 0) $page = 0;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 
 // Load sale and categ filters
@@ -91,11 +93,15 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $sref="";
     $snom="";
     $sall="";
+	$tosell="";
+	$tobuy="";
     $search_sale="";
     $search_categ="";
     $type="";
     $catid='';
     $toolowstock='';
+	$fourn_id='';
+	$sbarcode='';
 }
 
 
@@ -121,7 +127,7 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_produc
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
 if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $all);
+if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
 {
@@ -134,7 +140,7 @@ if (dol_strlen($type))
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }
-if ($sref)     $sql.= natural_search('p.ref', $ref);
+if ($sref)     $sql.= natural_search('p.ref', $sref);
 if ($search_barcode) $sql.= natural_search('p.barcode', $search_barcode);
 if ($snom)     $sql.= natural_search('p.label', $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
@@ -155,6 +161,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -182,6 +193,20 @@ if ($resql)
 	}
 	$texte.=' ('.$langs->trans("Stocks").')';
 
+	$param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)	$param.="&sall=".$sall;
+	if ($tosell)	$param.="&tosell=".$tosell;
+	if ($tobuy)		$param.="&tobuy=".$tobuy;
+	if ($type)		$param.="&type=".$type;
+	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
+	if ($snom)		$param.="&snom=".$snom;
+	if ($sref)		$param.="&sref=".$sref;
+	if ($search_sale) $param.="&search_sale=".$search_sale;
+	if ($search_categ) $param.="&search_categ=".$search_categ;
+	if ($toolowstock) $param.="&toolowstock=".$toolowstock;
+	if ($sbarcode) $param.="&sbarcode=".$sbarcode;
+	if ($catid) $param.="&catid=".$catid;
 
 	llxHeader("", $texte, $helpurl);
 
@@ -192,14 +217,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	if ($sref || $snom || $sall || GETPOST('search'))
-	{
-	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy.(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
-	else
-	{
-	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"").(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
 
 	if (! empty($catid))
 	{
@@ -242,6 +260,8 @@ if ($resql)
 	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
 	if ($snom)		$param.="&snom=".$snom;
 	if ($sref)		$param.="&sref=".$sref;
+	if ($toolowstock)		$param.="&toolowstock=".$toolowstock;
+	if ($search_categ)		$param.="&search_categ=".$search_categ;
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -311,11 +331,12 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr>';
-		print '<td class="nowrap">';
 		$product=new Product($db);
 		$product->fetch($objp->rowid);
 		$product->load_stock();
+
+		print '<tr>';
+		print '<td class="nowrap">';
 		print $product->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
@@ -336,7 +357,7 @@ if ($resql)
 		// Real stock
 		print '<td align="right">';
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-		print $objp->stock_physique;
+		print $objp->stock_physique|0;
 		print '</td>';
 
 		// Details per warehouse
@@ -352,15 +373,13 @@ if ($resql)
 			}
 		}
 
-
-
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-	    		print '<td align="right">';
+			print '<td align="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	    		print $product->stock_theorique;
-	    		print '</td>';
+			print $product->stock_theorique;
+			print '</td>';
 		}
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur <eldy@uers.sourceforge.net>
+ * Copyright (C) 2018		Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +151,8 @@ switch($action)
 					$obj_facturation->id($ret['rowid']);
 					$obj_facturation->ref($ret['ref']);
 					$obj_facturation->stock($ret['reel']);
-					$obj_facturation->prix($ret['price']);
+					//$obj_facturation->prix($ret['price']);
+					$obj_facturation->prix($pu_ht);
 
 
 					$vatrate = $tva_tx;

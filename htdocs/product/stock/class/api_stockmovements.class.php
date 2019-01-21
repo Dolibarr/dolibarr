@@ -173,7 +173,7 @@ class StockMovements extends DolibarrApi
      * @return  int                         ID of stock movement
      */
     //function post($product_id, $warehouse_id, $qty, $lot='', $movementcode='', $movementlabel='', $price=0)
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -212,7 +212,7 @@ class StockMovements extends DolibarrApi
      * @return int
      */
     /*
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);

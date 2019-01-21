@@ -61,7 +61,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -316,6 +318,8 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
+
+        $conf->global->MAIN_FIRSTNAME_NAME_POSITION = 0;	// Force setup for firstname+lastname
 
         $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,'.
                     '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';

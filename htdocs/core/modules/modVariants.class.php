@@ -62,8 +62,6 @@ class modVariants extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -77,9 +75,7 @@ class modVariants extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array(
-			'admin.php@variants'
-		);
+		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
@@ -114,24 +110,6 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-
-		// Main menu entries
-		$this->menu = array(
-			array(
-				'fk_menu' => 'fk_mainmenu=products,fk_leftmenu=product',
-				'type' => 'left',
-				'titre' => 'VariantAttributes',
-				'mainmenu' => 'products',
-				'leftmenu' => 'product',
-				'url' => '/variants/list.php',
-				'langs' => 'products',
-				'position' => 100,
-				'enabled' => '$conf->product->enabled',
-				'perms' => 1,
-				'target' => '',
-				'user' => 0
-			)
-		);			// List of menus to add
 	}
 }
 

@@ -10,6 +10,7 @@ LoanCapital=Kapital
 Insurance=Versicherung
 Interest=Zins
 Nbterms=Anzahl der Bedingungen
+Term=Term
 LoanAccountancyCapitalCode=Buchhaltungskonto Kapital
 LoanAccountancyInsuranceCode=Buchhaltungskonto Versicherung
 LoanAccountancyInterestCode=Buchhaltungskonto Zinsen
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Bestätigen Sie das Löschen dieses Kredites
 LoanDeleted=Kredit erfolgreich gelöscht
 ConfirmPayLoan=Bestätigen Sie das Löschen dieses Kredites
 LoanPaid=Kredit bezahlt
-# Calc
-LoanCalc=Bankkreditrechner
-PurchaseFinanceInfo=Einkauf- und Finanzierungsinformationen
-SalePriceOfAsset=Verkaufspreis
-PercentageDown=Prozentsatz
-LengthOfMortgage=Kreditlaufzeit
-AnnualInterestRate=Jahreszinssatz
-ExplainCalculations=Berechnungs-Erläuterung
-ShowMeCalculationsAndAmortization=Zeigen Sie mir die Berechnungen und Amortisation
-MortgagePaymentInformation=Kredit Zahlung Informationen
-DownPayment=Anzahlung
-DownPaymentDesc=Die <b>Anzahlung</b> = Der Preis des Kredits multipliziert mit dem Prozentsatz geteilt durch 100  (5% wird 5/100 oder 0,05)
-InterestRateDesc=Der <b>Zinssatz</b> = Die jährlichen Zins Prozentsatz dividiert durch 100
-MonthlyFactorDesc=Der <b>monatliche Faktor</b> = Das Ergebnis der folgenden Formel
-MonthlyInterestRateDesc=Der <b>monatliche Zinssatz</b> = Der effektive Jahreszins geteilt durch 12 (für die 12 Monate in einem Jahr)
-MonthTermDesc=Die <b>Monatliche Laufzeit</b> des Darlehens in Monaten = Anzahl der Jahre, die Sie das Darlehen für 12-mal getroffen habe heraus
-MonthlyPaymentDesc=Die monatlichen Zahlung erfolgt anhand der folgenden Formel gefunden
-AmortizationPaymentDesc=Die <a href="#amortization">Amortisation</a> reißt ab wie viel von Ihrer monatlichen Zahlung geht für die Bankzinsen, und wie viel für die Tilgung des Haupt-Darlehen geht.
-AmountFinanced=Höhe Kredit
-AmortizationMonthlyPaymentOverYears=Die Dauer der Amortisation bei einer monatliche Zahlung von: <b> %s</b> wird %s Jahre betragen
-Totalsforyear=Gesamtbetrag für Jahr
-MonthlyPayment=Monatliche Zahlung
-LoanCalcDesc=Mit diesem <b>Hypothek Rechner</b> kann die monatliche Belastung, basierend auf dem Hypothekarbetrag, der Laufzeit und dem Zissatz ermittelt werden.<br> Dieser Rechner beinhaltet auch Regeln für die Berechnung der PMI (Private Mortgage Insurance) wenn weniger als 20%% als Anzahlung geleistet werden. Stadt- und Grundstücksteuern, sowie deren Auswirkung auf die monatliche Belastung werden ebenfalls Berücksichtigt.<br>
-GoToInterest=%s wird in Richtung ZINSEN gehen
-GoToPrincipal=%s wird in Richtung HAUPT gehen
-YouWillSpend=Sie werden %s im Jahr %s bezahlen
 ListLoanAssociatedProject=Liste der Darlehen in dem Projekt
 AddLoan=Darlehen erstellen
+FinancialCommitment=Financial commitment
+InterestAmount=Zins
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Konfiguration des Modul Kredite
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchhaltungskonto Kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard-Buchhaltungskonto Zinsen
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard-Buchhaltungskonto Versicherung
-CreateCalcSchedule=Fälligkeit des Darlehens erstellen/bearbeiten
+CreateCalcSchedule=Edit financial commitment

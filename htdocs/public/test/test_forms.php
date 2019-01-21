@@ -28,11 +28,16 @@ This page is a sample of page using Dolibarr HTML widget methods. It is designed
 $form=new Form($db);
 
 // Test1: form->select_date using tzuser date
-print "Test 1: We must have here current hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
+print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
 $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 print " (dol_tz=".$offsettz." dol_dst=".$dol_dst.")<br>\n";
-$form->select_date('', 'test1', 1, 1, 0);
+$form->select_date(dol_now(), 'test1a', 1, 1, 0);
+
+print '<br><br>'."\n";
+
+print "Test 1b: We must have here current date with hours to 00:00.<br>";
+$form->select_date('', 'test1b', 1, 1, 0);
 
 print '<br><br>'."\n";
 

@@ -288,8 +288,6 @@ if ($result > 0)
 
 		if ($num > 0)
 		{
-			$var=True;
-
 			$facturestatic=new FactureFournisseur($db);
 
 			while ($i < $num)

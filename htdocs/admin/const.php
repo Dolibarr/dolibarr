@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin)
@@ -36,11 +37,11 @@ $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
 $action=GETPOST('action','alpha');
 $update=GETPOST('update','alpha');
-$delete=GETPOST('delete');	// Do not use alpha here
+$delete=GETPOST('delete','none');	// Do not use alpha here
 $debug=GETPOST('debug','int');
 $consts=GETPOST('const','array');
 $constname=GETPOST('constname','alpha');
-$constvalue=GETPOST('constvalue');
+$constvalue=GETPOST('constvalue','none');	// We shoul dbe able to send everything here
 $constnote=GETPOST('constnote','alpha');
 
 
@@ -247,7 +248,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		
+
 
 		print "\n";
 

@@ -148,10 +148,12 @@ if ($object->id > 0)
     //print '</div>';
 
 
-	$createbutton = '';
+	$newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
-    	$createbutton.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'">'.$langs->trans("AddAction").'</a>';
+    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    	$newcardbutton.= '</a>';
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
@@ -162,7 +164,7 @@ if ($object->id > 0)
     	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $createbutton, '', 0, 1, 1);
+    	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
 
     	// List of all actions
     	$filters=array();

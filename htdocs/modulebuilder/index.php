@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
@@ -119,13 +121,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
-		// Delete some files
+		// Delete some files related to object (because to previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
 		dol_delete_file($destdir.'/myobject_note.php');
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
-		dol_delete_file($destdir.'/lib/myobject.lib.php');
+		dol_delete_file($destdir.'/lib/mymodule_myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
@@ -181,6 +183,62 @@ if ($dirins && $action == 'addlanguage' && !empty($module))
 	$result = dolCopyDir($srcfile, $destfile, 0, 0);
 }
 
+if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray','alpha'))
+{
+	$tablename = GETPOST('initfromtablename','alpha');
+	$_results = $db->DDLDescTable($tablename);
+	if (empty($_results))
+	{
+		setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
+	}
+	else
+	{
+		/*public $fields=array(
+		 'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		 'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		 'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		 'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+		 'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
+		 'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
+		 'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		 'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		 'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
+		 'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		 'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		 //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		 'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		 'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		 //'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		 'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+		 'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		 );*/
+
+		$string = 'public $fields=array('."\n";
+		$string.="<br>";
+		$i=10;
+		while ($obj = $db->fetch_object($_results))
+		{
+			$fieldname = $obj->Field;
+			$type = $obj->Type;
+			if ($type == 'int(11)') $type='integer';
+			$notnull = ($obj->Null == 'YES'?0:1);
+			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
+			if ($fieldname == 'rowid') $label='ID';
+
+			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."', 'enabled'=>1, 'visible'=>-2";
+			if ($notnull) $string.= ", 'notnull'=>".$notnull;
+			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
+			$string.= ", 'position'=>".$i."),\n";
+			$string.="<br>";
+			$i+=5;
+		}
+		$string.= ');'."\n";
+		$string.="<br>";
+		print $string;
+		exit;
+	}
+}
+
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
 	if (preg_match('/[^a-z0-9_]/i', $objectname))
@@ -221,14 +279,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 	if (! $error)
 	{
-		// Delete some files
+		// Copy some files
 		$filetogenerate = array(
 		'myobject_card.php'=>strtolower($objectname).'_card.php',
 		'myobject_note.php'=>strtolower($objectname).'_note.php',
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
@@ -341,7 +399,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'Mon module'=>$module,
 			'htdocs/modulebuilder/template/'=>strtolower($modulename),
 			'myobject'=>strtolower($objectname),
-			'MyObject'=>$objectname
+			'MyObject'=>$objectname,
+                        'MYOBJECT'=>strtoupper($objectname)
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -490,7 +549,6 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
@@ -526,7 +584,6 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
@@ -591,7 +648,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule.lib.php'=>'lib/'.strtolower($module).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
@@ -1415,7 +1473,20 @@ elseif (! empty($module))
 				print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
 
 				print '<input type="text" name="objectname" value="'.dol_escape_htmltag(GETPOST('objectname','alpha')?GETPOST('objectname','alpha'):$modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
-				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<br>';
+				print '<br>';
+				print '<br>';
+				print $langs->trans("Or");
+				print '<br>';
+				print '<br>';
+				print '<br>';
+				//print '<input type="checkbox" name="initfromtablecheck"> ';
+				print $langs->trans("InitStructureFromExistingTable");
+				print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
+				print '<input type="submit" class="button" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<br>';
+
 				print '</form>';
 			}
 			elseif ($tabobj == 'deleteobject')
@@ -1493,7 +1564,7 @@ elseif (! empty($module))
 
 						print '<br>';
 
-						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtodocument?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtolib?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
@@ -1549,6 +1620,8 @@ elseif (! empty($module))
 						print '</div>';
 
 						print '<br><br><br>';
+
+						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
 
 						if (empty($forceddirread))
 						{

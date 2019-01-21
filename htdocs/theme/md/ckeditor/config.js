@@ -39,7 +39,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	    ['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
-	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+	    ['Bold','Italic','Underline','Strike','Superscript'],				// 'Subscript'
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
@@ -58,7 +58,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Undo','Redo','-','Find','Replace'],
 	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
@@ -72,7 +72,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
-	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
+	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],

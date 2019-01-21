@@ -157,14 +157,22 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+
+$sql .= $db->order($sortfield,$sortorder);
+
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
-$sql .= $db->order($sortfield,$sortorder);
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
@@ -253,7 +261,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$oldid = '';
-	$var=True;
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);

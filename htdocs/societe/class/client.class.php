@@ -29,9 +29,9 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 class Client extends Societe
 {
-    var $next_prev_filter="te.client in (1,2,3)";	// Used to add a filter in Form::showrefnav method
+    public $next_prev_filter="te.client in (1,2,3)";	// Used to add a filter in Form::showrefnav method
 
-    var $cacheprospectstatus=array();
+    public $cacheprospectstatus=array();
 
 
 	/**
@@ -42,6 +42,9 @@ class Client extends Societe
     function __construct($db)
     {
         $this->db = $db;
+
+        $this->client = 3;
+        $this->fournisseur = 0;
     }
 
     /**

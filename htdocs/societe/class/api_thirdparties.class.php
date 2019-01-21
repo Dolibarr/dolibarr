@@ -83,8 +83,14 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
-		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		} else {
+			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+		}
+
 		$absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
 		$absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
 		$this->company->absolute_discount = price2num($absolute_discount, 'MT');
@@ -123,6 +129,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "societe_extrafields as te ON te.fk_object = t.rowid";
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -193,7 +200,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Request datas
 	 * @return int  ID of thirdparty
 	 */
-	function post($request_data = NULL)
+	function post($request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -217,7 +224,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL)
+	function put($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -308,7 +315,7 @@ class Thirdparties extends DolibarrApi
 		$listofproperties=array(
 		'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
 		'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-		'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+		'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 		'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 		'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 		'model_pdf', 'fk_projet'

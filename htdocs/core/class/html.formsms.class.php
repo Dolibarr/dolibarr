@@ -205,8 +205,16 @@ function limitChars(textarea, limit, infodiv)
                     try
                     {
                         $classname=ucfirst($classfile);
-                        $sms = new $classname($this->db);
-                        $resultsender = $sms->SmsSenderList();
+                        if (class_exists($classname))
+                        {
+                        	$sms = new $classname($this->db);
+                        	$resultsender = $sms->SmsSenderList();
+                        }
+                        else
+                        {
+                        	$sms = new stdClass();
+                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        }
                     }
                     catch(Exception $e)
                     {

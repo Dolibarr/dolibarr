@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/lib/replenishment.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -52,7 +51,7 @@ $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';

@@ -26,4 +26,5 @@ Module20Name=Propales
 Module30Name=Factures
 DictionaryPaymentConditions=Conditions de paiement
 SuppliersPayment=Paiements fournisseurs
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 Target=Objectif

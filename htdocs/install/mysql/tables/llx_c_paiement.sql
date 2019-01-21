@@ -21,7 +21,7 @@
 
 create table llx_c_paiement
 (
-  id					integer,
+  id					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 1 NOT NULL,	-- multi company id
   code       		varchar(6)  NOT NULL,
   libelle    		varchar(62),

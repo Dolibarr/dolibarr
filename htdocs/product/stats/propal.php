@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -114,7 +114,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-		show_stats_for_company($product, $socid);
+        $nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
@@ -148,24 +148,21 @@ if ($id > 0 || ! empty($ref))
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . $user->id;
 			if ($socid)
 				$sql .= " AND p.fk_soc = " . $socid;
-			$sql .= " ORDER BY $sortfield $sortorder ";
+			$sql.= $db->order($sortfield, $sortorder);
 
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
 			$total_qty = 0;
-			$totalrecords = 0;
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+
+			// Count total nb of records
+			$totalofrecords = '';
+			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+			{
 				$result = $db->query($sql);
-				if ($result) {
-					$totalrecords = $db->num_rows($result);
-					while ( $objp = $db->fetch_object($result) ) {
-						$total_ht += $objp->amount;
-						$total_qty += $objp->qty;
-					}
-				}
+				$totalofrecords = $db->num_rows($result);
 			}
 
-			$sql .= $db->plimit($conf->liste_limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
 			if ($result)
@@ -178,6 +175,7 @@ if ($id > 0 || ! empty($ref))
 					$option .= '&amp;search_month=' . $search_month;
 				if (! empty($search_year))
 					$option .= '&amp;search_year=' . $search_year;
+				if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
 
 				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
 				if (! empty($sortfield))
@@ -189,7 +187,7 @@ if ($id > 0 || ! empty($ref))
 					$option .= '&amp;page=' . $page;
 				}
 
-				print_barre_liste($langs->trans("Proposals"), $page, $_SERVER["PHP_SELF"], "&amp;id=$product->id", $sortfield, $sortorder, '', $num, $totalrecords, '');
+				print_barre_liste($langs->trans("Proposals"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
                 print '<div class="liste_titre liste_titre_bydiv centpercent">';
                 print '<div class="divsearchfield">';
 				print $langs->trans('Period') . ' (' . $langs->trans("DatePropal") . ') - ';
@@ -216,20 +214,22 @@ if ($id > 0 || ! empty($ref))
 
 				if ($num > 0)
 				{
-					$var = True;
-					while ($i < $num && $i < $conf->liste_limit)
+					while ($i < min($num, $limit))
 					{
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
-						print '<td>';
+						$total_ht+=$objp->amount;
+						$total_qty+=$objp->qty;
+
 						$propalstatic->id=$objp->propalid;
 						$propalstatic->ref=$objp->ref;
 						$propalstatic->ref_client=$objp->ref_client;
-						print $propalstatic->getNomUrl(1);
-						 print "</td>\n";
 						$societestatic->fetch($objp->socid);
+
+						print '<tr class="oddeven">';
+						print '<td>';
+						print $propalstatic->getNomUrl(1);
+						print "</td>\n";
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
 						print '<td align="center">';
 						print dol_print_date($db->jdate($objp->datep), 'dayhour') . "</td>";
@@ -237,17 +237,13 @@ if ($id > 0 || ! empty($ref))
 						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
 						print '<td align="right">' . $propalstatic->LibStatut($objp->statut, 5) . '</td>';
 						print "</tr>\n";
-						$i ++;
-
-						if (! empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-							$total_ht += $objp->total_ht;
-							$total_qty += $objp->qty;
-						}
+						$i++;
 					}
 				}
 
         		print '<tr class="liste_total">';
-        		print '<td>' . $langs->trans('Total') . '</td>';
+        		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+        		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
         		print '<td colspan="2"></td>';
         		print '<td align="center">' . $total_qty . '</td>';
         		print '<td align="right">' . price($total_ht) . '</td>';

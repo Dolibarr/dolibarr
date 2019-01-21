@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -173,9 +173,11 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 	    $id = $object->id;     // So when doing a search from ref, id is also set correctly.
 
 		$result=$projectstatic->fetch($object->fk_project);
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
@@ -228,9 +230,12 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -282,7 +287,7 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');
@@ -300,6 +305,7 @@ if ($id > 0 || ! empty($ref))
 		// Project
 		if (empty($withproject))
 		{
+		    $result=$projectstatic->fetch($object->fk_project);
 		    $morehtmlref.='<div class="refidno">';
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
@@ -307,7 +313,11 @@ if ($id > 0 || ! empty($ref))
 
 		    // Third party
 		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    if($projectstatic->socid>0) {
+		        $projectstatic->fetch_thirdparty();
+		        $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    }
+
 		    $morehtmlref.='</div>';
 		}
 

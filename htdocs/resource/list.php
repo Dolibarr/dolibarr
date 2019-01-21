@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +19,15 @@
 
 /**
  *      \file       resource/index.php
- *              \ingroup    resource
- *              \brief      Page to manage resource objects
+ *      \ingroup    resource
+ *      \brief      Page to manage resource objects
  */
 
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
-// Load translations files required by page
+// Load translation files required by the page
 $langs->loadLangs(array("resource","companies","other"));
 
 // Get parameters
@@ -43,13 +45,16 @@ $sortfield      = GETPOST('sortfield','alpha');
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
 
+// Initialize technical objects
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+if (! is_array($search_array_options)) {
+    $search_array_options = array();
+}
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
@@ -84,7 +89,7 @@ foreach ($search_array_options as $key => $val)
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 
 
-$hookmanager->initHooks(array('resource_list'));
+$hookmanager->initHooks(array('resourcelist'));
 
 if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.ref";
@@ -162,10 +167,6 @@ if ($action == 'delete_resource')
 	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
 }
 
-
-
-$var=true;
-
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
 
@@ -196,7 +197,15 @@ if($ret == -1) {
 	dol_print_error($db,$object->error);
 	exit;
 } else {
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, '', '', $limit);
+	$newcardbutton='';
+	if ($user->rights->resource->write)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
+
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, $newcardbutton, '', $limit);
 }
 
 $moreforfilter = '';
@@ -237,7 +246,7 @@ print "</tr>\n";
 
 if ($ret)
 {
-    foreach ($object->lines as $resource)
+	foreach ($object->lines as $resource)
     {
         print '<tr class="oddeven">';
 
@@ -257,6 +266,7 @@ if ($ret)
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
+        $obj = (Object) $resource->array_options;
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';

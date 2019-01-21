@@ -83,9 +83,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function info($langs)
 	{
 		global $conf,$langs;
-
-		$langs->load("companies");
-		$langs->load("errors");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);
 
@@ -197,11 +197,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+        
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->societe->multidir_output[$object->entity])
 		{
@@ -282,7 +280,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 $result = $this->db->query($sql);
                 $num = $this->db->num_rows($result);
 
-                $var=true;
                 if ($num)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -362,7 +359,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
-                        // setVars failed, probably because key not found
+						// setVars failed, probably because key not found
 					}
 				}
 
@@ -378,8 +375,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 
-                // Call the beforeODTSave hook
-                		$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				// Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -418,7 +415,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else

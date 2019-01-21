@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
+	/**
+     * @var string document type
+     */
+    public $type;
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
     var $version = 'dolibarr';
@@ -64,11 +79,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		global $conf, $langs, $mysoc;
+		
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
@@ -154,11 +168,9 @@ class pdf_standard extends ModeleExpenseReport
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("trips");
-		$outputlangs->load("projects");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
@@ -205,6 +217,7 @@ class pdf_standard extends ModeleExpenseReport
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -214,7 +227,7 @@ class pdf_standard extends ModeleExpenseReport
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
 			    // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -328,7 +341,15 @@ class pdf_standard extends ModeleExpenseReport
                         $nextColumnPosX = $this->posxprojet;
                     }
 
-					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 10), 0, 'C');
+                    $expensereporttypecode = $object->lines[$i]->type_fees_code;
+                    $expensereporttypecodetoshow = $outputlangs->transnoentities($expensereporttypecode);
+                    if ($expensereporttypecodetoshow == $expensereporttypecode)
+                    {
+                    	$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
+                    }
+                    $expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);	// 10 is too much
+
+                    $pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled))
@@ -507,10 +528,10 @@ class pdf_standard extends ModeleExpenseReport
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$hookmanager;
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
-		$outputlangs->load("main");
-		$outputlangs->load("trips");
-		$outputlangs->load("companies");
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*

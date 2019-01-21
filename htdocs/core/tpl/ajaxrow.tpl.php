@@ -29,7 +29,7 @@ if (empty($object) || ! is_object($object))
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on tables -->
+<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
 $id=$object->id;
 $fk_element=$object->fk_element;
@@ -55,6 +55,7 @@ $(document).ready(function(){
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
+			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
 			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";

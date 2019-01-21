@@ -39,10 +39,12 @@ class Conf
 	var $db;
 	//! To store properties found into database
 	var $global;
+	//! To store browser info
+	var $browser;
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
-	//! Used to store current currency
+	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
 	public $theme;        // Contains current theme ("eldy", "auguria", ...)
@@ -97,7 +99,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
-		$this->livraison_bon		= new stdClass();
+		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -107,12 +109,13 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
-		$this->usergroup			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-		$this->expensereport		= new stdClass();
+		$this->expensereport	= new stdClass();
+		$this->productbatch		= new stdClass();
 	}
 
 
@@ -315,17 +318,20 @@ class Conf
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 
-		// UserGroup
+		// For usergroup storage
 		$this->usergroup->dir_output=$rootforuser."/usergroups";
 		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
-		// For propal storage
+		// For proposal storage
+		$this->propal->multidir_output	= array($this->entity => $rootfordata."/propale");
+		$this->propal->multidir_temp	= array($this->entity => $rootfordata."/propale/temp");
+		// For backward compatibility
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
-		$this->medias->multidir_temp		= array($this->entity => $rootfordata."/medias/temp");
+		$this->medias->multidir_temp	= array($this->entity => $rootfordata."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
@@ -343,6 +349,9 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->supplierproposal=new stdClass();
+			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
 			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
@@ -358,6 +367,9 @@ class Conf
     			$this->supplier_invoice->enabled=1;
     			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
     			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplierproposal=new stdClass();
+    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			}
 		}
 
@@ -372,16 +384,24 @@ class Conf
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
 
+		// Module productbatch
+		$this->productbatch->multidir_output=array($this->entity => $rootfordata."/produitlot");
+		$this->productbatch->multidir_temp  =array($this->entity => $rootfordata."/produitlot/temp");
+
 		// Module contrat
-		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		$this->contrat->multidir_output	= array($this->entity => $rootfordata."/contract");
+		$this->contrat->multidir_temp	= array($this->entity => $rootfordata."/contract/temp");
+		// For backward compatibility
+		$this->contrat->dir_output=$rootfordata."/contract";
+		$this->contrat->dir_temp  =$rootfordata."/contract/temp";
+
 		// Module bank
 		$this->bank->dir_output=$rootfordata."/bank";
 		$this->bank->dir_temp  =$rootfordata."/bank/temp";
 
 
 		// Set some default values
-
+		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
 		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
@@ -422,7 +442,7 @@ class Conf
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		if (empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30;   // Less than 1 minutes to be sure
+		if (empty($this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30;   // Less than 1 minutes to be sure
 
 		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
@@ -482,13 +502,13 @@ class Conf
 
 		// Default pdf option
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;    // use dash between lines
-        if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
+		if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
 
 		// Set default value to MAIN_SHOW_LOGO
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
 
 		// Default max file size for upload
-		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
+		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// By default, we propagate contacts
 		if (! isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) $this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN='*';  // Can be also '*' or '^(BILLING|SHIPPING|CUSTOMER|.*)$' (regex not yet implemented)
@@ -499,8 +519,15 @@ class Conf
 		// By default, we open card if one found
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
 
+		// By default, we show state code in combo list
+		if (! isset($this->global->MAIN_SHOW_STATE_CODE)) $this->global->MAIN_SHOW_STATE_CODE=1;
+
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! empty($this->modules_parts['moduleforexternal']))		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
+		{
+			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",".$key;
+		}
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
@@ -581,13 +608,15 @@ class Conf
 		if (! isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) $this->global->THEME_HIDE_BORDER_ON_INPUT=0;
 
 		// Save inconsistent option
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && (! isset($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))
+		if (empty($this->global->AGENDA_USE_EVENT_TYPE) && (! isset($this->global->AGENDA_DEFAULT_FILTER_TYPE) || $this->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))
 		{
-		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
+			$this->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
 
-		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
+
+		$this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		$this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

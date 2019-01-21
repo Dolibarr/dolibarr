@@ -44,11 +44,8 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("products");
-$langs->load("orders");
-$langs->load("bills");
-$langs->load("stocks");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadlangs(array('products', 'orders', 'bills', 'stocks', 'sendings'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage=GETPOST('backtopage','alpha');
@@ -85,6 +82,9 @@ if ($id > 0 || ! empty($ref))
     $result = $object->fetch($id, $ref);
 
 }
+
+if(empty($id) && !empty($object->id)) $id = $object->id;
+
 $modulepart='product';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -130,27 +130,22 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	if($maj_ok) {
 
 		$pse = new ProductStockEntrepot($db);
-		if($pse->fetch('', GETPOST('id'), GETPOST('fk_entrepot')) > 0) {
-
+		if($pse->fetch(0, $id, GETPOST('fk_entrepot')) > 0) {
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
 			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
-
 		} else {
-
 			// Create
 			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
-			$pse->fk_product  	 	 = GETPOST('id');
+			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
 			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
-
 		}
-
 	}
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id'));
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 	exit;
 
 }
@@ -159,11 +154,9 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 {
 
 	$pse = new ProductStockEntrepot($db);
-	$pse->fetch(GETPOST('fk_productstockwarehouse'));
+	$pse->fetch(GETPOST('fk_productstockwarehouse','int'));
 	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
-
 	$action = '';
-
 }
 
 // Set stock limit
@@ -916,7 +909,6 @@ if ($resql)
 			}
 		}
 		$i++;
-
 	}
 }
 else dol_print_error($db);
@@ -951,7 +943,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 	if (!empty($user->rights->produit->creer)){
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
-		print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
 	print '<table class="noborder" width="100%">';
 	if (!empty($user->rights->produit->creer)){
@@ -968,7 +960,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 	}
 
 	$pse = new ProductStockEntrepot($db);
-	$lines = $pse->fetchAll(GETPOST('id'));
+	$lines = $pse->fetchAll($id);
 
 	if (!empty($lines))
 	{
@@ -981,7 +973,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
 			print '<td align="right">'.$line['desiredstock'].'</td>';
 			if (!empty($user->rights->produit->creer)){
-				print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
+			    print '<td align="right"><a href="?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			}
 			print '</tr>';
 		}
@@ -989,8 +981,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 
 	print "</table>";
 
-	if (!empty($user->rights->produit->creer)){ 
-	    print '</form>'; 
+	if (!empty($user->rights->produit->creer)){
+	    print '</form>';
 	}
 }
 

@@ -179,7 +179,7 @@ class Projects extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of project
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -300,7 +300,7 @@ class Projects extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -362,7 +362,7 @@ class Projects extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -418,7 +418,7 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }

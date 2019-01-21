@@ -33,9 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-
-$langs->load("contracts");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'companies'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -49,8 +48,13 @@ $result=restrictedArea($user,'contrat',$id);
 
 $object = new Contrat($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
 
-// Add new contact
+
+/*
+ * Actions
+ */
 
 if ($action == 'addcontact' && $user->rights->contrat->creer)
 {

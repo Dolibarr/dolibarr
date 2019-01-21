@@ -24,8 +24,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 
 /**
@@ -59,6 +57,9 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			dol_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
 			return 0;
 		}
+
+		require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		$result=0;
 
@@ -436,11 +437,12 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 					{
-						$membertype=new AdherentType($this->db);
 						if ($object->typeid > 0)
 						{
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+							$membertype=new AdherentType($this->db);
 							$membertype->fetch($object->typeid);
-							$membertype->listMembersForMemberType();
+							$membertype->listMembersForMemberType('', 1);
 
 							$oldinfo=$membertype->_load_ldap_info();
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
@@ -555,12 +557,14 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
 					{
+						require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 						/*
 						 * Change member info
 						 */
 						$newmembertype=new AdherentType($this->db);
 						$newmembertype->fetch($object->typeid);
-						$newmembertype->listMembersForMemberType();
+						$newmembertype->listMembersForMemberType('', 1);
 
 						$oldinfo=$newmembertype->_load_ldap_info();
 						$olddn=$newmembertype->_load_ldap_dn($oldinfo);
@@ -586,7 +590,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							 */
 							$oldmembertype=new AdherentType($this->db);
 							$oldmembertype->fetch($object->oldcopy->typeid);
-							$oldmembertype->listMembersForMemberType();
+							$oldmembertype->listMembersForMemberType('', 1);
 
 							$oldinfo=$oldmembertype->_load_ldap_info();
 							$olddn=$oldmembertype->_load_ldap_dn($oldinfo);
@@ -679,12 +683,14 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					{
 						if ($object->typeid > 0)
 						{
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 							/*
 							 * Remove member in member type
 							 */
 							$membertype=new AdherentType($this->db);
 							$membertype->fetch($object->typeid);
-							$membertype->listMembersForMemberType('a.rowid != ' . $object->id); // remove deleted member from the list
+							$membertype->listMembersForMemberType('a.rowid != ' . $object->id, 1); // remove deleted member from the list
 
 							$oldinfo=$membertype->_load_ldap_info();
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
@@ -751,7 +757,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;
 					}
 
-					$object->oldcopy->listMembersForMemberType();
+					$object->oldcopy->listMembersForMemberType('', 1);
 
 					$oldinfo=$object->oldcopy->_load_ldap_info();
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
@@ -765,7 +771,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$olddn = '';
 					}
 
-					$object->listMembersForMemberType();
+					$object->listMembersForMemberType('', 1);
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);

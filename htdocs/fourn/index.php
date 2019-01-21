@@ -57,7 +57,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Orders
-$commande = new CommandeFournisseur($db);
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -76,17 +75,15 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
-	$var=True;
 
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
 
-
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
+		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -129,11 +126,10 @@ if (! empty($conf->fournisseur->enabled))
 			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
 
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
@@ -186,7 +182,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
-			$var = True;
+
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
@@ -259,12 +255,8 @@ if ($resql)
 	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
-	$var=True;
-
 	while ($obj = $db->fetch_object($resql) )
 	{
-
-
 		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
@@ -296,12 +288,10 @@ if (count($companystatic->SupplierCategories))
 	print '<tr class="liste_titre"><td colspan="2">';
 	print $langs->trans("Category");
 	print "</td></tr>\n";
-	$var=True;
 
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
-
-		print "<tr ".$bc[$var].">\n";
+		print '<tr class="oddeven">'."\n";
 		print '<td>';
 		$categstatic->id=$rowid;
 		$categstatic->ref=$label;

@@ -58,3 +58,4 @@ MoreChoices=Introduzca más opciones para los votantes
 SurveyExpiredInfo=La encuesta se ha cerrado o el periodo para la votación de ha terminado.
 EmailSomeoneVoted=%s  ha rellenado una línea.\nPuede encontrar su encuesta en el enlace:\n%s 
 ShowSurvey=Mostrar encuesta
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

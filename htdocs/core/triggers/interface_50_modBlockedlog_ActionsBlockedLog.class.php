@@ -23,7 +23,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 
 /**
@@ -56,6 +55,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b=new BlockedLog($this->db);
 
 		// Tracked events
@@ -69,14 +69,16 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$amounts = 0;
 		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
 			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
-			|| $action==='MEMBER_SUBCRIPTION_CREATE' || $action==='MEMBER_SUBCRIPTION_MODIFY' || $action==='MEMBER_SUBCRIPTION_DELETE'
+			|| $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
 			|| $action==='DON_VALIDATE' || $action==='DON_MODIFY' || $action==='DON_DELETE'
 			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
 		)
 		{
 			$qualified++;
 
-			if ($action==='DON_VALIDATE') $amounts = (double) $object->amount;
+			if (in_array($action, array(
+				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
+				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
 			else $amounts = (double) $object->total_ttc;
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -109,7 +111,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts, $user);		// Set field date_object, ref_object, fk_object, element, object_data
 
 		if ($result < 0)
 		{

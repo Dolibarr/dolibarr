@@ -32,6 +32,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
  * View
  */
 
+ // Load translation files required by the page
 $langs->load("opensurvey");
 
 llxHeader();

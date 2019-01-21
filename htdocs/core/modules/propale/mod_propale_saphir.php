@@ -115,8 +115,14 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
+		$constant = 'PROPALE_SAPHIR_MASK_'.$propal->entity;
+
 		// On defini critere recherche compteur
-		$mask=$conf->global->PROPALE_SAPHIR_MASK;
+		if (! empty($conf->global->$constant)) {
+			$mask = $conf->global->$constant; // for multicompany proposal sharing
+		} else {
+			$mask = $conf->global->PROPALE_SAPHIR_MASK;
+		}
 
 		if (! $mask)
 		{
@@ -124,9 +130,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
+		// Use object entity ID
+		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+
 		$date = $propal->date;
 
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date,'next',false,null,$entity);
 
 		return  $numFinal;
 	}

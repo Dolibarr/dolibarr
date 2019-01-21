@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-
-$langs->load('projects');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'other'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -92,7 +91,9 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$projectstatic->fetch($object->fk_project);
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 
 		if (! empty($projectstatic->socid)) {
 			$projectstatic->fetch_thirdparty();
@@ -172,9 +173,12 @@ if ($object->id > 0)
 
         // Date start - end
         print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-        print dol_print_date($projectstatic->date_start,'day');
-        $end=dol_print_date($projectstatic->date_end,'day');
-        if ($end) print ' - '.$end;
+        $start = dol_print_date($projectstatic->date_start,'day');
+        print ($start?$start:'?');
+        $end = dol_print_date($projectstatic->date_end,'day');
+        print ' - ';
+        print ($end?$end:'?');
+        if ($projectstatic->hasDelay()) print img_warning("Late");
         print '</td></tr>';
 
         // Budget
@@ -221,7 +225,7 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_document', $langs->trans("Task"), -1, 'projecttask');
+	dol_fiche_head($head, 'task_document', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 	// Files list constructor
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);

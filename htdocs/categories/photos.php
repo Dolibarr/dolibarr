@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
-$langs->load("categories");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadlangs(array('categories', 'bills'));
 
 
 $id=GETPOST('id','int');
@@ -69,7 +69,24 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-	    $object->add_photo($upload_dir, $_FILES['userfile']);
+        
+        $file = $_FILES['userfile'];
+        if (is_array($file['name']) && count($file['name']) > 0)
+        {
+            foreach ($file['name'] as $i => $name)
+            {
+                if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
+                {
+                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles' ) );
+                    unset($file['name'][$i],$file['type'][$i],$file['tmp_name'][$i],$file['error'][$i],$file['size'][$i]);
+                }
+            }
+        }
+        
+        if(!empty($file['tmp_name'])){
+            $object->add_photo($upload_dir, $file);
+        }
+        
     }
 }
 

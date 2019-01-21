@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
- * 
+ *
  * Get a distant dump file and load it into a mysql database
  */
 
@@ -92,7 +92,7 @@ if ($connection)
 {
 	if (! @ssh2_auth_password($connection, $login, $password))
 	{
-		dol_syslog("Could not authenticate with username ".$login." . and password ".$password,LOG_ERR);
+		dol_syslog("Could not authenticate with username ".$login." . and password ".preg_replace('/./', '*', $password),LOG_ERR);
 		exit(-5);
 	}
 	else

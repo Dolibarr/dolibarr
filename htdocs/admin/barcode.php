@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -70,18 +71,8 @@ else if ($action == 'update')
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id,'chaine',0,'',$conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id,'chaine',0,'',$conf->entity);
-}
-else if ($action == 'updateengine')
-{
-    // TODO Update engines.
-
-}
-
-if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
-{
-	if (! $res > 0) $error++;
-
- 	if (! $error)
+	
+	if ($res > 0)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -89,6 +80,42 @@ if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
+}
+else if ($action == 'updateengine')
+{
+    $sql = "SELECT rowid, coder";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+    $sql.= " WHERE entity = ".$conf->entity;
+    $sql.= " ORDER BY code";
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+	   $num = $db->num_rows($resql);
+	   $i = 0;
+
+	   while ($i <	$num)
+	   {
+	       $obj = $db->fetch_object($resql);
+	       
+	       if (GETPOST('coder'.$obj->rowid, 'alpha'))
+	       {
+	           $coder = GETPOST('coder'.$obj->rowid,'alpha');
+	           $code_id = $obj->rowid;
+	           
+	           $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
+	           $sqlp.= " SET coder = '" . $coder."'";
+	           $sqlp.= " WHERE rowid = ". $code_id;
+	           $sqlp.= " AND entity = ".$conf->entity;
+	           
+	           $upsql=$db->query($sqlp);
+	           if (! $upsql) dol_print_error($db);
+	       }
+
+	       $i++;
+	   }
+    }
+
 }
 
 /*
@@ -101,7 +128,7 @@ $formbarcode = new FormBarCode($db);
 $help_url='EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
 llxHeader('',$langs->trans("BarcodeSetup"),$help_url);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'title_setup');
 
 // Detect bar codes modules
@@ -157,14 +184,16 @@ foreach($dirbarcode as $reldir)
 /*
  *  CHOIX ENCODAGE
  */
-$var=true;
 
 print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
 
-//print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-//print "<input type=\"hidden\" name=\"action\" value=\"updateengine\">";
+if (empty($conf->use_javascript_ajax))
+{
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="updateengine">';
+}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -185,7 +214,6 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=true;
 
 	while ($i <	$num)
 	{
@@ -260,10 +288,9 @@ print "</table>\n";
 
 if (empty($conf->use_javascript_ajax))
 {
-    // TODO Implement code behind action updateengine
-    //print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+    print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+    print '</form>';
 }
-//print '</form>';
 
 print "<br>";
 
@@ -277,7 +304,6 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -371,7 +397,6 @@ if ($conf->produit->enabled)
 	    			}
 
 	    			$modBarCode = new $file();
-	    			$var = !$var;
 
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";

@@ -58,3 +58,4 @@ MoreChoices=Geben Sie weitere Wahlmöglichkeiten ein
 SurveyExpiredInfo=Die Umfrage ist geschlossen oder beendet.
 EmailSomeoneVoted=%s hat eine Zeile gefüllt. Sie können Ihre Umfrage unter dem Link  finden: %s
 ShowSurvey=Umfrage anzeigen
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

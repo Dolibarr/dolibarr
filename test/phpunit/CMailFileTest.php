@@ -59,7 +59,9 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -103,7 +105,7 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $conf->global->MAIN_DISABLE_ALL_MAILS=1;    // If I comment/remove this lien, unit test still works alone but failed when ran from AllTest. Don't know why.
-        
+
         print __METHOD__."\n";
     }
     /**

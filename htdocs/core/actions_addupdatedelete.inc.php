@@ -18,7 +18,7 @@
 
 /**
  *	\file			htdocs/core/actions_addupdatedelete.inc.php
- *  \brief			Code for common actions cancel / add / update / delete
+ *  \brief			Code for common actions cancel / add / update / delete / clone
  */
 
 
@@ -28,6 +28,7 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $triggermodname may be defined
 
 if ($cancel)
 {
@@ -47,13 +48,22 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
 		// Set value to insert
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
-		else $value = GETPOST($key,'alpha');
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+			$value = GETPOST($key,'none');
+		} elseif ($object->fields[$key]['type']=='date') {
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='datetime') {
+			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='price') {
+			$value = price2num(GETPOST($key));
+		} else {
+			$value = GETPOST($key,'alpha');
+		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
 		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '')
+		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -66,7 +76,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 			// Creation OK
-			$urltogo=$backtopage?$backtopage:$backurlforlist;
+			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -93,13 +103,22 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
 		// Set value to update
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
-		else $value = GETPOST($key,'alpha');
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+			$value = GETPOST($key,'none');
+		} elseif ($object->fields[$key]['type']=='date') {
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='datetime') {
+			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='price') {
+			$value = price2num(GETPOST($key));
+		} else {
+			$value = GETPOST($key,'alpha');
+		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
 		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '')
+		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -116,14 +135,34 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		else
 		{
 			// Creation KO
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';
 		}
 	}
 	else
 	{
 		$action='edit';
+	}
+}
+
+// Action to update one extrafield
+if ($action == "update_extras" && ! empty($permissiontoadd))
+{
+	$object->fetch(GETPOST('id','int'));
+	$attributekey = GETPOST('attribute','alpha');
+	$attributekeylong = 'options_'.$attributekey;
+	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
+
+	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
 	}
 }
 
@@ -142,5 +181,38 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 	{
 		if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 		else setEventMessages($object->error, null, 'errors');
+	}
+}
+
+// Action clone object
+if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))
+{
+	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+	}
+	else
+	{
+		if ($object->id > 0)
+		{
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = clone $object;
+
+			$result=$object->createFromClone($user, $object->id);
+			if ($result > 0)
+			{
+				$newid = 0;
+				if (is_object($result)) $newid = $result->id;
+				else $newid = $result;
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);	// Open record of new object
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$object = $orig;
+				$action='';
+			}
+		}
 	}
 }

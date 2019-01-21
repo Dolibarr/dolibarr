@@ -48,6 +48,13 @@ $result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
 if ($result < 0) { $error++; }
 // Fin appel triggers
 
+// Hooks on logout
+$action='';
+$hookmanager->initHooks(array('logout'));
+$parameters=array();
+$reshook=$hookmanager->executeHooks('afterLogout',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) { $error++; }
+
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 

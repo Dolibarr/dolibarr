@@ -26,6 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 

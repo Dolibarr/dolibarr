@@ -58,8 +58,11 @@ $conffiletoshowshort = "conf.php";
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
-//$conffile = "/etc/dolibarr/conf.php";
-//$conffiletoshow = "/etc/dolibarr/conf.php";
+if (! file_exists($conffile))
+{
+	$conffile = "/etc/dolibarr/conf.php";
+	$conffiletoshow = "/etc/dolibarr/conf.php";
+}
 
 
 // Load conf file if it is already defined
@@ -208,7 +211,7 @@ function pHeader($soutitre,$next,$action='none')
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	header("X-Content-Type-Options: nosniff");
-	
+
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	print '<head>'."\n";

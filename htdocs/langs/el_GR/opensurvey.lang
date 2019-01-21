@@ -58,3 +58,4 @@ MoreChoices=Εισάγετε περισσότερες επιλογές για τ
 SurveyExpiredInfo=Η δημοσκόπηση αυτή έχει λήξει ή ο χρόνος ψηφοφορίας έληξε.
 EmailSomeoneVoted=%s έχει γεμίσει μια γραμμή. \nΜπορείτε να βρείτε τη δημοσκόπηση σας στο σύνδεσμο:\n %s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

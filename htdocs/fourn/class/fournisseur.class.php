@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 class Fournisseur extends Societe
 {
 	var $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -44,10 +44,9 @@ class Fournisseur extends Societe
 	function __construct($db)
 	{
 		$this->db = $db;
+
 		$this->client = 0;
-		$this->fournisseur = 0;
-		$this->effectif_id  = 0;
-		$this->forme_juridique_code  = 0;
+		$this->fournisseur = 1;
 	}
 
 

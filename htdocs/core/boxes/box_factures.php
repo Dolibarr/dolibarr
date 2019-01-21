@@ -72,8 +72,10 @@ class box_factures extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $facturestatic=new Facture($db);
+        $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
+
+        $langs->load("bills");
 
 		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
 		$this->info_box_head = array(
@@ -88,9 +90,7 @@ class box_factures extends ModeleBoxes
             $sql.= ", f.total_ttc";
             $sql.= ", f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-            $sql.= ", s.nom as name";
-            $sql.= ", s.rowid as socid";
-            $sql.= ", s.code_client";
+            $sql.= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -117,6 +117,7 @@ class box_factures extends ModeleBoxes
                     $datelimite = $db->jdate($objp->datelimite);
                     $date = $db->jdate($objp->df);
                     $datem = $db->jdate($objp->tms);
+
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->facnumber;
                     $facturestatic->type = $objp->type;
@@ -129,7 +130,14 @@ class box_factures extends ModeleBoxes
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
-
+                    $societestatic->tva_intra = $objp->tva_intra;
+                    $societestatic->email = $objp->email;
+                    $societestatic->idprof1 = $objp->idprof1;
+                    $societestatic->idprof2 = $objp->idprof2;
+                    $societestatic->idprof3 = $objp->idprof3;
+                    $societestatic->idprof4 = $objp->idprof4;
+                    $societestatic->idprof5 = $objp->idprof5;
+                    $societestatic->idprof6 = $objp->idprof6;
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {

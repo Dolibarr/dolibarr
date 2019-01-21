@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("errors");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'members', 'errors', 'other'));
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -143,7 +142,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'date', '', $user, 'PRODUCT_MODIFY');
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;
@@ -211,7 +210,8 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','title_companies');
+
 	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
@@ -252,7 +252,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
+	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','title_products');
 	print '<br>'."\n";
 
 	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";

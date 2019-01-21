@@ -85,12 +85,10 @@ if ($result)
 	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"c.lastname","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"a.titre","","",'valign="center"',$sortfield,$sortorder);
 	print "</tr>\n";
-	$var=True;
+
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-
-
 
 		print '<tr class="oddeven">';
 		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";

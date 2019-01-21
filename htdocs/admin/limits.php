@@ -26,9 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin'));
 
 if (! $user->admin) accessforbidden();
 
@@ -38,8 +37,8 @@ if ($action == 'update')
 {
     $error=0;
     $MAXDEC=8;
-    if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > $MAXDEC
-    || $_POST["MAIN_MAX_DECIMALS_TOT"]   > $MAXDEC
+    if ($_POST["MAIN_MAX_DECIMALS_UNIT"] > $MAXDEC
+    || $_POST["MAIN_MAX_DECIMALS_TOT"] > $MAXDEC
     || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
     {
         $error++;

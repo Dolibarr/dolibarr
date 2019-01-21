@@ -72,6 +72,8 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -234,12 +236,17 @@ class SecurityTest extends PHPUnit_Framework_TestCase
      */
     public function testEncodeDecode()
     {
-        $stringtotest="This is a string to test encode/decode";
+        $stringtotest="This is a string to test encode/decode. This is a string to test encode/decode. This is a string to test encode/decode.";
 
         $encodedstring=dol_encode($stringtotest);
         $decodedstring=dol_decode($encodedstring);
         print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
-        $this->assertEquals($stringtotest,$decodedstring);
+        $this->assertEquals($stringtotest,$decodedstring, 'Use dol_encode/decode with no parameter');
+
+        $encodedstring=dol_encode($stringtotest, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $decodedstring=dol_decode($encodedstring, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        print __METHOD__." encodedstring=".$encodedstring." ".base64_encode($stringtotest)."\n";
+        $this->assertEquals($stringtotest,$decodedstring, 'Use dol_encode/decode with a key parameter');
 
         return 0;
     }

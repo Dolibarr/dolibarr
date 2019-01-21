@@ -53,16 +53,22 @@ elseif ($modulepart == 'project')
 	if (! $user->rights->projet->lire) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'expensereport')
+{
+	$result=restrictedArea($user,'expensereport',$id,'expensereport');
+	if (! $user->rights->expensereport->lire) accessforbidden();
+	$accessallowed=1;
+}
 elseif ($modulepart == 'holiday')
 {
 	$result=restrictedArea($user,'holiday',$id,'holiday');
 	if (! $user->rights->holiday->read) accessforbidden();
 	$accessallowed=1;
 }
-elseif ($modulepart == 'expensereport')
+elseif ($modulepart == 'member')
 {
-	$result=restrictedArea($user,'expensereport',$id,'expensereport');
-	if (! $user->rights->expensereport->lire) accessforbidden();
+	$result=restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
+	if (! $user->rights->adherent->lire) accessforbidden();
 	$accessallowed=1;
 }
 elseif ($modulepart == 'user')
@@ -75,6 +81,12 @@ elseif ($modulepart == 'societe')
 {
 	$result=restrictedArea($user,'societe',$id,'societe');
 	if (! $user->rights->societe->lire) accessforbidden();
+	$accessallowed=1;
+}
+elseif ($modulepart == 'ticket')
+{
+	$result=restrictedArea($user,'ticket',$id,'ticket');
+	if (! $user->rights->ticket->read) accessforbidden();
 	$accessallowed=1;
 }
 
@@ -121,6 +133,17 @@ elseif ($modulepart == 'holiday')
 		$dir=$conf->holiday->dir_output;	// By default
 	}
 }
+elseif ($modulepart == 'member')
+{
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	$object = new Adherent($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->adherent->dir_output;	// By default
+	}
+}
 elseif ($modulepart == 'societe')
 {
     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -154,15 +177,31 @@ elseif ($modulepart == 'expensereport')
         $dir=$conf->expensereport->dir_output;	// By default
     }
 }
+elseif ($modulepart == 'ticket')
+{
+	require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+	$object = new Ticket($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->ticket->dir_output;	// By default
+	}
+}
+else {
+	print 'Action crop for module part '.$modulepart.' is not supported yet.';
+}
 
 if (empty($backtourl))
 {
     if (in_array($modulepart, array('product','produit','service','produit|service'))) $backtourl=DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('expensereport'))) $backtourl=DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('holiday'))) $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('project'))) $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('user'))) $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('societe'))) $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('holiday')))       $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('member')))        $backtourl=DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('project')))       $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('societe')))       $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('ticket')))     $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
 

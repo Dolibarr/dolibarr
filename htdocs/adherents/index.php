@@ -48,9 +48,6 @@ $subscriptionstatic=new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"));
 
-
-$var=True;
-
 $Adherents=array();
 $AdherentsAValider=array();
 $MemberUpToDate=array();
@@ -65,7 +62,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " ON t.rowid = d.fk_adherent_type";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
-$sql.= " WHERE t.entity IN (".getEntity('adherent').")";
+$sql.= " WHERE t.entity IN (".getEntity('member_type').")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
@@ -255,7 +252,6 @@ print '<th align="right">'.$langs->trans("AmountTotal").'</th>';
 print '<th align="right">'.$langs->trans("AmountAverage").'</th>';
 print "</tr>\n";
 
-$var=true;
 krsort($Total);
 foreach ($Total as $key=>$value)
 {

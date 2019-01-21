@@ -9,25 +9,17 @@ namespace Stripe;
  */
 class OrderReturn extends ApiResource
 {
-    /**
-     * @param string $id The ID of the OrderReturn to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return Order
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
+    use ApiOperations\All;
+    use ApiOperations\Retrieve;
 
     /**
-     * @param array|null $params
-     * @param array|string|null $opts
+     * This is a special case because the order returns endpoint has an
+     *    underscore in it. The parent `className` function strips underscores.
      *
-     * @return Collection of OrderReturns
+     * @return string The name of the class.
      */
-    public static function all($params = null, $opts = null)
+    public static function className()
     {
-        return self::_all($params, $opts);
+        return 'order_return';
     }
 }

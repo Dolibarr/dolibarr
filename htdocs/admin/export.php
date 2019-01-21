@@ -31,9 +31,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-
-$langs->load("admin");
-$langs->load("exports");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'exports'));
 
 $langs->load('other');
 

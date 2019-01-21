@@ -33,6 +33,7 @@ PropalStatusSigned=Aláírt (szükséges számlázási)
 PropalStatusNotSigned=Nem írta alá (zárt)
 PropalStatusBilled=Kiszámlázott
 PropalStatusDraftShort=Tervezet
+PropalStatusValidatedShort=Hitelesítetve
 PropalStatusClosedShort=Zárva
 PropalStatusSignedShort=Aláírt
 PropalStatusNotSignedShort=Nem írták alá
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 hónap
 TypeContact_propal_internal_SALESREPFOLL=Képviselő-up a következő javaslatot
 TypeContact_propal_external_BILLING=Ügyfél számla Kapcsolat
 TypeContact_propal_external_CUSTOMER=Ügyfélkapcsolati nyomon követése javaslat
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=A javaslat teljes modell (logo. ..)
 DefaultModelPropalCreate=Default model creation

@@ -71,7 +71,6 @@ class Import
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
-        $var=true;
         $i=0;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

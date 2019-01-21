@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - stocks
-Warehouse=Armazém
 NewWarehouse=Novo armazém / setor de armazenagem
 MenuNewWarehouse=Novo armazém
 WarehouseSource=Armazém de origem
@@ -18,7 +17,6 @@ ErrorWarehouseRefRequired=A referência do armazém é necessária
 ListOfWarehouses=Lista de armazéns
 ListOfStockMovements=Lista de movimentações de estoque
 StocksArea=Setor de armazenagem
-NumberOfDifferentProducts=Número de produtos diferentes
 NumberOfProducts=Número total de produtos
 CorrectStock=Corrigir estoque
 StockTransfer=Banco de transferência
@@ -41,7 +39,6 @@ DeStockOnValidateOrder=Decrementar os estoques físicos sobre os pedidos
 DeStockOnShipment=Diminuir o estoque real na validação do envio
 DeStockOnShipmentOnClosing=Baixa real no estoque ao classificar o embarque como fechado
 ReStockOnBill=Incrementar os estoques físicos sobre as faturas/recibos
-ReStockOnValidateOrder=Incrementar os estoques físicos sobre os pedidos
 OrderStatusNotReadyToDispatch=Não tem ordem  ainda não ou nato tem um status que permite envio de produtos em para armazenamento.
 NoPredefinedProductToDispatch=Não há produtos pré-definidos para este objeto. Portanto, não envio em estoque é necessária.
 DispatchVerb=Despachar

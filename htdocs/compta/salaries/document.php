@@ -35,11 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("other");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -47,8 +44,9 @@ $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
 // Security check
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', $id, '');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 // Get parameters
@@ -118,7 +116,7 @@ if ($object->id)
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 	print '</table>';
 
 	print '</div>';

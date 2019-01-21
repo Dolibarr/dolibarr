@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Définissez ici les événements pour lesquels Dolibarr cr
 AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (Thunderbird, Google calendar, …)
 AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
 ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
-EventRemindersByEmailNotEnabled=Les rappels d'événements par email n'ont pas été activés dans la configuration du module Agenda.
+EventRemindersByEmailNotEnabled=Les rappels d'événements par email n'ont pas été activés dans la configuration du module %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
 ContractValidatedInDolibarr=Contrat %s validé
@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Adhérent %s validé
 MemberModifiedInDolibarr=Adhérent %s modifié
 MemberResiliatedInDolibarr=Adhérent %s résilié
 MemberDeletedInDolibarr=Adhérent %s supprimé
-MemberSubscriptionAddedInDolibarr=Souscription adhérent %s
+MemberSubscriptionAddedInDolibarr=Adhésion %s pour l'adhérent %s ajoutée
+MemberSubscriptionModifiedInDolibarr=Abonnement %s pour l'adhérent %s modifié
+MemberSubscriptionDeletedInDolibarr=Abonnement %s pour l'adhérent %s supprimé
 ShipmentValidatedInDolibarr=Expédition %s validée
 ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
@@ -98,6 +100,7 @@ AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'util
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux événements associés au projet <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure un événement automatique.
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -109,7 +112,7 @@ ExportCal=Export calendrier
 ExtSites=Import calendriers externes
 ExtSitesEnableThisTool=Afficher les calendriers externes (définis dans la configuration globale du module) dans l'agenda. N'affecte pas les calendriers externes définis par les utilisateurs.
 ExtSitesNbOfAgenda=Nombre de calendriers
-AgendaExtNb=Calendrier n° %s
+AgendaExtNb=Calendrier no %s
 ExtSiteUrlAgenda=URL d'accès au fichier ical
 ExtSiteNoLabel=Aucune description
 VisibleTimeRange=Plage d'heures visible
@@ -119,7 +122,7 @@ MyAvailability=Ma disponibilité
 ActionType=Type événement
 DateActionBegin=Date début événément
 CloneAction=Cloner l'événement
-ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner cette facture <b>%s</b> ?
+ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner cet événement <b>%s</b> ?
 RepeatEvent=Evénement répétitif
 EveryWeek=Chaque semaine
 EveryMonth=Chaque mois

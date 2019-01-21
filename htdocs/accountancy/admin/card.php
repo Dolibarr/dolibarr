@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
@@ -188,18 +187,21 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	}
 }
 
+
 /*
  * View
  */
-$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
-$helpurl = '';
-llxheader('', $title, $helpurl);
 
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $accountsystem = new AccountancySystem($db);
 $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+
+$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
+$helpurl = '';
+llxheader('', $title, $helpurl);
+
 
 // Create mode
 if ($action == 'create') {
@@ -330,7 +332,7 @@ else if ($id > 0 || $ref) {
 			print '</form>';
 		} else {
 			// View mode
-			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
 

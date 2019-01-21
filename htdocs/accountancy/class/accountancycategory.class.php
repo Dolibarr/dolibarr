@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,40 +29,345 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 /**
  * Class to manage categories of an accounting account
  */
-class AccountancyCategory
+class AccountancyCategory 	// extends CommonObject
 {
-	private $db;
-	public $error;
-	public $errors = array ();
-	public $element = 'accounting_category';
-	public $table_element = 'c_accounting_category';
+	public $db;							//!< To store db handler
+	public $error;							//!< To return error code (or message)
+	public $errors=array();				//!< To return several error codes (or messages)
+	public $element='c_accounting_category';			//!< Id that identify managed objects
+	public $table_element='c_accounting_category';	//!< Name of table without prefix where object is stored
+
 	public $id;
+	public $code;
+	public $label;
+	public $range_account;
+	public $sens;
+	public $category_type;
+	public $formula;
+	public $position;
+	public $fk_country;
+	public $active;
+
 	public $lines_cptbk;
 	public $lines_display;
 	public $sdc;
 
+
+
 	/**
-	 * Constructor
+	 *  Constructor
 	 *
-	 * @param DoliDB $db Database handler
+	 *  @param      DoliDb		$db      Database handler
 	 */
-	public function __construct($db) {
+	function __construct($db)
+	{
 		$this->db = $db;
 	}
+
+
+	/**
+	 *  Create object into database
+	 *
+	 *  @param      User	$user        User that create
+	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 */
+	function create($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->code)) $this->code=trim($this->code);
+		if (isset($this->label)) $this->label=trim($this->label);
+		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
+		if (isset($this->sens)) $this->sens=trim($this->sens);
+		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->formula)) $this->formula=trim($this->formula);
+		if (isset($this->position)) $this->position=trim($this->position);
+		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
+		if (isset($this->active)) $this->active=trim($this->active);
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Insert request
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_accounting_category(";
+		if ($this->rowid > 0) $sql.= "rowid,";
+		$sql.= "code,";
+		$sql.= "label,";
+		$sql.= "range_account,";
+		$sql.= "sens,";
+		$sql.= "category_type,";
+		$sql.= "formula,";
+		$sql.= "position,";
+		$sql.= "fk_country,";
+		$sql.= "active";
+		$sql.= ") VALUES (";
+		if ($this->rowid > 0) $sql.= " ".$this->rowid.",";
+		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
+		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
+		$sql.= " ".(! isset($this->range_account)?'NULL':"'".$this->db->escape($this->range_account)."'").",";
+		$sql.= " ".(! isset($this->sens)?'NULL':"'".$this->db->escape($this->sens)."'").",";
+		$sql.= " ".(! isset($this->category_type)?'NULL':"'".$this->db->escape($this->category_type)."'").",";
+		$sql.= " ".(! isset($this->formula)?'NULL':"'".$this->db->escape($this->formula)."'").",";
+		$sql.= " ".(! isset($this->position)?'NULL':$this->db->escape($this->position)).",";
+		$sql.= " ".(! isset($this->fk_country)?'NULL':$this->db->escape($this->fk_country)).",";
+		$sql.= " ".(! isset($this->active)?'NULL':$this->db->escape($this->active));
+		$sql.= ")";
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_accounting_category");
+
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+	}
+
+
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param      int		$id    	Id object
+	 *  @param		string	$code	Code
+	 *  @param		string	$label	Label
+	 *  @return     int          	<0 if KO, >0 if OK
+	 */
+	function fetch($id,$code='',$label='')
+	{
+		global $langs;
+		$sql = "SELECT";
+		$sql.= " t.rowid,";
+		$sql.= " t.code,";
+		$sql.= " t.label,";
+		$sql.= " t.range_account,";
+		$sql.= " t.sens,";
+		$sql.= " t.category_type,";
+		$sql.= " t.formula,";
+		$sql.= " t.position,";
+		$sql.= " t.fk_country,";
+		$sql.= " t.active";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
+		if ($id)   $sql.= " WHERE t.rowid = ".$id;
+		elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+		elseif ($label) $sql.= " WHERE t.label = '".$this->db->escape($label)."'";
+
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id            = $obj->rowid;
+				$this->code          = $obj->code;
+				$this->label         = $obj->label;
+				$this->range_account = $obj->range_account;
+				$this->sens          = $obj->sens;
+				$this->category_type = $obj->category_type;
+				$this->formula       = $obj->formula;
+				$this->position      = $obj->position;
+				$this->fk_country    = $obj->fk_country;
+				$this->active        = $obj->active;
+			}
+			$this->db->free($resql);
+
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *  Update object into database
+	 *
+	 *  @param      User	$user        User that modify
+	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 */
+	function update($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->code)) $this->code=trim($this->code);
+		if (isset($this->label)) $this->label=trim($this->label);
+		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
+		if (isset($this->sens)) $this->sens=trim($this->sens);
+		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->formula)) $this->formula=trim($this->formula);
+		if (isset($this->position)) $this->position=trim($this->position);
+		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
+		if (isset($this->active)) $this->active=trim($this->active);
+
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_accounting_category SET";
+		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
+		$sql.= " range_account=".(isset($this->range_account)?"'".$this->db->escape($this->range_account)."'":"null").",";
+		$sql.= " sens=".(isset($this->sens)?$this->sens:"null").",";
+		$sql.= " category_type=".(isset($this->category_type)?$this->category_type:"null").",";
+		$sql.= " formula=".(isset($this->formula)?"'".$this->db->escape($this->formula)."'":"null").",";
+		$sql.= " position=".(isset($this->position)?$this->position:"null").",";
+		$sql.= " fk_country=".(isset($this->fk_country)?$this->fk_country:"null").",";
+		$sql.= " active=".(isset($this->active)?$this->active:"null")."";
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that delete
+	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
+	function delete($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_accounting_category";
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
 
 	/**
 	 * Function to select all accounting accounts from an accounting category
 	 *
 	 * @param int $id Id
-	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id) {
+		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = " . $id;
+		$sql .= " AND t.entity = " . $conf->entity;
 
-		$this->lines_display = array ();
+		$this->lines_display = array();
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -97,13 +403,14 @@ class AccountancyCategory
 		$sql .= " WHERE t.numero_compte NOT IN (";
 		$sql .= " SELECT t.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = " . $id . ")";
+		$sql .= " WHERE t.fk_accounting_category = " . $id . " AND t.entity = " . $conf->entity.")";
 		$sql .= " AND t.numero_compte IN (";
 		$sql .= " SELECT DISTINCT aa.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
-		$sql .= " AND aa.active = 1)";
+		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = = " . $conf->entity . ")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
@@ -145,6 +452,7 @@ class AccountancyCategory
 	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
 	    $sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 	    $sql .= " AND aa.active = 1";
+	    $sql .= " AND aa.entity = " . $conf->entity;
 	    $sql .= " GROUP BY aa.account_number, aa.label";
 	    $sql .= " ORDER BY aa.account_number, aa.label";
 
@@ -189,6 +497,7 @@ class AccountancyCategory
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = " . $conf->entity;
 
 		$this->db->begin();
 
@@ -276,31 +585,27 @@ class AccountancyCategory
 	 *
 	 * @return array       Result in table
 	 */
-	public function getCatsCpts() {
-		global $mysoc;
+	public function getCatsCpts()
+	{
+		global $mysoc,$conf;
+
 		$sql = "";
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
-			$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id . ")";
-			$sql .= " AND cat.rowid = t.fk_accounting_category";
-			$sql .= " ORDER BY cat.position ASC";
-		} else {
-			$sql = "SELECT c.rowid, c.code, c.label, c.category_type ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
+		$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1";
+		$sql .= " AND c.entity = " . $conf->entity;
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND cat.rowid = t.fk_accounting_category";
+		$sql .= " AND t.entity = " . $conf->entity;
+		$sql .= " ORDER BY cat.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -381,35 +686,27 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Return list of personalized groups
+	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
-	 * @return	array							Array of groups
+	 * @return	array|int						Array of groups or -1 if error
 	 */
 	public function getCats($categorytype=-1)
 	{
-		global $db, $langs, $user, $mysoc;
+		global $db, $langs, $user, $mysoc, $conf;
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1 ";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id;
-			$sql .= " ORDER BY c.position ASC";
-		} else {	// Note: this should not happen
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1 ";
+		$sql .= " AND c.entity = " . $conf->entity;
+		if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -443,72 +740,13 @@ class AccountancyCategory
 	}
 
 
-	// calcule
-
-	/* I try to replace this with dol_eval()
-
-	const PATTERN = '/(?:\-?\d+(?:\.?\d+)?[\+\-\*\/])+\-?\d+(?:\.?\d+)?/';
-
-	const PARENTHESIS_DEPTH = 10;
-
-	public function calculate($input)
-	{
-		global $langs;
-
-		if(strpos($input, '+') != null || strpos($input, '-') != null || strpos($input, '/') != null || strpos($input, '*') != null){
-			//  Remove white spaces and invalid math chars
-			$input = str_replace($langs->trans("ThousandSeparator"), '', $input);
-			$input = str_replace(',', '.', $input);
-			$input = preg_replace('[^0-9\.\+\-\*\/\(\)]', '', $input);
-
-			//  Calculate each of the parenthesis from the top
-			$i = 0;
-			while(strpos($input, '(') || strpos($input, ')')){
-				$input = preg_replace_callback('/\(([^\(\)]+)\)/', 'self::callback', $input);
-
-				$i++;
-				if($i > self::PARENTHESIS_DEPTH){
-					break;
-				}
-			}
-
-			//  Calculate the result
-			if(preg_match(self::PATTERN, $input, $match)){
-				return $this->compute($match[0]);
-			}
-
-			return 0;
-		}
-
-		return $input;
-	}
-
-	private function compute($input){
-		$compute = create_function('', 'return '.$input.';');
-
-		return 0 + $compute();
-	}
-
-	private function callback($input){
-		if(is_numeric($input[1])){
-			return $input[1];
-		}
-		elseif(preg_match(self::PATTERN, $input[1], $match)){
-			return $this->compute($match[0]);
-		}
-
-		return 0;
-	}
-	*/
-
-
 	/**
 	 * Get all accounting account of a group.
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array       					Array of accounting accounts
+	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
+	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @return 	array|int							Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
@@ -525,14 +763,14 @@ class AccountancyCategory
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		else
 		{
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		//echo $sql;
 

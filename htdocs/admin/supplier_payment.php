@@ -27,12 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('bills');
-$langs->load('orders');
-
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
 if (! $user->admin) accessforbidden();
 
@@ -159,7 +155,7 @@ llxHeader("",$langs->trans("SupplierPaymentSetup"),'EN:Supplier_Payment_Configur
 $form=new Form($db);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SupplierPaymentSetup"),$linkback,'title_setup');
 
 print "<br>";
@@ -217,7 +213,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
 
             while (($file = readdir($handle))!==false)
             {
@@ -249,7 +244,6 @@ foreach ($dirmodels as $reldir)
 
                         if ($module->isEnabled())
                         {
-                            $var = !$var;
                             print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_supplier_payment_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
@@ -359,7 +353,6 @@ foreach ($dirmodels as $reldir)
 
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new PaiementFourn($db));
-
 
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";

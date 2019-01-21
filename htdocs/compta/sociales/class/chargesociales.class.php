@@ -83,7 +83,7 @@ class ChargeSociales extends CommonObject
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
         $sql.= ' WHERE cs.entity IN ('.getEntity('tax').')';
         if ($ref) $sql.= " AND cs.rowid = ".$ref;
         else $sql.= " AND cs.rowid = ".$id;
@@ -192,7 +192,7 @@ class ChargeSociales extends CommonObject
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
 
             //dol_syslog("ChargesSociales::create this->id=".$this->id);
-			$result=$this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);
+			$result=$this->call_trigger('SOCIALCONTRIBUTION_CREATE',$user);
 			if ($result < 0) $error++;
 
 			if(empty($error)) {
@@ -464,21 +464,58 @@ class ChargeSociales extends CommonObject
     /**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     * 	@param	int		$maxlen			Max length of label
-     *  @param	int  	$notooltip		1=Disable tooltip
-     *	@return	string					String with link
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     * 	@param	int		$maxlen						Max length of label
+     *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  int		$short           			1=Return just URL
+     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								String with link
      */
-    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
+    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0, $short=0, $save_lastsearch_value=-1)
     {
-        global $langs;
+    	global $langs, $conf, $user, $form;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result='';
 
-        if (empty($this->ref)) $this->ref=$this->lib;
-        $label = $langs->trans("ShowSocialContribution").': '.$this->ref;
+        $url = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        if ($short) return $url;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+
+        if (empty($this->ref)) $this->ref=$this->lib;
+
+        $label = '<u>'.$langs->trans("ShowSocialContribution").'</u>';
+        if (! empty($this->ref))
+        	$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->lib))
+        	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->lib;
+        if (! empty($this->type_libelle))
+        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_libelle;
+
+        $linkclose='';
+        if (empty($notooltip) && $user->rights->facture->lire)
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowSocialContribution");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip"';
+        }
+
+        $linkstart='<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
         $result .= $linkstart;

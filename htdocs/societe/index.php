@@ -127,6 +127,7 @@ if ($result)
 }
 else dol_print_error($db);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
@@ -175,6 +176,7 @@ print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><
 print $total;
 print '</td></tr>';
 print '</table>';
+print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
 {
@@ -183,6 +185,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
@@ -250,6 +253,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print $total;
 	print '</td></tr>';
 	print '</table>';
+	print '</div>';
 }
 
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
@@ -260,7 +264,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last third parties modified
  */
 $max=15;
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur";
+$sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql.= ", s.code_client";
 $sql.= ", s.code_fournisseur";
 $sql.= ", s.logo";
@@ -287,11 +291,12 @@ if ($result)
         $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
         print "\n<!-- last thirdparties modified -->\n";
+        print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
         print '<th>&nbsp;</th>';
-        print '<th align="right">'.$langs->trans('Status').'</th>';
+        print '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
         print '</tr>'."\n";
 
         while ($i < $num)
@@ -308,6 +313,7 @@ if ($result)
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
+            $thirdparty_static->email = $objp->email;
 
             print '<tr class="oddeven">';
             // Name
@@ -348,6 +354,7 @@ if ($result)
         $db->free($result);
 
         print "</table>\n";
+        print '</div>';
         print "<!-- End last thirdparties modified -->\n";
     }
 }

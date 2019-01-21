@@ -111,7 +111,8 @@ class MenuManager
 
 
     /**
-     *  Show menu
+     *  Show menu.
+     *  Module defined in sql tables are stored into this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output
@@ -185,6 +186,7 @@ class MenuManager
         			$tmpleftmenu='all';
         			$submenu=new Menu();
 	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
+	        		// Note: $submenu contains menu entry with substitution not yet done
         		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
                     //if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
 	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
@@ -247,9 +249,16 @@ class MenuManager
        					{
        						$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
        						$substitarray['__USERID__'] = $user->id;	// For backward compatibility
-       						$val2['url'] = make_substitutions($val2['url'], $substitarray);
+       						$val2['url'] = make_substitutions($val2['url'], $substitarray);		// Make also substitution of __(XXX)__ and __[XXX]__
 
-	        				$relurl2=dol_buildpath($val2['url'],1);
+       						if (! preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
+       						{
+       							$relurl2=dol_buildpath($val2['url'],1);
+       						}
+       						else
+       						{
+       							$relurl2=$val2['url'];
+       						}
 	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';

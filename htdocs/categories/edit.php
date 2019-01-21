@@ -29,12 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->load("categories");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action','aZ09');
+$action=(GETPOST('action','aZ09')?GETPOST('action','aZ09'):'edit');
 $confirm=GETPOST('confirm');
 $cancel=GETPOST('cancel','alpha');
 
@@ -176,7 +177,7 @@ print '</td></tr>';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (empty($reshook) && ! empty($extrafields->attribute_label))
+if (empty($reshook))
 {
 	print $object->showOptionals($extrafields,'edit');
 }

@@ -89,7 +89,7 @@ if ($action == 'update')
         if ($result > 0)
         {
             $menu->titre=GETPOST('titre', 'alpha');
-            $menu->leftmenu=GETPOST('leftmenu', 'alpha');
+            $menu->leftmenu=GETPOST('leftmenu', 'aZ09');
             $menu->url=GETPOST('url','alpha');
             $menu->langs=GETPOST('langs','alpha');
             $menu->position=GETPOST('position','int');

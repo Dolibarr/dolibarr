@@ -140,7 +140,7 @@ $configfilelib=array(
 					'Limit nb of email sent by page',
 					'Strict mode is on/off'
 					);
-$var=true;
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';

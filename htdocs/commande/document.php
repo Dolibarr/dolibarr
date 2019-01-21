@@ -36,9 +36,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
 $action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');
@@ -69,6 +68,7 @@ $object = new Commande($db);
 /*
  * Actions
  */
+
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();
@@ -163,7 +163,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 		print "</table>\n";
 

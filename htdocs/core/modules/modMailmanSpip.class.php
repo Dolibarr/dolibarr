@@ -43,7 +43,7 @@ class modMailmanSpip extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 105;
 
-		$this->family = "technic";
+		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Mailman or Spip interface for member module";
@@ -52,7 +52,6 @@ class modMailmanSpip extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 1;
 		$this->picto='technic';
 
 		// Data directories to create when module is enabled

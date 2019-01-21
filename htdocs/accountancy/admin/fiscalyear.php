@@ -39,8 +39,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.rowid"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
-$langs->load("admin");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)
@@ -95,6 +95,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);

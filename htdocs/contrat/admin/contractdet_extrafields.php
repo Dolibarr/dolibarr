@@ -31,9 +31,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'contracts'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -66,7 +65,7 @@ $textobject = $langs->transnoentitiesnoconv('Contracts');
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
 
 $head=contract_admin_prepare_head();

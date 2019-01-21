@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=Paybox modulis uzstādīšana
+PayBoxSetup=PayBox moduļa iestatīšana
 PayBoxDesc=Šis modulis piedāvā lapas, lai ļautu maksājumus par <a href="http://www.paybox.com" target="_blank">Paybox</a> ar klientiem. To var izmantot par brīvu maksājumu vai maksājumu par konkrētu Dolibarr objektu (rēķins, rīkojums, ...)
 FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
 PaymentForm=Maksājuma formu
@@ -23,12 +23,12 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL piedāvāt %s tiešsaistes 
 YouCanAddTagOnUrl=Jūs varat arī pievienot url parametrs <b>&amp; Tag = <i>vērtība,</i></b> kādu no šiem URL (nepieciešams tikai bezmaksas samaksu), lai pievienotu savu maksājumu komentāru tagu.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup savu Paybox ar url <b>%s</b> ir maksājums izveidots automātiski, kad apstiprinājis Paybox.
 YourPaymentHasBeenRecorded=Šajā lapā apliecina, ka jūsu maksājums ir reģistrēts. Paldies.
-YourPaymentHasNotBeenRecorded=Jūs maksājums nav reģistrēts, un darījums tika atcelts. Paldies.
+YourPaymentHasNotBeenRecorded=Jūsu maksājums NAV reģistrēts un darījums ir atcelts. Paldies.
 AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
 InformationToFindParameters=Palīdzēt atrast savu %s konta informāciju
 PAYBOX_CGI_URL_V2=URL Paybox CGI modulis par samaksu
-VendorName=Nosaukums pārdevējam
+VendorName=Pārdevēja nosaukums
 CSSUrlForPaymentForm=CSS stila lapas url maksājuma formu
 NewPayboxPaymentReceived=Jauns Paybox maksājums saņemts
 NewPayboxPaymentFailed=Jauns Paybox maksājums mēģināju, bet neizdevās

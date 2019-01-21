@@ -27,12 +27,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("ldap");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userldap';   // To manage different context of search
 
 // Security check
 $socid=0;
@@ -46,8 +45,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userldap','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userldap','globalcard'));
 
 
 /*
@@ -100,7 +98,7 @@ dol_fiche_head($head, 'ldap', $title, 0, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

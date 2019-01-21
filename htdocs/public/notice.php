@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
  *	\file       htdocs/public/notice.php
  *	\brief      Dolibarr page to show a notice.
  *              Default notice is a message to say network connection is off.
- *              You can also call this page with URL: 
+ *              You can also call this page with URL:
  *                /public/notice.php?lang=xx_XX&transkey=translation_key  (key must be inside file main.lang, error.lang or other.lang)
  *                /public/notice.php?transphrase=url_encoded_sentence_to_show
  */
 
 define('NOCSRFCHECK',1);
-define('NOLOGIN',1);		
+define('NOLOGIN',1);
 
 require '../main.inc.php';
 
@@ -34,7 +34,7 @@ require '../main.inc.php';
  * View
  */
 
-if (! GETPOST('transkey') && ! GETPOST('transphrase'))
+if (! GETPOST('transkey','alphanohtml') && ! GETPOST('transphrase','alphanohtml'))
 {
     print 'Sorry, it seems your internet connexion is off.<br>';
     print 'You need to be connected to network to use this software.<br>';
@@ -43,8 +43,8 @@ else
 {
     $langs->load("error");
     $langs->load("other");
-    
-    if (GETPOST('transphrase')) print GETPOST('transphrase'); 
-    if (GETPOST('transkey')) print $langs->trans(GETPOST('transkey'));
+
+    if (GETPOST('transphrase','alphanohtml')) print GETPOST('transphrase','alphanohtml');
+    if (GETPOST('transkey','alphanohtml')) print $langs->trans(GETPOST('transkey','alphanohtml'));
 }
 

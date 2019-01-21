@@ -28,7 +28,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');  // Disable "main.inc.php" hooks
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -63,7 +62,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
 	$row->id = $element_id;
-	$row->line_ajaxorder($newrowordertab);		// This update field rank or position in table table_element_line
+	$row->line_ajaxorder($newrowordertab);		// This update field rank or position in table row->table_element_line
 
 	// Reorder line to have position of children lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.

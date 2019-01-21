@@ -211,8 +211,7 @@ class Facturation
         $total_localtax1 = 0;
         $total_localtax2 = 0;
 
-        $tab=array();
-        $tab = $_SESSION['poscart'];
+        $tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
 
         $tab_size=count($tab);
         for($i=0;$i < $tab_size;$i++)
@@ -233,7 +232,7 @@ class Facturation
         $this->prix_total_localtax2 = $total_localtax2;
 
         $this->montant_tva = $total_ttc - $total_ht;
-        //print $this->prix_total_ttc.'eeee'; exit;
+        //print 'total: '.$this->prix_total_ttc; exit;
     }
 
     /**
@@ -292,7 +291,7 @@ class Facturation
         else if ( $aId == 'RESET' )
         {
 
-            $this->id = NULL;
+            $this->id = null;
 
         }
         else
@@ -318,7 +317,7 @@ class Facturation
         }
         else if ( $aRef == 'RESET' )
         {
-            $this->ref = NULL;
+            $this->ref = null;
         }
         else
         {
@@ -342,7 +341,7 @@ class Facturation
         else if ( $aQte == 'RESET' )
         {
 
-            $this->qte = NULL;
+            $this->qte = null;
         }
         else
         {
@@ -366,7 +365,7 @@ class Facturation
         }
         else if ( $aStock == 'RESET' )
         {
-            $this->stock = NULL;
+            $this->stock = null;
         }
         else
         {
@@ -390,7 +389,7 @@ class Facturation
         }
         else if ($aRemisePercent == 'RESET')
         {
-            $this->remise_percent = NULL;
+            $this->remise_percent = null;
         }
         else
         {
@@ -414,7 +413,7 @@ class Facturation
 
         } else if ( $aMontantRemise == 'RESET' ) {
 
-            $this->montant_remise = NULL;
+            $this->montant_remise = null;
 
         } else {
 
@@ -439,7 +438,7 @@ class Facturation
 
         } else if ( $aPrix == 'RESET' ) {
 
-            $this->prix = NULL;
+            $this->prix = null;
 
         } else {
 
@@ -463,7 +462,7 @@ class Facturation
 
         } else if ( $aTva == 'RESET' ) {
 
-            $this->tva = NULL;
+            $this->tva = null;
 
         } else {
 
@@ -487,7 +486,7 @@ class Facturation
 
         } else if ( $aNumFacture == 'RESET' ) {
 
-            $this->num_facture = NULL;
+            $this->num_facture = null;
 
         } else {
 
@@ -511,7 +510,7 @@ class Facturation
 
         } else if ( $aModeReglement == 'RESET' ) {
 
-            $this->mode_reglement = NULL;
+            $this->mode_reglement = null;
 
         } else {
 
@@ -536,7 +535,7 @@ class Facturation
 
         } else if ( $aMontantEncaisse == 'RESET' ) {
 
-            $this->montant_encaisse = NULL;
+            $this->montant_encaisse = null;
 
         } else {
 
@@ -560,7 +559,7 @@ class Facturation
             return $this->montant_rendu;
         } else if ( $aMontantRendu == 'RESET' ) {
 
-            $this->montant_rendu = NULL;
+            $this->montant_rendu = null;
 
         } else {
 
@@ -584,7 +583,7 @@ class Facturation
 
         } else if ( $aPaiementLe == 'RESET' ) {
 
-            $this->paiement_le = NULL;
+            $this->paiement_le = null;
 
         } else {
 
@@ -607,7 +606,7 @@ class Facturation
 
         } else if ( $aTotalHt == 'RESET' ) {
 
-            $this->prix_total_ht = NULL;
+            $this->prix_total_ht = null;
 
         } else {
 
@@ -630,7 +629,7 @@ class Facturation
 
         } else if ( $aMontantTva == 'RESET' ) {
 
-            $this->montant_tva = NULL;
+            $this->montant_tva = null;
 
         } else {
 
@@ -654,7 +653,7 @@ class Facturation
         }
         else if ( $aTotalTtc == 'RESET' )
         {
-            $this->prix_total_ttc = NULL;
+            $this->prix_total_ttc = null;
         }
         else
         {

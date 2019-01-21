@@ -3,7 +3,7 @@ PayBoxSetup=PayBox module setup
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
 PaymentForm=Payment form
-WelcomeOnPaymentPage=Welcome on our online payment service
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=This screen allow you to make an online payment to %s.
 ThisIsInformationOnPayment=This is information on payment to do
 ToComplete=To complete
@@ -23,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online paymen
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
-YourPaymentHasNotBeenRecorded=You payment has not been recorded and transaction has been canceled. Thank you.
+YourPaymentHasNotBeenRecorded=You payment has NOT been recorded and transaction has been canceled. Thank you.
 AccountParameter=Account parameters
 UsageParameter=Usage parameters
 InformationToFindParameters=Help to find your %s account information

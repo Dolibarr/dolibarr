@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("categories");
 
 if (! $user->rights->categorie->lire) accessforbidden();
@@ -64,8 +65,11 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
+$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'"><span class="valignmiddle">'.$langs->trans("NewCategory").'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
-print load_fiche_titre($title);
+print load_fiche_titre($title, $newcardbutton);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -82,7 +86,7 @@ print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
-print '<tr '.$bc[0].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
@@ -111,7 +115,6 @@ if ($catname || $id > 0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	$var=true;
 	foreach ($cats as $cat)
 	{
 		print "\t".'<tr class="oddeven">'."\n";

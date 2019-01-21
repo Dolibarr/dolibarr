@@ -25,8 +25,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadlangs(array('users', 'trips'));
 
 if(!$user->rights->expensereport->export_csv) {
    accessforbidden();

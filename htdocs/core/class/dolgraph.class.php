@@ -674,7 +674,7 @@ class DolGraph
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);
-		$group->legend->setPosition(NULL,0.1);
+		$group->legend->setPosition(null, 0.1);
 		$group->legend->setBackgroundColor($colorsemitrans);
 
 		if (is_array($this->bgcolorgrid)) $group->grid->setBackgroundColor($bgcolorgrid);
@@ -734,7 +734,7 @@ class DolGraph
 				$plot->barShadow->setSize($this->SetShading);
 				$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
 				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
-				$plot->barShadow->smooth(TRUE);
+				$plot->barShadow->smooth(true);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
 
@@ -880,10 +880,17 @@ class DolGraph
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
-		while ($i < $nblot)
+		if ($nblot < 0)
 		{
-			$this->stringtoshow.=$serie[$i];
-			$i++;
+			$this->stringtoshow.='<!-- No series of data -->';
+		}
+		else
+		{
+			while ($i < $nblot)
+			{
+				$this->stringtoshow.=$serie[$i];
+				$i++;
+			}
 		}
 		$this->stringtoshow.="\n";
 
@@ -917,7 +924,7 @@ class DolGraph
 								var percent=Math.round(series.percent);
 								var number=series.data[0][1];
 								return \'';
-								$this->stringtoshow.='<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
+								$this->stringtoshow.='<span style="font-size:8pt;text-align:center;padding:2px;color:black;">';
 								if ($urltemp) $this->stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$urltemp.'">';
 								$this->stringtoshow.='\'+';
 								$this->stringtoshow.=($showlegend?'':'label+\' \'+');	// Hide label if already shown in legend
@@ -925,7 +932,7 @@ class DolGraph
 								$this->stringtoshow.=($showpercent?'\'<br/>\'+percent+\'%\'+':'');
 								$this->stringtoshow.='\'';
 								if ($urltemp) $this->stringtoshow.='</a>';
-								$this->stringtoshow.='</div>\';
+								$this->stringtoshow.='</span>\';
 							},
 							background: {
 							opacity: 0.0,

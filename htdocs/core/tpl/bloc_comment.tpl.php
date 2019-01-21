@@ -43,7 +43,7 @@ print '<td colspan="3">';
 
 $desc = GETPOST('comment_description');
 
-$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '100%');
+$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
 print $doleditor->Create(1);
 
 print '</td>';

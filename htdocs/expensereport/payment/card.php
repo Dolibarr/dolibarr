@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -43,6 +41,13 @@ if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentExpenseReport($db);
+
+if ($id > 0)
+{
+	$result=$object->fetch($id);
+	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+}
+
 
 /*
  * Actions
@@ -73,16 +78,16 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 	$db->begin();
 
 	$result=$object->valide();
-	
+
 	if ($result > 0)
 	{
 		$db->commit();
 
 		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
+		foreach($factures as $invoiceid)
 		{
 			$fac = new Facture($db);
-			$fac->fetch($id);
+			$fac->fetch($invoiceid);
 
 			$outputlangs = $langs;
 			if (! empty($_REQUEST['lang_id']))
@@ -111,12 +116,6 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
  */
 
 llxHeader('', $langs->trans("ExpenseReportPayment"));
-
-if ($id > 0) 
-{
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
-}
 
 $form = new Form($db);
 
@@ -240,8 +239,6 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -269,15 +266,17 @@ if ($resql)
 			print '<td align="center">'.$expensereport->getLibStatut(4,$objp->amount).'</td>';
 
 			print "</tr>\n";
+
 			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
 			{
-				$disable_delete = 1;
+				$disable_delete = 2;
+				$title_button = $langs->trans("CantRemovePaymentWithOneInvoicePaid");
 			}
 			$total = $total + $objp->amount;
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	print '</div>';
@@ -307,7 +306,7 @@ if ($action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

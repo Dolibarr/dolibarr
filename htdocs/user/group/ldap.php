@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -105,7 +103,7 @@ $head = group_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object,'id',$linback,$user->rights->user->user->lire || $user->admin);
 

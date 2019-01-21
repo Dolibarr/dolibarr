@@ -184,6 +184,11 @@ $nbtotalofrecords = '';
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }*/
 
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

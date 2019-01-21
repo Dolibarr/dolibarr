@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/mailings/advthirdparties.modules
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-// Translations
-$langs->load("mails");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('mails', 'companies'));
 if (! empty($conf->categorie->enabled)) {
 	$langs->load("categories");
 }
@@ -73,13 +72,13 @@ if (GETPOST('button_removefilter_x','alpha')) {
 	$search_prenom = '';
 	$search_email = '';
 }
-
 $array_query = array ();
-
 $object = new Mailing($db);
 $advTarget = new AdvanceTargetingMailing($db);
+
 if (empty($template_id)) {
-	$advTarget->fk_mailing = $id;
+	$advTarget->fk_element = $id;
+	$advTarget->type_element = 'mailing';
 	$result = $advTarget->fetch_by_mailing();
 } else {
 	$result = $advTarget->fetch($template_id);
@@ -223,7 +222,7 @@ if ($action == 'add') {
 	} else {
 		$advTarget->contact_lines = array ();
 	}
-
+	
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
 		$obj = new mailing_advthirdparties($db);
@@ -237,6 +236,7 @@ if ($action == 'add') {
 		if (! empty($template_id)) {
 			$query_temlate_id = '&template_id=' . $template_id;
 		}
+		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
 		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . $query_temlate_id);
 		exit();
 	}
@@ -356,6 +356,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				setEventMessage($advTarget->error, 'errors');
 			}
 		} elseif ($action == 'savefilter') {
+			
 			$result = $advTarget->update($user);
 			if ($result < 0) {
 				setEventMessage($advTarget->error, 'errors');
@@ -409,36 +410,7 @@ if ($_POST["button_removefilter"]) {
 
 llxHeader('', $langs->trans("MailAdvTargetRecipients"));
 
-print '<script type="text/javascript" language="javascript">
-	$(document).ready(function() {
 
-		// Click Function
-		$(":button[name=addcontact]").click(function() {
-				$(":hidden[name=action]").val("add");
-				$("#find_customer").submit();
-		});
-
-		$(":button[name=loadfilter]").click(function() {
-				$(":hidden[name=action]").val("loadfilter");
-				$("#find_customer").submit();
-		});
-
-		$(":button[name=deletefilter]").click(function() {
-				$(":hidden[name=action]").val("deletefilter");
-				$("#find_customer").submit();
-		});
-
-		$(":button[name=savefilter]").click(function() {
-				$(":hidden[name=action]").val("savefilter");
-				$("#find_customer").submit();
-		});
-
-		$(":button[name=createfilter]").click(function() {
-				$(":hidden[name=action]").val("createfilter");
-				$("#find_customer").submit();
-		});
-	});
-</script>';
 
 $form = new Form($db);
 $formadvtargetemaling = new FormAdvTargetEmailing($db);
@@ -490,487 +462,9 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
-		print_fiche_titre($langs->trans("AdvTgtTitle"));
-
-		print '<div class="tabBar">' . "\n";
-		print '<form name="find_customer" id="find_customer" action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '"  method="POST">' . "\n";
-		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">' . "\n";
-		print '<input type="hidden" name="action" value="">' . "\n";
-		print '<table class="border" width="100%">' . "\n";
-
-		print '<tr>' . "\n";
-		print '<td colspan="3" align="right">' . "\n";
-
-		print '<input type="button" name="addcontact" id="addcontact" value="' . $langs->trans('AdvTgtAddContact') . '" class="butAction"/>' . "\n";
-
-		print '</td>' . "\n";
-		print '</tr>' . "\n";
-
-		print '<tr><td>' . $langs->trans('AdvTgtNameTemplate') . '</td><td>';
-		if (! empty($template_id)) {
-			$default_template = $template_id;
-		} else {
-			$default_template = $advTarget->id;
-		}
-		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template);
-		print '<input type="button" name="loadfilter" id="loadfilter" value="' . $langs->trans('AdvTgtLoadFilter') . '" class="butAction"/>';
-		print '<input type="button" name="deletefilter" id="deletefilter" value="' . $langs->trans('AdvTgtDeleteFilter') . '" class="butAction"/>';
-		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';
-		print $langs->trans('AdvTgtOrCreateNewFilter');
-		print '<input type="text" name="template_name" id="template_name" value=""/>';
-		print '<input type="button" name="createfilter" id="createfilter" value="' . $langs->trans('AdvTgtCreateFilter') . '" class="butAction"/>';
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		print '<tr><td>' . $langs->trans('AdvTgtTypeOfIncude') . '</td><td>';
-		print $form->selectarray('type_of_target', $advTarget->select_target_type, $array_query['type_of_target']);
-		print '</td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtTypeOfIncudeHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Customer name
-		print '<tr><td>' . $langs->trans('ThirdPartyName');
-		if (! empty($array_query['cust_name'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="cust_name" value="' . $array_query['cust_name'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Code Client
-		print '<tr><td>' . $langs->trans('CustomerCode');
-		if (! empty($array_query['cust_code'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="cust_code" value="' . $array_query['cust_code'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Address Client
-		print '<tr><td>' . $langs->trans('Address');
-		if (! empty($array_query['cust_adress'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="cust_adress" value="' . $array_query['cust_adress'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Zip Client
-		print '<tr><td>' . $langs->trans('Zip');
-		if (! empty($array_query['cust_zip'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="cust_zip" value="' . $array_query['cust_zip'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// City Client
-		print '<tr><td>' . $langs->trans('Town');
-		if (! empty($array_query['cust_city'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="cust_city" value="' . $array_query['cust_city'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Customer Country
-		print '<tr><td>' . $langs->trans("Country");
-		if (count($array_query['cust_country']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselectCountry('cust_country', $array_query['cust_country']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// State Customer
-		print '<tr><td>' . $langs->trans('Status') . ' ' . $langs->trans('ThirdParty');
-		if (count($array_query['cust_status']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('cust_status', array (
-				'0' => $langs->trans('ActivityCeased'),
-				'1' => $langs->trans('InActivity')
-		), $array_query['cust_status']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Mother Company
-		print '<tr><td>' . $langs->trans("Maison mère");
-		if (! empty($array_query['cust_mothercompany'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print '<input type="text" name="cust_mothercompany" value="' . $array_query['cust_mothercompany'] . '"/>';
-		print '</td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Prospect/Customer
-		$selected = $array_query['cust_typecust'];
-		print '<tr><td>' . $langs->trans('ProspectCustomer') . ' ' . $langs->trans('ThirdParty');
-		if (count($array_query['cust_typecust']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		$options_array = array (
-				2 => $langs->trans('Prospect'),
-				3 => $langs->trans('ProspectCustomer'),
-				1 => $langs->trans('Customer'),
-				0 => $langs->trans('NorProspectNorCustomer')
-		);
-		print $formadvtargetemaling->advMultiselectarray('cust_typecust', $options_array, $array_query['cust_typecust']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Prospection status
-		print '<tr><td>' . $langs->trans('ProspectLevel');
-		if (count($array_query['cust_prospect_status']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Prospection comm status
-		print '<tr><td>' . $langs->trans('StatusProsp');
-		if (count($array_query['cust_comm_status']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('cust_comm_status', $advTarget->type_statuscommprospect, $array_query['cust_comm_status']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Customer Type
-		print '<tr><td>' . $langs->trans("ThirdPartyType");
-		if (count($array_query['cust_typeent']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print $formadvtargetemaling->advMultiselectarray('cust_typeent', $formcompany->typent_array(0, " AND id <> 0"), $array_query['cust_typeent']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Staff number
-		print '<td>' . $langs->trans("Staff");
-		if (count($array_query['cust_effectif_id']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray("cust_effectif_id", $formcompany->effectif_array(0, " AND id <> 0"), $array_query['cust_effectif_id']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Sales manager
-		print '<tr><td>' . $langs->trans("SalesRepresentatives");
-		if (count($array_query['cust_saleman']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman', $array_query['cust_saleman'], $user);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Customer Default Langauge
-		if (! empty($conf->global->MAIN_MULTILANGS)) {
-
-			print '<tr><td>' . $langs->trans("DefaultLang");
-			if (count($array_query['cust_language']) > 0) {
-				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-			}
-			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselectselectLanguage('cust_language', $array_query['cust_language']);
-			print '</td><td>' . "\n";
-			print '</td></tr>' . "\n";
-		}
-
-		if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
-			// Customer Categories
-			print '<tr><td>' . $langs->trans("CustomersCategoryShort");
-			if (count($array_query['cust_categ']) > 0) {
-				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-			}
-			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselectCustomerCategories('cust_categ', $array_query['cust_categ']);
-			print '</td><td>' . "\n";
-			print '</td></tr>' . "\n";
-		}
-
-		// Standard Extrafield feature
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-			// fetch optionals attributes and labels
-			dol_include_once('/core/class/extrafields.class.php');
-			$extrafields = new ExtraFields($db);
-			$extralabels = $extrafields->fetch_name_optionals_label('societe');
-			foreach ( $extralabels as $key => $val ) {
-				if ($key != 'ts_nameextra' && $key != 'ts_payeur') {
-					print '<tr><td>' . $extrafields->attribute_label[$key];
-					if (! empty($array_query['options_' . $key]) || (is_array($array_query['options_' . $key]) && count($array_query['options_' . $key]) > 0)) {
-						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-					}
-					print '</td><td>';
-					if (($extrafields->attribute_type[$key] == 'varchar') || ($extrafields->attribute_type[$key] == 'text')) {
-						print '<input type="text" name="options_' . $key . '"/></td><td>' . "\n";
-						print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
-						print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options' . $key . '_min"/>';
-						print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options' . $key . '_max"/>';
-						print '</td><td>' . "\n";
-						print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
-
-						print '<table class="nobordernopadding"><tr>';
-						print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-						print $form->select_date('', 'options_' . $key . '_st_dt');
-						print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-						print $form->select_date('', 'options_' . $key . '_end_dt');
-						print '</td></tr></table>';
-
-						print '</td><td>' . "\n";
-						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-						print $form->selectarray('options_' . $key, array (
-								'' => '',
-								'1' => $langs->trans('Yes'),
-								'0' => $langs->trans('No')
-						), $array_query['options_' . $key]);
-						print '</td><td>' . "\n";
-					} elseif (($extrafields->attribute_type[$key] == 'select')) {
-						print $formadvtargetemaling->advMultiselectarray('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
-						print '</td><td>' . "\n";
-					} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
-						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
-						print '</td><td>' . "\n";
-					} else {
-
-						print '<table class="nobordernopadding"><tr>';
-						print '<td></td><td>';
-						if (is_array($array_query['options_' . $key])) {
-							print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key]));
-						} else {
-							print $extrafields->showInputField($key, $array_query['options_' . $key]);
-						}
-						print '</td></tr></table>';
-
-						print '</td><td>' . "\n";
-					}
-					print '</td></tr>' . "\n";
-				}
-			}
-		} else {
-			$std_soc = new Societe($db);
-			$action_search = 'query';
-
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array ('thirdpartycard'));
-
-			$parameters=array();
-			if (! empty($advTarget->id)) {
-				$parameters = array('array_query' => $advTarget->filtervalue);
-			}
-			// Other attributes
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $std_soc, $action_search);
-            print $hookmanager->resPrint;
-		}
-
-		// State Contact
-		print '<tr><td>' . $langs->trans('Status') . ' ' . $langs->trans('Contact');
-		if (count($array_query['contact_status']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('contact_status', array (
-				'0' => $langs->trans('ActivityCeased'),
-				'1' => $langs->trans('InActivity')
-		), $array_query['contact_status']);
-		print '</td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtContactHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Civility
-		print '<tr><td width="15%">' . $langs->trans("UserTitle");
-		if (count($array_query['contact_civility']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>';
-		print $formadvtargetemaling->multiselectCivility('contact_civility', $array_query['contact_civility']);
-		print '</td></tr>';
-
-		// contact name
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans('Lastname');
-		if (! empty($array_query['contact_lastname'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="contact_lastname" value="' . $array_query['contact_lastname'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans('Firstname');
-		if (! empty($array_query['contact_firstname'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td><input type="text" name="contact_firstname" value="' . $array_query['contact_firstname'] . '"/></td><td>' . "\n";
-		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		print '</td></tr>' . "\n";
-
-		// Contact Country
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans("Country");
-		if (count($array_query['contact_country']) > 0) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselectCountry('contact_country', $array_query['contact_country']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Never send mass mailing
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans("No_Email");
-		if (! empty($array_query['contact_no_email'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print $form->selectarray('contact_no_email', array (
-				'' => '',
-				'1' => $langs->trans('Yes'),
-				'0' => $langs->trans('No')
-		), $array_query['contact_no_email']);
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Contact Date Create
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans("DateCreation");
-		if (! empty($array_query['contact_create_st_dt'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print '<table class="nobordernopadding"><tr>';
-		print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-		print $form->select_date($array_query['contact_create_st_dt'], 'contact_create_st_dt', 0, 0, 1, 'find_customer', 1, 1);
-		print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-		print $form->select_date($array_query['contact_create_end_dt'], 'contact_create_end_dt', 0, 0, 1, 'find_customer', 1, 1);
-		print '</td></tr></table>';
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		// Contact update Create
-		print '<tr><td>' . $langs->trans('Contact') . ' ' . $langs->trans("DateLastModification");
-		if (! empty($array_query['contact_update_st_dt'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-		}
-		print '</td><td>' . "\n";
-		print '<table class="nobordernopadding"><tr>';
-		print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-		print $form->select_date($array_query['contact_update_st_dt'], 'contact_update_st_dt', 0, 0, 1, 'find_customer', 1, 1);
-		print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-		print $form->select_date($array_query['contact_update_end_dt'], 'contact_update_end_dt', 0, 0, 1, 'find_customer', 1, 1);
-		print '</td></tr></table>';
-		print '</td><td>' . "\n";
-		print '</td></tr>' . "\n";
-
-		if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
-			// Customer Categories
-			print '<tr><td>' . $langs->trans("ContactCategoriesShort");
-			if (count($array_query['contact_categ']) > 0) {
-				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-			}
-			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselectContactCategories('contact_categ', $array_query['contact_categ']);
-			print '</td><td>' . "\n";
-			print '</td></tr>' . "\n";
-		}
-
-		// Standard Extrafield feature
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-			// fetch optionals attributes and labels
-			dol_include_once('/core/class/extrafields.class.php');
-			$extrafields = new ExtraFields($db);
-			$extralabels = $extrafields->fetch_name_optionals_label('socpeople');
-            foreach($extrafields->attribute_type as $key=>&$value) {
-                if($value == 'radio')$value = 'select';
-            }
-
-
-			foreach ( $extralabels as $key => $val ) {
-
-				print '<tr><td>' . $extrafields->attribute_label[$key];
-				if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
-					print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-				}
-				print '</td><td>';
-				if (($extrafields->attribute_type[$key] == 'varchar') || ($extrafields->attribute_type[$key] == 'text')) {
-					print '<input type="text" name="options_' . $key . '_cnct"/></td><td>' . "\n";
-					print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
-					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options_' . $key . '_min_cnct"/>';
-					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options_' . $key . '_max_cnct"/>';
-					print '</td><td>' . "\n";
-					print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
-
-					print '<table class="nobordernopadding"><tr>';
-					print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-					print $form->select_date('', 'options_' . $key . '_st_dt' . '_cnct');
-					print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-					print $form->select_date('', 'options_' . $key . '_end_dt' . '_cnct');
-					print '</td></tr></table>';
-
-					print '</td><td>' . "\n";
-					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-					print $form->selectarray('options_' . $key . '_cnct', array (
-							'' => '',
-							'1' => $langs->trans('Yes'),
-							'0' => $langs->trans('No')
-					), $array_query['options_' . $key . '_cnct']);
-					print '</td><td>' . "\n";
-				} elseif (($extrafields->attribute_type[$key] == 'select')) {
-					print $formadvtargetemaling->advMultiselectarray('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
-					print '</td><td>' . "\n";
-				} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
-					print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
-					print '</td><td>' . "\n";
-				} else {
-
-					print '<table class="nobordernopadding"><tr>';
-					print '<td></td><td>';
-					if (is_array($array_query['options_' . $key . '_cnct'])) {
-						print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key . '_cnct']), '', '_cnct');
-					} else {
-						print $extrafields->showInputField($key, $array_query['options_' . $key . '_cnct'], '', '_cnct');
-					}
-					print '</td></tr></table>';
-
-					print '</td><td>' . "\n";
-				}
-				print '</td></tr>' . "\n";
-			}
-		}
-
-		print '<tr>' . "\n";
-		print '<td colspan="3" align="right">' . "\n";
-
-		print '<input type="button" name="addcontact" id="addcontact" value="' . $langs->trans('AdvTgtAddContact') . '" class="butAction"/>' . "\n";
-
-		print '</td>' . "\n";
-		print '</tr>' . "\n";
-		print '</table>' . "\n";
-		print '</form>' . "\n";
-		print '</div>' . "\n";
-
-		print '<form action="' . $_SERVER['PHP_SELF'] . '?action=clear&id=' . $object->id . '" method="POST">';
-		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" align="right"><input type="submit" class="button" value="' . $langs->trans("TargetsReset") . '"></td>';
-		print '</tr>';
-		print '</table>';
-		print '</form>';
-		print '<br>';
+		
+		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
+		
 	}
 }
 

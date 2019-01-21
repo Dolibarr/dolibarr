@@ -36,11 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("bills");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
@@ -78,9 +75,9 @@ if (empty($search_year)) $search_year=$currentyear;
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-
 $object = new Product($db);
-if (! $id)
+
+if (! $id && empty($ref))
 {
     llxHeader("",$langs->trans("ProductStatistics"));
 

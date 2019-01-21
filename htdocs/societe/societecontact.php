@@ -45,6 +45,9 @@ $result = restrictedArea($user, 'societe', $id,'');
 
 $object = new Societe($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactthirdparty','globalcard'));
+
 
 /*
  * Actions
@@ -222,7 +225,8 @@ if ($id > 0 || ! empty($ref))
 			$sql.= " t.libelle as type, t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE d.fk_soc=".$id;
+			$sql.= " WHERE d.fk_soc = ".$id;
+			$sql.= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
 			$resql = $db->query($sql);
@@ -249,7 +253,6 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
 					print "</tr>\n";
 
-					$var=True;
 					$i=0;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
@@ -264,7 +267,6 @@ if ($id > 0 || ! empty($ref))
 						$memberstatic->datefin=$db->jdate($objp->datefin);
 
 						$companyname=$objp->company;
-
 
 						print '<tr class="oddeven">';
 

@@ -1,0 +1,36 @@
+language: php
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+
+
+env:
+  matrix:
+    - LOWEST_DEPS="" TEST_DEPS=""
+    - LOWEST_DEPS="--prefer-lowest" TEST_DEPS="tests/Sabre/"
+
+services:
+  - mysql
+  - postgresql
+
+sudo: false
+
+before_script:
+  - mysql -e 'create database sabredav_test'
+  - psql -c "create database sabredav_test" -U postgres
+  - psql -c "create user sabredav with PASSWORD 'sabredav';GRANT ALL PRIVILEGES ON DATABASE sabredav_test TO sabredav" -U postgres
+  #  - composer self-update
+  - composer update --prefer-dist $LOWEST_DEPS
+
+# addons:
+#    postgresql: "9.5"
+
+script:
+  - ./bin/phpunit --configuration tests/phpunit.xml.dist $TEST_DEPS
+  - ./bin/sabre-cs-fixer fix . --dry-run --diff
+
+cache:
+  directories:
+    - $HOME/.composer/cache

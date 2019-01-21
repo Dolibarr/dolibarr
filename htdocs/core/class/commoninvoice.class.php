@@ -173,19 +173,13 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	function getSumCreditNotesUsed($multicurrency=0)
 	{
-	    if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-	    {
-	        // TODO
-	        return 0;
-	    }
-
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 	    $discountstatic=new DiscountAbsolute($this->db);
@@ -275,14 +269,72 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Return list of payments
+	 *
+	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @return     array					Array with list of payments
+	 */
+	function getListOfPayments($filtertype='')
+	{
+		$retarray=array();
+
+		$table='paiement_facture';
+		$table2='paiement';
+		$field='fk_facture';
+		$field2='fk_paiement';
+		$sharedentity='facture';
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+		{
+			$table='paiementfourn_facturefourn';
+			$table2='paiementfourn';
+			$field='fk_facturefourn';
+			$field2='fk_paiementfourn';
+			$sharedentity='facture_fourn';
+		}
+
+		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
+		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
+		//$sql.= ' WHERE pf.'.$field.' = 1';
+		$sql.= ' AND pf.'.$field2.' = p.rowid';
+		$sql.= ' AND p.fk_paiement = t.id';
+		$sql.= ' AND p.entity IN (' . getEntity($sharedentity).')';
+		if ($filtertype) $sql.=" AND t.code='PRE'";
+
+		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$i++;
+			}
+			$this->db->free($resql);
+			return $retarray;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_print_error($this->db);
+			return array();
+		}
+	}
+
+
+	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
-	 *  If invoice is draft and has a temporary ref -> yes
+	 *  If invoice is draft and has a temporary ref -> yes (1)
 	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on -> no (0)
 	 *  If invoice is dispatched in bookkeeping -> no (-1)
 	 *  If invoice has a definitive ref, is not last and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
 	 *  If invoice not last in a cycle -> no (-3)
 	 *  If there is payment -> no (-4)
+	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         <=0 if no, >0 if yes
 	 */
@@ -330,7 +382,7 @@ abstract class CommonInvoice extends CommonObject
 		// Test if there is at least one payment. If yes, refuse to delete.
 		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) return -4;
 
-		return 1;
+		return 2;
 	}
 
 	/**
@@ -457,7 +509,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -475,7 +527,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
@@ -493,7 +545,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('BillStatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
@@ -512,7 +564,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusDraft').' </span>'.img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusCanceled').' </span>'.img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9');
 				if ($alreadypaid <= 0)
 				{
 				    if ($type == self::TYPE_CREDIT_NOTE) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotRefunded').' </span>'.img_picto($langs->trans('StatusNotRefunded'),'statut1');
@@ -545,9 +597,11 @@ abstract class CommonInvoice extends CommonObject
 
 		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-		$sqltemp.= " WHERE c.entity IN (" . getEntity('c_payment_term').")";
-		if (is_numeric($cond_reglement)) $sqltemp.= " AND c.rowid=".$cond_reglement;
-		else $sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
+		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
+		else {
+			$sqltemp.= " WHERE c.entity IN (".getEntity('c_payment_term').")";
+			$sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
+		}
 
 		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
 		$resqltemp=$this->db->query($sqltemp);
@@ -623,7 +677,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 {
 	/**
 	 * Quantity
-	 * @var int
+	 * @var double
 	 */
 	public $qty;
 

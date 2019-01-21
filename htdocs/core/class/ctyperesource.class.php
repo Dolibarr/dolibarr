@@ -48,14 +48,14 @@ class Ctyperesource
 
 	/**
 	 */
-	
+
 	public $code;
 	public $label;
 	public $active;
 
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -82,7 +82,7 @@ class Ctyperesource
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -93,26 +93,26 @@ class Ctyperesource
 			 $this->active = trim($this->active);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
+
 		$sql.= 'code,';
 		$sql.= 'label';
 		$sql.= 'active';
 
-		
+
 		$sql .= ') VALUES (';
-		
+
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(! isset($this->active)?'NULL':$this->active);
 
-		
+
 		$sql .= ')';
 
 		$this->db->begin();
@@ -165,18 +165,18 @@ class Ctyperesource
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
+
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
 
-		
+
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if ($id)   $sql.= " WHERE t.id = ".$id;
 		elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
 		elseif ($label) $sql.= " WHERE t.label = '".$this->db->escape($label)."'";
-		
-		
+
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -184,25 +184,20 @@ class Ctyperesource
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				
+
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
 
-				
+
 			}
-			
+
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
-			/*
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-			$this->fetch_optionals($this->id,$extralabels);
-            */
-			
+			// $this->fetch_optionals();
+
 			// $this->fetch_lines();
-			
+
 			$this->db->free($resql);
 
 			if ($numrows) {
@@ -236,12 +231,12 @@ class Ctyperesource
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
+
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
 
-		
+
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -251,7 +246,7 @@ class Ctyperesource
 				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
-		
+
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
@@ -270,12 +265,12 @@ class Ctyperesource
 				$line = new self($this->db);
 
 				$line->id = $obj->rowid;
-				
+
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
 
-				
+
 			}
 			$this->db->free($resql);
 
@@ -303,7 +298,7 @@ class Ctyperesource
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -319,12 +314,12 @@ class Ctyperesource
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		
+
 		$sql .= ' code = '.(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").',';
 		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
 		$sql .= ' active = '.(isset($this->active)?$this->active:"null");
 
-        
+
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -387,7 +382,7 @@ class Ctyperesource
 		}
 
 		// If you need to delete child tables to, you can insert them here
-		
+
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
@@ -468,7 +463,7 @@ class Ctyperesource
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+
 		$this->code = '';
 		$this->label = '';
 		$this->active = '';
@@ -488,7 +483,7 @@ class CtyperesourceLine
 	/**
 	 * @var mixed Sample line property 1
 	 */
-	
+
 	public $code;
 	public $label;
 	public $active;
@@ -496,5 +491,5 @@ class CtyperesourceLine
 	/**
 	 * @var mixed Sample line property 2
 	 */
-	
+
 }

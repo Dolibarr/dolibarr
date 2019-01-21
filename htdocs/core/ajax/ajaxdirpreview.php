@@ -93,7 +93,7 @@ if (empty($url))
 	else $url=DOL_URL_ROOT.'/ecm/index.php';
 }
 
-// Load traductions files
+// Load translation files required by the page
 $langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
@@ -172,7 +172,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -203,6 +203,8 @@ if ($type == 'directory')
     else if ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
     else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
+	// Auto area for holiday
+    else if ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))

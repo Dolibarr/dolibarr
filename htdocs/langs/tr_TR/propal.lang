@@ -33,6 +33,7 @@ PropalStatusSigned=İmzalı(faturalanacak)
 PropalStatusNotSigned=İmzalanmamış (kapalı)
 PropalStatusBilled=Faturalanmış
 PropalStatusDraftShort=Taslak
+PropalStatusValidatedShort=Doğrulandı
 PropalStatusClosedShort=Kapalı
 PropalStatusSignedShort=İmzalı
 PropalStatusNotSignedShort=İmzalanmamış
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 ay
 TypeContact_propal_internal_SALESREPFOLL=Teklif izleme temsilcisi
 TypeContact_propal_external_BILLING=Müşteri faturası ilgilisi
 TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Eksiksiz bir teklif modeli (logo. ..)
 DefaultModelPropalCreate=Varsayılan model oluşturma

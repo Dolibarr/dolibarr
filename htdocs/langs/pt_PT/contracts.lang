@@ -91,7 +91,7 @@ LowerDateEndPlannedShort=Menor data de término planeada dos serviços ativos
 SendContractRef=Informação contratual __REF__
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Representante de vendas assinante do contrato
-TypeContact_contrat_internal_SALESREPFOLL=Representante de vendas que dá seguimento ao contrato
-TypeContact_contrat_external_BILLING=Contacto do cliente responsável pela facturação do contrato
+TypeContact_contrat_internal_SALESREPFOLL=Representante que dá seguimento ao contrato
+TypeContact_contrat_external_BILLING=Contacto do cliente responsável pela faturação
 TypeContact_contrat_external_CUSTOMER=Contacto do cliente responsável pelo seguimento do contrato
 TypeContact_contrat_external_SALESREPSIGN=Contacto cliente assinante do contrato
