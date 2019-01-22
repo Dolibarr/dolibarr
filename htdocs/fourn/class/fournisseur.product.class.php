@@ -71,7 +71,7 @@ class ProductFournisseur extends Product
     public $fourn_price;             // price for quantity
     public $fourn_remise_percent;    // discount for quantity (percent)
     public $fourn_remise;            // discount for quantity (amount)
-    public $product_fourn_id;        // supplier id
+    public $product_fourn_id;        // product id
 
     /**
      * @var int ID availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
@@ -332,7 +332,12 @@ class ProductFournisseur extends Product
                 $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$user);
                 if ($result < 0) $error++;
                 // End call triggers
-
+                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    if ($result < 0) {
+                        $error++;
+                    }
+                }
 				if (empty($error))
 				{
 					$this->db->commit();
@@ -404,24 +409,8 @@ class ProductFournisseur extends Product
 
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
-                    $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";
-                    $sql.= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
-                    $sql .= "datec, fk_product_fournisseur,fk_user,price,quantity)";
-                    $sql .= "values(";
-                    $sql.= (isset($multicurrency_buyprice)?"'".$this->db->escape(price2num($multicurrency_buyprice))."'":'null').",";
-                    $sql.= (isset($multicurrency_unitBuyPrice)?"'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'":'null').",";
-                    $sql.= (isset($multicurrency_tx)?"'".$this->db->escape($multicurrency_tx)."'":'1').",";
-                    $sql.= (isset($fk_multicurrency)?"'".$this->db->escape($fk_multicurrency)."'":'null').",";
-                    $sql.= (isset($multicurrency_code)?"'".$this->db->escape($multicurrency_code)."'":'null').",";
-                    $sql .= " '" . $this->db->idate($now) . "',";
-                    $sql .= " " . $this->product_fourn_id . ",";
-                    $sql .= " " . $user->id . ",";
-                    $sql .= " " . price2num($buyprice) . ",";
-                    $sql .= " " . $qty;
-                    $sql .= ")";
-
-                    $resql = $this->db->query($sql);
-                    if (! $resql) {
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    if ($result < 0) {
                         $error++;
                     }
                 }
@@ -887,5 +876,47 @@ class ProductFournisseur extends Product
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-	}
+    }
+    
+    /**
+     * Private function to log price history
+     *
+     * @param User      $user                           Object user who adds/changes price
+     * @param date      $datec                          date create
+     * @param float     $buyprice                       price for qty
+     * @param float     $qty                            qty for price
+     * @param float     $multicurrency_buyprice         Purchase price for the quantity min in currency
+     * @param float     $multicurrency_unitBuyPrice     Unit Purchase price in currency
+     * @param float     $multicurrency_tx               Rate currency
+     * @param int       $fk_multicurrency               key multi currency
+     * @param string    $multicurrency_code	            Currency code
+     *
+     * @return int < 0 NOK > 0 OK
+     */
+    private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code)
+    {
+        // Add record into log table
+        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";
+        $sql.= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
+        $sql .= "datec, fk_product_fournisseur,fk_user,price,quantity)";
+        $sql .= "values(";
+        $sql.= (isset($multicurrency_buyprice)?"'".$this->db->escape(price2num($multicurrency_buyprice))."'":'null').",";
+        $sql.= (isset($multicurrency_unitBuyPrice)?"'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'":'null').",";
+        $sql.= (isset($multicurrency_tx)?"'".$this->db->escape($multicurrency_tx)."'":'1').",";
+        $sql.= (isset($fk_multicurrency)?"'".$this->db->escape($fk_multicurrency)."'":'null').",";
+        $sql.= (isset($multicurrency_code)?"'".$this->db->escape($multicurrency_code)."'":'null').",";
+        $sql .= "values('" . $this->db->idate($datec) . "',";
+        $sql .= " " . $this->product_fourn_price_id . ",";
+        $sql .= " " . $user->id . ",";
+        $sql .= " " . price2num($buyprice) . ",";
+        $sql .= " " . $qty;
+        $sql .= ")";
+
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
 }
