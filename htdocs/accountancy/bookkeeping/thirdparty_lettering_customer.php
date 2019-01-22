@@ -209,7 +209,7 @@ if ($resql) {
 	print '<td><input type="text" name="search_year" value="' . $search_year . '"></td>';
 	print '<td><input type="text" name="search_doc_refe" value="' . $search_doc_ref . '"></td>';
 	print '<td colspan="5">&nbsp;</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -235,9 +235,9 @@ if ($resql) {
 		print '<td>' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
 		print '<td>' . $obj->label_compte . '</td>';
-		print '<td align="right">' . price($obj->debit) . '</td>';
-		print '<td align="right">' . price($obj->credit) . '</td>';
-		print '<td align="right">' . price(round($solde, 2)) . '</td>';
+		print '<td class="right">' . price($obj->debit) . '</td>';
+		print '<td class="right">' . price($obj->credit) . '</td>';
+		print '<td class="right">' . price(round($solde, 2)) . '</td>';
 		print '<td align="center">' . $obj->code_journal . '</td>';
 
 		if (empty($obj->lettering_code)) {
@@ -250,15 +250,15 @@ if ($resql) {
 
 	print '<tr class="oddeven">';
 	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
-	print '<td align="right"><strong>' . price($debit) . '</strong></td>';
-	print '<td align="right"><strong>' . price($credit) . '</strong></td>';
+	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
+	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
-	print '<td align="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
+	print '<td class="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td align="right"><strong>' . price($credit - $debit) . '</strong></td>';
+	print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="3"></td>';
 	print "</tr>\n";
 

@@ -313,7 +313,7 @@ if ($result)
 		print '</td>';
 
 		// More informations
-		print '<td align="right">';
+		print '<td class="right">';
 		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
 		print $form->textwithpicto('',$htmltext);
 		print '</td>';

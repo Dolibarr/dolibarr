@@ -141,7 +141,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td cols
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
 print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
@@ -179,14 +179,14 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
 	print '<td>'.$langs->trans("NbOfEntries").'</td>';
-	print '<td align="right">'.$langs->trans("Address").'</td>';
+	print '<td class="right">'.$langs->trans("Address").'</td>';
 	print '</tr>'."\n";
 
 	foreach($shmoparray as $key => $val)
 	{
 		print '<tr class="oddeven"><td>'.$key.'</td>';
 		print '<td>'.count($val).'</td>';
-		print '<td align="right">'.dol_getshmopaddress($key).'</td>';
+		print '<td class="right">'.dol_getshmopaddress($key).'</td>';
 		print '</tr>'."\n";
 	}
 

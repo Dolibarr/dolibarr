@@ -275,8 +275,8 @@ if (! $error && $xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-        $out.='<td align="right">' . $langs->trans("Size") . '</td>';
-        $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
+        $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+        $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
@@ -292,8 +292,8 @@ if (! $error && $xml)
 	            $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
 	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 	            $totalsize += $size;
-	            $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
-	            $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+	            $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+	            $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
             $out.='<tr class="liste_total">';
@@ -301,8 +301,8 @@ if (! $error && $xml)
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
-            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
-            $out.='<td align="right"></td>' . "\n";
+            $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td class="right"></td>' . "\n";
             $out.="</tr>\n";
         }
         else
@@ -325,8 +325,8 @@ if (! $error && $xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-        $out.='<td align="right">' . $langs->trans("Size") . '</td>';
-        $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
+        $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+        $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
         if (is_array($tmpfilelist3) && count($tmpfilelist3))
@@ -347,8 +347,8 @@ if (! $error && $xml)
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
                 $totalsize += $size;
-                $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
-                $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+                $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+                $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
                 $out.="</tr>\n";
             }
             $out.='<tr class="liste_total">';
@@ -356,8 +356,8 @@ if (! $error && $xml)
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
-            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
-            $out.='<td align="right"></td>' . "\n";
+            $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td class="right"></td>' . "\n";
             $out.="</tr>\n";
         }
         else

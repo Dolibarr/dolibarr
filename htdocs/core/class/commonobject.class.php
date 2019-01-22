@@ -4900,6 +4900,14 @@ abstract class CommonObject
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 					}
+					
+					// If field is a computed field, value must become result of compute
+					foreach ($tab as $key => $value) {
+						if (! empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key]))
+						{
+							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+						}
+					}
 				}
 
 				$this->db->free($resql);

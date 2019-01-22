@@ -198,7 +198,7 @@ if ($conf->facture->enabled)
 	}
 	else
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
 		print '</td>';
 	}

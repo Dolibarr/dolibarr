@@ -1547,14 +1547,6 @@ class ExtraFields
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
-		// If field is a computed field, value must become result of compute
-		if ($computed)
-		{
-		    // Make the eval of compute string
-		    //var_dump($computed);
-		    $value = dol_eval($computed, 1, 0);
-		}
-
 		$showsize=0;
 		if ($type == 'date')
 		{

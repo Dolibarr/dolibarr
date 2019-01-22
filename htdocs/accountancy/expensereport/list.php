@@ -376,12 +376,12 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->price);
 		print '</td>';
 
 		// Vat rate
-		print '<td align="right">';
+		print '<td class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
