@@ -53,7 +53,6 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		Error string
-	 * @see             errors
 	 */
 	public $error;
 
@@ -331,7 +330,7 @@ abstract class CommonObject
 
 	/**
 	 * @deprecated
-	 * @see note_public
+	 * @see $note_public
 	 */
 	public $note;
 
@@ -1541,7 +1540,7 @@ abstract class CommonObject
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
 	 *	@return	int							<0 if KO, >0 if OK
-	 *  @see updateExtraField
+	 *  @see updateExtraField()
 	 */
 	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='', $fk_user_field='fk_user_modif')
 	{
@@ -2952,7 +2951,7 @@ abstract class CommonObject
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
 	 *	@return		int					<=0 if KO, >0 if OK
-	 *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
+	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	function add_object_linked($origin=null, $origin_id=null)
 	{
@@ -3013,7 +3012,7 @@ abstract class CommonObject
 	 *  @param  string	$orderby			SQL 'ORDER BY' clause
 	 *  @param	int		$loadalsoobjects	Load also array this->linkedObjects (Use 0 to increase performances)
 	 *	@return int							<0 if KO, >0 if OK
-	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
+	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype',$loadalsoobjects=1)
 	{
@@ -3217,7 +3216,7 @@ abstract class CommonObject
 	 *	@param  int		$targetid		Object target id
 	 *	@param  string	$targettype		Object target type
 	 *	@return							int	>0 if OK, <0 if KO
-	 *	@see	add_object_linked, fetObjectLinked, deleteObjectLinked
+	 *	@see	add_object_linked(), fetObjectLinked(), deleteObjectLinked()
 	 */
 	function updateObjectLinked($sourceid=null, $sourcetype='', $targetid=null, $targettype='')
 	{
@@ -4459,7 +4458,7 @@ abstract class CommonObject
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
 	 * @param   null|array  $moreparams     Array to provide more information
 	 * @return 	int 						>0 if OK, <0 if KO
-	 * @see	addFileIntoDatabaseIndex
+	 * @see	addFileIntoDatabaseIndex()
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
@@ -4953,7 +4952,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraField, setValueFrom
+	 *  @see updateExtraField(), setValueFrom()
 	 */
 	function insertExtraFields($trigger='', $userused=null)
 	{
@@ -5199,7 +5198,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see setValueFrom, insertExtraFields
+	 *  @see setValueFrom(), insertExtraFields()
 	 */
 	function updateExtraField($key, $trigger=null, $userused=null)
 	{

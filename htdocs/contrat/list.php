@@ -636,7 +636,7 @@ while ($i < min($num,$limit))
 	}
 	if (! empty($arrayfields['c.ref_customer']['checked']))
 	{
-		print '<td>'.$obj->ref_customer.'</td>';
+	    print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (! empty($arrayfields['c.ref_supplier']['checked']))
 	{
