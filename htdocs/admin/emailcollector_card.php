@@ -449,7 +449,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td><td>';
 	print '<input type="text" name="rulevalue">';
 	print '</td>';
-	print '<td align="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List filters
 	foreach($object->filters as $rulefilter)
@@ -462,7 +462,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $langs->trans($arrayoftypes[$rulefilter['type']]);
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		//print $rulefilterobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
@@ -492,7 +492,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $form->textwithpicto('', $htmltext);
 	print '</td>';
 	print '<td></td>';
-	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
 	$nboflines = count($object->actions);
@@ -509,7 +509,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		print '</td>';
 		print '<td>'.$ruleaction['actionparam'].'</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		//print $ruleactionobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
