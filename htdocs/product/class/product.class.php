@@ -3736,14 +3736,25 @@ class Product extends CommonObject
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
         }
 
-        if ($this->type == Product::TYPE_PRODUCT) {
-            if ($this->weight) {  $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units, "weight");
+        if ($this->type == Product::TYPE_PRODUCT)
+        {
+            if ($this->weight) {
+                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
             }
-            if ($this->length) {  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units, 'length');
+            if ($this->length) {
+                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'size');
             }
-            if ($this->surface) { $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units, 'surface');
+            if ($this->width) {
+                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units,'size');
             }
-            if ($this->volume) {  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units, 'volume');
+            if ($this->height) {
+                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units,'size');
+            }
+            if ($this->surface) {
+                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+            }
+            if ($this->volume) {
+                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
             }
         }
 
