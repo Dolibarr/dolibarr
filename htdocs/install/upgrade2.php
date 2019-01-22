@@ -581,7 +581,7 @@ if ($db->connected) $db->close();
 if ($ret) exit($ret);
 
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Reporte liens vers une facture de paiements sur table de jointure (lien n-n paiements factures)
  *
@@ -592,6 +592,7 @@ if ($ret) exit($ret);
  */
 function migrate_paiements($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -945,7 +946,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
     print '</td></tr>';
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
  *
@@ -956,6 +957,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
  */
 function migrate_contracts_det($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     $nberr=0;
@@ -1044,6 +1046,7 @@ function migrate_contracts_det($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Function to migrate links into llx_bank_url
  *
@@ -1054,6 +1057,7 @@ function migrate_contracts_det($db,$langs,$conf)
  */
 function migrate_links_transfert($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     $nberr=0;
@@ -1128,6 +1132,7 @@ function migrate_links_transfert($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Mise a jour des date de contrats non renseignees
  *
@@ -1138,6 +1143,7 @@ function migrate_links_transfert($db,$langs,$conf)
  */
 function migrate_contracts_date1($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1164,11 +1170,13 @@ function migrate_contracts_date1($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /*
  * Mise a jour date contrat avec date min effective mise en service si inferieur
  */
 function migrate_contracts_date2($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     $nberr=0;
@@ -1228,6 +1236,7 @@ function migrate_contracts_date2($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Mise a jour des dates de creation de contrat
  *
@@ -1238,6 +1247,7 @@ function migrate_contracts_date2($db,$langs,$conf)
  */
 function migrate_contracts_date3($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1255,6 +1265,7 @@ function migrate_contracts_date3($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Reouverture des contrats qui ont au moins une ligne non fermee
  *
@@ -1265,6 +1276,7 @@ function migrate_contracts_date3($db,$langs,$conf)
  */
 function migrate_contracts_open($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1314,6 +1326,7 @@ function migrate_contracts_open($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Factures fournisseurs
  *
@@ -1324,6 +1337,7 @@ function migrate_contracts_open($db,$langs,$conf)
  */
 function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 {
+	// phpcs:enable
     global $bc;
 
     print '<tr><td colspan="4">';
@@ -2038,7 +2052,7 @@ function migrate_modeles($db,$langs,$conf)
     //print $langs->trans("AlreadyDone");
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
  *
@@ -2049,6 +2063,7 @@ function migrate_modeles($db,$langs,$conf)
  */
 function migrate_commande_expedition($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_commande_expedition");
 
     print '<tr><td colspan="4">';
@@ -2116,6 +2131,7 @@ function migrate_commande_expedition($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
  *
@@ -2126,6 +2142,7 @@ function migrate_commande_expedition($db,$langs,$conf)
  */
 function migrate_commande_livraison($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_commande_livraison");
 
     print '<tr><td colspan="4">';
@@ -2209,6 +2226,7 @@ function migrate_commande_livraison($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration des details commandes dans les details livraisons
  *
@@ -2219,6 +2237,7 @@ function migrate_commande_livraison($db,$langs,$conf)
  */
 function migrate_detail_livraison($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_detail_livraison");
 
     print '<tr><td colspan="4">';
@@ -2330,6 +2349,7 @@ function migrate_detail_livraison($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration du champ stock dans produits
  *
@@ -2340,6 +2360,7 @@ function migrate_detail_livraison($db,$langs,$conf)
  */
 function migrate_stocks($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_stocks");
 
     print '<tr><td colspan="4">';
@@ -2403,6 +2424,7 @@ function migrate_stocks($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration of menus (use only 1 table instead of 3)
  * 2.6 -> 2.7
@@ -2414,6 +2436,7 @@ function migrate_stocks($db,$langs,$conf)
  */
 function migrate_menus($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_menus");
 
     print '<tr><td colspan="4">';
@@ -2485,6 +2508,7 @@ function migrate_menus($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration du champ fk_adresse_livraison dans expedition
  * 2.6 -> 2.7
@@ -2496,6 +2520,7 @@ function migrate_menus($db,$langs,$conf)
  */
 function migrate_commande_deliveryaddress($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_commande_deliveryaddress");
 
     print '<tr><td colspan="4">';
@@ -2569,6 +2594,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
  * lien dans llx_societe_remise_except vers llx_facturedet
@@ -2580,6 +2606,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
  */
 function migrate_restore_missing_links($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_restore_missing_links");
 
     if (($db->type == 'mysql' || $db->type == 'mysqli'))
@@ -2726,6 +2753,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration du champ fk_user_resp de llx_projet vers llx_element_contact
  *
@@ -2736,6 +2764,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
  */
 function migrate_project_user_resp($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_project_user_resp");
 
     print '<tr><td colspan="4">';
@@ -2823,6 +2852,7 @@ function migrate_project_user_resp($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration de la table llx_projet_task_actors vers llx_element_contact
  *
@@ -2833,6 +2863,7 @@ function migrate_project_user_resp($db,$langs,$conf)
  */
 function migrate_project_task_actors($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_project_task_actors");
 
     print '<tr><td colspan="4">';
@@ -3016,6 +3047,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate duration in seconds
  *
@@ -3026,6 +3058,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
  */
 function migrate_project_task_time($db,$langs,$conf)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_project_task_time");
 
     print '<tr><td colspan="4">';
@@ -3137,6 +3170,7 @@ function migrate_project_task_time($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate order ref_customer and date_delivery fields to llx_expedition
  *
@@ -3147,6 +3181,7 @@ function migrate_project_task_time($db,$langs,$conf)
  */
 function migrate_customerorder_shipping($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -3238,6 +3273,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate link stored into fk_expedition into llx_element_element
  *
@@ -3248,6 +3284,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
  */
 function migrate_shipping_delivery($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -3349,6 +3386,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * We try to complete field ref_customer and date_delivery that are empty into llx_livraison.
  * We set them with value from llx_expedition.
@@ -3360,6 +3398,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
  */
 function migrate_shipping_delivery2($db,$langs,$conf)
 {
+	// phpcs:enable
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -3434,6 +3473,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
     print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate link stored into fk_xxxx into fk_element and elementtype
  *
@@ -3444,6 +3484,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
  */
 function migrate_actioncomm_element($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -3500,6 +3541,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate link stored into fk_mode_reglement
  *
@@ -3510,6 +3552,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
  */
 function migrate_mode_reglement($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -3598,7 +3641,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Delete duplicates in table categorie_association
  *
@@ -3610,6 +3653,7 @@ function migrate_mode_reglement($db,$langs,$conf)
  */
 function migrate_clean_association($db,$langs,$conf,$versionto)
 {
+	// phpcs:enable
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
     if ($result)	// result defined for version 3.2 or -
     {
@@ -3686,7 +3730,7 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
     }
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate categorie association
  *
@@ -3697,6 +3741,7 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
  */
 function migrate_categorie_association($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -3780,6 +3825,7 @@ function migrate_categorie_association($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate event assignement to owner
  *
@@ -3790,6 +3836,7 @@ function migrate_categorie_association($db,$langs,$conf)
  */
 function migrate_event_assignement($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -3857,6 +3904,7 @@ function migrate_event_assignement($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate event assignement to owner
  *
@@ -3867,6 +3915,7 @@ function migrate_event_assignement($db,$langs,$conf)
  */
 function migrate_event_assignement_contact($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -3934,7 +3983,7 @@ function migrate_event_assignement_contact($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate to reset the blocked log for V7+ algorithm
  *
@@ -3945,6 +3994,7 @@ function migrate_event_assignement_contact($db,$langs,$conf)
  */
 function migrate_reset_blocked_log($db,$langs,$conf)
 {
+	// phpcs:enable
 	global $user;
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -4052,7 +4102,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate to add entity value into llx_societe_remise
  *
@@ -4063,6 +4113,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
  */
 function migrate_remise_entity($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -4130,6 +4181,7 @@ function migrate_remise_entity($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate to add entity value into llx_societe_remise_except
  *
@@ -4140,6 +4192,7 @@ function migrate_remise_entity($db,$langs,$conf)
  */
 function migrate_remise_except_entity($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -4242,6 +4295,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate to add entity value into llx_user_rights
  *
@@ -4252,6 +4306,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
  */
 function migrate_user_rights_entity($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<b>'.$langs->trans('MigrationUserRightsEntity')."</b><br>\n";
@@ -4318,6 +4373,7 @@ function migrate_user_rights_entity($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migrate to add entity value into llx_usergroup_rights
  *
@@ -4328,6 +4384,7 @@ function migrate_user_rights_entity($db,$langs,$conf)
  */
 function migrate_usergroup_rights_entity($db,$langs,$conf)
 {
+	// phpcs:enable
 	print '<tr><td colspan="4">';
 
 	print '<b>'.$langs->trans('MigrationUserGroupRightsEntity')."</b><br>\n";
@@ -4394,6 +4451,7 @@ function migrate_usergroup_rights_entity($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Migration directory
  *
@@ -4406,6 +4464,7 @@ function migrate_usergroup_rights_entity($db,$langs,$conf)
  */
 function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
 {
+	// phpcs:enable
     dolibarr_install_syslog("upgrade2::migrate_rename_directories");
 
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
@@ -4489,6 +4548,7 @@ function migrate_delete_old_files($db, $langs, $conf)
     return $result;
 }
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Remove deprecated directories
  *
@@ -4499,6 +4559,7 @@ function migrate_delete_old_files($db, $langs, $conf)
  */
 function migrate_delete_old_dir($db, $langs, $conf)
 {
+	// phpcs:enable
     $result = true;
 
     dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
@@ -4776,7 +4837,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $forc
 }
 
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  * Reload menu if dynamic menus, if modified by version
  *
@@ -4788,6 +4849,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $forc
  */
 function migrate_reload_menu($db,$langs,$conf,$versionto)
 {
+	// phpcs:enable
     global $conf;
     dolibarr_install_syslog("upgrade2::migrate_reload_menu");
 
