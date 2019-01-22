@@ -390,7 +390,6 @@ Module2600Desc=Ativa o servidor de serviços web do Dolibarr
 Module2610Desc=Permitir que o servidor prestação de serviços de API REST do Dolibarr
 Module2660Name=Chamar ServiçosWeb (cliente SOAP)
 Module2900Desc=Capacidade de conversão com o GeoIP Maxmind
-Module3100Desc=Adicionar um botão Skype nos cartões dos usuários / terceiros / contatos membros
 Module4000Name=RH
 Module4000Desc=Gerenciamento de recursos humanos (gerenciamento do departamento, contratos dos funcionários e benefícios)
 Module5000Name=Multi-Empresas
