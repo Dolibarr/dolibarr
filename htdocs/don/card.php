@@ -107,7 +107,7 @@ if ($action == 'update')
 		$object->amount      = price2num(GETPOST("amount",'alpha'));
 		$object->town        = GETPOST("town",'alpha');
 		$object->zip         = GETPOST("zipcode",'alpha');
-		$object->country_id  = GETPOST('country_id', 'int');
+		$object->country_id  = GETPOST('country_id','int');
 		$object->email       = GETPOST("email",'alpha');
 		$object->date        = $donation_date;
 		$object->public      = GETPOST("public",'alpha');
@@ -162,7 +162,7 @@ if ($action == 'add')
 		$object->amount      = price2num(GETPOST("amount",'alpha'));
 		$object->zip         = GETPOST("zipcode",'alpha');
 		$object->town        = GETPOST("town",'alpha');
-		$object->country_id  = GETPOST('country_id', 'int');
+		$object->country_id  = GETPOST('country_id','int');
 		$object->email	     = GETPOST('email', 'alpha');
     		$object->date        = $donation_date;
 		$object->note_private= GETPOST("note_private",'none');
