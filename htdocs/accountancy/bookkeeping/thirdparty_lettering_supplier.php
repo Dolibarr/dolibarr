@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018 Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018 Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify

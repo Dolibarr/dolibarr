@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 		Dimitri Mouillard   	<dmouillard@teclib.com>
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@zendsi.com>
+ * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2018 	Ferran Marcet       	<fmarcet@2byte.es>

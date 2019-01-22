@@ -6,7 +6,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
