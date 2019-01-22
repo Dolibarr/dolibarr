@@ -68,6 +68,7 @@ class Cchargesociales
 		$this->db = $db;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Create object into database
 	 *
@@ -78,6 +79,7 @@ class Cchargesociales
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -217,6 +219,7 @@ class Cchargesociales
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Update object into database
 	 *
@@ -227,6 +230,7 @@ class Cchargesociales
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -291,6 +295,7 @@ class Cchargesociales
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Delete object in database
 	 *
@@ -301,6 +306,7 @@ class Cchargesociales
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
