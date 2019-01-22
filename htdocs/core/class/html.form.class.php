@@ -129,13 +129,13 @@ class Form
 		}
 		else
 		{
-			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			if ($fieldrequired) $ret.='<span class="fieldrequired">';
 			$ret.=$langs->trans($text);
 			if ($fieldrequired) $ret.='</span>';
 			if (! empty($notabletag)) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
-			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
+			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<td class="right">';
 			if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
 			if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
@@ -487,13 +487,13 @@ class Form
 			else $paramfortooltiptd.=' dolid="'.$tooltiptrigger.'"';
 		}
 		else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
-		if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
+		if (empty($notabs)) $s.='<table class="nobordernopadding"><tr style="height: auto;">';
 		elseif ($notabs == 2) $s.='<div class="inline-block'.($forcenowrap?' nowrap':'').'">';
 		// Define value if value is before
 		if ($direction < 0) {
 			$s.='<'.$tag.$paramfortooltipimg;
 			if ($tag == 'td') {
-				$s .= ' valign="top" width="14"';
+				$s .= ' class=valigntop" width="14"';
 			}
 			$s.= '>'.$textfordialog.$img.'</'.$tag.'>';
 		}
@@ -503,7 +503,7 @@ class Form
 		// Define value if value is after
 		if ($direction > 0) {
 			$s.='<'.$tag.$paramfortooltipimg;
-			if ($tag == 'td') $s .= ' valign="middle" width="14"';
+			if ($tag == 'td') $s .= ' class="valignmiddle" width="14"';
 			$s.= '>'.$textfordialog.$img.'</'.$tag.'>';
 		}
 		if (empty($notabs)) $s.='</tr></table>';
@@ -609,7 +609,7 @@ class Form
 		if (! empty($conf->use_javascript_ajax))
 		{
 			$ret.='<!-- JS CODE TO ENABLE mass action select -->
-    		<script type="text/javascript">
+    		<script>
         		function initCheckForSelect(mode)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkbox */
         		{
         			atleastoneselected=0;
@@ -3849,7 +3849,7 @@ class Form
 			}
 
 			// Now add questions
-			$more.='<table class="paddingtopbottomonly" width="100%">'."\n";
+			$more.='<table class="paddingtopbottomonly centpercent">'."\n";
 			if (! empty($formquestion['text'])) $more.='<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
@@ -3870,7 +3870,7 @@ class Form
 					elseif ($input['type'] == 'select')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop" align="left">';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop left>';
 						$more.=$this->selectarray($input['name'],$input['values'],$input['default'],1,0,0,$moreattr,0,0,0,'',$morecss);
 						$more.='</td></tr>'."\n";
 					}
@@ -4052,7 +4052,7 @@ class Form
 			$formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
 			$formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
-			$formconfirm.= '<table width="100%" class="valid">'."\n";
+			$formconfirm.= '<table class="valid centpercent">'."\n";
 
 			// Line title
 			$formconfirm.= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
@@ -4071,7 +4071,7 @@ class Form
 			$formconfirm.= '<td class="valid">';
 			$formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
 			$formconfirm.= '</td>';
-			$formconfirm.= '<td class="valid" align="center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
+			$formconfirm.= '<td class="valid center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm.= '</tr>'."\n";
 
 			$formconfirm.= '</table>'."\n";
@@ -5856,7 +5856,7 @@ class Form
 
 		$tmpplugin='select2';
 		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-	    	<script type="text/javascript">
+	    	<script>
 	    	$(document).ready(function () {
 
     	        '.($callurlonselect ? 'var saveRemoteData = [];':'').'
@@ -5968,7 +5968,7 @@ class Form
 
 		$tmpplugin='select2';
 		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-			<script type="text/javascript">
+			<script>
 			$(document).ready(function () {
 				var data = '.json_encode($formattedarrayresult).';
 
@@ -6079,7 +6079,7 @@ class Form
 		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
 			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-						<script type="text/javascript">'."\n";
+						<script>'."\n";
 			if ($addjscombo == 1)
 			{
 				$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
@@ -6337,10 +6337,10 @@ class Form
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td>'.$langs->trans("Ref").'</td>';
-			print '<td align="center"></td>';
-			print '<td align="center">'.$langs->trans("Date").'</td>';
-			print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
-			print '<td align="right">'.$langs->trans("Status").'</td>';
+			print '<td class="center"></td>';
+			print '<td class="center">'.$langs->trans("Date").'</td>';
+			print '<td class="right">'.$langs->trans("AmountHTShort").'</td>';
+			print '<td class="right">'.$langs->trans("Status").'</td>';
 			print '<td></td>';
 			print '</tr>';
 
@@ -6542,9 +6542,9 @@ class Form
 					print '<table class="noborder">';
 					print '<tr class="liste_titre">';
 					print '<td class="nowrap"></td>';
-					print '<td align="center">' . $langs->trans("Ref") . '</td>';
+					print '<td class="center">' . $langs->trans("Ref") . '</td>';
 					print '<td class="left">' . $langs->trans("RefCustomer") . '</td>';
-					print '<td align="right">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
 					print '<td class="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
 					while ($i < $num)
@@ -6555,9 +6555,9 @@ class Form
 						print '<td aling="left">';
 						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
 						print '</td>';
-						print '<td align="center">' . $objp->ref . '</td>';
+						print '<td class="center">' . $objp->ref . '</td>';
 						print '<td>' . $objp->ref_client . '</td>';
-						print '<td align="right">' . price($objp->total_ht) . '</td>';
+						print '<td class="right">' . price($objp->total_ht) . '</td>';
 						print '<td>' . $objp->name . '</td>';
 						print '</tr>';
 						$i++;
@@ -6604,7 +6604,7 @@ class Form
 		if (! empty($conf->use_javascript_ajax))
 		{
 		  print '<!-- Add js to show linkto box -->
-				<script type="text/javascript" language="javascript">
+				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
 						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
@@ -7196,7 +7196,7 @@ class Form
 
 		$out='';
 		if (! empty($conf->use_javascript_ajax)) $out.='<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
-		$out.='<script type="text/javascript">
+		$out.='<script>
             $(document).ready(function() {
             	$("#checkallactions").click(function() {
                     if($(this).is(\':checked\')){
@@ -7282,7 +7282,7 @@ class Form
 					if ($db->num_rows($resql) > 0)
 					{
 						$obj = $db->fetch_object($resql);
-						$out.= '<script type="text/javascript">
+						$out.= '<script>
 							$(function() {
 								$("select[name='.$target.']").on("change", function() {
 									var current_val = $(this).val();

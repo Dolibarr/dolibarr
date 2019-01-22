@@ -241,8 +241,8 @@ if ($id > 0 || ! empty($ref))
 				}
 
         		print '<tr class="liste_total">';
-        		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-        		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+        		if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+        		else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
         		print '<td colspan="2"></td>';
         		print '<td align="center">' . $total_qty . '</td>';
         		print '<td align="right">' . price($total_ht) . '</td>';

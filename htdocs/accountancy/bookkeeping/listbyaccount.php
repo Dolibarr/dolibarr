@@ -363,7 +363,7 @@ while ($i < min($num, $limit))
 
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td>';
-	print '<td align="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
+	print '<td class="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 
 	// TODO Add a link according to doc_type and fk_doc
@@ -378,8 +378,8 @@ while ($i < min($num, $limit))
 	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';
-	print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+	print '<td class="right">' . ($line->debit ? price($line->debit) :''). '</td>';
+	print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
 	$accountingjournal = new AccountingJournal($db);
 	$result = $accountingjournal->fetch('',$line->code_journal);

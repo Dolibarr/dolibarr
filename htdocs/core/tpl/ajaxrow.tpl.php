@@ -45,7 +45,7 @@ $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
 $filepath=(empty($filepath)?'':$filepath);
 
 if (GETPOST('action','aZ09') != 'editline' && $nboflines > 1) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();

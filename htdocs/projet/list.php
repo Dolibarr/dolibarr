@@ -807,7 +807,7 @@ while ($i < min($num,$limit))
 		// Visibility
 		if (! empty($arrayfields['p.public']['checked']))
 		{
-			print '<td align="left">';
+			print '<td class="left">';
 			if ($obj->public) print $langs->trans('SharedProject');
 			else print $langs->trans('PrivateProject');
 			print '</td>';
@@ -922,8 +922,8 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
 		$i++;
 		if ($i == 1)
 		{
-			if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-			else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
 		elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
 		elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';

@@ -1591,6 +1591,7 @@ class BonPrelevement extends CommonObject
 	function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
 	{
         // phpcs:enable
+        global $conf;
 		$CrLf = "\n";
 		$Rowing = sprintf("%06d", $row_idfac);
 

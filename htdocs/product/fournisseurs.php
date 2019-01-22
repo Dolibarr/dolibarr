@@ -796,14 +796,14 @@ SCRIPT;
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
 						// Supplier ref
-						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+						print '<td class="left">'.$productfourn->fourn_ref.'</td>';
 
 						// Availability
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 						{
 							$form->load_cache_availability();
                 			$availability= $form->cache_availability[$productfourn->fk_availability]['label'];
-							print '<td align="left">'.$availability.'</td>';
+							print '<td class="left">'.$availability.'</td>';
 						}
 
 						// Quantity

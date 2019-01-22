@@ -252,7 +252,7 @@ print '</td></tr>';
 
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';

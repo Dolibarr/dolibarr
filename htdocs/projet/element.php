@@ -674,7 +674,7 @@ foreach ($listofreferent as $key => $value)
 
 			print '<tr class="oddeven">';
 			// Module
-			print '<td align="left">'.$name.'</td>';
+			print '<td class="left">'.$name.'</td>';
 			// Nb
 			print '<td align="right">'.$i.'</td>';
 			// Amount HT
@@ -968,7 +968,7 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
 				// Third party or user
-                print '<td align="left">';
+                print '<td class="left">';
                 if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
                 else if ($tablename == 'expensereport_det')
                 {

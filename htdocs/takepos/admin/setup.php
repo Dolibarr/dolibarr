@@ -270,7 +270,7 @@ print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
 $url='https://www.dolistore.com/en/modules/980-TakePOS-7-mobile.html';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/takeposmobile.jpg"></a></td>';
+print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/takeposmobile.jpg"></a></td>';
 print '<td>TakePOS for mobile devices</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
@@ -287,7 +287,7 @@ print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
 $url='http://www.takepos.com';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
+print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';

@@ -541,7 +541,7 @@ while ($i < min($num, $limit))
 	// Price
 	if (! empty($arrayfields['d.amount']['checked']))
 	{
-		print '<td align="right">'.price($obj->subscription).'</td>';
+		print '<td class="right">'.price($obj->subscription).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='d.amount';
 		$totalarray['val']['d.amount'] += $obj->subscription;
@@ -591,7 +591,7 @@ if (isset($totalarray['pos']))
 	while ($i < $totalarray['nbfield'])
 	{
 		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 		else
 		{
 			if ($i == 1)
