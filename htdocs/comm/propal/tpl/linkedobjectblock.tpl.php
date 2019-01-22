@@ -82,9 +82,9 @@ if (count($linkedObjectBlock) > 1)
         <td></td>
     	<td align="center"></td>
     	<td align="center"></td>
-    	<td align="right"><?php echo price($total); ?></td>
-    	<td align="right"></td>
-    	<td align="right"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
     </tr>
     <?php
 }
