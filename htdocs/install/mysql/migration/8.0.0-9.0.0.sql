@@ -29,6 +29,9 @@
 
 
 -- Missing in 8.0
+ALTER TABLE llx_contrat_extrafields ADD INDEX idx_contrat_extrafields (fk_object);
+ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
@@ -256,6 +259,9 @@ CREATE TABLE llx_pos_cash_fence(
 	import_key VARCHAR(14)
 ) ENGINE=innodb;
 
+-- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;
+
 -- Withdrawals / Prelevements
-UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END');
-UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD');
+UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
+UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';

@@ -436,7 +436,7 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -459,7 +459,7 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -482,7 +482,7 @@ if ($action == 'create')
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -602,8 +602,8 @@ if ($action == 'create')
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');
+				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Action", "", "", "", "", 'width="60" align="center"');
 
 				print "</tr>\n";
@@ -630,8 +630,8 @@ if ($action == 'create')
 						}
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
-						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
-						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
@@ -641,8 +641,8 @@ if ($action == 'create')
 						print '<td>' . $accountingaccount->getNomUrl(0,1,1,'',0) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_operation. '</td>';
-						print '<td align="right">' . price($line->debit) . '</td>';
-						print '<td align="right">' . price($line->credit) . '</td>';
+						print '<td class="right">' . price($line->debit) . '</td>';
+						print '<td class="right">' . price($line->credit) . '</td>';
 
 						print '<td align="center">';
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
@@ -687,8 +687,8 @@ if ($action == 'create')
 					}
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
-					print '<td align="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-					print '<td align="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}

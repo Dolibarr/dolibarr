@@ -458,6 +458,46 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Return customer ref for screen output.
+	 *
+	 * @param  string      $objref        Customer ref
+	 * @return string                     Customer ref formated
+	 */
+	function getFormatedCustomerRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedCustomerRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
+	}
+
+	/**
+	 * Return supplier ref for screen output.
+	 *
+	 * @param  string      $objref        Supplier ref
+	 * @return string                     Supplier ref formated
+	 */
+	function getFormatedSupplierRef($objref)
+	{
+	    global $hookmanager;
+
+	    $parameters=array('objref'=>$objref);
+	    $action='';
+	    $reshook = $hookmanager->executeHooks('getFormatedSupplierRef', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+	    if ($reshook > 0)
+	    {
+	        return $hookmanager->resArray['objref'];
+	    }
+	    return $objref.(isset($hookmanager->resArray['objref'])?$hookmanager->resArray['objref']:'');
+	}
+
+	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
@@ -612,7 +652,8 @@ abstract class CommonObject
 		}
 		if (! empty($this->url))
 		{
-			$out.=dol_print_url($this->url,'_goout',0,1);
+            //$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
+		    $out.=dol_print_url($this->url,'_blank',0,1);
 			$outdone++;
 		}
 		$out.='<div style="clear: both;">';
@@ -3868,7 +3909,7 @@ abstract class CommonObject
 			print '<tr class="liste_titre nodrag nodrop">';
 
 			// Adds a line numbering column
-			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
+			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
 
 			// Description
 			print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -3879,29 +3920,29 @@ abstract class CommonObject
 			}
 
 			// VAT
-			print '<td class="linecolvat" align="right" width="80">'.$langs->trans('VAT').'</td>';
+			print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT').'</td>';
 
 			// Price HT
-			print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+			print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
 
 			// Multicurrency
-			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
+			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
 
-			if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
+			if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$langs->trans('PriceUTTC').'</td>';
 
 			// Qty
-			print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
+			print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
 			if($conf->global->PRODUCT_USE_UNITS)
 			{
-				print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
+				print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 			}
 
 			// Reduction short
-			print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
+			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 
 			if ($this->situation_cycle_ref) {
-				print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
+				print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
 			}
 
 			if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -3909,36 +3950,36 @@ abstract class CommonObject
 				if (!empty($user->rights->margins->creer))
 				{
 					if ($conf->global->MARGIN_TYPE == "1")
-						print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
+						print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
 					else
-						print '<td class="linecolmargin1 margininfos" align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+						print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
 				}
 
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
-					print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+					print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
 				if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-					print '<td class="linecolmargin2 margininfos" align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+					print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
 			}
 
 			// Total HT
-			print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
+			print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
 
 			// Multicurrency
-			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
+			if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
 
-			if ($outputalsopricetotalwithtax) print '<td align="right" width="80">'.$langs->trans('TotalTTCShort').'</td>';
+			if ($outputalsopricetotalwithtax) print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
 
 			print '<td class="linecoledit"></td>';  // No width to allow autodim
 
-			print '<td class="linecoldelete" width="10"></td>';
+			print '<td class="linecoldelete" style="width: 10px"></td>';
 
-			print '<td class="linecolmove" width="10"></td>';
+			print '<td class="linecolmove" style="width: 10px"></td>';
 
 			if($action == 'selectlines')
 			{
-			    print '<td class="linecolcheckall" align="center">';
+			    print '<td class="linecolcheckall center">';
 			    print '<input type="checkbox" class="linecheckboxtoggle" />';
-			    print '<script type="text/javascript">$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
+			    print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
 			    print '</td>';
 			}
 
@@ -4120,15 +4161,15 @@ abstract class CommonObject
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td align="right">'.$langs->trans('VATRate').'</td>';
-		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('PriceUHTCurrency').'</td>';
-		print '<td align="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('VATRate').'</td>';
+		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
+		print '<td class="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
 		$var = true;
 		$i	 = 0;
@@ -4858,6 +4899,14 @@ abstract class CommonObject
 							}
 
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
+						}
+					}
+					
+					// If field is a computed field, value must become result of compute
+					foreach ($tab as $key => $value) {
+						if (! empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key]))
+						{
+							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
 						}
 					}
 				}
@@ -5869,7 +5918,7 @@ abstract class CommonObject
 
 			if(! empty($conf->use_javascript_ajax)) {
 				$out.= '
-					<script type="text/javascript">
+					<script>
 					$(document).ready(function() {
 						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
 							$("'.dol_escape_js($newInput).'").insertBefore(this);
@@ -6422,7 +6471,7 @@ abstract class CommonObject
 			// Add code to manage list depending on others
 			if (! empty($conf->use_javascript_ajax)) {
 				$out .= '
-				<script type="text/javascript">
+				<script>
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
@@ -6687,10 +6736,10 @@ abstract class CommonObject
 
 						if ($nbbyrow > 0)
 						{
-							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+							if ($nbphoto == 1) $return.= '<table class="valigntop center centpercent" style="border: 0; padding: 2; border-spacing: 2px; border-collapse: separate;">';
 
-							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
-							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+							if ($nbphoto % $nbbyrow == 1) $return.= '<tr class="center valignmiddle" style="border: 1px">';
+							$return.= '<td style="width: '.ceil(100/$nbbyrow).'%" class="photo">';
 						}
 						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
@@ -6717,17 +6766,17 @@ abstract class CommonObject
 								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
 								{
 									$return.= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return.= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
 								}
 								else {
 									$return.= '<!-- Show original file -->';
-									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+									$return.= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							}
 							else
 							{
 								$return.= '<!-- Show nophoto file (because file is not shared) -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+								$return.= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 						else
@@ -6735,11 +6784,11 @@ abstract class CommonObject
 							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
 							{
 								$return.= '<!-- Show thumb -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return.= '<img class="photo photowithmargin"  height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 							else {
 								$return.= '<!-- Show original file -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+								$return.= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
 
@@ -6777,7 +6826,7 @@ abstract class CommonObject
 					}
 
 					if (empty($size)) {     // Format origine
-						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
+						$return.= '<img class="photo photowithmargin" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
 
 						if ($showfilename) $return.= '<br>'.$viewfilename;
 						if ($showaction)
@@ -6807,7 +6856,7 @@ abstract class CommonObject
 					// Ferme tableau
 					while ($nbphoto % $nbbyrow)
 					{
-						$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$return.= '<td style="width: '.ceil(100/$nbbyrow).'%">&nbsp;</td>';
 						$nbphoto++;
 					}
 

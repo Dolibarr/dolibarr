@@ -250,7 +250,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 	}
 
-
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 *  Update database
 	 *
@@ -260,6 +260,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	function update($user=null, $notrigger=0)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
@@ -336,7 +337,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 	}
 
-
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 *  Delete object in database
 	 *
@@ -346,6 +347,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 		$error=0;
 

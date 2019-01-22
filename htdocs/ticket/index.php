@@ -327,7 +327,7 @@ if ($result) {
             print "</td>\n";
 
             // Creation date
-            print '<td align="left">';
+            print '<td class="left">';
             print dol_print_date($db->jdate($objp->datec), 'dayhour');
             print "</td>";
 

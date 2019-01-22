@@ -594,7 +594,7 @@ if ($sql_select)
 		*/
 		print '</td>';
 
-		//print '<td align="left">'.$prodreftxt.'</td>';
+		//print '<td class="left">'.$prodreftxt.'</td>';
 
 		print '<td align="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;

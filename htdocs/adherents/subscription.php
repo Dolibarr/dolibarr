@@ -610,7 +610,7 @@ if ($rowid > 0)
 	print '</td>';
 	if ($action != 'editlogin' && $user->rights->adherent->creer)
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($user->rights->user->user->creer)
 		{
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a>';
@@ -695,10 +695,10 @@ if ($rowid > 0)
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-            print '<td align="right">'.$langs->trans("Amount").'</td>';
+            print '<td class="right">'.$langs->trans("Amount").'</td>';
             if (! empty($conf->banque->enabled))
             {
-                print '<td align="right">'.$langs->trans("Account").'</td>';
+                print '<td class="right">'.$langs->trans("Account").'</td>';
             }
             print "</tr>\n";
 
@@ -716,10 +716,10 @@ if ($rowid > 0)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-                print '<td align="right">'.price($objp->subscription).'</td>';
+                print '<td class="right">'.price($objp->subscription).'</td>';
 				if (! empty($conf->banque->enabled))
 				{
-					print '<td align="right">';
+					print '<td class="right">';
 					if ($objp->bid)
 					{
 						$accountstatic->label=$objp->label;
@@ -862,8 +862,16 @@ if ($rowid > 0)
 			{
 				$tmpcompany = new Societe($db);
 				$tmpcompany->name=$companyname;
-				$customercode = $tmpcompany->get_codeclient($tmpcompany,0);
-				$formquestion[]=array('label' => $langs->trans("CustomerCode"), 'type' => 'text', 'name' => 'customercode', 'value' => $customercode, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"');
+                $tmpcompany->get_codeclient($tmpcompany, 0);
+				$customercode = $tmpcompany->code_client;
+				$formquestion[]=array(
+                    'label' => $langs->trans("CustomerCode"),
+                    'type' => 'text',
+                    'name' => 'customercode',
+                    'value' => $customercode,
+                    'morecss' => 'minwidth300',
+                    'moreattr' => 'maxlength="128"',
+                );
 			}
 			// @TODO Add other extrafields mandatory for thirdparty creation
 

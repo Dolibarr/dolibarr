@@ -33,7 +33,7 @@ class HookManager
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -168,6 +168,8 @@ class HookManager
 				'getFormMail',
 				'getIdProfUrl',
 				'getDirList',
+			    'getFormatedCustomerRef',
+			    'getFormatedSupplierRef',
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',

@@ -188,16 +188,16 @@ if ($resql) {
 	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
 	print '</tr><tr><td colspan=2>';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td align="left">' . $langs->trans("ThirdParties") . '</td>';
-	print '<td align="left">' . $langs->trans("AccountNumber") . '</td>';
-	print '<td align="left">' . $langs->trans("RaisonSociale") . '</td>';
-	print '<td align="left">' . $langs->trans("Address") . '</td>';
-	print '<td align="left">' . $langs->trans("Zip") . '</td>';
-	print '<td align="left">' . $langs->trans("Town") . '</td>';
-	print '<td align="left">' . $langs->trans("Country") . '</td>';
-	print '<td align="left">' . $langs->trans("Contact") . '</td>';
-	print '<td align="left">' . $langs->trans("Phone") . '</td>';
-	print '<td align="left">' . $langs->trans("Fax") . '</td></tr>';
+	print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
+	print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
+	print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';
+	print '<td class="left">' . $langs->trans("Address") . '</td>';
+	print '<td class="left">' . $langs->trans("Zip") . '</td>';
+	print '<td class="left">' . $langs->trans("Town") . '</td>';
+	print '<td class="left">' . $langs->trans("Country") . '</td>';
+	print '<td class="left">' . $langs->trans("Contact") . '</td>';
+	print '<td class="left">' . $langs->trans("Phone") . '</td>';
+	print '<td class="left">' . $langs->trans("Fax") . '</td></tr>';
 
 	while ($obj = $db->fetch_object($resql))
 	{
@@ -210,15 +210,15 @@ if ($resql) {
 		$thirdpartystatic->status = $obj->status;
 		print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="left">' . $obj->compta . '</td>' . "\n";
-		print '<td align="left"></td>';
-		print '<td align="left">' . $obj->address . '</td>';
-		print '<td align="left">' . $obj->zip . '</td>';
-		print '<td align="left">' . $obj->town . '</td>';
-		print '<td align="left">' . $obj->country . '</td>';
-		print '<td align="left"></td>';
-		print '<td align="left">' . $obj->phone . '</td>';
-		print '<td align="left">' . $obj->fax . '</td>';
+		print '<td class="left">' . $obj->compta . '</td>' . "\n";
+		print '<td class="left"></td>';
+		print '<td class="left">' . $obj->address . '</td>';
+		print '<td class="left">' . $obj->zip . '</td>';
+		print '<td class="left">' . $obj->town . '</td>';
+		print '<td class="left">' . $obj->country . '</td>';
+		print '<td class="left"></td>';
+		print '<td class="left">' . $obj->phone . '</td>';
+		print '<td class="left">' . $obj->fax . '</td>';
 		print "</tr>\n";
 
 		$i ++;

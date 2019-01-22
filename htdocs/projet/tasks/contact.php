@@ -447,13 +447,13 @@ if ($id > 0 || ! empty($ref))
 				print '<tr class="oddeven" valign="top">';
 
 				// Source
-				print '<td align="left">';
+				print '<td class="left">';
 				if ($tab[$i]['source']=='internal') print $langs->trans("User");
 				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
 				print '</td>';
 
 				// Societe
-				print '<td align="left">';
+				print '<td class="left">';
 				if ($tab[$i]['socid'] > 0)
 				{
 					$companystatic->fetch($tab[$i]['socid']);

@@ -483,7 +483,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->total_ht);
 		print '</td>';
 
