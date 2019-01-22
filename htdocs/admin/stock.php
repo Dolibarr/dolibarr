@@ -454,7 +454,7 @@ if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULAT
 
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td align="right">';
+    print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 } else {
@@ -522,7 +522,7 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
