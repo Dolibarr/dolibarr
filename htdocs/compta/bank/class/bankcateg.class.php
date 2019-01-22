@@ -56,7 +56,7 @@ class BankCateg // extends CommonObject
 		$this->db = $db;
 	}
 
-
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 *  Create in database
 	 *
@@ -66,6 +66,7 @@ class BankCateg // extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $conf;
 
 		$error = 0;
@@ -147,6 +148,7 @@ class BankCateg // extends CommonObject
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Update database
 	 *
@@ -156,6 +158,7 @@ class BankCateg // extends CommonObject
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $conf;
 		$error = 0;
 
@@ -196,6 +199,7 @@ class BankCateg // extends CommonObject
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Delete object in database
 	 *
@@ -205,6 +209,7 @@ class BankCateg // extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $conf;
 		$error = 0;
 
