@@ -16,10 +16,9 @@
  */
 
 /**
- *      \file       compta/facture/class/paymentterm.class.php
- *      \ingroup    facture
- *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\author		Put author name here
+ *  \file       compta/facture/class/paymentterm.class.php
+ *  \ingroup    facture
+ *  \brief      Class file for payment terms
  */
 
 
@@ -74,16 +73,17 @@ class PaymentTerm // extends CommonObject
         $this->db = $db;
     }
 
-
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
-     *      Create in database
+     * Create in database
      *
-     *      @param      User	$user        	User that create
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, Id of created object if OK
+     * @param      User	$user        	User that create
+     * @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+     * @return     int       			  	<0 if KO, Id of created object if OK
      */
     function create($user, $notrigger=0)
     {
+		// phpcs:enable
     	global $conf, $langs;
 		$error=0;
 
@@ -260,16 +260,17 @@ class PaymentTerm // extends CommonObject
 		}
 	}
 
-
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
-     *      Update database
+     * Update database
      *
-     *      @param      User	$user        	User that modify
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, >0 if OK
+     * @param       User    $user           User that modify
+     * @param       int     $notrigger      0=launch triggers after, 1=disable triggers
+     * @return      int                     <0 if KO, >0 if OK
      */
 	function update($user=null, $notrigger=0)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 
 		$error=0;
@@ -337,16 +338,17 @@ class PaymentTerm // extends CommonObject
 		}
 	}
 
-
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
-	 *  Delete object in database
+	 * Delete object in database
 	 *
-	 *	@param      User	$user  		User that delete
-	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 * @param       User    $user       User that delete
+	 * @param       int     $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return      int                 <0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
