@@ -58,6 +58,7 @@ class Cpaiement
 		$this->db = $db;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Create object into database
 	 *
@@ -68,6 +69,7 @@ class Cpaiement
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -216,6 +218,7 @@ class Cpaiement
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Update object into database
 	 *
@@ -226,6 +229,7 @@ class Cpaiement
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -298,6 +302,7 @@ class Cpaiement
 		}
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 	/**
 	 * Delete object in database
 	 *
@@ -308,6 +313,7 @@ class Cpaiement
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		// phpcs:enable
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
