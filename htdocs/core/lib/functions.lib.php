@@ -1527,7 +1527,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		{
 			$accounted = $object->getVentilExportCompta();
 			$langs->load("accountancy");
-			$morehtmlstatus.='</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted"));
+			$morehtmlstatus.='</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : '<span class="opacitymedium">'.$langs->trans("NotYetAccounted").'</span>');
 		}
 	}
 
