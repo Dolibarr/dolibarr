@@ -631,7 +631,7 @@ class modSociete extends DolibarrModules
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
             's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_soc' => 'Third Party name eg. TPBigCompany',
-            's.civility' => 'honorific eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
+            's.civility' => 'Title of civility eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
             's.lastname' => "lastname or label",
             's.firstname' => 'John',
             's.address' => '61 Jump street',
