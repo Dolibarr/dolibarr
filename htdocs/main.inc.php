@@ -1691,7 +1691,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
-
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
 /**
  *  Show left menu bar
  *
@@ -1708,6 +1708,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  */
 function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='', $acceptdelayedhtml=0)
 {
+	// phpcs:enable
 	global $user, $conf, $langs, $db, $form;
 	global $hookmanager, $menumanager;
 
