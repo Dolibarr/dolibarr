@@ -796,7 +796,14 @@ SCRIPT;
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
 						// Supplier ref
-						print '<td class="left">'.$productfourn->fourn_ref.'</td>';
+						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						{
+							print '<td align="left">'.$productfourn->getNomUrl().'</td>';
+						}
+						else
+						{
+							print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+						}
 
 						// Availability
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
