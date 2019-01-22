@@ -602,7 +602,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -635,7 +635,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="140">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 		// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
@@ -678,7 +678,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1040,7 +1040,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -1077,7 +1077,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1131,7 +1131,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
