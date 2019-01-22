@@ -62,6 +62,7 @@ class ActionsDatapolicy
         $this->db = $db;
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * Execute action
      *
@@ -74,11 +75,13 @@ class ActionsDatapolicy
      */
     function getNomUrl($parameters, &$object, &$action)
     {
+		// phpcs:enable
         global $db, $langs, $conf, $user;
         $this->resprints = '';
         return 0;
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * Overloading the doActions function : replacing the parent's function with the one below
      *
@@ -90,6 +93,7 @@ class ActionsDatapolicy
      */
     public function doActions($parameters, &$object, &$action, $hookmanager)
     {
+		// phpcs:enable
         global $conf, $user, $langs;
         $langs->load('datapolicy@datapolicy');
         $error = 0; // Error counter
@@ -230,6 +234,7 @@ class ActionsDatapolicy
         }
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * Overloading the doActions function : replacing the parent's function with the one below
      *
@@ -241,6 +246,7 @@ class ActionsDatapolicy
      */
     public function doMassActions($parameters, &$object, &$action, $hookmanager)
     {
+		// phpcs:enable
         global $conf, $user, $langs;
 
         $error = 0; // Error counter
@@ -263,6 +269,7 @@ class ActionsDatapolicy
         }
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * Overloading the addMoreMassActions function : replacing the parent's function with the one below
      *
@@ -274,6 +281,7 @@ class ActionsDatapolicy
      */
     public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
     {
+		// phpcs:enable
         global $conf, $user, $langs;
 
         $error = 0; // Error counter
@@ -349,6 +357,7 @@ class ActionsDatapolicy
         return $ret;
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * addMoreActionsButtons
      *
@@ -360,6 +369,7 @@ class ActionsDatapolicy
      */
     function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
     {
+		// phpcs:enable
         global $conf, $user, $langs;
         $langs->load('datapolicy@datapolicy');
 
@@ -408,6 +418,7 @@ class ActionsDatapolicy
         }
     }
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
     /**
      * printCommonFooter
      *
@@ -419,6 +430,7 @@ class ActionsDatapolicy
      */
     function printCommonFooter($parameters, &$object, &$action, $hookmanager)
     {
+		// phpcs:enable
         global $conf, $user, $langs;
 
         $jsscript = '';
