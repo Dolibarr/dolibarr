@@ -280,7 +280,7 @@ class ChargeSociales extends CommonObject
      *      @param	User	$user   Utilisateur qui modifie
      *      @return int     		<0 si erreur, >0 si ok
      */
-    function update($user)
+    function update($user, $notrigger=0)
     {
         $error=0;
         $this->db->begin();
