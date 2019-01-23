@@ -1858,7 +1858,6 @@ if (! GETPOST('hide_websitemenu'))
 		}
 		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
 		print '</div>';
-
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager')))
