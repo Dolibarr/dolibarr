@@ -282,6 +282,7 @@ class ChargeSociales extends CommonObject
      */
     function update($user)
     {
+        $error=0;
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
@@ -295,17 +296,40 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
+        
+        if (! $resql) {
+            $error++; $this->errors[]="Error ".$this->db->lasterror();
+        }
+        
+        if (! $error)
+        {
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('SOCIALCHARGES_MODIFY',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+        }
+        
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
         {
             $this->db->commit();
             return 1;
         }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
-        }
+        
+        
     }
 
     /**
