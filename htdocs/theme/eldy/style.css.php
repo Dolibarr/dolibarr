@@ -3935,6 +3935,7 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
+	line-height: 28px;
 }
 .websitetools {
 	float: right;
