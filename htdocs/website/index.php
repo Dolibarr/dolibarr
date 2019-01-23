@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-$langs->loadLangs(array("admin","other","website"));
+$langs->loadLangs(array("admin","other","website","errors"));
 
 if (! $user->rights->website->read) accessforbidden();
 
@@ -280,6 +280,12 @@ if ($action == 'addsite')
 {
 	$db->begin();
 
+    if (GETPOST('virtualhost','alpha') && ! preg_match('/^http/',GETPOST('virtualhost','alpha')))
+    {
+        $error++;
+        setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
+	}
+
 	if (! $error && ! GETPOST('WEBSITE_REF','alpha'))
 	{
 		$error++;
@@ -353,6 +359,7 @@ if ($action == 'addcontainer')
 		if (! preg_match('/^http/', $urltograb))
 		{
 			$error++;
+			$langs->load("errors");
 			setEventMessages('Error URL must start with http:// or https://', null, 'errors');
 			$action = 'createcontainer';
 		}
@@ -872,7 +879,7 @@ if ($action == 'updatecss')
 		    if (GETPOST('virtualhost','alpha') && ! preg_match('/^http/',GETPOST('virtualhost','alpha')))
     		{
     		    $error++;
-    		    setEventMessages('Error URL must start with http:// or https://', null, 'errors');
+    		    setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
     		    $action='editcss';
     		}
 
@@ -1825,11 +1832,11 @@ if (! GETPOST('hide_websitemenu'))
 		$htmltext = '';
 		if (empty($object->fk_default_home))
 		{
-		    $htmltext.= '<span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
+		    $htmltext.= '<br><span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
 		}
-		if (empty($virtualurl))
+		elseif (empty($virtualurl))
 		{
-		    $htmltext.= '<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
+		    $htmltext.= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		}
 		else
 		{
@@ -2150,7 +2157,7 @@ if (! GETPOST('hide_websitemenu'))
                             newurl=jQuery("#previewsiteurl").val();
 							if (! newurl.startsWith("http"))
 							{
-								alert(\''.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).'\');
+								alert(\''.dol_escape_js($langs->trans("ErrorURLMustStartWithHttp")).'\');
 								return false;
 							}
 
@@ -2412,7 +2419,7 @@ if ($action == 'createsite')
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="virtualhost" value="'.dol_escape_htmltag($sitedesc).'">';
+	print '<input type="text" class="flat minwidth300" name="virtualhost" value="'.dol_escape_htmltag(GETPOST('virtualhost','alpha')).'">';
 	print '</td></tr>';
 
 
