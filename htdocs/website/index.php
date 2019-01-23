@@ -1818,14 +1818,14 @@ if (! GETPOST('hide_websitemenu'))
 
 	// Toolbar for websites
 
-	print '<div class="websitetools">';
+	print '<div class="websitetools websiteselection">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 	{
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
 
-		print '<div class="websiteinputurl" id="websiteinputurl">';
+		print '<div class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl?$virtualurl:'#').'" class="valignmiddle">';
 		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('','object_globe');
 		$linktotestonwebserver.= '</a>';
@@ -1856,7 +1856,7 @@ if (! GETPOST('hide_websitemenu'))
     		$htmltext.='<br>';
     		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
 		}
-		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', '', 0, 2, 'helpvirtualhost');
+		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
 		print '</div>';
 
 	}
