@@ -1775,105 +1775,18 @@ if (empty($reshook))
 
 				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
-				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-				if (empty($tva_tx)) $tva_npr=0;
-
-				$pu_ht = $prod->price;
-				$pu_ttc = $prod->price_ttc;
-				$price_min = $prod->price_min;
-				$price_base_type = $prod->price_base_type;
-
-				// If price per segment
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
-				{
-					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-					{
-						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
-						if (empty($tva_tx)) $tva_npr=0;
-					}
-				}
-				// If price per customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-				{
-					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-
-					$prodcustprice = new Productcustomerprice($db);
-
-					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
-
-					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result) {
-						if (count($prodcustprice->lines) > 0) {
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) $tva_npr=0;
-						}
-					}
-				}
-				// If price per quantity
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
-				{
-					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
-					{
-						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
-
-						// Search price into product_price_by_qty from $prod->id
-						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
-							break;
-						}
-					}
-				}
-				// If price per quantity and customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-				{
-					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
-					{
-						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
-
-						// Search price into product_price_by_qty from $prod->id
-						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
-							break;
-						}
-					}
-				}
-
+				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+				$pqp = (GETPOST('pbq','int') ? GETPOST('pbq','int') : 0);
+				
+				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
+				
+				$pu_ht = $datapriceofproduct['pu_ht'];
+				$pu_ttc = $datapriceofproduct['pu_ttc'];
+				$price_min = $datapriceofproduct['price_min'];
+				$price_base_type = $datapriceofproduct['price_base_type'];
+				$tva_tx = $datapriceofproduct['tva_tx'];
+				$tva_npr = $datapriceofproduct['tva_npr'];
+				
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 

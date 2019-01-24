@@ -313,35 +313,41 @@ if ($massaction == 'generateinvoice')
 		else
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/project/class/projet.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			
 			$tmpinvoice = new Facture($db);
-			$tmptimespent=new Task();
+			$tmptimespent=new Task($db);
 			$tmpproduct=new Product($db);
 			$fuser = new User($db);
-			$idprod = 0;
+
+			$db->begin();
+
+			$idprod = GETPOST('idprod', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
+			}
 			
-			$txtva = get_default_tva($mysoc, $projectstatic->thirdparty, $idprod);
+			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+			$pu_ht = $dataforprice['pu_ht'];
+			$txtva = $dataforprice['tva_tx']; 	
 			
 			$tmpinvoice->fk_soc = $projectstatic->thirdparty->id;
 			$tmpinvoice->create($user);
-	
+
 			$arrayoftasks=array();
-			$totaltimespent = 0;
 			foreach($toselect as $key => $value)
 			{
 				// Get userid, timepent
-				//$object->fetchTimeSpent(GETPOST('lineid','int'));
+				$object->fetchTimeSpent($value);
 				
-				
-				$arrayoftasks[$userid]['timespent']+=$timespent;
+				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
 			}
-			
 			foreach($arrayoftasks as $userid => $value)
 			{
 				$fuser->fetch($userid);
-				$pu_ht = $value['timespent'] * $fuser->thm;
+				//$pu_ht = $value['timespent'] * $fuser->thm;
 				$username = $fuser->getFullName($langs);
 				
 				// Add lines
@@ -349,8 +355,16 @@ if ($massaction == 'generateinvoice')
 			}
 			
 			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $tmpinvoice->ref), null, 'mesgs');
-			
-			exit;
+			//var_dump($tmpinvoice);
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 }
 
