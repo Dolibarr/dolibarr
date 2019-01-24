@@ -137,14 +137,12 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	if($maj_ok) {
 
 		$pse = new ProductStockEntrepot($db);
-		if($pse->fetch('', $id, GETPOST('fk_entrepot')) > 0) {
-
+		if ($pse->fetch(0, $id, GETPOST('fk_entrepot','int')) > 0) {
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
 			if($pse->update($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseUpdated'), null, 'mesgs');
 		} else {
-
 			// Create
 			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
@@ -162,8 +160,9 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 {
 
 	$pse = new ProductStockEntrepot($db);
-	$pse->fetch(GETPOST('fk_productstockwarehouse'));
-	if($pse->delete($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
+
+	$pse->fetch(GETPOST('fk_productstockwarehouse','int'));
+	if ($pse->delete($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
 
 	$action = '';
 }
@@ -802,6 +801,7 @@ if (! $variants) {
 	 */
 
 	print '<div class="div-table-responsive">';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">' . $langs->trans("Warehouse") . '</td>';

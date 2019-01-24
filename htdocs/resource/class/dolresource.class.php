@@ -56,7 +56,9 @@ class Dolresource extends CommonObject
 	public $type_label;
 	public $tms='';
 
-	var $oldcopy;
+	public $cache_code_type_resource=array();
+
+	public $oldcopy;
 
     /**
      *  Constructor

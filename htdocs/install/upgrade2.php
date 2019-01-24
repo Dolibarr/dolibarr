@@ -463,6 +463,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 			'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
 			'MAIN_MODULE_DON'=>'newboxdefonly',
 			'MAIN_MODULE_ECM'=>'newboxdefonly',
+			'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
 			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
@@ -2922,9 +2923,9 @@ function migrate_project_task_actors($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @param	string		$table			Table name
  * @param	int			$fk_source		Id of element source
- * @param	type		$sourcetype		Type of element source
+ * @param	string		$sourcetype		Type of element source
  * @param	int			$fk_target		Id of element target
- * @param	type		$targettype		Type of element target
+ * @param	string		$targettype		Type of element target
  * @return	void
  */
 function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
@@ -4833,7 +4834,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
  */
 function migrate_user_photospath()
 {
-	global $conf, $db, $langs;
+	global $conf, $db, $langs, $user;
 
 	print '<tr><td colspan="4">';
 
@@ -4841,6 +4842,8 @@ function migrate_user_photospath()
 
 	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$fuser = new User($db);
+
+	if (! is_object($user)) $user = $fuser;	// To avoid error during migration
 
 	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user";	// Get list of all users
 	$resql = $db->query($sql);
@@ -4850,50 +4853,65 @@ function migrate_user_photospath()
 		{
 			$fuser->fetch($obj->uid);
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
-			$entity = (!empty($fuser->entity)) ? $fuser->entity : 1;
+			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT . '/' . $entity . '/users';
 			} else {
 				$dir = $conf->user->multidir_output[$entity];	// $conf->user->multidir_output[] for each entity is construct by the multicompany module
 			}
-			$origin = $dir .'/'. get_exdir($fuser->id,2,0,0,$fuser,'user');
-			$destin = $dir.'/'.$fuser->id;
-
-			$error = 0;
-
-			$origin_osencoded=dol_osencode($origin);
-			$destin_osencoded=dol_osencode($destin);
-			dol_mkdir($destin);
-			//echo '<hr>'.$origin.' -> '.$destin;
-			if (dol_is_dir($origin))
+			if ($dir)
 			{
-				$handle=opendir($origin_osencoded);
-		        if (is_resource($handle))
-		        {
-		        	while (($file = readdir($handle)) !== false)
-		    		{
-		     			if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file))
-		    			{
-		    				$thumbs = opendir($origin_osencoded.'/'.$file);
-		    				if (is_resource($thumbs))
-		        			{
-			     				dol_mkdir($destin.'/'.$file);
-			     				while (($thumb = readdir($thumbs)) !== false)
-				    			{
-				    				dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
-				    			}
-		//		    			dol_delete_dir($origin.'/'.$file);
-		        			}
-		    			}
-		    			else
-		    			{
-		    				if (dol_is_file($origin.'/'.$file) )
-		    				{
-		    					dol_move($origin.'/'.$file, $destin.'/'.$file);
-		    				}
-		    			}
-		    		}
-		        }
+				//print "Process user id ".$fuser->id."<br>\n";
+				$origin = $dir .'/'. get_exdir($fuser->id,2,0,1,$fuser,'user');	// Use old behaviour to get x/y path
+				$destin = $dir .'/'. $fuser->id;
+
+				$origin_osencoded=dol_osencode($origin);
+
+				dol_mkdir($destin);
+				//echo '<hr>'.$origin.' -> '.$destin;
+				if (dol_is_dir($origin))
+				{
+					$handle=opendir($origin_osencoded);
+			        if (is_resource($handle))
+			        {
+			        	while (($file = readdir($handle)) !== false)
+			    		{
+			    			if ($file == '.' || $file == '..') continue;
+
+			     			if (dol_is_dir($origin.'/'.$file))	// it is a dir (like 'thumbs')
+			    			{
+			    				$thumbs = opendir($origin_osencoded.'/'.$file);
+			    				if (is_resource($thumbs))
+			        			{
+				     				dol_mkdir($destin.'/'.$file);
+				     				while (($thumb = readdir($thumbs)) !== false)
+					    			{
+					    				if (! dol_is_file($destin.'/'.$file.'/'.$thumb))
+					    				{
+					    					if ($thumb == '.' || $thumb == '..') continue;
+
+					    					//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
+					    					print '.';
+					    					dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+					    					//var_dump('aaa');exit;
+					    				}
+					    			}
+									// dol_delete_dir($origin.'/'.$file);
+			        			}
+			    			}
+			    			else								// it is a file
+			    			{
+			    				if (! dol_is_file($destin.'/'.$file))
+			    				{
+			    					//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
+			    					print '.';
+			    					dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+			    					//var_dump('eee');exit;
+			    				}
+			    			}
+			    		}
+			        }
+				}
 			}
 		}
 	}

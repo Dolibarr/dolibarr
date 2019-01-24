@@ -459,8 +459,6 @@ class PaymentSocialContribution extends CommonObject
 
 		$object=new PaymentSocialContribution($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -472,6 +470,7 @@ class PaymentSocialContribution extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -488,7 +487,7 @@ class PaymentSocialContribution extends CommonObject
 
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

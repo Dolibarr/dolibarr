@@ -280,8 +280,6 @@ class BankCateg // extends CommonObject
 
 		$object = new BankCateg($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -290,6 +288,7 @@ class BankCateg // extends CommonObject
 		$object->statut = 0;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options

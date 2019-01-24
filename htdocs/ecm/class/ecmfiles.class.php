@@ -180,8 +180,15 @@ class EcmFiles extends CommonObject
 		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
-		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
-		if (! empty($this->ref)) $ref=$this->ref;
+		$ref = '';
+		if (! empty($this->ref))
+		{
+			$ref=$this->ref;
+		}
+		else {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		}
 
 		$maxposition=0;
 		if (empty($this->position))   // Get max used
@@ -725,6 +732,7 @@ class EcmFiles extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -733,6 +741,8 @@ class EcmFiles extends CommonObject
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {

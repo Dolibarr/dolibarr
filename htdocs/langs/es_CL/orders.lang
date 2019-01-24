@@ -56,7 +56,6 @@ AddToDraftOrders=Añadir a orden de borrador
 OrdersOpened=Órdenes para procesar
 NoDraftOrders=No hay borradores de pedidos
 NoOrder=Sin orden
-NoSupplierOrder=Sin orden de compra
 LastOrders=Últimas %s pedidos de clientes
 LastCustomerOrders=Últimas %s pedidos de clientes
 LastSupplierOrders=Últimas %s órdenes de compra

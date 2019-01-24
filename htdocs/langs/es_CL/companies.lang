@@ -83,7 +83,6 @@ VATIntraShort=Identificación del impuesto
 VATIntraSyntaxIsValid=La sintaxis es valida
 VATReturn=Devolución del IVA
 ProspectCustomer=Prospecto/Cliente
-Prospect=Prospectar
 CustomerCard=Tarjeta Cliente
 CustomerRelativeDiscount=Descuento relativo del cliente
 SupplierRelativeDiscount=Descuento relativo del vendedor

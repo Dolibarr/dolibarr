@@ -1222,31 +1222,30 @@ class Propal extends CommonObject
 
 		dol_include_once('/projet/class/project.class.php');
 
-		$this->context['createfromclone']='createfromclone';
-
 		$error=0;
 		$now=dol_now();
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
+
 		$this->db->begin();
 
-		// get extrafields so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals();
-
-		// Load dest object
-		$clonedObj = clone $this;
+		// Load source object
+		$object->fetch($this->id);
+		$object->fetch_lines();
 
 		$objsoc=new Societe($this->db);
 
 		// Change socid if needed
-		if (! empty($socid) && $socid != $clonedObj->socid)
+		if (! empty($socid) && $socid != $object->socid)
 		{
 			if ($objsoc->fetch($socid) > 0)
 			{
-				$clonedObj->socid 				= $objsoc->id;
-				$clonedObj->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$clonedObj->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$clonedObj->fk_delivery_address	= '';
+			    $object->socid 				= $objsoc->id;
+			    $object->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+			    $object->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+			    $object->fk_delivery_address	= '';
 
 				/*if (!empty($conf->projet->enabled))
                 {
@@ -1258,44 +1257,51 @@ class Propal extends CommonObject
     					$clonedObj->fk_project = '';
     				}
                 }*/
-				$clonedObj->fk_project = '';    // A cloned proposal is set by default to no project.
+			    $object->fk_project = '';    // A cloned proposal is set by default to no project.
 			}
 
 			// reset ref_client
-			$clonedObj->ref_client  = '';
+			$object->ref_client  = '';
 
 			// TODO Change product price if multi-prices
 		}
 		else
 		{
-			$objsoc->fetch($clonedObj->socid);
+		    $objsoc->fetch($object->socid);
 		}
 
-		$clonedObj->id=0;
-		$clonedObj->ref='';
-		$clonedObj->statut=self::STATUS_DRAFT;
+		$object->id=0;
+		$object->ref='';
+		$object->statut=self::STATUS_DRAFT;
 
 		// Clear fields
-		$clonedObj->user_author	= $user->id;
-		$clonedObj->user_valid	= '';
-		$clonedObj->date		= $now;
-		$clonedObj->datep		= $now;    // deprecated
-		$clonedObj->fin_validite	= $clonedObj->date + ($clonedObj->duree_validite * 24 * 3600);
-		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
+		$object->user_author	= $user->id;
+		$object->user_valid	= '';
+		$object->date		= $now;
+		$object->datep		= $now;    // deprecated
+		$object->fin_validite	= $object->date + ($object->duree_validite * 24 * 3600);
+		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client	= '';
 
 		// Create clone
-		$result=$clonedObj->create($user);
+		$object->context['createfromclone']='createfromclone';
+		$result=$object->create($user);
 		if ($result < 0) $error++;
-		else
+
+		if (! $error)
 		{
 			// copy internal contacts
-			if ($clonedObj->copy_linked_contact($this, 'internal') < 0)
+		    if ($object->copy_linked_contact($this, 'internal') < 0)
+		    {
 				$error++;
+		    }
+		}
 
+		if (! $error)
+		{
 			// copy external contacts if same company
-			elseif ($this->socid == $clonedObj->socid)
+			if ($this->socid == $object->socid)
 			{
-				if ($clonedObj->copy_linked_contact($this, 'external') < 0)
+			    if ($object->copy_linked_contact($this, 'external') < 0)
 					$error++;
 			}
 		}
@@ -1312,13 +1318,13 @@ class Propal extends CommonObject
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
 		{
 			$this->db->commit();
-			return $clonedObj->id;
+			return $object->id;
 		}
 		else
 		{

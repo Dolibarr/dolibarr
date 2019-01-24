@@ -118,9 +118,12 @@ if (empty($reshook))
 	$error=0;
 
 	$permissiontoadd = $user->rights->mymodule->write;
-	$permissiontodelete = $user->rights->mymodule->delete;
-	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
-	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
+	$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
+    	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
+	if (empty($backtopage)) {
+	    if (empty($id)) $backtopage = $backurlforlist;
+	    else $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).($id > 0 ? $id : '__ID__');
+    	}
 	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone

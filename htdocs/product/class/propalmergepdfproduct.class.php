@@ -582,6 +582,7 @@ class Propalmergepdfproduct extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -594,8 +595,9 @@ class Propalmergepdfproduct extends CommonObject
 		if (! $error)
 		{
 
-
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

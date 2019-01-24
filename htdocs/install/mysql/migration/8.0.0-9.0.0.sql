@@ -29,6 +29,9 @@
 
 
 -- Missing in 8.0
+ALTER TABLE llx_contrat_extrafields ADD INDEX idx_contrat_extrafields (fk_object);
+ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
@@ -150,6 +153,9 @@ UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NU
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 
+-- DROP TABLE llx_emailcollector_emailcollectorfilter;
+-- DROP TABLE llx_emailcollector_emailcollectoraction;
+-- DROP TABLE llx_emailcollector_emailcollector;
 
 CREATE TABLE llx_emailcollector_emailcollector(
         -- BEGIN MODULEBUILDER FIELDS
@@ -177,6 +183,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 
@@ -225,3 +232,31 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcol
 ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
 ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
 
+DROP TABLE llx_ticket_logs;
+
+
+CREATE TABLE llx_pos_cash_fence(
+	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
+	entity INTEGER DEFAULT 1 NOT NULL,
+	ref VARCHAR(64),
+	label VARCHAR(255),
+	opening double(24,8) default 0,
+	cash double(24,8) default 0,
+	card double(24,8) default 0,
+	cheque double(24,8) default 0,
+	status INTEGER,
+	date_creation DATETIME NOT NULL,
+	date_valid DATETIME,
+	day_close INTEGER,
+	month_close INTEGER,
+	year_close INTEGER,
+	posmodule VARCHAR(30),
+	posnumber VARCHAR(30),
+	fk_user_creat integer,
+	fk_user_valid integer,
+	tms TIMESTAMP NOT NULL,
+	import_key VARCHAR(14)
+) ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;

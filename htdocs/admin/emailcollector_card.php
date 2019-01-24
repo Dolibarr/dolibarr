@@ -380,11 +380,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sourcedir = $object->source_directory;
 	$targetdir = ($object->target_directory ? $object->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
 
-	$connectstringserver = $object->getConnectStringIMAP();
-	$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-	$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+	$connection = null;
+	$connectstringserver = '';
+	$connectstringsource = '';
+	$connectstringtarget = '';
 
-	$connection = imap_open($connectstringsource, $object->user, $object->password);
+	if (function_exists('imap_open'))
+	{
+		$connectstringserver = $object->getConnectStringIMAP();
+		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+
+		$connection = imap_open($connectstringsource, $object->user, $object->password);
+	}
+	else
+	{
+		$morehtml .= 'IMAP functions not available on your PHP';
+	}
+
 	if (! $connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
@@ -395,7 +408,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtml .= imap_num_msg($connection);
 	}
 
-	imap_close($connection);
+	if ($connection)
+	{
+		imap_close($connection);
+	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
@@ -471,6 +487,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
+	$htmltext=$langs->transnoentitiesnoconv("OperationParamDesc");
+	//var_dump($htmltext);
+	print $form->textwithpicto('', $htmltext);
 	print '</td>';
 	print '<td></td>';
 	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';

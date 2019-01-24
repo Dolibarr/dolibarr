@@ -120,8 +120,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "$action" parameter
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
@@ -165,8 +163,6 @@ if (empty($reshook))
 
 /*
  * View
- *
- * Put here all code to render page
  */
 
 $form=new Form($db);
@@ -212,20 +208,20 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object)
 $sql.=$hookmanager->resPrint;
 
 /* If a group by is required
- $sql.= " GROUP BY "
- foreach($object->fields as $key => $val)
- {
- $sql.='t.'.$key.', ';
- }
- // Add fields from extrafields
- if (! empty($extrafields->attributes[$object->table_element]['label'])) {
- foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
- // Add where from hooks
- $parameters=array();
- $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
- $sql.=$hookmanager->resPrint;
- $sql=preg_replace('/, $/','', $sql);
- */
+$sql.= " GROUP BY "
+foreach($object->fields as $key => $val)
+{
+	$sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql=preg_replace('/, $/','', $sql);
+*/
 
 $sql.=$db->order($sortfield,$sortorder);
 
@@ -305,8 +301,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-//'presend'=>$langs->trans("SendByMail"),
-//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>$langs->trans("SendByMail"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -324,7 +320,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton='';
 //if ($user->rights->emailcollector->creer)
-	//{
+//{
 $newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
 $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
@@ -333,6 +329,10 @@ $newcardbutton.= '</a>';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
+/*$topicmail="";
+$modelmail="";
+$objecttmp=new EmailCollector($db);
+$trackid='xxxx'.$object->id;*/
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
@@ -343,8 +343,8 @@ if ($sall)
 
 $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
- $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
- $moreforfilter.= '</div>';*/
+$moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
+$moreforfilter.= '</div>';*/
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
@@ -371,11 +371,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+    $cssforfield='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+    if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+    if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -397,11 +397,14 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
+    $cssforfield='';
+    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+    if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+    if (! empty($arrayfields['t.'.$key]['checked']))
+    {
+        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+    }
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -444,15 +447,22 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-		$align='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-		if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-		if ($key == 'status') $align.=($align?' ':'').'center';
-		if (! empty($arrayfields['t.'.$key]['checked']))
-		{
-			print '<td';
-			if ($align) print ' class="'.$align.'"';
-			print '>';
+	    $cssforfield='';
+	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	    
+	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    
+	    if (! empty($arrayfields['t.'.$key]['checked']))
+	    {
+	        print '<td';
+	        if ($cssforfield || $val['css']) print ' class="';
+	        print $cssforfield;
+	        if ($cssforfield && $val['css']) print ' ';
+	        print $val['css'];
+	        if ($cssforfield || $val['css']) print '"';
+	        print '>';
 			print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

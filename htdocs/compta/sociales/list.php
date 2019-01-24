@@ -19,7 +19,7 @@
  */
 
 /**
- *   	\file       htdocs/compta/list/index.php
+ *   	\file       htdocs/compta/sociales/list.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
  */

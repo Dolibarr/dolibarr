@@ -951,8 +951,6 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -961,8 +959,6 @@ class Facture extends CommonInvoice
 
 		// Load source object
 		$objFrom = clone $this;
-
-
 
 		// Change socid if needed
 		if (! empty($socid) && $socid != $this->socid)
@@ -1008,6 +1004,7 @@ class Facture extends CommonInvoice
 		}
 
 		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
 		$result=$this->create($user);
 		if ($result < 0) $error++;
 		else {

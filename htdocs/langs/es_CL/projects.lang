@@ -22,7 +22,6 @@ ProjectCategories=Etiquetas / categorías de proyecto
 ConfirmDeleteAProject=¿Seguro que quieres eliminar este proyecto?
 ConfirmDeleteATask=¿Seguro que quieres eliminar esta tarea?
 ShowProject=Mostrar proyecto
-ShowTask=Mostrar tarea
 SetProject=Establecer proyecto
 NoProject=Ningún proyecto definido o propiedad
 TimeSpentByYou=Tiempo pasado por ti

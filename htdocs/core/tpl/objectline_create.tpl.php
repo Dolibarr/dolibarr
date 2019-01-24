@@ -274,7 +274,7 @@ else {
 		        $alsoproductwithnosupplierprice=1;
 		    }
 
-			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
+		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';

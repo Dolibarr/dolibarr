@@ -1418,6 +1418,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
+
 		$error = 0;
 		$object = new BookKeeping($this->db);
 
@@ -1432,6 +1433,7 @@ class BookKeeping extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -1441,6 +1443,8 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		unset($object->context['createfromclone']);
+
 		// End
 		if (! $error) {
 			$this->db->commit();
@@ -1449,7 +1453,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 

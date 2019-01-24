@@ -76,6 +76,8 @@ $extrafields = new ExtraFields($db);
 
 $object = new Adherent($db);
 
+$user->loadDefaultValues();
+
 
 /**
  * Show header for new member

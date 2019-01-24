@@ -1362,6 +1362,18 @@ class Task extends CommonObject
 
 		$ret = 0;
 
+		// Check parameters
+		if ($this->timespent_date == '')
+		{
+		    $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
+		    return -1;
+		}
+		if (! ($this->timespent_fk_user > 0))
+		{
+		    $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
+		    return -1;
+		}
+
 		// Clean parameters
 		if (empty($this->timespent_datehour)) $this->timespent_datehour = $this->timespent_date;
 		if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);

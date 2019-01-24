@@ -757,7 +757,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else
+		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    // Load translation files required by the page
@@ -799,7 +799,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
         }
         // Set societeforaction.
-        if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+        if ($object->socid > 0)			$societeforaction->fetch($object->socid);
+        elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
         $projectid = isset($object->fk_project)?$object->fk_project:0;
         if ($object->element == 'project') $projectid = $object->id;

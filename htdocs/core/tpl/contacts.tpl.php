@@ -157,6 +157,8 @@ if ($permission) {
 	</form>
 
 	<?php
+	$var = false;
+
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
 
@@ -168,9 +170,10 @@ if ($permission) {
 
 		$i = 0;
 		while ($i < $num) {
+		    $var = ! $var;
 	?>
 
-	<form class="tagtr oddeven">
+	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
 		<div class="tagtd" align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>

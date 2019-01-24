@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
@@ -376,28 +377,22 @@ if (empty($reshook))
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
 
-            $result = $object->update($contactid, $user);
+			$result = $object->update($contactid, $user);
 
 			if ($result > 0) {
 				// Categories association
-				// First we delete all categories association
-				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_contact';
-				$sql .= ' WHERE fk_socpeople = ' . $object->id;
-				$db->query( $sql );
-
-				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array');
+				$categories = GETPOST('contcats', 'array');
 				$object->setCategories($categories);
 
-                $object->old_lastname='';
-                $object->old_firstname='';
-                $action = 'view';
-            }
-            else
-            {
-                setEventMessages($object->error, $object->errors, 'errors');
-                $action = 'edit';
-            }
+				$object->old_lastname='';
+				$object->old_firstname='';
+				$action = 'view';
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit';
+			}
         }
 
         if (! $error && empty($errors))
