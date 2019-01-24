@@ -116,21 +116,21 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td>'.$langs->trans("Description").'</td>';
 	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans("Entity").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td align="right">'.$langs->trans("Debit").'</td>';
-	print '<td align="right">'.$langs->trans("Credit").'</td>';
-	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
+	print '<td class="right">'.$langs->trans("Debit").'</td>';
+	print '<td class="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
 	// Current balance
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td align="right" class="nowrap">'.price($solde).'</td>';
+	print '<td class="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	print '<td class="nowrap right">'.price($solde).'</td>';
 	print '</tr>';
 
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right" class="nowrap">&nbsp;</td>';
+	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="nowrap right">&nbsp;</td>';
 	print '</tr>';
 
 
@@ -293,9 +293,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					}else print "<td></td>";
 				}
     			print "<td>".$refcomp."</td>";
-    			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
-    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
-    			print '<td align="right">'.price($solde).'</td>';
+    			if ($obj->total_ttc < 0) { print "<td class=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
+    			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td class=\"right\">".price($total_ttc)."</td>"; };
+    			print '<td class="right">'.price($solde).'</td>';
     			print "</tr>";
 			}
 
@@ -317,8 +317,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// solde
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
-	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
+	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
+	print '<td class="nowrap right">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";
