@@ -427,8 +427,13 @@ if ($rowid > 0)
 		}
 
 		// Add
+		if ($user->rights->adherent->configurer && !empty($object->statut))
+		{
 		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
-
+  		} else {
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';    
+   		}		
+		
 		// Delete
 		if ($user->rights->adherent->configurer)
 		{
