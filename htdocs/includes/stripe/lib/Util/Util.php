@@ -82,7 +82,7 @@ abstract class Util
             \Stripe\BitcoinTransaction::OBJECT_NAME => 'Stripe\\BitcoinTransaction',
             \Stripe\Card::OBJECT_NAME => 'Stripe\\Card',
             \Stripe\Charge::OBJECT_NAME => 'Stripe\\Charge',
-            \Stripe\CheckoutSession::OBJECT_NAME => 'Stripe\\CheckoutSession',
+            \Stripe\Checkout\Session::OBJECT_NAME => 'Stripe\\Checkout\\Session',
             \Stripe\CountrySpec::OBJECT_NAME => 'Stripe\\CountrySpec',
             \Stripe\Coupon::OBJECT_NAME => 'Stripe\\Coupon',
             \Stripe\Customer::OBJECT_NAME => 'Stripe\\Customer',
