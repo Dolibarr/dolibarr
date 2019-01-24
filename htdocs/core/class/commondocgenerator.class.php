@@ -445,6 +445,7 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines)>0)
 		{
+			$totalUp = 0;
 			foreach ($object->lines as $line)
 			{
 			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
@@ -456,8 +457,20 @@ abstract class CommonDocGenerator
 				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
 				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+				
+				$totalUp += $line->subprice * $line->qty;
+			}
+		
+			// @GS: Calculate total up and total discount percentage
+			$resarray['object_total_up'] = $totalUp;
+			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
+			
+			if (method_exists($object, 'getTotalDiscount')) {
+				$resarray['object_total_discount'] = round(100 / $totalUp * $object->getTotalDiscount(), 2);
+				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
 			}
 		}
+		
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
@@ -470,6 +483,7 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
+		
 		return $resarray;
 	}
 
@@ -493,6 +507,8 @@ abstract class CommonDocGenerator
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
+			'line_total_up'=>price2num($line->subprice * $line->qty),
+			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
 			'line_qty'=>$line->qty,
 			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
 			'line_price_ht'=>price2num($line->total_ht),
@@ -629,6 +645,7 @@ abstract class CommonDocGenerator
 	    	'line_desc'=>$line->desc,
 	    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 	    	'line_up'=>price($line->subprice),
+		'line_total_up'=>price($line->subprice * $line->qty),
 	    	'line_qty'=>$line->qty,
 	    	'line_qty_shipped'=>$line->qty_shipped,
 	    	'line_qty_asked'=>$line->qty_asked,
