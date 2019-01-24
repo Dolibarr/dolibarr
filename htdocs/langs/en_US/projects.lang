@@ -226,6 +226,7 @@ LatestProjects=Latest %s projects
 LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
+ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
@@ -236,3 +237,4 @@ SendProjectRef=Information project %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
 NewTaskRefSuggested=Task ref already used, a new task ref is required
 TimeSpentInvoiced=Time spent billed
+GenerateInvoice=Generate invoice
