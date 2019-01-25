@@ -37,7 +37,7 @@ if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expenserepor
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips'));
+$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
 
 $socid=GETPOST("socid","int");
 
@@ -48,6 +48,8 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
+
+$max=3;
 
 
 
@@ -160,10 +162,6 @@ if (! empty($conf->holiday->enabled))
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-$max=10;
-
-$langs->load("boxes");
 
 
 

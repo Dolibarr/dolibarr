@@ -404,7 +404,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	else
 	{
-		//$morehtmlstatus .= imap_num_msg($connection).'</div><div class="statusref">';
 		$morehtml .= imap_num_msg($connection);
 	}
 

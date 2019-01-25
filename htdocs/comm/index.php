@@ -51,7 +51,7 @@ if (isset($user->societe_id) && $user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
-$max=5;
+$max=3;
 $now=dol_now();
 
 /*
@@ -464,7 +464,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX=3;
 $max=3;
 
 

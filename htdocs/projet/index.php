@@ -45,6 +45,9 @@ if (!$user->rights->projet->lire) accessforbidden();
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 
+$max=3;
+
+
 
 /*
  * View
@@ -161,8 +164,6 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
-$max=5;
 
 // Last modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
