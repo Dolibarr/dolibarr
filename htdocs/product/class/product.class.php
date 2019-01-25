@@ -1526,12 +1526,119 @@ class Product extends CommonObject
         }
     }
 
+    
+    /**
+     * Return price of sell of a product for a seller/buyer/product.
+     * 
+     * @param	Societe		$thirdparty_seller		Seller
+     * @param	Societe		$thirdparty_buyer		Buyer
+     * @param	int			$pqp					Id of product per price if a selection was done of such a price
+     * @return	array								Array of price information
+     * @see get_buyprice()
+     */
+    function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp=0)
+    {
+    	global $conf, $db;
+
+    			// Update if prices fields are defined
+				$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
+				$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
+				if (empty($tva_tx)) $tva_npr=0;
+
+				$pu_ht = $this->price;
+				$pu_ttc = $this->price_ttc;
+				$price_min = $this->price_min;
+				$price_base_type = $this->price_base_type;
+
+				// If price per segment
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($thirdparty_buyer->price_level))
+				{
+					$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
+					$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
+					$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+					$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+					{
+						if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) $tva_tx=$this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+						if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr=$this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+						if (empty($tva_tx)) $tva_npr=0;
+					}
+				}
+				// If price per customer
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
+					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+					$prodcustprice = new Productcustomerprice($db);
+
+					$filter = array('t.fk_product' => $this->id,'t.fk_soc' => $thirdparty_buyer->id);
+
+					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+					if ($result) {
+						if (count($prodcustprice->lines) > 0) {
+							$pu_ht = price($prodcustprice->lines[0]->price);
+							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+							$price_base_type = $prodcustprice->lines[0]->price_base_type;
+							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
+						}
+					}
+				}
+				// If price per quantity
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				{
+					if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
+					{
+						// Search price into product_price_by_qty from $this->id
+						foreach($this->prices_by_qty_list[0] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							break;
+						}
+					}
+				}
+				// If price per quantity and customer
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+				{
+					if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
+					{
+						// Search price into product_price_by_qty from $this->id
+						foreach($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							break;
+						}
+					}
+				}
+				
+    	return array('pu_ht'=>$pu_ht, 'pu_ttc'=>$pu_ttc, 'price_min'=>$price_min, 'price_base_type'=>$price_base_type, 'tva_tx'=>$tva_tx, 'tva_npr'=>$tva_npr);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *    Read price used by a provider.
-     *    We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref.
-     *  This also set some properties on product like ->buyprice, ->fourn_pu, ...
+     * Read price used by a provider.
+     * We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref.
+     * This also set some properties on product like ->buyprice, ->fourn_pu, ...
      *
      * @param  int    $prodfournprice Id du tarif = rowid table product_fournisseur_price
      * @param  double $qty            Quantity asked or -1 to get first entry found
@@ -1539,6 +1646,7 @@ class Product extends CommonObject
      * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
      * @param  int    $fk_soc         If of supplier
      * @return int                         <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+     * @see getSellPrice()
      */
     function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0)
     {

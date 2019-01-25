@@ -285,15 +285,87 @@ if (! empty($project_ref) && ! empty($withproject))
 
 // To show all time lines for project
 $projectidforalltimes=0;
-if (GETPOST('projectid','int'))
+if (GETPOST('projectid','int') > 0)
 {
 	$projectidforalltimes=GETPOST('projectid','int');
+
+	$result=$projectstatic->fetch($projectidforalltimes);
+    if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+    $res=$projectstatic->fetch_optionals();
 }
 elseif (GETPOST('project_ref','alpha'))
 {
     $projectstatic->fetch(0, GETPOST('project_ref','alpha'));
     $projectidforalltimes=$projectstatic->id;
     $withproject=1;
+}
+
+if ($massaction == 'generateinvoice')
+{
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+		
+        //->fetch_thirdparty();
+		
+		if (! ($projectstatic->thirdparty->id > 0))
+		{
+			setEventMessages($langs->trans("ThirdPartyRequiredToGenerateInvoice"), null, 'errors');
+		}
+		else
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			
+			$tmpinvoice = new Facture($db);
+			$tmptimespent=new Task($db);
+			$tmpproduct=new Product($db);
+			$fuser = new User($db);
+
+			$db->begin();
+
+			$idprod = GETPOST('idprod', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
+			}
+			
+			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+			$pu_ht = $dataforprice['pu_ht'];
+			$txtva = $dataforprice['tva_tx']; 	
+			
+			$tmpinvoice->fk_soc = $projectstatic->thirdparty->id;
+			$tmpinvoice->create($user);
+
+			$arrayoftasks=array();
+			foreach($toselect as $key => $value)
+			{
+				// Get userid, timepent
+				$object->fetchTimeSpent($value);
+				
+				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+			}
+			foreach($arrayoftasks as $userid => $value)
+			{
+				$fuser->fetch($userid);
+				//$pu_ht = $value['timespent'] * $fuser->thm;
+				$username = $fuser->getFullName($langs);
+				
+				// Add lines
+				$tmpinvoice->addline($langs->trans("TotalOfTimeSpentBy", $username).' : '.$value['timespent'], $pu_ht, 1, $txtva);
+			}
+			
+			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $tmpinvoice->ref), null, 'mesgs');
+			//var_dump($tmpinvoice);
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
 }
 
 
@@ -315,7 +387,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	/*
 	 * Fiche projet en mode visu
  	 */
-    if ($projectidforalltimes)
+    if ($projectidforalltimes > 0)
     {
         $result=$projectstatic->fetch($projectidforalltimes);
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
