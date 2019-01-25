@@ -462,11 +462,6 @@ $linkback='';
 
 print load_fiche_titre($titre,$linkback,'title_accountancy');
 
-if (empty($id))
-{
-	print $langs->trans("DictionaryDesc");
-	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-}
 print "<br>\n";
 
 
