@@ -155,7 +155,7 @@ class ExtraFields
 	 *  @param  string			$label              label of attribute
 	 *  @param  int				$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
-	 *  @param  string			$size               Size/length of attribute
+	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
 	 *  @param	int				$unique				Is field unique or not
 	 *  @param	int				$required			Is field required or not
@@ -1336,10 +1336,10 @@ class ExtraFields
 					} else if (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
 						// Pattern for word=$ID$
 						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
-						
+
 						// Removing space arount =, ( and )
 						$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
-						
+
 						$nbPreg = 1;
 						// While we have parenthesis
 						while ($nbPreg!=0) {
@@ -1353,11 +1353,11 @@ class ExtraFields
 							$InfoFieldList[4]=preg_replace(  '#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*(' . $word .   ')[^)^(]*\)#','$1 ',$InfoFieldList[4], -1, $nbPregSel);
 							// On retire les espaces autour des = et parenthèses
 							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#','$1', $InfoFieldList[4]);
-							
+
 							// Calcul du compteur général pour la boucle
 							$nbPreg = $nbPregRepl + $nbPregSel;
 						}
-						
+
 						// Si l'on a un AND ou un OR, avant ou après
 						preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
 						while(!empty($matchCondition[0])) {
@@ -1379,7 +1379,7 @@ class ExtraFields
 									$InfoFieldList[4] = 1;
 								}
 							}
-							
+
 							// Si l'on a un AND ou un OR, avant ou après
 							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
 						}
