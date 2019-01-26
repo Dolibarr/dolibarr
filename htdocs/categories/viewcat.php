@@ -278,7 +278,7 @@ else
 {
 	print "<br>";
 	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats").'</td><td align="right">';
+	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats").'</td><td class="right">';
 	if ($user->rights->categorie->creer)
 	{
 		print "<a href='".DOL_URL_ROOT."/categories/card.php?action=create&amp;catorigin=".$object->id."&amp;socid=".$object->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type)."'>";
@@ -366,7 +366,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 				print "</td>\n";
 				print '<td class="tdtop">'.$prod->label."</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -413,7 +413,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -466,7 +466,7 @@ if($type == Categorie::TYPE_CUSTOMER)
 				print $soc->getNomUrl(1);
 				print "</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -519,7 +519,7 @@ if ($type == Categorie::TYPE_MEMBER)
 				print '<td class="tdtop">'.$member->lastname."</td>\n";
 				print '<td class="tdtop">'.$member->firstname."</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -569,7 +569,7 @@ if ($type == Categorie::TYPE_CONTACT)
 				print $contact->getNomUrl(1,'category');
 				print "</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -621,7 +621,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
                 print '<td class="tdtop">'.$account->bank."</td>\n";
                 print '<td class="tdtop">'.$account->number."</td>\n";
                 // Link to delete from category
-                print '<td align="right">';
+                print '<td class="right">';
                 $permission=0;
                 if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
                 if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
@@ -672,7 +672,7 @@ if ($type == Categorie::TYPE_PROJECT)
 				print '<td class="tdtop">'.$project->ref."</td>\n";
 				print '<td class="tdtop">'.$project->title."</td>\n";
 				// Link to delete from category
-				print '<td align="right">';
+				print '<td class="right">';
 				$permission=0;
 				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
 				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;

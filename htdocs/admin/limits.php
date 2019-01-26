@@ -139,20 +139,20 @@ else
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"),$langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
+    print '</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
 
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
+    print '</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
 
 
-    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
-    print '</td><td align="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
+    print '</td><td class="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
 
     print '</table>';
 

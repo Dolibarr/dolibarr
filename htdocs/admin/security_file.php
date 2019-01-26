@@ -126,7 +126,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UMask").'</td><td align="right">';
+print '<td>'.$langs->trans("UMask").'</td><td class="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';

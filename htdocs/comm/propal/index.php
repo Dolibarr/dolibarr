@@ -123,7 +123,7 @@ if ($resql)
 
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
-            print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
+            print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
     }
@@ -144,8 +144,8 @@ if ($resql)
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else
@@ -260,7 +260,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" class="nobordernopadding right">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -276,7 +276,7 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -355,9 +355,9 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->canvas=$obj->canvas;
 				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
-				print '<td align="right">';
+				print '<td class="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
@@ -441,7 +441,7 @@ if (! empty($conf->propal->enabled))
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
-				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;

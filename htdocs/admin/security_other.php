@@ -109,13 +109,13 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
+print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
-print '<td align="right">';
+print '<td class="right">';
 if (function_exists("imagecreatefrompng"))
 {
 	if (! empty($conf->use_javascript_ajax))
@@ -144,7 +144,7 @@ print '</td></tr>';
 // Enable advanced perms
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
-print '<td align="right">';
+print '<td class="right">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
@@ -179,7 +179,7 @@ print "</tr>\n";
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
+print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
 print '<td class="nowrap">';
@@ -191,7 +191,7 @@ print '</tr>';
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';

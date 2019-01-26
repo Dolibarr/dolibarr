@@ -151,7 +151,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
 /*print '<td>'.$langs->trans("Code").'</td>';
  print '<td>'.$langs->trans("Label").'</td>';*/
-//print '<td align="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
+//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
 print "</tr>\n";
 
 // Load array of available notifications

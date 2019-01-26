@@ -602,7 +602,7 @@ if ($object->fetch($id) >= 0)
 				}
 
 				// Search Icon
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {

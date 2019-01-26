@@ -103,7 +103,7 @@ else
 	);
 	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 	print '</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 }

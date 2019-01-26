@@ -525,7 +525,7 @@ if (empty($reshook))
 	}
 }
 
-print '<td align="right">';
+print '<td class="right">';
 print '</td>';
 print "</tr>";
 

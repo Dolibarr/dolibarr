@@ -520,7 +520,7 @@ if ($mode == 'searchkey')
         if ($i > ($offset + $limit)) break;
         print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
-        print '</td><td align="right">';
+        print '</td><td class="right">';
         if (! empty($newlangfileonly->tab_translate[$key]))
         {
             if ($val != $newlangfileonly->tab_translate[$key])
