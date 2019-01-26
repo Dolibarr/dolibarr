@@ -303,9 +303,9 @@ elseif (GETPOST('project_ref','alpha'))
 if ($massaction == 'generateinvoice')
 {
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
-		
+
         //->fetch_thirdparty();
-		
+
 		if (! ($projectstatic->thirdparty->id > 0))
 		{
 			setEventMessages($langs->trans("ThirdPartyRequiredToGenerateInvoice"), null, 'errors');
@@ -315,7 +315,7 @@ if ($massaction == 'generateinvoice')
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			
+
 			$tmpinvoice = new Facture($db);
 			$tmptimespent=new Task($db);
 			$tmpproduct=new Product($db);
@@ -328,11 +328,11 @@ if ($massaction == 'generateinvoice')
 			{
 				$tmpproduct->fetch($idprod);
 			}
-			
+
 			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
 			$pu_ht = $dataforprice['pu_ht'];
-			$txtva = $dataforprice['tva_tx']; 	
-			
+			$txtva = $dataforprice['tva_tx'];
+
 			$tmpinvoice->fk_soc = $projectstatic->thirdparty->id;
 			$tmpinvoice->create($user);
 
@@ -341,7 +341,7 @@ if ($massaction == 'generateinvoice')
 			{
 				// Get userid, timepent
 				$object->fetchTimeSpent($value);
-				
+
 				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
 			}
 			foreach($arrayoftasks as $userid => $value)
@@ -349,11 +349,11 @@ if ($massaction == 'generateinvoice')
 				$fuser->fetch($userid);
 				//$pu_ht = $value['timespent'] * $fuser->thm;
 				$username = $fuser->getFullName($langs);
-				
+
 				// Add lines
 				$tmpinvoice->addline($langs->trans("TotalOfTimeSpentBy", $username).' : '.$value['timespent'], $pu_ht, 1, $txtva);
 			}
-			
+
 			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $tmpinvoice->ref), null, 'mesgs');
 			//var_dump($tmpinvoice);
 

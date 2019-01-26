@@ -1526,10 +1526,10 @@ class Product extends CommonObject
         }
     }
 
-    
+
     /**
      * Return price of sell of a product for a seller/buyer/product.
-     * 
+     *
      * @param	Societe		$thirdparty_seller		Seller
      * @param	Societe		$thirdparty_buyer		Buyer
      * @param	int			$pqp					Id of product per price if a selection was done of such a price
@@ -1630,7 +1630,7 @@ class Product extends CommonObject
 						}
 					}
 				}
-				
+
     	return array('pu_ht'=>$pu_ht, 'pu_ttc'=>$pu_ttc, 'price_min'=>$price_min, 'price_base_type'=>$price_base_type, 'tva_tx'=>$tva_tx, 'tva_npr'=>$tva_npr);
     }
 
