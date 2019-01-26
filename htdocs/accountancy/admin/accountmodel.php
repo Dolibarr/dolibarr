@@ -221,10 +221,10 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
 		}
 	}
-	if ($id == 3 && ! is_numeric($_POST["code"]))
+	if (! is_numeric($_POST["code"]))
 	{
 	   	$ok=0;
-	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
+	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 	}
 
 	// Clean some parameters
@@ -462,11 +462,6 @@ $linkback='';
 
 print load_fiche_titre($titre,$linkback,'title_accountancy');
 
-if (empty($id))
-{
-	print $langs->trans("DictionaryDesc");
-	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-}
 print "<br>\n";
 
 
