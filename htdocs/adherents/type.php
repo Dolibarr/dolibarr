@@ -57,6 +57,7 @@ if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
 $label=GETPOST("label","alpha");
+$statut=GETPOST("statut","int");
 $subscription=GETPOST("subscription","int");
 $vote=GETPOST("vote","int");
 $comment=GETPOST("comment",'alphanohtml');
@@ -104,7 +105,8 @@ if ($cancel) {
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
 	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
+	$object->statut        	 	= trim($statut);
+	$object->subscription		= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
@@ -157,7 +159,8 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
+	$object->statut         	= trim($statut);
+	$object->subscription		= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
@@ -214,7 +217,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -242,7 +245,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
@@ -257,6 +260,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
+		print '<th align="center">'.$langs->trans("Status").'</th>';
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
@@ -278,6 +282,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
+			print '<td align="center">';
+if ( !empty($objp->statut) ) print img_picto($langs->trans("InActivity"),'statut4');
+else print img_picto($langs->trans("ActivityCeased"),'statut5');
+      			print '</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
@@ -319,7 +327,11 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
-	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>';
+  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
+  	print '</td></tr>';
+  
+  	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("subscription",1,1);
 	print '</td></tr>';
 
@@ -339,7 +351,7 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+    	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
@@ -392,6 +404,11 @@ if ($rowid > 0)
 
 		print '<table class="border" width="100%">';
 
+   		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
+    if ( !empty($object->statut) ) print img_picto($langs->trans('TypeStatusActive'),'statut4').' '.$langs->trans("InActivity");
+    else print img_picto($langs->trans('TypeStatusInactive'),'statut5').' '.$langs->trans("ActivityCeased");
+		print '</tr>';
+
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print yn($object->subscription);
 		print '</tr>';
@@ -427,7 +444,12 @@ if ($rowid > 0)
 		}
 
 		// Add
-		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+    if ( $user->rights->adherent->configurer && !empty($object->statut) )
+		{
+    print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
+    } else {
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
+    }
 
 		// Delete
 		if ($user->rights->adherent->configurer)
@@ -576,8 +598,8 @@ if ($rowid > 0)
 
 			print '<td align="right" colspan="2" class="liste_titre">';
 			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		    print '&nbsp; ';
-		    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		    	print '&nbsp; ';
+		    	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 			print '</td>';
 
 			print "</tr>\n";
@@ -723,7 +745,11 @@ if ($rowid > 0)
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>';
+    		print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $object->statut);
+    		print '</td></tr>';
+    
+    		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print $form->selectyesno("subscription",$object->subscription,1);
 		print '</td></tr>';
 
@@ -743,7 +769,7 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+        	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 		    print $object->showOptionals($extrafields,'edit');
