@@ -1851,14 +1851,13 @@ if (! GETPOST('hide_websitemenu'))
     		$htmltext.=$langs->trans("SetHereVirtualHost", $dataroot);
     		$htmltext.='<br>';
     		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-    		$htmltext.='<br>bb'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+    		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
     		$htmltext.='<br>';
     		$htmltext.='<br>';
     		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
 		}
 		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
 		print '</div>';
-
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager')))
