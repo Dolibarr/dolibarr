@@ -32,6 +32,7 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = GETPOST('place','int');
 if ($place=="") $place="0";
@@ -410,6 +411,14 @@ if ($conf->global->TAKEPOSCONNECTOR){
 	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
 					'action'=>'OpenDrawer();');
 }
+
+$hookmanager->initHooks(array('takeposfrontend'));
+$reshook=$hookmanager->executeHooks('ActionButtons');
+if (!empty($reshook))
+	{
+		$menus[$r++]=$reshook;
+	}
+
 ?>
 <div style="position:absolute; top:1%; left:65.5%; height:37%; width:32.5%;">
 <?php
