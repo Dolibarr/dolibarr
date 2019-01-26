@@ -8,7 +8,8 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2018		Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2018		Eric Seigne	    <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -785,17 +786,17 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
-	print '"' . $langs->trans("BankId").'"' . $sep;
-	print '"' . $langs->trans("Date") . '"' . $sep;
-	print '"' . $langs->trans("PaymentMode") . '"' . $sep;
-	print '"' . $langs->trans("AccountAccounting") . '"' . $sep;
-	print '"' . $langs->trans("LedgerAccount") . '"' . $sep;
-	print '"' . $langs->trans("SubledgerAccount") . '"' . $sep;
-	print '"' . $langs->trans("Label"). '"' . $sep;
-	print '"' . $langs->trans("Debit") . '"' . $sep;
-	print '"' . $langs->trans("Credit") . '"' . $sep;
-	print '"' . $langs->trans("Journal")  . '"' . $sep;
-	print '"' . $langs->trans("Note")  . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("BankId").'"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Date") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("PaymentMode") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("AccountAccounting") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("LedgerAccount") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("SubledgerAccount") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Label"). '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Debit") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Credit") . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Journal")  . '"' . $sep;
+	print '"' . $langs->transnoentitiesnoconv("Note")  . '"' . $sep;
 	print "\n";
 
 
