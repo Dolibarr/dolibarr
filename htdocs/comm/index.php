@@ -193,7 +193,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -272,7 +272,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             }
             if ($total>0)
             {
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
         else
@@ -348,7 +348,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
 				}
 				else {
-					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+					print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				}
 				$i++;
 				$total += $obj->total_ttc;
@@ -356,7 +356,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -435,7 +435,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
 				}
 				else {
-					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+					print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				}
                 $i++;
                 $total += $obj->total_ttc;
@@ -443,7 +443,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
             if ($total>0)
             {
 
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
         else
@@ -499,7 +499,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
-		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
+		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -514,10 +514,10 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
                 $companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
-				print '<td align="right" nowrap>';
+				print '<td class="right" nowrap>';
 				print $companystatic->getLibCustProspStatut();
 				print "</td>";
-				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
+				print '<td class="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
 			}
@@ -559,7 +559,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
-		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
+		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -573,7 +573,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
                 $companystatic->canvas=$objp->canvas;
                 print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
 
 				$i++;
@@ -655,7 +655,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
                 $companystatic->canvas=$objp->canvas;
                 print $companystatic->getNomUrl(1,'customer',44);
 				print '</td>'."\n";
-				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
+				print "<td class=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
 
 				$i++;
 			}
@@ -742,13 +742,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
-				print '<td align="right">';
+				print '<td class="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
-					print '<td align="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right">'.price($obj->total_ht).'</td>';
 				}
 				else {
-					print '<td align="right">'.price($obj->total_ttc).'</td>';
+					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
@@ -761,7 +761,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			}
 			else if ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
@@ -846,13 +846,13 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
-				print '<td align="right">';
+				print '<td class="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
-					print '<td align="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right">'.price($obj->total_ht).'</td>';
 				}
 				else {
-					print '<td align="right">'.price($obj->total_ttc).'</td>';
+					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut,$obj->billed,3).'</td>'."\n";
 				print '</tr>'."\n";
@@ -865,7 +865,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			}
 			else if ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
