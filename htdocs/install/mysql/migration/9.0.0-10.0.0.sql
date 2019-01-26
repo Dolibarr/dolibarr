@@ -87,3 +87,6 @@ ALTER TABLE llx_subscription ADD fk_type integer(11);
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
