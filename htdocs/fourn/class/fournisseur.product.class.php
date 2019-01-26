@@ -71,7 +71,7 @@ class ProductFournisseur extends Product
     public $fourn_price;             // price for quantity
     public $fourn_remise_percent;    // discount for quantity (percent)
     public $fourn_remise;            // discount for quantity (amount)
-    public $product_fourn_id;        // product id
+    public $product_fourn_id;        // product-supplier id
 
     /**
      * @var int ID availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
