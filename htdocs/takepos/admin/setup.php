@@ -273,14 +273,14 @@ print '<br><br>';
 // Marketplace
 print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">TakePOS Marketplace</td>';
+print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
 print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
-$url='https://www.dolistore.com/en/modules/980-TakePOS-7-mobile.html';
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/takeposmobile.jpg"></a></td>';
-print '<td>TakePOS for mobile devices</td>';
+$url='https://www.dolistore.com/45-pos';
+    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
 
