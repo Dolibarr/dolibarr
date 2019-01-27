@@ -183,7 +183,7 @@ class FormMail extends Form
 	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
-	function add_attached_files($path, $file='', $type='')
+	function add_attached_files($path, $file = '', $type = '')
 	{
         // phpcs:enable
 		$listofpaths=array();
@@ -268,7 +268,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return	void
 	 */
-	function show_form($addfileaction='addfile',$removefileaction='removefile')
+	function show_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
         // phpcs:enable
 		print $this->get_form($addfileaction,$removefileaction);
@@ -285,7 +285,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return string						Form to show
 	 */
-	function get_form($addfileaction='addfile', $removefileaction='removefile')
+	function get_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
         // phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
@@ -1143,7 +1143,7 @@ class FormMail extends Form
 	 *      @param	string		$label			Label of template
 	 *      @return ModelMail					One instance of ModelMail
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
 		$ret = new ModelMail();
 
@@ -1267,7 +1267,7 @@ class FormMail extends Form
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return	int		                    <0 if KO, nb of records found if OK
 	 */
-	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active=1)
+	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
 		$ret=array();
 
@@ -1378,7 +1378,7 @@ class FormMail extends Form
 	 * @param	Object	$object		Object if applicable
 	 * @return	array               Array of substitution values for emails.
 	 */
-	static function getAvailableSubstitKey($mode='formemail', $object=null)
+	static function getAvailableSubstitKey($mode = 'formemail', $object = null)
 	{
 		global $conf, $langs;
 

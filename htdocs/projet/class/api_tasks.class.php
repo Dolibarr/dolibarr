@@ -64,7 +64,7 @@ class Tasks extends DolibarrApi
 	 *
      * @throws 	RestException
      */
-    function get($id, $includetimespent=0)
+    function get($id, $includetimespent = 0)
     {
 		if(! DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
@@ -265,7 +265,7 @@ class Tasks extends DolibarrApi
      *
      * @return int
      */
-    function getRoles($id, $userid=0)
+    function getRoles($id, $userid = 0)
     {
         global $db;
 
@@ -505,7 +505,7 @@ class Tasks extends DolibarrApi
      *
      * @return  array
      */
-    function addTimeSpent($id, $date, $duration, $user_id=0, $note='')
+    function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
     {
 
 

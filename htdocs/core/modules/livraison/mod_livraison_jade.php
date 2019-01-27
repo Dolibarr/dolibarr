@@ -125,7 +125,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    function getNextValue($objsoc, $object)
     {
         global $db,$conf;
 
@@ -169,7 +169,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
      *  @param  Object		$object			Object livraison
      *  @return string      				Texte descriptif
      */
-    function livraison_get_num($objsoc=0,$object='')
+    function livraison_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc,$object);

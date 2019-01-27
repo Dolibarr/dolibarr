@@ -119,7 +119,7 @@ class CMailFile
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
-	function __construct($subject, $to, $from, $msg, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=0, $errors_to='', $css='', $trackid='', $moreinheader='', $sendcontext='standard', $replyto='')
+	function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
 		global $conf, $dolibarr_main_data_root;
 
@@ -1178,7 +1178,7 @@ class CMailFile
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @return	string						Chaine fichiers encodes
 	 */
-	function write_files($filename_list,$mimetype_list,$mimefilename_list)
+	function write_files($filename_list, $mimetype_list, $mimefilename_list)
 	{
         // phpcs:enable
 		$out = '';
@@ -1259,7 +1259,7 @@ class CMailFile
 	 * @param 	int			$port		Example: 25, 465
 	 * @return	int						Socket id if ok, 0 if KO
 	 */
-	function check_server_port($host,$port)
+	function check_server_port($host, $port)
 	{
         // phpcs:enable
 		global $conf;
@@ -1457,7 +1457,7 @@ class CMailFile
 	 *										     If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
 	 *                                           If format 4: 'John Doe' or 'john@doe.com' if no label exists
 	 */
-	static function getValidAddress($address,$format,$encode=0,$maxnumberofemail=0)
+	static function getValidAddress($address, $format, $encode = 0, $maxnumberofemail = 0)
 	{
 		global $conf;
 

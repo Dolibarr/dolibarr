@@ -65,7 +65,7 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
  * @param	string	       $mode		'png' or 'jpg' ...
  * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
  */
-function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
+function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 {
     dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
@@ -108,7 +108,7 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
  * @param	string	$encoding	Encoding
  * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
-function barcode_encode($code,$encoding)
+function barcode_encode($code, $encoding)
 {
     global $genbarcode_loc;
 
@@ -238,7 +238,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
  * @param	string	$encoding	Encoding
  * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
-function barcode_encode_genbarcode($code,$encoding)
+function barcode_encode_genbarcode($code, $encoding)
 {
     global $genbarcode_loc;
 

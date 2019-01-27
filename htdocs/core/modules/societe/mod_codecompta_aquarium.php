@@ -112,7 +112,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objsoc=0,$type=-1)
+	function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		$s='';
 		$s.=$this->prefixcustomeraccountancycode.'CUSTCODE';
@@ -131,7 +131,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
-	function get_code($db, $societe, $type='')
+	function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
 		global $conf;

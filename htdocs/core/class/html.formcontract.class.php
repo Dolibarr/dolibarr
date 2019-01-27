@@ -60,7 +60,7 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
-	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
+	function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
 	{
         // phpcs:enable
 		global $db,$user,$conf,$langs;
@@ -177,7 +177,7 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int                 Nbr of project if OK, <0 if KO
 	 */
-	function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
+	function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
 	{
         global $langs;
 

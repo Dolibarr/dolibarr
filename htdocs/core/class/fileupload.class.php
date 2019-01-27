@@ -41,7 +41,7 @@ class FileUpload
 	 * @param int		$fk_element		fk_element
 	 * @param string	$element		element
 	 */
-	function __construct($options=null,$fk_element=null,$element=null)
+	function __construct($options = null, $fk_element = null, $element = null)
 	{
 		global $db, $conf;
 		global $object;

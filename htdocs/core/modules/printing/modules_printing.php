@@ -59,7 +59,7 @@ class PrintingDriver
      *  @param  integer  $maxfilenamelength  Max length of value to show
      *  @return array                       List of drivers
     */
-    static function listDrivers($db,$maxfilenamelength=0)
+    static function listDrivers($db, $maxfilenamelength = 0)
     {
         global $conf;
 

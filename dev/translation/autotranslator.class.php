@@ -50,7 +50,7 @@ class autoTranslator
      * @param   string $_apikey         Api key
      * @return void
      */
-    function __construct($_destlang,$_refLang,$_langDir,$_limittofile,$_apikey)
+    function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
     {
 
 		// Set enviorment variables
@@ -156,7 +156,7 @@ class autoTranslator
 	 * @param 	string	$my_destlang		Target language code
 	 * @return	void
 	 */
-	private function updateTranslationFile($destPath,$file,$my_destlang)
+	private function updateTranslationFile($destPath, $file, $my_destlang)
 	{
 		$this->_time_end = date('Y-m-d H:i:s');
 
@@ -183,7 +183,7 @@ class autoTranslator
 	 * @param 	string	$my_destlang		Target language code
 	 * @return	void
 	 */
-	private function createTranslationFile($path,$my_destlang)
+	private function createTranslationFile($path, $my_destlang)
 	{
 		$fp = fopen($path, 'w+');
 		fwrite($fp, "/*\n");
@@ -205,7 +205,7 @@ class autoTranslator
 	 * @param	string	$my_destlang	Language code (ie: fr_FR)
 	 * @return	int						0=Nothing translated, 1=Record translated
 	 */
-	private function translateFileLine($content,$file,$key,$value,$my_destlang)
+	private function translateFileLine($content, $file, $key, $value, $my_destlang)
 	{
 
 		//print "key    =".$key."\n";

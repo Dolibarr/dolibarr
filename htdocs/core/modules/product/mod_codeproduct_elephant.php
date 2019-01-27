@@ -138,7 +138,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objproduct=0,$type=-1)
+	function getExample($langs, $objproduct = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
@@ -179,7 +179,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
 	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct=0,$type=-1)
+	function getNextValue($objproduct = 0, $type = -1)
 	{
 		global $db,$conf;
 

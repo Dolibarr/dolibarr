@@ -310,7 +310,7 @@ class SMTPs
      * @param	boolean		$_part		Variant
      * @return	string					Errors to
      */
-	function getErrorsTo($_part = true )
+	function getErrorsTo($_part = true)
 	{
 		$_retValue = '';
 
@@ -328,7 +328,7 @@ class SMTPs
 	 * @param	boolean		$_vDebug		Value for debug
 	 * @return 	void
 	 */
-	function setDebug($_vDebug = false )
+	function setDebug($_vDebug = false)
 	{
 		$this->_debug = $_vDebug;
 	}
@@ -1659,7 +1659,7 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority( $_value = 3 )
+	function setPriority($_value = 3)
 	{
 		if ( ( is_numeric($_value) ) &&
 		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
@@ -1748,7 +1748,7 @@ class SMTPs
 	 * @param  string $type				Type of boundary
 	 * @return string $_smtpsBoundary 	MIME message Boundary
 	 */
-	function _getBoundary($type='mixed')
+	function _getBoundary($type = 'mixed')
 	{
 		if ($type == 'mixed') return $this->_smtpsBoundary;
 		else if ($type == 'related') return $this->_smtpsRelatedBoundary;
@@ -1807,7 +1807,7 @@ class SMTPs
 	 * @param 	string		$CRLF			CRLF
 	 * @return 	boolean|null						True or false
 	 */
-	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
+	function socket_send_str($_strSend, $_returnCode = null, $CRLF = "\r\n")
 	{
         // phpcs:enable
 		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
@@ -1828,7 +1828,7 @@ class SMTPs
 	 * @param  string $_errMsg  Error Message
 	 * @return void
      */
-    function _setErr( $_errNum, $_errMsg )
+    function _setErr($_errNum, $_errMsg)
     {
         $this->_smtpsErrors[] = array(
             'num' => $_errNum,

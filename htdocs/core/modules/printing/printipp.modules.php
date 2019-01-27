@@ -87,7 +87,7 @@ class printing_printipp extends PrintingDriver
      *
      * @return  int                     0 if OK, >0 if KO
      */
-    public function printFile($file, $module, $subdir='')
+    public function printFile($file, $module, $subdir = '')
     {
         global $conf, $user;
         $error = 0;

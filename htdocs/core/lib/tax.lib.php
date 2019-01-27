@@ -88,7 +88,7 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  int		$q           	Quarter
  *  @return array       			Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
-function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m=0, $q=0)
+function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
     global $conf;
 
@@ -556,7 +556,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  @param  int		$m           	Month
  *  @return array       			Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
-function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
+function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
     global $conf;
 

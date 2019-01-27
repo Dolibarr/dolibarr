@@ -725,7 +725,7 @@ class BlockedLog
 	 * @param	string	$mode	0=unserialize, 1=json_decode
 	 * @return 	string			Value unserialized
 	 */
-	public function dolDecodeBlockedData($data, $mode=0)
+	public function dolDecodeBlockedData($data, $mode = 0)
 	{
 		try
 		{
@@ -763,7 +763,7 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-    public function create($user, $forcesignature='')
+    public function create($user, $forcesignature = '')
     {
 
 		global $conf,$langs,$hookmanager;
@@ -878,7 +878,7 @@ class BlockedLog
 	 *	@param	string		$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
 	 *	@return	boolean							True if OK, False if KO
 	 */
-	public function checkSignature($previoushash='')
+	public function checkSignature($previoushash = '')
 	{
 		if (empty($previoushash))
 		{
@@ -921,7 +921,7 @@ class BlockedLog
 	 *	@param int	$beforeid		ID of a record
 	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
-	 public function getPreviousHash($withlock=0, $beforeid=0)
+	 public function getPreviousHash($withlock = 0, $beforeid = 0)
 	 {
 		global $conf;
 
@@ -972,7 +972,7 @@ class BlockedLog
 	 *  @param	string	$search_code	search code
 	 *	@return	array|int				Array of object log or <0 if error
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref='', $search_amount='', $search_code='')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
 		global $conf, $cachedlogs;
 
@@ -1070,7 +1070,7 @@ class BlockedLog
 	 * @param	int		$ignoresystem		Ignore system events for the test
      * @return bool
 	 */
-	function alreadyUsed($ignoresystem=0)
+	function alreadyUsed($ignoresystem = 0)
 	{
 		global $conf;
 

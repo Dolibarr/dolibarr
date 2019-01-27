@@ -207,7 +207,7 @@ $type=$this->fk_type;
 	 *	@param 	int		$notrigger		0=Disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -263,7 +263,7 @@ $type=$this->fk_type;
 	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
 	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function delete($user, $notrigger=false)
+	function delete($user, $notrigger = false)
 	{
 		$error = 0;
 
@@ -356,7 +356,7 @@ $type=$this->fk_type;
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $notooltip=0, $option='', $morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $notooltip = 0, $option = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs;
 
@@ -395,7 +395,7 @@ $type=$this->fk_type;
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 	    return '';
 	}

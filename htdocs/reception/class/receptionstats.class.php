@@ -52,7 +52,7 @@ class ReceptionStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
      */
-    function __construct($db, $socid, $mode, $userid=0)
+    function __construct($db, $socid, $mode, $userid = 0)
     {
 		global $user, $conf;
 

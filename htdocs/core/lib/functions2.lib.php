@@ -78,7 +78,7 @@ function jsUnEscape($source)
  * @param	string	$subdir		Sub directory (Example: '/mailings')
  * @return	array				Array of directories that can contains module descriptors
  */
-function dolGetModulesDirs($subdir='')
+function dolGetModulesDirs($subdir = '')
 {
     global $conf;
 
@@ -142,7 +142,7 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
  *  @param  int			$searchalt      1=Search also in alternative languages
  *	@return	boolean						true if OK, false if KO
  */
-function dol_print_file($langs,$filename,$searchalt=0)
+function dol_print_file($langs, $filename, $searchalt = 0)
 {
     global $conf;
 
@@ -192,7 +192,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
  *  @param  int     $usetable       Output into a table
  *	@return	void
  */
-function dol_print_object_info($object, $usetable=0)
+function dol_print_object_info($object, $usetable = 0)
 {
     global $langs, $db;
 
@@ -528,7 +528,7 @@ function isValidMailDomain($mail)
  *  @param  int		$anchor		1: verify anchor is provided, 0: not verify anchor
  *	@return int					1=Check is OK, 0=Check is KO
  */
-function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
+function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0, $anchor = 0)
 {
     $ValidUrl = 0;
     $urlregex = '';
@@ -571,7 +571,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
  *	@param  integer	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
  *	@return string				Cleaned url
  */
-function clean_url($url,$http=1)
+function clean_url($url, $http = 1)
 {
     // Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
     // To include the minus sign in a char class, we must not escape it but put it at the end of the class
@@ -617,7 +617,7 @@ function clean_url($url,$http=1)
  * 	@param 		bool		$displaytld			Display tld (default: true)
  * 	@return		string							Return email with hidden parts or '';
  */
-function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, $nbdisplaydomain=3, $displaytld=true)
+function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail = 4, $nbdisplaydomain = 3, $displaytld = true)
 {
 	if(!isValidEmail($mail))return '';
 	$tab = explode('@', $mail);
@@ -658,7 +658,7 @@ function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, 
  * 	@param	string	$tdoptions	Options for td
  * 	@return	string
  */
-function array2tr($data,$troptions='',$tdoptions='')
+function array2tr($data, $troptions = '', $tdoptions = '')
 {
     $text = '<tr '.$troptions.'>' ;
     foreach($data as $key => $item){
@@ -678,7 +678,7 @@ function array2tr($data,$troptions='',$tdoptions='')
  * 	@param	string	$tdoptions		Options for td
  * 	@return	string
  */
-function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions='')
+function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '', $tdoptions = '')
 {
     $text='' ;
     if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
@@ -712,7 +712,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param	int			$forceentity	Entity id to force
  * @return 	string						New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true, $objuser=null, $forceentity=null)
+function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
 {
     global $conf,$user;
 
@@ -1193,7 +1193,7 @@ function get_string_between($string, $start, $end)
  * @param 	string	$value		Value
  * @return	int|string		    <0 or error string if KO, 0 if OK
  */
-function check_value($mask,$value)
+function check_value($mask, $value)
 {
     $result=0;
 
@@ -1302,7 +1302,7 @@ function check_value($mask,$value)
  *	@param   boolean	$upper		Convert to tupper
  *	@return  string					x
  */
-function binhex($bin, $pad=false, $upper=false)
+function binhex($bin, $pad = false, $upper = false)
 {
     $last = dol_strlen($bin)-1;
     for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2,$i); }
@@ -1418,7 +1418,7 @@ function numero_semaine($time)
  *	@param  int		$to_unit   		Nouvelle unite  en puissance de 10
  *	@return float	        		Masse convertie
  */
-function weight_convert($weight,&$from_unit,$to_unit)
+function weight_convert($weight, &$from_unit, $to_unit)
 {
     /* Pour convertire 320 gr en Kg appeler
      *  $f = -3
@@ -1522,7 +1522,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
  *	@param	Translate	$langs			Output language
  *	@return	string						Formated reduction
  */
-function dol_print_reduction($reduction,$langs)
+function dol_print_reduction($reduction, $langs)
 {
     $string = '';
     if ($reduction == 100)
@@ -1589,7 +1589,7 @@ function version_webserver()
  *  @param  int		    $maxfilenamelength  Max length of value to show
  * 	@return	mixed			    			0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
-function getListOfModels($db,$type,$maxfilenamelength=0)
+function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
     global $conf,$langs;
     $liste=array();
@@ -1714,7 +1714,7 @@ function is_ip($ip)
  *  @param  string		$firstname		Firstname
  *	@return	string						Login
  */
-function dol_buildlogin($lastname,$firstname)
+function dol_buildlogin($lastname, $firstname)
 {
     $login=strtolower(dol_string_unaccent($firstname));
     $login.=($login?'.':'');
@@ -1778,7 +1778,7 @@ function getSoapParams()
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
  */
-function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
+function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 {
 	global $db, $conf, $langs;
 
@@ -2140,7 +2140,7 @@ function getElementProperties($element_type)
  * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type, $element_ref='')
+function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
     global $conf;
 	global $db,$conf;
@@ -2170,7 +2170,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref='')
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
  *  @see	colorStringToArray
  */
-function colorArrayToHex($arraycolor,$colorifnotfound='888888')
+function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
 	if (empty($arraycolor)) return $colorifnotfound;
@@ -2187,7 +2187,7 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
  *  @return	string						RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex
  */
-function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
+function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
 	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
@@ -2316,7 +2316,7 @@ function getModuleDirForApiClass($module)
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color_part($min=0,$max=255)
+function random_color_part($min = 0, $max = 255)
 {
     return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
 }
@@ -2328,7 +2328,7 @@ function random_color_part($min=0,$max=255)
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color($min=0, $max=255)
+function random_color($min = 0, $max = 255)
 {
     return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
 }

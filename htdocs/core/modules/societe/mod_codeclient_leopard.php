@@ -99,7 +99,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc=0,$type=-1)
+	function getNextValue($objsoc = 0, $type = -1)
 	{
 		global $langs;
 		return '';

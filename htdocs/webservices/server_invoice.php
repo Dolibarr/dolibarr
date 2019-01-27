@@ -286,7 +286,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getInvoice($authentication,$id='',$ref='',$ref_ext='')
+function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -399,7 +399,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
-function getInvoicesForThirdParty($authentication,$idthirdparty)
+function getInvoicesForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -534,7 +534,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
  * @param	Facture		$invoice			Invoice
  * @return	array							Array result
  */
-function createInvoice($authentication,$invoice)
+function createInvoice($authentication, $invoice)
 {
     global $db,$conf,$langs;
 
@@ -654,7 +654,7 @@ function createInvoice($authentication,$invoice)
  * @param	string      $ref_ext_order		ref_ext of order to copy invoice from
  * @return	array							Array result
  */
-function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $ref_ext_order='')
+function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = '', $ref_ext_order = '')
 {
 	global $db,$conf;
 
@@ -740,7 +740,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
  * @param	Facture		$invoice			Invoice
  * @return	array							Array result
  */
-function updateInvoice($authentication,$invoice)
+function updateInvoice($authentication, $invoice)
 {
 	global $db,$conf,$langs;
 

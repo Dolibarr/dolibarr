@@ -55,7 +55,7 @@ class Login
 	 * @url GET /
 	 * @url POST /
 	 */
-    public function index($login, $password, $entity='', $reset=0)
+    public function index($login, $password, $entity = '', $reset = 0)
     {
 
 	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;

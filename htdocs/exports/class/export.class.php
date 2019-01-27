@@ -78,7 +78,7 @@ class Export
 	 *    @param  	string		$filter    	Load a particular dataset only
 	 *    @return	int						<0 if KO, >0 if OK
 	 */
-	function load_arrays($user,$filter='')
+	function load_arrays($user, $filter = '')
 	{
         // phpcs:enable
 		global $langs,$conf,$mysoc;
@@ -782,7 +782,7 @@ class Export
 	 *  @param      int			$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

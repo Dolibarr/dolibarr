@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
-function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode='')
+function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -164,7 +164,7 @@ function print_start_menu_array_auguria()
  * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry_auguria($idsel,$classname,$showmode)
+function print_start_menu_entry_auguria($idsel, $classname, $showmode)
 {
 	if ($showmode)
 	{
@@ -255,7 +255,7 @@ function print_end_menu_array_auguria()
  * @param	array		$moredata			An array with more data to output
  * @return	int								Nb of entries
  */
-function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='',$moredata=null)
+function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
