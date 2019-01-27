@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,6 +367,7 @@ class Don extends CommonObject
         $sql.= ", entity";
         $sql.= ", amount";
         $sql.= ", fk_payment";
+        $sql.= ", fk_soc";
         $sql.= ", firstname";
         $sql.= ", lastname";
         $sql.= ", societe";
@@ -388,6 +390,7 @@ class Don extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
+        $sql.= ", '".$this->db->escape($this->fk_soc)."'";
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
@@ -489,7 +492,7 @@ class Don extends CommonObject
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",zip='".$this->db->escape($this->zip)."'";
         $sql .= ",town='".$this->db->escape($this->town)."'";
-        $sql .= ",fk_country = ".$this->country_id;
+        $sql .= ",fk_country = ".($this->country_id > 0 ? $this->country_id : '0');
         $sql .= ",public=".$this->public;
         $sql .= ",fk_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -636,7 +639,7 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
+        $sql.= " d.fk_soc,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
         $sql.= " p.ref as project_ref,";
@@ -670,6 +673,7 @@ class Don extends CommonObject
                 $this->date_valid     = $this->db->jdate($obj->date_valid);
                 $this->datem          = $this->db->jdate($obj->datem);
                 $this->date           = $this->db->jdate($obj->datedon);
+                $this->fk_soc         = $obj->fk_soc;
                 $this->firstname      = $obj->firstname;
                 $this->lastname       = $obj->lastname;
                 $this->societe        = $obj->societe;
@@ -682,7 +686,7 @@ class Don extends CommonObject
                 $this->country_code   = $obj->country_code;
                 $this->country        = $obj->country;
                 $this->country_olddata= $obj->country_olddata;	// deprecated
-				$this->email          = $obj->email;
+                $this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
                 $this->project        = $obj->project_ref;
@@ -692,7 +696,7 @@ class Don extends CommonObject
                 $this->modepaymentid  = $obj->fk_payment;
                 $this->modepaymentcode = $obj->payment_code;
                 $this->modepayment    = $obj->payment_label;
-				$this->paid			  = $obj->paid;
+                $this->paid			  = $obj->paid;
                 $this->amount         = $obj->amount;
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;
