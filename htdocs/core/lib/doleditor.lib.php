@@ -131,4 +131,3 @@ function show_skin($fuser,$edit=0)
 
     print '</table>';
 }
-

@@ -133,4 +133,3 @@ if ($action == 'remove_file' && $permissioncreate)
     header('Location: '.$urltoredirect);
     exit;
 }
-

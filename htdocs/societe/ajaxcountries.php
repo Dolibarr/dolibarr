@@ -75,4 +75,3 @@ if (! empty($country))
 		print '</ul>';
 	}
 }
-

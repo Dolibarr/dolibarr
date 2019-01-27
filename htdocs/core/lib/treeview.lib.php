@@ -227,4 +227,3 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 
     if ($rang == 0) print '</ul>';
 }
-

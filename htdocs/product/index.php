@@ -507,4 +507,3 @@ function activitytrim($product_type)
 			print '</table>';
 	}
 }
-

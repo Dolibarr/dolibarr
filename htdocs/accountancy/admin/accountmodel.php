@@ -874,4 +874,3 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 	}
 }
-

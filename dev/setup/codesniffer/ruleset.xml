@@ -65,7 +65,7 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed">
 		<severity>0</severity>
     </rule>
-    
+
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
     <!--
@@ -390,9 +390,6 @@
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
-    <rule ref="PSR2.Classes.ClassDeclaration" />
-    <rule ref="PSR2.Methods.FunctionClosingBrace" />
-
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
         <severity>0</severity>
@@ -418,5 +415,9 @@
 
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
     <rule ref="Zend.Files.ClosingTag"/>
+
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
+    <rule ref="PSR2.Files.EndFileNewline.TooMany" />
 
 </ruleset>

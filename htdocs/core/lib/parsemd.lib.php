@@ -53,4 +53,3 @@ function dolMd2Html($content, $parser='parsedown',$replaceimagepath=null)
 
     return $content;
 }
-

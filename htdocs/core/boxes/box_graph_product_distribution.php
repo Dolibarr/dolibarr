@@ -417,4 +417,3 @@ class box_graph_product_distribution extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

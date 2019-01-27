@@ -469,4 +469,3 @@ pFooter(1,$setuplang);
 
 // Return code if ran from command line
 if ($ret) exit($ret);
-

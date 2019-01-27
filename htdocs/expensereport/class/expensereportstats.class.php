@@ -177,4 +177,3 @@ class ExpenseReportStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
-

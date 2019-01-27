@@ -1249,6 +1249,3 @@ $parameters['uploaddir']=$uploaddir;
 
 $reshook=$hookmanager->executeHooks('doMassActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-
-

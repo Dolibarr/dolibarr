@@ -1008,4 +1008,3 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	return $list;
 }
-

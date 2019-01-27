@@ -130,4 +130,3 @@ class modProductBatch extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 }
-

@@ -199,4 +199,3 @@ function html_print_stripe_footer($fromcompany,$langs)
 	print $line2;
 	print '</font></div>'."\n";
 }
-

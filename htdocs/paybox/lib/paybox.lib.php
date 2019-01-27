@@ -196,4 +196,3 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
 	return;
 }
-

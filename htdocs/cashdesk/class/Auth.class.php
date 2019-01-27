@@ -139,4 +139,3 @@ class Auth
 		return $ret;
 	}
 }
-

@@ -208,4 +208,3 @@ function removeHtmlComment($content)
 	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
 	return $content;
 }
-

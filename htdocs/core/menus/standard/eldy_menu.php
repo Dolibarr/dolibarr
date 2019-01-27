@@ -337,4 +337,3 @@ class MenuManager
         return 0;
     }
 }
-

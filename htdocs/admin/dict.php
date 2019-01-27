@@ -1990,4 +1990,3 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	return $withentity;
 }
-

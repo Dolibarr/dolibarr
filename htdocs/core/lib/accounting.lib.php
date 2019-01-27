@@ -226,4 +226,3 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }
-

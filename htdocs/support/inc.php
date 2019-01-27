@@ -250,4 +250,3 @@ function pFooter($nonext=0,$setuplang='')
 	print '</body>'."\n";
 	print '</html>'."\n";
 }
-

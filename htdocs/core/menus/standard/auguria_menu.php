@@ -317,4 +317,3 @@ class MenuManager
         unset($this->menu);
     }
 }
-

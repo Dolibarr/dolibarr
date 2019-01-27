@@ -79,4 +79,3 @@ class FormBank
 		return 'IBANNumber';
 	}
 }
-

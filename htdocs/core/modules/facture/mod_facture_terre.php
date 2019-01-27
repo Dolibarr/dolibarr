@@ -243,4 +243,3 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 }
-

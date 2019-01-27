@@ -145,4 +145,3 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	public $special_code = 0;
 }
-
