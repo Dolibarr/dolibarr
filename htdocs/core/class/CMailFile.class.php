@@ -294,7 +294,7 @@ class CMailFile
 			$this->message.= $text_body . $files_encoded;
 			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
 		}
-		else if ($this->sendmode == 'smtps')
+		elseif ($this->sendmode == 'smtps')
 		{
 			// Use SMTPS library
 			// ------------------------------------------
@@ -349,7 +349,7 @@ class CMailFile
 
 			$this->smtps=$smtps;
 		}
-		else if ($this->sendmode == 'swiftmailer')
+		elseif ($this->sendmode == 'swiftmailer')
 		{
 			// Use Swift Mailer library
 			// ------------------------------------------
@@ -670,7 +670,7 @@ class CMailFile
 				if (! empty($conf->global->$keyforsmtpserver))	ini_restore('SMTP');
 				if (! empty($conf->global->$keyforsmtpport)) 	ini_restore('smtp_port');
 			}
-			else if ($this->sendmode == 'smtps')
+			elseif ($this->sendmode == 'smtps')
 			{
 				if (! is_object($this->smtps))
 				{
@@ -750,7 +750,7 @@ class CMailFile
 					}
 				}
 			}
-			else if ($this->sendmode == 'swiftmailer')
+			elseif ($this->sendmode == 'swiftmailer')
 			{
 				// Use Swift Mailer library
 				// ------------------------------------------

@@ -1269,7 +1269,7 @@ class Product extends CommonObject
                     return -1;
                 }
             }
-            else if (isset($this->multilangs[$key])) {
+            elseif (isset($this->multilangs[$key])) {
                 $sql = "SELECT rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
                 $sql.= " WHERE fk_product=".$this->id;
@@ -2009,8 +2009,8 @@ class Product extends CommonObject
         {
             $sql.= " WHERE entity IN (".getEntity($this->element).")";
             if ($ref) { $sql.= " AND ref = '".$this->db->escape($ref)."'";
-            } else if ($ref_ext) { $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
-            } else if ($barcode) { $sql.= " AND barcode = '".$this->db->escape($barcode)."'";
+            } elseif ($ref_ext) { $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+            } elseif ($barcode) { $sql.= " AND barcode = '".$this->db->escape($barcode)."'";
             }
         }
 
@@ -2178,7 +2178,7 @@ class Product extends CommonObject
                 {
                     // Nothing loaded by default. List may be very long.
                 }
-                else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))    // prices per quantity
+                elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))    // prices per quantity
                 {
                     $sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
                     $sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
@@ -2229,7 +2229,7 @@ class Product extends CommonObject
                         return -1;
                     }
                 }
-                else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))    // prices per customer and quantity
+                elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))    // prices per customer and quantity
                 {
                     for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
                     {
@@ -3912,9 +3912,9 @@ class Product extends CommonObject
 
         if ($option == 'supplier' || $option == 'category') {
             $url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id;
-        } else if ($option == 'stock') {
+        } elseif ($option == 'stock') {
             $url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
-        } else if ($option == 'composition') {
+        } elseif ($option == 'composition') {
             $url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
         } else {
             $url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;

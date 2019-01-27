@@ -293,7 +293,7 @@ class ActionComm extends CommonObject
                 $this->type_id=$cactioncomm->id;
                 $this->type_code=$cactioncomm->code;
             }
-            else if ($result == 0)
+            elseif ($result == 0)
             {
                 $this->error='Failed to get record with id '.$this->type_id.' code '.$this->type_code.' from dictionary "type of events"';
                 return -1;

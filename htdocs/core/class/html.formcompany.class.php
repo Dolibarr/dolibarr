@@ -816,12 +816,12 @@ class FormCompany
         	{
         		if (isset($idprof)) {
         			if ($idprof==1) $formlength=9;
-        			else if ($idprof==2) $formlength=14;
-        			else if ($idprof==3) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
-        			else if ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
+        			elseif ($idprof==2) $formlength=14;
+        			elseif ($idprof==3) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
+        			elseif ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
         		}
         	}
-        	else if ($country_code == 'ES')
+        	elseif ($country_code == 'ES')
         	{
         		if ($idprof==1) $formlength=9;  //CIF/NIF/NIE 9 digits
         		if ($idprof==2) $formlength=12; //NASS 12 digits without /
@@ -833,9 +833,9 @@ class FormCompany
         $selected=$preselected;
         if (! $selected && isset($idprof)) {
         	if ($idprof==1 && ! empty($this->idprof1)) $selected=$this->idprof1;
-        	else if ($idprof==2 && ! empty($this->idprof2)) $selected=$this->idprof2;
-        	else if ($idprof==3 && ! empty($this->idprof3)) $selected=$this->idprof3;
-        	else if ($idprof==4 && ! empty($this->idprof4)) $selected=$this->idprof4;
+        	elseif ($idprof==2 && ! empty($this->idprof2)) $selected=$this->idprof2;
+        	elseif ($idprof==3 && ! empty($this->idprof3)) $selected=$this->idprof3;
+        	elseif ($idprof==4 && ! empty($this->idprof4)) $selected=$this->idprof4;
         }
 
         $maxlength=$formlength;

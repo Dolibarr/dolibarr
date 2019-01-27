@@ -279,7 +279,7 @@ class User extends CommonObject
 		{
 			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
-		else if ($login)
+		elseif ($login)
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
@@ -538,7 +538,7 @@ class User extends CommonObject
 			$whereforadd="id=".$this->db->escape($rid);
 			// Ajout des droits induits
 			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			elseif (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 		}
 		else {
 			// On a pas demande un droit en particulier mais une liste de droits
@@ -3187,7 +3187,7 @@ class User extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
-				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+				elseif ($mode == 'mobile') $user_property = $obj->user_mobile;
 			}
 			return $user_property;
 		}

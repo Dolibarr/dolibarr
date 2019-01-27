@@ -2706,7 +2706,7 @@ class Propal extends CommonObject
 					{
 						$ga[$obj->propalid] = $obj->ref;
 					}
-					else if ($shortlist == 2)
+					elseif ($shortlist == 2)
 					{
 						$ga[$obj->propalid] = $obj->ref.' ('.$obj->name.')';
 					}

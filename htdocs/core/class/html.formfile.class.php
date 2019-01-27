@@ -380,7 +380,7 @@ class FormFile
 					$modellist=ModeleThirdPartyDoc::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'propal')
+			elseif ($modulepart == 'propal')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -389,7 +389,7 @@ class FormFile
 					$modellist=ModelePDFPropales::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'supplier_proposal')
+			elseif ($modulepart == 'supplier_proposal')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -398,7 +398,7 @@ class FormFile
 					$modellist=ModelePDFSupplierProposal::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'commande')
+			elseif ($modulepart == 'commande')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -434,7 +434,7 @@ class FormFile
 					$modellist=ModelePDFDeliveryOrder::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'ficheinter')
+			elseif ($modulepart == 'ficheinter')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -524,7 +524,7 @@ class FormFile
 					$modellist=ModeleExports::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order')
+			elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -533,7 +533,7 @@ class FormFile
 					$modellist=ModelePDFSuppliersOrders::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+			elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -542,7 +542,7 @@ class FormFile
 					$modellist=ModelePDFSuppliersInvoices::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'supplier_payment')
+			elseif ($modulepart == 'supplier_payment')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -551,7 +551,7 @@ class FormFile
 					$modellist=ModelePDFSuppliersPayments::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'remisecheque')
+			elseif ($modulepart == 'remisecheque')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -587,7 +587,7 @@ class FormFile
 					$modellist=ModeleAction::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'expensereport')
+			elseif ($modulepart == 'expensereport')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -596,7 +596,7 @@ class FormFile
 					$modellist=ModeleExpenseReport::liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'unpaid')
+			elseif ($modulepart == 'unpaid')
 			{
 				$modellist='';
 			}
@@ -1465,72 +1465,72 @@ class FormFile
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$object_instance=new Societe($this->db);
 		}
-		else if ($modulepart == 'invoice')
+		elseif ($modulepart == 'invoice')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$object_instance=new Facture($this->db);
 		}
-		else if ($modulepart == 'invoice_supplier')
+		elseif ($modulepart == 'invoice_supplier')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$object_instance=new FactureFournisseur($this->db);
 		}
-		else if ($modulepart == 'propal')
+		elseif ($modulepart == 'propal')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$object_instance=new Propal($this->db);
 		}
-		else if ($modulepart == 'supplier_proposal')
+		elseif ($modulepart == 'supplier_proposal')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 			$object_instance=new SupplierProposal($this->db);
 		}
-		else if ($modulepart == 'order')
+		elseif ($modulepart == 'order')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$object_instance=new Commande($this->db);
 		}
-		else if ($modulepart == 'order_supplier')
+		elseif ($modulepart == 'order_supplier')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 			$object_instance=new CommandeFournisseur($this->db);
 		}
-		else if ($modulepart == 'contract')
+		elseif ($modulepart == 'contract')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 			$object_instance=new Contrat($this->db);
 		}
-		else if ($modulepart == 'product')
+		elseif ($modulepart == 'product')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$object_instance=new Product($this->db);
 		}
-		else if ($modulepart == 'tax')
+		elseif ($modulepart == 'tax')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance=new ChargeSociales($this->db);
 		}
-		else if ($modulepart == 'project')
+		elseif ($modulepart == 'project')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance=new Project($this->db);
 		}
-		else if ($modulepart == 'fichinter')
+		elseif ($modulepart == 'fichinter')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$object_instance=new Fichinter($this->db);
 		}
-		else if ($modulepart == 'user')
+		elseif ($modulepart == 'user')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			$object_instance=new User($this->db);
 		}
-		else if ($modulepart == 'expensereport')
+		elseif ($modulepart == 'expensereport')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$object_instance=new ExpenseReport($this->db);
 		}
-		else if ($modulepart == 'holiday')
+		elseif ($modulepart == 'holiday')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 			$object_instance=new Holiday($this->db);

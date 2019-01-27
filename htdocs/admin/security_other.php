@@ -57,7 +57,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
-else if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+elseif (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -71,7 +71,7 @@ else if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
-else if ($action == 'updateform')
+elseif ($action == 'updateform')
 {
 	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
     $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);

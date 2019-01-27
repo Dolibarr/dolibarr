@@ -496,7 +496,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				if (preg_match('/"/',$out)) $out='';
-				else if (preg_match('/\.\.\//',$out)) $out='';
+				elseif (preg_match('/\.\.\//',$out)) $out='';
 			}
 			break;
 		case 'san_alpha':
@@ -536,7 +536,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				if (preg_match('/"/',$out)) $out='';
-				else if (preg_match('/\.\.\//',$out)) $out='';
+				elseif (preg_match('/\.\.\//',$out)) $out='';
 				$out=dol_string_nohtmltag($out);
 			}
 			break;
@@ -590,7 +590,7 @@ if (! function_exists('dol_getprefix'))
 			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
 			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
@@ -911,9 +911,9 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
 	if (empty($noescapebackslashn)) { $substitjs["\n"]='\\n'; $substitjs['\\']='\\\\'; }
 	if (empty($mode)) { $substitjs["'"]="\\'"; $substitjs['"']="\\'"; }
-	else if ($mode == 1) $substitjs["'"]="\\'";
-	else if ($mode == 2) { $substitjs['"']='\\"'; }
-	else if ($mode == 3) { $substitjs["'"]="\\'"; $substitjs['"']="\\\""; }
+	elseif ($mode == 1) $substitjs["'"]="\\'";
+	elseif ($mode == 2) { $substitjs['"']='\\"'; }
+	elseif ($mode == 3) { $substitjs["'"]="\\'"; $substitjs['"']="\\\""; }
 	return strtr($stringtoescape, $substitjs);
 }
 
@@ -1033,13 +1033,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// This is when server run behind a reverse proxy
 		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].(empty($_SERVER["REMOTE_ADDR"])?'':'->'.$_SERVER['REMOTE_ADDR']);
 		// This is when server run normally on a server
-		else if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+		elseif (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
 		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-		else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
+		elseif (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
 		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-		else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
+		elseif (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
 		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-		else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
+		elseif (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
@@ -1162,7 +1162,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 					$out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			}
-			else if (! empty($links[$i][1]))
+			elseif (! empty($links[$i][1]))
 			{
 				//print "x $i $active ".$links[$i][2]." z";
 				if ($isactive)
@@ -1196,7 +1196,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				else
 					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
-			else if (! empty($links[$i][1]))
+			elseif (! empty($links[$i][1]))
 			{
 				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 				$outmore.=preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]);	// Replace x/y with x / y to allow wrap on long composed texts.
@@ -1425,7 +1425,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						}
 					}
 				}
-				else if (! $phototoshow)
+				elseif (! $phototoshow)
 				{
 					$phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
 				}
@@ -1627,7 +1627,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		}
 		if ($object->zip) $ret .= ($ret?", ":'').$object->zip;
 	}
-	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	elseif (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state)
@@ -1636,7 +1636,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
+	elseif (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
@@ -1645,7 +1645,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret.="\n".$object->state;
 		}
 	}
-	else if (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+	elseif (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
@@ -1746,22 +1746,22 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	// TODO Add format daysmallyear and dayhoursmallyear
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
-	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
-	else if ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
-	else if ($format == 'daytext')			 $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
-	else if ($format == 'daytextshort')	$format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
-	else if ($format == 'dayhour')			 $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
-	else if ($format == 'dayhoursec')		 $format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
-	else if ($format == 'dayhourtext')		 $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
-	else if ($format == 'dayhourtextshort') $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
+	elseif ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	elseif ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	elseif ($format == 'daytext')			 $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
+	elseif ($format == 'daytextshort')	$format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	elseif ($format == 'dayhour')			 $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
+	elseif ($format == 'dayhoursec')		 $format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
+	elseif ($format == 'dayhourtext')		 $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
+	elseif ($format == 'dayhourtextshort') $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
 	// Format not sensitive to language
-	else if ($format == 'dayhourlog')		 $format='%Y%m%d%H%M%S';
-	else if ($format == 'dayhourldap')		 $format='%Y%m%d%H%M%SZ';
-	else if ($format == 'dayhourxcard')	$format='%Y%m%dT%H%M%SZ';
-	else if ($format == 'dayxcard')	 	$format='%Y%m%d';
-	else if ($format == 'dayrfc')			 $format='%Y-%m-%d';             // DATE_RFC3339
-	else if ($format == 'dayhourrfc')		 $format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
-	else if ($format == 'standard')		$format='%Y-%m-%d %H:%M:%S';
+	elseif ($format == 'dayhourlog')		 $format='%Y%m%d%H%M%S';
+	elseif ($format == 'dayhourldap')		 $format='%Y%m%d%H%M%SZ';
+	elseif ($format == 'dayhourxcard')	$format='%Y%m%dT%H%M%SZ';
+	elseif ($format == 'dayxcard')	 	$format='%Y%m%d';
+	elseif ($format == 'dayrfc')			 $format='%Y-%m-%d';             // DATE_RFC3339
+	elseif ($format == 'dayhourrfc')		 $format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
+	elseif ($format == 'standard')		$format='%Y-%m-%d %H:%M:%S';
 
 	if ($reduceformat)
 	{
@@ -1953,7 +1953,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 			$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
 			$localtz = new DateTimeZone($default_timezone);
 		}
-		else if ($gm === 'user')
+		elseif ($gm === 'user')
 		{
 			// We use dol_tz_string first because it is more reliable.
 			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
@@ -1966,7 +1966,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 				$default_timezone=@date_default_timezone_get();
 			}
 		}
-		else if (strrpos($gm, "tz,") !== false)
+		elseif (strrpos($gm, "tz,") !== false)
 		{
 			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
 			try
@@ -2015,7 +2015,7 @@ function dol_now($mode = 'gmt')
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
-	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
+	elseif ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
@@ -2027,7 +2027,7 @@ function dol_now($mode = 'gmt')
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
-	else if ($mode == 'tzuser')				// Time for now with user timezone added
+	elseif ($mode == 'tzuser')				// Time for now with user timezone added
 	{
 		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
@@ -2527,7 +2527,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone ='<a href="tel:'.$phone.'"';
 			$newphone.='>'.$phone.'</a>';
 		}
-		else if (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')		// If click to dial, we use click to dial url
+		elseif (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')		// If click to dial, we use click to dial url
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
@@ -3101,10 +3101,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) {
 			$path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
 		}
-		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
+		elseif (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
 			$path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
 		}
-		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
+		elseif (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
 			$path = $theme.'/theme/'.$theme;     // If the theme have the same name as the module
 		}
 
@@ -4137,7 +4137,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 			{
 				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=0'.$options.'">1</a></li>';
 				if ($cpt > 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
-				else if ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				elseif ($cpt == 2) $pagelist.='<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page=1'.$options.'">2</a></li>';
 			}
 
 			do
@@ -4157,7 +4157,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 			if ($cpt<$nbpages)
 			{
 				if ($cpt<$nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><span '.(($conf->dol_use_jmobile != 4)?'class="inactive"':'').'>...</span></li>';
-				else if ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
+				elseif ($cpt == $nbpages-2) $pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-2).$options.'">'.($nbpages - 1).'</a></li>';
 				$pagelist.= '<li'.(($conf->dol_use_jmobile != 4)?' class="pagination"':'').'><a href="'.$file.'?page='.($nbpages-1).$options.'">'.$nbpages.'</a></li>';
 			}
 		}
@@ -4341,7 +4341,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->transnoentitiesnoconv("SeparatorDecimal");
 	if ($outlangs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
-	else if ($thousand == 'Space') $thousand=' ';
+	elseif ($thousand == 'Space') $thousand=' ';
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	//print "amount=".$amount."-";
@@ -6294,7 +6294,7 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 		if ($firstname && $lastname) $ret.=' ';
 		$ret.=$lastname;
 	}
-	else if ($nameorder == 2 || $nameorder == 3)
+	elseif ($nameorder == 2 || $nameorder == 3)
 	{
 	   $ret.=$firstname;
 	   if (empty($ret) && $nameorder == 3)
@@ -6518,8 +6518,8 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 			if ($val && preg_match('/class="warning"/i',$val)) { $iswarning++; break; }
 		}
 	}
-	else if ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
-	else if ($mesgstring && preg_match('/class="warning"/i',$mesgstring)) $iswarning++;
+	elseif ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
+	elseif ($mesgstring && preg_match('/class="warning"/i',$mesgstring)) $iswarning++;
 	if ($style=='error') $iserror++;
 	if ($style=='warning') $iswarning++;
 
@@ -7082,7 +7082,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$h++;
 					}
 				}
-				else if (count($values) == 5)       // deprecated
+				elseif (count($values) == 5)       // deprecated
 				{
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
@@ -7102,7 +7102,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					$h++;
 				}
 			}
-			else if ($mode == 'remove' && preg_match('/^\-/',$values[1]))
+			elseif ($mode == 'remove' && preg_match('/^\-/',$values[1]))
 			{
 				if ($values[0] != $type) continue;
 				$tabname=str_replace('-','',$values[1]);
@@ -7459,12 +7459,12 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$i2++;	// a criteria was added to string
 				}
 			}
-			else if ($mode == 2)
+			elseif ($mode == 2)
 			{
 				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
 				$i2++;	// a criteria was added to string
 			}
-			else if ($mode == 3)
+			elseif ($mode == 3)
 			{
 				$tmparray=explode(',',trim($crit));
 				if (count($tmparray))
@@ -7482,7 +7482,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$i2++;	// a criteria was added to string
 				}
 			}
-			else if ($mode == 4)
+			elseif ($mode == 4)
 			{
 			    $tmparray=explode(',',trim($crit));
 			    if (count($tmparray))

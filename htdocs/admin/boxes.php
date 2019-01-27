@@ -289,14 +289,14 @@ if ($resql)
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
-					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
+					elseif (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "B0".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 				}
-				else if (dol_strlen($record['box_order']) == 2)
+				elseif (dol_strlen($record['box_order']) == 2)
 				{
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
 					{
@@ -304,7 +304,7 @@ if ($resql)
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
-					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
+					elseif (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "B".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";

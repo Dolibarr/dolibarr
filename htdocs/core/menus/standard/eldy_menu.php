@@ -225,7 +225,7 @@ class MenuManager
         			    {
         			        $lastlevel[0]='enabled';
         			    }
-        			    else if ($showmenu)                 // Not enabled but visible (so greyed)
+        			    elseif ($showmenu)                 // Not enabled but visible (so greyed)
         			    {
         			        $lastlevel[0]='greyed';
         			    }

@@ -1397,7 +1397,7 @@ class Categorie extends CommonObject
 		        {
     				if ($mode == 'id') {
     				    $cats[] = $obj->rowid;
-    				} else if ($mode == 'label') {
+    				} elseif ($mode == 'label') {
     				    $cats[] = $obj->label;
     				} else {
     				    $cat = new Categorie($this->db);
@@ -1427,7 +1427,7 @@ class Categorie extends CommonObject
     			{
     				if ($mode == 'id') {
     					$cats[] = $obj->rowid;
-    				} else if ($mode == 'label') {
+    				} elseif ($mode == 'label') {
     					$cats[] = $obj->label;
     				} else {
     					$cat = new Categorie($this->db);
@@ -1747,7 +1747,7 @@ class Categorie extends CommonObject
 	                return -1;
 	            }
 	        }
-	        else if (isset($this->multilangs["$key"]))
+	        elseif (isset($this->multilangs["$key"]))
 	        {
 	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
 	            {

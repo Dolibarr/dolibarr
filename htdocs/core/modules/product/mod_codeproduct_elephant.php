@@ -189,7 +189,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$mask = '';
 		if ($type == 0 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT))
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-		else if ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
+		elseif ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 
 		if (empty($mask))
@@ -204,7 +204,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			$field = 'ref';
 			//$where = ' AND client in (1,2)';
 		}
-		else if ($type == 1)
+		elseif ($type == 1)
 		{
 			$field = 'ref';
 			//$where = ' AND fournisseur = 1';
@@ -267,7 +267,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}

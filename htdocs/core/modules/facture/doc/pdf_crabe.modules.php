@@ -572,7 +572,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 						$pdf->MultiCell($this->posxprogress-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
-					else if($conf->global->PRODUCT_USE_UNITS)
+					elseif($conf->global->PRODUCT_USE_UNITS)
 					{
 						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
@@ -590,7 +590,7 @@ class pdf_crabe extends ModelePDFFactures
 						{
 							$pdf->MultiCell($this->posxunit-$this->posxprogress-1, 3, $progress, 0, 'R');
 						}
-						else if ($this->atleastonediscount)
+						elseif ($this->atleastonediscount)
 						{
 							$pdf->MultiCell($this->posxdiscount-$this->posxprogress-1, 3, $progress, 0, 'R');
 						}
@@ -1486,7 +1486,7 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				$pdf->MultiCell($this->posxprogress-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
-			else if($conf->global->PRODUCT_USE_UNITS)
+			elseif($conf->global->PRODUCT_USE_UNITS)
 			{
 				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
@@ -1507,7 +1507,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$pdf->MultiCell($this->posxunit-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
 				}
-				else if ($this->atleastonediscount)
+				elseif ($this->atleastonediscount)
 				{
 					$pdf->MultiCell($this->posxdiscount-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
 				}

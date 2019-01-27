@@ -310,7 +310,7 @@ abstract class ActionsCardCommon
             	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
             	$this->tpl['sales_representatives'].= '</a>';
             }
-            else if ($nbofsalesrepresentative > 0)
+            elseif ($nbofsalesrepresentative > 0)
             {
             	$userstatic=new User($this->db);
             	$i=0;

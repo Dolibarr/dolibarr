@@ -1413,7 +1413,7 @@ class SMTPs
 		die ("Sorry, no content");
 
 		// If we have ONE, we can use the simple format
-		else if( $keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
+		elseif( $keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
 		{
 			$_msgData = $this->_msgContent;
 			$_msgData = $_msgData[$_types[0]];
@@ -1431,7 +1431,7 @@ class SMTPs
 		}
 
 		// If we have more than ONE, we use the multi-part format
-		else if( $keyCount >= 1 || ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
+		elseif( $keyCount >= 1 || ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))
 		{
 			// Since this is an actual multi-part message
 			// We need to define a content message Boundary
@@ -1479,7 +1479,7 @@ class SMTPs
 					}
 				}
 				// @CHANGE LDR
-				else if ( $type == 'image' )
+				elseif ( $type == 'image' )
 				{
 					// loop through all images
 					foreach ( $_content as $_image => $_data )
@@ -1751,8 +1751,8 @@ class SMTPs
 	function _getBoundary($type = 'mixed')
 	{
 		if ($type == 'mixed') return $this->_smtpsBoundary;
-		else if ($type == 'related') return $this->_smtpsRelatedBoundary;
-		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
+		elseif ($type == 'related') return $this->_smtpsRelatedBoundary;
+		elseif ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

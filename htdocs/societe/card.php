@@ -471,7 +471,7 @@ if (empty($reshook))
 			}
 
 	        if (GETPOST('deletephoto')) $object->logo = '';
-	        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+	        elseif (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
 	        // Check parameters
 	        if (! GETPOST('cancel','alpha'))
@@ -631,7 +631,7 @@ if (empty($reshook))
                 	{
                     	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
-                    	else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
+                    	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
                 		header("Location: ".$url);
                     	exit;
@@ -1786,7 +1786,7 @@ else
                 if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
                 print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
-            else if ($object->codeclient_modifiable())
+            elseif ($object->codeclient_modifiable())
             {
             	print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
             }
@@ -1826,7 +1826,7 @@ else
 	                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
 	                }
-	                else if ($object->codefournisseur_modifiable())
+	                elseif ($object->codefournisseur_modifiable())
 	                {
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }

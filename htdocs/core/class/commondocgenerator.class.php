@@ -230,7 +230,7 @@ abstract class CommonDocGenerator
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
         		}
-        		else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+        		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
         		{
         			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
         		}
@@ -760,11 +760,11 @@ abstract class CommonDocGenerator
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
 			{
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
 			}
-			else if($extrafields->attribute_type[$key] == 'date')
+			elseif($extrafields->attribute_type[$key] == 'date')
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
@@ -782,7 +782,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			else if($extrafields->attribute_type[$key] == 'datetime')
+			elseif($extrafields->attribute_type[$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
 				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
@@ -791,7 +791,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			else if($extrafields->attribute_type[$key] == 'link')
+			elseif($extrafields->attribute_type[$key] == 'link')
 			{
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")

@@ -370,7 +370,7 @@ if ($action == 'create') {
 		$title = $langs->trans("ProductsAndServices");
 		if (empty($conf->service->enabled))
 			$title = $langs->trans("Products");
-		else if (empty($conf->product->enabled))
+		elseif (empty($conf->product->enabled))
 			$title = $langs->trans("Services");
 
 		print load_fiche_titre($title, '', '');
@@ -712,7 +712,7 @@ if ($action == 'create') {
 			$title = $langs->trans("ProductsAndServices");
 			if (empty($conf->service->enabled))
 				$title = $langs->trans("Products");
-			else if (empty($conf->product->enabled))
+			elseif (empty($conf->product->enabled))
 				$title = $langs->trans("Services");
 
 			print load_fiche_titre($title);

@@ -206,7 +206,7 @@ class ActionsCardService
 			{
 				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 			}
-			else if ($this->object->duration_value > 0)
+			elseif ($this->object->duration_value > 0)
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 			}

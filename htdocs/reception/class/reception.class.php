@@ -297,7 +297,7 @@ class Reception extends CommonObject
 						}
 					}
 				}
-				else if ($reshook < 0) $error++;
+				elseif ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{

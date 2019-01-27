@@ -100,7 +100,7 @@ class FormAdmin
 					$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
 				}
 			}
-			else if ($selected == $key)
+			elseif ($selected == $key)
 			{
 				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
 			}
@@ -167,7 +167,7 @@ class FormAdmin
     	        				$prefix='';
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
     	        				if (preg_match('/^eldy/i',$file)) $prefix='0';
-                                else if (preg_match('/^smartphone/i',$file)) $prefix='2';
+                                elseif (preg_match('/^smartphone/i',$file)) $prefix='2';
     	        				else $prefix='3';
 
     	                        if ($file == $selected)

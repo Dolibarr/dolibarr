@@ -270,7 +270,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 }
 
 // Remove file in doc form
-else if ($action == 'remove_file' && $user->rights->banque->cheque)
+elseif ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
 	{

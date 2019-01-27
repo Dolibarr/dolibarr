@@ -222,7 +222,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			$field = 'code_client';
 			//$where = ' AND client in (1,2)';
 		}
-		else if ($type == 1)
+		elseif ($type == 1)
 		{
 			$field = 'code_fournisseur';
 			//$where = ' AND fournisseur = 1';
@@ -285,7 +285,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}

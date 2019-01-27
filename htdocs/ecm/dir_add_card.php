@@ -201,7 +201,7 @@ if ($action == 'add' && $permtoadd)
 }
 
 // Deleting file
-else if ($action == 'confirm_deletesection' && $confirm == 'yes')
+elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');

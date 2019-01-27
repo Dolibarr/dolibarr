@@ -634,7 +634,7 @@ class Menubase
                             $tab_titre = explode("/",$menu['titre']);
                             $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
                         }
-                        else if (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle)
+                        elseif (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle)
                         {
                         	$tab_title = explode("||",$menu['titre']);
                         	$alt_title = explode("@",$tab_title[1]);

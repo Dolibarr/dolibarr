@@ -1398,7 +1398,7 @@ class FactureRec extends CommonInvoice
 					$line->total_ttc=-119.6;
 					$line->total_tva=-19.6;
 				}
-				else if ($xnbp == 2)    // UP is negative (free line)
+				elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice=-100;
 					$line->total_ht=-100;
@@ -1406,7 +1406,7 @@ class FactureRec extends CommonInvoice
 					$line->total_tva=-19.6;
 					$line->remise_percent=0;
 				}
-				else if ($xnbp == 3)    // Discount is 50% (product line)
+				elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];

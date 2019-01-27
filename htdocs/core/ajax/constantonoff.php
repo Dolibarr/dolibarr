@@ -58,7 +58,7 @@ if (! empty($action) && ! empty($name))
 		{
 			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
 		}
-		else if ($action == 'del')
+		elseif ($action == 'del')
 		{
 			dolibarr_del_const($db, $name, $entity);
 		}

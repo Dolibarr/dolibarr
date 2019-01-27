@@ -401,6 +401,7 @@
 
     <rule ref="PSR2.Classes.ClassDeclaration" />
     <rule ref="PSR2.Methods.FunctionClosingBrace" />
+    <rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed" />
 
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">

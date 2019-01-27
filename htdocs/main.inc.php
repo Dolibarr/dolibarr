@@ -1226,7 +1226,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<title>';
 		$titletoshow='';
 		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) $titletoshow = dol_htmlentities($title);
-		else if ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
+		elseif ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
 		else $titletoshow = dol_htmlentities($appli);
 
 		$parameters=array('title'=>$titletoshow);

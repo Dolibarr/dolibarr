@@ -2313,7 +2313,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $force_number;
 		}
-		else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+		elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		{
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
@@ -3337,8 +3337,8 @@ class Facture extends CommonInvoice
 
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->FACTURE_ADDON)) $conf->global->FACTURE_ADDON='mod_facture_terre';
-		else if ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
-		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
+		elseif ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
+		elseif ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
 
 		if (! empty($conf->global->FACTURE_ADDON))
 		{
@@ -3511,7 +3511,7 @@ class Facture extends CommonInvoice
 					{
 						$ga[$obj->fid] = $obj->ref;
 					}
-					else if ($shortlist == 2)
+					elseif ($shortlist == 2)
 					{
 						$ga[$obj->fid] = $obj->ref.' ('.$obj->name.')';
 					}
@@ -3971,7 +3971,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ttc=-239.2;
 					$line->multicurrency_total_tva=-39.2;
 				}
-				else if ($xnbp == 2)    // UP is negative (free line)
+				elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice=-100;
 					$line->total_ht=-100;
@@ -3982,7 +3982,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ttc=-239.2;
 					$line->multicurrency_total_tva=-39.2;
 				}
-				else if ($xnbp == 3)    // Discount is 50% (product line)
+				elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];

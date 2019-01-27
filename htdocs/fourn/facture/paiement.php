@@ -774,12 +774,12 @@ if (empty($action))
     {
         if ($year > 0 && empty($day))
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-        else if ($year > 0 && ! empty($day))
+        elseif ($year > 0 && ! empty($day))
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
         else
         $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
     }
-    else if ($year > 0)
+    elseif ($year > 0)
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }

@@ -239,7 +239,7 @@ if ($action == 'set_paid')
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
-else if ($action == 'classin' && $user->rights->don->creer)
+elseif ($action == 'classin' && $user->rights->don->creer)
 {
 	$object->fetch($id);
 	$object->setProject($projectid);

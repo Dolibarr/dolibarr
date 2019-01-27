@@ -651,7 +651,7 @@ class Don extends CommonObject
         {
         	$sql.= " AND d.rowid=".$id;
         }
-        else if (! empty($ref))
+        elseif (! empty($ref))
         {
         	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }

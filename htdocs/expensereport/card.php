@@ -2417,7 +2417,7 @@ if ($action != 'create' && $action != 'edit')
 	    // Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
-	else if($user->rights->expensereport->supprimer && $object->fk_statut != 6)
+	elseif($user->rights->expensereport->supprimer && $object->fk_statut != 6)
 	{
     	// Delete
 	    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';

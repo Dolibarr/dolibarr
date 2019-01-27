@@ -213,7 +213,7 @@ class Members extends DolibarrApi
                     if ($result < 0) {
                         throw new RestException(500, 'Error when resiliating member: '.$member->error);
                     }
-                } else if ($value == '1') {
+                } elseif ($value == '1') {
                     $result = $member->validate(DolibarrApiAccess::$user);
                     if ($result < 0) {
                         throw new RestException(500, 'Error when validating member: '.$member->error);

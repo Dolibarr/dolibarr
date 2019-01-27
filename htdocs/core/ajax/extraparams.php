@@ -52,18 +52,18 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 
 	// For compatibility
 	if ($element == 'order' || $element == 'commande')    { $classpath = $subelement = 'commande'; }
-	else if ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
-	else if ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
-	else if ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
-	else if ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
-	else if ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
-	else if ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
-	else if ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
+	elseif ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
+	elseif ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
+	elseif ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
+	elseif ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
+	elseif ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
+	elseif ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
+	elseif ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
 
 	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 
 	if ($element == 'order_supplier')			{ $classname = 'CommandeFournisseur'; }
-	else if ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
+	elseif ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
 	else $classname = ucfirst($subelement);
 
 	$object	= new $classname($db);

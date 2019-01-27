@@ -509,7 +509,7 @@ class DoliDBMysqli extends DoliDB
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -542,7 +542,7 @@ class DoliDBMysqli extends DoliDB
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }

@@ -59,7 +59,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
             $error++;
             $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurred during fetch of user';
         }
-        else if ($result == 0)
+        elseif ($result == 0)
         {
             $error++;
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';

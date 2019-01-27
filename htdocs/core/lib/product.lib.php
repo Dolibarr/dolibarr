@@ -484,7 +484,7 @@ function measuring_units_string($unit, $measuring_style = '')
 		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
 		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
 	}
-	else if ($measuring_style == 'size')
+	elseif ($measuring_style == 'size')
 	{
 		$measuring_units[0] = $langs->transnoentitiesnoconv("SizeUnitm");
 		$measuring_units[-1] = $langs->transnoentitiesnoconv("SizeUnitdm");
@@ -493,7 +493,7 @@ function measuring_units_string($unit, $measuring_style = '')
         $measuring_units[98] = $langs->transnoentitiesnoconv("SizeUnitfoot");
 		$measuring_units[99] = $langs->transnoentitiesnoconv("SizeUnitinch");
 	}
-	else if ($measuring_style == 'surface')
+	elseif ($measuring_style == 'surface')
 	{
 		$measuring_units[0] = $langs->transnoentitiesnoconv("SurfaceUnitm2");
 		$measuring_units[-2] = $langs->transnoentitiesnoconv("SurfaceUnitdm2");
@@ -502,7 +502,7 @@ function measuring_units_string($unit, $measuring_style = '')
         $measuring_units[98] = $langs->transnoentitiesnoconv("SurfaceUnitfoot2");
 		$measuring_units[99] = $langs->transnoentitiesnoconv("SurfaceUnitinch2");
 	}
-	else if ($measuring_style == 'volume')
+	elseif ($measuring_style == 'volume')
 	{
 		$measuring_units[0] = $langs->transnoentitiesnoconv("VolumeUnitm3");
 		$measuring_units[-3] = $langs->transnoentitiesnoconv("VolumeUnitdm3");

@@ -95,9 +95,9 @@ class PaiementFourn extends Paiement
 		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
-		else if ($ref)
+		elseif ($ref)
 			$sql.= ' AND p.rowid = '.$ref;
-		else if ($fk_bank)
+		elseif ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 		//print $sql;
 
@@ -636,8 +636,8 @@ class PaiementFourn extends Paiement
 
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_bronan';
-		else if ($conf->global->SUPPLIER_PAYMENT_ADDON=='brodator') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_brodator';
-		else if ($conf->global->SUPPLIER_PAYMENT_ADDON=='bronan') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_bronan';
+		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON=='brodator') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_brodator';
+		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON=='bronan') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_bronan';
 
 		if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON))
 		{

@@ -194,13 +194,13 @@ class Form
 					$tmp=explode(':',$typeofdata);
 					$ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue?$editvalue:$value).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
 				}
-				else if (preg_match('/^(numeric|amount)/',$typeofdata))
+				elseif (preg_match('/^(numeric|amount)/',$typeofdata))
 				{
 					$tmp=explode(':',$typeofdata);
 					$valuetoshow=price2num($editvalue?$editvalue:$value);
 					$ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow!=''?price($valuetoshow):'').'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
 				}
-				else if (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))
+				elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))
 				{
 					$tmp=explode(':',$typeofdata);
 					$cols=$tmp[2];
@@ -217,15 +217,15 @@ class Form
 					$ret.=dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
 					$ret.='</textarea>';
 				}
-				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
+				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{
 					$ret.=$this->selectDate($value,$htmlname,0,0,1,'form'.$htmlname,1,0);
 				}
-				else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
+				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
 				{
 					$ret.=$this->selectDate($value,$htmlname,1,1,1,'form'.$htmlname,1,0);
 				}
-				else if (preg_match('/^select;/',$typeofdata))
+				elseif (preg_match('/^select;/',$typeofdata))
 				{
 					 $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
 					 foreach($arraydata as $val)
@@ -235,7 +235,7 @@ class Form
 					 }
 					 $ret.=$this->selectarray($htmlname,$arraylist,$value);
 				}
-				else if (preg_match('/^ckeditor/',$typeofdata))
+				elseif (preg_match('/^ckeditor/',$typeofdata))
 				{
 					$tmp=explode(':',$typeofdata);		// Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -261,7 +261,7 @@ class Form
 				elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
 				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
 				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
-				else if (preg_match('/^select;/',$typeofdata))
+				elseif (preg_match('/^select;/',$typeofdata))
 				{
 					$arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
 					foreach($arraydata as $val)
@@ -271,7 +271,7 @@ class Form
 					}
 					$ret.=$arraylist[$value];
 				}
-				else if (preg_match('/^ckeditor/',$typeofdata))
+				elseif (preg_match('/^ckeditor/',$typeofdata))
 				{
 					$tmpcontent=dol_htmlentitiesbr($value);
 					if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
@@ -314,8 +314,8 @@ class Form
 
 		// Check parameters
 		if (preg_match('/^text/',$inputType)) $value = dol_nl2br($value);
-		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
-		else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
+		elseif (preg_match('/^numeric/',$inputType)) $value = price($value);
+		elseif ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
 		if ($condition)
 		{
@@ -348,7 +348,7 @@ class Form
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
 				$out.= '<input id="width_'.$htmlname.'" value="'.$inputOption.'" type="hidden"/>'."\n";
 			}
-			else if ((preg_match('/^day$/',$inputType)) || (preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
+			elseif ((preg_match('/^day$/',$inputType)) || (preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
 			{
 				$tmp=explode(':',$inputType);
 				$inputType=$tmp[0];
@@ -357,21 +357,21 @@ class Form
 
 				$out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
 			}
-			else if (preg_match('/^(select|autocomplete)/',$inputType))
+			elseif (preg_match('/^(select|autocomplete)/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
 				$inputType=$tmp[0]; $loadmethod=$tmp[1];
 				if (! empty($tmp[2])) $savemethod=$tmp[2];
 				if (! empty($tmp[3])) $button_only=true;
 			}
-			else if (preg_match('/^textarea/',$inputType))
+			elseif (preg_match('/^textarea/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
 				$inputType=$tmp[0];
 				$rows=(empty($tmp[1])?'8':$tmp[1]);
 				$cols=(empty($tmp[2])?'80':$tmp[2]);
 			}
-			else if (preg_match('/^ckeditor/',$inputType))
+			elseif (preg_match('/^ckeditor/',$inputType))
 			{
 				$tmp=explode(':',$inputType);
 				$inputType=$tmp[0]; $toolbar=$tmp[1];
@@ -1081,7 +1081,7 @@ class Form
 			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out.='<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
-			else if ($hidelabel > 1) {
+			elseif ($hidelabel > 1) {
 				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					$out.=  img_picto($langs->trans("Search"), 'search');
@@ -1131,7 +1131,7 @@ class Form
 		$outarray=array();
 
 		if ($selected === '') $selected = array();
-		else if (!is_array($selected)) $selected = array($selected);
+		elseif (!is_array($selected)) $selected = array($selected);
 
 		// Clean $filter that may contains sql conditions so sql code
 		if (function_exists('testSqlAndScriptInject')) {
@@ -1421,7 +1421,7 @@ class Form
 		if (empty($htmlid)) $htmlid = $htmlname;
 
 		if ($selected === '') $selected = array();
-		else if (!is_array($selected)) $selected = array($selected);
+		elseif (!is_array($selected)) $selected = array($selected);
 		$out='';
 
 		if (! is_object($hookmanager))
@@ -1598,7 +1598,7 @@ class Form
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
 		if ($selected === '') $selected = array();
-		else if (!is_array($selected)) $selected = array($selected);
+		elseif (!is_array($selected)) $selected = array($selected);
 
 		$excludeUsers=null;
 		$includeUsers=null;
@@ -1607,12 +1607,12 @@ class Form
 		if (is_array($exclude))	$excludeUsers = implode(",",$exclude);
 		// Permettre l'inclusion d'utilisateurs
 		if (is_array($include))	$includeUsers = implode(",",$include);
-		else if ($include == 'hierarchy')
+		elseif ($include == 'hierarchy')
 		{
 			// Build list includeUsers to have only hierarchy
 			$includeUsers = implode(",",$user->getAllChildIds(0));
 		}
-		else if ($include == 'hierarchyme')
+		elseif ($include == 'hierarchyme')
 		{
 			// Build list includeUsers to have only hierarchy and current user
 			$includeUsers = implode(",",$user->getAllChildIds(1));
@@ -1991,7 +1991,7 @@ class Form
                 <?php
 			}
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
-			else if ($hidelabel > 1) {
+			elseif ($hidelabel > 1) {
 				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					print img_picto($langs->trans("Search"), 'search');
@@ -2367,7 +2367,7 @@ class Form
 		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
 		{
 			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
-			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
+			elseif ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
 		}
 		$opt.= '>';
 		$opt.= $objp->ref;
@@ -4906,7 +4906,7 @@ class Form
 						$code_country.=",'".$societe_acheteuse->country_code."'";
 					}
 				}
-				else if (! $idprod)  // We don't know type of product
+				elseif (! $idprod)  // We don't know type of product
 				{
 					$code_country.=",'".$societe_acheteuse->country_code."'";
 				}
@@ -6370,40 +6370,40 @@ class Form
 					$tplpath = 'compta/'.$element;
 					if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
 				}
-				else if ($objecttype == 'facturerec')          {
+				elseif ($objecttype == 'facturerec')          {
 					$tplpath = 'compta/facture';
 					$tplname = 'linkedobjectblockForRec';
 					if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
 				}
-				else if ($objecttype == 'propal')           {
+				elseif ($objecttype == 'propal')           {
 					$tplpath = 'comm/'.$element;
 					if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
 				}
-				else if ($objecttype == 'supplier_proposal')           {
+				elseif ($objecttype == 'supplier_proposal')           {
 					if (empty($conf->supplier_proposal->enabled)) continue;	// Do not show if module disabled
 				}
-				else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
+				elseif ($objecttype == 'shipping' || $objecttype == 'shipment') {
 					$tplpath = 'expedition';
 					if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
 				}
-        		else if ($objecttype == 'reception') {
+        		elseif ($objecttype == 'reception') {
         			$tplpath = 'reception';
         			if (empty($conf->reception->enabled)) continue;	// Do not show if module disabled
         		}
-				else if ($objecttype == 'delivery')         {
+				elseif ($objecttype == 'delivery')         {
 					$tplpath = 'livraison';
 					if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
 				}
-				else if ($objecttype == 'invoice_supplier') {
+				elseif ($objecttype == 'invoice_supplier') {
 					$tplpath = 'fourn/facture';
 				}
-				else if ($objecttype == 'order_supplier')   {
+				elseif ($objecttype == 'order_supplier')   {
 					$tplpath = 'fourn/commande';
 				}
-				else if ($objecttype == 'expensereport')   {
+				elseif ($objecttype == 'expensereport')   {
 					$tplpath = 'expensereport';
 				}
-				else if ($objecttype == 'subscription')   {
+				elseif ($objecttype == 'subscription')   {
 					$tplpath = 'adherents';
 				}
 
@@ -6509,7 +6509,7 @@ class Form
 				$possiblelinks=array_merge($possiblelinks, $hookmanager->resArray);
 			}
 		}
-		else if ($reshook > 0)
+		elseif ($reshook > 0)
 		{
 			if (is_array($hookmanager->resArray) && count($hookmanager->resArray))
 			{
@@ -6832,7 +6832,7 @@ class Form
 		{
 			$ret.=dol_htmlentities($object->name);
 		}
-		else if ($object->element == 'member')
+		elseif ($object->element == 'member')
 		{
 			$ret.=$object->ref.'<br>';
 			$fullname=$object->getFullName($langs);
@@ -6842,23 +6842,23 @@ class Form
 				$ret.= dol_htmlentities($fullname) . ((! empty($object->societe) && $object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');
 			}
 		}
-		else if (in_array($object->element, array('contact', 'user', 'usergroup')))
+		elseif (in_array($object->element, array('contact', 'user', 'usergroup')))
 		{
 			$ret.=dol_htmlentities($object->getFullName($langs));
 		}
-		else if (in_array($object->element, array('action', 'agenda')))
+		elseif (in_array($object->element, array('action', 'agenda')))
 		{
 			$ret.=$object->ref.'<br>'.$object->label;
 		}
-		else if (in_array($object->element, array('adherent_type')))
+		elseif (in_array($object->element, array('adherent_type')))
 		{
 			$ret.=$object->label;
 		}
-		else if ($object->element == 'ecm_directories')
+		elseif ($object->element == 'ecm_directories')
 		{
 			$ret.='';
 		}
-		else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
+		elseif ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
 
 
 		if ($morehtmlref)
@@ -6931,32 +6931,32 @@ class Form
 			if (! empty($object->logo))
 			{
 				if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini');             // getImageFileNameForSize include the thumbs
-				else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
+				elseif ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
 				else $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
 				$originalfile=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.$object->logo;
 			}
 			$email=$object->email;
 		}
-		else if ($modulepart=='contact')
+		elseif ($modulepart=='contact')
 		{
 			$dir=$conf->societe->multidir_output[$entity].'/contact';
 			if (! empty($object->photo))
 			{
 				if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
+				elseif ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.getImageFileNameForSize($object->photo, '_small');
 				else $file=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
 				$originalfile=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
 			}
 			$email=$object->email;
 			$capture='user';
 		}
-		else if ($modulepart=='userphoto')
+		elseif ($modulepart=='userphoto')
 		{
 			$dir=$conf->user->dir_output;
 			if (! empty($object->photo))
 			{
 				if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_small');
+				elseif ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_small');
 				else $file=get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
 				$originalfile=get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
 			}
@@ -6964,13 +6964,13 @@ class Form
 			$email=$object->email;
 			$capture='user';
 		}
-		else if ($modulepart=='memberphoto')
+		elseif ($modulepart=='memberphoto')
 		{
 			$dir=$conf->adherent->dir_output;
 			if (! empty($object->photo))
 			{
 				if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+				elseif ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
 				else $file=get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 				$originalfile=get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 			}
@@ -6985,7 +6985,7 @@ class Form
 			if (! empty($object->photo))
 			{
 				if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+				elseif ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
 				else $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 				$originalfile=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 			}
@@ -7008,7 +7008,7 @@ class Form
 				$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
 				if ($addlinktofullsize) $ret.='</a>';
 			}
-			else if ($altfile && file_exists($dir."/".$altfile))
+			elseif ($altfile && file_exists($dir."/".$altfile))
 			{
 				if ($addlinktofullsize)
 				{

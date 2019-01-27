@@ -270,7 +270,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			if ($field == 'price' || preg_match('/^amount/i',$field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
-			else if ($field == 'entity') {
+			elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -441,7 +441,7 @@ if ($id)
 			{
 				print '<td align="'.$align.'">';
 				if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-				else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+				elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
 				else print $valuetoshow;
 				print '</td>';
 			 }
@@ -611,11 +611,11 @@ if ($id)
 							if ($valuetoshow=='all') {
 								$valuetoshow=$langs->trans('All');
 							}
-							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+							elseif ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
 								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
-							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+							elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
 								$valuetoshow=$langs->trans($obj->label);
                             }
 
@@ -630,8 +630,8 @@ if ($id)
 					if (isset($obj->code) && $id != 10)
 					{
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) { $iserasable = 0; $canbedisabled = 0; }
-						else if ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
-						else if ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
+						elseif ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
+						elseif ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
 					}
 
 					$canbemodified=$iserasable;

@@ -175,8 +175,8 @@ if (empty($reshook))
 		{
 			$langs->load("errors");
         	if ($result == -1) $errors[] = 'ErrorBadBarCodeSyntax';
-        	else if ($result == -2) $errors[] = 'ErrorBarCodeRequired';
-        	else if ($result == -3) $errors[] = 'ErrorBarCodeAlreadyUsed';
+        	elseif ($result == -2) $errors[] = 'ErrorBarCodeRequired';
+        	elseif ($result == -3) $errors[] = 'ErrorBarCodeAlreadyUsed';
         	else $errors[] = 'FailedToValidateBarCode';
 
 			$error++;
@@ -1248,7 +1248,7 @@ else
      * Product card
      */
 
-    else if ($object->id > 0)
+    elseif ($object->id > 0)
     {
         // Fiche en mode edition
 		if ($action == 'edit' && $usercancreate)
@@ -1826,7 +1826,7 @@ else
                 {
                     $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
                 }
-                else if ($object->duration_value > 0)
+                elseif ($object->duration_value > 0)
                 {
                     $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                 }
@@ -1943,7 +1943,7 @@ else
             dol_fiche_end();
         }
     }
-    else if ($action != 'create')
+    elseif ($action != 'create')
     {
         exit;
     }

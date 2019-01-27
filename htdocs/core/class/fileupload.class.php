@@ -136,7 +136,7 @@ class FileUpload
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
 			$object_ref = get_exdir($object->id,2,0,0,$object,'invoice_supplier') . $object_ref;
-		} else if ($element == 'project_task') {
+		} elseif ($element == 'project_task') {
 			$object_ref = $object->project->ref . '/' . $object_ref;
 		}
 
@@ -456,7 +456,7 @@ class FileUpload
 					}
 				}
 			}
-			else if ($this->options['discard_aborted_uploads'])
+			elseif ($this->options['discard_aborted_uploads'])
 			{
 				unlink($file_path);
 				$file->error = 'abort';

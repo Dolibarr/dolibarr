@@ -538,7 +538,7 @@ class DiscountAbsolute
             $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
             $sql.= ' AND f.type = 3';
         }
-        else if ($invoice->element == 'invoice_supplier')
+        elseif ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
@@ -584,7 +584,7 @@ class DiscountAbsolute
             $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
             $sql.= ' AND (f.type = 2 OR f.type = 0)';	// Find discount coming from credit note or excess received
         }
-        else if ($invoice->element == 'invoice_supplier')
+        elseif ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';

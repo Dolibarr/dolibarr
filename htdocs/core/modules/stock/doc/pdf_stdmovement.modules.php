@@ -287,7 +287,7 @@ class pdf_stdmovement extends ModelePDFMovement
 			else
 			$sql.= " AND date_format(m.datem, '%m') = '$month'";
 		}
-		else if ($year > 0)
+		elseif ($year > 0)
 		{
 			$sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 		}

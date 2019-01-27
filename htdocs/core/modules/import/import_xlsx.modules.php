@@ -485,7 +485,7 @@ class ImportXlsx extends ModeleImports
                                             else
                                             {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,'code',$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
                                                 else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                                 $this->errors[$error]['type']='FOREIGNKEY';
                                                 $errorforthistable++;
@@ -604,7 +604,7 @@ class ImportXlsx extends ModeleImports
 									}
 								}
 								// If test is just a static regex
-								else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
+								elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
 								{
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
@@ -686,7 +686,7 @@ class ImportXlsx extends ModeleImports
 									if($resql->num_rows == 1) {
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} else if($resql->num_rows > 1) {
+									} elseif($resql->num_rows > 1) {
 										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filters, ', '));
 										$this->errors[$error]['type']='SQL';
 										$error++;

@@ -704,7 +704,7 @@ class DolGraph
 		// Create graph
 		$classname='';
 		if (! isset($this->type[0]) || $this->type[0] == 'bars')  $classname='BarPlot';    // Only one type (first one) is supported by artichow
-		else if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname='LinePlot';
+		elseif ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname='LinePlot';
 		else $classname='TypeUnknown';
 		include_once ARTICHOW_PATH.$classname.'.class.php';
 

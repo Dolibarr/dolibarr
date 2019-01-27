@@ -171,7 +171,7 @@ class FormProjets
 		if ($socid > 0)
 		{
 		    if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		    else if ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+		    elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 		    {
 		        $sql.= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
 		    }
@@ -233,12 +233,12 @@ class FormProjets
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Draft");
 						}
-						else if ($obj->fk_statut == 2)
+						elseif ($obj->fk_statut == 2)
 						{
 							if ($discard_closed == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
-						else if ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						elseif ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 						{
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -416,12 +416,12 @@ class FormProjets
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Draft");
 							}
-							else if ($obj->fk_statut == Project::STATUS_CLOSED)
+							elseif ($obj->fk_statut == Project::STATUS_CLOSED)
 							{
 								if ($discard_closed == 2) $disabled=1;
 								$labeltoshow.=' - '.$langs->trans("Closed");
 							}
-							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							elseif ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");

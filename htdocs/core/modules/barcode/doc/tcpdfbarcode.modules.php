@@ -255,7 +255,7 @@ class modTcpdfbarcode extends ModeleBarCode
 		if (array_key_exists($dolEncodingType, $tcpdf1dEncodingTypes)) {
 			$this->is2d = false;
 			return $tcpdf1dEncodingTypes[$dolEncodingType];
-		} else if (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
+		} elseif (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
 			$this->is2d = true;
 			return $tcpdf2dEncodingTypes[$dolEncodingType];
 		} else {

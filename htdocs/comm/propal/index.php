@@ -367,7 +367,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
+			elseif ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}

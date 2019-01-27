@@ -165,26 +165,26 @@ class pdf_standard extends CommonStickerGenerator
 		{
 			// Output left area
 			if ($textleft == '__LOGO__' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textleft == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			elseif ($textleft == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
-		else if ($textleft!='' && $textright!='')	//
+		elseif ($textleft!='' && $textright!='')	//
 		{
 			if ($textleft == '__LOGO__' || $textleft == '__PHOTO__')
 			{
 				if ($textleft == '__LOGO__' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textleft == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				elseif ($textleft == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 				$pdf->SetXY($_PosX+$xleft+$widthtouse+1, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
-			else if ($textright == '__LOGO__' || $textright == '__PHOTO__')
+			elseif ($textright == '__LOGO__' || $textright == '__PHOTO__')
 			{
 				if ($textright == '__LOGO__' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textright == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				elseif ($textright == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
@@ -200,7 +200,7 @@ class pdf_standard extends CommonStickerGenerator
 		{
 			// Output right area
 			if ($textright == '__LOGO__' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textright == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			elseif ($textright == '__PHOTO__' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);

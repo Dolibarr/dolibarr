@@ -175,7 +175,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         global $db,$conf;
 
         if ($object->type == 2) $prefix=$this->prefixcreditnote;
-        else if ($facture->type == 3) $prefix=$this->prefixdeposit;
+        elseif ($facture->type == 3) $prefix=$this->prefixdeposit;
         else $prefix=$this->prefixinvoice;
 
         // D'abord on recupere la valeur max
@@ -220,7 +220,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
         	return $ref;
         }
-        else if ($mode == 'next')
+        elseif ($mode == 'next')
         {
         	$date=$object->date;	// This is invoice date (not creation date)
         	$yymm = strftime("%y%m",$date);

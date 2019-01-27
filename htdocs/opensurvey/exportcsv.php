@@ -109,7 +109,7 @@ if ($resql)
 				$input.='OK;';
 				$somme[$k]++;
 			}
-			else if ($car == "2")
+			elseif ($car == "2")
 			{
 				$input.='KO;';
 				$somme[$k]++;
