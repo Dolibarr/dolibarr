@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
@@ -1179,23 +1179,20 @@ else
 			print $formaccounting->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
 
-			if ($conf->global->MAIN_FEATURES_LEVEL)
+			// Accountancy_code_sell_intra
+			if ($mysoc->isInEEC())
 			{
-				// Accountancy_code_sell_intra
-				if ($mysoc->isInEEC())
-				{
-					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-					print '<td>';
-					print $formaccounting->select_account(GETPOST('accountancy_code_sell_intra'), 'accountancy_code_sell_intra', 1, null, 1, 1, '');
-					print '</td></tr>';
-				}
-
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 				print '<td>';
-				print $formaccounting->select_account(GETPOST('accountancy_code_sell_export'), 'accountancy_code_sell_export', 1, null, 1, 1, '');
+				print $formaccounting->select_account(GETPOST('accountancy_code_sell_intra'), 'accountancy_code_sell_intra', 1, null, 1, 1, '');
 				print '</td></tr>';
 			}
+
+			// Accountancy_code_sell_export
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+			print '<td>';
+			print $formaccounting->select_account(GETPOST('accountancy_code_sell_export'), 'accountancy_code_sell_export', 1, null, 1, 1, '');
+			print '</td></tr>';
 
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
