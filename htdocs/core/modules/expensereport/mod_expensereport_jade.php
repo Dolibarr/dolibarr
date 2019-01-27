@@ -44,7 +44,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 
@@ -78,7 +78,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
 	/**
-	 *  Test whether the numbers already in force in the base do not cause conflicts 
+	 *  Test whether the numbers already in force in the base do not cause conflicts
 	 *  that would prevent this numbering from working.
 	 *
 	 *  @return     boolean     false si conflit, true si ok
@@ -154,7 +154,6 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			endif;
 
 			$ref_number_int = ($newref+1)-1;
-			$update_number_int = true;
 
 			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 
