@@ -141,6 +141,12 @@ if ($action=='install')
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
 			$error++;
 		}
+		if (empty($_FILES['fileinstall']['tmp_name']))
+		{
+		    $langs->load("errors");
+		    setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+		    $error++;
+		}
     }
 
     if (! $error)
@@ -151,14 +157,14 @@ if ($action=='install')
             dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
         }
 
-        $tmpdir=preg_replace('/\.zip$/','',$original_file).'.dir';
+        $tmpdir=preg_replace('/\.zip$/i','',$original_file).'.dir';
         if ($tmpdir)
         {
             @dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$tmpdir);
             dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
         }
 
-        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
+        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'], $newfile, 1, 0, $_FILES['fileinstall']['error']);
         if ($result > 0)
         {
             $result=dol_uncompress($newfile,$conf->admin->dir_temp.'/'.$tmpdir);
@@ -206,6 +212,7 @@ if ($action=='install')
         }
         else
         {
+            setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
             $error++;
         }
     }
@@ -1002,6 +1009,7 @@ if ($mode == 'deploy')
 			print '<br>';
 
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
@@ -1026,6 +1034,20 @@ if ($mode == 'deploy')
 			print '<input class="flat minwidth400" type="file" name="fileinstall"> ';
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+
+			if (! empty($conf->global->MAIN_UPLOAD_DOC))
+			{
+			    if ($user->admin)
+			    {
+			        $langs->load('other');
+			        print ' ';
+			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+			    }
+			}
+			else
+			{
+			    print ' ('.$langs->trans("UploadDisabled").')';
+			}
 
 			print '</form>';
 
