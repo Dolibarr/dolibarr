@@ -187,7 +187,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject->note='New note after update';
-    	$result=$localobject->update($localobject->id,$user);
+    	$result=$localobject->update($localobject->id, $user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
