@@ -103,7 +103,7 @@ class AdherentType extends CommonObject
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -170,7 +170,7 @@ class AdherentType extends CommonObject
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
-	function update($user,$notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -356,7 +356,7 @@ class AdherentType extends CommonObject
 	 *  									2=Return array of members id only
 	 * 	@return	mixed						Array of members or -1 on error
 	 */
-	function listMembersForMemberType($excludefilter='', $mode=0)
+	function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
 		global $conf, $user;
 
@@ -411,7 +411,7 @@ class AdherentType extends CommonObject
      *  	@param		int  	$notooltip		1=Disable tooltip
      *		@return		string					String with URL
      */
-    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
+    function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
     {
         global $langs;
 
@@ -449,7 +449,7 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info,$mode=0)
+	function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;

@@ -124,7 +124,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal		Object commercial proposal
 	 *  @return string      			Next value
 	 */
-	function getNextValue($objsoc,$supplier_proposal)
+	function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 
@@ -165,7 +165,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 * 	@param	Object		$objforref		Object for number to search
 	 *  @return string      				Next free value
 	 */
-	function getNumRef($objsoc,$objforref)
+	function getNumRef($objsoc, $objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}

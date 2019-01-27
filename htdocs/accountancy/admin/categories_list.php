@@ -813,7 +813,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountingCategories($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf,$langs,$db;
 	global $form, $mysoc;

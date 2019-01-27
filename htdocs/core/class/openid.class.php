@@ -301,7 +301,7 @@ class SimpleOpenID
      * @param string	$params		Params
      * @return boolean|unknown
      */
-    function FSOCK_Request($url, $method="GET", $params = "")
+    function FSOCK_Request($url, $method = "GET", $params = "")
     {
         // phpcs:enable
         $fp = fsockopen("ssl://www.myopenid.com", 443, $errno, $errstr, 3); // Connection timeout is 3 seconds
@@ -335,7 +335,7 @@ class SimpleOpenID
      * @param 	string	$params		Params
      * @return string
      */
-    function CURL_Request($url, $method="GET", $params = "")
+    function CURL_Request($url, $method = "GET", $params = "")
     {
         // phpcs:enable
         // Remember, SSL MUST BE SUPPORTED
@@ -394,7 +394,7 @@ class SimpleOpenID
      * @param	string	$url	Url to found endpoint
      * @return 	string			Endpoint
      */
-    function GetOpenIDServer($url='')
+    function GetOpenIDServer($url = '')
     {
         // phpcs:enable
         global $conf;
@@ -518,7 +518,7 @@ class SimpleOpenID
      * @param	string	$url	Url of endpoint to request
      * @return 	string			First endpoint OpenID server found. False if it failed to found.
      */
-    function sendDiscoveryRequestToGetXRDS($url='')
+    function sendDiscoveryRequestToGetXRDS($url = '')
     {
     	global $conf;
 

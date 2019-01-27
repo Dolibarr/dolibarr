@@ -361,7 +361,7 @@ class Members extends DolibarrApi
      *
      * @url POST {id}/subscriptions
      */
-    function createSubscription($id, $start_date, $end_date, $amount, $label='')
+    function createSubscription($id, $start_date, $end_date, $amount, $label = '')
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);

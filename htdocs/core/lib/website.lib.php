@@ -33,7 +33,7 @@
  * @return	boolean							True if OK
  * @see dolWebsiteOutput for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 {
 	$nbrep = 0;
 
@@ -102,7 +102,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
  * @param	string	$replacewith	String to use as replacement
  * @return 	string					Result string without php code
  */
-function dolStripPhpCode($str, $replacewith='')
+function dolStripPhpCode($str, $replacewith = '')
 {
 	$newstr = '';
 
@@ -277,7 +277,7 @@ function dolWebsiteSaveContent($content)
  * @param 	int		$containerid		Id of container.
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt='',$containerid=0)
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0)
 {
 	global $db, $website;
 
@@ -412,7 +412,7 @@ function includeContainer($containerref)
  * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
-function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks=0, $grabimages=1, $grabimagesinto='subpage')
+function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
 {
 	global $conf;
 

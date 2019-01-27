@@ -108,7 +108,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -260,7 +260,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	function fetch_by_mailing($id=0)
+	function fetch_by_mailing($id = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -327,7 +327,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	string	$type_element	Type target
 	 *  @return int          			<0 if KO, >0 if OK
 	 */
-	function fetch_by_element($id=0, $type_element='mailing')
+	function fetch_by_element($id = 0, $type_element = 'mailing')
 	{
         // phpcs:enable
 		global $langs;
@@ -390,7 +390,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -466,7 +466,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -525,7 +525,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		array		$arrayquery		All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-	function savequery($user,$arrayquery)
+	function savequery($user, $arrayquery)
 	{
 		global $langs,$conf;
 
@@ -946,7 +946,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
-    public function transformToSQL($column_to_test,$criteria)
+    public function transformToSQL($column_to_test, $criteria)
     {
 		$return_sql_criteria = '(';
 

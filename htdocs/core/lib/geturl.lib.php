@@ -31,7 +31,7 @@
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						    Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array())
 {
     //declaring of global variables
     global $conf, $langs;

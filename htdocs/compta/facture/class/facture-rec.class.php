@@ -321,7 +321,7 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
+	function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
 	{
 		$sql = 'SELECT f.rowid, f.entity, f.titre, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
@@ -573,7 +573,7 @@ class FactureRec extends CommonInvoice
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete(User $user, $notrigger=0, $idwarehouse=-1)
+	function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
 	    $rowid=$this->id;
 
@@ -644,7 +644,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise=0, $date_start_fill=0, $date_end_fill=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0)
 	{
 	    global $mysoc;
 
@@ -826,7 +826,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise = 0, $notrigger=0, $date_start_fill=0, $date_end_fill=0)
+	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0)
 	{
 	    global $mysoc;
 
@@ -1002,7 +1002,7 @@ class FactureRec extends CommonInvoice
 	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
 	 *  @return	int								0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function createRecurringInvoices($restrictioninvoiceid=0, $forcevalidation=0)
+	function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0)
 	{
 		global $conf, $langs, $db, $user, $hookmanager;
 
@@ -1159,7 +1159,7 @@ class FactureRec extends CommonInvoice
      * @param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return string 			         			String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip='',$save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = '', $save_lastsearch_value = -1)
 	{
 		global $langs;
 
@@ -1210,7 +1210,7 @@ class FactureRec extends CommonInvoice
 	 *  @param      integer	$alreadypaid    Not used on recurring invoices
 	 *  @return     string			        Label of status
 	 */
-	function getLibStatut($mode=0, $alreadypaid=-1)
+	function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
 
 		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, $alreadypaid, empty($this->type)?0:$this->type);
@@ -1227,7 +1227,7 @@ class FactureRec extends CommonInvoice
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
-	function LibStatut($recur, $status, $mode=0, $alreadypaid=-1, $type=0)
+	function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -1328,7 +1328,7 @@ class FactureRec extends CommonInvoice
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option='')
+	function initAsSpecimen($option = '')
 	{
 		global $user,$langs,$conf;
 
@@ -1480,7 +1480,7 @@ class FactureRec extends CommonInvoice
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function setFrequencyAndUnit($frequency,$unit)
+    function setFrequencyAndUnit($frequency, $unit)
     {
         if (! $this->table_element)
         {
@@ -1523,7 +1523,7 @@ class FactureRec extends CommonInvoice
      *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
      *	@return		int									<0 if KO, >0 if OK
      */
-    function setNextDate($date, $increment_nb_gen_done=0)
+    function setNextDate($date, $increment_nb_gen_done = 0)
     {
         if (! $this->table_element)
         {
@@ -1823,7 +1823,7 @@ class FactureLigneRec extends CommonInvoiceLine
      *  @param		int		$notrigger				No trigger
      *	@return    	int             				<0 if KO, Id of line if OK
      */
-    function update(User $user, $notrigger=0)
+    function update(User $user, $notrigger = 0)
     {
     	global $conf;
 

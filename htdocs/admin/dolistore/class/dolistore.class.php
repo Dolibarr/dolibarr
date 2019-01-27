@@ -54,7 +54,7 @@ class Dolistore
 	 *
 	 * @param	boolean		$debug		Enable debug of request on screen
 	 */
-	function __construct($debug=false)
+	function __construct($debug = false)
 	{
 		global $conf, $langs;
 

@@ -73,7 +73,7 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+	function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;

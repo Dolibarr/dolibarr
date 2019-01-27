@@ -65,7 +65,7 @@ class Menu
      * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
+    function add($url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
     	$this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
     }
@@ -88,7 +88,7 @@ class Menu
      * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
-    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
+    function insert($idafter, $url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
         $array_start = array_slice($this->liste,0,($idafter+1));
         $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));

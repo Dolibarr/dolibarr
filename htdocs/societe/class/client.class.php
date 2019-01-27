@@ -98,7 +98,7 @@ class Client extends Societe
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
 	 *  @return int					<0 if KO, >0 if OK
 	 */
-    function loadCacheOfProspStatus($active=1)
+    function loadCacheOfProspStatus($active = 1)
     {
     	global $langs;
 

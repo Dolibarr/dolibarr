@@ -309,7 +309,7 @@ class modMyModule extends DolibarrModules
      *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		$result=$this->_load_tables('/mymodule/sql/');
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')

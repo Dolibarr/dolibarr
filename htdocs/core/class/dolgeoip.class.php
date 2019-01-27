@@ -41,7 +41,7 @@ class DolGeoIP
 	 * @param 	string	$type		'country' or 'city'
 	 * @param	string	$datfile	Data file
 	 */
-	function __construct($type,$datfile)
+	function __construct($type, $datfile)
 	{
 		if ($type == 'country')
 		{

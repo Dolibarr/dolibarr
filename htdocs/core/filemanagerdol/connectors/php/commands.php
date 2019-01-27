@@ -67,7 +67,7 @@ function GetFolders($resourceType, $currentFolder)
  * @param	string	$currentFolder	Current folder
  * @return void
  */
-function GetFoldersAndFiles( $resourceType, $currentFolder )
+function GetFoldersAndFiles($resourceType, $currentFolder)
 {
 	// Map the virtual path to the local server path.
 	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFoldersAndFiles');
@@ -132,7 +132,7 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
  * @param   string $currentFolder   Current folder
  * @return void
  */
-function CreateFolder( $resourceType, $currentFolder )
+function CreateFolder($resourceType, $currentFolder)
 {
 	if (!isset($_GET)) {
 		global $_GET;

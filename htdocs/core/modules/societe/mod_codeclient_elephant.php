@@ -139,7 +139,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objsoc=0,$type=-1)
+	function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
@@ -200,7 +200,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
 	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objsoc=0,$type=-1)
+	function getNextValue($objsoc = 0, $type = -1)
 	{
 		global $db,$conf;
 
@@ -324,7 +324,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $soc, $type=0)
+	function verif_dispo($db, $code, $soc, $type = 0)
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";

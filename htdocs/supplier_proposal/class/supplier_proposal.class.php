@@ -211,7 +211,7 @@ class SupplierProposal extends CommonObject
      *	@param      int		$socid		Id third party
      *	@param      int		$supplier_proposalid   Id supplier_proposal
      */
-    function __construct($db, $socid="", $supplier_proposalid=0)
+    function __construct($db, $socid = "", $supplier_proposalid = 0)
     {
         global $conf,$langs;
 
@@ -237,7 +237,7 @@ class SupplierProposal extends CommonObject
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
-    function add_product($idproduct, $qty, $remise_percent=0)
+    function add_product($idproduct, $qty, $remise_percent = 0)
     {
         // phpcs:enable
         global $conf, $mysoc;
@@ -394,7 +394,7 @@ class SupplierProposal extends CommonObject
      *
      *    	@see       	add_product
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_supplier='', $fk_unit='', $origin='', $origin_id=0, $pu_ht_devise=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0)
     {
     	global $mysoc, $conf;
 
@@ -656,7 +656,7 @@ class SupplierProposal extends CommonObject
 	 *	@param		int			$fk_unit			Id of the unit to use.
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $array_option=0, $ref_supplier='', $fk_unit='')
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_option = 0, $ref_supplier = '', $fk_unit = '')
     {
         global $conf,$user,$langs, $mysoc;
 
@@ -841,7 +841,7 @@ class SupplierProposal extends CommonObject
      * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
         global $langs, $conf, $mysoc, $hookmanager;
         $error=0;
@@ -1119,7 +1119,7 @@ class SupplierProposal extends CommonObject
      *		@param		int				$socid			Id of thirdparty
      * 	 	@return		int								New id of clone
      */
-    function createFromClone($socid=0)
+    function createFromClone($socid = 0)
     {
         global $user,$langs,$conf,$hookmanager;
 
@@ -1214,7 +1214,7 @@ class SupplierProposal extends CommonObject
      *	@param		string		$ref		Ref of proposal
      *	@return     int         			>0 if OK, <0 if KO
      */
-    function fetch($rowid,$ref='')
+    function fetch($rowid, $ref = '')
     {
         global $conf;
 
@@ -1424,7 +1424,7 @@ class SupplierProposal extends CommonObject
      *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return int         		<0 if KO, >=0 if OK
      */
-    function valid($user, $notrigger=0)
+    function valid($user, $notrigger = 0)
     {
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1643,7 +1643,7 @@ class SupplierProposal extends CommonObject
      *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
-    function reopen($user, $statut, $note='', $notrigger=0)
+    function reopen($user, $statut, $note = '', $notrigger = 0)
     {
         global $langs,$conf;
 
@@ -1912,7 +1912,7 @@ class SupplierProposal extends CommonObject
      *    @param    string	$sortorder			Sort order
      *    @return	int		       				-1 if KO, array with result if OK
      */
-    function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datec', $sortorder='DESC')
+    function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datec', $sortorder = 'DESC')
     {
         // phpcs:enable
         global $conf,$user;
@@ -1983,7 +1983,7 @@ class SupplierProposal extends CommonObject
      *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
-    function delete($user, $notrigger=0)
+    function delete($user, $notrigger = 0)
     {
         global $conf,$langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2156,7 +2156,7 @@ class SupplierProposal extends CommonObject
      *    	@param      int			$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *    	@return     string		Label
      */
-    function getLibStatut($mode=0)
+    function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut,$mode);
     }
@@ -2169,7 +2169,7 @@ class SupplierProposal extends CommonObject
      *  @param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *  @return     string      Label
      */
-	function LibStatut($statut,$mode=1)
+	function LibStatut($statut, $mode = 1)
     {
         // phpcs:enable
     	// Init/load array of translation of status
@@ -2214,7 +2214,7 @@ class SupplierProposal extends CommonObject
      *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
      *      @return         int             <0 if KO, >0 if OK
      */
-    function load_board($user,$mode)
+    function load_board($user, $mode)
     {
         // phpcs:enable
         global $conf, $user, $langs;
@@ -2480,7 +2480,7 @@ class SupplierProposal extends CommonObject
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return     string          					String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $get_params='', $notooltip=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $langs, $conf, $user;
 
@@ -2638,7 +2638,7 @@ class SupplierProposal extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
@@ -2941,7 +2941,7 @@ class SupplierProposalLine extends CommonObjectLine
      *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    function insert($notrigger=0)
+    function insert($notrigger = 0)
     {
         global $conf,$langs,$user;
 
@@ -3126,7 +3126,7 @@ class SupplierProposalLine extends CommonObjectLine
      *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	int					<0 if ko, >0 if ok
      */
-    function update($notrigger=0)
+    function update($notrigger = 0)
     {
         global $conf,$langs,$user;
 

@@ -141,7 +141,7 @@ function xyzToUnixTimestamp($mysqldate)
  * @param 	int		$year			Year
  * @return	void
  */
-function displayBox($selectedDate,$month,$year)
+function displayBox($selectedDate, $month, $year)
 {
 	global $langs,$conf;
 

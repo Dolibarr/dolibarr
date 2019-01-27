@@ -92,7 +92,7 @@ abstract class ModeleNumRefChequeReceipts
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -135,7 +135,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;

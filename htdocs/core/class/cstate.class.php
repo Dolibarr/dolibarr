@@ -92,7 +92,7 @@ class Cstate // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -168,7 +168,7 @@ class Cstate // extends CommonObject
      *  @param		string	$code	Code
      *  @return     int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$code='')
+    function fetch($id, $code = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -212,7 +212,7 @@ class Cstate // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -281,7 +281,7 @@ class Cstate // extends CommonObject
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

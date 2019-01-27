@@ -423,7 +423,7 @@ class Product extends CommonObject
      * @param  int  $notrigger Disable triggers
      * @return int                         Id of product/service if OK, < 0 if KO
      */
-    function create($user,$notrigger=0)
+    function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -727,7 +727,7 @@ class Product extends CommonObject
      *                                     -2 ErrorBarCodeRequired
      *                                     -3 ErrorBarCodeAlreadyUsed
      */
-    function check_barcode($valuetotest,$typefortest)
+    function check_barcode($valuetotest, $typefortest)
     {
         // phpcs:enable
         global $conf;
@@ -764,7 +764,7 @@ class Product extends CommonObject
      * @param  string $action    Current action for hookmanager ('add' or 'update')
      * @return int                 1 if OK, -1 if ref already exists, -2 if other error
      */
-    function update($id, $user, $notrigger=false, $action='update')
+    function update($id, $user, $notrigger = false, $action = 'update')
     {
         global $langs, $conf, $hookmanager;
 
@@ -1056,7 +1056,7 @@ class Product extends CommonObject
      * @param  int  $notrigger Do not execute trigger
      * @return int                    < 0 if KO, 0 = Not possible, > 0 if OK
      */
-    function delete(User $user, $notrigger=0)
+    function delete(User $user, $notrigger = 0)
     {
         // Deprecation warning
         if ($id > 0) {
@@ -1466,7 +1466,7 @@ class Product extends CommonObject
      * @param  int  $level price level to change
      * @return int                    <0 if KO, >0 if OK
      */
-    function _log_price($user,$level=0)
+    function _log_price($user, $level = 0)
     {
         // phpcs:enable
         global $conf;
@@ -1536,7 +1536,7 @@ class Product extends CommonObject
      * @return	array								Array of price information
      * @see get_buyprice()
      */
-    function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp=0)
+    function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
     {
     	global $conf, $db;
 
@@ -1648,7 +1648,7 @@ class Product extends CommonObject
      * @return int                         <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
      * @see getSellPrice()
      */
-    function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0)
+    function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
     {
         // phpcs:enable
         global $conf;
@@ -1798,7 +1798,7 @@ class Product extends CommonObject
      * @param  string $newdefaultvatcode Default vat code
      * @return int                            <0 if KO, >0 if OK
      */
-    function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice=0, $level=0, $newnpr=0, $newpbq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
+    function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '')
     {
         global $conf,$langs;
 
@@ -1980,7 +1980,7 @@ class Product extends CommonObject
      * @param  int    $ignore_expression Ignores the math expression for calculating price and uses the db value instead
      * @return int                         <0 if KO, 0 if not found, >0 if OK
      */
-    function fetch($id='', $ref='', $ref_ext='', $barcode='', $ignore_expression=0)
+    function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -2333,7 +2333,7 @@ class Product extends CommonObject
      * @param  int $socid Id societe
      * @return array               Tableau des stats
      */
-    function load_stats_propale($socid=0)
+    function load_stats_propale($socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -2380,7 +2380,7 @@ class Product extends CommonObject
      * @param  int $socid Id thirdparty
      * @return array               Tableau des stats
      */
-    function load_stats_proposal_supplier($socid=0)
+    function load_stats_proposal_supplier($socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -2429,7 +2429,7 @@ class Product extends CommonObject
      * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
      * @return array                  Array of stats (nb=nb of order, qty=qty ordered)
      */
-    function load_stats_commande($socid=0,$filtrestatut='', $forVirtualStock = 0)
+    function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -2524,7 +2524,7 @@ class Product extends CommonObject
      * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
      * @return array                     Tableau des stats
      */
-    function load_stats_commande_fournisseur($socid=0,$filtrestatut='', $forVirtualStock = 0)
+    function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -2572,7 +2572,7 @@ class Product extends CommonObject
      * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
      * @return array                   Tableau des stats
      */
-    function load_stats_sending($socid=0,$filtrestatut='', $forVirtualStock = 0)
+    function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -2624,7 +2624,7 @@ class Product extends CommonObject
      * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
      * @return array                   Tableau des stats
      */
-    function load_stats_reception($socid=0,$filtrestatut='', $forVirtualStock = 0)
+    function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -2670,7 +2670,7 @@ class Product extends CommonObject
      * @param  int $socid Id societe
      * @return array               Tableau des stats
      */
-    function load_stats_contrat($socid=0)
+    function load_stats_contrat($socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -2716,7 +2716,7 @@ class Product extends CommonObject
      * @param  int $socid Id societe
      * @return array                   Tableau des stats
      */
-    function load_stats_facture($socid=0)
+    function load_stats_facture($socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -2762,7 +2762,7 @@ class Product extends CommonObject
      * @param  int $socid Id societe
      * @return array                   Tableau des stats
      */
-    function load_stats_facture_fournisseur($socid=0)
+    function load_stats_facture_fournisseur($socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -2810,7 +2810,7 @@ class Product extends CommonObject
      * @param  int    $year Year (0=current year)
      * @return array               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function _get_stats($sql, $mode, $year=0)
+    function _get_stats($sql, $mode, $year = 0)
     {
         // phpcs:enable
         $resql = $this->db->query($sql);
@@ -2876,7 +2876,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_vente($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf;
@@ -2921,7 +2921,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_achat($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf;
@@ -2965,7 +2965,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_propal($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf;
@@ -3009,7 +3009,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_propalsupplier($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf;
@@ -3053,7 +3053,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_order($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf, $user;
@@ -3096,7 +3096,7 @@ class Product extends CommonObject
      * @param  string $morefilter          More sql filters
      * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
-    function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+    function get_nb_ordersupplier($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
         global $conf, $user;
@@ -3138,7 +3138,7 @@ class Product extends CommonObject
      * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
      * @return int                < 0 if KO, > 0 if OK
      */
-    function add_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
+    function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
     {
         // phpcs:enable
         // Clean parameters
@@ -3196,7 +3196,7 @@ class Product extends CommonObject
      * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
      * @return int                < 0 if KO, > 0 if OK
      */
-    function update_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
+    function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
     {
         // phpcs:enable
         // Clean parameters
@@ -3543,7 +3543,7 @@ class Product extends CommonObject
      * @param  int    $id_parent  Id parent
      * @return void
      */
-    function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1, $id_parent=0)
+    function fetch_prod_arbo($prod, $compl_path = "", $multiply = 1, $level = 1, $id_parent = 0)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -3600,7 +3600,7 @@ class Product extends CommonObject
      * @param  int $multiply Because each sublevel must be multiplicated by parent nb
      * @return array                     $this->res
      */
-    function get_arbo_each_prod($multiply=1)
+    function get_arbo_each_prod($multiply = 1)
     {
         // phpcs:enable
         $this->res = array();
@@ -3735,7 +3735,7 @@ class Product extends CommonObject
      * @param  int $level          Level of recursing call (start to 1)
      * @return array                       Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
      */
-    public function getChildsArbo($id, $firstlevelonly=0, $level=1)
+    public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
     {
         global $alreadyfound;
 
@@ -3823,7 +3823,7 @@ class Product extends CommonObject
      * @param  int    $notooltip			 No tooltip
      * @return string                                String with URL
      */
-    public function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1, $notooltip=0)
+    public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0)
     {
         global $conf, $langs, $hookmanager;
         include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -3965,7 +3965,7 @@ class Product extends CommonObject
      * @param  int       $hideref     Hide ref
      * @return int                         0 if KO, 1 if OK
      */
-    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+    public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
         global $conf,$user,$langs;
 
@@ -3994,7 +3994,7 @@ class Product extends CommonObject
      * @param  int $type 0=Sell, 1=Buy, 2=Batch Number management
      * @return string          Label of status
      */
-    public function getLibStatut($mode=0, $type=0)
+    public function getLibStatut($mode = 0, $type = 0)
     {
         switch ($type)
         {
@@ -4019,7 +4019,7 @@ class Product extends CommonObject
      * @param  int $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
      * @return string              Label of status
      */
-    function LibStatut($status,$mode=0,$type=0)
+    function LibStatut($status, $mode = 0, $type = 0)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -4122,7 +4122,7 @@ class Product extends CommonObject
      * @param  int    $origin_id      Origin id of element
      * @return int                     <0 if KO, >0 if OK
      */
-    function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='', $origin_element='', $origin_id=null)
+    function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null)
     {
         // phpcs:enable
         if ($id_entrepot) {
@@ -4170,7 +4170,7 @@ class Product extends CommonObject
      * @param  int    $origin_id      Origin id of element
      * @return int                     <0 if KO, >0 if OK
      */
-    function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='', $origin_element='', $origin_id=null)
+    function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
     {
         // phpcs:enable
         if ($id_entrepot) {
@@ -4210,7 +4210,7 @@ class Product extends CommonObject
      * @return int                   < 0 if KO, > 0 if OK
      * @see    load_virtual_stock(), loadBatchInfo()
      */
-    function load_stock($option='')
+    function load_stock($option = '')
     {
         // phpcs:enable
         global $conf;
@@ -4477,7 +4477,7 @@ class Product extends CommonObject
      * @param  int    $nbmax Nombre maximum de photos (0=pas de max)
      * @return array                   Tableau de photos
      */
-    function liste_photos($dir,$nbmax=0)
+    function liste_photos($dir, $nbmax = 0)
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -4648,7 +4648,7 @@ class Product extends CommonObject
      * @param  string  $type   Barcode type (ean, isbn, ...)
      * @return void
      */
-    function get_barcode($object,$type='')
+    function get_barcode($object, $type = '')
     {
         // phpcs:enable
         global $conf;
@@ -4724,7 +4724,7 @@ class Product extends CommonObject
      * @param  string $type Label type (long or short)
      * @return string|int <0 if ko, label if ok
      */
-    function getLabelOfUnit($type='long')
+    function getLabelOfUnit($type = 'long')
     {
         global $langs;
 

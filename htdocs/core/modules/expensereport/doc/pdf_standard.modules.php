@@ -541,7 +541,7 @@ class pdf_standard extends ModeleExpenseReport
      * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
      * @return  void
      */
-    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails=0)
+    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
         global $conf;
         $pdf->SetFont('','', $default_font_size - 1);
@@ -835,7 +835,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1057,7 +1057,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

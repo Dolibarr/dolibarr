@@ -62,7 +62,7 @@ function paypaladmin_prepare_head()
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showPaypalPaymentUrl($type,$ref)
+function showPaypalPaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -88,7 +88,7 @@ function showPaypalPaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
 {
 	global $conf;
 
@@ -194,7 +194,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param   string	$tag				Full tag
  * @return	string						No return (a redirect is done) if OK, or Error message if KO
  */
-function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
+function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag)
 {
     //declaring of global variables
     global $conf, $langs;
@@ -330,7 +330,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  * @param	string			$desc				Description
  * @return	array								Array
  */
-function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
+function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email = '', $desc = '')
 {
     //------------------------------------------------------------------------------------------------------------------------------------
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
@@ -583,7 +583,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
  * @param	string	$nvpStr 		is nvp string.
  * @return	array					returns an associtive array containing the response from the server.
  */
-function hash_call($methodName,$nvpStr)
+function hash_call($methodName, $nvpStr)
 {
     //declaring of global variables
     global $conf, $langs;

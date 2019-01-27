@@ -61,7 +61,7 @@ abstract class ActionsCardCommon
      *  @param		ref		$ref		Object ref
      *  @return		object				Object loaded
      */
-    protected function getObject($id,$ref='')
+    protected function getObject($id, $ref = '')
     {
     	//$ret = $this->getInstanceDao();
 
@@ -79,7 +79,7 @@ abstract class ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
      */
-    function assign_values(&$action, $id=0, $ref='')
+    function assign_values(&$action, $id = 0, $ref = '')
     {
         // phpcs:enable
         global $conf, $langs, $user, $mysoc, $canvas;

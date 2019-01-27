@@ -111,7 +111,7 @@ class PaymentVarious extends CommonObject
 	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -181,7 +181,7 @@ class PaymentVarious extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=null)
+	function fetch($id, $user = null)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -505,7 +505,7 @@ class PaymentVarious extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -518,7 +518,7 @@ class PaymentVarious extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Libelle
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -567,7 +567,7 @@ class PaymentVarious extends CommonObject
      *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *	@return string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $save_lastsearch_value=-1, $notooltip=0)
+	function getNomUrl($withpicto = 0, $option = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $db, $conf, $langs, $hookmanager;
 		global $langs;
