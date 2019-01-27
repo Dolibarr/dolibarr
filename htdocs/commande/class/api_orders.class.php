@@ -496,7 +496,7 @@ class Orders extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -629,7 +629,7 @@ class Orders extends DolibarrApi
      *
      * @return  int
      */
-    function close($id, $notrigger=0)
+    function close($id, $notrigger = 0)
     {
     	if(! DolibarrApiAccess::$user->rights->commande->creer) {
     		throw new RestException(401);
@@ -675,7 +675,7 @@ class Orders extends DolibarrApi
      *
      * @return  array
      */
-    function settodraft($id, $idwarehouse=-1)
+    function settodraft($id, $idwarehouse = -1)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);

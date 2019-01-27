@@ -39,7 +39,7 @@ $shmoffset=1000;	// Max number of entries found into a language file. If too low
  * 	@param	string		$data			Data to save
  * 	@return	int							<0 if KO, Nb of bytes written if OK
  */
-function dol_setcache($memoryid,$data)
+function dol_setcache($memoryid, $data)
 {
 	global $conf;
 	$result=0;
@@ -214,7 +214,7 @@ function dol_listshmop()
  * 	@param	string	$data			Data to save
  * 	@return	int						<0 if KO, Nb of bytes written if OK
  */
-function dol_setshmop($memoryid,$data)
+function dol_setshmop($memoryid, $data)
 {
 	global $shmkeys,$shmoffset;
 

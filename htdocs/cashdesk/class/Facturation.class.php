@@ -283,7 +283,7 @@ class Facturation
      * @param	int		$aId	Id
      * @return  id
      */
-    public function id($aId=null)
+    public function id($aId = null)
     {
 
         if ( !$aId )
@@ -308,7 +308,7 @@ class Facturation
      * @param	string	$aRef	Ref
      * @return	string			Ref
      */
-    public function ref($aRef=null)
+    public function ref($aRef = null)
     {
 
         if (is_null($aRef))
@@ -331,7 +331,7 @@ class Facturation
      * @param	int		$aQte		Qty
      * @return	int					Qty
      */
-    public function qte($aQte=null)
+    public function qte($aQte = null)
     {
         if (is_null($aQte))
         {
@@ -354,7 +354,7 @@ class Facturation
      * @param   string	$aStock		Stock
      * @return	string				Stock
      */
-    public function stock($aStock=null)
+    public function stock($aStock = null)
     {
 
         if (is_null($aStock))
@@ -377,7 +377,7 @@ class Facturation
      * @param	string	$aRemisePercent		Discount
      * @return	string						Discount
      */
-    public function remisePercent($aRemisePercent=null)
+    public function remisePercent($aRemisePercent = null)
     {
 
         if (is_null($aRemisePercent))
@@ -400,7 +400,7 @@ class Facturation
      * @param	int		$aMontantRemise		Amount
      * @return	string						Amount
      */
-    public function montantRemise($aMontantRemise=null)
+    public function montantRemise($aMontantRemise = null)
     {
 
         if (is_null($aMontantRemise)) {
@@ -421,7 +421,7 @@ class Facturation
      * @param	int		$aPrix		Price
      * @return	string				Stock
      */
-    public function prix($aPrix=null)
+    public function prix($aPrix = null)
     {
 
         if (is_null($aPrix)) {
@@ -442,7 +442,7 @@ class Facturation
      * @param	int		$aTva		Vat
      * @return	int					Vat
      */
-    public function tva($aTva=null)
+    public function tva($aTva = null)
     {
         if (is_null($aTva)) {
 
@@ -462,7 +462,7 @@ class Facturation
      * @param string	$aNumFacture		Invoice ref
      * @return	string						Invoice ref
      */
-    public function numInvoice($aNumFacture=null)
+    public function numInvoice($aNumFacture = null)
     {
         if (is_null($aNumFacture)) {
 
@@ -482,7 +482,7 @@ class Facturation
      * @param	int		$aModeReglement		Payment mode
      * @return	int							Payment mode
      */
-    public function getSetPaymentMode($aModeReglement=null)
+    public function getSetPaymentMode($aModeReglement = null)
     {
 
         if (is_null($aModeReglement)) {
@@ -503,7 +503,7 @@ class Facturation
      * @param	int		$aMontantEncaisse		Amount
      * @return	int								Amount
      */
-    public function montantEncaisse($aMontantEncaisse=null)
+    public function montantEncaisse($aMontantEncaisse = null)
     {
 
         if (is_null($aMontantEncaisse)) {
@@ -524,7 +524,7 @@ class Facturation
      * @param	int			$aMontantRendu		Amount
      * @return	int								Amount
      */
-    public function montantRendu($aMontantRendu=null)
+    public function montantRendu($aMontantRendu = null)
     {
 
         if (is_null($aMontantRendu)) {
@@ -545,7 +545,7 @@ class Facturation
      * @param	date		$aPaiementLe		Date
      * @return	date							Date
      */
-    public function paiementLe($aPaiementLe=null)
+    public function paiementLe($aPaiementLe = null)
     {
         if (is_null($aPaiementLe)) {
 
@@ -565,7 +565,7 @@ class Facturation
      * @param	int		$aTotalHt		Total amount
      * @return	int						Total amount
      */
-    public function prixTotalHt($aTotalHt=null)
+    public function prixTotalHt($aTotalHt = null)
     {
         if (is_null($aTotalHt)) {
 
@@ -585,7 +585,7 @@ class Facturation
      * @param	int		$aMontantTva	Amount vat
      * @return	int						Amount vat
      */
-    public function montantTva($aMontantTva=null)
+    public function montantTva($aMontantTva = null)
     {
         if (is_null($aMontantTva)) {
 
@@ -605,7 +605,7 @@ class Facturation
      * @param	int		$aTotalTtc		Amount ttc
      * @return	int						Amount ttc
      */
-    public function prixTotalTtc($aTotalTtc=null)
+    public function prixTotalTtc($aTotalTtc = null)
     {
         if (is_null($aTotalTtc))
         {

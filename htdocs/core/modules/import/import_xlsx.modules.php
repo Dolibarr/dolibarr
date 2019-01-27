@@ -95,7 +95,7 @@ class ImportXlsx extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function __construct($db,$datatoimport)
+	function __construct($db, $datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;
@@ -166,7 +166,7 @@ class ImportXlsx extends ModeleImports
 	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string
 	 */
-	function write_title_example($outputlangs,$headerlinefields)
+	function write_title_example($outputlangs, $headerlinefields)
 	{
         // phpcs:enable
 		global $conf;
@@ -192,7 +192,7 @@ class ImportXlsx extends ModeleImports
 	 * 	@param	array		$contentlinevalues	Array of lines
 	 * 	@return	string
 	 */
-	function write_record_example($outputlangs,$contentlinevalues)
+	function write_record_example($outputlangs, $contentlinevalues)
 	{
         // phpcs:enable
 		$col = 0;
@@ -346,7 +346,7 @@ class ImportXlsx extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
+	function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
         // phpcs:enable
 		global $langs,$conf,$user;

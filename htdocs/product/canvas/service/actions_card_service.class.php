@@ -48,7 +48,7 @@ class ActionsCardService
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function __construct($db,$targetmodule,$canvas,$card)
+	function __construct($db, $targetmodule, $canvas, $card)
 	{
 		$this->db 				= $db;
 		$this->targetmodule     = $targetmodule;
@@ -72,7 +72,7 @@ class ActionsCardService
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+	function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;

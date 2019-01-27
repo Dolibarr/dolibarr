@@ -88,7 +88,7 @@ class DolGraph
 	 *
 	 * @param	string	$library		'jflot' (default) or 'artichow' (no more supported)
 	 */
-	function __construct($library='jflot')
+	function __construct($library = 'jflot')
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
@@ -658,7 +658,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-	function draw($file, $fileurl='')
+	function draw($file, $fileurl = '')
 	{
 		if (empty($file))
 		{
@@ -690,7 +690,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	void
 	 */
-	private function draw_artichow($file,$fileurl)
+	private function draw_artichow($file, $fileurl)
 	{
         // phpcs:enable
 		global $artichow_defaultfont;
@@ -1127,7 +1127,7 @@ class DolGraph
 	 * @param	int			$shownographyet 	Show graph to say there is not enough data
 	 * @return	string							HTML string to show graph
 	 */
-	function show($shownographyet=0)
+	function show($shownographyet = 0)
 	{
 		global $langs;
 
@@ -1149,7 +1149,7 @@ class DolGraph
 	 * @param	string	$defaultsize	Value we want as default size
 	 * @return	int						Value of width or height to use by default
 	 */
-	static function getDefaultGraphSizeForStats($direction,$defaultsize='')
+	static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
 

@@ -46,7 +46,7 @@ class DolibarrApi
      * @param   string  $cachedir       Cache dir
      * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir='', $refreshCache=false)
+    function __construct($db, $cachedir = '', $refreshCache = false)
     {
         global $conf, $dolibarr_main_url_root;
 
@@ -222,7 +222,7 @@ class DolibarrApi
      * @return bool
 	 * @throws RestException
 	 */
-    static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+    static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
     {
 
 		// Features/modules to check

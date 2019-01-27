@@ -96,7 +96,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param)
+	function addSticker(&$pdf, $outputlangs, $param)
 	{
 		global $mysoc,$conf;
 
@@ -277,7 +277,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
+	function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;

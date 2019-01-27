@@ -37,7 +37,7 @@
  * 	@return	int|object					<=0 if KO, Object if OK
  *  @see rebuildObjectSql
  */
-function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
+function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
 {
     global $db, $langs;
 
@@ -210,7 +210,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  * 	@return	int							<=0 if KO, >0 if OK
  *  @see rebuildObjectClass
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null)
 {
     global $db, $langs;
 

@@ -107,7 +107,7 @@ abstract class CommonStickerGenerator
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @return int             				1=OK, 0=KO
 	 */
-	abstract function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='');
+	abstract function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
     // phpcs:enable
 
 	/**
@@ -118,7 +118,7 @@ abstract class CommonStickerGenerator
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
 	 */
-	abstract function addSticker(&$pdf,$outputlangs,$param);
+	abstract function addSticker(&$pdf, $outputlangs, $param);
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
@@ -129,7 +129,7 @@ abstract class CommonStickerGenerator
 	 * @param    int        $pt    point
 	 * @return   void
 	 */
-	function Set_Char_Size(&$pdf,$pt)
+	function Set_Char_Size(&$pdf, $pt)
 	{
         // phpcs:enable
 		if ($pt > 3) {
@@ -152,7 +152,7 @@ abstract class CommonStickerGenerator
 	 * @param 	int		$nbPointilles		Nb pointilles
 	 * @return	void
 	 */
-    function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
+    function _Pointille(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $nbPointilles = 15)
 	{
         // phpcs:enable
 		$pdf->SetLineWidth($epaisseur);
@@ -195,7 +195,7 @@ abstract class CommonStickerGenerator
 	 * @param int	$taille             Size
 	 * @return void
 	 */
-	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
+	function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{
         // phpcs:enable
 		$pdf->SetDrawColor(192,192,192);

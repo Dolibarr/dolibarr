@@ -1277,7 +1277,7 @@ $db->close();
  * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $nonew=0)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0)
 {
     global $user, $conf, $langs;
     global $action, $filter, $filtert, $status, $actioncode, $usergroup;	// Filters used into search form

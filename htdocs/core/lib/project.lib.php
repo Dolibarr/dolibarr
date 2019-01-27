@@ -251,7 +251,7 @@ function task_prepare_head($object)
  * @param   string  $fuser      Filter on user
  * @return  array				Array of tabs to show
  */
-function project_timesheet_prepare_head($mode, $fuser=null)
+function project_timesheet_prepare_head($mode, $fuser = null)
 {
 	global $langs, $conf, $user;
 	$h = 0;
@@ -347,7 +347,7 @@ function project_admin_prepare_head()
  * @param   string      $filterprogresscalc     filter text
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0, $filterprogresscalc='')
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '')
 {
 	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
@@ -647,7 +647,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
+function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -873,7 +873,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1162,7 +1162,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak=0)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1473,7 +1473,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array(),$hiddenfields=array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $statut = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
 	global $langs,$conf,$user,$bc;
 

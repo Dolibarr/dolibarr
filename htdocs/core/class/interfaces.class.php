@@ -65,7 +65,7 @@ class Interfaces
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
-    function run_triggers($action,$object,$user,$langs,$conf)
+    function run_triggers($action, $object, $user, $langs, $conf)
     {
         // phpcs:enable
         // Check parameters
@@ -241,7 +241,7 @@ class Interfaces
      *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
      * 	@return	array								Array list of triggers
      */
-    function getTriggersList($forcedirtriggers=null)
+    function getTriggersList($forcedirtriggers = null)
     {
         global $conf, $langs, $db;
 

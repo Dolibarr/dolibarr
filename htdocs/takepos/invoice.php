@@ -324,7 +324,7 @@ if ($placeid > 0) {
         if ($line->special_code == "3") { print ' order';
         }
         print '" id="' . $line->rowid . '">';
-        print '<td>' . $line->product_label . $line->desc . '</td>';
+        print '<td align="left">' . $line->product_label . $line->desc . '</td>';
         print '<td align="right">' . $line->qty . '</td>';
         print '<td align="right">' . price($line->total_ttc) . '</td>';
         print '</tr>';

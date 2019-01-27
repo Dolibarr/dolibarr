@@ -69,7 +69,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_user($user,$outputlangs)
+    function get_substitutionarray_user($user, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -107,7 +107,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_mysoc($mysoc,$outputlangs)
+    function get_substitutionarray_mysoc($mysoc, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -167,7 +167,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_thirdparty($object,$outputlangs)
+    function get_substitutionarray_thirdparty($object, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -361,7 +361,7 @@ abstract class CommonDocGenerator
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+	function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
         // phpcs:enable
 		global $conf;
@@ -604,7 +604,7 @@ abstract class CommonDocGenerator
      * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
-    function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
+    function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
     	global $conf;
@@ -716,7 +716,7 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
     {
         // phpcs:enable
         $array_other = array();
@@ -747,7 +747,7 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
+    function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -834,7 +834,7 @@ abstract class CommonDocGenerator
 	 * @param	int		$hidebottom		Hide bottom
 	 * @return	void
 	 */
-    function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
+    function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
     {
         if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
         $pdf->line($x+$l, $y, $x+$l, $y+$h);
@@ -870,7 +870,7 @@ abstract class CommonDocGenerator
      *      @param	int				$hideref			Do not show ref
      *      @return	null
      */
-    function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
         global $conf;
 

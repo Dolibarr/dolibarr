@@ -317,7 +317,7 @@ function product_lot_admin_prepare_head()
  * @param 	int			$socid		Thirdparty id
  * @return	integer					NB of lines shown into array
  */
-function show_stats_for_company($product,$socid)
+function show_stats_for_company($product, $socid)
 {
 	global $conf,$langs,$user,$db;
 
@@ -470,7 +470,7 @@ function show_stats_for_company($product,$socid)
  *	@return	string	   			         Unit string
  * 	@see	formproduct->load_measuring_units
  */
-function measuring_units_string($unit,$measuring_style='')
+function measuring_units_string($unit, $measuring_style = '')
 {
 	global $langs;
 

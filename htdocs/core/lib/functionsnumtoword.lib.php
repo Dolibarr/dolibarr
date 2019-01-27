@@ -33,7 +33,7 @@
  * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
  * @return 	string  				Text of the number
  */
-function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
+function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 {
 	global $conf;
 
@@ -144,7 +144,7 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
  * @param	string	$numorcurrency	'number' or 'amount'
  * @return 	string  				Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
-function dolNumberToWord($numero, $langs, $numorcurrency='number')
+function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
 	// If the number is negative convert to positive and return -1 if is too long
 	if ($numero < 0) $numero *= -1;

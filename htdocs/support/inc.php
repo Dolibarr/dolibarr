@@ -201,7 +201,7 @@ function conf($dolibarr_main_document_root)
  * @param	string	$action		Action code
  * @return	void
  */
-function pHeader($soutitre,$next,$action='none')
+function pHeader($soutitre, $next, $action = 'none')
 {
 	global $conf;
 	global $langs;
@@ -241,7 +241,7 @@ function pHeader($soutitre,$next,$action='none')
  * @param   string	$setuplang		Language code
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='')
+function pFooter($nonext = 0, $setuplang = '')
 {
 	global $langs;
 	$langs->load("main");

@@ -307,7 +307,7 @@ class Donations extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);

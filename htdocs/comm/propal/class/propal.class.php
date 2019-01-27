@@ -239,7 +239,7 @@ class Propal extends CommonObject
 	 *	@param      int		$socid		Id third party
 	 *	@param      int		$propalid   Id proposal
 	 */
-	function __construct($db, $socid="", $propalid=0)
+	function __construct($db, $socid = "", $propalid = 0)
 	{
 		global $conf,$langs;
 
@@ -267,7 +267,7 @@ class Propal extends CommonObject
 	 *	TODO	Replace calls to this function by generation objet Ligne
 	 *			inserted into table $this->products
 	 */
-	function add_product($idproduct, $qty, $remise_percent=0)
+	function add_product($idproduct, $qty, $remise_percent = 0)
 	{
         // phpcs:enable
 		global $conf, $mysoc;
@@ -434,7 +434,7 @@ class Propal extends CommonObject
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise=0, $fk_remise_except=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -663,7 +663,7 @@ class Propal extends CommonObject
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise = 0, $notrigger=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
 		global $mysoc;
 
@@ -869,7 +869,7 @@ class Propal extends CommonObject
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int     			<0 if KO, >=0 if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf,$hookmanager;
 		$error=0;
@@ -1216,7 +1216,7 @@ class Propal extends CommonObject
 	 *		@param		int				$socid			Id of thirdparty
 	 * 	 	@return		int								New id of clone
 	 */
-	function createFromClone($socid=0)
+	function createFromClone($socid = 0)
 	{
 		global $user,$conf,$hookmanager;
 
@@ -1340,7 +1340,7 @@ class Propal extends CommonObject
 	 *	@param		string		$ref		Ref of proposal
 	 *	@return     int         			>0 if OK, <0 if KO
 	 */
-	function fetch($rowid,$ref='')
+	function fetch($rowid, $ref = '')
 	{
 
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
@@ -1504,7 +1504,7 @@ class Propal extends CommonObject
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger=0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -1599,7 +1599,7 @@ class Propal extends CommonObject
 	 * @param		int		$only_product	Return only physical products
 	 * @return		int						<0 if KO, >0 if OK
 	 */
-	function fetch_lines($only_product=0)
+	function fetch_lines($only_product = 0)
 	{
         // phpcs:enable
 		$this->lines=array();
@@ -1718,7 +1718,7 @@ class Propal extends CommonObject
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
 	 *  @return int         		<0 if KO, 0=Nothing done, >=0 if OK
 	 */
-	function valid($user, $notrigger=0)
+	function valid($user, $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1842,7 +1842,7 @@ class Propal extends CommonObject
 	 *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int         			<0 if KO, >0 if OK
 	 */
-	function set_date($user, $date, $notrigger=0)
+	function set_date($user, $date, $notrigger = 0)
 	{
         // phpcs:enable
 		if (empty($date))
@@ -1911,7 +1911,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if KO, >0 if OK
 	 */
-	function set_echeance($user, $date_fin_validite, $notrigger=0)
+	function set_echeance($user, $date_fin_validite, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -1973,7 +1973,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
-	function set_date_livraison($user, $date_livraison, $notrigger=0)
+	function set_date_livraison($user, $date_livraison, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -2035,7 +2035,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           			<0 if KO, >0 if OK
 	 */
-	function set_availability($user, $id, $notrigger=0)
+	function set_availability($user, $id, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2106,7 +2106,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           		<0 if KO, >0 if OK
 	 */
-	function set_demand_reason($user, $id, $notrigger=0)
+	function set_demand_reason($user, $id, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2179,7 +2179,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if ko, >0 if ok
 	 */
-	function set_ref_client($user, $ref_client, $notrigger=0)
+	function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -2244,7 +2244,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-	function set_remise_percent($user, $remise, $notrigger=0)
+	function set_remise_percent($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2311,7 +2311,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-	function set_remise_absolue($user, $remise, $notrigger=0)
+	function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2380,7 +2380,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function reopen($user, $statut, $note='', $notrigger=0)
+	function reopen($user, $statut, $note = '', $notrigger = 0)
 	{
 
 		$this->statut = $statut;
@@ -2441,7 +2441,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function cloture($user, $statut, $note="", $notrigger=0)
+	function cloture($user, $statut, $note = "", $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -2544,7 +2544,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int     			<0 si ko, >0 si ok
 	 */
-	function classifyBilled(User $user, $notrigger=0)
+	function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error=0;
 
@@ -2600,7 +2600,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function set_draft($user, $notrigger=0)
+	function set_draft($user, $notrigger = 0)
 	{
         // phpcs:enable
 		$error=0;
@@ -2665,7 +2665,7 @@ class Propal extends CommonObject
 	 *    @param    string	$sortorder			Sort order
 	 *    @return	int		       				-1 if KO, array with result if OK
 	 */
-	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
+	function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
         // phpcs:enable
 		global $user;
@@ -2833,7 +2833,7 @@ class Propal extends CommonObject
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return	int						1 if ok, otherwise if error
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2957,7 +2957,7 @@ class Propal extends CommonObject
 	 *  @return int                  	>0 if OK, <0 if KO
 	 *  @deprecated  use set_availability
 	 */
-	function availability($availability_id, $notrigger=0)
+	function availability($availability_id, $notrigger = 0)
 	{
 		global $user;
 
@@ -3028,7 +3028,7 @@ class Propal extends CommonObject
 	 *	@return int						>0 si ok, <0 si ko
 	 *	@deprecated use set_demand_reason
 	 */
-	function demand_reason($demand_reason_id, $notrigger=0)
+	function demand_reason($demand_reason_id, $notrigger = 0)
 	{
         // phpcs:enable
 		global $user;
@@ -3153,7 +3153,7 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
@@ -3166,7 +3166,7 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-	function LibStatut($statut,$mode=1)
+	function LibStatut($statut, $mode = 1)
 	{
         // phpcs:enable
 		global $conf;
@@ -3213,7 +3213,7 @@ class Propal extends CommonObject
 	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	function load_board($user,$mode)
+	function load_board($user, $mode)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3495,7 +3495,7 @@ class Propal extends CommonObject
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return     string          		          String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $get_params='', $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $user;
 
@@ -3585,7 +3585,7 @@ class Propal extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$langs;
 
@@ -3854,7 +3854,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function insert($notrigger=0)
+	function insert($notrigger = 0)
 	{
 		global $conf,$user;
 
@@ -3997,7 +3997,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-	function delete(User $user, $notrigger=0)
+	function delete(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -4051,7 +4051,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	int					<0 if ko, >0 if ok
 	 */
-	function update($notrigger=0)
+	function update($notrigger = 0)
 	{
 		global $conf,$user;
 

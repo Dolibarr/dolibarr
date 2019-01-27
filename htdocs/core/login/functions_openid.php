@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
+function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
     global $_POST,$db,$conf,$langs;
 

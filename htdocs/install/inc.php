@@ -374,7 +374,7 @@ function conf($dolibarr_main_document_root)
  * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
+function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl = '', $csstable = 'main-inside')
 {
     global $conf;
     global $langs;
@@ -451,7 +451,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
  * @param	integer	$withpleasewait		Add also please wait tags
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
+function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleasewait = 0)
 {
     global $conf,$langs;
 
@@ -508,7 +508,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
  * @param 	int		$level		Level of log
  * @return	void
  */
-function dolibarr_install_syslog($message, $level=LOG_DEBUG)
+function dolibarr_install_syslog($message, $level = LOG_DEBUG)
 {
     if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
     dol_syslog($message,$level);

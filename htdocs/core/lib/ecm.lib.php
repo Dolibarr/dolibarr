@@ -72,7 +72,7 @@ function ecm_prepare_dasboard_head($object)
  * @param	string	$section	Section
  * @return  array				Array of tabs to show
  */
-function ecm_prepare_head($object, $module='ecm', $section='')
+function ecm_prepare_head($object, $module = 'ecm', $section = '')
 {
 	global $langs, $conf, $user;
 	$h = 0;

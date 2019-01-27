@@ -109,7 +109,7 @@ class DiscountAbsolute
      *  @param		int		$fk_invoice_supplier_source		fk_invoice_supplier_source
      *	@return		int										<0 if KO, =0 if not found, >0 if OK
      */
-    function fetch($rowid, $fk_facture_source=0, $fk_invoice_supplier_source=0)
+    function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
     {
     	global $conf;
 
@@ -396,7 +396,7 @@ class DiscountAbsolute
      *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function link_to_invoice($rowidline,$rowidinvoice)
+    function link_to_invoice($rowidline, $rowidinvoice)
     {
         // phpcs:enable
         // Check parameters
@@ -484,7 +484,7 @@ class DiscountAbsolute
      *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
      * 	@return		int						<0 if KO, amount otherwise
      */
-    function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0, $discount_type=0)
+    function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
     {
     	global $conf;
 
@@ -527,7 +527,7 @@ class DiscountAbsolute
 	 *  @param 		int 		    $multicurrency 	Return multicurrency_amount instead of amount
      *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumDepositsUsed($invoice, $multicurrency=0)
+    function getSumDepositsUsed($invoice, $multicurrency = 0)
     {
         dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
 
@@ -573,7 +573,7 @@ class DiscountAbsolute
 	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
      *	@return		int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
      */
-    function getSumCreditNotesUsed($invoice, $multicurrency=0)
+    function getSumCreditNotesUsed($invoice, $multicurrency = 0)
     {
         dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
 
@@ -619,7 +619,7 @@ class DiscountAbsolute
      *	@param		string	$option			Where to link to ('invoice' or 'discount')
      *	@return		string					String with URL
      */
-    function getNomUrl($withpicto,$option='invoice')
+    function getNomUrl($withpicto, $option = 'invoice')
     {
         global $langs;
 

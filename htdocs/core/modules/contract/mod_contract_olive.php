@@ -81,7 +81,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc,$contract)
+	function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return '';

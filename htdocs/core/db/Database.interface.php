@@ -419,7 +419,7 @@ interface Database
 	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 * @return	int|string					Date TMS or ''
 	 */
-	function jdate($string, $gm=false);
+	function jdate($string, $gm = false);
 
 	/**
 	 * Encrypt sensitive data in database

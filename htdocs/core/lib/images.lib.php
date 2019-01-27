@@ -106,7 +106,7 @@ function dol_getImageSize($file, $url = false)
  * 		@param	int		$src_y			Position of croping image in source image (not use if mode=0)
  *		@return	int						File name if OK, error message if KO
  */
-function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
+function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -349,7 +349,7 @@ function dolRotateImage($file_path)
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
  *    	@return    string						Full path of thumb or '' if it fails or 'Error...' if it fails
  */
-function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
+function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

@@ -757,7 +757,7 @@ $db->close();
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */
-function show_day_events_pertype($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
+function show_day_events_pertype($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $showheader = false, $colorsbytype = array(), $var = false)
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;

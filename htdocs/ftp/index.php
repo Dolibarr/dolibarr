@@ -698,7 +698,7 @@ $db->close();
  * @param	integer	$ftp_passive	Use a passive mode
  * @return	int 	<0 if OK, >0 if KO
  */
-function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive=0)
+function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
 {
 	global $langs, $conf;
 
@@ -798,7 +798,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
  * @param 		string		$dir			Directory
  * @return		int			1=directory, 0=not a directory
  */
-function ftp_isdir($connect_id,$dir)
+function ftp_isdir($connect_id, $dir)
 {
 	if (@ftp_chdir($connect_id,$dir))
 	{

@@ -142,7 +142,7 @@ class BlockedLogAuthority
 	 *	@param      string		$signature		Signature of object to load
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-    public function fetch($id, $signature='')
+    public function fetch($id, $signature = '')
     {
 
 		global $langs;

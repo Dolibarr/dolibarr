@@ -60,7 +60,7 @@ class FormPropal
      *    @param    string  $htmlname       Name of select field
      *    @return	void
      */
-    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1, $mode='customer',$htmlname='propal_statut')
+    function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut')
     {
         global $langs;
 

@@ -170,7 +170,7 @@ class Project extends CommonObject
      *    @param	int		$notrigger		Disable triggers
      *    @return   int         			<0 if KO, id of created project if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -299,7 +299,7 @@ class Project extends CommonObject
      * @param  int		$notrigger  1=Disable all triggers
      * @return int                  <=0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -431,7 +431,7 @@ class Project extends CommonObject
      * 	@param		string	$ref		Ref of project
      * 	@return     int      		   	>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($id, $ref='')
+    function fetch($id, $ref = '')
     {
     	global $conf;
 
@@ -515,7 +515,7 @@ class Project extends CommonObject
      * 	@param		int		$socid		To filter on a particular third party
      * 	@return		array				List of projects
      */
-    function liste_array($socid='')
+    function liste_array($socid = '')
     {
         // phpcs:enable
         global $conf;
@@ -563,7 +563,7 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
+    function get_element_list($type, $tablename, $datefieldname = '', $dates = '', $datee = '', $projectkey = 'fk_projet')
     {
         // phpcs:enable
         $elements = array();
@@ -647,7 +647,7 @@ class Project extends CommonObject
      *    @param       int		$notrigger       Disable triggers
      *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
      */
-    function delete($user, $notrigger=0)
+    function delete($user, $notrigger = 0)
     {
         global $langs, $conf;
         require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -811,7 +811,7 @@ class Project extends CommonObject
      *      @param      int     $notrigger     1=Disable triggers
      * 		@return		int					   <0 if KO, >0 if OK
      */
-    function setValid($user, $notrigger=0)
+    function setValid($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -937,7 +937,7 @@ class Project extends CommonObject
      *  @param  int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string      			Label
      */
-    function getLibStatut($mode=0)
+    function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut, $mode);
     }
@@ -950,7 +950,7 @@ class Project extends CommonObject
      *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string				Label
      */
-    function LibStatut($statut, $mode=0)
+    function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -1013,7 +1013,7 @@ class Project extends CommonObject
      *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      * 	@return	string					          String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -1147,7 +1147,7 @@ class Project extends CommonObject
      * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
      * 	@return	int					>0 if user has permission, <0 if user has no permission
      */
-    function restrictedProjectArea($user, $mode='read')
+    function restrictedProjectArea($user, $mode = 'read')
     {
         // To verify role of users
         $userAccess = 0;
@@ -1200,7 +1200,7 @@ class Project extends CommonObject
      * @param	string	$filter			additionnal filter on project (statut, ref, ...)
      * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
-    function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
+    function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
     {
         $projects = array();
         $temp = array();
@@ -1300,7 +1300,7 @@ class Project extends CommonObject
       * @param  int     $newthirdpartyid  New thirdparty id
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0,$newthirdpartyid=0)
+	function createFromClone($fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
 	{
 		global $user,$langs,$conf;
 
@@ -1693,7 +1693,7 @@ class Project extends CommonObject
 	 *  @param  int			$hideref        Hide ref
 	 *  @return int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$langs;
 
@@ -1725,7 +1725,7 @@ class Project extends CommonObject
 	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpent($datestart, $taskid=0, $userid=0)
+	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
     {
         $error=0;
 

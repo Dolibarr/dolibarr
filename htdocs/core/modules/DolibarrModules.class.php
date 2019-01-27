@@ -381,7 +381,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                         1 if OK, 0 if KO
      */
-    function _init($array_sql, $options='')
+    function _init($array_sql, $options = '')
     {
         global $conf;
         $err=0;
@@ -474,7 +474,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                     1 if OK, 0 if KO
      */
-    function _remove($array_sql, $options='')
+    function _remove($array_sql, $options = '')
     {
         $err=0;
 
@@ -778,7 +778,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  int $translated 1=Special version keys are translated, 0=Special version keys are not translated
      * @return string                  Module version
      */
-    function getVersion($translated=1)
+    function getVersion($translated = 1)
     {
         global $langs;
         $langs->load("admin");
@@ -1127,7 +1127,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int             Error count (0 if OK)
      */
-    function insert_boxes($option='')
+    function insert_boxes($option = '')
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
@@ -1650,7 +1650,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  int $notrigger        1=Does not execute triggers, 0= execute triggers
      * @return int                     Error count (0 if OK)
      */
-    function insert_permissions($reinitadminperms=0, $force_entity=null, $notrigger=0)
+    function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
     {
         // phpcs:enable
         global $conf,$user;
@@ -2017,7 +2017,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int             Error count (0 if OK)
      */
-    function insert_dirs($name,$dir)
+    function insert_dirs($name, $dir)
     {
         // phpcs:enable
         global $conf;

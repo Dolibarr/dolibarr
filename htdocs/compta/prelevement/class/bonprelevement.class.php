@@ -81,7 +81,7 @@ class BonPrelevement extends CommonObject
 	 *  @param		DoliDB		$db      	Database handler
 	 *  @param		string		$filename	Filename of withdraw receipt
 	 */
-	function __construct($db, $filename='')
+	function __construct($db, $filename = '')
 	{
 		global $conf,$langs;
 
@@ -276,7 +276,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$ref		Ref of direct debit
 	 *	@return	int					>0 if OK, <0 if KO
 	 */
-	function fetch($rowid, $ref='')
+	function fetch($rowid, $ref = '')
 	{
 		global $conf;
 
@@ -630,7 +630,7 @@ class BonPrelevement extends CommonObject
 	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
 	 *	@return	array 				Id of invoices
 	 */
-	private function getListInvoices($amounts=0)
+	private function getListInvoices($amounts = 0)
 	{
 		global $conf;
 
@@ -731,7 +731,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$agence		dolibarr mysoc agence
 	 *	@return	int					<O if KO, number of invoices if OK
 	 */
-	function NbFactureAPrelever($banque=0,$agence=0)
+	function NbFactureAPrelever($banque = 0, $agence = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -777,7 +777,7 @@ class BonPrelevement extends CommonObject
          * @param       string  $executiondate	Date to execute the transfer
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='')
+	function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -1138,7 +1138,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	User	$user		Object user that delete
 	 *	@return	int					>0 if OK, <0 if KO
 	 */
-	function delete($user=null)
+	function delete($user = null)
 	{
 		$this->db->begin();
 
@@ -1178,7 +1178,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$option		link target
 	 *	@return	string				URL of target
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto = 0, $option = '')
 	{
 		global $langs;
 
@@ -1299,7 +1299,7 @@ class BonPrelevement extends CommonObject
          * @param string $executiondate		Date to execute transfer
 	 *	@return		int					0 if OK, <0 if KO
 	 */
-	function generate($format='ALL',$executiondate='')
+	function generate($format = 'ALL', $executiondate = '')
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1493,7 +1493,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$rib_dom		rib domiciliation
 	 *	@return	void
 	 */
-	function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $ref, $facid, $rib_dom='')
+	function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $ref, $facid, $rib_dom = '')
 	{
         // phpcs:enable
 		fputs($this->file, "06");
@@ -1726,7 +1726,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$format			FRST or RCUR or ALL
 	 *	@return	string					String with SEPA Sender
 	 */
-	function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n', $format='FRST')
+	function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST')
 	{
         // phpcs:enable
 		// SEPA INITIALISATION
@@ -1905,7 +1905,7 @@ class BonPrelevement extends CommonObject
 	 *    @param    int		$mode   0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return	string     		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -1918,7 +1918,7 @@ class BonPrelevement extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * 	@return	string  		    Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		if (empty($this->labelstatut))

@@ -96,7 +96,7 @@ class SupplierInvoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -296,7 +296,7 @@ class SupplierInvoices extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
     	if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
     		throw new RestException(401);

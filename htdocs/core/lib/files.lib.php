@@ -56,7 +56,7 @@ function dol_basename($pathfile)
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="", $donotfollowsymlinks=0)
+function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -226,7 +226,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','type'=>'dir|file',...)
  *  @see dol_dir_list
  */
-function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
+function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
 {
 	global $conf, $db;
 
@@ -578,7 +578,7 @@ function dol_filemtime($pathoffile)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy dolReplaceRegExInFile
  */
-function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
+function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
 	global $conf;
 
@@ -648,7 +648,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy dolReplaceInFile
  */
-function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
+function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
 	// TODO
 }
@@ -663,7 +663,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newma
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  * @see		dol_delete_file
  */
-function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
+function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 {
 	global $conf;
 
@@ -719,7 +719,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement=null)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null)
 {
 	global $conf;
 
@@ -811,7 +811,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file
  */
-function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvirus=0, $indexdatabase=1)
+function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1)
 {
 	global $user, $db, $conf;
 	$result=false;
@@ -993,7 +993,7 @@ function dolCheckVirus($src_file)
  *	@return int       			  		>0 if OK, <0 or string if KO
  *  @see    dol_move
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
 {
 	global $conf, $db, $user, $langs;
 	global $object, $hookmanager;
@@ -1136,7 +1136,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file, $disableglob=0, $nophperrors=0, $nohook=0, $object=null, $allowdotdot=false, $indexdatabase=1)
+function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1246,7 +1246,7 @@ function dol_delete_file($file, $disableglob=0, $nophperrors=0, $nohook=0, $obje
  *  @return boolean         		True if success, false if error
  *  @see dol_delete_file dol_copy
  */
-function dol_delete_dir($dir,$nophperrors=0)
+function dol_delete_dir($dir, $nophperrors = 0)
 {
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
@@ -1270,7 +1270,7 @@ function dol_delete_dir($dir,$nophperrors=0)
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
  *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
-function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$countdeleted=0)
+function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0)
 {
 	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
 	if (dol_is_dir($dir))
@@ -1478,7 +1478,7 @@ function dol_meta_create($object)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_init_file_process($pathtoscan='', $trackid='')
+function dol_init_file_process($pathtoscan = '', $trackid = '')
 {
 	$listofpaths=array();
 	$listofnames=array();
@@ -1516,7 +1516,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @return	int                             <=0 if KO, >0 if OK
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='', $generatethumbs=1)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1660,7 +1660,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1,$trackid='')
+function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -1712,7 +1712,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param		int		$setsharekey	Set also the share key
  *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig='', $mode='uploaded', $setsharekey=0)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0)
 {
 	global $db, $user;
 
@@ -1760,7 +1760,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig='', $mode='uploaded
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
  */
-function deleteFilesIntoDatabaseIndex($dir, $file, $mode='uploaded')
+function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 {
 	global $conf, $db, $user;
 
@@ -1816,7 +1816,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode='uploaded')
  *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput, $ext='png', $fileoutput='')
+function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
 {
 	global $langs;
 
@@ -1874,7 +1874,7 @@ function dol_convert_file($fileinput, $ext='png', $fileoutput='')
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_file($inputfile, $outputfile, $mode="gz")
+function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 {
 	$foundhandler=0;
 
@@ -1927,7 +1927,7 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
  * @param 	string	$outputdir		Target dir name
  * @return 	array					array('error'=>'Error code') or array() if no error
  */
-function dol_uncompress($inputfile,$outputdir)
+function dol_uncompress($inputfile, $outputdir)
 {
 	global $langs;
 
@@ -1988,7 +1988,7 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$mode			'zip'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode="zip")
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 {
 	$foundhandler=0;
 
@@ -2088,7 +2088,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode="zip")
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  * @return	string						Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta|_preview.*\.png)$','^\.'),$nohook=false,$mode='')
+function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$','^\.'), $nohook = false, $mode = '')
 {
 	$tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,$mode,$nohook);
 	return $tmparray[0];
@@ -2106,7 +2106,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea
  */
-function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
+function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
 	global $conf, $db, $user;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;

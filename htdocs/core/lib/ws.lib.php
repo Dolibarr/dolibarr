@@ -32,7 +32,7 @@
  *  @param  string	$errorlabel		Error string label
  *  @return User						Return user object identified by login/pass/entity into authentication array
  */
-function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
+function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
 {
     global $db,$conf,$langs;
     global $dolibarr_main_authentication,$dolibarr_auto_user;

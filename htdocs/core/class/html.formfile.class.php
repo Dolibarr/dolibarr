@@ -77,7 +77,7 @@ class FormFile
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='', $sectiondir='')
+	function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '')
 	{
         // phpcs:enable
 		global $conf,$langs, $hookmanager;
@@ -255,7 +255,7 @@ class FormFile
 	 * 		@return		int										<0 if KO, number of shown files if OK
 	 *      @deprecated                                         Use print xxx->showdocuments() instead.
 	 */
-	function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+	function show_documents($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '')
 	{
         // phpcs:enable
 		$this->numoffiles=0;
@@ -288,7 +288,7 @@ class FormFile
 	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
 	 * 		@return		string              					Output string with HTML array of documents (might be empty string)
 	 */
-	function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='',$object=null,$hideifempty=0)
+	function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0)
 	{
 		// Deprecation warning
 		if (! empty($iconPDF)) {
@@ -887,7 +887,7 @@ class FormFile
 	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
 	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
-	function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter='')
+	function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '')
 	{
 		global $conf, $langs;
 
@@ -1022,7 +1022,7 @@ class FormFile
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles
 	 */
-	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
+	function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -1412,7 +1412,7 @@ class FormFile
 	 *  @return int                 		<0 if KO, nb of files shown if OK
 	 *  @see list_of_documents
 	 */
-	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
+	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permtodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $form;
@@ -1695,7 +1695,7 @@ class FormFile
 	 * @param	string		$param			More param to add into URL
 	 * @return 	int							Number of links
 	 */
-	public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null, $param='')
+	public function listOfLinks($object, $permtodelete = 1, $action = null, $selected = null, $param = '')
 	{
 		global $user, $conf, $langs, $user;
 		global $sortfield, $sortorder;
@@ -1831,7 +1831,7 @@ class FormFile
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */
-	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0, $param='')
+	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto = 0, $param = '')
 	{
 		global $langs, $conf;
 

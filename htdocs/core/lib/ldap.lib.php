@@ -103,7 +103,7 @@ function ldap_prepare_head()
  *  @param	string	$objectclass	Class
  *  @return	void
  */
-function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
+function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 {
 	global $langs, $conf, $user;
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
@@ -141,7 +141,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
  * @param   int		$subcount	Subcount
  * @return  int
  */
-function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
+function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
 {
 	global $bc, $conf;
 

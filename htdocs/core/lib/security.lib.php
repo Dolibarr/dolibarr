@@ -34,7 +34,7 @@
  *	@return  string					encoded string
  *  @see dol_decode
  */
-function dol_encode($chain, $key='1')
+function dol_encode($chain, $key = '1')
 {
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
@@ -70,7 +70,7 @@ function dol_encode($chain, $key='1')
  *	@return  string					decoded string
  *  @see dol_encode
  */
-function dol_decode($chain, $key='1')
+function dol_decode($chain, $key = '1')
 {
 	$chain = base64_decode($chain);
 
@@ -111,7 +111,7 @@ function dol_decode($chain, $key='1')
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
-function dol_hash($chain, $type='0')
+function dol_hash($chain, $type = '0')
 {
 	global $conf;
 
@@ -147,7 +147,7 @@ function dol_hash($chain, $type='0')
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
  */
-function dol_verifyHash($chain, $hash, $type='0')
+function dol_verifyHash($chain, $hash, $type = '0')
 {
 	global $conf;
 
@@ -178,7 +178,7 @@ function dol_verifyHash($chain, $hash, $type='0')
  * 	@return	int						Always 1, die process if not allowed
  *  @see dol_check_secure_access_document
  */
-function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $isdraft=0)
+function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0)
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -433,7 +433,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
  * @return	bool						True if user has access, False otherwise
  * @see restrictedArea
  */
-function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='', $dbt_select='rowid')
+function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid')
 {
 	global $db, $conf;
 
@@ -657,7 +657,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
  *  @param  int		$showonlymessage     Show only message parameter. Otherwise add more information.
  *  @return	void
  */
-function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
+function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0)
 {
     global $conf, $db, $user, $langs;
     if (! is_object($langs))

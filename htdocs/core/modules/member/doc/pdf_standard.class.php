@@ -42,7 +42,7 @@ class pdf_standard extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    function addSticker(&$pdf,$outputlangs,$param)
+    function addSticker(&$pdf, $outputlangs, $param)
     {
 		// use this method in future refactoring
 	}
@@ -63,7 +63,7 @@ class pdf_standard extends CommonStickerGenerator
 	 * @param	 string		$photo			Photo (full path to image file used as replacement for key __PHOTOS__ into left, right, header or footer text)
 	 * @return	 void
 	 */
-	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
+	function Add_PDF_card(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $idmember = 0, $photo = '')
 	{
         // phpcs:enable
 		global $db,$mysoc,$conf,$langs;
@@ -248,7 +248,7 @@ class pdf_standard extends CommonStickerGenerator
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
 	 *	@return	int								1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $mode='member', $nooutput=0)
+	function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
