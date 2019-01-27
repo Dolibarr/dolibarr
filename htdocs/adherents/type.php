@@ -350,13 +350,8 @@ if ($action == 'create')
 
 	// Other attributes
 	$parameters=array();
-<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
-    	print $hookmanager->resPrint;
-=======
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
->>>>>>> upstream/develop
 	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields, 'edit');
@@ -410,16 +405,11 @@ if ($rowid > 0)
 		print '<table class="border" width="100%">';
 
    		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
-<<<<<<< HEAD
-    if ( !empty($object->statut) ) print img_picto($langs->trans('TypeStatusActive'), 'statut4').' '.$langs->trans("InActivity");
-    else print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
-=======
         if ( !empty($object->statut) ) {
-            print img_picto($langs->trans('TypeStatusActive'),'statut4').' '.$langs->trans("InActivity");
+            print img_picto($langs->trans('TypeStatusActive'), 'statut4').' '.$langs->trans("InActivity");
         } else {
-            print img_picto($langs->trans('TypeStatusInactive'),'statut5').' '.$langs->trans("ActivityCeased");
+            print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
         }
->>>>>>> upstream/develop
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -762,13 +752,8 @@ if ($rowid > 0)
     	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $object->statut);
     	print '</td></tr>';
 
-<<<<<<< HEAD
-    		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("subscription", $object->subscription, 1);
-=======
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("subscription",$object->subscription,1);
->>>>>>> upstream/develop
+		print $form->selectyesno("subscription", $object->subscription, 1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
