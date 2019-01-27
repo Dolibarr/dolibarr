@@ -64,7 +64,7 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $categorie = new Categorie($db);
 $categories = $categorie->get_full_arbo('product');
 ?>
-var categories = JSON.parse( '<?php echo json_encode($categories);?>' );
+var categories = <?php echo json_encode($categories); ?>;
 var currentcat;
 var pageproducts=0;
 var pagecategories=0;

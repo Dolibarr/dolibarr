@@ -733,20 +733,31 @@ if (empty($reshook))
 			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
+				// Total payments
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND pf.fk_paiement = p.rowid';
-				$sql.= ' AND p.entity IN (' . getEntity('invoice').')';
-
+				$sql.= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
 
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
 
-				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
+				// Total credit note and deposit
+				$total_creditnote_and_deposit = 0;
+		                $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+		                $sql .= " re.description, re.fk_facture_source";
+		                $sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+		                $sql .= " WHERE fk_facture = " . $object->id;
+		                $resql = $db->query($sql);
+		                if (!empty($resql)) {
+		                        while ($obj = $db->fetch_object($resql)) $total_creditnote_and_deposit += $obj->amount_ttc;
+		                } else dol_print_error($db);
+
+				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
 
@@ -1777,16 +1788,16 @@ if (empty($reshook))
 
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 				$pqp = (GETPOST('pbq','int') ? GETPOST('pbq','int') : 0);
-				
+
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
-				
+
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
 				$price_base_type = $datapriceofproduct['price_base_type'];
 				$tva_tx = $datapriceofproduct['tva_tx'];
 				$tva_npr = $datapriceofproduct['tva_npr'];
-				
+
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
