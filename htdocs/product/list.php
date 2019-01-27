@@ -115,7 +115,7 @@ if (! empty($canvas))
 
 // Security check
 if ($search_type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas);
-else if ($search_type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
+elseif ($search_type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
 else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 
 // Define virtualdiffersfromphysical
@@ -381,7 +381,7 @@ if ($resql)
 		{
 			$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		}
-		else if ($search_type == 1)
+		elseif ($search_type == 1)
 		{
 			$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		}
@@ -787,7 +787,7 @@ if ($resql)
 				{
 				    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 				}
-				else if ((float) $duration_value > 0)
+				elseif ((float) $duration_value > 0)
 				{
 				    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}

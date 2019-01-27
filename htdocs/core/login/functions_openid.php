@@ -90,7 +90,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
                 }
             }
         }
-        else if($openid->IsError() === true)
+        elseif($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
@@ -103,7 +103,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
             return false;
         }
     }
-    else if ($_GET['openid_mode'] == 'cancel')
+    elseif ($_GET['openid_mode'] == 'cancel')
     {
         // User Canceled your Request
         //echo "USER CANCELED REQUEST";

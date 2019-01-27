@@ -246,11 +246,11 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}
 	}
-	else if ($format == 'hour')	// only hour part
+	elseif ($format == 'hour')	// only hour part
 	{
 		$sTime=dol_print_date($iSecond,'%H',true);
 	}
-	else if ($format == 'fullhour')
+	elseif ($format == 'fullhour')
 	{
 		if (!empty($iSecond)) {
 			$iSecond=$iSecond/3600;
@@ -260,19 +260,19 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 		}
 		$sTime=$iSecond;
 	}
-	else if ($format == 'min')	// only min part
+	elseif ($format == 'min')	// only min part
 	{
 		$sTime=dol_print_date($iSecond,'%M',true);
 	}
-    else if ($format == 'sec')	// only sec part
+    elseif ($format == 'sec')	// only sec part
     {
         $sTime=dol_print_date($iSecond,'%S',true);
     }
-    else if ($format == 'month')	// only month part
+    elseif ($format == 'month')	// only month part
     {
         $sTime=dol_print_date($iSecond,'%m',true);
     }
-    else if ($format == 'year')	// only year part
+    elseif ($format == 'year')	// only year part
     {
         $sTime=dol_print_date($iSecond,'%Y',true);
     }
@@ -297,12 +297,12 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
 		if ($year_date > 0 && empty($day_date)) {
 			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
 			$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, false))."'";
-		} else if ($year_date > 0 && ! empty($day_date)) {
+		} elseif ($year_date > 0 && ! empty($day_date)) {
 			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
 			$sqldate.= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
 		} else
 			$sqldate.= " AND date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
-	} else if ($year_date > 0){
+	} elseif ($year_date > 0){
 		$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
 		$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
 	}
@@ -345,7 +345,7 @@ function dol_stringtotime($string, $gm=1)
         if ($syear >= 50 && $syear < 100) $syear+=2000;
         $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
     }
-    else if (
+    elseif (
     	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
     	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
    		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ

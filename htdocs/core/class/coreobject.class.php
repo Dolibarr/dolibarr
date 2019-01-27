@@ -416,15 +416,15 @@ class CoreObject extends CommonObject
 			{
 				$this->setDate($key, $value);
 			}
-			else if( $this->checkFieldType($key, 'array'))
+			elseif( $this->checkFieldType($key, 'array'))
 			{
 				$this->{$key} = $value;
 			}
-			else if( $this->checkFieldType($key, 'float') )
+			elseif( $this->checkFieldType($key, 'float') )
 			{
 				$this->{$key} = (double) price2num($value);
 			}
-			else if( $this->checkFieldType($key, 'int') ) {
+			elseif( $this->checkFieldType($key, 'int') ) {
 				$this->{$key} = (int) price2num($value);
 			}
 			else

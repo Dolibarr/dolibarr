@@ -150,8 +150,8 @@ class DoliDBSqlite3 extends DoliDB
             if ($type == 'auto')
             {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
-              else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
-              else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
+              elseif (preg_match('/CREATE TABLE/i',$line)) $type='dml';
+              elseif (preg_match('/DROP TABLE/i',$line)) $type='dml';
             }
 
             if ($type == 'dml')
@@ -742,7 +742,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -775,7 +775,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
@@ -915,19 +915,19 @@ class DoliDBSqlite3 extends DoliDB
             $sqlfields[$i]  .= $field_desc['type'];
             if( preg_match("/^[^\s]/i",$field_desc['value']))
             $sqlfields[$i]  .= "(".$field_desc['value'].")";
-            else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['attribute']))
             $sqlfields[$i]  .= " ".$field_desc['attribute'];
-            else if( preg_match("/^[^\s]/i",$field_desc['default']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['default']))
             {
                 if(preg_match("/null/i",$field_desc['default']))
                 $sqlfields[$i]  .= " default ".$field_desc['default'];
                 else
                 $sqlfields[$i]  .= " default '".$field_desc['default']."'";
             }
-            else if( preg_match("/^[^\s]/i",$field_desc['null']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['null']))
             $sqlfields[$i]  .= " ".$field_desc['null'];
 
-            else if( preg_match("/^[^\s]/i",$field_desc['extra']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['extra']))
             $sqlfields[$i]  .= " ".$field_desc['extra'];
             $i++;
         }

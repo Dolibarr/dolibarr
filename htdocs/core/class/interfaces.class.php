@@ -212,7 +212,7 @@ class Interfaces
                     $nbtotal++;
                     $nbko++;
                     if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
-                    else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
+                    elseif (! empty($objMod->error))  $this->errors[]=$objMod->error;
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
             }
@@ -338,7 +338,7 @@ class Interfaces
                 $module=preg_replace('/^mod/i','',$reg[2]);
                 $constparam='MAIN_MODULE_'.strtoupper($module);
                 if (strtolower($module) == 'all') $disabledbymodule=0;
-                else if (empty($conf->global->$constparam)) $disabledbymodule=2;
+                elseif (empty($conf->global->$constparam)) $disabledbymodule=2;
                 $triggers[$j]['module']=strtolower($module);
             }
 

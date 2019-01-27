@@ -60,7 +60,7 @@ if ($action == 'builddoc' && $permissioncreate)
         //{
             if (GETPOST('fk_bank','int')) { // this field may come from an external module
                 $object->fk_bank = GETPOST('fk_bank','int');
-            } else if (! empty($object->fk_account)) {
+            } elseif (! empty($object->fk_account)) {
                 $object->fk_bank = $object->fk_account;
             }
         //}

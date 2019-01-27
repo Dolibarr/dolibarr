@@ -122,7 +122,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action='';
 		}
-		else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+		elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 		{
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action='';
@@ -525,13 +525,13 @@ if (empty($reshook))
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
-		else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
-		else if ($action == 'setemail_replyto')		$object->email_replyto  = trim(GETPOST('email_replyto','alpha'));
-		else if ($action == 'setemail_errorsto')	$object->email_errorsto = trim(GETPOST('email_errorsto','alpha'));
-		else if ($action == 'settitre' && empty($object->titre)) {
+		elseif ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
+		elseif ($action == 'setemail_replyto')		$object->email_replyto  = trim(GETPOST('email_replyto','alpha'));
+		elseif ($action == 'setemail_errorsto')	$object->email_errorsto = trim(GETPOST('email_errorsto','alpha'));
+		elseif ($action == 'settitre' && empty($object->titre)) {
 			$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
 		}
-		else if ($action == 'setfrom' && empty($object->email_from)) {
+		elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
 		}
 
@@ -803,12 +803,12 @@ else
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 		}
 		// Confirm reset
-		else if ($action == 'reset')
+		elseif ($action == 'reset')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
 		}
 		// Confirm delete
-		else if ($action == 'delete')
+		elseif ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 		}
@@ -842,7 +842,7 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+				elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 				{
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
@@ -1008,7 +1008,7 @@ else
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
 					}
-					else if (empty($user->rights->mailing->valider))
+					elseif (empty($user->rights->mailing->valider))
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
 					}
@@ -1024,7 +1024,7 @@ else
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
 					}
-					else if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+					elseif (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					}

@@ -342,7 +342,7 @@ class RssParser
                 else $items=$rss->items;                                                              // With xmlparse
                 //var_dump($items);exit;
             }
-            else if ($rss->_format == 'atom')
+            elseif ($rss->_format == 'atom')
             {
                 //var_dump($rss);
                 if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
@@ -410,7 +410,7 @@ class RssParser
                             }
                         }
                     }
-                    else if ($rss->_format == 'atom')
+                    elseif ($rss->_format == 'atom')
                     {
                         if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
                         {

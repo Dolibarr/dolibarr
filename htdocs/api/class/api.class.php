@@ -230,7 +230,7 @@ class DolibarrApi
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
 		}
-		else if (preg_match('/\|/', $resource)) {
+		elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 

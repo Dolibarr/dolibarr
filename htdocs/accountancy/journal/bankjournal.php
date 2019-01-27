@@ -290,18 +290,18 @@ if ($result) {
 					$paymentstatic->ref = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2, '', '');		// TODO Do not include list of invoice in tooltip, the dol_string_nohtmltag is ko with this
 					$tabpay[$obj->rowid]["paymentid"] = $paymentstatic->id;
-				} else if ($links[$key]['type'] == 'payment_supplier') {
+				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
 					$paymentsupplierstatic->ref = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsupplierstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsupplierid"] = $paymentsupplierstatic->id;
-				} else if ($links[$key]['type'] == 'company') {
+				} elseif ($links[$key]['type'] == 'company') {
 					$societestatic->id = $links[$key]['url_id'];
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) $tabtp[$obj->rowid][$compta_soc] += $obj->amount;
-				} else if ($links[$key]['type'] == 'user') {
+				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
 					$userstatic->name = $links[$key]['label'];
 					$userstatic->email = $tabuser[$obj->rowid]['email'];
@@ -310,7 +310,7 @@ if ($result) {
 					if ($userstatic->id > 0) $tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
 					else $tabpay[$obj->rowid]["soclib"] = '???';	// Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					if ($compta_user) $tabtp[$obj->rowid][$compta_user] += $obj->amount;
-				} else if ($links[$key]['type'] == 'sc') {
+				} elseif ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
 					$chargestatic->ref = $links[$key]['url_id'];
 
@@ -339,14 +339,14 @@ if ($result) {
 						$objmid = $db->fetch_object($resultmid);
 						$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
 					}
-				} else if ($links[$key]['type'] == 'payment_donation') {
+				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
 					$paymentdonstatic->ref = $links[$key]['url_id'];
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
-				} else if ($links[$key]['type'] == 'member') {
+				} elseif ($links[$key]['type'] == 'member') {
 					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->ref = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->label = $links[$key]['label'];
@@ -354,24 +354,24 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentsubscriptionid"] = $paymentsubscriptionstatic->id;
 					$paymentsubscriptionstatic->fetch($paymentsubscriptionstatic->id);
 					$tabtp[$obj->rowid][$account_pay_subscription] += $obj->amount;
-				} else if ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
+				} elseif ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					$paymentvatstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentvatid"] = $paymentvatstatic->id;
 					$tabtp[$obj->rowid][$account_pay_vat] += $obj->amount;
-				} else if ($links[$key]['type'] == 'payment_salary') {
+				} elseif ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
-				} else if ($links[$key]['type'] == 'payment_expensereport') {
+				} elseif ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= $paymentexpensereportstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentexpensereport"] = $paymentexpensereportstatic->id;
-				} else if ($links[$key]['type'] == 'payment_various') {
+				} elseif ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
 					$paymentvariousstatic->ref = $links[$key]['url_id'];
 					$paymentvariousstatic->label = $links[$key]['label'];
@@ -380,7 +380,7 @@ if ($result) {
 					$paymentvariousstatic->fetch($paymentvariousstatic->id);
 					$account_various = (! empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined');	// NotDefined is a reserved word
 					$tabtp[$obj->rowid][$account_various] += $obj->amount;
-				} else if ($links[$key]['type'] == 'payment_loan') {
+				} elseif ($links[$key]['type'] == 'payment_loan') {
 					$paymentloanstatic->id = $links[$key]['url_id'];
 					$paymentloanstatic->ref = $links[$key]['url_id'];
 					$paymentloanstatic->fk_loan = $links[$key]['url_id'];
@@ -399,7 +399,7 @@ if ($result) {
 						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] -= $objmid->amount_insurance;
 						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] -= $objmid->amount_interest;
 					}
-				} else if ($links[$key]['type'] == 'banktransfert') {
+				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
 					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$accountLinestatic ->getNomUrl(1);
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
@@ -567,68 +567,68 @@ if (! $error && $action == 'writebookkeeping') {
 
 							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
+						} elseif ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 
 							$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_expensereport') {
+						} elseif ($tabtype[$key] == 'payment_expensereport') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 
 							$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_salary') {
+						} elseif ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 
 							$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
+						} elseif (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = $objmid->labelc;
-						} else if ($tabtype[$key] == 'payment_vat') {
+						} elseif ($tabtype[$key] == 'payment_vat') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_donation') {
+						} elseif ($tabtype[$key] == 'payment_donation') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'member') {
+						} elseif ($tabtype[$key] == 'member') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_loan') {
+						} elseif ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'payment_various') {
+						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
-						} else if ($tabtype[$key] == 'banktransfert') {
+						} elseif ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
@@ -845,11 +845,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 					if ($tabtype[$key] == 'payment_supplier') {
 						print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
-					} else if($tabtype[$key] == 'payment') {
+					} elseif($tabtype[$key] == 'payment') {
 						print '"' . $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER . '"' . $sep;
-					} else if($tabtype[$key] == 'payment_expensereport') {
+					} elseif($tabtype[$key] == 'payment_expensereport') {
 						print '"' . $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT . '"' . $sep;
-					} else if($tabtype[$key] == 'payment_salary') {
+					} elseif($tabtype[$key] == 'payment_salary') {
 						print '"' . $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT . '"' . $sep;
 					} else {
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;

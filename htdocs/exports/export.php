@@ -186,7 +186,7 @@ if ($action=='selectfield')     // Selection of field at step 2
             if (is_array($tmp)) $listofdependencies=$tmp;
             else $listofdependencies=array($tmp);
         }
-        else if (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
+        elseif (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
         {
             // We found a dependency on a dedicated field
             $tmp=$fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))

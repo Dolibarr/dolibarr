@@ -2747,7 +2747,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$qty = price2num($this->detail_batch[0]->qty);
 			}
 		}
-		else if (! empty($this->detail_batch))
+		elseif (! empty($this->detail_batch))
 		{
 			$batch = $this->detail_batch->batch;
 			$batch_id = $this->detail_batch->fk_origin_stock;

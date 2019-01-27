@@ -344,7 +344,7 @@ class Contact extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
-		else if ($this->socid == -1) $sql .= " fk_soc=null,";
+		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
@@ -874,7 +874,7 @@ class Contact extends CommonObject
 	    unset($this->gender);
     	if (in_array($this->civility_id, array('MR'))) {
     	    $this->gender = 'man';
-    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	} elseif(in_array($this->civility_id, array('MME','MLE'))) {
     	    $this->gender = 'woman';
     	}
 	}

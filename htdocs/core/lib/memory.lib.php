@@ -69,7 +69,7 @@ function dol_setcache($memoryid,$data)
 			return -$rescode;
 		}
 	}
-	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $dolmemcache;
 		if (empty($dolmemcache) || ! is_object($dolmemcache))
@@ -93,7 +93,7 @@ function dol_setcache($memoryid,$data)
 		}
 	}
 	// Using shmop
-	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$result=dol_setshmop($memoryid,$data);
 	}
@@ -139,7 +139,7 @@ function dol_getcache($memoryid)
 			return -$rescode;
 		}
 	}
-	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $m;
 		if (empty($m) || ! is_object($m))
@@ -165,7 +165,7 @@ function dol_getcache($memoryid)
 		}
 	}
 	// Using shmop
-	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$data=dol_getshmop($memoryid);
 		return $data;

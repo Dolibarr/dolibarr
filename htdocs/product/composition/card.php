@@ -112,7 +112,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		exit;
 	}
 }
-else if($action==='save_composed_product')
+elseif($action==='save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
 	if (!empty($TProduct))

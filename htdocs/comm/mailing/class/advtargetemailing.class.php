@@ -785,12 +785,12 @@ class AdvanceTargetingMailing extends CommonObject
 						if (!empty($arrayquery['options_'.$key.'_max'.'_cnct'])) {
 							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'.'_cnct'].")";
 						}
-					} else if (($extrafields->attribute_type[$key] == 'date') ||
+					} elseif (($extrafields->attribute_type[$key] == 'date') ||
 					($extrafields->attribute_type[$key] == 'datetime')) {
 						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
 						}
-					}else if ($extrafields->attribute_type[$key] == 'boolean') {
+					}elseif ($extrafields->attribute_type[$key] == 'boolean') {
 						if ($arrayquery['options_'.$key.'_cnct']!=''){
 							if ($arrayquery['options_'.$key.'_cnct']==0) {
 								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct']." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
@@ -885,12 +885,12 @@ class AdvanceTargetingMailing extends CommonObject
 												if (!empty($arrayquery['options_'.$key.'_max'])) {
 													$sqlwhere[]= " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 												}
-									} else if (($extrafields->attribute_type[$key] == 'date') ||
+									} elseif (($extrafields->attribute_type[$key] == 'date') ||
 											($extrafields->attribute_type[$key] == 'datetime')) {
 												if (!empty($arrayquery['options_'.$key.'_end_dt'])){
 													$sqlwhere[]= " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 												}
-											}else if ($extrafields->attribute_type[$key] == 'boolean') {
+											}elseif ($extrafields->attribute_type[$key] == 'boolean') {
 												if ($arrayquery['options_'.$key]!=''){
 													$sqlwhere[]= " (tse.".$key." = ".$arrayquery['options_'.$key].")";
 												}

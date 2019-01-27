@@ -73,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
-else if ($action == 'add') {
+elseif ($action == 'add') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -118,7 +118,7 @@ else if ($action == 'add') {
 }
 
 // Update record
-else if ($action == 'update') {
+elseif ($action == 'update') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
@@ -198,7 +198,7 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-} else if ($id) {
+} elseif ($id) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = fiscalyear_prepare_head($object);

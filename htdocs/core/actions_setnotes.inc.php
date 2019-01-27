@@ -61,7 +61,7 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 	}
 }
 // Set public note
-else if ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('cancel','alpha'))
+elseif ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('cancel','alpha'))
 {
 	if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('','Include of actions_setnotes.inc.php was done but required variable was not set before');
 	if (empty($object->id)) $object->fetch($id);	// Fetch may not be already done

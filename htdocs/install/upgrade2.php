@@ -4175,7 +4175,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f";
 					$sqlSelect2.= " WHERE f.rowid = " . $fk_facture;
 				}
-				else if (!empty($obj->fk_facture_line))
+				elseif (!empty($obj->fk_facture_line))
 				{
 					$sqlSelect2 = "SELECT f.entity";
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";

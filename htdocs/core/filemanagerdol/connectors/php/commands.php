@@ -290,7 +290,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 					@unlink($sFilePath);
 					$sErrorNumber = '202' ;
 				}
-				else if ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml($sFilePath) === true )
+				elseif ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml($sFilePath) === true )
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202' ;

@@ -42,7 +42,7 @@ if ($action == 'activate_hidemenu')
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
-else if ($action == 'disable_hidemenu')
+elseif ($action == 'disable_hidemenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);

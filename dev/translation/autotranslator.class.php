@@ -221,8 +221,8 @@ class autoTranslator
 		}
 
 		if ($key == 'CHARSET') $val=$this->_outputpagecode;
-		else if (preg_match('/^Format/',$key)) $val=$value;
-		else if ($value=='-') $val=$value;
+		elseif (preg_match('/^Format/',$key)) $val=$value;
+		elseif ($value=='-') $val=$value;
 		else
 		{
 			// If not translated then translate

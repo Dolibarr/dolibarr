@@ -306,8 +306,8 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
-		    else if ($value == '+') $this->cachenbofdoc++;
-		    else if ($value == '-') $this->cachenbofdoc--;
+		    elseif ($value == '+') $this->cachenbofdoc++;
+		    elseif ($value == '-') $this->cachenbofdoc--;
 		}
 
 		return 1;

@@ -614,7 +614,7 @@ class FormMail extends Form
 							$soc->fetch($this->toid);
 							$out.= $soc->getNomUrl(1);
 						}
-						else if ($this->totype == 'contact')
+						elseif ($this->totype == 'contact')
 						{
 							$contact=new Contact($this->db);
 							$contact->fetch($this->toid);
@@ -841,7 +841,7 @@ class FormMail extends Form
 							$out.= '<br></div>';
 						}
 					}
-					else if (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
+					elseif (empty($this->withmaindocfile))		// Do not show message if we asked to show the checkbox
 					{
 						$out.= $langs->trans("NoAttachedFiles").'<br>';
 					}
@@ -924,7 +924,7 @@ class FormMail extends Form
 				// Deal with format differences between message and signature (text / HTML)
 				if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
-				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+				} elseif(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 

@@ -979,7 +979,7 @@ class ExtraFields
 				{
 					$morecss = 'minwidth100';
 				}
-				else if (round($size) <= 48)
+				elseif (round($size) <= 48)
 				{
 					$morecss = 'minwidth200';
 				}
@@ -1333,7 +1333,7 @@ class ExtraFields
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
-					} else if (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
+					} elseif (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
 						// Pattern for word=$ID$
 						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
@@ -1371,7 +1371,7 @@ class ExtraFields
 									$boolCond =(( $matchCondition[1] == "AND" )?' AND 1 ':' OR 0 ');
 									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond.$matchCondition[3],$InfoFieldList[4]);
 								}
-								else if (! empty($matchCondition[3])) {
+								elseif (! empty($matchCondition[3])) {
 									$boolCond =(( $matchCondition[3] == "AND" )?' 1 AND ':' 0 OR');
 									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond,$InfoFieldList[4]);
 								}
@@ -1945,7 +1945,7 @@ class ExtraFields
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
 				}
-				else if (in_array($key_type,array('checkbox','chkbxlst')))
+				elseif (in_array($key_type,array('checkbox','chkbxlst')))
 				{
 					$value_arr=GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -1954,7 +1954,7 @@ class ExtraFields
 						$value_key='';
 					}
 				}
-				else if (in_array($key_type,array('price','double')))
+				elseif (in_array($key_type,array('price','double')))
 				{
 					$value_arr=GETPOST("options_".$key, 'alpha');
 					$value_key=price2num($value_arr);
@@ -2020,14 +2020,14 @@ class ExtraFields
 					// Clean parameters
 					$value_key=dol_mktime($_POST[$keysuffix."options_".$key.$keyprefix."hour"], $_POST[$keysuffix."options_".$key.$keyprefix."min"], 0, $_POST[$keysuffix."options_".$key.$keyprefix."month"], $_POST[$keysuffix."options_".$key.$keyprefix."day"], $_POST[$keysuffix."options_".$key.$keyprefix."year"]);
 				}
-				else if (in_array($key_type,array('checkbox', 'chkbxlst')))
+				elseif (in_array($key_type,array('checkbox', 'chkbxlst')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr=(array) $value_arr;
 					$value_key=implode(',', $value_arr);
 				}
-				else if (in_array($key_type,array('price','double')))
+				elseif (in_array($key_type,array('price','double')))
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key=price2num($value_arr);

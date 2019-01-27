@@ -459,9 +459,9 @@ function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entc
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
             if ($withcode == 1) $result=$label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) $result=$obj->code;
-            else if ($withcode == 3) $result=$obj->rowid;
-            else if ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
+            elseif ($withcode == 2) $result=$obj->code;
+            elseif ($withcode == 3) $result=$obj->rowid;
+            elseif ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else $result=$label;
         }
         else
@@ -525,7 +525,7 @@ function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$ent
                     return $label = $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
             }
-            else if ($withcode == 2) {
+            elseif ($withcode == 2) {
                 if ($withregion == 1) {
                     return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
@@ -533,7 +533,7 @@ function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$ent
                     return $label = ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
             }
-            else if ($withcode === 'all') {
+            elseif ($withcode === 'all') {
                 if ($withregion == 1) {
                     return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label,'region_code'=>$obj->region_code,'region'=>$obj->region_name);
                 }

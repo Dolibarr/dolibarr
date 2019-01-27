@@ -208,7 +208,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'payment') {
+		elseif($this->element === 'payment') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 			$object = new Paiement($this->db);
@@ -219,7 +219,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'payment_supplier') {
+		elseif($this->element === 'payment_supplier') {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 			$object = new PaiementFourn($this->db);
@@ -230,7 +230,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'payment_donation') {
+		elseif($this->element === 'payment_donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 
 			$object = new PaymentDonation($this->db);
@@ -241,7 +241,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'payment_various') {
+		elseif($this->element === 'payment_various') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
 			$object = new PaymentVarious($this->db);
@@ -252,7 +252,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'don' || $this->element === 'donation') {
+		elseif($this->element === 'don' || $this->element === 'donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 			$object = new Don($this->db);
@@ -263,7 +263,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'subscription') {
+		elseif($this->element === 'subscription') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 			$object = new Subscription($this->db);
@@ -274,7 +274,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if($this->element === 'cashcontrol') {
+		elseif($this->element === 'cashcontrol') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 			$object = new CashControl($this->db);
@@ -285,11 +285,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
-		else if ($this->action == 'MODULE_SET')
+		elseif ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
 		}
-		else if ($this->action == 'MODULE_RESET')
+		elseif ($this->action == 'MODULE_RESET')
 		{
 			if ($this->signature == '0000000000')
 			{
@@ -469,7 +469,7 @@ class BlockedLog
 						}
 					}
 				}
-				else if (!is_object($value)) $this->object_data->{$key} = $value;
+				elseif (!is_object($value)) $this->object_data->{$key} = $value;
 			}
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -984,11 +984,11 @@ class BlockedLog
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
 		}
-		else if ($element=='not_certified') {
+		elseif ($element=='not_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 0";
 		}
-		else if ($element=='just_certified') {
+		elseif ($element=='just_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
 		}

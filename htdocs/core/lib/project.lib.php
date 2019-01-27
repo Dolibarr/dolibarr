@@ -1105,7 +1105,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				// Warning
 				print '<td align="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-   				else if ($disabledtask)
+   				elseif ($disabledtask)
    				{
    					$titleassigntask = $langs->trans("AssignTaskToMe");
    					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
@@ -1383,7 +1383,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				// Warning
 				print '<td align="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
-   				else if ($disabledtask)
+   				elseif ($disabledtask)
    				{
    					$titleassigntask = $langs->trans("AssignTaskToMe");
    					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');

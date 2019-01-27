@@ -461,7 +461,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
     				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
     			}
-    			else if (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+    			elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
     				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
     			}
 
@@ -820,7 +820,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$cur+=1;
 	}
 
-	else if (! $usedetailedbban) $cury+=1;
+	elseif (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
 	$ibankey = FormBank::getIBANLabel($account);
@@ -2030,7 +2030,7 @@ function pdf_getTotalQty($object,$type,$outputlangs)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			else if ($type==9 && is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
+			elseif ($type==9 && is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
 			{
 				$special_code = $object->lines[$i]->special_code;
 				if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -2039,11 +2039,11 @@ function pdf_getTotalQty($object,$type,$outputlangs)
 				$reshook = $hookmanager->executeHooks('pdf_getTotalQty',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 				return $hookmanager->resPrint;
 			}
-			else if ($type==0 && $object->lines[$i]->product_type == 0)
+			elseif ($type==0 && $object->lines[$i]->product_type == 0)
 			{
 				$total += $object->lines[$i]->qty;
 			}
-			else if ($type==1 && $object->lines[$i]->product_type == 1)
+			elseif ($type==1 && $object->lines[$i]->product_type == 1)
 			{
 				$total += $object->lines[$i]->qty;
 			}
@@ -2087,7 +2087,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date,'day','',$outputlangs);
 			}
 		}
-		else if ($objecttype == 'commande' || $objecttype == 'supplier_order')
+		elseif ($objecttype == 'commande' || $objecttype == 'supplier_order')
 		{
 			$outputlangs->load('orders');
 			foreach($objects as $elementobject)
@@ -2098,7 +2098,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date,'day','',$outputlangs);
 			}
 		}
-		else if ($objecttype == 'contrat')
+		elseif ($objecttype == 'contrat')
 		{
 			$outputlangs->load('contracts');
 			foreach($objects as $elementobject)
@@ -2109,7 +2109,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date_contrat,'day','',$outputlangs);
 			}
 		}
-		else if ($objecttype == 'shipping')
+		elseif ($objecttype == 'shipping')
 		{
 			$outputlangs->loadLangs(array("orders", "sendings"));
 

@@ -498,7 +498,7 @@ function getRandomPassword($generic=false, $replaceambiguouschars=null)
 			$generated_password=str_shuffle($randomCode);
 		}
 	}
-	else if (! empty($conf->global->USER_PASSWORD_GENERATED))
+	elseif (! empty($conf->global->USER_PASSWORD_GENERATED))
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";

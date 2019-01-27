@@ -1358,7 +1358,7 @@ class Account extends CommonObject
 		{
 			$url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
 		}
-		else if ($mode == 'receipts')
+		elseif ($mode == 'receipts')
 		{
 			$url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
 		}
@@ -1783,7 +1783,7 @@ class AccountLine extends CommonObject
 		$sql.= " WHERE b.fk_account = ba.rowid";
 		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) $sql.= " AND b.num_chq='".$this->db->escape($num)."'";
-		else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
+		elseif ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
 		else $sql.= " AND b.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

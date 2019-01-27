@@ -1953,7 +1953,7 @@ class SupplierProposal extends CommonObject
                     {
                         $ga[$obj->supplier_proposalid] = $obj->ref;
                     }
-                    else if ($shortlist == 2)
+                    elseif ($shortlist == 2)
                     {
                         $ga[$obj->supplier_proposalid] = $obj->ref.' ('.$obj->name.')';
                     }

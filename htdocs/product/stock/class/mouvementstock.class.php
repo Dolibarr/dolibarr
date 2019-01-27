@@ -433,7 +433,7 @@ class MouvementStock extends CommonObject
 					//print "qty=".$qty." newpmp=".$newpmp;
 					//exit;
 				}
-				else if ($type == 1 || $type == 2)
+				elseif ($type == 1 || $type == 2)
 				{
 					// After a stock decrease, we don't change value of PMP for product.
 					$newpmp = $oldpmp;
@@ -465,7 +465,7 @@ class MouvementStock extends CommonObject
 					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
-				else if (empty($fk_product_stock))
+				elseif (empty($fk_product_stock))
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
@@ -822,7 +822,7 @@ class MouvementStock extends CommonObject
 				$result = -2;
 			}
 		}
-		else if (is_array($dluo))
+		elseif (is_array($dluo))
 		{
 			if (isset($dluo['fk_product_stock']))
 			{

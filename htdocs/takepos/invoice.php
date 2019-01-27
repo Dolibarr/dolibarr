@@ -66,8 +66,8 @@ if (!$placeid) { $placeid = 0; // not necesary
 if ($action == 'valid' && $user->rights->facture->creer)
 {
 	if ($pay=="cash") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-	else if ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-	else if ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+	elseif ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	elseif ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 	$now=dol_now();
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -80,8 +80,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->amounts[$invoice->id]=$invoice->total_ttc;
 	
   if ($pay=="cash") $payment->paiementid=4;
-	else if ($pay=="card") $payment->paiementid=6;
-	else if ($pay=="cheque") $payment->paiementid=7;
+	elseif ($pay=="card") $payment->paiementid=6;
+	elseif ($pay=="cheque") $payment->paiementid=7;
 	$payment->num_paiement=$invoice->ref;
 
   $payment->create($user);
@@ -125,8 +125,7 @@ if ($action == "deleteline") {
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    else
-    if ($placeid > 0) { //If exist invoice, but no line selected, proced to delete last line
+    elseif ($placeid > 0) { //If exist invoice, but no line selected, proced to delete last line
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='$placeid' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);

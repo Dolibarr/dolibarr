@@ -426,8 +426,8 @@ abstract class CommonObject
 		$sql.= " WHERE entity IN (".getEntity($element).")" ;
 
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
-		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
-		else if ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
+		elseif ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
+		elseif ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
 		else {
 			$error='ErrorWrongParameters';
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
@@ -1207,7 +1207,7 @@ abstract class CommonObject
 		if($this->element=='shipping' && $this->origin_id != 0) {
 			$id=$this->origin_id;
 			$element='commande';
-        } else if($this->element=='reception' && $this->origin_id != 0) {
+        } elseif($this->element=='reception' && $this->origin_id != 0) {
             $id=$this->origin_id;
             $element='order_supplier';
 		} else {
@@ -1353,7 +1353,7 @@ abstract class CommonObject
 		if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
 		{
 			if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-			else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+			elseif ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
 			else dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
 		}
 
@@ -1562,8 +1562,8 @@ abstract class CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 
 		if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
-		else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
-		else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
+		elseif ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
+		elseif ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
 
 		if ($fk_user_field)
 		{
@@ -1648,8 +1648,8 @@ abstract class CommonObject
 			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
-		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
 		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
@@ -1660,7 +1660,7 @@ abstract class CommonObject
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
@@ -1694,8 +1694,8 @@ abstract class CommonObject
 			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
-		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
 		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
@@ -1706,7 +1706,7 @@ abstract class CommonObject
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
@@ -2675,7 +2675,7 @@ abstract class CommonObject
 		if ($this->db->query($sql))
 		{
 			if ($suffix == '_public') $this->note_public = $note;
-			else if ($suffix == '_private') $this->note_private = $note;
+			elseif ($suffix == '_private') $this->note_private = $note;
 			else
 			{
 				$this->note = $note;      // deprecated
@@ -3059,7 +3059,7 @@ abstract class CommonObject
 				$sql.= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
 				if ($withtargettype) $sql.= " AND targettype = '".$targettype."'";
 			}
-			else if ($justtarget)
+			elseif ($justtarget)
 			{
 				$sql.= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
 				if ($withsourcetype) $sql.= " AND sourcetype = '".$sourcetype."'";
@@ -3087,7 +3087,7 @@ abstract class CommonObject
 					{
 						$this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
 					}
-					else if ($justtarget)
+					elseif ($justtarget)
 					{
 						$this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
 					}
@@ -3125,28 +3125,28 @@ abstract class CommonObject
 					if ($objecttype == 'facture')			{
 						$classpath = 'compta/facture/class';
 					}
-					else if ($objecttype == 'facturerec')			{
+					elseif ($objecttype == 'facturerec')			{
 						$classpath = 'compta/facture/class'; $module = 'facture';
 					}
-					else if ($objecttype == 'propal')			{
+					elseif ($objecttype == 'propal')			{
 						$classpath = 'comm/propal/class';
 					}
-					else if ($objecttype == 'supplier_proposal')			{
+					elseif ($objecttype == 'supplier_proposal')			{
 						$classpath = 'supplier_proposal/class';
 					}
-					else if ($objecttype == 'shipping')			{
+					elseif ($objecttype == 'shipping')			{
 						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
 					}
-					else if ($objecttype == 'delivery')			{
+					elseif ($objecttype == 'delivery')			{
 						$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
 					}
-					else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
+					elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
 						$classpath = 'fourn/class'; $module = 'fournisseur';
 					}
-					else if ($objecttype == 'fichinter')			{
+					elseif ($objecttype == 'fichinter')			{
 						$classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
 					}
-					else if ($objecttype == 'subscription')			{
+					elseif ($objecttype == 'subscription')			{
 						$classpath = 'adherents/class'; $module = 'adherent';
 					}
 
@@ -3156,19 +3156,19 @@ abstract class CommonObject
 					if ($objecttype == 'order') {
 						$classfile = 'commande'; $classname = 'Commande';
 					}
-					else if ($objecttype == 'invoice_supplier') {
+					elseif ($objecttype == 'invoice_supplier') {
 						$classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
 					}
-					else if ($objecttype == 'order_supplier')   {
+					elseif ($objecttype == 'order_supplier')   {
 						$classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
 					}
-					else if ($objecttype == 'supplier_proposal')   {
+					elseif ($objecttype == 'supplier_proposal')   {
 						$classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
 					}
-					else if ($objecttype == 'facturerec')   {
+					elseif ($objecttype == 'facturerec')   {
 						$classfile = 'facture-rec'; $classname = 'FactureRec';
 					}
-					else if ($objecttype == 'subscription')   {
+					elseif ($objecttype == 'subscription')   {
 						$classfile = 'subscription'; $classname = 'Subscription';
 					}
 
@@ -3224,7 +3224,7 @@ abstract class CommonObject
 		$updatetarget=false;
 
 		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $updatesource=true;
-		else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $updatetarget=true;
+		elseif (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $updatetarget=true;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_element SET ";
 		if ($updatesource)
@@ -3234,7 +3234,7 @@ abstract class CommonObject
 			$sql.= " WHERE fk_target = ".$this->id;
 			$sql.= " AND targettype = '".$this->db->escape($this->element)."'";
 		}
-		else if ($updatetarget)
+		elseif ($updatetarget)
 		{
 			$sql.= "fk_target = ".$targetid;
 			$sql.= ", targettype = '".$this->db->escape($targettype)."'";
@@ -3271,7 +3271,7 @@ abstract class CommonObject
 		$deletetarget=false;
 
 		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $deletesource=true;
-		else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $deletetarget=true;
+		elseif (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $deletetarget=true;
 
 		$sourceid = (! empty($sourceid) ? $sourceid : $this->id);
 		$sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
@@ -3291,7 +3291,7 @@ abstract class CommonObject
 				$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
 				$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."'";
 			}
-			else if ($deletetarget)
+			elseif ($deletetarget)
 			{
 				$sql.= " fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
 				$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."'";
@@ -3626,7 +3626,7 @@ abstract class CommonObject
 			{
 				if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
 				$totalToShip+=$line->qty_shipped;   // defined for shipment only
-            }else if ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
+            }elseif ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
             {
                 if (empty($totalToShip)) $totalToShip=0;
                 $totalToShip+=$line->qty;   // defined for reception only
@@ -4240,7 +4240,7 @@ abstract class CommonObject
 			$discount->fk_soc = $this->socid;
 			$this->tpl['label'].= $discount->getNomUrl(0,'discount');
 		}
-		else if (! empty($line->fk_product))
+		elseif (! empty($line->fk_product))
 		{
 			$productstatic = new Product($this->db);
 			$productstatic->id = $line->fk_product;
@@ -5437,7 +5437,7 @@ abstract class CommonObject
 				{
 					$morecss = 'minwidth100';
 				}
-				else if (round($size) <= 48)
+				elseif (round($size) <= 48)
 				{
 					$morecss = 'minwidth200';
 				}
@@ -6035,7 +6035,7 @@ abstract class CommonObject
 				{
 					$showsize = 'minwidth100';
 				}
-				else if (round($size) <= 48)
+				elseif (round($size) <= 48)
 				{
 					$showsize = 'minwidth200';
 				}
@@ -6589,12 +6589,12 @@ abstract class CommonObject
 					{
 						$buyPrice = $product->cost_price;
 					}
-					else if ($product->pmp > 0)
+					elseif ($product->pmp > 0)
 					{
 						$buyPrice = $product->pmp;
 					}
 				}
-				else if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
+				elseif (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
@@ -6618,7 +6618,7 @@ abstract class CommonObject
 					{
 						$buyPrice = $productFournisseur->fourn_unitprice;
 					}
-					else if ($result < 0)
+					elseif ($result < 0)
 					{
 						$this->errors[] = $productFournisseur->error;
 						return -2;
@@ -6740,7 +6740,7 @@ abstract class CommonObject
 							if ($nbphoto % $nbbyrow == 1) $return.= '<tr class="center valignmiddle" style="border: 1px">';
 							$return.= '<td style="width: '.ceil(100/$nbbyrow).'%" class="photo">';
 						}
-						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
+						elseif ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
 						$return.= "\n";
 
@@ -6821,7 +6821,7 @@ abstract class CommonObject
 							$return.= '</td>';
 							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
 						}
-						else if ($nbbyrow < 0) $return.='</div>';
+						elseif ($nbbyrow < 0) $return.='</div>';
 					}
 
 					if (empty($size)) {     // Format origine
@@ -7003,7 +7003,7 @@ abstract class CommonObject
 					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
 			}
-			else if($this->isArray($info))
+			elseif($this->isArray($info))
 			{
 				if(! empty($this->{$field})) {
 					if(! is_array($this->{$field})) {
@@ -7014,7 +7014,7 @@ abstract class CommonObject
 					$queryarray[$field] = null;
 				}
 			}
-			else if($this->isInt($info))
+			elseif($this->isInt($info))
 			{
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
 				else
@@ -7023,7 +7023,7 @@ abstract class CommonObject
 					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
-			else if($this->isFloat($info))
+			elseif($this->isFloat($info))
 			{
 				$queryarray[$field] = (double) price2num($this->{$field});
 				if (empty($queryarray[$field])) $queryarray[$field]=0;
@@ -7111,7 +7111,7 @@ abstract class CommonObject
     protected function quote($value, $fieldsentry)
     {
 		if (is_null($value)) return 'NULL';
-		else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+		elseif (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";
 	}
 

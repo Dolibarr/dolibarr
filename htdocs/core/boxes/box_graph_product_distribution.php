@@ -368,17 +368,17 @@ class box_graph_product_distribution extends ModeleBoxes
 			if ($nbofgraph == 1)
 			{
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				else $stringtoshow.=$px3->show();
 			}
 			if ($nbofgraph == 2)
 			{
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				$stringtoshow.='</div><div class="fichehalfright">';
 				if ($showordernb) $stringtoshow.=$px3->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				$stringtoshow.='</div></div></div>';
 			}
 			if ($nbofgraph == 3)

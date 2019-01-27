@@ -134,7 +134,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES") {
+elseif ($modecompta=="RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -146,7 +146,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
@@ -191,7 +191,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		/*
 		 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -232,7 +232,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -278,12 +278,12 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 			dol_print_error($db);
 		}
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		// Nothing from this table
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -307,7 +307,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
@@ -347,7 +347,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -429,7 +429,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 			dol_print_error($db);
 		}
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		// TVA reellement deja payee
 		$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
@@ -493,7 +493,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		}
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -516,7 +516,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -554,7 +554,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }
@@ -578,7 +578,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
-	else if ($modecompta=="RECETTES-DEPENSES")
+	elseif ($modecompta=="RECETTES-DEPENSES")
 	{
 		$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -616,7 +616,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		dol_print_error($db);
 	}
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	// Nothing from this table
 }

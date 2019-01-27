@@ -162,7 +162,7 @@ if (empty($reshook))
 	}
 
 	// Update record
-	else if ($action == 'update' && $user->rights->loan->write)
+	elseif ($action == 'update' && $user->rights->loan->write)
 	{
 		if (! $cancel)
 		{

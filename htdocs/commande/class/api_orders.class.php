@@ -565,7 +565,7 @@ class Orders extends DolibarrApi
         $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
         if( $result < 0) {
             throw new RestException(405, $this->commande->error);
-        }else if( $result == 0) {
+        }elseif( $result == 0) {
             throw new RestException(304);
         }
 

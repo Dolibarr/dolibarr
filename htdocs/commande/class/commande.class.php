@@ -2533,7 +2533,7 @@ class Commande extends CommonOrder
 					{
 						$ga[$obj->cid] = $obj->ref;
 					}
-					else if ($shortlist == 2)
+					elseif ($shortlist == 2)
 					{
 						$ga[$obj->cid] = $obj->ref.' ('.$obj->name.')';
 					}

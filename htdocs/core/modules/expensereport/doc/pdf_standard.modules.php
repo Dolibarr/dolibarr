@@ -780,7 +780,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outputlangs),0,'L');
 				}
 			}
-			else if($object->fk_statut==4)
+			elseif($object->fk_statut==4)
 			{
 				if ($object->fk_user_cancel > 0) {
 					$userfee=new User($this->db);

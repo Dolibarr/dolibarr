@@ -445,7 +445,7 @@ class Project extends CommonObject
         {
         	$sql.= " WHERE rowid=".$id;
         }
-        else if (! empty($ref))
+        elseif (! empty($ref))
         {
         	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
         	$sql.= " AND entity IN (".getEntity('project').")";
@@ -1039,7 +1039,7 @@ class Project extends CommonObject
             if (preg_match('/\.php$/',$option)) {
                 $url = dol_buildpath($option,1) . '?id=' . $this->id;
             }
-            else if ($option == 'task')
+            elseif ($option == 'task')
             {
                 $url = DOL_URL_ROOT . '/projet/tasks.php?id=' . $this->id;
             }
@@ -1155,7 +1155,7 @@ class Project extends CommonObject
         {
             $userAccess = 1;
         }
-        else if ($this->public && (($mode == 'read' && ! empty($user->rights->projet->lire)) || ($mode == 'write' && ! empty($user->rights->projet->creer)) || ($mode == 'delete' && ! empty($user->rights->projet->supprimer))))
+        elseif ($this->public && (($mode == 'read' && ! empty($user->rights->projet->lire)) || ($mode == 'write' && ! empty($user->rights->projet->creer)) || ($mode == 'delete' && ! empty($user->rights->projet->supprimer))))
         {
             $userAccess = 1;
         }

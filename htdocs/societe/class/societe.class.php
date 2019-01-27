@@ -2332,7 +2332,7 @@ class Societe extends CommonObject
 				{
 					$obj = $this->db->fetch_object($resql);
 					if ($mode == 'email') $property=$obj->email;
-					else if ($mode == 'mobile') $property=$obj->phone_mobile;
+					elseif ($mode == 'mobile') $property=$obj->phone_mobile;
 					else $property=$obj->$mode;
 
 					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
@@ -2341,7 +2341,7 @@ class Societe extends CommonObject
 						if (empty($property))
 						{
 							if ($mode == 'email') $property=$langs->transnoentitiesnoconv("NoEMail");
-							else if ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
+							elseif ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
 						}
 
 						if (!empty($obj->poste))
@@ -2465,7 +2465,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') $contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
-				else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
+				elseif ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;
 		}
@@ -2787,7 +2787,7 @@ class Societe extends CommonObject
 				$result = $mod->get_code($this->db, $this, $type);
 
 				if ($type == 'customer') $this->code_compta = $mod->code;
-				else if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
+				elseif ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
 
 				return $result;
 			}
@@ -2800,7 +2800,7 @@ class Societe extends CommonObject
 		else
 		{
 			if ($type == 'customer') $this->code_compta = '';
-			else if ($type == 'supplier') $this->code_compta_fournisseur = '';
+			elseif ($type == 'supplier') $this->code_compta_fournisseur = '';
 
 			return 0;
 		}
@@ -3225,7 +3225,7 @@ class Societe extends CommonObject
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
 		if (! empty($this->tva_intra)) $isacompany=1;
-		else if (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
+		elseif (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
 		{
 			// TODO Add a field is_a_company into dictionary
 			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) $isacompany=0;

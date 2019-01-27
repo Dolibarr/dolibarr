@@ -717,7 +717,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    else if ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
+    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
     else $valueforccc=$objsoc->code_client;
 
     $sharetable = $table;
@@ -859,7 +859,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
     if (is_numeric($yearoffsettype) && $yearoffsettype >= 1)
         $maskraz=$yearoffsettype; // For backward compatibility
-    else if ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
+    elseif ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
         $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
     //print "maskraz=".$maskraz;	// -1=no reset
 
@@ -882,8 +882,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         else // if reset is for a specific month in year, we need year
         {
             if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
-        	else if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
-            else if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
+        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
+            elseif (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
             else return 'ErrorCantUseRazIfNoYearInMask';
         }
         // Define length
@@ -917,10 +917,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         		if ($date < $nextnewyeardate && $yearoffsettype == '+') $yearoffset=1;
         	}
         	// If after or equal of current new year date
-        	else if ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
+        	elseif ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
         }
         // For backward compatibility
-        else if (date("m",$date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+        elseif (date("m",$date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
 
         if ($yearlen == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
         elseif ($yearlen == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
@@ -938,7 +938,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
             $sqlwhere.=')';
         }
-		else if ($resetEveryMonth)
+		elseif ($resetEveryMonth)
 		{
 			$sqlwhere.="(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
             $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
@@ -989,7 +989,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
     	$sql.= " AND entity IN (".getEntity($sharetable).")";
-    else if (! empty($forceentity))
+    elseif (! empty($forceentity))
     	$sql.= " AND entity IN (".$forceentity.")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
@@ -1006,12 +1006,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // Check if we must force counter to maskoffset
     if (empty($counter)) $counter=$maskoffset;
-    else if (preg_match('/[^0-9]/i',$counter))
+    elseif (preg_match('/[^0-9]/i',$counter))
     {
     	$counter=0;
     	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
     }
-    else if ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
+    elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
@@ -1038,7 +1038,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
     	if ($bentityon) // only if entity enable
         	$sql.= " AND entity IN (".getEntity($sharetable).")";
-        else if (! empty($forceentity))
+        elseif (! empty($forceentity))
         	$sql.= " AND entity IN (".$forceentity.")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
@@ -1054,7 +1054,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
         $numFinal=$ref;
     }
-    else if ($mode == 'next')
+    elseif ($mode == 'next')
     {
         $counter++;
 
@@ -1094,7 +1094,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
             if ($bentityon) // only if entity enable
             	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
-            else if (! empty($forceentity))
+            elseif (! empty($forceentity))
             	$sql.= " AND entity IN (".$forceentity.")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
@@ -1357,9 +1357,9 @@ function numero_semaine($time)
     // Definition du Jeudi de la semaine
     if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
     $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
-    else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
+    elseif (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
     $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)+(4-date("w",mktime(12,0,0,$mois,$jour,$annee)))*24*60*60;
-    else if (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
+    elseif (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
     $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
     else // Jeudi
     $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
@@ -1369,11 +1369,11 @@ function numero_semaine($time)
     {
         $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
     }
-    else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
+    elseif (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
     {
         $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(4-date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine))))*24*60*60;
     }
-    else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
+    elseif (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
     {
         $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(7-(date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))-4))*24*60*60;
     }

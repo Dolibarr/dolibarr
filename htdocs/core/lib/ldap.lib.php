@@ -113,11 +113,11 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
 	}
-	else if (empty($conf->global->LDAP_SERVER_HOST))
+	elseif (empty($conf->global->LDAP_SERVER_HOST))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
-	else if (empty($key) || empty($dn) || empty($objectclass))
+	elseif (empty($key) || empty($dn) || empty($objectclass))
 	{
 		$langs->load("errors");
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
@@ -172,7 +172,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 			}
 			show_ldap_content($val,$level+1,$count,$var,$hide,$val["count"]);
 		}
-		else if ($subcount)
+		elseif ($subcount)
 		{
 			$subcount--;
 			$newstring=dol_htmlentitiesbr($val);

@@ -199,7 +199,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) )
 		{
 			$result=-2;
 		}

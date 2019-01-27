@@ -546,11 +546,11 @@ if (! $error && $db->connected && $action == "set")
             {
                 $databasefortest='mysql';
             }
-            else if ($conf->db->type == 'pgsql')
+            elseif ($conf->db->type == 'pgsql')
             {
                 $databasefortest='postgres';
             }
-            else if ($conf->db->type == 'mssql')
+            elseif ($conf->db->type == 'mssql')
             {
                 $databasefortest='master';
             }

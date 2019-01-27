@@ -104,7 +104,7 @@ class FormProduct
 				$sql.= ", ps.reel as stock";
 			}
 		}
-		else if ($sumStock)
+		elseif ($sumStock)
 		{
 			$sql.= ", sum(ps.reel) as stock";
 		}
@@ -318,9 +318,9 @@ class FormProduct
 
 		$measuring_units=array();
 		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,98=>1,99=>1);
-		else if ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
-        else if ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
-		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		elseif ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
+        elseif ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
+		elseif ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
 
 		$return.= '<select class="flat" name="'.$name.'">';
 		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
