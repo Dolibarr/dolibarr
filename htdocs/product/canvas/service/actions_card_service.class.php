@@ -80,7 +80,7 @@ class ActionsCardService
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
-   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
+   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id, $ref);
         $this->object = $tmpobject;
 
 		//parent::assign_values($action);
@@ -90,7 +90,7 @@ class ActionsCardService
             $this->tpl[$key] = $value;
         }
 
-        $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
+        $this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
 
 		// canvas
 		$this->tpl['canvas'] = $this->canvas;
@@ -121,14 +121,14 @@ class ActionsCardService
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
 		}
 
 		if ($action == 'view')
 		{
             $head = product_prepare_head($this->object);
 
-            $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
@@ -136,12 +136,12 @@ class ActionsCardService
             $this->tpl['showend']=dol_get_fiche_end();
 
 			// Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -170,10 +170,10 @@ class ActionsCardService
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->object->status);
+    		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$this->object->status_buy);
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
     		$this->tpl['description'] = $this->description;
     		$this->tpl['note'] = $this->note;
@@ -198,7 +198,7 @@ class ActionsCardService
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Duration
@@ -262,7 +262,7 @@ class ActionsCardService
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 
-				array_push($this->field_list,$fieldlist);
+				array_push($this->field_list, $fieldlist);
 
 				$i++;
 			}
@@ -270,7 +270,7 @@ class ActionsCardService
 		}
 		else
 		{
-			dol_print_error($this->db,$sql);
+			dol_print_error($this->db, $sql);
 		}
 	}
 
@@ -298,9 +298,9 @@ class ActionsCardService
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		// We'll need this table joined to the select in order to filter by categ
 		if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-		if (GETPOST("fourn_id",'int') > 0)
+		if (GETPOST("fourn_id", 'int') > 0)
 		{
-			$fourn_id = GETPOST("fourn_id",'int');
+			$fourn_id = GETPOST("fourn_id", 'int');
 			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		}
 		$sql.= " WHERE p.entity IN (".getEntity('product').")";
@@ -333,7 +333,7 @@ class ActionsCardService
 		{
 			$sql .= " AND cp.fk_categorie = ".$this->db->escape($search_categ);
 		}
-		$sql.= $this->db->order($sortfield,$sortorder);
+		$sql.= $this->db->order($sortfield, $sortorder);
 		$sql.= $this->db->plimit($limit+1, $offset);
 
 		$this->list_datas = array();
@@ -344,7 +344,7 @@ class ActionsCardService
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while ($i < min($num,$limit))
+			while ($i < min($num, $limit))
 			{
 				$datas = array();
 				$obj = $this->db->fetch_object($resql);
@@ -355,7 +355,7 @@ class ActionsCardService
 				$datas["barcode"]   = $obj->barcode;
 				$datas["statut"]    = $obj->statut;
 
-				array_push($this->list_datas,$datas);
+				array_push($this->list_datas, $datas);
 
 				$i++;
 			}

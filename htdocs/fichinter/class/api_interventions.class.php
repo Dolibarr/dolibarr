@@ -83,7 +83,7 @@ class Interventions extends DolibarrApi
     		throw new RestException(404, 'Intervention report not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -267,7 +267,7 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-                if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+                if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
                         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
                 }
 
@@ -303,7 +303,7 @@ class Interventions extends DolibarrApi
     		throw new RestException(404, 'Intervention not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->fichinter->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('commande', $this->fichinter->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -344,7 +344,7 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -381,7 +381,7 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+        if (! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

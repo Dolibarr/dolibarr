@@ -41,15 +41,15 @@ $date_endyear=GETPOST('date_endyear');
 $nbofyear=4;
 
 // Date range
-$year=GETPOST('year','int');
+$year=GETPOST('year', 'int');
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -75,16 +75,16 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 		}
 		else $month_end=$month_start;
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 
-$userid=GETPOST('userid','int');
-$socid = GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 
 $tmps=dol_getdate($date_start);
 $year_start = $tmps['year'];
@@ -95,12 +95,12 @@ $nbofyear = ($year_end - $year_start) + 1;
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
-if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 
 
@@ -119,7 +119,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
@@ -145,7 +145,7 @@ else if ($modecompta=="BOOKKEEPING")
 {
 	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
@@ -156,7 +156,7 @@ else if ($modecompta=="BOOKKEEPING")
 
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -213,8 +213,8 @@ if ($result)
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($obj->amount_ttc)
 		{
-			$minyearmonth=($minyearmonth?min($minyearmonth,$obj->dm):$obj->dm);
-			$maxyearmonth=max($maxyearmonth,$obj->dm);
+			$minyearmonth=($minyearmonth?min($minyearmonth, $obj->dm):$obj->dm);
+			$maxyearmonth=max($maxyearmonth, $obj->dm);
 		}
 		$i++;
 	}
@@ -250,8 +250,8 @@ if ($modecompta == 'RECETTES-DEPENSES')
 			$cum[$obj->dm] += $obj->amount_ttc;
 			if ($obj->amount_ttc)
 			{
-				$minyearmonth=($minyearmonth?min($minyearmonth,$obj->dm):$obj->dm);
-				$maxyearmonth=max($maxyearmonth,$obj->dm);
+				$minyearmonth=($minyearmonth?min($minyearmonth, $obj->dm):$obj->dm);
+				$maxyearmonth=max($maxyearmonth, $obj->dm);
 			}
 			$i++;
 		}
@@ -293,13 +293,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print '</tr>';
 
 $now_show_delta=0;
-$minyear=substr($minyearmonth,0,4);
-$maxyear=substr($maxyearmonth,0,4);
-$nowyear=strftime("%Y",dol_now());
-$nowyearmonth=strftime("%Y-%m",dol_now());
-$maxyearmonth=max($maxyearmonth,$nowyearmonth);
+$minyear=substr($minyearmonth, 0, 4);
+$maxyear=substr($maxyearmonth, 0, 4);
+$nowyear=strftime("%Y", dol_now());
+$nowyearmonth=strftime("%Y-%m", dol_now());
+$maxyearmonth=max($maxyearmonth, $nowyearmonth);
 $now=dol_now();
-$casenow = dol_print_date($now,"%Y-%m");
+$casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month
 $nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START-1):0;
@@ -310,13 +310,13 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 
 	print '<tr class="oddeven">';
 
-	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, 2000), "%B")."</td>";
 	for ($annee = $year_start -1 ; $annee <= $year_end ; $annee++)	// We start one year before to have data to be able to make delta
 	{
 		$annee_decalage=$annee;
 		if ($mois>12) {$annee_decalage=$annee+1;}
-		$case = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage),"%Y-%m");
-		$caseprev = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage-1),"%Y-%m");
+		$case = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage), "%Y-%m");
+		$caseprev = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage-1), "%Y-%m");
 
 		if ($annee >= $year_start)
 		{
@@ -326,11 +326,11 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				if ($cum_ht[$case])
 				{
 					$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case], 1).'</a>';
 				}
 				else
 				{
-					if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
 					else { print '&nbsp;'; }
 				}
 				print "</td>";
@@ -347,7 +347,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			}
 			else
 			{
-				if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+				if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
 				else { print '&nbsp;'; }
 			}
 			print "</td>";
@@ -357,7 +357,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				if ($cum[$caseprev] && $cum[$case])
 				{
-					$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
+					$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev], 4)*100);
 					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
 					print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
 				}
@@ -467,7 +467,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') {
 		// Montant total HT
-		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
+		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 		{
 			print '<td align="right" class="nowrap">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
 		}
@@ -478,7 +478,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	}
 
 	// Montant total
-	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
+	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 	{
 		print '<td align="right" class="nowrap">'.($total[$annee]?price($total[$annee]):"0")."</td>";
 	}
@@ -488,10 +488,10 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	}
 
 	// Pourcentage total
-	if ($annee > $minyear && $annee <= max($nowyear,$maxyear))
+	if ($annee > $minyear && $annee <= max($nowyear, $maxyear))
 	{
 		if ($total[$annee-1] && $total[$annee]) {
-			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
+			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1], 4)*100);
 			print '<td align="right" class="nowrap borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
 		}
 		if ($total[$annee-1] && ! $total[$annee])
@@ -510,7 +510,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	else
 	{
 		print '<td align="right" class="borderrightlight">';
-		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear,$maxyear))) { print '-'; }
+		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; }
 		else { print '&nbsp;'; }
 		print '</td>';
 	}

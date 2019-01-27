@@ -44,14 +44,14 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	requi
 // Load translation files required by the page
 $langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
 
-$id=GETPOST('id','int');			// id of order
-$ref= GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');			// id of order
+$ref= GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid=0;
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$id);
+$result=restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
@@ -80,10 +80,10 @@ if (empty($reshook))
     {
     	$object = new Commande($db);
     	$object->fetch($id);
-    	$object->setProject(GETPOST('projectid','int'));
+    	$object->setProject(GETPOST('projectid', 'int'));
     }
 
-    if ($action == 'confirm_cloture' && GETPOST('confirm','alpha') == 'yes')
+    if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes')
     {
     	$object = new Commande($db);
     	$object->fetch($id);
@@ -102,11 +102,11 @@ if (empty($reshook))
     if ($action == 'setdatedelivery' && $user->rights->commande->creer)
     {
     	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-    	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
+    	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
     	$object = new Commande($db);
     	$object->fetch($id);
-    	$result=$object->set_date_livraison($user,$datelivraison);
+    	$result=$object->set_date_livraison($user, $datelivraison);
     	if ($result < 0)
     		setEventMessages($object->error, $object->errors, 'errors');
     }
@@ -124,7 +124,7 @@ if (empty($reshook))
     {
     	$object = new Commande($db);
     	$object->fetch($id);
-    	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+    	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
     	if ($result < 0)
     		setEventMessages($object->error, $object->errors, 'errors');
     }
@@ -149,7 +149,7 @@ if (empty($reshook))
     {
     	$object = new Commande($db);
     	$object->fetch($id);
-    	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+    	$result=$object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
     	if ($result < 0)
     		setEventMessages($object->error, $object->errors, 'errors');
     }
@@ -226,13 +226,13 @@ $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-llxHeader('',$langs->trans('OrderCard'),'');
+llxHeader('', $langs->trans('OrderCard'), '');
 
 
 if ($id > 0 || ! empty($ref))
 {
 	$object = new Commande($db);
-	if ( $object->fetch($id,$ref) > 0)
+	if ( $object->fetch($id, $ref) > 0)
 	{
 		$object->loadExpeditions(1);
 
@@ -255,7 +255,7 @@ if ($id > 0 || ! empty($ref))
 		// Confirm validation
 		if ($action == 'cloture')
 		{
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id, $langs->trans("CloseShipment"), $langs->trans("ConfirmCloseShipment"), "confirm_cloture");
 		}
 
 		// Call Hook formConfirm
@@ -334,10 +334,10 @@ if ($id > 0 || ! empty($ref))
 
 		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="3">';
 
-		$absolute_discount=$soc->getAvailableDiscounts('',$filterabsolutediscount);
-		$absolute_creditnote=$soc->getAvailableDiscounts('',$filtercreditnote);
-		$absolute_discount=price2num($absolute_discount,'MT');
-		$absolute_creditnote=price2num($absolute_creditnote,'MT');
+		$absolute_discount=$soc->getAvailableDiscounts('', $filterabsolutediscount);
+		$absolute_creditnote=$soc->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount=price2num($absolute_discount, 'MT');
+		$absolute_creditnote=price2num($absolute_creditnote, 'MT');
 
 		$thirdparty = $soc;
 		$discount_type = 0;
@@ -349,7 +349,7 @@ if ($id > 0 || ! empty($ref))
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
-		print dol_print_date($object->date,'daytext');
+		print dol_print_date($object->date, 'daytext');
 		if ($object->hasDelay() && empty($object->date_livraison)) {
 		    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
@@ -362,7 +362,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			print dol_print_date($object->date_livraison,'daytext');
+			print dol_print_date($object->date_livraison, 'daytext');
 			if ($object->hasDelay() && ! empty($object->date_livraison)) {
 			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
@@ -394,7 +394,7 @@ if ($id > 0 || ! empty($ref))
         print $langs->trans('SendingMethod');
         print '</td>';
         if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
         if ($action == 'editshippingmethod') {
@@ -414,7 +414,7 @@ if ($id > 0 || ! empty($ref))
             print $langs->trans('Warehouse');
             print '</td>';
             if ($action != 'editwarehouse' && $user->rights->commande->creer)
-                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'),1).'</a></td>';
+                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
             if ($action == 'editwarehouse') {
@@ -677,7 +677,7 @@ if ($id > 0 || ! empty($ref))
 						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
-							$outputlangs = new Translate("",$conf);
+							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
 
@@ -698,10 +698,10 @@ if ($id > 0 || ! empty($ref))
 					$text.= ' - '.$label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
                     $description.= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
-					print $form->textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 					// Show range
-					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 					// Add description in form
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -714,18 +714,18 @@ if ($id > 0 || ! empty($ref))
 				else
 				{
 					print "<td>";
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
+					if ($type==1) $text = img_object($langs->trans('Service'), 'service');
+					else $text = img_object($langs->trans('Product'), 'product');
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text,$objp->description,3,'','',$i);
+						print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
 
 					// Show range
-					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 					print "</td>\n";
 				}
 
@@ -915,7 +915,7 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 
-		show_list_sending_receive('commande',$object->id);
+		show_list_sending_receive('commande', $object->id);
 	}
 	else
 	{

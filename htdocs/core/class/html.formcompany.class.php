@@ -154,7 +154,7 @@ class FormCompany
 		print '<input type="hidden" name="action" value="setprospectlevel">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-		dol_syslog(get_class($this).'::form_prospect_level',LOG_DEBUG);
+		dol_syslog(get_class($this).'::form_prospect_level', LOG_DEBUG);
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
@@ -181,7 +181,7 @@ class FormCompany
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
@@ -202,7 +202,7 @@ class FormCompany
 	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
         // phpcs:enable
-		print $this->select_state($selected,$country_codeid, $htmlname);
+		print $this->select_state($selected, $country_codeid, $htmlname);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -224,7 +224,7 @@ class FormCompany
         // phpcs:enable
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid, LOG_DEBUG);
 
 		$langs->load("dict");
 
@@ -246,7 +246,7 @@ class FormCompany
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			dol_syslog(get_class($this)."::select_departement num=".$num,LOG_DEBUG);
+			dol_syslog(get_class($this)."::select_departement num=".$num, LOG_DEBUG);
 			if ($num)
 			{
 				$country='';
@@ -303,7 +303,7 @@ class FormCompany
 				}
 			}
 			if (! empty($htmlname)) $out.= '</select>';
-			if (! empty($htmlname) && $user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if (! empty($htmlname) && $user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		else
 		{
@@ -437,7 +437,7 @@ class FormCompany
 				}
 			}
 			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		else
 		{
@@ -551,7 +551,7 @@ class FormCompany
 				}
 			}
 			$out.= '</select>';
-			if ($user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if ($user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 		    // Make select dynamic
         	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -609,7 +609,7 @@ class FormCompany
 			// Add an entry htmlname to say which element we must change once url is called
 			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines
 			// To refresh contacts list on thirdparty list change
-			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
@@ -677,7 +677,7 @@ class FormCompany
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto))
 			{
-				$sql.= " AND s.rowid IN (".join(',',$limitto).")";
+				$sql.= " AND s.rowid IN (".join(',', $limitto).")";
 			}
 			$sql.= " ORDER BY s.nom ASC";
 
@@ -700,19 +700,19 @@ class FormCompany
 						$obj = $this->db->fetch_object($resql);
 						if ($i == 0) $firstCompany = $obj->rowid;
 						$disabled=0;
-						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
+						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid, $limitto)) $disabled=1;
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
-							print ' selected>'.dol_trunc($obj->name,24).'</option>';
+							print ' selected>'.dol_trunc($obj->name, 24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
-							print '>'.dol_trunc($obj->name,24).'</option>';
+							print '>'.dol_trunc($obj->name, 24).'</option>';
 						}
 						$i ++;
 					}
@@ -756,7 +756,7 @@ class FormCompany
 				print '>'.$value.'</option>';
 			}
 			print "</select>";
-			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print "\n";
 		}
 	}
@@ -786,7 +786,7 @@ class FormCompany
 
 		if ($conf->use_javascript_ajax && empty($disableautocomplete))
 		{
-			$out.= ajax_multiautocompleter($htmlname,$fields,DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
+			$out.= ajax_multiautocompleter($htmlname, $fields, DOL_URL_ROOT.'/core/ajax/ziptown.php')."\n";
 			$moreattrib.=' autocomplete="off"';
 		}
 		$out.= '<input id="'.$htmlname.'" class="maxwidthonsmartphone'.($morecss?' '.$morecss:'').'" type="text"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" '.$size.' value="'.$selected.'">'."\n";

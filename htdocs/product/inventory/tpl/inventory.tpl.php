@@ -167,7 +167,7 @@ if (empty($conf) || ! is_object($conf))
 			<?php $i++;
         }
 
-		_footerList($view,$total_pmp,$total_pmp_actual,$total_pa,$total_pa_actual, $total_current_pa,$total_current_pa_actual);
+		_footerList($view, $total_pmp, $total_pmp_actual, $total_pa, $total_pa_actual, $total_current_pa, $total_current_pa_actual);
 
 		?>
 	</table>

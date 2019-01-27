@@ -260,7 +260,7 @@ class ExpenseReport extends CommonObject
 					if (!$notrigger)
 					{
 						// Call trigger
-						$result=$this->call_trigger('EXPENSE_REPORT_CREATE',$user);
+						$result=$this->call_trigger('EXPENSE_REPORT_CREATE', $user);
 
 						if ($result < 0) {
 							$error++;
@@ -348,7 +348,7 @@ class ExpenseReport extends CommonObject
             {
                 $parameters=array('objFrom'=>$objFrom);
                 $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
         }
@@ -412,7 +412,7 @@ class ExpenseReport extends CommonObject
             if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('EXPENSE_REPORT_UPDATE',$user);
+				$result=$this->call_trigger('EXPENSE_REPORT_UPDATE', $user);
 
 				if ($result < 0) {
 					$error++;
@@ -573,7 +573,7 @@ class ExpenseReport extends CommonObject
 				if (!$notrigger)
 				{
 					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_PAID',$fuser);
+					$result=$this->call_trigger('EXPENSE_REPORT_PAID', $fuser);
 
 					if ($result < 0) {
 						$error++;
@@ -615,7 +615,7 @@ class ExpenseReport extends CommonObject
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->status,$mode);
+        return $this->LibStatut($this->status, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -644,13 +644,13 @@ class ExpenseReport extends CommonObject
             return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
 
         elseif ($mode == 4)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
+            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
 
         elseif ($mode == 5)
-            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
+            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
 
         elseif ($mode == 6)
-            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
+            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
     }
 
 
@@ -847,7 +847,7 @@ class ExpenseReport extends CommonObject
 
                     print '<tr>';
                     print '<td><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a></td>';
-                    print '<td align="center">'.dol_print_date($objp->date,'day').'</td>';
+                    print '<td align="center">'.dol_print_date($objp->date, 'day').'</td>';
                     print '<td>'.$author->getNomUrl(1).'</td>';
                     print '<td>'.$objp->comments.'</td>';
                     print '<td align="right">'.price($objp->total_ht).'</td>';
@@ -856,19 +856,19 @@ class ExpenseReport extends CommonObject
 
                     switch($objp->fk_c_expensereport_status) {
                         case 4:
-                            print img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+                            print img_picto($langs->trans('StatusOrderCanceled'), 'statut5');
                             break;
                         case 1:
-                            print $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut0');
+                            print $langs->trans('Draft').' '.img_picto($langs->trans('Draft'), 'statut0');
                             break;
                         case 2:
-                            print $langs->trans('TripForValid').' '.img_picto($langs->trans('TripForValid'),'statut3');
+                            print $langs->trans('TripForValid').' '.img_picto($langs->trans('TripForValid'), 'statut3');
                             break;
                         case 5:
-                            print $langs->trans('TripForPaid').' '.img_picto($langs->trans('TripForPaid'),'statut3');
+                            print $langs->trans('TripForPaid').' '.img_picto($langs->trans('TripForPaid'), 'statut3');
                             break;
                         case 6:
-                            print $langs->trans('TripPaid').' '.img_picto($langs->trans('TripPaid'),'statut4');
+                            print $langs->trans('TripPaid').' '.img_picto($langs->trans('TripPaid'), 'statut4');
                             break;
                     }
                     /*
@@ -938,14 +938,14 @@ class ExpenseReport extends CommonObject
             return 1;
             else:
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::recalculer: Error ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
             return -3;
             endif;
         }
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::recalculer: Error ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
             return -3;
         }
     }
@@ -1123,7 +1123,7 @@ class ExpenseReport extends CommonObject
 			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE',$fuser);
+				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
 
 				if ($result < 0) {
 					$error++;
@@ -1154,11 +1154,11 @@ class ExpenseReport extends CommonObject
 					    {
 					        dol_syslog("Rename ok");
 					        // Rename docs starting with $oldref with $newref
-					        $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+					        $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 					        foreach($listoffiles as $fileentry)
 					        {
 					        	$dirsource=$fileentry['name'];
-					        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+					        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 					        	$dirsource=$fileentry['path'].'/'.$dirsource;
 					        	$dirdest=$fileentry['path'].'/'.$dirdest;
 					        	@rename($dirsource, $dirdest);
@@ -1269,7 +1269,7 @@ class ExpenseReport extends CommonObject
                 if (!$notrigger)
 				{
 					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_APPROVE',$fuser);
+					$result=$this->call_trigger('EXPENSE_REPORT_APPROVE', $fuser);
 
 					if ($result < 0) {
 						$error++;
@@ -1336,7 +1336,7 @@ class ExpenseReport extends CommonObject
 				if (!$notrigger)
 				{
 					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_DENY',$fuser);
+					$result=$this->call_trigger('EXPENSE_REPORT_DENY', $fuser);
 
 					if ($result < 0) {
 						$error++;
@@ -1397,7 +1397,7 @@ class ExpenseReport extends CommonObject
 				if (!$notrigger)
 				{
 					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_UNPAID',$fuser);
+					$result=$this->call_trigger('EXPENSE_REPORT_UNPAID', $fuser);
 
 					if ($result < 0) {
 						$error++;
@@ -1461,7 +1461,7 @@ class ExpenseReport extends CommonObject
 				if (!$notrigger)
 				{
 					// Call trigger
-					$result=$this->call_trigger('EXPENSE_REPORT_CANCEL',$fuser);
+					$result=$this->call_trigger('EXPENSE_REPORT_CANCEL', $fuser);
 
 					if ($result < 0) {
 						$error++;
@@ -1584,7 +1584,7 @@ class ExpenseReport extends CommonObject
         //{
         // Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         //}
 
@@ -1609,7 +1609,7 @@ class ExpenseReport extends CommonObject
 
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.=($max?dol_trunc($ref,$max):$ref);
+        if ($withpicto != 2) $result.=($max?dol_trunc($ref, $max):$ref);
         $result .= $linkend;
 
         return $result;
@@ -1714,7 +1714,7 @@ class ExpenseReport extends CommonObject
 
 			$this->line = new ExpenseReportLine($this->db);
 
-			$localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc,$this->thirdparty);
+			$localtaxes_type=getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
@@ -1722,7 +1722,7 @@ class ExpenseReport extends CommonObject
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
 			}
-			$vatrate = preg_replace('/\*/','',$vatrate);
+			$vatrate = preg_replace('/\*/', '', $vatrate);
 
 			$seller = '';  // seller is unknown
 
@@ -1817,14 +1817,14 @@ class ExpenseReport extends CommonObject
 					$this->errors[] = $this->error;
 
 					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test,0,$langs,1,-1,-1,$conf->currency), price($rule->amount,0,$langs,1,-1,-1,$conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc,0,$langs,1,-1,-1,$conf->currency)));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc, 0, $langs, 1, -1, -1, $conf->currency)));
 				}
 				else
 				{
 					$this->error = 'ExpenseReportConstraintViolationWarning';
 					$this->errors[] = $this->error;
 
-					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test,0,$langs,1,-1,-1,$conf->currency), price($rule->amount,0,$langs,1,-1,-1,$conf->currency), $langs->trans('nolimitby'.$rule->code_expense_rules_type));
+					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('nolimitby'.$rule->code_expense_rules_type));
 				}
 
 				// No break, we sould test if another rule is violated
@@ -1953,7 +1953,7 @@ class ExpenseReport extends CommonObject
             $seller = $mysoc;
             $buyer = new Societe($this->db);
 
-            $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$buyer,$seller);
+            $localtaxes_type=getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
 
             // Clean vat code
             $vat_src_code='';
@@ -1962,7 +1962,7 @@ class ExpenseReport extends CommonObject
                 $vat_src_code = $reg[1];
                 $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
             }
-            $vatrate = preg_replace('/\*/','',$vatrate);
+            $vatrate = preg_replace('/\*/', '', $vatrate);
 
             $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
@@ -2155,7 +2155,7 @@ class ExpenseReport extends CommonObject
             while ($i < $num_lignes)
             {
                 $objp = $this->db->fetch_object($result);
-                array_push($users_validator,$objp->fk_user);
+                array_push($users_validator, $objp->fk_user);
                 $i++;
             }
             return $users_validator;
@@ -2198,7 +2198,7 @@ class ExpenseReport extends CommonObject
 
         $modelpath = "core/modules/expensereport/doc/";
 
-        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
+        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
     }
 
     /**
@@ -2294,8 +2294,8 @@ class ExpenseReport extends CommonObject
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
         $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
-        $sql.= " AND (ex.fk_user_author IN (".join(',',$userchildids).")";
-        $sql.= " OR ex.fk_user_validator IN (".join(',',$userchildids)."))";
+        $sql.= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
+        $sql.= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2315,7 +2315,7 @@ class ExpenseReport extends CommonObject
 	            $response->label=$langs->trans("ExpenseReportsToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
-	        $response->img=img_object('',"trip");
+	        $response->img=img_object('', "trip");
 
             while ($obj=$this->db->fetch_object($resql))
             {

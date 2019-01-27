@@ -32,10 +32,10 @@ $langs->loadLangs(array('ftp', 'companies', 'other'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ftp','');
+$result = restrictedArea($user, 'ftp', '');
 
 // Get parameters
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $section=GETPOST('section');
 if (! $section) $section='/';
 $numero_ftp = GETPOST("numero_ftp");
@@ -46,9 +46,9 @@ $confirm=GETPOST('confirm');
 $upload_dir = $conf->ftp->dir_temp;
 $download_dir = $conf->ftp->dir_temp;
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -88,7 +88,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)
 	{
-		dol_print_error($db,$ecmdir->error);
+		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
 	$relativepath=$ecmdir->getRelativePath();
@@ -96,7 +96,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0);
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']), 0);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			$result=$ecmdir->changeNbOfFiles('+');
@@ -107,7 +107,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload))	// Files infected by a virus
 			{
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
@@ -121,7 +121,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
+		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
 	}
 }
 
@@ -164,7 +164,7 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@', $section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
 		//print "x".$newremotefileiso;
@@ -172,12 +172,12 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
+			setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 		}
 		else
 		{
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-			setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveFile", $file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -186,7 +186,7 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 	}
 	else
 	{
-		dol_print_error('',$mesg);
+		dol_print_error('', $mesg);
 	}
 }
 
@@ -214,7 +214,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				// Remote file
 				$file=$const["file"];
 				$section=$const["section"];
-				$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+				$remotefile=$section.(preg_match('@[\\\/]$@', $section)?'':'/').$file;
 				$newremotefileiso=utf8_decode($remotefile);
 
 				//print "x".$newremotefileiso;
@@ -222,12 +222,12 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				$result=@ftp_delete($conn_id, $newremotefileiso);
 				if ($result)
 				{
-					setEventMessages($langs->trans("FileWasRemoved",$file), null, 'mesgs');
+					setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 				}
 				else
 				{
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
-					setEventMessages($langs->trans("FTPFailedToRemoveFile",$file), null, 'errors');
+					setEventMessages($langs->trans("FTPFailedToRemoveFile", $file), null, 'errors');
 				}
 
 				//ftp_close($conn_id);	Close later
@@ -238,7 +238,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 	}
 	else
 	{
-		dol_print_error('',$mesg);
+		dol_print_error('', $mesg);
 	}
 }
 
@@ -259,17 +259,17 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 	{
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@', $section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
 		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
-			setEventMessages($langs->trans("DirWasRemoved",$file), null, 'mesgs');
+			setEventMessages($langs->trans("DirWasRemoved", $file), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessages($langs->trans("FTPFailedToRemoveDir",$file), null, 'errors');
+			setEventMessages($langs->trans("FTPFailedToRemoveDir", $file), null, 'errors');
 		}
 
 		//ftp_close($conn_id);	Close later
@@ -278,7 +278,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 	}
 	else
 	{
-		dol_print_error('',$mesg);
+		dol_print_error('', $mesg);
 	}
 }
 
@@ -298,14 +298,14 @@ if ($action == 'download')
 	if ($conn_id && $ok && ! $mesg)
 	{
 		// Local file
-		$localfile=tempnam($download_dir,'dol_');
+		$localfile=tempnam($download_dir, 'dol_');
 
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@', $section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
-		$result=ftp_get($conn_id,$localfile,$newremotefileiso,FTP_BINARY);
+		$result=ftp_get($conn_id, $localfile, $newremotefileiso, FTP_BINARY);
 		if ($result)
 		{
 			if (! empty($conf->global->MAIN_UMASK))
@@ -336,12 +336,12 @@ if ($action == 'download')
 		}
 		else
 		{
-			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile',$remotefile), null, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $remotefile), null, 'errors');
 		}
 	}
 	else
 	{
-		dol_print_error('',$mesg);
+		dol_print_error('', $mesg);
 	}
 
 	//ftp_close($conn_id);	Close later
@@ -405,13 +405,13 @@ else
 		// Confirm remove file
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 		}
 
 		// Confirmation de la suppression d'une ligne categorie
 		if ($action == 'delete_section')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
@@ -420,7 +420,7 @@ else
         print $langs->trans("FTPs (FTP over SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SSL).'</b><br>';
         print $langs->trans("SFTP (FTP as a subsytem of SSH)").': <b>'.yn($conf->global->FTP_CONNECT_WITH_SFTP).'</b><br>';
         print $langs->trans("Directory").': ';
-		$sectionarray=preg_split('|[\/]|',$section);
+		$sectionarray=preg_split('|[\/]|', $section);
 		// For /
 		$newsection='/';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection?'&section='.urlencode($newsection):'').'">';
@@ -462,7 +462,7 @@ else
 		print '<td class="liste_titre" align="center">'.$langs->trans("Permissions").'</td>'."\n";
 		print '<td class="liste_titre nowrap" align="right">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a> ';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"), 'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
 
@@ -510,7 +510,7 @@ else
 			$i=0;
 			while ($i < $nboflines && $i < 1000)
 			{
-				$vals=preg_split('@ +@',utf8_encode($buff[$i]),9);
+				$vals=preg_split('@ +@', utf8_encode($buff[$i]), 9);
 				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
 				//var_dump($vals);
 				$file=$vals[8];
@@ -531,8 +531,8 @@ else
 				if ($file == '..') $is_directory=1;
 				else if (! $rawlisthasfailed)
 				{
-					if (preg_match('/^d/',$vals[0])) $is_directory=1;
-					if (preg_match('/^l/',$vals[0])) $is_link=1;
+					if (preg_match('/^d/', $vals[0])) $is_directory=1;
+					if (preg_match('/^l/', $vals[0])) $is_link=1;
 				}
 				else
 				{
@@ -541,7 +541,7 @@ else
 					//print "section=".$section.' file='.$file.'X';
 					//print preg_match('@[\/]$@','aaa/').'Y';
 					//print preg_match('@[\\\/]$@',"aaa\\").'Y';
-					$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').preg_replace('@^[\\\/]@','',$file);
+					$remotefile=$section.(preg_match('@[\\\/]$@', $section)?'':'/').preg_replace('@^[\\\/]@', '', $file);
 					//print 'A'.$remotefile.'A';
 					$newremotefileiso=utf8_decode($remotefile);
 					//print 'Z'.$newremotefileiso.'Z';
@@ -552,8 +552,8 @@ else
 				print '<tr class="oddeven" height="18">';
 				// Name
 				print '<td>';
-				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
-				$newsection=preg_replace('@[\\\/][^\\\/]+[\\\/]\.\.$@','/',$newsection);	// Change aaa/xxx/.. to new aaa
+				$newsection=$section.(preg_match('@[\\\/]$@', $section)?'':'/').$file;
+				$newsection=preg_replace('@[\\\/][^\\\/]+[\\\/]\.\.$@', '/', $newsection);	// Change aaa/xxx/.. to new aaa
 				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'&numero_ftp='.$numero_ftp.'">';
 				print $file;
 				if ($is_directory) print '</a>';
@@ -589,12 +589,12 @@ else
 				else if ($is_link)
 				{
 					$newfile=$file;
-					$newfile=preg_replace('/ ->.*/','',$newfile);
+					$newfile=preg_replace('/ ->.*/', '', $newfile);
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($newfile).'">'.img_delete().'</a>';
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('','file').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('', 'file').'</a>';
 					print ' &nbsp; ';
 					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 					print ' &nbsp; ';
@@ -707,7 +707,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 
 	if (! is_numeric($ftp_port))
 	{
-		$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
+		$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
 		$ok=0;
 	}
 
@@ -781,7 +781,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		else
 		{
 		    dol_syslog('FailedToConnectToFTPServer '.$ftp_server.' '.$ftp_port, LOG_ERR);
-			$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
+			$mesg=$langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
 			$ok=0;
 		}
 	}
@@ -800,7 +800,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
  */
 function ftp_isdir($connect_id,$dir)
 {
-	if (@ftp_chdir($connect_id,$dir))
+	if (@ftp_chdir($connect_id, $dir))
 	{
 		ftp_cdup($connect_id);
 		return 1;

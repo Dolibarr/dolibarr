@@ -177,7 +177,7 @@ class ModeleImports
         {
     		while (($file = readdir($handle))!==false)
     		{
-    			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
+    			if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
     			{
     				$moduleid=$reg[1];
 
@@ -186,7 +186,7 @@ class ModeleImports
     				$classname = "Import".ucfirst($moduleid);
 
     				require_once $file;
-    				$module = new $classname($db,'');
+    				$module = new $classname($db, '');
 
     				// Picto
     				$this->picto[$module->id]=$module->picto;

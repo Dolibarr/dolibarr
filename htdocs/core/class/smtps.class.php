@@ -360,11 +360,11 @@ class SMTPs
 		// This is done here because '@fsockopen' will not give me this
 		// information if it failes to connect because it can't find the HOST
 		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
+		$usetls = preg_match('@tls://@i', $host);
 
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@tls://@i', '', $host);	// Remove prefix
 
 		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -378,7 +378,7 @@ class SMTPs
 		{
 			//See if we can connect to the SMTP server
 			if ($this->socket = @fsockopen(
-    			preg_replace('@tls://@i','',$this->getHost()),       // Host to 'hit', IP or domain
+    			preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
     			$this->getPort(),       // which Port number to use
     			$this->errno,           // actual system level error
     			$this->errstr,          // and any text that goes with the error
@@ -423,11 +423,11 @@ class SMTPs
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
 		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
+		$usetls = preg_match('@tls://@i', $host);
 
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@tls://@i', '', $host);	// Remove prefix
 
 		if ($usetls) $host='tls://'.$host;
 
@@ -549,11 +549,11 @@ class SMTPs
 			{
 				// Send the RFC821 specified HELO.
 				$host=$this->getHost();
-				$usetls = preg_match('@tls://@i',$host);
+				$usetls = preg_match('@tls://@i', $host);
 
-				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+				$host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
+				$host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
+				$host=preg_replace('@tls://@i', '', $host);	// Remove prefix
 
 				$hosth = $host;
 
@@ -1292,11 +1292,11 @@ class SMTPs
         */
 
 		$host=$this->getHost();
-		$usetls = preg_match('@tls://@i',$host);
+		$usetls = preg_match('@tls://@i', $host);
 
-		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
-		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
+		$host=preg_replace('@tls://@i', '', $host);	// Remove prefix
 
 		$host=dol_getprefix('email');
 
@@ -1370,7 +1370,7 @@ class SMTPs
 		if ($strType == 'html')
 		{
 			// Similar code to forge a text from html is also in CMailFile.class.php
-			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
 			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
@@ -1778,7 +1778,7 @@ class SMTPs
         // avoid infinite loop
         $limit=0;
 
-		while (substr($server_response,3,1) != ' ' && $limit<100)
+		while (substr($server_response, 3, 1) != ' ' && $limit<100)
 		{
 			if (! ($server_response = fgets($socket, 256)))
 			{

@@ -45,7 +45,7 @@ function show_skin($fuser,$edit=0)
     {
     	foreach($conf->modules_parts['theme'] as $reldir)
     	{
-	    	$dirskins=array_merge($dirskins,(array) ($reldir.'theme'));
+	    	$dirskins=array_merge($dirskins, (array) ($reldir.'theme'));
     	}
     }
     $dirskins=array_unique($dirskins);
@@ -90,8 +90,8 @@ function show_skin($fuser,$edit=0)
     foreach($dirskins as $dir)
     {
     	//print $dirroot.$dir;exit;
-    	$dirskin=dol_buildpath($dir,0);	// This include loop on $conf->file->dol_document_root
-    	$urltheme=dol_buildpath($dir,1);
+    	$dirskin=dol_buildpath($dir, 0);	// This include loop on $conf->file->dol_document_root
+    	$urltheme=dol_buildpath($dir, 1);
 
     	if (is_dir($dirskin))
     	{
@@ -101,11 +101,11 @@ function show_skin($fuser,$edit=0)
     			while (($subdir = readdir($handle))!==false)
     			{
     				if (is_dir($dirskin."/".$subdir) && substr($subdir, 0, 1) <> '.'
-    						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
+    						&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i', $subdir))
     				{
     					// Disable not stable themes (dir ends with _exp or _dev)
-    					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i',$subdir)) continue;
-    					if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i',$subdir)) continue;
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+    					if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
     					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					if ($subdir == $selected_theme)

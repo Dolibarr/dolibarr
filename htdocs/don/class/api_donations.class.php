@@ -72,7 +72,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->don->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('commande', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -163,7 +163,7 @@ class Donations extends DolibarrApi
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
                     // Add external contacts ids
-                    $commande_static->contacts_ids = $commande_static->liste_contact(-1,'external',1);
+                    $commande_static->contacts_ids = $commande_static->liste_contact(-1, 'external', 1);
                     $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
@@ -229,7 +229,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Order not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if (! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
@@ -269,7 +269,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('don',$this->don->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -317,7 +317,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('don',$this->don->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -333,7 +333,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Order not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

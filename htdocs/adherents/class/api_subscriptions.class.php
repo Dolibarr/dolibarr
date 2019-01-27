@@ -222,7 +222,7 @@ class Subscriptions extends DolibarrApi
         }
 
         if (! $subscription->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when deleting subscription');
+            throw new RestException(401, 'error when deleting subscription');
         }
 
         return array(

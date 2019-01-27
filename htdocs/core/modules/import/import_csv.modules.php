@@ -104,7 +104,7 @@ class ImportCsv extends ModeleImports
 
 		$this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Csv';             // Label of driver
-		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
+		$this->desc=$langs->trans("CSVFormatDesc", $this->separator, $this->enclosure, $this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
 		$this->version='1.34';         // Driver version
@@ -114,7 +114,7 @@ class ImportCsv extends ModeleImports
 		$this->version_lib=DOL_VERSION;
 
 		$this->datatoimport=$datatoimport;
-		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
+		if (preg_match('/^societe_/', $datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
 
@@ -142,7 +142,7 @@ class ImportCsv extends ModeleImports
 	function write_title_example($outputlangs,$headerlinefields)
 	{
         // phpcs:enable
-		$s=join($this->separator,array_map('cleansep',$headerlinefields));
+		$s=join($this->separator, array_map('cleansep', $headerlinefields));
 		return $s."\n";
 	}
 
@@ -157,7 +157,7 @@ class ImportCsv extends ModeleImports
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
         // phpcs:enable
-		$s=join($this->separator,array_map('cleansep',$contentlinevalues));
+		$s=join($this->separator, array_map('cleansep', $contentlinevalues));
 		return $s."\n";
 	}
 
@@ -191,13 +191,13 @@ class ImportCsv extends ModeleImports
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 
-		ini_set('auto_detect_line_endings',1);	// For MAC compatibility
+		ini_set('auto_detect_line_endings', 1);	// For MAC compatibility
 
 		$this->handle = fopen(dol_osencode($file), "r");
 		if (! $this->handle)
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFailToOpenFile",$file);
+			$this->error=$langs->trans("ErrorFailToOpenFile", $file);
 			$ret=-1;
 		}
 		else
@@ -247,7 +247,7 @@ class ImportCsv extends ModeleImports
         // phpcs:enable
 		global $conf;
 
-		$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
+		$arrayres=fgetcsv($this->handle, 100000, $this->separator, $this->enclosure, $this->escape);
 
 		// End of file
 		if ($arrayres === false) return false;
@@ -367,7 +367,7 @@ class ImportCsv extends ModeleImports
 				if (! isset($tablewithentity_cache[$tablename]))	// keep this test with "isset"
 				{
 					dol_syslog("Check if table ".$tablename." has an entity field");
-					$resql=$this->db->DDLDescTable($tablename,'entity');
+					$resql=$this->db->DDLDescTable($tablename, 'entity');
 					if ($resql)
 					{
 						$obj=$this->db->fetch_object($resql);
@@ -385,8 +385,8 @@ class ImportCsv extends ModeleImports
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach($sort_array_match_file_to_database as $key => $val)
 				{
-				    $fieldalias=preg_replace('/\..*$/i','',$val);
-				    $fieldname=preg_replace('/^.*\./i','',$val);
+				    $fieldalias=preg_replace('/\..*$/i', '', $val);
+				    $fieldname=preg_replace('/^.*\./i', '', $val);
 
 				    if ($alias != $fieldalias) continue;    // Not a field of current table
 
@@ -399,9 +399,9 @@ class ImportCsv extends ModeleImports
 						// Make some tests on $newval
 
 						// Is it a required field ?
-						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ((string) $newval==''))
+						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval==''))
 						{
-							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
+							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue', $key);
 							$this->errors[$error]['type']='NOTNULL';
 							$errorforthistable++;
 							$error++;
@@ -420,8 +420,8 @@ class ImportCsv extends ModeleImports
                                 {
                                     // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
                                     $isidorref='id';
-                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
-                                    $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
+                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i', $newval)) $isidorref='ref';
+                                    $newval=preg_replace('/^(id|ref):/i', '', $newval);    // Remove id: or ref: that was used to force if field is id or ref
                                     //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
 
                                     if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
@@ -443,11 +443,11 @@ class ImportCsv extends ModeleImports
                                             }
                                             $classinstance=new $class($this->db);
                                             // Try the fetch from code or ref
-                                            call_user_func_array(array($classinstance, $method),array('', $newval));
+                                            call_user_func_array(array($classinstance, $method), array('', $newval));
                                             // If not found, try the fetch from label
                                             if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
                                             {
-												call_user_func_array(array($classinstance, $method),array('', '', $newval));
+												call_user_func_array(array($classinstance, $method), array('', '', $newval));
                                             }
                                             $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
@@ -457,8 +457,8 @@ class ImportCsv extends ModeleImports
                                             }
                                             else
                                             {
-                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,'code',$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                                else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
                                                 else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                                 $this->errors[$error]['type']='FOREIGNKEY';
                                                 $errorforthistable++;
@@ -475,7 +475,7 @@ class ImportCsv extends ModeleImports
                                 {
                                     if (strtolower($newval) == 'auto')
                                     {
-                                        $this->thirpartyobject->get_codeclient(0,0);
+                                        $this->thirpartyobject->get_codeclient(0, 0);
                                         $newval=$this->thirpartyobject->code_client;
                                         //print 'code_client='.$newval;
                                     }
@@ -485,7 +485,7 @@ class ImportCsv extends ModeleImports
                                 {
                                     if (strtolower($newval) == 'auto')
                                     {
-                                        $newval=$this->thirpartyobject->get_codefournisseur(0,1);
+                                        $newval=$this->thirpartyobject->get_codefournisseur(0, 1);
                                         $newval=$this->thirpartyobject->code_fournisseur;
                                         //print 'code_fournisseur='.$newval;
                                     }
@@ -521,7 +521,7 @@ class ImportCsv extends ModeleImports
                                     {
                                         require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
                                         $modTask = new $obj;
-                                        $defaultref = $modTask->getNextValue(null,null);
+                                        $defaultref = $modTask->getNextValue(null, null);
                                     }
                                     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
                                     $newval=$defaultref;
@@ -540,7 +540,7 @@ class ImportCsv extends ModeleImports
 							if (! empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
 								// If test is "Must exist in a field@table"
-								if (preg_match('/^(.*)@(.*)$/',$objimport->array_import_regex[0][$val],$reg))
+								if (preg_match('/^(.*)@(.*)$/', $objimport->array_import_regex[0][$val], $reg))
 								{
 									$field=$reg[1];
 									$table=$reg[2];
@@ -568,19 +568,19 @@ class ImportCsv extends ModeleImports
 									}
 
 									// Now we check cache is not empty (should not) and key is into cache
-									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval,$this->cachefieldtable[$field.'@'.$table]))
+									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval, $this->cachefieldtable[$field.'@'.$table]))
 									{
-										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn',$key,$newval,$field,$table);
+										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $table);
 										$this->errors[$error]['type']='FOREIGNKEY';
 									    $errorforthistable++;
 										$error++;
 									}
 								}
 								// If test is just a static regex
-								else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
+								else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval))
 								{
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
-									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
+									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type']='REGEX';
 									$errorforthistable++;
 									$error++;
@@ -615,14 +615,14 @@ class ImportCsv extends ModeleImports
     				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
     				    if ($val == 'user->id')
     				    {
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
     				        $listvalues[] = $user->id;
     				    }
-    				    elseif (preg_match('/^lastrowid-/',$val))
+    				    elseif (preg_match('/^lastrowid-/', $val))
     				    {
-    				        $tmp=explode('-',$val);
+    				        $tmp=explode('-', $val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-							$keyfield = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+							$keyfield = preg_replace('/^'.preg_quote($alias).'\./', '', $key);
     				        $listfields[] = $keyfield;
                             $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
@@ -652,7 +652,7 @@ class ImportCsv extends ModeleImports
 								$filters = array();
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
-									$key=preg_replace('/^.*\./i','',$key);
+									$key=preg_replace('/^.*\./i', '', $key);
 									$where[] = $key.' = '.$data[$key];
 									$filters[] = $col.' = '.$data[$key];
 								}
@@ -802,5 +802,5 @@ class ImportCsv extends ModeleImports
  */
 function cleansep($value)
 {
-	return str_replace(array(',',';'),'/',$value);
+	return str_replace(array(',',';'), '/', $value);
 };

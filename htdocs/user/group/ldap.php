@@ -69,14 +69,14 @@ if ($action == 'dolibarr2ldap')
 		$info=$object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup
-		if (in_array('posixGroup',$info['objectclass'])) {
+		if (in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
 		$dn=$object->_load_ldap_dn($info);
 		$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn,$info,$user,$olddn);
+		$result=$ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0)
@@ -105,7 +105,7 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object,'id',$linback,$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -119,7 +119,7 @@ if (! empty($conf->mutlicompany->enabled))
     print '<td class="valeur">'.$object->name;
     if (!$object->entity)
     {
-    	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    	print img_picto($langs->trans("GlobalGroup"), 'redstar');
     }
     print "</td></tr>\n";
 }
@@ -180,9 +180,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
@@ -195,7 +195,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else

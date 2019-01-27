@@ -148,7 +148,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -336,9 +336,9 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     //Parameters
     print '<tr>';
     $help = $langs->trans("GlobalVariableUpdaterHelp".$type).'<br><b>'.$langs->trans("GlobalVariableUpdaterHelpFormat".$type).'</b>';
-    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"),$help,1).'</td><td>';
+    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"), $help, 1).'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('parameters',empty($price_updaters->parameters)?'':$price_updaters->parameters,'',300,'','',false,false,false,ROWS_8,'90%');
+    $doleditor=new DolEditor('parameters', empty($price_updaters->parameters)?'':$price_updaters->parameters, '', 300, '', '', false, false, false, ROWS_8, '90%');
     $doleditor->Create();
     print '</td></tr>';
     print '</tr>';

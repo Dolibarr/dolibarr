@@ -70,7 +70,7 @@ if ($resql)
 }
 else
 {
-	dol_print_error($db,'Error');
+	dol_print_error($db, 'Error');
 	$found = 'Error';
 }
 //Greek to Latin

@@ -101,13 +101,13 @@ class Export
                 // Search module files
 			    while (($file = readdir($handle))!==false)
 				{
-					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
 					{
 						$modulename=$reg[1];
 
 						// Defined if module is enabled
 						$enabled=true;
-						$part=strtolower(preg_replace('/^mod/i','',$modulename));
+						$part=strtolower(preg_replace('/^mod/i', '', $modulename));
 						if ($part == 'propale') $part='propal';
 						if (empty($conf->$part->enabled)) $enabled=false;
 
@@ -235,7 +235,7 @@ class Export
 			else $i++;
 
 			if (strpos($key, ' as ')===false) {
-				$newfield=$key.' as '.str_replace(array('.', '-','(',')'),'_',$key);
+				$newfield=$key.' as '.str_replace(array('.', '-','(',')'), '_', $key);
 			} else {
 				$newfield=$key;
 			}
@@ -300,15 +300,15 @@ class Export
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery ="(".$this->conditionDate($NameField,trim($ValueArray[0]),">=");
-					$szFilterQuery.=" AND ".$this->conditionDate($NameField,trim($ValueArray[1]),"<=").")";
+					$szFilterQuery ="(".$this->conditionDate($NameField, trim($ValueArray[0]), ">=");
+					$szFilterQuery.=" AND ".$this->conditionDate($NameField, trim($ValueArray[1]), "<=").")";
 				}
 				else
 				{
-					if (is_numeric(substr($ValueField,0,1)))
-						$szFilterQuery=$this->conditionDate($NameField,trim($ValueField),"=");
+					if (is_numeric(substr($ValueField, 0, 1)))
+						$szFilterQuery=$this->conditionDate($NameField, trim($ValueField), "=");
 					else
-						$szFilterQuery=$this->conditionDate($NameField,trim(substr($ValueField,1)),substr($ValueField,0,1));
+						$szFilterQuery=$this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
 				}
 				break;
 			case 'Duree':
@@ -324,10 +324,10 @@ class Export
 				}
 				else
 				{
-					if (is_numeric(substr($ValueField,0,1)))
+					if (is_numeric(substr($ValueField, 0, 1)))
 						$szFilterQuery=" ".$NameField."=".$ValueField;
 					else
-						$szFilterQuery=" ".$NameField.substr($ValueField,0,1).substr($ValueField,1);
+						$szFilterQuery=" ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
 				}
 				break;
 			case 'Boolean':
@@ -451,7 +451,7 @@ class Export
 								continue;
 							}
 							//var_dump($InfoFieldList[1]);
-							$labeltoshow=dol_trunc($obj->label,18);
+							$labeltoshow=dol_trunc($obj->label, 18);
 							if ($InfoFieldList[1] == 'c_stcomm')
 							{
 								$langs->load("companies");
@@ -605,7 +605,7 @@ class Export
 				$objmodel->write_header($outputlangs);
 
 				// Genere ligne de titre
-				$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs,$this->array_export_TypeFields[$indice]);
+				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, $this->array_export_TypeFields[$indice]);
 
 				while ($obj = $this->db->fetch_object($resql))
 				{
@@ -619,21 +619,21 @@ class Export
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								if ($obj->$alias < 0) $obj->$alias='';
 							}
 							// Operation ZEROIFNEG
 							elseif ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								if ($obj->$alias < 0) $obj->$alias='0';
 							}
 							// Operation INVOICEREMAINTOPAY
 							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								$remaintopay='';
 								if ($obj->f_rowid > 0)
 								{
@@ -662,7 +662,7 @@ class Export
 						}
 					}
 					// end of special operation processing
-					$objmodel->write_record($array_selected,$obj,$outputlangs,$this->array_export_TypeFields[$indice]);
+					$objmodel->write_record($array_selected, $obj, $outputlangs, $this->array_export_TypeFields[$indice]);
 				}
 
 				// Genere en-tete
@@ -858,7 +858,7 @@ class Export
 				print "<tr>";
 				print '<td><a href=export.php?step=2&action=select_model&exportmodelid='.$obj->rowid.'&datatoexport='.$obj->type.'>'.$obj->label.'</a></td>';
 				print '<td>';
-				print img_object($this->array_export_module[$keyModel]->getName(),$this->array_export_icon[$keyModel]).' ';
+				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';
 				// recuperation du nom de l'export
 
@@ -866,11 +866,11 @@ class Export
 				print ($string!=$this->array_export_label[$keyModel]?$string:$this->array_export_label[$keyModel]);
 				print '</td>';
 				//print '<td>'.$obj->type.$keyModel.'</td>';
-				print '<td>'.str_replace(',',' , ',$obj->field).'</td>';
+				print '<td>'.str_replace(',', ' , ', $obj->field).'</td>';
 				if (! empty($obj->filter)) {
 					$filter = json_decode($obj->filter, true);
-					print '<td>'.str_replace(',',' , ',$filter['field']).'</td>';
-					print '<td>'.str_replace(',',' , ',$filter['value']).'</td>';
+					print '<td>'.str_replace(',', ' , ', $filter['field']).'</td>';
+					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
 				// suppression de l'export
 				print '<td align="right">';

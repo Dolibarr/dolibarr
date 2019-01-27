@@ -90,7 +90,7 @@ abstract class DoliDB implements Database
 	function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
@@ -116,15 +116,15 @@ abstract class DoliDB implements Database
 			if ($ret)
 			{
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
+				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+				dol_syslog('', 0, 1);
 			}
 			return $ret;
 		}
 		else
 		{
 			$this->transaction_opened++;
-			dol_syslog('',0,1);
+			dol_syslog('', 0, 1);
 			return 1;
 		}
 	}
@@ -137,14 +137,14 @@ abstract class DoliDB implements Database
 	 */
 	function commit($log='')
 	{
-		dol_syslog('',0,-1);
+		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("COMMIT");
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+				dol_syslog("COMMIT Transaction".($log?' '.$log:''), LOG_DEBUG);
 				return 1;
 			}
 			else
@@ -167,12 +167,12 @@ abstract class DoliDB implements Database
 	 */
 	function rollback($log='')
 	{
-		dol_syslog('',0,-1);
+		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''), LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -205,7 +205,7 @@ abstract class DoliDB implements Database
 	 */
 	function getVersionArray()
 	{
-		return preg_split("/[\.,-]/",$this->getVersion());
+		return preg_split("/[\.,-]/", $this->getVersion());
 	}
 
 	/**
@@ -230,15 +230,15 @@ abstract class DoliDB implements Database
 		if (! empty($sortfield))
 		{
 			$return='';
-			$fields=explode(',',$sortfield);
-			$orders=explode(',',$sortorder);
+			$fields=explode(',', $sortfield);
+			$orders=explode(',', $sortorder);
 			$i=0;
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=', ';
 
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+				$return.=preg_replace('/[^0-9a-z_\.]/i', '', $val);
 
 				$tmpsortorder = trim($orders[$i]);
 
@@ -282,9 +282,9 @@ abstract class DoliDB implements Database
 	{
 		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
-		$string=preg_replace('/([^0-9])/i','',$string);
+		$string=preg_replace('/([^0-9])/i', '', $string);
 		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
+		$date=dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
 		return $date;
 	}
 

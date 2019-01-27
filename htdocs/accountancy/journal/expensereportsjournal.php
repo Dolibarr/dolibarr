@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 $langs->loadLangs(array("commercial", "compta","bills","other","accountancy","trips","errors"));
 
 $id_journal = GETPOST('id_journal', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -326,7 +326,7 @@ if ($action == 'writebookkeeping') {
 					$accountingaccount->fetch($k, null, true);
 					$bookkeeping->label_compte = $accountingaccount->label;
 
-					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %';
+					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %';
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -492,7 +492,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
+	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -661,7 +661,7 @@ if (empty($action) || $action == 'view') {
 				// Subledger account
 				print "<td>";
 				print '</td>';
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
+				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
 				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";

@@ -52,7 +52,7 @@ if ($action == 'presend')
 		//
 		if ($object->element == 'invoice_supplier')
 		{
-			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 		}
 
 		$file = $fileparams['fullname'];
@@ -164,10 +164,10 @@ if ($action == 'presend')
 		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
-				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
 			}
 		} elseif ($result<0) {
-			setEventMessages(null, $fuserdest->errors,'errors');
+			setEventMessages(null, $fuserdest->errors, 'errors');
 		}
 		if (count($listeuser)>0) {
 			$formmail->withtouser = $listeuser;
@@ -218,7 +218,7 @@ if ($action == 'presend')
 	// Tableau des parametres complementaires
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id']=GETPOST('modelmailselected','int');
+	$formmail->param['models_id']=GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 	$formmail->param['fileinit'] = array($file);

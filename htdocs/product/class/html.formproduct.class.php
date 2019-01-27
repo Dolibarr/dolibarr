@@ -75,7 +75,7 @@ class FormProduct
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
-		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+		if (is_array($exclude))	$excludeGroups = implode("','", $exclude);
 
 		$warehouseStatus = array();
 
@@ -121,7 +121,7 @@ class FormProduct
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
+			$sql.= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 		}
 		else
 		{
@@ -142,7 +142,7 @@ class FormProduct
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				if ($sumStock) $obj->stock = price2num($obj->stock,5);
+				if ($sumStock) $obj->stock = price2num($obj->stock, 5);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
 				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
@@ -214,7 +214,7 @@ class FormProduct
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
@@ -333,7 +333,7 @@ class FormProduct
 				$return.= ' selected';
 			}
 			//$return.= '>'.$value.'</option>';
-			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';
+			$return.= '>'.measuring_units_string($key, $measuring_style).'</option>';
 		}
 		$return.= '</select>';
 
@@ -362,7 +362,7 @@ class FormProduct
 	{
 		global $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		$productIdArray = array();

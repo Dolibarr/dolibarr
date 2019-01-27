@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 $langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
-$year = GETPOST("year",'int');
+$year = GETPOST("year", 'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;

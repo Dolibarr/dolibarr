@@ -77,15 +77,15 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte.= '<input type="hidden" name="maskconstsupplier_proposal" value="SUPPLIER_PROPOSAL_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CommRequest"),$langs->transnoentities("CommRequest"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -108,7 +108,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -142,7 +142,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		$date=$supplier_proposal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'supplier_proposal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db, $mask, 'supplier_proposal', 'ref', '', $customercode, $date);
 
 		return  $numFinal;
 	}

@@ -68,7 +68,7 @@ class FormSocialContrib
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code))
         {
-            dol_print_error('','Call to select_type_socialcontrib with mysoc country not yet defined');
+            dol_print_error('', 'Call to select_type_socialcontrib with mysoc country not yet defined');
             exit;
         }
 
@@ -105,21 +105,21 @@ class FormSocialContrib
                     $obj = $db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
                     if ($obj->id == $selected) print ' selected';
-                    print '>'.dol_trunc($obj->type,$maxlen);
+                    print '>'.dol_trunc($obj->type, $maxlen);
                     $i++;
                 }
                 print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
                 if (! empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
             }
             else
             {
-                print $langs->trans("ErrorNoSocialContributionForSellerCountry",$mysoc->country_code);
+                print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
             }
         }
         else
         {
-            dol_print_error($db,$db->lasterror());
+            dol_print_error($db, $db->lasterror());
         }
     }
 }

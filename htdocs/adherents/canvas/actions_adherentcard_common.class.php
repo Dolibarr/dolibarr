@@ -121,7 +121,7 @@ abstract class ActionsAdherentCardCommon
         	}
         	else
         	{
-        		$this->tpl['company'] = $form->select_company($this->object->socid,'socid','',1);
+        		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
         	}
 
         	// Civility
@@ -139,26 +139,26 @@ abstract class ActionsAdherentCardCommon
         	}
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town','selectcountry_id','state_id'), 6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode','selectcountry_id','state_id'));
 
             if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
 
             // Country
-            $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
+            $this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
             // State
-            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Physical or Moral
             $selectarray=array('0'=>$langs->trans("Physical"),'1'=>$langs->trans("Moral"));
-            $this->tpl['select_morphy'] = $form->selectarray('morphy',$selectarray,$this->object->morphy,0);
+            $this->tpl['select_morphy'] = $form->selectarray('morphy', $selectarray, $this->object->morphy, 0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
@@ -183,7 +183,7 @@ abstract class ActionsAdherentCardCommon
 
         if ($action == 'view' || $action == 'delete')
         {
-        	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'id');
 
         	if ($this->object->socid > 0)
         	{
@@ -206,9 +206,9 @@ abstract class ActionsAdherentCardCommon
             $img=picto_from_langcode($this->object->country_code);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['email'] 		= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
+            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['email'] 		= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
 
             $this->tpl['visibility'] = $this->object->getmorphylib($this->object->morphy);
 
@@ -230,7 +230,7 @@ abstract class ActionsAdherentCardCommon
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateAdherent"),"confirm_create_user",$formquestion,'no');
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateAdherent"), "confirm_create_user", $formquestion, 'no');
         }
     }
 

@@ -124,9 +124,9 @@ class BlockedLogAuthority
 
 		if(strlen($block)!=64) return false;
 
-		$blocks = str_split($this->blockchain,64);
+		$blocks = str_split($this->blockchain, 64);
 
-		if(!in_array($block,$blocks)) {
+		if(!in_array($block, $blocks)) {
 			return true;
 		}
 		else{
@@ -321,7 +321,7 @@ class BlockedLogAuthority
 			}
 			else {
 
-				$this->error = $langs->trans('ImpossibleToContactAuthority ',$url);
+				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
 				return -1;
 			}
 		}

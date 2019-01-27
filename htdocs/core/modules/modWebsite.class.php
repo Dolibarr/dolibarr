@@ -48,7 +48,7 @@ class modWebsite extends DolibarrModules
         $this->family = "portal";
         $this->module_position = '50';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
@@ -163,11 +163,11 @@ class modWebsite extends DolibarrModules
 	    	{
 	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    		dol_mkdir($dest);
-	    		$result=dolCopyDir($src,$dest,0,0);
+	    		$result=dolCopyDir($src, $dest, 0, 0);
 	    		if ($result < 0)
 	    		{
 	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyDir',$src,$dest);
+	    			$this->error=$langs->trans('ErrorFailToCopyDir', $src, $dest);
 	    			return 0;
 	    		}
 	    	}

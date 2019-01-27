@@ -322,7 +322,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
 	}
 
 
@@ -338,11 +338,11 @@ class mailing_contacts1 extends MailingTargets
         // phpcs:enable
 		global $conf, $langs;
 
-		$filter = GETPOST('filter','alpha');
-		$filter_jobposition = GETPOST('filter_jobposition','alpha');
-		$filter_category = GETPOST('filter_category','alpha');
-		$filter_category_customer = GETPOST('filter_category_customer','alpha');
-		$filter_category_supplier = GETPOST('filter_category_supplier','alpha');
+		$filter = GETPOST('filter', 'alpha');
+		$filter_jobposition = GETPOST('filter_jobposition', 'alpha');
+		$filter_category = GETPOST('filter_category', 'alpha');
+		$filter_category_customer = GETPOST('filter_category_customer', 'alpha');
+		$filter_category_supplier = GETPOST('filter_category_supplier', 'alpha');
 
 		$cibles = array();
 

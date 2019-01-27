@@ -61,7 +61,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -79,7 +79,7 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
@@ -91,18 +91,18 @@ if ($result)
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Address",$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Zipcode",$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
-	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", 'align="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	if ($num > 0)
     {
 	    $establishmentstatic=new Establishment($db);
 
-		while ($i < min($num,$limit))
+		while ($i < min($num, $limit))
 		{
             $obj = $db->fetch_object($result);
 

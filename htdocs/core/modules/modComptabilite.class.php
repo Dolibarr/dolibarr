@@ -50,7 +50,7 @@ class modComptabilite extends DolibarrModules
 		$this->family = "financial";
 		$this->module_position = '60';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion sommaire de comptabilite";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -118,6 +118,6 @@ class modComptabilite extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

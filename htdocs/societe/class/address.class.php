@@ -132,7 +132,7 @@ class Address
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 
-					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
 				}
 
 				$this->db->rollback();
@@ -188,11 +188,11 @@ class Address
 		$this->town			= trim($this->town);
 		$this->country_id	= trim($this->country_id);
 		$this->phone		= trim($this->phone);
-		$this->phone		= preg_replace("/\s/","",$this->phone);
-		$this->phone		= preg_replace("/\./","",$this->phone);
+		$this->phone		= preg_replace("/\s/", "", $this->phone);
+		$this->phone		= preg_replace("/\./", "", $this->phone);
 		$this->fax			= trim($this->fax);
-		$this->fax			= preg_replace("/\s/","",$this->fax);
-		$this->fax			= preg_replace("/\./","",$this->fax);
+		$this->fax			= preg_replace("/\s/", "", $this->fax);
+		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->note			= trim($this->note);
 
 		$result = $this->verify();		// Verifie que name et label obligatoire
@@ -229,7 +229,7 @@ class Address
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 
-					$this->error=$langs->trans("ErrorDuplicateField",$this->name);
+					$this->error=$langs->trans("ErrorDuplicateField", $this->name);
 					$result=-1;
 				}
 				else

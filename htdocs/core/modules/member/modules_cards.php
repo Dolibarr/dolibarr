@@ -57,7 +57,7 @@ class ModelePDFCards
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -108,7 +108,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	else $code=$modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$template,2);
+	$tmp=explode(':', $template, 2);
 	if (! empty($tmp[1]))
 	{
 		$template=$tmp[0];
@@ -119,7 +119,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 		foreach(array('doc','pdf') as $prefix)
@@ -127,7 +127,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
+			$file=dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
 			if (file_exists($file))
 			{
 				$filefound=1;
@@ -157,14 +157,14 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"members_card_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "members_card_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
 
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

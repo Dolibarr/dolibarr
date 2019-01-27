@@ -216,7 +216,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		// TODO le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('commandefournisseurdispatchdao'));
 		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -388,7 +388,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            $result=$this->call_trigger('LINERECEPTION_UPDATE',$user);
+	            $result=$this->call_trigger('LINERECEPTION_UPDATE', $user);
 	            if ($result < 0) $error++;
 	            //// End call triggers
 			 }
@@ -536,7 +536,7 @@ class CommandeFournisseurDispatch extends CommonObject
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->status,$mode);
+        return $this->LibStatut($this->status, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -567,21 +567,21 @@ class CommandeFournisseurDispatch extends CommonObject
         }
         elseif ($mode == 3)
         {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
         }
         elseif ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);
         }
         elseif ($mode == 5)
         {
-            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut8');
+            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
         }
     }
 
@@ -664,7 +664,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		}
 
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
 			$sql .=  ' ' . $this->db->plimit($limit, $offset);

@@ -49,7 +49,7 @@ $action=GETPOST('action', 'alpha');
 
 // Securite acces client
 if (! $user->rights->mymodule->read) accessforbidden();
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if (isset($user->societe_id) && $user->societe_id > 0)
 {
 	$action = '';
@@ -74,9 +74,9 @@ $now=dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("",$langs->trans("MyModuleArea"));
+llxHeader("", $langs->trans("MyModuleArea"));
 
-print load_fiche_titre($langs->trans("MyModuleArea"),'','mymodule.png@mymodule');
+print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

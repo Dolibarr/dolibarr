@@ -1028,7 +1028,7 @@ class Setup extends DolibarrApi
     			// Complete with list of new files
     			foreach ($scanfiles as $keyfile => $valfile)
     			{
-    				$tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT,'/').'/','', $valfile['fullname']);
+    				$tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
     				if (! in_array($tmprelativefilename, $file_list['insignature']))
     				{
     					$md5newfile=@md5_file($valfile['fullname']);    // Can fails if we don't have permission to open/read file
@@ -1098,7 +1098,7 @@ class Setup extends DolibarrApi
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
     					$out.="</tr>\n";
     				}
     				$out.='<tr class="liste_total">';
@@ -1148,7 +1148,7 @@ class Setup extends DolibarrApi
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
-    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+    					$out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
     					$out.="</tr>\n";
     				}
     				$out.='<tr class="liste_total">';
@@ -1189,7 +1189,7 @@ class Setup extends DolibarrApi
 
     		asort($checksumconcat); // Sort list of checksum
     		//var_dump($checksumconcat);
-    		$checksumget = md5(join(',',$checksumconcat));
+    		$checksumget = md5(join(',', $checksumconcat));
     		$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
     		$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));

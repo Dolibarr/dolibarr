@@ -46,7 +46,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$this->db=$db;
 		if (is_array($conf->modules))
 		{
-			$this->enabled=in_array('mymodule',$conf->modules)?1:0;
+			$this->enabled=in_array('mymodule', $conf->modules)?1:0;
 		}
 	}
 
@@ -88,7 +88,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$id.'">'.img_object('',"generic").'</a>';
+		return '<a href="'.dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id.'">'.img_object('', "generic").'</a>';
 	}
 
 

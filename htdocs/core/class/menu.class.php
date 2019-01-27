@@ -90,10 +90,10 @@ class Menu
      */
     function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
     {
-        $array_start = array_slice($this->liste,0,($idafter+1));
+        $array_start = array_slice($this->liste, 0, ($idafter+1));
         $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
-        $array_end   = array_slice($this->liste,($idafter+1));
-        $this->liste=array_merge($array_start,$array_new,$array_end);
+        $array_end   = array_slice($this->liste, ($idafter+1));
+        $this->liste=array_merge($array_start, $array_new, $array_end);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

@@ -68,7 +68,7 @@ if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
 
 $user = new User($db);
 // for signature, we use user send as parameter
-if (! empty($login)) $user->fetch('',$login);
+if (! empty($login)) $user->fetch('', $login);
 
 // We get list of emailing id to process
 $sql = "SELECT m.rowid";
@@ -106,7 +106,7 @@ if ($resql)
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
 			$msgishtml=-1;  // Unknown by default
-			if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
+			if (preg_match('/[\s\t]*<html>/i', $message)) $msgishtml=1;
 
 			$nbok=0; $nbko=0;
 
@@ -151,15 +151,15 @@ if ($resql)
 						$obj = $db->fetch_object($resql2);
 
 						// sendto en RFC2822
-						$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname) ." <".$obj->email.">");
+						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname) ." <".$obj->email.">");
 
 						// Make subtsitutions on topic and body
-						$other=explode(';',$obj->other);
-						$tmpfield=explode('=',$other[0],2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-						$tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-						$tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-						$tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-						$tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$other=explode(';', $obj->other);
+						$tmpfield=explode('=', $other[0], 2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=', $other[1], 2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=', $other[2], 2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=', $other[3], 2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=', $other[4], 2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 						$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
 						$object = null;		// Not defined with mass emailing
@@ -222,9 +222,9 @@ if ($resql)
 							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
 
-						complete_substitutions_array($substitutionarray,$langs);
-						$newsubject=make_substitutions($subject,$substitutionarray);
-						$newmessage=make_substitutions($message,$substitutionarray);
+						complete_substitutions_array($substitutionarray, $langs);
+						$newsubject=make_substitutions($subject, $substitutionarray);
+						$newmessage=make_substitutions($message, $substitutionarray);
 
 						$substitutionisok=true;
 
@@ -354,7 +354,7 @@ if ($resql)
 				{
 					$mesg="Emailing id ".$id." has no recipient to target";
 					print $mesg."\n";
-					dol_syslog($mesg,LOG_ERR);
+					dol_syslog($mesg, LOG_ERR);
 				}
 
 				// Loop finished, set global statut of mail
@@ -383,7 +383,7 @@ if ($resql)
 	{
 		$mesg="No validated emailing id to send found.";
 		print $mesg."\n";
-		dol_syslog($mesg,LOG_ERR);
+		dol_syslog($mesg, LOG_ERR);
 		$error++;
 	}
 }

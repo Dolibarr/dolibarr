@@ -57,7 +57,7 @@ function reception_prepare_head(Reception $object)
 	        $objectsrc = new Commande($db);
 	        $objectsrc->fetch($object->origin_id);
 	    }
-	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
+	    $nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/reception/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -79,7 +79,7 @@ function reception_prepare_head(Reception $object)
 
 	
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'order','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
     return $head;
 }
@@ -121,7 +121,7 @@ function reception_admin_prepare_head()
 	
 	
 	
-	complete_head_from_modules($conf,$langs,null,$head,$h,'reception_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin', 'remove');
 
 	return $head;
 }

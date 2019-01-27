@@ -23,7 +23,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]))
 				{
 					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
+					$tmpkey=preg_replace('/search_options_/', '', $key);
 					$searchclass='';
 					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
 					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';

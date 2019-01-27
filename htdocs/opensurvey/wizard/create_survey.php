@@ -79,7 +79,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	}
 
 	$testdate = false;
-	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
+	$champdatefin = dol_mktime(0, 0, 0, GETPOST('champdatefinmonth'), GETPOST('champdatefinday'), GETPOST('champdatefinyear'));
 
 	if ($champdatefin && ($champdatefin > 0))	// A date was provided
 	{
@@ -87,12 +87,12 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		if ($champdatefin >= dol_now())
 		{
 			$testdate = true;
-			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 		}
 		else
 		{
 			$testdate = true;
-			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			setEventMessages('ExpireDate', null, 'warnings');
@@ -100,7 +100,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	}
 
 	if (! $testdate) {
-		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
 	if ($titre && $testdate)
@@ -150,8 +150,8 @@ if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creati
 
 print '</tr>'."\n";
 print '<tr><td>'. $langs->trans("Description") .'</td><td>';
-$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"],'',120,'dolibarr_notes','In',1,1,1,ROWS_7,'90%');
-$doleditor->Create(0,'');
+$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+$doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";
 

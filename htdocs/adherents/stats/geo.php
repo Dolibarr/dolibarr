@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$graphwidth=DolGraph::getDefaultGraphSizeForStats('width',700);
+$graphwidth=DolGraph::getDefaultGraphSizeForStats('width', 700);
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'adherent','','','cotisation');
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
@@ -62,7 +62,7 @@ if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
 if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
-llxHeader('', $title,'','',0,0,$arrayjs);
+llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
 print load_fiche_titre($title, $mesg);
 
@@ -133,7 +133,7 @@ if ($mode)
         //print $sql;
     }
 
-    $langsen=new Translate('',$conf);
+    $langsen=new Translate('', $conf);
     $langsen->setDefaultLang('en_US');
     $langsen->load("dict");
     //print $langsen->trans("Country"."FI");exit;
@@ -267,7 +267,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     //print "\toptions['zoomOutLabel'] = '".dol_escape_js($langs->transnoentitiesnoconv("Numbers"))."';\n";
     print "\toptions['width'] = ".$graphwidth.";\n";
     print "\toptions['height'] = ".$graphheight.";\n";
-    print "\toptions['colors'] = [0x".colorArrayToHex($theme_datacolor[1],'BBBBBB').", 0x".colorArrayToHex($theme_datacolor[0],'444444')."];\n";
+    print "\toptions['colors'] = [0x".colorArrayToHex($theme_datacolor[1], 'BBBBBB').", 0x".colorArrayToHex($theme_datacolor[0], '444444')."];\n";
     print "\tvar container = document.getElementById('".$mode."');\n";
     print "\tvar geomap = new google.visualization.GeoMap(container);\n";
     print "\tgeomap.draw(data, options);\n";
@@ -298,7 +298,7 @@ if ($mode)
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td class="right">'.$val['nb'].'</td>';
-        print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+        print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
         print '</tr>';
         $oldyear=$year;
     }

@@ -93,7 +93,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$texte.= '<input type="hidden" name="param1" value="BARCODE_STANDARD_PRODUCT_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("BarCode"),$langs->transnoentities("BarCode"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4c");
 		$tooltip.=$langs->trans("GenericMaskCodes5");
@@ -101,7 +101,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?$conf->global->BARCODE_STANDARD_PRODUCT_MASK:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?$conf->global->BARCODE_STANDARD_PRODUCT_MASK:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 		$texte.= '</tr>';
 
@@ -121,7 +121,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function getExample($langs,$objproduct=0)
 	{
-		$examplebarcode = $this->getNextValue($objproduct,'');
+		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (! $examplebarcode)
 		{
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -164,7 +164,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$now=dol_now();
 
-		$numFinal=get_next_value($db,$mask,'product',$field,$where,'',$now);
+		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
 
 		return  $numFinal;
 	}
@@ -297,16 +297,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$newcodefortest=$codefortest;
 
 		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-		if (in_array($typefortest,array('EAN13','ISBN')))	// We remove the CRC char not included into mask
+		if (in_array($typefortest, array('EAN13','ISBN')))	// We remove the CRC char not included into mask
 		{
-    		if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    		if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
     	    {
-    	        if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest,0,12);
+    	        if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest, 0, 12);
     	        dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
     	    }
 		}
 
-		$result=check_value($mask,$newcodefortest);
+		$result=check_value($mask, $newcodefortest);
 		if (is_string($result))
 		{
 			$this->error = $result;

@@ -57,10 +57,10 @@ class DolibarrApi
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode, $refreshCache);
 
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
+        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
         $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
@@ -285,7 +285,7 @@ class DolibarrApi
 
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
-	    $tmp=explode(':',$matches[1]);
+	    $tmp=explode(':', $matches[1]);
         if (count($tmp) < 3) return '';
 
 	    $tmpescaped=$tmp[2];

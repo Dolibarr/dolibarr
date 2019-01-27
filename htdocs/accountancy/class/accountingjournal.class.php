@@ -272,7 +272,7 @@ class AccountingJournal extends CommonObject
 	 */
 	function getLibType($mode=0)
 	{
-		return $this->LibType($this->nature,$mode);
+		return $this->LibType($this->nature, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

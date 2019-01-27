@@ -32,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','','bons');
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -48,18 +48,18 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datec";
 
 // Get supervariables
-$statut = GETPOST('statut','int');
-$search_ref = GETPOST('search_ref','alpha');
-$search_amount = GETPOST('search_amount','alpha');
+$statut = GETPOST('statut', 'int');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
 
-$bon=new BonPrelevement($db,"");
+$bon=new BonPrelevement($db, "");
 
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
     $search_ref="";
     $search_amount="";
@@ -70,7 +70,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalsReceipts"));
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -78,7 +78,7 @@ $sql.= " WHERE p.entity IN (".getEntity('invoice').")";
 if ($search_ref) $sql.=natural_search("p.ref", $search_ref);
 if ($search_amount) $sql.=natural_search("p.amount", $search_amount, 1);
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -93,7 +93,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1,$offset);
+$sql.= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -143,14 +143,14 @@ if ($result)
   print '</tr>';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"',$sortfield,$sortorder);
-  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"',$sortfield,$sortorder);
-  print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","","",'align="right"',$sortfield,$sortorder);
-  print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"","","",'align="right"',$sortfield,$sortorder);
-  print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+  print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
+  print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
+  print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'align="right"', $sortfield, $sortorder);
+  print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
+  print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
   print "</tr>\n";
 
-  while ($i < min($num,$limit))
+  while ($i < min($num, $limit))
   {
       $obj = $db->fetch_object($result);
 
@@ -158,7 +158,7 @@ if ($result)
 
       print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
+      print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
       print '<td align="right">'.price($obj->amount)."</td>\n";
 

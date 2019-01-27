@@ -120,7 +120,7 @@ class DoliDBSqlite3 extends DoliDB
             $this->database_selected = false;
             $this->database_name = '';
             //$this->error=sqlite_connect_error();
-            dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error, LOG_ERR);
         }
 
         return $this->ok;
@@ -137,11 +137,11 @@ class DoliDBSqlite3 extends DoliDB
     static function convertSQLFromMysql($line,$type='ddl')
     {
         // Removed empty line if this is a comment line for SVN tagging
-        if (preg_match('/^--\s\$Id/i',$line)) {
+        if (preg_match('/^--\s\$Id/i', $line)) {
             return '';
         }
         // Return line if this is a comment
-        if (preg_match('/^#/i',$line) || preg_match('/^$/i',$line) || preg_match('/^--/i',$line))
+        if (preg_match('/^#/i', $line) || preg_match('/^$/i', $line) || preg_match('/^--/i', $line))
         {
             return $line;
         }
@@ -149,90 +149,90 @@ class DoliDBSqlite3 extends DoliDB
         {
             if ($type == 'auto')
             {
-              if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
-              else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
-              else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
+              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+              else if (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+              else if (preg_match('/DROP TABLE/i', $line)) $type='dml';
             }
 
             if ($type == 'dml')
             {
-                $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
+                $line=preg_replace('/\s/', ' ', $line);   // Replace tabulation with space
 
                 // we are inside create table statement so lets process datatypes
-                if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
-                    $line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-                    $line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
-                    $line=preg_replace('/,$/','',$line);
+                if (preg_match('/(ISAM|innodb)/i', $line)) { // end of create table sequence
+                    $line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
+                    $line=preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
+                    $line=preg_replace('/,$/', '', $line);
                 }
 
                 // Process case: "CREATE TABLE llx_mytable(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
-                if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i',$line,$reg)) {
-                    $newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i','\\1 \\2 integer PRIMARY KEY AUTOINCREMENT',$line);
+                if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i', $line, $reg)) {
+                    $newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 integer PRIMARY KEY AUTOINCREMENT', $line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
                     $line=$newline;
                 }
 
                 // tinyint type conversion
-                $line=str_replace('tinyint','smallint',$line);
+                $line=str_replace('tinyint', 'smallint', $line);
 
                 // nuke unsigned
-                $line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
+                $line=preg_replace('/(int\w+|smallint)\s+unsigned/i', '\\1', $line);
 
                 // blob -> text
-                $line=preg_replace('/\w*blob/i','text',$line);
+                $line=preg_replace('/\w*blob/i', 'text', $line);
 
                 // tinytext/mediumtext -> text
-                $line=preg_replace('/tinytext/i','text',$line);
-                $line=preg_replace('/mediumtext/i','text',$line);
+                $line=preg_replace('/tinytext/i', 'text', $line);
+                $line=preg_replace('/mediumtext/i', 'text', $line);
 
                 // change not null datetime field to null valid ones
                 // (to support remapping of "zero time" to null
-                $line=preg_replace('/datetime not null/i','datetime',$line);
-                $line=preg_replace('/datetime/i','timestamp',$line);
+                $line=preg_replace('/datetime not null/i', 'datetime', $line);
+                $line=preg_replace('/datetime/i', 'timestamp', $line);
 
                 // double -> numeric
-                $line=preg_replace('/^double/i','numeric',$line);
-                $line=preg_replace('/(\s*)double/i','\\1numeric',$line);
+                $line=preg_replace('/^double/i', 'numeric', $line);
+                $line=preg_replace('/(\s*)double/i', '\\1numeric', $line);
                 // float -> numeric
-                $line=preg_replace('/^float/i','numeric',$line);
-                $line=preg_replace('/(\s*)float/i','\\1numeric',$line);
+                $line=preg_replace('/^float/i', 'numeric', $line);
+                $line=preg_replace('/(\s*)float/i', '\\1numeric', $line);
 
                 // unique index(field1,field2)
-                if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
+                if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i', $line))
                 {
-                    $line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
+                    $line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i', 'UNIQUE\(\\1\)', $line);
                 }
 
                 // We remove end of requests "AFTER fieldxxx"
-                $line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+                $line=preg_replace('/AFTER [a-z0-9_]+/i', '', $line);
 
                 // We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
-                $line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
+                $line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i', 'DROP INDEX', $line);
 
                 // Translate order to rename fields
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i', $line, $reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
                 // Translate order to modify field format
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i', $line, $reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $newreg3=$reg[3];
-                    $newreg3=preg_replace('/ DEFAULT NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT NULL/i', '', $newreg3);
+                    $newreg3=preg_replace('/ NOT NULL/i', '', $newreg3);
+                    $newreg3=preg_replace('/ NULL/i', '', $newreg3);
+                    $newreg3=preg_replace('/ DEFAULT 0/i', '', $newreg3);
+                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i', '', $newreg3);
                     $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
                     // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
 
                 // alter table add primary key (field1, field2 ...) -> We create a unique index instead as dynamic creation of primary key is not supported
                 // ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
-                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i', $line, $reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "CREATE UNIQUE INDEX ".$reg[2]." ON ".$reg[1]."(".$reg[3];
@@ -240,7 +240,7 @@ class DoliDBSqlite3 extends DoliDB
 
                 // Translate order to drop foreign keys
                 // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
-                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i', $line, $reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
@@ -248,15 +248,15 @@ class DoliDBSqlite3 extends DoliDB
 
                 // alter table add [unique] [index] (field1, field2 ...)
                 // ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
-                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i', $line, $reg))
                 {
                     $fieldlist=$reg[4];
                     $idxname=$reg[3];
                     $tablename=$reg[1];
                     $line = "-- ".$line." replaced by --\n";
-                    $line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+                    $line.= "CREATE ".(preg_match('/UNIQUE/', $reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
                 }
-                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i',$line, $reg)) {
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $line, $reg)) {
                     // Pour l'instant les contraintes ne sont pas créées
                     dol_syslog(get_class().'::query line emptied');
                     $line = 'SELECT 0;';
@@ -269,24 +269,24 @@ class DoliDBSqlite3 extends DoliDB
 
             // Delete using criteria on other table must not declare twice the deleted table
             // DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
-            if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i',$line,$reg))
+            if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i', $line, $reg))
             {
 				if ($reg[1] == $reg[2])	// If same table, we remove second one
                 {
-                    $line=preg_replace('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i','DELETE FROM \\1 USING \\3', $line);
+                    $line=preg_replace('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i', 'DELETE FROM \\1 USING \\3', $line);
                 }
             }
 
             // Remove () in the tables in FROM if one table
-            $line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
+            $line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i', 'FROM \\1', $line);
             //print $line."\n";
 
             // Remove () in the tables in FROM if two table
-            $line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2',$line);
+            $line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i', 'FROM \\1, \\2', $line);
             //print $line."\n";
 
             // Remove () in the tables in FROM if two table
-            $line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
+            $line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i', 'FROM \\1, \\2, \\3', $line);
             //print $line."\n";
 
             //print "type=".$type." newline=".$line."<br>\n";
@@ -327,7 +327,7 @@ class DoliDBSqlite3 extends DoliDB
     {
         global $main_data_dir;
 
-        dol_syslog(get_class($this)."::connect name=".$name,LOG_DEBUG);
+        dol_syslog(get_class($this)."::connect name=".$name, LOG_DEBUG);
 
         $dir=$main_data_dir;
         if (empty($dir)) $dir=DOL_DATA_ROOT;
@@ -383,7 +383,7 @@ class DoliDBSqlite3 extends DoliDB
     {
         if ($this->db)
         {
-            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
+            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
             $this->connected=false;
             $this->db->close();
             unset($this->db);    // Clean this->db
@@ -408,7 +408,7 @@ class DoliDBSqlite3 extends DoliDB
         $this->error = 0;
 
         // Convert MySQL syntax to SQLite syntax
-        if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i',$query, $reg)) {
+        if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
             // Ajout d'une clef étrangère à la table
             // procédure de remplacement de la table pour ajouter la contrainte
             // Exemple : ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
@@ -445,7 +445,7 @@ class DoliDBSqlite3 extends DoliDB
             // dummy statement
             $query="SELECT 0";
         } else {
-            $query=$this->convertSQLFromMysql($query,$type);
+            $query=$this->convertSQLFromMysql($query, $type);
         }
         //print "After convertSQLFromMysql:\n".$query."<br>\n";
 
@@ -464,7 +464,7 @@ class DoliDBSqlite3 extends DoliDB
             $this->error=$this->db->lastErrorMsg();
         }
 
-        if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
+        if (! preg_match("/^COMMIT/i", $query) && ! preg_match("/^ROLLBACK/i", $query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
             if (! is_object($ret) || $this->error)
@@ -477,7 +477,7 @@ class DoliDBSqlite3 extends DoliDB
 
                 $errormsg = get_class($this)."::query SQL Error message: ".$this->lasterror;
 
-                if (preg_match('/[0-9]/',$this->lasterrno)) {
+                if (preg_match('/[0-9]/', $this->lasterrno)) {
                     $errormsg .= ' ('.$this->lasterrno.')';
                 }
 
@@ -669,14 +669,14 @@ class DoliDBSqlite3 extends DoliDB
             $errno=$this->db->lastErrorCode();
 			if ($errno=='HY000' || $errno == 0)
             {
-                if (preg_match('/table.*already exists/i',$this->error))     return 'DB_ERROR_TABLE_ALREADY_EXISTS';
-                elseif (preg_match('/index.*already exists/i',$this->error)) return 'DB_ERROR_KEY_NAME_ALREADY_EXISTS';
-                elseif (preg_match('/syntax error/i',$this->error))          return 'DB_ERROR_SYNTAX';
+                if (preg_match('/table.*already exists/i', $this->error))     return 'DB_ERROR_TABLE_ALREADY_EXISTS';
+                elseif (preg_match('/index.*already exists/i', $this->error)) return 'DB_ERROR_KEY_NAME_ALREADY_EXISTS';
+                elseif (preg_match('/syntax error/i', $this->error))          return 'DB_ERROR_SYNTAX';
             }
             if ($errno=='23000')
             {
-                if (preg_match('/column.* not unique/i',$this->error))       return 'DB_ERROR_RECORD_ALREADY_EXISTS';
-                elseif (preg_match('/PRIMARY KEY must be unique/i',$this->error)) return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+                if (preg_match('/column.* not unique/i', $this->error))       return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+                elseif (preg_match('/PRIMARY KEY must be unique/i', $this->error)) return 'DB_ERROR_RECORD_ALREADY_EXISTS';
             }
             if ($errno > 1) {
                 // TODO Voir la liste des messages d'erreur
@@ -820,14 +820,14 @@ class DoliDBSqlite3 extends DoliDB
         $sql = 'CREATE DATABASE '.$database;
         $sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 
-        dol_syslog($sql,LOG_DEBUG);
+        dol_syslog($sql, LOG_DEBUG);
         $ret=$this->query($sql);
         if (! $ret)
         {
             // We try again for compatibility with Mysql < 4.1.1
             $sql = 'CREATE DATABASE '.$database;
             $ret=$this->query($sql);
-            dol_syslog($sql,LOG_DEBUG);
+            dol_syslog($sql, LOG_DEBUG);
         }
         return $ret;
     }
@@ -875,7 +875,7 @@ class DoliDBSqlite3 extends DoliDB
 
         $sql="SHOW FULL COLUMNS FROM ".$table.";";
 
-        dol_syslog($sql,LOG_DEBUG);
+        dol_syslog($sql, LOG_DEBUG);
         $result = $this->query($sql);
         if ($result)
         {
@@ -913,21 +913,21 @@ class DoliDBSqlite3 extends DoliDB
         {
             $sqlfields[$i] = $field_name." ";
             $sqlfields[$i]  .= $field_desc['type'];
-            if( preg_match("/^[^\s]/i",$field_desc['value']))
+            if( preg_match("/^[^\s]/i", $field_desc['value']))
             $sqlfields[$i]  .= "(".$field_desc['value'].")";
-            else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
+            else if( preg_match("/^[^\s]/i", $field_desc['attribute']))
             $sqlfields[$i]  .= " ".$field_desc['attribute'];
-            else if( preg_match("/^[^\s]/i",$field_desc['default']))
+            else if( preg_match("/^[^\s]/i", $field_desc['default']))
             {
-                if(preg_match("/null/i",$field_desc['default']))
+                if(preg_match("/null/i", $field_desc['default']))
                 $sqlfields[$i]  .= " default ".$field_desc['default'];
                 else
                 $sqlfields[$i]  .= " default '".$field_desc['default']."'";
             }
-            else if( preg_match("/^[^\s]/i",$field_desc['null']))
+            else if( preg_match("/^[^\s]/i", $field_desc['null']))
             $sqlfields[$i]  .= " ".$field_desc['null'];
 
-            else if( preg_match("/^[^\s]/i",$field_desc['extra']))
+            else if( preg_match("/^[^\s]/i", $field_desc['extra']))
             $sqlfields[$i]  .= " ".$field_desc['extra'];
             $i++;
         }
@@ -952,16 +952,16 @@ class DoliDBSqlite3 extends DoliDB
                 $i++;
             }
         }
-        $sql .= implode(',',$sqlfields);
+        $sql .= implode(',', $sqlfields);
         if($primary_key != "")
         $sql .= ",".$pk;
         if(is_array($unique_keys))
-        $sql .= ",".implode(',',$sqluq);
+        $sql .= ",".implode(',', $sqluq);
         if(is_array($keys))
-        $sql .= ",".implode(',',$sqlk);
+        $sql .= ",".implode(',', $sqlk);
         $sql .=") type=".$type;
 
-        dol_syslog($sql,LOG_DEBUG);
+        dol_syslog($sql, LOG_DEBUG);
         if(! $this -> query($sql))
             return -1;
         return 1;
@@ -998,7 +998,7 @@ class DoliDBSqlite3 extends DoliDB
         // phpcs:enable
         $sql="DESC ".$table." ".$field;
 
-        dol_syslog(get_class($this)."::DDLDescTable ".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::DDLDescTable ".$sql, LOG_DEBUG);
         $this->_results = $this->query($sql);
         return $this->_results;
     }
@@ -1020,27 +1020,27 @@ class DoliDBSqlite3 extends DoliDB
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
         $sql.= $field_desc['type'];
-        if(preg_match("/^[^\s]/i",$field_desc['value']))
-        if (! in_array($field_desc['type'],array('date','datetime')))
+        if(preg_match("/^[^\s]/i", $field_desc['value']))
+        if (! in_array($field_desc['type'], array('date','datetime')))
         {
             $sql.= "(".$field_desc['value'].")";
         }
-        if(preg_match("/^[^\s]/i",$field_desc['attribute']))
+        if(preg_match("/^[^\s]/i", $field_desc['attribute']))
         $sql.= " ".$field_desc['attribute'];
-        if(preg_match("/^[^\s]/i",$field_desc['null']))
+        if(preg_match("/^[^\s]/i", $field_desc['null']))
         $sql.= " ".$field_desc['null'];
-        if(preg_match("/^[^\s]/i",$field_desc['default']))
+        if(preg_match("/^[^\s]/i", $field_desc['default']))
         {
-            if(preg_match("/null/i",$field_desc['default']))
+            if(preg_match("/null/i", $field_desc['default']))
             $sql.= " default ".$field_desc['default'];
             else
             $sql.= " default '".$field_desc['default']."'";
         }
-        if(preg_match("/^[^\s]/i",$field_desc['extra']))
+        if(preg_match("/^[^\s]/i", $field_desc['extra']))
         $sql.= " ".$field_desc['extra'];
         $sql.= " ".$field_position;
 
-        dol_syslog(get_class($this)."::DDLAddField ".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
         if(! $this->query($sql))
         {
             return -1;
@@ -1066,7 +1066,7 @@ class DoliDBSqlite3 extends DoliDB
             $sql.="(".$field_desc['value'].")";
         }
 
-        dol_syslog(get_class($this)."::DDLUpdateField ".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
         if (! $this->query($sql))
             return -1;
         return 1;
@@ -1084,7 +1084,7 @@ class DoliDBSqlite3 extends DoliDB
     {
         // phpcs:enable
         $sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-        dol_syslog(get_class($this)."::DDLDropField ".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::DDLDropField ".$sql, LOG_DEBUG);
         if (! $this->query($sql))
         {
             $this->error=$this->lasterror();
@@ -1205,7 +1205,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             $liste=$this->fetch_array($resql);
             $basedir=$liste['Value'];
-            $fullpathofdump=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysqldump';
+            $fullpathofdump=$basedir.(preg_match('/\/$/', $basedir)?'':'/').'bin/mysqldump';
         }
         return $fullpathofdump;
     }
@@ -1225,7 +1225,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             $liste=$this->fetch_array($resql);
             $basedir=$liste['Value'];
-            $fullpathofimport=$basedir.(preg_match('/\/$/',$basedir)?'':'/').'bin/mysql';
+            $fullpathofimport=$basedir.(preg_match('/\/$/', $basedir)?'':'/').'bin/mysql';
         }
         return $fullpathofimport;
     }
@@ -1314,7 +1314,7 @@ class DoliDBSqlite3 extends DoliDB
     {
         if ($this->db)
         {
-        	$newname=preg_replace('/_/','',$name);
+        	$newname=preg_replace('/_/', '', $name);
             $localname = __CLASS__ . '::' . 'db' . $newname;
             $reflectClass = new ReflectionClass(__CLASS__);
             $reflectFunction = $reflectClass->getMethod('db' . $newname);
@@ -1394,8 +1394,8 @@ class DoliDBSqlite3 extends DoliDB
     private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
     {
         // phpcs:enable
-        $daynr=self::calc_daynr($year,$month,$day);
-        $first_daynr=self::calc_daynr($year,1,1);
+        $daynr=self::calc_daynr($year, $month, $day);
+        $first_daynr=self::calc_daynr($year, 1, 1);
         $monday_first= ($week_behaviour & self::WEEK_MONDAY_FIRST) ? 1 : 0;
         $week_year= ($week_behaviour & self::WEEK_YEAR) ? 1 : 0;
         $first_weekday= ($week_behaviour & self::WEEK_FIRST_WEEKDAY) ? 1 : 0;

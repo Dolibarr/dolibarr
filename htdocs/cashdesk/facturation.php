@@ -35,7 +35,7 @@
 $form=new Form($db);
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
-if ( GETPOST('filtre','alpha') ) {
+if ( GETPOST('filtre', 'alpha') ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
@@ -51,7 +51,7 @@ if ( GETPOST('filtre','alpha') ) {
 	$sql.= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
 	if (! empty($conf->barcode->enabled))
 	{
-		$filtre = GETPOST('filtre','alpha');
+		$filtre = GETPOST('filtre', 'alpha');
 
 		//If the barcode looks like an EAN13 format and the last digit is included in it,
 		//then whe look for the 12-digit too

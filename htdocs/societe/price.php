@@ -41,8 +41,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 $langs->loadLangs(array("products", "companies", "bills"));
 
 $action = GETPOST('action', 'alpha');
-$search_prod = GETPOST('search_prod','alpha');
-$cancel = GETPOST('cancel','alpha');
+$search_prod = GETPOST('search_prod', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -62,12 +62,12 @@ $hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
     {
         $search_prod = '';
     }
@@ -233,7 +233,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 	$page = GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;

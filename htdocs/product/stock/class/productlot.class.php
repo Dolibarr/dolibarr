@@ -188,7 +188,7 @@ class Productlot extends CommonObject
 				// want this action to call a trigger.
 
 				// Call triggers
-				$result=$this->call_trigger('PRODUCTLOT_CREATE',$user);
+				$result=$this->call_trigger('PRODUCTLOT_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -359,7 +359,7 @@ class Productlot extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
+			$result=$this->call_trigger('PRODUCTLOT_MODIFY', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -487,7 +487,7 @@ class Productlot extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-	    return $this->LibStatut(0,$mode);
+	    return $this->LibStatut(0, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -547,7 +547,7 @@ class Productlot extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 

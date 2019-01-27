@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'salaries', '', '', '');
  * View
  */
 
-llxHeader("",$langs->trans("SalaryPayment"));
+llxHeader("", $langs->trans("SalaryPayment"));
 
 $object = new PaymentSalary($db);
 $object->fetch($id);

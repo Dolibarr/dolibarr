@@ -35,18 +35,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-$action		= GETPOST('action','alpha');
-$cancel		= GETPOST('cancel','alpha');
-$origin		= GETPOST('origin','alpha');
-$catorigin	= GETPOST('catorigin','int');
-$type 		= GETPOST('type','alpha');
-$urlfrom	= GETPOST('urlfrom','alpha');
-$backtopage = GETPOST('backtopage','alpha');
+$action		= GETPOST('action', 'alpha');
+$cancel		= GETPOST('cancel', 'alpha');
+$origin		= GETPOST('origin', 'alpha');
+$catorigin	= GETPOST('catorigin', 'int');
+$type 		= GETPOST('type', 'alpha');
+$urlfrom	= GETPOST('urlfrom', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color');
@@ -137,7 +137,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	if ($parent != "-1") $object->fk_parent = $parent;
 
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error++;
 
 	if (! $object->label)
@@ -224,7 +224,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $helpurl='';
-llxHeader("",$langs->trans("Categories"),$helpurl);
+llxHeader("", $langs->trans("Categories"), $helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -238,7 +238,7 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="id" value="'.GETPOST('origin','alpha').'">';
+		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -258,13 +258,13 @@ if ($user->rights->categorie->creer)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
+		$doleditor=new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Color
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
-		print $formother->selectColor($color,'color');
+		print $formother->selectColor($color, 'color');
 		print '</td></tr>';
 
 		// Parent category
@@ -274,11 +274,11 @@ if ($user->rights->categorie->creer)
 		print '</td></tr>';
 
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields, 'edit');
 		}
 
 		print '</table>';

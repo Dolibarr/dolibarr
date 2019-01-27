@@ -85,7 +85,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(404, 'MyObject not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -233,7 +233,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(404, 'MyObject not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -265,7 +265,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(404, 'MyObject not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

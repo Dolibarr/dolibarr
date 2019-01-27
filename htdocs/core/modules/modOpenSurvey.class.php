@@ -54,7 +54,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->family = "portal";
 		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
 		$this->description = "Module to make online surveys (like Doodle, Studs, Rdvz, ...)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -180,7 +180,7 @@ class modOpenSurvey extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }
 

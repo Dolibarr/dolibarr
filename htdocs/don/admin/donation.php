@@ -37,10 +37,10 @@ $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $value = GETPOST('value');
-$label = GETPOST('label','alpha');
-$scandir = GETPOST('scan_dir','alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 
 $type='donation';
 
@@ -51,7 +51,7 @@ $type='donation';
 
 if ($action == 'specimen')
 {
-    $modele=GETPOST('module','alpha');
+    $modele=GETPOST('module', 'alpha');
 
     $don = new Don($db);
     $don->initAsSpecimen();
@@ -66,7 +66,7 @@ if ($action == 'specimen')
 
         $obj = new $classname($db);
 
-        if ($obj->write_file($don,$langs) > 0)
+        if ($obj->write_file($don, $langs) > 0)
         {
             header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
             return;
@@ -87,7 +87,7 @@ if ($action == 'specimen')
 // Set default model
 else if ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "DON_ADDON_MODEL", $value, 'chaine', 0, '', $conf->entity))
 	{
 		// The constant that was read before the new set
 		// So we go through a variable for a coherent display
@@ -113,16 +113,16 @@ else if ($action == 'del')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL',$conf->entity);
+        if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL', $conf->entity);
 	}
 }
 
 // Options
 if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 {
-	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT','alpha');
+	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT', 'alpha');
 
-    $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT",$account,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT", $account, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -138,9 +138,9 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
 if ($action == 'set_DONATION_MESSAGE')
 {
-	$freemessage = GETPOST('DONATION_MESSAGE','none');	// No alpha here, we want exact string
+	$freemessage = GETPOST('DONATION_MESSAGE', 'none');	// No alpha here, we want exact string
 
-    $res = dolibarr_set_const($db, "DONATION_MESSAGE",$freemessage,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "DONATION_MESSAGE", $freemessage, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -157,7 +157,7 @@ if ($action == 'set_DONATION_MESSAGE')
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -171,7 +171,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -193,9 +193,9 @@ $dir = "../../core/modules/dons/";
 $form=new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
+llxHeader('', $langs->trans("DonationsSetup"), 'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
 $head = donation_admin_prepare_head();
 
@@ -246,7 +246,7 @@ if (is_resource($handle))
 {
 	while (($file = readdir($handle))!==false)
 	{
-		if (preg_match('/\.modules\.php$/i',$file))
+		if (preg_match('/\.modules\.php$/i', $file))
 		{
 			$name = substr($file, 0, dol_strlen($file) -12);
 			$classname = substr($file, 0, dol_strlen($file) -12);
@@ -273,20 +273,20 @@ if (is_resource($handle))
 					if ($conf->global->DON_ADDON_MODEL == $name)
 					{
 						print "<td align=\"center\">\n";
-						print img_picto($langs->trans("Enabled"),'switch_on');
+						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</td>';
 					}
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 						print '</td>';
 					}
 				}
 				else
 				{
 					print "<td align=\"center\">\n";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 					print "</td>";
 				}
 
@@ -294,13 +294,13 @@ if (is_resource($handle))
 				if ($conf->global->DON_ADDON_MODEL == "$name")
 				{
 					print "<td align=\"center\">";
-					print img_picto($langs->trans("Default"),'on');
+					print img_picto($langs->trans("Default"), 'on');
 					print '</td>';
 				}
 				else
 				{
 					print "<td align=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 					print '</td>';
 				}
 
@@ -312,15 +312,15 @@ if (is_resource($handle))
 					$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 				}
 				$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-				$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-				$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+				$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+				$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 				print '<td align="center">';
-				print $form->textwithpicto('',$htmltooltip,-1,0);
+				print $form->textwithpicto('', $htmltooltip, -1, 0);
 				print '</td>';
 
 				// Preview
 				print '<td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"), 'generic').'</a>';
 				print '</td>';
 
 				print "</tr>\n";
@@ -397,7 +397,7 @@ print '</form>';
 /*
  *  French params
  */
-if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
+if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');

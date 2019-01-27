@@ -142,7 +142,7 @@ class EcmDirectory // extends CommonObject
 			$parent->fetch($this->fk_parent);
 			$relativepath=$parent->getRelativePath().$relativepath;
 		}
-		$relativepath=preg_replace('/([\/])+/i','/',$relativepath);	// Avoid duplicate / or \
+		$relativepath=preg_replace('/([\/])+/i', '/', $relativepath);	// Avoid duplicate / or \
 		//print $relativepath.'<br>';
 
 		$cat = new EcmDirectory($this->db);
@@ -199,7 +199,7 @@ class EcmDirectory // extends CommonObject
 				if ($result < 0) { $error++; $this->error="ErrorFailedToCreateDir"; }
 
                 // Call trigger
-                $result=$this->call_trigger('MYECMDIR_CREATE',$user);
+                $result=$this->call_trigger('MYECMDIR_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 
@@ -264,7 +264,7 @@ class EcmDirectory // extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('MYECMDIR_MODIFY',$user);
+            $result=$this->call_trigger('MYECMDIR_MODIFY', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -402,7 +402,7 @@ class EcmDirectory // extends CommonObject
 		else
 		{
             // Call trigger
-            $result=$this->call_trigger('MYECMDIR_DELETE',$user);
+            $result=$this->call_trigger('MYECMDIR_DELETE', $user);
             if ($result < 0)
             {
             	$this->db->rollback();
@@ -489,7 +489,7 @@ class EcmDirectory // extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($max?dol_trunc($newref,$max,'middle'):$newref);
+		if ($withpicto != 2) $result.= ($max?dol_trunc($newref, $max, 'middle'):$newref);
 		$result .= $linkend;
 
 		return $result;
@@ -581,7 +581,7 @@ class EcmDirectory // extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -692,7 +692,7 @@ class EcmDirectory // extends CommonObject
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($motherof[$key])) continue;
-			$this->build_path_from_id_categ($key,0);
+			$this->build_path_from_id_categ($key, 0);
 		}
 
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
@@ -730,7 +730,7 @@ class EcmDirectory // extends CommonObject
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
-		$this->cats[$id_categ]['level']=strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
+		$this->cats[$id_categ]['level']=strlen(preg_replace('/([^_])/i', '', $this->cats[$id_categ]['fullpath']));
 
 		// Traite ces enfants
 		$protection++;
@@ -739,7 +739,7 @@ class EcmDirectory // extends CommonObject
 		{
 			foreach($this->cats[$id_categ]['id_children'] as $key => $val)
 			{
-				$this->build_path_from_id_categ($val,$protection);
+				$this->build_path_from_id_categ($val, $protection);
 			}
 		}
 	}
@@ -756,7 +756,7 @@ class EcmDirectory // extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview.*\.png)$');
+		$filelist=dol_dir_list($dir, 'files', 0, '', '(\.meta|_preview.*\.png)$');
 
 		// Test if filelist is in database
 
@@ -806,11 +806,11 @@ class EcmDirectory // extends CommonObject
 
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+        $result=$interface->run_triggers($trigger_name, $this, $user, $langs, $conf);
         if ($result < 0) {
             if (!empty($this->errors))
             {
-                $this->errors=array_merge($this->errors,$interface->errors);
+                $this->errors=array_merge($this->errors, $interface->errors);
             }
             else
             {

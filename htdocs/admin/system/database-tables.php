@@ -31,7 +31,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 if ($action == 'convert')
@@ -46,12 +46,12 @@ if ($action == 'convert')
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 
 
 // Define request to get table description
 $base=0;
-if (preg_match('/mysql/i',$conf->db->type))
+if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS";
 	$base=1;

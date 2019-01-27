@@ -90,7 +90,7 @@ if ($argv[2] != 'all')
 
 require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";
 
-$langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$argv[3]);
+$langParser = new autoTranslator($argv[2], $argv[1], $dir, $file, $argv[3]);
 
 print "***** Finished *****\n";
 

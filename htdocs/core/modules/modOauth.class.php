@@ -49,7 +49,7 @@ class modOauth extends DolibarrModules
         $this->family = "interface";
         $this->module_position = '31';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable OAuth authentication";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version

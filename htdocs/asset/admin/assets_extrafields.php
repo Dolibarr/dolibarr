@@ -58,10 +58,10 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Assets");
 
-llxHeader('',$langs->trans("AssetsSetup"));
+llxHeader('', $langs->trans("AssetsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
 
 
 $head = asset_admin_prepare_head();

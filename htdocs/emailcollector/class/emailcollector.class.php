@@ -469,7 +469,7 @@ class EmailCollector extends CommonObject
         global $action,$hookmanager;
         $hookmanager->initHooks(array('emailcollectordao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
         if ($reshook > 0) $result = $hookmanager->resPrint;
         else $result .= $hookmanager->resPrint;
 
@@ -516,28 +516,28 @@ class EmailCollector extends CommonObject
         }
         elseif ($mode == 2)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
         }
         elseif ($mode == 3)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 4)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
         }
         elseif ($mode == 5)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 6)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
     }
 
@@ -888,7 +888,7 @@ class EmailCollector extends CommonObject
         {
             $fromdate=0;
             if ($this->datelastresult && $this->codelastresult == 'OK') $fromdate = $this->datelastresult;
-            if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1,'dayhourrfc');
+            if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1, 'dayhourrfc');
         }
         dol_syslog("IMAP search string = ".$search);
         //var_dump($search);
@@ -922,7 +922,7 @@ class EmailCollector extends CommonObject
                 if ($searchfilterdoltrackid > 0)
                 {
                     //if (empty($headers['X-Dolibarr-TRACKID'])) continue;
-                    if (empty($headers['References']) || ! preg_match('/@'.preg_quote($host,'/').'/', $headers['References']))
+                    if (empty($headers['References']) || ! preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
                         continue;
@@ -930,7 +930,7 @@ class EmailCollector extends CommonObject
                 }
                 if ($searchfilternodoltrackid > 0)
                 {
-                    if (! empty($headers['References']) && preg_match('/@'.preg_quote($host,'/').'/', $headers['References']))
+                    if (! empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
                         continue;
@@ -1005,7 +1005,7 @@ class EmailCollector extends CommonObject
                     $part_array[] = array('part_number' => $partno, 'part_object' => $obj);
                     if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
                         //print_r($obj);
-                        if (array_key_exists('parts',$obj)) {    // Check to see if the email has parts
+                        if (array_key_exists('parts', $obj)) {    // Check to see if the email has parts
                             foreach ($obj->parts as $count => $part) {
                                 // Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
                                 if (count($part->parts) > 0) {
@@ -1020,7 +1020,7 @@ class EmailCollector extends CommonObject
                             $part_array[] = array('part_number' => $partno.'.1', 'part_object' => $obj);
                         }
                     }else{    // If there are more sub-parts, expand them out.
-                        if (array_key_exists('parts',$obj)) {
+                        if (array_key_exists('parts', $obj)) {
                             foreach ($obj->parts as $count => $p) {
                                 addPartToArray($p, $partno.".".($count+1), $part_array);
                             }
@@ -1103,7 +1103,7 @@ class EmailCollector extends CommonObject
                 // For example: References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
                 $trackid = '';
                 $reg=array();
-                if (! empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host,'/').'/', $headers['References'], $reg))
+                if (! empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
                 {
                     $trackid = $reg[1].$reg[2];
 
@@ -1420,10 +1420,10 @@ class EmailCollector extends CommonObject
 
                         // Search template files
                         $file=''; $classname=''; $filefound=0; $reldir='';
-                        $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+                        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
                         foreach($dirmodels as $reldir)
                         {
-                            $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php',0);
+                            $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
                             if (file_exists($file))
                             {
                                 $filefound=1;

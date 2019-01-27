@@ -123,7 +123,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_CREATE',$user);
+				$result=$this->call_trigger('TASK_COMMENT_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -246,7 +246,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_MODIFY',$user);
+				$result=$this->call_trigger('TASK_COMMENT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -298,7 +298,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_DELETE',$user);
+				$result=$this->call_trigger('TASK_COMMENT_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}

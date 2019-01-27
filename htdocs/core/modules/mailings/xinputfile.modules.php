@@ -91,7 +91,7 @@ class mailing_xinputfile extends MailingTargets
 	function url($id)
 	{
 		global $langs;
-		return $langs->trans('LineInFile',$id);
+		return $langs->trans('LineInFile', $id);
 		//' - '.$langs->trans("File").' '.dol_trunc(,12);
 	}
 
@@ -150,7 +150,7 @@ class mailing_xinputfile extends MailingTargets
 					{
 						$cpt++;
 				        $buffer = trim(fgets($handle));
-			        	$tab=explode(';',$buffer,4);
+			        	$tab=explode(';', $buffer, 4);
 				        $email=$tab[0];
 				        $name=$tab[1];
 				        $firstname=$tab[2];
@@ -180,7 +180,7 @@ class mailing_xinputfile extends MailingTargets
 					        {
 					        	$i++;
 					        	$langs->load("errors");
-					        	$this->error = $langs->trans("ErrorFoundBadEmailInFile",$i,$cpt,$email);
+					        	$this->error = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
 					        }
 				        }
 				    }
@@ -206,7 +206,7 @@ class mailing_xinputfile extends MailingTargets
 				{
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload))	// Files infected by a virus
 				{
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 				}

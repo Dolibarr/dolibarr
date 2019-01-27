@@ -154,7 +154,7 @@ class ChargeSociales extends CommonObject
 	 */
 	function check()
 	{
-		$newamount=price2num($this->amount,'MT');
+		$newamount=price2num($this->amount, 'MT');
 
         // Validation parametres
         if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
@@ -180,7 +180,7 @@ class ChargeSociales extends CommonObject
         $now=dol_now();
 
         // Nettoyage parametres
-        $newamount=price2num($this->amount,'MT');
+        $newamount=price2num($this->amount, 'MT');
 
 		if (!$this->check())
 		{
@@ -211,7 +211,7 @@ class ChargeSociales extends CommonObject
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
 
             //dol_syslog("ChargesSociales::create this->id=".$this->id);
-			$result=$this->call_trigger('SOCIALCONTRIBUTION_CREATE',$user);
+			$result=$this->call_trigger('SOCIALCONTRIBUTION_CREATE', $user);
 			if ($result < 0) $error++;
 
 			if(empty($error)) {
@@ -247,7 +247,7 @@ class ChargeSociales extends CommonObject
         // Get bank transaction lines for this social contributions
         include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
         $account=new Account($this->db);
-        $lines_url=$account->get_url('',$this->id,'sc');
+        $lines_url=$account->get_url('', $this->id, 'sc');
 
         // Delete bank urls
         foreach ($lines_url as $line_url)
@@ -316,7 +316,7 @@ class ChargeSociales extends CommonObject
         $sql.= " SET libelle='".$this->db->escape($this->lib)."'";
         $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
         $sql.= ", periode='".$this->db->idate($this->periode)."'";
-        $sql.= ", amount='".price2num($this->amount,'MT')."'";
+        $sql.= ", amount='".price2num($this->amount, 'MT')."'";
 		$sql.= ", fk_projet='".$this->db->escape($this->fk_project)."'";
         $sql.= ", fk_user_modif=".$user->id;
         $sql.= " WHERE rowid=".$this->id;
@@ -421,7 +421,7 @@ class ChargeSociales extends CommonObject
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
     {
-        return $this->LibStatut($this->paye,$mode,$alreadypaid);
+        return $this->LibStatut($this->paye, $mode, $alreadypaid);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -507,7 +507,7 @@ class ChargeSociales extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -540,7 +540,7 @@ class ChargeSociales extends CommonObject
 
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref, $maxlen):$this->ref);
         $result .= $linkend;
 
         return $result;

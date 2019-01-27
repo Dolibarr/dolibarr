@@ -41,7 +41,7 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
-$result=restrictedArea($user,'produit|service&fournisseur',$id,'product&product','','','rowid');
+$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects
 $product = new Product($db);
@@ -166,7 +166,7 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
@@ -204,9 +204,9 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 }
 
 //Price expression editor
-print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
+print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,ROWS_4,'90%');
+$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';

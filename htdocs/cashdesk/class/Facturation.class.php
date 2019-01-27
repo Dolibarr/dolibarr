@@ -164,8 +164,8 @@ class Facturation
         $newcartarray[$i]['fk_tva']=$this->tva();   // Vat rowid
         $newcartarray[$i]['remise_percent']=$remise_percent;
         $newcartarray[$i]['remise']=price2num($montant_remise_ht);
-        $newcartarray[$i]['total_ht']=price2num($total_ht,'MT');
-        $newcartarray[$i]['total_ttc']=price2num($total_ttc,'MT');
+        $newcartarray[$i]['total_ht']=price2num($total_ht, 'MT');
+        $newcartarray[$i]['total_ttc']=price2num($total_ttc, 'MT');
         $newcartarray[$i]['total_vat']=price2num($total_vat, 'MT');
         $newcartarray[$i]['total_localtax1']=price2num($total_localtax1, 'MT');
         $newcartarray[$i]['total_localtax2']=price2num($total_localtax2, 'MT');

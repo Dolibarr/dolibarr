@@ -52,7 +52,7 @@ class modFicheinter extends DolibarrModules
         $this->family = "crm";
         $this->module_position = '45';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Gestion des fiches d'intervention";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -220,6 +220,6 @@ class modFicheinter extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','ficheinter',".$conf->entity.")",
         );
 
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

@@ -389,7 +389,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
-			    $result=$this->call_trigger('GROUP_MODIFY',$user);
+			    $result=$this->call_trigger('GROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
@@ -514,7 +514,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
-			    $result=$this->call_trigger('GROUP_MODIFY',$user);
+			    $result=$this->call_trigger('GROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
@@ -655,7 +655,7 @@ class UserGroup extends CommonObject
 		if ($result)
 		{
             // Call trigger
-            $result=$this->call_trigger('GROUP_DELETE',$user);
+            $result=$this->call_trigger('GROUP_DELETE', $user);
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
@@ -723,7 +723,7 @@ class UserGroup extends CommonObject
 			if (! $error && ! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('GROUP_CREATE',$user);
+                $result=$this->call_trigger('GROUP_CREATE', $user);
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
 			}
@@ -786,7 +786,7 @@ class UserGroup extends CommonObject
 			if (! $error && ! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('GROUP_MODIFY',$user);
+                $result=$this->call_trigger('GROUP_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -819,7 +819,7 @@ class UserGroup extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-	    return $this->LibStatut(0,$mode);
+	    return $this->LibStatut(0, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -872,7 +872,7 @@ class UserGroup extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -908,7 +908,7 @@ class UserGroup extends CommonObject
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -951,7 +951,7 @@ class UserGroup extends CommonObject
 		$info=array();
 
 		// Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
 		if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;

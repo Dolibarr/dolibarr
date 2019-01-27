@@ -85,7 +85,7 @@ class ExportExcelnew extends ModeleExports
 		$this->version='1.30';             // Driver version
 		$this->phpmin = array(5,6);		   // Minimum version of PHP required by module
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 
 		if (empty($this->disabled))
 		{
@@ -207,7 +207,7 @@ class ExportExcelnew extends ModeleExports
             if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
             {
             	$langs->load("errors");
-            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+            	$this->error=$langs->trans('ErrorPHPNeedModule', 'zip');
             	return -1;
             }
 	    }
@@ -267,7 +267,7 @@ class ExportExcelnew extends ModeleExports
 		{
             $alias=$array_export_fields_label[$code];
 			//print "dd".$alias;
-			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+			if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
     		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		{
     			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
@@ -275,7 +275,7 @@ class ExportExcelnew extends ModeleExports
     		else
     		{
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $outputlangs->transnoentities($alias));
-    		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Numeric','TextAuto')))		// Set autowidth for some types
+    		    if (! empty($array_types[$code]) && in_array($array_types[$code], array('Date','Numeric','TextAuto')))		// Set autowidth for some types
                 {
                 	$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
                 }
@@ -306,9 +306,9 @@ class ExportExcelnew extends ModeleExports
 
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
+			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
-            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+            if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
@@ -322,7 +322,7 @@ class ExportExcelnew extends ModeleExports
 			}
 
 			// Traduction newvalue
-			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg))
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
@@ -331,14 +331,14 @@ class ExportExcelnew extends ModeleExports
 				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
 
-			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue))
 			{
         		    $newvalue=dol_stringtotime($newvalue);
         		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
         		    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
         		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
 			}
-			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i',$newvalue))
+			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
 			{
         		    $newvalue=dol_stringtotime($newvalue);
         		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));

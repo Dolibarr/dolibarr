@@ -74,7 +74,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		//$commandestatic=new Commande($db);
 
-		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
+		$text = $langs->trans("BoxCustomersOrdersPerMonth", $max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -102,22 +102,22 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
+			$autosetarray=preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
 			{
-				$endyear=GETPOST($param_year,'int');
-				$shownb=GETPOST($param_shownb,'alpha');
-				$showtot=GETPOST($param_showtot,'alpha');
+				$endyear=GETPOST($param_year, 'int');
+				$shownb=GETPOST($param_shownb, 'alpha');
+				$showtot=GETPOST($param_showtot, 'alpha');
 			}
 			else
 			{
-				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb=1; $showtot=1; }
-			$nowarray=dol_getdate(dol_now(),true);
+			$nowarray=dol_getdate(dol_now(), true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='customer';
@@ -129,7 +129,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
@@ -160,14 +160,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px1->mode='depth';
 					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
 
-					$px1->draw($filenamenb,$fileurlnb);
+					$px1->draw($filenamenb, $fileurlnb);
 				}
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
@@ -198,7 +198,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px2->mode='depth';
 					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
 
-					$px2->draw($filenamenb,$fileurlnb);
+					$px2->draw($filenamenb, $fileurlnb);
 				}
 			}
 
@@ -228,7 +228,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfOrdersByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)

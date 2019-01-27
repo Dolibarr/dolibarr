@@ -91,7 +91,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function info($langs)
 	{
-		return $langs->trans("MonkeyNumRefModelDesc",$this->prefixcustomer,$this->prefixsupplier);
+		return $langs->trans("MonkeyNumRefModelDesc", $this->prefixcustomer, $this->prefixsupplier);
 	}
 
 
@@ -154,10 +154,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 
 		$date	= dol_now();
-		$yymm	= strftime("%y%m",$date);
+		$yymm	= strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 5) - 1)) $num=$max+1;	// If counter > 99999, we do not format on 5 chars, we take number as it is
-		else $num = sprintf("%05s",$max+1);
+		else $num = sprintf("%05s", $max+1);
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;

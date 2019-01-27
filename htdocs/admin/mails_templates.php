@@ -45,31 +45,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","mails","languages"));
 
-$action     = GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
-$confirm    = GETPOST('confirm','alpha');												// Result of a confirmation
+$action     = GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm    = GETPOST('confirm', 'alpha');												// Result of a confirmation
 
-$id			= GETPOST('id','int');
-$rowid		= GETPOST('rowid','alpha');
-$search_label=GETPOST('search_label','alpha');
-$search_type_template=GETPOST('search_type_template','alpha');
-$search_lang=GETPOST('search_lang','alpha');
-$search_fk_user=GETPOST('search_fk_user','intcomma');
-$search_topic=GETPOST('search_topic','alpha');
+$id			= GETPOST('id', 'int');
+$rowid		= GETPOST('rowid', 'alpha');
+$search_label=GETPOST('search_label', 'alpha');
+$search_type_template=GETPOST('search_type_template', 'alpha');
+$search_lang=GETPOST('search_lang', 'alpha');
+$search_fk_user=GETPOST('search_fk_user', 'intcomma');
+$search_topic=GETPOST('search_topic', 'alpha');
 
 if (! empty($user->socid)) accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"),'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
 
-$listoffset=GETPOST('listoffset','alpha');
-$listlimit =GETPOST('listlimit','alpha')>0?GETPOST('listlimit','alpha'):1000;
+$listoffset=GETPOST('listoffset', 'alpha');
+$listlimit =GETPOST('listlimit', 'alpha')>0?GETPOST('listlimit', 'alpha'):1000;
 $active = 1;
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
@@ -169,7 +169,7 @@ if ($conf->projet->enabled)            $elementList['project']=$langs->trans('Ma
 $elementList['user']=$langs->trans('MailToUser');
 
 $parameters=array('elementList'=>$elementList);
-$reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('emailElementlist', $parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook == 0) {
 	foreach ($hookmanager->resArray as $item => $value) {
 		$elementList[$item] = $value;
@@ -189,17 +189,17 @@ $id = 25;
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_label='';
         $search_type_template='';
@@ -211,12 +211,12 @@ if (empty($reshook))
     }
 
     // Actions add or modify an entry into a dictionary
-    if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
+    if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     {
-        $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
-        $listfieldinsert=explode(',',$tabfieldinsert[$id]);
-        $listfieldmodify=explode(',',$tabfieldinsert[$id]);
-        $listfieldvalue=explode(',',$tabfieldvalue[$id]);
+        $listfield=explode(',', str_replace(' ', '', $tabfield[$id]));
+        $listfieldinsert=explode(',', $tabfieldinsert[$id]);
+        $listfieldmodify=explode(',', $tabfieldinsert[$id]);
+        $listfieldvalue=explode(',', $tabfieldvalue[$id]);
 
         // Check that all fields are filled
         $ok=1;
@@ -227,7 +227,7 @@ if (empty($reshook))
             if ($value == 'content') continue;
             if ($value == 'content_lines') continue;
 
-            if (GETPOST('actionmodify','alpha') && $value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
+            if (GETPOST('actionmodify', 'alpha') && $value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
 
             if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
             {
@@ -405,7 +405,7 @@ $titre=$langs->trans("EMailsSetup");
 $linkback='';
 $titlepicto='title_setup';
 
-print load_fiche_titre($titre,$linkback,$titlepicto);
+print load_fiche_titre($titre, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 
@@ -414,7 +414,7 @@ dol_fiche_head($head, 'templates', '', -1);
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 //var_dump($elementList);
 
@@ -438,16 +438,16 @@ if ($search_fk_user != '' && $search_fk_user != '-1') $sql.=natural_search('fk_u
 if ($search_topic) $sql.=natural_search('topic', $search_topic);
 // If sort order is "country", we use country_code instead
 if ($sortfield == 'country') $sortfield='country_code';
-$sql.=$db->order($sortfield,$sortorder);
-$sql.=$db->plimit($listlimit+1,$offset);
+$sql.=$db->order($sortfield, $sortorder);
+$sql.=$db->plimit($listlimit+1, $offset);
 //print $sql;
 
-$fieldlist=explode(',',$tabfield[$id]);
+$fieldlist=explode(',', $tabfield[$id]);
 
 // Form to add a new line
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
@@ -478,7 +478,7 @@ foreach ($fieldlist as $field => $value)
 	if ($valuetoshow != '')
 	{
 		print '<td align="'.$align.'">';
-		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
+		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 		else if (! empty($tabhelp[$id][$value]))
 		{
 			if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
@@ -593,7 +593,7 @@ print '<br>';
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
@@ -616,7 +616,7 @@ if ($resql)
     $paramwithsearch = $param;
     if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
     if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
-    if (GETPOST('from','alpha')) $paramwithsearch.= '&from='.urlencode(GETPOST('from','alpha'));
+    if (GETPOST('from', 'alpha')) $paramwithsearch.= '&from='.urlencode(GETPOST('from', 'alpha'));
 
     // There is several pages
     if ($num > $listlimit)
@@ -724,11 +724,11 @@ if ($resql)
 
             	$tmpaction='edit';
                 $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                 // Show fields
-                if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
+                if (empty($reshook)) fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 
                 print '<td></td><td></td><td></td>';
                 print '<td align="center">';
@@ -801,7 +801,7 @@ if ($resql)
 
             	$tmpaction = 'view';
                 $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 

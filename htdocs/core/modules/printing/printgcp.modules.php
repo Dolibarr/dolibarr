@@ -75,7 +75,7 @@ class printing_printgcp extends PrintingDriver
         global $conf, $langs, $dolibarr_main_url_root;
 
         // Define $urlwithroot
-        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
         $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -215,10 +215,10 @@ class printing_printgcp extends PrintingDriver
             $html.= '<td align="center">';
             if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id'])
             {
-                $html.= img_picto($langs->trans("Default"),'on');
+                $html.= img_picto($langs->trans("Default"), 'on');
             }
             else
-                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             $html.= '</td>';
             $html.= '</tr>'."\n";
         }
@@ -275,7 +275,7 @@ class printing_printgcp extends PrintingDriver
             $response = $apiService->request(self::PRINTERS_SEARCH_URL);
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
-            print '<pre>'.print_r($e->getMessage(),true).'</pre>';
+            print '<pre>'.print_r($e->getMessage(), true).'</pre>';
         }
         //print '<tr><td><pre>'.print_r($response, true).'</pre></td></tr>';
         $responsedata = json_decode($response, true);

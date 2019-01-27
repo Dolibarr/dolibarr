@@ -72,7 +72,7 @@ class SupplierOrders extends DolibarrApi
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -198,7 +198,7 @@ class SupplierOrders extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->order->$field = $value;
         }
-        if(! array_keys($request_data,'date')) {
+        if(! array_keys($request_data, 'date')) {
             $this->order->date = dol_now();
         }
         /* We keep lines as an array
@@ -234,7 +234,7 @@ class SupplierOrders extends DolibarrApi
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -265,7 +265,7 @@ class SupplierOrders extends DolibarrApi
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -311,7 +311,7 @@ class SupplierOrders extends DolibarrApi
     		throw new RestException(404, 'Order not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+    	if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 

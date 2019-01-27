@@ -444,7 +444,7 @@ class BonPrelevement extends CommonObject
 
 						$langs->load('withdrawals');
 						$subject = $langs->trans("InfoCreditSubject", $this->ref);
-						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date,'dayhour'));
+						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 						//Add payment of withdrawal into bank
 						$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
@@ -491,7 +491,7 @@ class BonPrelevement extends CommonObject
 							}
 							else
 							{
-								$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount,'','');
+								$result=$paiement->addPaymentToBank($user, 'payment', '(WithdrawalPayment)', $bankaccount, '', '');
 								if ($result < 0)
 								{
 									dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error");
@@ -573,7 +573,7 @@ class BonPrelevement extends CommonObject
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::set_infotrans Start",LOG_INFO);
+		dol_syslog(get_class($this)."::set_infotrans Start", LOG_INFO);
 		if ($this->db->begin())
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
@@ -591,7 +591,7 @@ class BonPrelevement extends CommonObject
 				$langs->load('withdrawals');
 				$subject = $langs->trans("InfoTransSubject", $this->ref);
 				$message = $langs->trans("InfoTransMessage", $this->ref, dolGetFirstLastname($user->firstname, $user->lastname));
-				$message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date,'day'));
+				$message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date, 'day'));
 
 				// TODO Call trigger to create a notification using notification module
 			}
@@ -961,7 +961,7 @@ class BonPrelevement extends CommonObject
              */
 			if (!$error)
 			{
-				$ref = substr($year,-2).$month;
+				$ref = substr($year, -2).$month;
 
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";
 				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
@@ -975,7 +975,7 @@ class BonPrelevement extends CommonObject
 				if ($resql)
 				{
 					$row = $this->db->fetch_row($resql);
-					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1,0,2),2,"0",STR_PAD_LEFT);
+					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1, 0, 2), 2, "0", STR_PAD_LEFT);
 
 					$dir=$conf->prelevement->dir_output.'/receipts';
 					if (! is_dir($dir)) dol_mkdir($dir);
@@ -1093,7 +1093,7 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 
 					// Generation of SEPA file $this->filename
-					$this->generate($format,$executiondate);
+					$this->generate($format, $executiondate);
 				}
 				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
 			}
@@ -1309,7 +1309,7 @@ class BonPrelevement extends CommonObject
 
 		dol_syslog(get_class($this)."::generate build file ".$this->filename);
 
-		$this->file = fopen($this->filename,"w");
+		$this->file = fopen($this->filename, "w");
 		if (empty($this->file))
 		{
 			$this->error=$langs->trans('ErrorFailedToOpenFile', $this->filename);
@@ -1507,19 +1507,19 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, "       ");
 		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance),1));
+		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
 
 		// Raison Sociale Destinataire C2
 
-		fputs($this->file, substr(strtoupper($client_nom)."                         ",0,24));
+		fputs($this->file, substr(strtoupper($client_nom)."                         ", 0, 24));
 
 		// Domiciliation facultative D1
 		$domiciliation = strtr($rib_dom, array(" " => "-", CHR(13) => " ", CHR(10) => ""));
-		fputs($this->file, substr($domiciliation."                         ",0,24));
+		fputs($this->file, substr($domiciliation."                         ", 0, 24));
 
 		// Zone Reservee D2
 
-		fputs($this->file, substr("                             ",0,8));
+		fputs($this->file, substr("                             ", 0, 8));
 
 		// Code Guichet  D3
 
@@ -1531,7 +1531,7 @@ class BonPrelevement extends CommonObject
 
 		// Zone E Montant
 
-		$montant = (round($amount,2) * 100);
+		$montant = (round($amount, 2) * 100);
 
 		fputs($this->file, substr("000000000000000".$montant, -16));
 
@@ -1606,7 +1606,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
 	//	$XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
-		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "" ) ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref,20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "" ) ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='				</PmtId>'.$CrLf;
 		$XML_DEBITOR .='				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 		$XML_DEBITOR .='				<DrctDbtTx>'.$CrLf;
@@ -1627,8 +1627,8 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 		$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
 		$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town)?' ':''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
-		if (trim($addressline1)) 	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1,70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
-		if (trim($addressline2))	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2,70,'right','UTF-8',true)).'</AdrLine>'.$CrLf;
+		if (trim($addressline1)) 	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+		if (trim($addressline2))	$XML_DEBITOR .='						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
 		$XML_DEBITOR .='					</PstlAdr>'.$CrLf;
 		$XML_DEBITOR .='				</Dbtr>'.$CrLf;
 		$XML_DEBITOR .='				<DbtrAcct>'.$CrLf;
@@ -1666,25 +1666,25 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, "       ");
 		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance),1));
+		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
 
 		// Raison Sociale C2
 
-		fputs($this->file, substr($this->raison_sociale. "                           ",0,24));
+		fputs($this->file, substr($this->raison_sociale. "                           ", 0, 24));
 
 		// Reference de la remise creancier D1 sur 7 caracteres
 
-		fputs($this->file, substr($this->reference_remise. "                           ",0,7));
+		fputs($this->file, substr($this->reference_remise. "                           ", 0, 7));
 
 		// Zone Reservee D1-2
 
-		fputs($this->file, substr("                                    ",0,17));
+		fputs($this->file, substr("                                    ", 0, 17));
 
 		// Zone Reservee D2
 
-		fputs($this->file, substr("                             ",0,2));
+		fputs($this->file, substr("                             ", 0, 2));
 		fputs($this->file, "E");
-		fputs($this->file, substr("                             ",0,5));
+		fputs($this->file, substr("                             ", 0, 5));
 
 		// Code Guichet  D3
 
@@ -1696,11 +1696,11 @@ class BonPrelevement extends CommonObject
 
 		// Zone Reservee E
 
-		fputs($this->file, substr("                                        ",0,16));
+		fputs($this->file, substr("                                        ", 0, 16));
 
 		// Zone Reservee F
 
-		fputs($this->file, substr("                                        ",0,31));
+		fputs($this->file, substr("                                        ", 0, 31));
 
 		// Code etablissement
 
@@ -1708,7 +1708,7 @@ class BonPrelevement extends CommonObject
 
 		// Zone Reservee G
 
-		fputs($this->file, substr("                                        ",0,5));
+		fputs($this->file, substr("                                        ", 0, 5));
 
 		fputs($this->file, "\n");
 	}
@@ -1855,28 +1855,28 @@ class BonPrelevement extends CommonObject
 
 		// Reserve C1
 
-		fputs($this->file, substr("                           ",0,12));
+		fputs($this->file, substr("                           ", 0, 12));
 
 
 		// Raison Sociale C2
 
-		fputs($this->file, substr("                           ",0,24));
+		fputs($this->file, substr("                           ", 0, 24));
 
 		// D1
 
-		fputs($this->file, substr("                                    ",0,24));
+		fputs($this->file, substr("                                    ", 0, 24));
 
 		// Zone Reservee D2
 
-		fputs($this->file, substr("                             ",0,8));
+		fputs($this->file, substr("                             ", 0, 8));
 
 		// Code Guichet  D3
 
-		fputs($this->file, substr("                             ",0,5));
+		fputs($this->file, substr("                             ", 0, 5));
 
 		// Numero de compte D4
 
-		fputs($this->file, substr("                             ",0,11));
+		fputs($this->file, substr("                             ", 0, 11));
 
 		// Zone E Montant
 
@@ -1886,15 +1886,15 @@ class BonPrelevement extends CommonObject
 
 		// Zone Reservee F
 
-		fputs($this->file, substr("                                        ",0,31));
+		fputs($this->file, substr("                                        ", 0, 31));
 
 		// Code etablissement
 
-		fputs($this->file, substr("                                        ",0,5));
+		fputs($this->file, substr("                                        ", 0, 5));
 
 		// Zone Reservee F
 
-		fputs($this->file, substr("                                        ",0,5));
+		fputs($this->file, substr("                                        ", 0, 5));
 
 		fputs($this->file, "\n");
 	}
@@ -1907,7 +1907,7 @@ class BonPrelevement extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1936,33 +1936,33 @@ class BonPrelevement extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
-			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3').' '.$this->labelstatut[$statut];
-			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
+			if ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
+			if ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1');
-			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3');
-			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6');
+			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1');
+			if ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3');
+			if ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
-			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3').' '.$this->labelstatut[$statut];
-			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
+			if ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
+			if ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut3');
-			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
+			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut3');
-			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
+			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
 		}
 	}
 }

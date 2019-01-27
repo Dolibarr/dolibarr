@@ -201,7 +201,7 @@ class FormAdvTargetEmailing extends Form
 
 		$options_array = array ();
 
-		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
 		foreach ($langs_available as $key => $value)
 		{
@@ -262,7 +262,7 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this) . "::".__METHOD__,LOG_DEBUG);
+			dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 
@@ -301,7 +301,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -345,7 +345,7 @@ class FormAdvTargetEmailing extends Form
 		global $conf, $langs;
 
 		$form=new Form($this->db);
-		$return = $form->multiselectarray($htmlname, $options_array, $selected_array,0,0,'',0,295);
+		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
 	}
 
@@ -358,7 +358,7 @@ class FormAdvTargetEmailing extends Form
 	 */
 	function multiselectCustomerCategories($htmlname='cust_cat',$selected_array = array())
 	{
-		return $this->multiselectCategories($htmlname,$selected_array,2);
+		return $this->multiselectCategories($htmlname, $selected_array, 2);
 	}
 
 	/**
@@ -370,7 +370,7 @@ class FormAdvTargetEmailing extends Form
 	 */
 	function multiselectContactCategories($htmlname='contact_cat',$selected_array = array())
 	{
-		return $this->multiselectCategories($htmlname,$selected_array,4);
+		return $this->multiselectCategories($htmlname, $selected_array, 4);
 	}
 
 	/**
@@ -391,7 +391,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE type=".$type;
 
-		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -164,7 +164,7 @@ class PaymentSalary extends CommonObject
 		if (! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
+            $result=$this->call_trigger('PAYMENT_SALARY_MODIFY', $user);
             if ($result < 0) $error++;
             // End call triggers
 		}
@@ -272,7 +272,7 @@ class PaymentSalary extends CommonObject
 		$error=0;
 
 		// Call trigger
-		$result=$this->call_trigger('PAYMENT_SALARY_DELETE',$user);
+		$result=$this->call_trigger('PAYMENT_SALARY_DELETE', $user);
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -341,27 +341,27 @@ class PaymentSalary extends CommonObject
 		// Check parameters
 		if (! $this->label)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 			return -3;
 		}
 		if ($this->fk_user < 0 || $this->fk_user == '')
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Employee"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
 		if ($this->amount < 0 || $this->amount == '')
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
 		if (! empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -6;
 		}
 		if (! empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
 
@@ -484,7 +484,7 @@ class PaymentSalary extends CommonObject
 				}
 
 	            // Call trigger
-	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
+	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE', $user);
 	            if ($result < 0) $error++;
 	            // End call triggers
 			}
@@ -564,7 +564,7 @@ class PaymentSalary extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -601,7 +601,7 @@ class PaymentSalary extends CommonObject
 		global $action,$hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -654,7 +654,7 @@ class PaymentSalary extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-	    return $this->LibStatut($this->statut,$mode);
+	    return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

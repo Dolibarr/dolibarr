@@ -119,7 +119,7 @@ class ActionsTicket
         if (GETPOST('addfile')) {
             // altairis : allow files from public interface
             if (GETPOST('track_id')) {
-            	$res = $object->fetch('', '', GETPOST('track_id','alpha'));
+            	$res = $object->fetch('', '', GETPOST('track_id', 'alpha'));
             }
 
             ////if($res > 0)
@@ -143,7 +143,7 @@ class ActionsTicket
         if (GETPOST('removedfile')) {
             // altairis : allow files from public interface
             if (GETPOST('track_id')) {
-                $res = $object->fetch('', '', GETPOST('track_id','alpha'));
+                $res = $object->fetch('', '', GETPOST('track_id', 'alpha'));
             }
 
             ////if($res > 0)
@@ -336,7 +336,7 @@ class ActionsTicket
         }
 
         if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
-            $object->fetch('', '', GETPOST("track_id",'alpha'));
+            $object->fetch('', '', GETPOST("track_id", 'alpha'));
 
             if ($object->markAsRead($user) > 0) {
                 // Log action in ticket logs table
@@ -355,10 +355,10 @@ class ActionsTicket
             $action = 'view';
         }
 
-        if ($action == "assign_user" && GETPOST('btn_assign_user','aplha') && $user->rights->ticket->write) {
-            $object->fetch('', '', GETPOST("track_id",'alpha'));
+        if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->rights->ticket->write) {
+            $object->fetch('', '', GETPOST("track_id", 'alpha'));
             $useroriginassign = $object->fk_user_assign;
-            $usertoassign = GETPOST('fk_user_assign','int');
+            $usertoassign = GETPOST('fk_user_assign', 'int');
 
             /*if (! ($usertoassign > 0)) {
                 $error++;
@@ -560,7 +560,7 @@ class ActionsTicket
         } elseif ($action == "set_message" && $user->rights->ticket->manage) {
             // altairis: manage cancel button
             if (!GETPOST('cancel')) {
-                $this->fetch('', '', GETPOST('track_id','alpha'));
+                $this->fetch('', '', GETPOST('track_id', 'alpha'));
                 $oldvalue_message = $object->message;
                 $fieldtomodify = GETPOST('message_initial');
 
@@ -621,7 +621,7 @@ class ActionsTicket
         $error = 0;
 
         $object = new Ticket($this->db);
-        $ret = $object->fetch('', '', GETPOST('track_id','alpha'));
+        $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();
         if ($ret < 0) {
@@ -829,7 +829,7 @@ class ActionsTicket
 
         $object = new Ticket($this->db);
         $error = 0;
-        $ret = $object->fetch('', '', GETPOST('track_id','alpha'));
+        $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();
         if ($ret < 0) {

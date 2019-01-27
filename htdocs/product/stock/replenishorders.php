@@ -38,7 +38,7 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service');
+$result=restrictedArea($user, 'produit|service');
 
 $sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
@@ -52,12 +52,12 @@ $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';
 if (!$sortfield) $sortfield = 'cf.date_creation';
-$page = GETPOST('page','int') ? GETPOST('page','int') : 0;
+$page = GETPOST('page', 'int') ? GETPOST('page', 'int') : 0;
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
 
@@ -66,7 +66,7 @@ $offset = $limit * $page;
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
     $sall="";
     $sref="";
@@ -135,7 +135,7 @@ if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
 if ($search_datemonth > 0)
 {
 	if ($search_dateyear > 0 && empty($search_dateday))
-		$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear,$search_datemonth,false))."' AND '".$db->idate(dol_get_last_day($search_dateyear,$search_datemonth,false))."'";
+		$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, $search_datemonth, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, $search_datemonth, false))."'";
 		else if ($search_dateyear > 0 && ! empty($search_dateday))
 			$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_datemonth, $search_dateday, $search_dateyear))."'";
 			else
@@ -143,7 +143,7 @@ if ($search_datemonth > 0)
 }
 else if ($search_dateyear > 0)
 {
-	$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_dateyear,12,false))."'";
+	$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, 12, false))."'";
 }
 if ($sall) $sql .= natural_search(array('cf.ref','cf.note'), $sall);
 if (!empty($socid)) $sql .= ' AND s.rowid = ' . $socid;
@@ -269,7 +269,7 @@ if ($resql)
 
     $userstatic = new User($db);
 
-    while ($i < min($num,$conf->liste_limit))
+    while ($i < min($num, $conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
 

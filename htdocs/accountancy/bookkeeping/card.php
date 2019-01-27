@@ -37,11 +37,11 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $id = GETPOST('id', 'int');					// id of record
-$mode = GETPOST('mode','aZ09');		 		// '' or 'tmp'
-$piece_num = GETPOST("piece_num",'int');	// id of transaction (several lines share the same transaction id)
+$mode = GETPOST('mode', 'aZ09');		 		// '' or 'tmp'
+$piece_num = GETPOST("piece_num", 'int');	// id of transaction (several lines share the same transaction id)
 
 // Security check
 if ($user->societe_id > 0) {
@@ -53,25 +53,25 @@ $mesg = '';
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
-$accountingaccount_number = GETPOST('accountingaccount_number','alphanohtml');
+$accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
 $accountingaccount->fetch(null, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
 
-$journal_code = GETPOST('code_journal','alpha');
+$journal_code = GETPOST('code_journal', 'alpha');
 $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
 
-$subledger_account = GETPOST('subledger_account','alphanohtml');
+$subledger_account = GETPOST('subledger_account', 'alphanohtml');
 if ($subledger_account == - 1) {
 	$subledger_account = null;
 }
-$label_operation= GETPOST('label_operation','alphanohtml');
-$debit = price2num(GETPOST('debit','alpha'));
-$credit = price2num(GETPOST('credit','alpha'));
+$label_operation= GETPOST('label_operation', 'alphanohtml');
+$debit = price2num(GETPOST('debit', 'alpha'));
+$credit = price2num(GETPOST('credit', 'alpha'));
 
-$save = GETPOST('save','alpha');
+$save = GETPOST('save', 'alpha');
 if (! empty($save)) $action = 'add';
-$update = GETPOST('update','alpha');
+$update = GETPOST('update', 'alpha');
 if (! empty($update)) $action = 'confirm_update';
 
 $object = new BookKeeping($db);
@@ -165,14 +165,14 @@ else if ($action == "add") {
 		$object->label_operation= $label_operation;
 		$object->debit = $debit;
 		$object->credit = $credit;
-		$object->doc_date = GETPOST('doc_date','alpha');
-		$object->doc_type = GETPOST('doc_type','alpha');
+		$object->doc_date = GETPOST('doc_date', 'alpha');
+		$object->doc_type = GETPOST('doc_type', 'alpha');
 		$object->piece_num = $piece_num;
-		$object->doc_ref = GETPOST('doc_ref','alpha');
+		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOST('fk_doc','int');
-		$object->fk_docdet = GETPOST('fk_docdet','int');
+		$object->fk_doc = GETPOST('fk_doc', 'int');
+		$object->fk_docdet = GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit;
@@ -239,17 +239,17 @@ else if ($action == "confirm_create") {
 		$object->label_compte = '';
 		$object->debit = 0;
 		$object->credit = 0;
-		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth','int'), GETPOST('doc_dateday','int'), GETPOST('doc_dateyear','int'));
-		$object->doc_type = GETPOST('doc_type','alpha');
-		$object->piece_num = GETPOST('next_num_mvt','alpha');
-		$object->doc_ref = GETPOST('doc_ref','alpha');
+		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+		$object->doc_type = GETPOST('doc_type', 'alpha');
+		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
 		$object->montant = 0;
 
-		$result = $object->createStd($user,0, $mode);
+		$result = $object->createStd($user, 0, $mode);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -266,7 +266,7 @@ else if ($action == "confirm_create") {
 
 if ($action == 'setdate') {
 	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-	$result = $object->updateByMvt($piece_num,'doc_date',$db->idate($datedoc),$mode);
+	$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -293,8 +293,8 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref','alpha'));
-	$result = $object->updateByMvt($piece_num,'doc_ref',$refdoc,$mode);
+	$refdoc = trim(GETPOST('doc_ref', 'alpha'));
+	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -308,7 +308,7 @@ if ($action == 'setdocref') {
 
 // Validate transaction
 if ($action == 'valid') {
-	$result = $object->transformTransaction(0,$piece_num);
+	$result = $object->transformTransaction(0, $piece_num);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -368,7 +368,7 @@ if ($action == 'create')
 
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $formaccounting->select_journal($journal_code,'code_journal',0,0,1,1) . '</td>';
+	print '<td>' . $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1) . '</td>';
 	print '</tr>';
 
 	print '<tr>';
@@ -436,7 +436,7 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -459,7 +459,7 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -467,7 +467,7 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $formaccounting->select_journal($object->code_journal,'code_journal',0,0,array(),1,1);
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
@@ -482,7 +482,7 @@ if ($action == 'create')
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -638,7 +638,7 @@ if ($action == 'create')
 						print '</td>';
 					} else {
 						$accountingaccount->fetch(null, $line->numero_compte, true);
-						print '<td>' . $accountingaccount->getNomUrl(0,1,1,'',0) . '</td>';
+						print '<td>' . $accountingaccount->getNomUrl(0, 1, 1, '', 0) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_operation. '</td>';
 						print '<td class="right">' . price($line->debit) . '</td>';

@@ -50,7 +50,7 @@ if (! empty($conf->productbatch->enabled))
 $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
@@ -85,7 +85,7 @@ if ($id > 0 || ! empty($ref)) {
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
@@ -435,7 +435,7 @@ if ($id > 0 || ! empty($ref)) {
 	print '</tr>';
 
   $parameters=array();
-  $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+  $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 
@@ -460,7 +460,7 @@ if ($id > 0 || ! empty($ref)) {
 		$listwarehouses = $entrepot->list_array(1);
 
 		if(empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
-        else print  '<form method="post" action="'.dol_buildpath('/reception/card.php',1).'?originid='.$object->id.'&origin=supplierorder">';
+        else print  '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
 		
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		if(empty($conf->reception->enabled))print '<input type="hidden" name="action" value="dispatch">';
@@ -826,8 +826,8 @@ if ($id > 0 || ! empty($ref)) {
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
 				print "</td>\n";
-				print '<td>'.dol_print_date($db->jdate($objp->datec),'day').'</td>';
-				print '<td>'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
+				print '<td>'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
+				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				if (! empty($conf->productbatch->enabled)) {
 					print '<td class="dispatch_batch_number">' . $objp->batch . '</td>';

@@ -66,18 +66,18 @@ $langs->loadLangs(array("companies","other","compta","banks","bills","donations"
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
 
-$date_startmonth = GETPOST('date_startmonth','int');
-$date_startday = GETPOST('date_startday','int');
-$date_startyear = GETPOST('date_startyear','int');
-$date_endmonth = GETPOST('date_endmonth','int');
-$date_endday = GETPOST('date_endday','int');
-$date_endyear = GETPOST('date_endyear','int');
-$in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
+$date_startmonth = GETPOST('date_startmonth', 'int');
+$date_startday = GETPOST('date_startday', 'int');
+$date_startyear = GETPOST('date_startyear', 'int');
+$date_endmonth = GETPOST('date_endmonth', 'int');
+$date_endday = GETPOST('date_endday', 'int');
+$date_endyear = GETPOST('date_endyear', 'int');
+$in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 
 $now = dol_now();
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->societe_id > 0 && empty($id_journal))
@@ -908,7 +908,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
+	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';

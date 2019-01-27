@@ -144,7 +144,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -206,13 +206,13 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}
 }

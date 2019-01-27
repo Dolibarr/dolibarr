@@ -158,13 +158,13 @@ class Conf
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key=$value;
 
-					if ($value && preg_match('/^MAIN_MODULE_/',$key))
+					if ($value && preg_match('/^MAIN_MODULE_/', $key))
 					{
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
-						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
+						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 						{
 							$partname = 'tabs';
-							$params=explode(':',$value,2);
+							$params=explode(':', $value, 2);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
 						}
@@ -173,21 +173,21 @@ class Conf
 						// modules_parts['models'], modules_parts['theme']
 						// modules_parts['sms'],
 						// modules_parts['css'], ...
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg))
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$arrValue = json_decode($value,true);
+							$arrValue = json_decode($value, true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
-							else if (in_array($partname,array('sms'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
                         // If this is a module constant (must be at end)
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';

@@ -277,7 +277,7 @@ class FormTicket
             dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
             $classname = ucfirst($subelement);
             $objectsrc = new $classname($this->db);
-            $objectsrc->fetch(GETPOST('originid','int'));
+            $objectsrc->fetch(GETPOST('originid', 'int'));
 
             if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
                 $objectsrc->fetch_lines();

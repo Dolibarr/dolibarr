@@ -259,7 +259,7 @@ class Entrepot extends CommonObject
 		if (! $error && empty($notrigger))
 		{
             // Call trigger
-            $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
+            $result=$this->call_trigger('WAREHOUSE_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -361,7 +361,7 @@ class Entrepot extends CommonObject
 				$this->country_id     = $obj->country_id;
 
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	            $tmp=getCountry($this->country_id,'all');
+	            $tmp=getCountry($this->country_id, 'all');
 				$this->country=$tmp['label'];
 				$this->country_code=$tmp['code'];
 
@@ -537,7 +537,7 @@ class Entrepot extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -656,7 +656,7 @@ class Entrepot extends CommonObject
         // Initialize parameters
         $this->id=0;
         $this->libelle = 'WAREHOUSE SPECIMEN';
-        $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now,'dayhourlog');
+        $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now, 'dayhourlog');
 		$this->statut=1;
         $this->specimen=1;
 

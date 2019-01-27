@@ -39,13 +39,13 @@ $langs->load("orders");
 $langs->load("receptions");
 $langs->load("companies");
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'reception', $id,'');
+$result = restrictedArea($user, 'reception', $id, '');
 
 $object = new Reception($db);
 if ($id > 0 || ! empty($ref))
@@ -138,7 +138,7 @@ else if ($action == 'setaddress' && $user->rights->reception->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Reception'),'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Reception'), 'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -223,7 +223,7 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefOrder").'</td>';
 	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1,'commande');
+	    print $objectsrc->getNomUrl(1, 'commande');
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -234,7 +234,7 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefProposal").'</td>';
 	    print '<td colspan="3">';
-	    print $objectsrc->getNomUrl(1,'reception');
+	    print $objectsrc->getNomUrl(1, 'reception');
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -261,7 +261,7 @@ if ($id > 0 || ! empty($ref))
 	echo '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach($dirtpls as $reldir)
 	{
 		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');

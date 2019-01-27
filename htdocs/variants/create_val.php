@@ -20,13 +20,13 @@ require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$value = GETPOST('value','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$value = GETPOST('value', 'alpha');
 
-$action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel','alpha');
-$backtopage=GETPOST('backtopage','alpha');
+$action=GETPOST('action', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);

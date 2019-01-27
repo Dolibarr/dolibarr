@@ -94,13 +94,13 @@ class Import
 			// Search module files
 			while (($file = readdir($handle))!==false)
 			{
-				if (! preg_match("/^(mod.*)\.class\.php/i",$file,$reg)) continue;
+				if (! preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) continue;
 
 				$modulename=$reg[1];
 
 				// Defined if module is enabled
 				$enabled=true;
-				$part=strtolower(preg_replace('/^mod/i','',$modulename));
+				$part=strtolower(preg_replace('/^mod/i', '', $modulename));
 				if (empty($conf->$part->enabled)) $enabled=false;
 
 				if (empty($enabled)) continue;
@@ -210,7 +210,7 @@ class Import
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
 		require_once $dir.$file;
-		$objmodel = new $classname($this->db,$datatoimport);
+		$objmodel = new $classname($this->db, $datatoimport);
 
 		$outputlangs=$langs;	// Lang for output
 		$s='';
@@ -219,10 +219,10 @@ class Import
 		$s.=$objmodel->write_header_example($outputlangs);
 
 		// Genere ligne de titre
-		$s.=$objmodel->write_title_example($outputlangs,$headerlinefields);
+		$s.=$objmodel->write_title_example($outputlangs, $headerlinefields);
 
 		// Genere ligne de titre
-		$s.=$objmodel->write_record_example($outputlangs,$contentlinevalues);
+		$s.=$objmodel->write_record_example($outputlangs, $contentlinevalues);
 
 		// Genere pied de page
 		$s.=$objmodel->write_footer_example($outputlangs);

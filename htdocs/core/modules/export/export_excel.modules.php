@@ -82,7 +82,7 @@ class ExportExcel extends ModeleExports
         $this->picto='mime/xls';					// Picto
 		$this->version='1.30';             // Driver version
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 
 		if (empty($this->disabled))
 		{
@@ -222,7 +222,7 @@ class ExportExcel extends ModeleExports
 	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
 	            {
 	            	$langs->load("errors");
-	            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+	            	$this->error=$langs->trans('ErrorPHPNeedModule', 'zip');
 	            	return -1;
 	            }
 		    }
@@ -303,7 +303,7 @@ class ExportExcel extends ModeleExports
 		{
             $alias=$array_export_fields_label[$code];
 			//print "dd".$alias;
-			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+			if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
     		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		{
     			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
@@ -311,7 +311,7 @@ class ExportExcel extends ModeleExports
     		else
     		{
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $outputlangs->transnoentities($alias));
-    		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Numeric','TextAuto')))		// Set autowidth for some types
+    		    if (! empty($array_types[$code]) && in_array($array_types[$code], array('Date','Numeric','TextAuto')))		// Set autowidth for some types
                 {
                 	$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
                 }
@@ -348,9 +348,9 @@ class ExportExcel extends ModeleExports
 
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
+			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
-            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+            if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
@@ -364,7 +364,7 @@ class ExportExcel extends ModeleExports
 			}
 
 			// Traduction newvalue
-			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg))
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
@@ -373,14 +373,14 @@ class ExportExcel extends ModeleExports
 				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
 
-			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue))
 			{
         		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
         		{
             		$formatdate=$this->workbook->addformat();
             		$formatdate->set_num_format('yyyy-mm-dd');
             		//$formatdate->set_num_format(0x0f);
-        		    $arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
+        		    $arrayvalue=preg_split('/[.,]/', xl_parse_date($newvalue));
     				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
     				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
         		    $this->worksheet->write($this->row, $this->col, $newvalue, PHPExcel_Shared_Date::PHPToExcel($formatdate));
@@ -393,14 +393,14 @@ class ExportExcel extends ModeleExports
         		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
         		}
 			}
-			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i',$newvalue))
+			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
 			{
 				if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		    {
             		$formatdatehour=$this->workbook->addformat();
             		$formatdatehour->set_num_format('yyyy-mm-dd hh:mm:ss');
             		//$formatdatehour->set_num_format(0x0f);
-            		$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
+            		$arrayvalue=preg_split('/[.,]/', xl_parse_date($newvalue));
     				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
     				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
     		        $this->worksheet->write($this->row, $this->col, $newvalue, $formatdatehour);

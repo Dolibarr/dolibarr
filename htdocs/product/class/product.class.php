@@ -3847,22 +3847,22 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_PRODUCT)
         {
             if ($this->weight) {
-                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units, "weight");
             }
             if ($this->length) {
-                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'size');
+                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units, 'size');
             }
             if ($this->width) {
-                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units,'size');
+                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units, 'size');
             }
             if ($this->height) {
-                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units,'size');
+                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units, 'size');
             }
             if ($this->surface) {
-                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units, 'surface');
             }
             if ($this->volume) {
-                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units, 'volume');
             }
         }
 
@@ -4294,24 +4294,24 @@ class Product extends CommonObject
 
 		if (! empty($conf->commande->enabled))
 		{
-			$result=$this->load_stats_commande(0,'1,2', 1);
-			if ($result < 0) dol_print_error($this->db,$this->error);
+			$result=$this->load_stats_commande(0, '1,2', 1);
+			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_client=$this->stats_commande['qty'];
 		}
 		if (! empty($conf->expedition->enabled))
 		{
-			$result=$this->load_stats_sending(0,'1,2', 1);
-			if ($result < 0) dol_print_error($this->db,$this->error);
+			$result=$this->load_stats_sending(0, '1,2', 1);
+			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client=$this->stats_expedition['qty'];
 		}
 		if (! empty($conf->fournisseur->enabled))
 		{
-			$result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
-			if ($result < 0) dol_print_error($this->db,$this->error);
+			$result=$this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
+			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-			$result=$this->load_stats_reception(0,'4', 1);
-			if ($result < 0) dol_print_error($this->db,$this->error);
+			$result=$this->load_stats_reception(0, '4', 1);
+			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur=$this->stats_reception['qty'];
 		}
 

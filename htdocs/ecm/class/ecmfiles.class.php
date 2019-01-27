@@ -288,7 +288,7 @@ class EcmFiles extends CommonObject
 			if (! $notrigger)
 			{
 				// Call triggers
-				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
+				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -486,7 +486,7 @@ class EcmFiles extends CommonObject
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
 			$sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -638,7 +638,7 @@ class EcmFiles extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
@@ -675,7 +675,7 @@ class EcmFiles extends CommonObject
 		if (! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE',$user);
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
@@ -817,7 +817,7 @@ class EcmFiles extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

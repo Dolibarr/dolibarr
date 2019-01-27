@@ -39,7 +39,7 @@ $langs->load("modulebuilder");
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+print $langs->trans("DefineHereComplementaryAttributes", $textobject).'<br>'."\n";
 print '<br>';
 
 // Load attribute_label

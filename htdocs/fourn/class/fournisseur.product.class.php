@@ -168,7 +168,7 @@ class ProductFournisseur extends Product
         $this->db->begin();
 
         // Call trigger
-        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE',$user);
+        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_DELETE', $user);
         if ($result < 0) $error++;
         // End call triggers
 
@@ -255,19 +255,19 @@ class ProductFournisseur extends Product
     			$ttx = $tva_tx;
     			$multicurrency_buyprice = $multicurrency_buyprice/(1+($ttx/100));
     		}
-            $multicurrency_buyprice=price2num($multicurrency_buyprice,'MU');
-            $multicurrency_unitBuyPrice=price2num($multicurrency_buyprice/$qty,'MU');
+            $multicurrency_buyprice=price2num($multicurrency_buyprice, 'MU');
+            $multicurrency_unitBuyPrice=price2num($multicurrency_buyprice/$qty, 'MU');
 
             $buyprice=$multicurrency_buyprice/$multicurrency_tx;
             $fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $multicurrency_code);
         }
 
-        $buyprice=price2num($buyprice,'MU');
-		$charges=price2num($charges,'MU');
+        $buyprice=price2num($buyprice, 'MU');
+		$charges=price2num($charges, 'MU');
         $qty=price2num($qty);
  		$error=0;
 
-		$unitBuyPrice = price2num($buyprice/$qty,'MU');
+		$unitBuyPrice = price2num($buyprice/$qty, 'MU');
 
 		$now=dol_now();
 
@@ -283,9 +283,9 @@ class ProductFournisseur extends Product
 		else     // old method. deprecated because ot can't retreive type
 		{
 			$localtaxtype1='0';
-			$localtax1=get_localtax($newvat,1);
+			$localtax1=get_localtax($newvat, 1);
 			$localtaxtype2='0';
-			$localtax2=get_localtax($newvat,2);
+			$localtax2=get_localtax($newvat, 2);
 		}
 		if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 		if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
@@ -329,7 +329,7 @@ class ProductFournisseur extends Product
 			if ($resql)
 			{
                 // Call trigger
-                $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$user);
+                $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
@@ -507,7 +507,7 @@ class ProductFournisseur extends Product
                     	//recalculation of unitprice, as probably the price changed...
 	                    if ($this->fourn_qty!=0)
 	                    {
-	                        $this->fourn_unitprice = price2num($this->fourn_price/$this->fourn_qty,'MU');
+	                        $this->fourn_unitprice = price2num($this->fourn_price/$this->fourn_qty, 'MU');
 	                    }
 	                    else
 	                    {
@@ -613,7 +613,7 @@ class ProductFournisseur extends Product
                 {
                     if ($prodfourn->fourn_qty!=0)
                     {
-                        $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price/$prodfourn->fourn_qty,'MU');
+                        $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price/$prodfourn->fourn_qty, 'MU');
                     }
                     else
                     {
@@ -722,10 +722,10 @@ class ProductFournisseur extends Product
                         $priceparser = new PriceParser($this->db);
                         $price_result = $priceparser->parseProductSupplier($prod_supplier);
                         if ($price_result >= 0) {
-                            $fourn_price = price2num($price_result,'MU');
+                            $fourn_price = price2num($price_result, 'MU');
                             if ($record["quantity"] != 0)
                             {
-                                $fourn_unitprice = price2num($fourn_price/$record["quantity"],'MU');
+                                $fourn_unitprice = price2num($fourn_price/$record["quantity"], 'MU');
                             }
                             else
                             {
@@ -820,7 +820,7 @@ class ProductFournisseur extends Product
         $thirdparty = new Fournisseur($this->db);
         $thirdparty->fetch($this->fourn_id);
 
-        return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
+        return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -988,13 +988,13 @@ class ProductFournisseur extends Product
             $label.= $this->displayPriceProductFournisseurLog($logPrices);
         }
 
-        $url = dol_buildpath('/product/fournisseurs.php',1).'?id='.$this->id.'&action=add_price&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
+        $url = dol_buildpath('/product/fournisseurs.php', 1).'?id='.$this->id.'&action=add_price&socid='.$this->fourn_id.'&rowid='.$this->product_fourn_price_id;
 
         if ($option != 'nolink')
         {
             // Add param to save lastsearch_values or not
             $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-            if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
             if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 

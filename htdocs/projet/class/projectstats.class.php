@@ -159,7 +159,7 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId='';
-		if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user,0,1,$user->socid);
+		if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
 
 		$sqlwhere[] = ' t.entity IN (' . getEntity('project') . ')';
 
@@ -300,7 +300,7 @@ class ProjectStats extends Stats
 			$year=$startyear;
 			while($year <= $endyear)
 			{
-				$datay[$year] = $this->getWeightedAmountByMonth($year,$wonlostfilter);
+				$datay[$year] = $this->getWeightedAmountByMonth($year, $wonlostfilter);
 				$year++;
 			}
 

@@ -115,7 +115,7 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->cre
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
+llxHeader('', $langs->trans("Order"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

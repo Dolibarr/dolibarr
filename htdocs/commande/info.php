@@ -37,13 +37,13 @@ if (!$user->rights->commande->lire)	accessforbidden();
 $langs->loadLangs(array('orders', 'sendings'));
 
 $socid=0;
-$comid = GETPOST("id",'int');
-$id = GETPOST("id",'int');
-$ref=GETPOST('ref','alpha');
+$comid = GETPOST("id", 'int');
+$id = GETPOST("id", 'int');
+$ref=GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$comid,'');
+$result=restrictedArea($user, 'commande', $comid, '');
 
 $object = new Commande($db);
 if (! $object->fetch($id, $ref) > 0)
@@ -59,7 +59,7 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $object->fetch_thirdparty();
 $object->info($object->id);

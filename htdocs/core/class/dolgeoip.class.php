@@ -72,7 +72,7 @@ class DolGeoIP
 
 		if (function_exists('geoip_open'))
 		{
-			$this->gi = geoip_open($datfile,GEOIP_STANDARD);
+			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
 		}
 		else
 		{

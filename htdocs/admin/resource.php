@@ -61,12 +61,12 @@ if ($action == 'updateoptions')
  * View
  */
 
-llxHeader('',$langs->trans('ResourceSetup'));
+llxHeader('', $langs->trans('ResourceSetup'));
 
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans('ResourceSetup'),$linkback,'title_setup');
+print load_fiche_titre($langs->trans('ResourceSetup'), $linkback, 'title_setup');
 
 $head=resource_admin_prepare_head();
 
@@ -97,11 +97,11 @@ else
 	print '<td width="60" align="right">';
 	$arrval=array(
 			'0'=>$langs->trans("No"),
-			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
-			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
-			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 	print '</td>';
 	print '<td class="right">';
 	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';

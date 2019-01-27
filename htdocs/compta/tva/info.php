@@ -29,11 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -48,7 +48,7 @@ $object = new Tva($db);
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
 	$object->fetch($id);
-	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0)
 		setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -60,7 +60,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 
 $title=$langs->trans("VAT") . " - " . $langs->trans("Info");
 $help_url='';
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 $object = new Tva($db);
 $object->fetch($id);

@@ -30,7 +30,7 @@
  */
 function encode($string)
 {
-    return str_replace(";","\;",(dol_quoted_printable_encode(utf8_decode($string))));
+    return str_replace(";", "\;", (dol_quoted_printable_encode(utf8_decode($string))));
 }
 
 

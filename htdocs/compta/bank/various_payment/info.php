@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
 
@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'banque', '', '', '');
  * View
  */
 
-llxHeader("",$langs->trans("VariousPayment"));
+llxHeader("", $langs->trans("VariousPayment"));
 
 $object = new PaymentVarious($db);
 $result = $object->fetch($id);

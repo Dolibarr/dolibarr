@@ -108,7 +108,7 @@ class Login
 			}
 
     		// Generate token for user
-    		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
+    		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY, 1);
 
     		// We store API token into database
     		$sql = "UPDATE ".MAIN_DB_PREFIX."user";

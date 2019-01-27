@@ -34,13 +34,13 @@ $langs->loadLangs(array("admin", "stocks"));
 // Securit check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -54,7 +54,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -72,10 +72,10 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
  * View
  */
 
-llxHeader('',$langs->trans("StockSetup"));
+llxHeader('', $langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $form=new Form($db);
 
@@ -385,7 +385,7 @@ if ($virtualdiffersfromphysical)
 {
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help',$langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
   print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 

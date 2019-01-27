@@ -189,7 +189,7 @@ class Livraison extends CommonObject
 					if (! $conf->expedition_bon->enabled)
 					{
 						// TODO uniformiser les statuts
-						$ret = $this->setStatut(2,$this->origin_id,$this->origin);
+						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (! $ret)
 						{
 							$error++;
@@ -385,7 +385,7 @@ class Livraison extends CommonObject
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		            {
-		                $numref = $objMod->livraison_get_num($soc,$this);
+		                $numref = $objMod->livraison_get_num($soc, $this);
 		            }
 		            else
 					{
@@ -429,7 +429,7 @@ class Livraison extends CommonObject
 			        if (! $error && ! $notrigger)
 			        {
 			            // Call trigger
-			            $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
+			            $result=$this->call_trigger('DELIVERY_VALIDATE', $user);
 			            if ($result < 0) $error++;
 			            // End call triggers
 			        }
@@ -455,11 +455,11 @@ class Livraison extends CommonObject
 								{
 			                        dol_syslog("Rename ok");
 			                        // Rename docs starting with $oldref with $newref
-			                        $listoffiles=dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+			                        $listoffiles=dol_dir_list($conf->expedition->dir_output.'/receipt/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 			                        foreach($listoffiles as $fileentry)
 			                        {
 			                        	$dirsource=$fileentry['name'];
-			                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+			                        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 			                        	$dirsource=$fileentry['path'].'/'.$dirsource;
 			                        	$dirdest=$fileentry['path'].'/'.$dirdest;
 			                        	@rename($dirsource, $dirdest);
@@ -670,14 +670,14 @@ class Livraison extends CommonObject
 						{
 							if (!dol_delete_dir($dir))
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+								$this->error=$langs->trans("ErrorCanNotDeleteDir", $dir);
 								return 0;
 							}
 						}
 					}
 
                     // Call trigger
-                    $result=$this->call_trigger('DELIVERY_DELETE',$user);
+                    $result=$this->call_trigger('DELIVERY_DELETE', $user);
                     if ($result < 0)
                     {
                         $this->db->rollback();
@@ -731,7 +731,7 @@ class Livraison extends CommonObject
         //{
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         //}
 
@@ -813,7 +813,7 @@ class Livraison extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -843,15 +843,15 @@ class Livraison extends CommonObject
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5').' '.$langs->trans('StatusDeliveryCanceled');
-			elseif ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
-			elseif ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			elseif ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			elseif ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
-			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
-			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 	}
 
@@ -923,7 +923,7 @@ class Livraison extends CommonObject
 		global $langs;
 
 		// Get the linked object
-		$this->fetchObjectLinked('','',$this->id,$this->element);
+		$this->fetchObjectLinked('', '', $this->id, $this->element);
 		//var_dump($this->linkedObjectIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";

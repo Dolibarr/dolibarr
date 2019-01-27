@@ -80,7 +80,7 @@ class box_actions extends ModeleBoxes
         $societestatic = new Societe($db);
         $actionstatic = new ActionComm($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
         if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -153,7 +153,7 @@ class box_actions extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $actionstatic->LibStatut($objp->percentage,3),
+                        'text' => $actionstatic->LibStatut($objp->percentage, 3),
                     );
 
                     $line++;
@@ -222,10 +222,10 @@ class box_actions extends ModeleBoxes
 						$percentage=$contents[$line][5]['text'];
 						$out.= '<tr class="oddeven">';
 						$out.= '<td align=center>';
-						$out.= img_object("",$logo);
+						$out.= img_object("", $logo);
 						$out.= '</td>';
 						$out.= '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
-						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("",$logosoc)." ".$nomsoc.'</a></td>';
+						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
 						$out.= '<td align=center>'.$dateligne.'</td>';
 						$out.= '<td align=center>'.$percentage.'</td>';
 						$out.= '</tr>';

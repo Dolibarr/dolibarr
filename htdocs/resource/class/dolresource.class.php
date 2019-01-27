@@ -150,7 +150,7 @@ class Dolresource extends CommonObject
     			//// Call triggers
     			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			$interface=new Interfaces($this->db);
-    			$result=$interface->run_triggers('RESOURCE_CREATE',$this,$user,$langs,$conf);
+    			$result=$interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
     			if ($result < 0) { $error++; $this->errors=$interface->errors; }
     			//// End call triggers
     		}
@@ -280,7 +280,7 @@ class Dolresource extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('RESOURCE_MODIFY',$user);
+				$result=$this->call_trigger('RESOURCE_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -299,7 +299,7 @@ class Dolresource extends CommonObject
 					if (! $res)
 					{
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+						$this->error=$langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 						$error++;
 					}
 				}
@@ -381,10 +381,10 @@ class Dolresource extends CommonObject
     			$this->fk_user_create	=	$obj->fk_user_create;
 
 				if($obj->resource_id && $obj->resource_type) {
-					$this->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+					$this->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
 				}
 				if($obj->element_id && $obj->element_type) {
-					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
+					$this->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
 				}
     		}
     		$this->db->free($resql);
@@ -448,7 +448,7 @@ class Dolresource extends CommonObject
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('RESOURCE_DELETE',$user);
+			$result=$this->call_trigger('RESOURCE_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -509,7 +509,7 @@ class Dolresource extends CommonObject
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafields=new ExtraFields($this->db);
-    	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+    	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
     	if (is_array($extralabels) && count($extralabels)>0) {
     		foreach($extralabels as $code=>$label) {
     			$sql.= " ef.".$code." as extra_".$code.",";
@@ -525,10 +525,10 @@ class Dolresource extends CommonObject
     	//Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
-    			if (strpos($key,'date')) {
+    			if (strpos($key, 'date')) {
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
-    			elseif (strpos($key,'ef.')!==false){
+    			elseif (strpos($key, 'ef.')!==false){
     				$sql.= $value;
     			}
     			else {
@@ -536,7 +536,7 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield,$sortorder);
+    	$sql.= $this->db->order($sortfield, $sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -612,7 +612,7 @@ class Dolresource extends CommonObject
    		//Manage filter
    		if (!empty($filter)){
    			foreach($filter as $key => $value) {
-   				if (strpos($key,'date')) {
+   				if (strpos($key, 'date')) {
    					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
@@ -620,8 +620,8 @@ class Dolresource extends CommonObject
    				}
    			}
    		}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-   		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield, $sortorder);
+   		if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
    		$resql=$this->db->query($sql);
@@ -643,9 +643,9 @@ class Dolresource extends CommonObject
    					$line->fk_user_create	=	$obj->fk_user_create;
 
 					if($obj->resource_id && $obj->resource_type)
-						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+						$line->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
 					if($obj->element_id && $obj->element_type)
-						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
+						$line->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
         			$this->lines[] = $line;
    				}
    				$this->db->free($resql);
@@ -694,7 +694,7 @@ class Dolresource extends CommonObject
     	//Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
-    			if (strpos($key,'date')) {
+    			if (strpos($key, 'date')) {
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
@@ -702,8 +702,8 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+    	$sql.= $this->db->order($sortfield, $sortorder);
+    	if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -725,7 +725,7 @@ class Dolresource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+    				$this->lines[] = fetchObjectByElement($obj->resource_id, $obj->resource_type);
     			}
     			$this->db->free($resql);
     		}
@@ -806,7 +806,7 @@ class Dolresource extends CommonObject
 			if (! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('RESOURCE_MODIFY',$user);
+                $result=$this->call_trigger('RESOURCE_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
 	    	}
@@ -880,10 +880,10 @@ class Dolresource extends CommonObject
      */
     function fetchElementResources($element,$element_id)
     {
-        $resources = $this->getElementResources($element,$element_id);
+        $resources = $this->getElementResources($element, $element_id);
         $i=0;
         foreach($resources as $nb => $resource) {
-            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
+            $this->lines[$i] = fetchObjectByElement($resource['resource_id'], $resource['resource_type']);
             $i++;
         }
         return $i;
@@ -952,7 +952,7 @@ class Dolresource extends CommonObject
         $linkend = '';
         if ($option == '')
         {
-            $linkstart = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id. $get_params .'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $picto='resource';
             $label=$langs->trans("ShowResource").': '.$this->ref;
             $linkend='</a>';
@@ -975,7 +975,7 @@ class Dolresource extends CommonObject
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->status,$mode);
+        return $this->LibStatut($this->status, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
