@@ -120,8 +120,8 @@ function LoadProducts(position){
 		ishow=0; //product to show counter
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -158,8 +158,8 @@ function MoreProducts(moreorless){
 		ishow=0; //product to show counter
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -337,11 +337,11 @@ function MoreActions(totalactions){
 	}
 	else if (pageactions==1){
 		pageactions=0;
-		for (i = 0; i <= totalactions; i++){ 
+		for (i = 0; i <= totalactions; i++){
 			if (i<9) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
-	}		
+	}
 }
 
 $( document ).ready(function() {
@@ -411,16 +411,17 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 }
 
 if ($conf->global->TAKEPOSCONNECTOR){
-	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
-					'action'=>'OpenDrawer();');
+    $menus[$r++]=array(
+        'title'=>$langs->trans("DOL_OPEN_DRAWER"),
+        'action'=>'OpenDrawer();'
+    );
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook=$hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook))
-	{
-		$menus[$r++]=$reshook;
-	}
+if (!empty($reshook)) {
+    $menus[$r++]=$reshook;
+}
 
 ?>
 		<div class="div3">
@@ -446,7 +447,7 @@ foreach($menus as $menu) {
 	while ($count<16)
 	{
 	?>
-			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; else if ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
+			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
 				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="98%" id='catimg<?php echo $count;?>'/>
 				<div class='description'>
 					<div class='description_content' id='catdesc<?php echo $count;?>'></div>

@@ -1355,12 +1355,12 @@ function numero_semaine($time)
      */
 
     // Definition du Jeudi de la semaine
-    if (date("w",mktime(12, 0, 0, $mois, $jour, $annee))==0) // Dimanche
+    if (date("w", mktime(12, 0, 0, $mois, $jour, $annee))==0) // Dimanche
     $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-3*24*60*60;
     elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))<4) // du Lundi au Mercredi
     $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)+(4-date("w", mktime(12, 0, 0, $mois, $jour, $annee)))*24*60*60;
     elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))>4) // du Vendredi au Samedi
-    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-(date("w", mktime(12, 0, 0, $mois, $jour, $annee))-4)*24*60*60;
     else // Jeudi
     $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 

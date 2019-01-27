@@ -535,8 +535,8 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out=trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/',$out)) $out='';
-				elseif (preg_match('/\.\.\//',$out)) $out='';
+				if (preg_match('/"/', $out)) $out='';
+				elseif (preg_match('/\.\.\//', $out)) $out='';
 				$out=dol_string_nohtmltag($out);
 			}
 			break;
@@ -3089,7 +3089,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$fa='fa';
 			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
-            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '') . ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '');
+            $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}

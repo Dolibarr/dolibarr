@@ -171,7 +171,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 			elseif ($textright == '%LOGO%' || $textright == '%PHOTO%')
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
-				elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop, $widthtouse, $heighttouse);
+				elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
@@ -187,7 +187,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
-			elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop, $widthtouse, $heighttouse);
+			elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);

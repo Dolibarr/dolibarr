@@ -768,7 +768,7 @@ if ($mode == 'common')
         			}
         			print "</td>\n";
         		}
-        		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url,$regs))
+        		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
         		{
         			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a></td>';
         		}
@@ -1061,7 +1061,7 @@ if ($mode == 'deploy')
 			    {
 			        $langs->load('other');
 			        print ' ';
-			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
 			    }
 			}
 			else

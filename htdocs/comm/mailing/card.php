@@ -530,9 +530,9 @@ if (empty($reshook))
 		elseif ($action == 'setemail_errorsto') {
             $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
         } elseif ($action == 'settitre' && empty($object->titre)) {
-			$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
-			$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 		}
 
 		if (! $mesg)
