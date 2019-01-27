@@ -538,11 +538,11 @@ if ($rowid > 0)
 		    if ($status != '')
 		    {
 		        if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
-		        else if ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
-		        else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
-		        else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
-		        else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
-		        else if ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
+		        elseif ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
+		        elseif ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
+		        elseif ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
+		        elseif ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
+		        elseif ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
 		    }
 		    elseif ($action == 'search')
 		    {

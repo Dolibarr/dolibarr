@@ -41,7 +41,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    function addSticker(&$pdf,$outputlangs,$param)
+    function addSticker(&$pdf, $outputlangs, $param)
     {
 		// use this method in future refactoring
 	}
@@ -61,7 +61,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return	void
 	 */
-	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
+	function Add_PDF_label(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $photo = '')
 	{
         // phpcs:enable
 		global $mysoc, $conf, $langs;
@@ -152,26 +152,26 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			// Output left area
 			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
-		else if ($textleft!='' && $textright!='')	//
+		elseif ($textleft!='' && $textright!='')	//
 		{
 			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
 			{
 				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 				$pdf->SetXY($_PosX+$xleft+$widthtouse+1, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
-			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
+			elseif ($textright == '%LOGO%' || $textright == '%PHOTO%')
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
@@ -187,7 +187,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
@@ -238,7 +238,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
+	function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;

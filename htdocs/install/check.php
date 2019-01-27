@@ -83,7 +83,7 @@ if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Mi
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok=0;	// 0=error, 1=warning
 }
-else if (versioncompare(versionphparray(),$arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
+elseif (versioncompare(versionphparray(),$arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
 {
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",versiontostring($arrayphpminversionwarning));
     $checksok=0;	// 0=error, 1=warning

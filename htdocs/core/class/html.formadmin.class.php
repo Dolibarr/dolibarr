@@ -59,7 +59,7 @@ class FormAdmin
 	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *      @return		string						Return HTML select string with list of languages
      */
-	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0, $forcecombo=0)
+	function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -100,7 +100,7 @@ class FormAdmin
 					$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
 				}
 			}
-			else if ($selected == $key)
+			elseif ($selected == $key)
 			{
 				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
 			}
@@ -131,7 +131,7 @@ class FormAdmin
      *    @param    string		$moreattrib      More attributes on html select tag
      *    @return	integer|null
      */
-    function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
+    function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
     {
 		// phpcs:enable
         global $langs,$conf;
@@ -167,7 +167,7 @@ class FormAdmin
     	        				$prefix='';
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
     	        				if (preg_match('/^eldy/i',$file)) $prefix='0';
-                                else if (preg_match('/^smartphone/i',$file)) $prefix='2';
+                                elseif (preg_match('/^smartphone/i',$file)) $prefix='2';
     	        				else $prefix='3';
 
     	                        if ($file == $selected)
@@ -293,7 +293,7 @@ class FormAdmin
      *  @param  string		$htmlname        Nom de la zone select
      *  @return	void
      */
-    function select_timezone($selected,$htmlname)
+    function select_timezone($selected, $htmlname)
     {
 		// phpcs:enable
 		global $langs,$conf;
@@ -349,7 +349,7 @@ class FormAdmin
 	 * 	@param		int		$showempty		Add empty value
 	 * 	@return		string					Return HTML output
 	 */
-	function select_paper_format($selected='',$htmlname='paperformat_id',$filter=0,$showempty=0)
+	function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
 	{
 		// phpcs:enable
 		global $langs;

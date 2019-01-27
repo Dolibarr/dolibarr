@@ -85,7 +85,7 @@ class Address
 	 *  @param  User	$user       Object user making creation
 	 *  @return int         		0 if OK, < 0 if KO
 	 */
-	function create($socid, $user='')
+	function create($socid, $user = '')
 	{
 		global $langs,$conf;
 
@@ -175,7 +175,7 @@ class Address
 	 *  @param  User	$user           Utilisateur qui demande la mise a jour
 	 *  @return int             		<0 if KO, >=0 if OK
 	 */
-	function update($id, $socid, $user='')
+	function update($id, $socid, $user = '')
 	{
 		global $langs;
 
@@ -251,7 +251,7 @@ class Address
 	 *  @param  User	$user        Objet de l'utilisateur
 	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-	function fetch_lines($socid, $user=null)
+	function fetch_lines($socid, $user = null)
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -346,7 +346,7 @@ class Address
 	 *  @param  User	$user       Objet de l'utilisateur
 	 *  @return int 				>0 si ok, <0 si ko
 	 */
-	function fetch_address($id, $user=null)
+	function fetch_address($id, $user = null)
 	{
         // phpcs:enable
 		global $langs;
@@ -415,7 +415,7 @@ class Address
 	 *  @param	int		$socid	id third party
 	 *  @return	<0 KO >0 OK
 	 */
-	function delete($id,$socid)
+	function delete($id, $socid)
 	{
 		dol_syslog("Address::Delete");
 
@@ -440,7 +440,7 @@ class Address
 	 *	@param		string		$option			Where the link point to
 	 *	@return		string						String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto = 0, $option = '')
 	{
 		global $langs;
 

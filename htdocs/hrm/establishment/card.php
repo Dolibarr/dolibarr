@@ -70,7 +70,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
 }
 
-else if ($action == 'add')
+elseif ($action == 'add')
 {
     if (! $cancel)
     {
@@ -120,7 +120,7 @@ else if ($action == 'add')
 }
 
 // Update record
-else if ($action == 'update')
+elseif ($action == 'update')
 {
 	$error = 0;
 

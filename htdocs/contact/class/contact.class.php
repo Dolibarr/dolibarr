@@ -313,7 +313,7 @@ class Contact extends CommonObject
 	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=null, $notrigger=0, $action='update', $nosyncuser=0)
+	function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -344,7 +344,7 @@ class Contact extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
-		else if ($this->socid == -1) $sql .= " fk_soc=null,";
+		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
@@ -501,7 +501,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info,$mode=0)
+	function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -597,7 +597,7 @@ class Contact extends CommonObject
 	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=null, $notrigger=0)
+	function update_perso($id, $user = null, $notrigger = 0)
 	{
         // phpcs:enable
 	    $error=0;
@@ -686,7 +686,7 @@ class Contact extends CommonObject
      *  @param		string	$email		Email
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=null, $ref_ext='', $email='')
+	function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
 
@@ -874,7 +874,7 @@ class Contact extends CommonObject
 	    unset($this->gender);
     	if (in_array($this->civility_id, array('MR'))) {
     	    $this->gender = 'man';
-    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	} elseif(in_array($this->civility_id, array('MME','MLE'))) {
     	    $this->gender = 'woman';
     	}
 	}
@@ -931,7 +931,7 @@ class Contact extends CommonObject
 	 *   	@param		int		$notrigger		Disable all trigger
 	 *		@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($notrigger=0)
+	function delete($notrigger = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1124,7 +1124,7 @@ class Contact extends CommonObject
 	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
+	function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1231,7 +1231,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut,$mode)
+	function LibStatut($statut, $mode)
 	{
         // phpcs:enable
 		global $langs;

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
-function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode='')
+function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -341,10 +341,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
+			elseif (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
 			else $classname='class="tmenu"';
 		}
-		else if ($showmode == 2) $classname='class="tmenu"';
+		elseif ($showmode == 2) $classname='class="tmenu"';
 
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu']?$newTabMenu[$i]['leftmenu']:''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
@@ -393,7 +393,7 @@ function print_start_menu_array()
  * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry($idsel,$classname,$showmode)
+function print_start_menu_entry($idsel, $classname, $showmode)
 {
 	if ($showmode)
 	{
@@ -482,7 +482,7 @@ function print_end_menu_array()
  * @param	array		$moredata			An array with more data to output
  * @return	int								nb of menu entries
  */
-function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='',$moredata=null)
+function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
@@ -1837,7 +1837,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					print '</div>'."\n";
 					$lastlevel0='enabled';
 				}
-				else if ($showmenu)                 // Not enabled but visible (so greyed)
+				elseif ($showmenu)                 // Not enabled but visible (so greyed)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 					$lastlevel0='greyed';
@@ -1870,7 +1870,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
 					print '</div>'."\n";
 				}
-				else if ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
+				elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}

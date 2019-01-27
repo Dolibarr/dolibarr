@@ -91,7 +91,7 @@ if (empty($reshook))
     }
 
     // Positionne ref commande client
-    else if ($action == 'setref_client' && $user->rights->commande->creer) {
+    elseif ($action == 'setref_client' && $user->rights->commande->creer) {
         $result = $object->set_ref_client($user, GETPOST('ref_client'));
         if ($result < 0)
         {

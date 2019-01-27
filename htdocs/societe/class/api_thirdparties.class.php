@@ -117,7 +117,7 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '')
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $sqlfilters = '')
     {
 		global $db, $conf;
 
@@ -739,7 +739,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingProposals($id, $mode='customer')
+	function getOutStandingProposals($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -783,7 +783,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingOrder($id, $mode='customer')
+	function getOutStandingOrder($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -826,7 +826,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws 401
 	 * @throws 404
 	 */
-	function getOutStandingInvoices($id, $mode='customer')
+	function getOutStandingInvoices($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -872,7 +872,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 503
 	 */
-	function getFixedAmountDiscounts($id, $filter="none", $sortfield = "f.type", $sortorder = 'ASC')
+	function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
@@ -1281,7 +1281,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/gateways/
 	 */
-	function getSocieteAccounts($id, $site=null)
+	function getSocieteAccounts($id, $site = null)
     {
 		global $db, $conf;
 

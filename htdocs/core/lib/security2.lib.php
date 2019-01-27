@@ -49,7 +49,7 @@ function dol_getwebuser($mode)
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *  @return		string						Login or ''
  */
-function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode)
+function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode)
 {
 	global $conf,$langs;
     //global $dolauthmode;    // To return authentication finally used
@@ -129,7 +129,7 @@ if (! function_exists('dol_loginfunction'))
      * @param       Societe     $mysoc      Company object
      * @return      void
      */
-    function dol_loginfunction($langs,$conf,$mysoc)
+    function dol_loginfunction($langs, $conf, $mysoc)
 	{
 		global $dolibarr_main_demo,$db;
 		global $smartphone,$hookmanager;
@@ -313,7 +313,7 @@ if (! function_exists('dol_loginfunction'))
  *									non defini=>renvoi un salt pour cryptage par defaut
  *	@return		string				Salt string
  */
-function makesalt($type=CRYPT_SALT_LENGTH)
+function makesalt($type = CRYPT_SALT_LENGTH)
 {
 	dol_syslog("makesalt type=".$type);
 	switch($type)
@@ -340,7 +340,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
  *  @param   	int		$level   	Encode level: 0 no encoding, 1 encoding
  *	@return		int					<0 if KO, >0 if OK
  */
-function encodedecode_dbpassconf($level=0)
+function encodedecode_dbpassconf($level = 0)
 {
 	dol_syslog("encodedecode_dbpassconf level=".$level, LOG_DEBUG);
 	$config = '';
@@ -448,7 +448,7 @@ function encodedecode_dbpassconf($level=0)
  * @return		string								New value for password
  * @see dol_hash
  */
-function getRandomPassword($generic=false, $replaceambiguouschars=null)
+function getRandomPassword($generic = false, $replaceambiguouschars = null)
 {
 	global $db,$conf,$langs,$user;
 
@@ -498,7 +498,7 @@ function getRandomPassword($generic=false, $replaceambiguouschars=null)
 			$generated_password=str_shuffle($randomCode);
 		}
 	}
-	else if (! empty($conf->global->USER_PASSWORD_GENERATED))
+	elseif (! empty($conf->global->USER_PASSWORD_GENERATED))
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";

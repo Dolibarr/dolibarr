@@ -31,24 +31,24 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *  Return list of active generation modules
+	 *  Return list of active models generation
      *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
 
 		$type='expensereport';
-		$liste=array();
+		$list=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list=getListOfModels($db,$type,$maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -57,16 +57,16 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
  * expensereport_pdf_create
  *
  *  @param	    DoliDB		$db  			Database handler
- *  @param	    ExpenseReport		$object			Object order
+ *  @param	    ExpenseReport	$object		Object ExpenseReport
  *  @param		string		$message		Message
- *  @param	    string		$modele			Force le modele a utiliser ('' to not force)
- *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	    string		$modele			Force the model to use ('' to not force)
+ *  @param		Translate	$outputlangs	lang object to use for translation
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
  */
-function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
     // phpcs:enable
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -85,9 +85,9 @@ abstract class ModeleNumRefExpenseReport
 	public $error='';
 
 	/**
-	 *	Return if a module can be used or not
+	 *	Return if a model can be used or not
 	 *
-	 *	@return		boolean     true if module can be used
+	 *	@return		boolean     true if model can be used
 	 */
 	function isEnabled()
 	{
@@ -95,9 +95,9 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Renvoie la description par defaut du modele de numerotation
+	 *	Returns the default description of the numbering model
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	function info()
 	{
@@ -107,7 +107,7 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Renvoie un exemple de numerotation
+	 *	Returns an example of numbering
 	 *
 	 *	@return     string      Example
 	 */
@@ -119,9 +119,9 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering from working.
 	 *
-	 *	@return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
 	function canBeActivated()
 	{
@@ -129,10 +129,10 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Renvoie prochaine valeur attribuee
+	 *	Returns next assigned value
 	 *
 	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
+	 *	@return	string      Value
 	 */
 	function getNextValue($object)
 	{
@@ -141,9 +141,9 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Renvoie version du module numerotation
+	 *	Returns the version of the numbering module
 	 *
-	 *  @return     string      Valeur
+	 *  @return     string      Value
 	 */
 	function getVersion()
 	{

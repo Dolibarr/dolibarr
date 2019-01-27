@@ -95,7 +95,7 @@ class ImportXlsx extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function __construct($db,$datatoimport)
+	function __construct($db, $datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;
@@ -166,7 +166,7 @@ class ImportXlsx extends ModeleImports
 	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string
 	 */
-	function write_title_example($outputlangs,$headerlinefields)
+	function write_title_example($outputlangs, $headerlinefields)
 	{
         // phpcs:enable
 		global $conf;
@@ -192,7 +192,7 @@ class ImportXlsx extends ModeleImports
 	 * 	@param	array		$contentlinevalues	Array of lines
 	 * 	@return	string
 	 */
-	function write_record_example($outputlangs,$contentlinevalues)
+	function write_record_example($outputlangs, $contentlinevalues)
 	{
         // phpcs:enable
 		$col = 0;
@@ -346,7 +346,7 @@ class ImportXlsx extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
+	function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
         // phpcs:enable
 		global $langs,$conf,$user;
@@ -485,7 +485,7 @@ class ImportXlsx extends ModeleImports
                                             else
                                             {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,'code',$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                else if (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn',$key,$newval,$langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
                                                 else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                                 $this->errors[$error]['type']='FOREIGNKEY';
                                                 $errorforthistable++;
@@ -604,7 +604,7 @@ class ImportXlsx extends ModeleImports
 									}
 								}
 								// If test is just a static regex
-								else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
+								elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
 								{
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
@@ -686,7 +686,7 @@ class ImportXlsx extends ModeleImports
 									if($resql->num_rows == 1) {
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} else if($resql->num_rows > 1) {
+									} elseif($resql->num_rows > 1) {
 										$this->errors[$error]['lib']=$langs->trans('MultipleRecordFoundWithTheseFilters', implode($filters, ', '));
 										$this->errors[$error]['type']='SQL';
 										$error++;

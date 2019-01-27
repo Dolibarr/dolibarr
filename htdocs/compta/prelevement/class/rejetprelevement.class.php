@@ -82,7 +82,7 @@ class RejetPrelevement
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
 	 */
-	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
+	function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
 		global $langs,$conf;
 
@@ -282,7 +282,7 @@ class RejetPrelevement
 	 * @return	array				Array List of invoices related to the withdrawal line
 	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
-	private function getListInvoices($amounts=0)
+	private function getListInvoices($amounts = 0)
 	{
 		global $conf;
 

@@ -333,7 +333,7 @@ class Ldap
 	 * @param	string	$pass			Password
 	 * @return	boolean					true or false
 	 */
-	function bindauth($bindDn,$pass)
+	function bindauth($bindDn, $pass)
 	{
 		if (! $this->result = @ldap_bind($this->connection, $bindDn, $pass))
 		{
@@ -569,7 +569,7 @@ class Ldap
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($dn, $info, $user, $olddn, $newrdn=false, $newparent=false)
+	function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
 		global $conf;
 
@@ -741,7 +741,7 @@ class Ldap
 	 * @param int		$timeout		Timeout in second (default 1s)
 	 * @return boolean				true or false
 	 */
-	function serverPing($host, $port=389, $timeout=1)
+	function serverPing($host, $port = 389, $timeout = 1)
 	{
 		// Replace ldaps:// by ssl://
 		if (preg_match('/^ldaps:\/\/([^\/]+)\/?$/',$host, $regs)) {
@@ -925,7 +925,7 @@ class Ldap
 	 *	@param	string	$filter		Filter
 	 *	@return	int|array			<0 or false if KO, array if OK
 	 */
-	function getAttribute($dn,$filter)
+	function getAttribute($dn, $filter)
 	{
 		// Check parameters
 		if (! $this->connection)
@@ -970,7 +970,7 @@ class Ldap
 	 * 	@param	string	$attribute			Attributes
 	 * 	@return void
 	 */
-	function getAttributeValues($filterrecord,$attribute)
+	function getAttributeValues($filterrecord, $attribute)
 	{
 		$attributes=array();
 		$attributes[0] = $attribute;
@@ -1015,7 +1015,7 @@ class Ldap
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
-	function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0, $attributeAsArray=array())
+	function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
 		$fulllist=array();
 
@@ -1260,7 +1260,7 @@ class Ldap
 	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
 	 *		@return	int					>0 if OK, <0 if KO
 	 */
-	function fetch($user,$filter)
+	function fetch($user, $filter)
 	{
 		// Perform the search and get the entry handles
 
@@ -1463,7 +1463,7 @@ class Ldap
 	 *  @param	string	$pagecodefrom	Page code of src string
 	 *  @return string         			Converted string
 	 */
-	private function convToOutputCharset($str,$pagecodefrom='UTF-8')
+	private function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		global $conf;
 		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
@@ -1478,7 +1478,7 @@ class Ldap
 	 *  @param	string	$pagecodeto		Page code for result string
 	 *  @return string         			Converted string
 	 */
-	function convFromOutputCharset($str,$pagecodeto='UTF-8')
+	function convFromOutputCharset($str, $pagecodeto = 'UTF-8')
 	{
 		global $conf;
 		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') $str=utf8_decode($str);
@@ -1493,7 +1493,7 @@ class Ldap
 	 *	@param	string	$keygroup	Key of group
 	 *	@return	int					gid number
 	 */
-	function getNextGroupGid($keygroup='LDAP_KEY_GROUPS')
+	function getNextGroupGid($keygroup = 'LDAP_KEY_GROUPS')
 	{
 		global $conf;
 

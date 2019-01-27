@@ -32,7 +32,7 @@
  *  @param  string	$errorlabel		Error string label
  *  @return User						Return user object identified by login/pass/entity into authentication array
  */
-function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
+function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
 {
     global $db,$conf,$langs;
     global $dolibarr_main_authentication,$dolibarr_auto_user;
@@ -59,7 +59,7 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
             $error++;
             $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurred during fetch of user';
         }
-        else if ($result == 0)
+        elseif ($result == 0)
         {
             $error++;
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';

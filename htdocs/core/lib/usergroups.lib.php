@@ -295,7 +295,7 @@ function user_admin_prepare_head()
  * 	@param	boolean		$foruserprofile		Show for user profile view
  * 	@return	void
  */
-function show_theme($fuser,$edit=0,$foruserprofile=false)
+function show_theme($fuser, $edit = 0, $foruserprofile = false)
 {
 	global $conf,$langs,$db,$form;
 	global $bc;

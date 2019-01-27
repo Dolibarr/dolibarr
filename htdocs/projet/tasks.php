@@ -133,13 +133,13 @@ if ($search_dtstartmonth > 0)
 {
 	if ($search_dtstartyear > 0 && empty($search_dtstartday)) {
 		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear,$search_dtstartmonth,false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear,$search_dtstartmonth,false))."')";
-	}else if ($search_dtstartyear > 0 && ! empty($search_dtstartday)) {
+	}elseif ($search_dtstartyear > 0 && ! empty($search_dtstartday)) {
 		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."')";
 	}else {
 		$morewherefilterarray[]= " date_format(t.dateo, '%m') = '".$search_dtstartmonth."'";
 	}
 }
-else if ($search_dtstartyear > 0)
+elseif ($search_dtstartyear > 0)
 {
 	$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear,12,false))."')";
 }
@@ -148,13 +148,13 @@ if ($search_dtendmonth > 0)
 {
 	if ($search_dtendyear > 0 && empty($search_dtendday)) {
 		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear,$search_dtendmonth,false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear,$search_dtendmonth,false))."')";
-	}else if ($search_dtendyear > 0 && ! empty($search_dtendday)) {
+	}elseif ($search_dtendyear > 0 && ! empty($search_dtendday)) {
 		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtendmonth, $search_dtendday, $search_dtendyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtendmonth, $search_dtendday, $search_dtendyear))."')";
 	}else {
 		$morewherefilterarray[]= " date_format(t.datee, '%m') = '".$search_dtendmonth."'";
 	}
 }
-else if ($search_dtendyear > 0)
+elseif ($search_dtendyear > 0)
 {
 	$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear,12,false))."')";
 }
@@ -207,7 +207,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$action='create';
 			$error++;
 		}
-		else if (empty($_POST['task_parent']))
+		elseif (empty($_POST['task_parent']))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action='create';
@@ -268,7 +268,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".$backtopage);
 				exit;
 			}
-			else if (empty($projectid))
+			elseif (empty($projectid))
 			{
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
@@ -283,7 +283,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			header("Location: ".$backtopage);
 			exit;
 		}
-		else if (empty($id))
+		elseif (empty($id))
 		{
 			// We go back on task list
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode)?'':'?mode='.$mode));
@@ -563,7 +563,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</form>';
 	}
 }
-else if ($id > 0 || ! empty($ref))
+elseif ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Projet card in view mode

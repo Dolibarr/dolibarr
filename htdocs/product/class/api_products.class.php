@@ -68,7 +68,7 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    function get($id, $ref='', $ref_ext='', $barcode='', $includestockdata=0)
+    function get($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');

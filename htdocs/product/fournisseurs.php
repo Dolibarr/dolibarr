@@ -235,7 +235,7 @@ if (empty($reshook))
 
 					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), null, 'errors');
 				}
-				else if ($ret < 0)
+				elseif ($ret < 0)
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');

@@ -79,7 +79,7 @@ abstract class ModeleNumRefPayments
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

@@ -277,7 +277,7 @@ if (empty($conf->produit->enabled))
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
 }
-else if (empty($conf->service->enabled))
+elseif (empty($conf->service->enabled))
 {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');

@@ -48,7 +48,7 @@ class InfoBox
      *  @param  int         $includehidden  Include also hidden boxes
      *  @return array       	        	Array of boxes
      */
-    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array(), $includehidden=1)
+    static function listBoxes($db, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
     {
         global $conf;
 
@@ -186,7 +186,7 @@ class InfoBox
      *  @param  int     $userid     	Id of user
      *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
      */
-    static function saveboxorder($db, $zone,$boxorder,$userid=0)
+    static function saveboxorder($db, $zone, $boxorder, $userid = 0)
     {
         global $conf;
 

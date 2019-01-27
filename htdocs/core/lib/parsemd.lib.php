@@ -29,7 +29,7 @@
  * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
-function dolMd2Html($content, $parser='parsedown',$replaceimagepath=null)
+function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
     if (is_array($replaceimagepath))
     {

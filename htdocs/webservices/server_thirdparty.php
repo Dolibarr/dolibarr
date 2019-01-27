@@ -283,7 +283,7 @@ $server->register(
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
-function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -399,7 +399,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
-function createThirdParty($authentication,$thirdparty)
+function createThirdParty($authentication, $thirdparty)
 {
     global $db,$conf,$langs;
 
@@ -525,7 +525,7 @@ function createThirdParty($authentication,$thirdparty)
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
-function updateThirdParty($authentication,$thirdparty)
+function updateThirdParty($authentication, $thirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -655,7 +655,7 @@ function updateThirdParty($authentication,$thirdparty)
  * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
-function getListOfThirdParties($authentication,$filterthirdparty)
+function getListOfThirdParties($authentication, $filterthirdparty)
 {
     global $db,$conf,$langs;
 
@@ -760,7 +760,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
-function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
+function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 

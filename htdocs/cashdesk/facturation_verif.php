@@ -51,7 +51,7 @@ switch($action)
 			{
 				$sql.= " AND p.rowid = ".$_POST['selProduit'];
 			}
-			else if ( $_POST['hdnSource'] == 'REF' )
+			elseif ( $_POST['hdnSource'] == 'REF' )
 			{
 				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
 			}
@@ -163,7 +163,7 @@ switch($action)
 					{
 						$filtre = $ret['ref'];
 					}
-					else if ( $_POST['hdnSource'] == 'REF' )
+					elseif ( $_POST['hdnSource'] == 'REF' )
 					{
 						$filtre = $_POST['txtRef'];
 					}

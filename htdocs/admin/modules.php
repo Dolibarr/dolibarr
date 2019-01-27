@@ -244,7 +244,7 @@ if ($action == 'set' && $user->admin)
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
-else if ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
+elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
@@ -698,7 +698,7 @@ if ($mode == 'common')
         	{
         		print $langs->trans("Disabled");
         	}
-        	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+        	elseif (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
         		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
         		else {
@@ -761,7 +761,7 @@ if ($mode == 'common')
         			}
         			print "</td>\n";
         		}
-        		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
+        		elseif (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
         			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
@@ -783,7 +783,7 @@ if ($mode == 'common')
         	{
         		// Should never happened
         	}
-        	else if (! empty($objMod->disabled))
+        	elseif (! empty($objMod->disabled))
         	{
         		print $langs->trans("Disabled");
         	}

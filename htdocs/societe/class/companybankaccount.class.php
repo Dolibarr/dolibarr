@@ -67,7 +67,7 @@ class CompanyBankAccount extends Account
 	 * @param   int    $notrigger   1=Disable triggers
 	 * @return	int					<0 if KO, >= 0 if OK
 	 */
-	function create(User $user = null, $notrigger=0)
+	function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
 		$error	= 0;
@@ -201,7 +201,7 @@ class CompanyBankAccount extends Account
 	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($id, $socid=0, $default=1, $type='ban')
+	function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -263,7 +263,7 @@ class CompanyBankAccount extends Account
 	 *	@param  	int		$notrigger	1=Disable triggers
 	 *  @return		int		            <0 if KO, >0 if OK
 	 */
-	function delete(User $user = null, $notrigger=0)
+	function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -333,7 +333,7 @@ class CompanyBankAccount extends Account
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
 	 */
-	function setAsDefault($rib=0)
+	function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1.= " WHERE rowid = ".($rib?$rib:$this->id);

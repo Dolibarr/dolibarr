@@ -81,7 +81,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc,$contract)
+	function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return '';
@@ -112,7 +112,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}

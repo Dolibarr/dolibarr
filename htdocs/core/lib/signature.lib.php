@@ -24,7 +24,7 @@
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showOnlineSignatureUrl($type,$ref)
+function showOnlineSignatureUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -49,7 +49,7 @@ function showOnlineSignatureUrl($type,$ref)
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref='')
+function getOnlineSignatureUrl($mode, $type, $ref = '')
 {
 	global $conf, $db, $langs;
 

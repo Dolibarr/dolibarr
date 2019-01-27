@@ -122,7 +122,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -151,7 +151,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function commande_get_num($objsoc,$objforref)
+    function commande_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);

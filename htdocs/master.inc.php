@@ -148,15 +148,15 @@ if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an open
 {
 	$conf->entity = $_SESSION["dol_entity"];
 }
-else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
+elseif (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-else if (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
+elseif (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
 {
 	$conf->entity = GETPOST("entity",'int');
 }
-else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
+elseif (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 {
 	$conf->entity = DOLENTITY;
 }

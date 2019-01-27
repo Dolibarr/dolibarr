@@ -105,7 +105,7 @@ if ($action === 'downloadblockchain') {
 
 	exit;
 }
-else if (GETPOST('downloadcsv','alpha'))
+elseif (GETPOST('downloadcsv','alpha'))
 {
 	$error = 0;
 

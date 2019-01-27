@@ -188,7 +188,7 @@ if ($action == 'set')
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -197,7 +197,7 @@ else if ($action == 'del')
 	}
 }
 
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -212,7 +212,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated

@@ -142,7 +142,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return     int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -239,7 +239,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param		string	$label	Label
 	 *  @return     int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id, $code='', $label='')
+	function fetch($id, $code = '', $label = '')
 	{
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -299,7 +299,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return     int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -379,7 +379,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -726,7 +726,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param int       $year 				Specifig year - Can be empty
 	 * @return integer 						<0 if KO, >= 0 if OK
 	 */
-	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code='nofilter', $month=0, $year=0)
+	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)
 	{
 		global $conf;
 
@@ -796,7 +796,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @return	array|int						Array of groups or -1 if error
 	 */
-	public function getCats($categorytype=-1)
+	public function getCats($categorytype = -1)
 	{
 		global $conf, $mysoc;
 
@@ -853,7 +853,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
 	 * @return 	array|int							Array of accounting accounts or -1 if error
 	 */
-	public function getCptsCat($cat_id, $predefinedgroupwhere='')
+	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
 	{
 		global $conf, $mysoc;
 		$sql = '';

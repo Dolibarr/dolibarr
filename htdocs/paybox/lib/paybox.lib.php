@@ -36,7 +36,7 @@
  * @param   string	$TAG		Full tag
  * @return  int              	1 if OK, -1 if ERROR
  */
-function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
+function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 {
 	global $conf, $langs, $db;
 

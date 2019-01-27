@@ -57,7 +57,7 @@ class FormEcm
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
 	 *  @return	string						String with HTML select
 	 */
-	function selectAllSections($selected=0, $select_name='', $module='ecm')
+	function selectAllSections($selected = 0, $select_name = '', $module = 'ecm')
 	{
 		global $conf, $langs;
 		$langs->load("ecm");

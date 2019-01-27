@@ -299,7 +299,7 @@ class printing_printgcp extends PrintingDriver
      * @param   string      $subdir     subdir for file
      * @return  int                     0 if OK, >0 if KO
      */
-    public function printFile($file, $module, $subdir='')
+    public function printFile($file, $module, $subdir = '')
     {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 

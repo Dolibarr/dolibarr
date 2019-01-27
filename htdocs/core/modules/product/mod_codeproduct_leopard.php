@@ -100,7 +100,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objproduct=0,$type=-1)
+	function getNextValue($objproduct = 0, $type = -1)
 	{
 		global $langs;
 		return '';
@@ -131,7 +131,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}

@@ -677,7 +677,7 @@ if ($action == 'addcontainer')
 			$error++;
 			$action='createcontainer';
 		}
-		else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
+		elseif (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');

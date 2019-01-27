@@ -284,12 +284,12 @@ if ($search_smonth > 0)
 {
 	if ($search_syear > 0 && empty($search_sday))
 		$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,$search_smonth,false))."' AND '".$db->idate(dol_get_last_day($search_syear,$search_smonth,false))."'";
-		else if ($search_syear > 0 && ! empty($search_sday))
+		elseif ($search_syear > 0 && ! empty($search_sday))
 			$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
 			else
 				$sql.= " AND date_format(t.dateo, '%m') = '".$search_smonth."'";
 }
-else if ($search_syear > 0)
+elseif ($search_syear > 0)
 {
 	$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,1,false))."' AND '".$db->idate(dol_get_last_day($search_syear,12,false))."'";
 }
@@ -297,12 +297,12 @@ if ($search_emonth > 0)
 {
 	if ($search_eyear > 0 && empty($search_eday))
 		$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,$search_emonth,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,$search_emonth,false))."'";
-		else if ($search_eyear > 0 && ! empty($search_eday))
+		elseif ($search_eyear > 0 && ! empty($search_eday))
 			$sql.= " AND t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
 			else
 				$sql.= " AND date_format(t.datee, '%m') = '".$search_emonth."'";
 }
-else if ($search_eyear > 0)
+elseif ($search_eyear > 0)
 {
 	$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,12,false))."'";
 }

@@ -496,7 +496,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
-        else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
+        elseif (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
 		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
@@ -759,7 +759,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
+			elseif ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
@@ -863,7 +863,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
+			elseif ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}

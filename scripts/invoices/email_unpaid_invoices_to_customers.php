@@ -218,7 +218,7 @@ else
  *  @param	string	$oldtarget		Target name
  * 	@return	int						<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
     global $conf,$langs;
 

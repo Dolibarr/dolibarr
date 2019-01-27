@@ -163,7 +163,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int				$hideref			Do not show ref
 	 *  @return		int									1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -491,7 +491,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -727,7 +727,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

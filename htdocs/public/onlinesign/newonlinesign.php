@@ -167,7 +167,7 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_SIGN_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
+elseif (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';

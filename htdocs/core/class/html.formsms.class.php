@@ -100,7 +100,7 @@ class FormSms
      *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
-    function show_form($morecss='titlefield', $showform=1)
+    function show_form($morecss = 'titlefield', $showform = 1)
     {
      // phpcs:enable
         global $conf, $langs, $user, $form;
@@ -208,7 +208,7 @@ function limitChars(textarea, limit, infodiv)
                         dol_print_error('','Error to get list of senders: '.$e->getMessage());
                     }
                 }
-                else if (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+                elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
                 {
                     $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
                     $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);

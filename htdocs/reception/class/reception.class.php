@@ -176,7 +176,7 @@ class Reception extends CommonObject
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				<0 si erreur, id reception creee si ok
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -297,7 +297,7 @@ class Reception extends CommonObject
 						}
 					}
 				}
-				else if ($reshook < 0) $error++;
+				elseif ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -358,7 +358,7 @@ class Reception extends CommonObject
      * 	@param	string	$ref_int	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($id, $ref='', $ref_ext='', $ref_int='')
+	function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
 	{
 		global $conf;
 
@@ -488,7 +488,7 @@ class Reception extends CommonObject
      *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if OK, >0 if KO
 	 */
-	function valid($user, $notrigger=0)
+	function valid($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -712,7 +712,7 @@ class Reception extends CommonObject
 	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline($entrepot_id, $id, $qty, $array_options=0, $comment='', $eatby='', $sellby='', $batch='')
+	function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '')
 	{
 		global $conf, $langs, $user;
 
@@ -763,7 +763,7 @@ class Reception extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int 			       	<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user = null, $notrigger = 0)
     {
     	global $conf;
 		$error=0;
@@ -1082,7 +1082,7 @@ class Reception extends CommonObject
      *  @param      int         $notooltip      1=No tooltip
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
+	function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
 	{
 		global $langs;
 		$result='';
@@ -1123,7 +1123,7 @@ class Reception extends CommonObject
      *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *	@return     string      		Libelle
      */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -1136,7 +1136,7 @@ class Reception extends CommonObject
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-	function LibStatut($statut,$mode)
+	function LibStatut($statut, $mode)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1322,7 +1322,7 @@ class Reception extends CommonObject
      *  @param  int      $id     only this carrier, all if none
      *  @return void
      */
-    function list_delivery_methods($id='')
+    function list_delivery_methods($id = '')
     {
 		// phpcs:enable
         global $langs;
@@ -1359,7 +1359,7 @@ class Reception extends CommonObject
      *
      *  @return void
      */
-    function update_delivery_method($id='')
+    function update_delivery_method($id = '')
     {
 		// phpcs:enable
         if ($id=='')
@@ -1422,7 +1422,7 @@ class Reception extends CommonObject
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function getUrlTrackingStatus($value='')
+	function getUrlTrackingStatus($value = '')
 	{
 		if (! empty($this->shipping_method_id))
 		{
@@ -1935,7 +1935,7 @@ class Reception extends CommonObject
 	 *  @param      int			$hideref        Hide ref
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$langs;
 

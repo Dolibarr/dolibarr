@@ -109,7 +109,7 @@ class Don extends CommonObject
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *  @return string        		Libelle
      */
-    function getLibStatut($mode=0)
+    function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut,$mode);
     }
@@ -122,7 +122,7 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
     	if (empty($this->labelstatut) || empty($this->labelstatutshort))
@@ -251,7 +251,7 @@ class Don extends CommonObject
      *	@param	int	$minimum	Minimum
      *	@return	int				0 if KO, >0 if OK
      */
-    function check($minimum=0)
+    function check($minimum = 0)
     {
     	global $langs;
     	$langs->load('main');
@@ -344,7 +344,7 @@ class Don extends CommonObject
      * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -465,7 +465,7 @@ class Don extends CommonObject
      *  @param      int		$notrigger	Disable triggers
      *  @return     int      		>0 if OK, <0 if KO
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -556,7 +556,7 @@ class Don extends CommonObject
      *    @param       int		$notrigger       Disable triggers
      *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
      */
-    function delete($user, $notrigger=0)
+    function delete($user, $notrigger = 0)
     {
 		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -631,7 +631,7 @@ class Don extends CommonObject
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='')
+    function fetch($id, $ref = '')
     {
         global $conf;
 
@@ -651,7 +651,7 @@ class Don extends CommonObject
         {
         	$sql.= " AND d.rowid=".$id;
         }
-        else if (! empty($ref))
+        elseif (! empty($ref))
         {
         	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
@@ -718,7 +718,7 @@ class Don extends CommonObject
      *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-	function setValid($user, $notrigger=0)
+	function setValid($user, $notrigger = 0)
 	{
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
@@ -732,7 +732,7 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-	function valid_promesse($id, $userid, $notrigger=0)
+	function valid_promesse($id, $userid, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -783,7 +783,7 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepayment=0)
+    function set_paid($id, $modepayment = 0)
     {
         // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
@@ -915,7 +915,7 @@ class Don extends CommonObject
      *	@param	int  	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $notooltip=0)
+    function getNomUrl($withpicto = 0, $notooltip = 0)
     {
         global $langs;
 
@@ -989,7 +989,7 @@ class Don extends CommonObject
 	 *  @param      int			$hideref        Hide ref
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$langs;
 

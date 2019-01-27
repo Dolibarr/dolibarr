@@ -97,7 +97,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$shipment)
+	function getNextValue($objsoc, $shipment)
 	{
 		global $db,$conf;
 
@@ -138,7 +138,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-	function reception_get_num($objsoc,$objforref)
+	function reception_get_num($objsoc, $objforref)
 	{
 		// phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);

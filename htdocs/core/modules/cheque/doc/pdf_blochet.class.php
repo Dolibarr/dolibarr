@@ -381,7 +381,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
