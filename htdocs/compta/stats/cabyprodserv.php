@@ -178,7 +178,7 @@ if ($modecompta=="CREANCES-DETTES") {
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -189,12 +189,12 @@ else if ($modecompta=="RECETTES-DEPENSES")
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 
 
 }
-else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
 
 
@@ -231,7 +231,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
-	else if ($selected_cat) 	// Into a specific category
+	elseif ($selected_cat) 	// Into a specific category
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
@@ -253,7 +253,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	{
 		$sql.=" AND cp.fk_product is null";
 	}
-	else if ($selected_cat) {	// Into a specific category
+	elseif ($selected_cat) {	// Into a specific category
 		$sql.= " AND (c.rowid = ".$selected_cat;
 		if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 		$sql.= ")";

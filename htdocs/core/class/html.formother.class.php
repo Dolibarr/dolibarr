@@ -67,7 +67,7 @@ class FormOther
      *    @param    int		$fk_user          Utilisateur créant le modèle
      *    @return	void
      */
-    function select_export_model($selected='', $htmlname='exportmodelid', $type='', $useempty=0, $fk_user=null)
+    function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
     {
         // phpcs:enable
         $sql = "SELECT rowid, label";
@@ -119,7 +119,7 @@ class FormOther
      *    @param    int		$useempty          Affiche valeur vide dans liste
      *    @return	void
      */
-    function select_import_model($selected='', $htmlname='importmodelid', $type='', $useempty=0)
+    function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0)
     {
         // phpcs:enable
         $sql = "SELECT rowid, label";
@@ -168,7 +168,7 @@ class FormOther
      *    @param    string	$htmlname	Name of combo list
      *    @return	integer
      */
-    function select_ecotaxes($selected='', $htmlname='ecotaxe_id')
+    function select_ecotaxes($selected = '', $htmlname = 'ecotaxe_id')
     {
         // phpcs:enable
         global $langs;
@@ -227,7 +227,7 @@ class FormOther
      *    @param    string	$country_code   Country Code
      *    @return	string					HTML select list
      */
-    function select_revenue_stamp($selected='', $htmlname='revenuestamp', $country_code='')
+    function select_revenue_stamp($selected = '', $htmlname = 'revenuestamp', $country_code = '')
     {
         // phpcs:enable
     	global $langs;
@@ -290,7 +290,7 @@ class FormOther
      *    @param    int     $showempty      Add also an empty line
      *    @return   string					HTML select string
      */
-    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
+    function select_percent($selected = 0, $htmlname = 'percent', $disabled = 0, $increment = 5, $start = 0, $end = 100, $showempty = 0)
     {
         // phpcs:enable
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
@@ -328,7 +328,7 @@ class FormOther
      * @return  string		        	Html combo list code
      * @see	select_all_categories
      */
-    function select_categories($type, $selected=0, $htmlname='search_categ', $nocateg=0, $showempty=1, $morecss='')
+    function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -389,7 +389,7 @@ class FormOther
      *  @param	string	$morecss		More CSS
      *  @return string					Html combo list code
      */
-    function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
+    function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '')
     {
         // phpcs:enable
         global $conf,$langs;
@@ -490,7 +490,7 @@ class FormOther
      *  @param	string	$morecss				More css
      *  @return	void
      */
-    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0, $filteronprojstatus='', $morecss='')
+    function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
     {
         global $user, $langs;
 
@@ -528,7 +528,7 @@ class FormOther
      * @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
      * @return	void
      */
-    private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0, $disablechildoftaskid=0)
+    private function _pLineSelect(&$inc, $parent, $lines, $level = 0, $selectedtask = 0, $selectedproject = 0, $disablechildoftaskid = 0)
     {
         global $langs, $user, $conf;
 
@@ -621,7 +621,7 @@ class FormOther
      * 		@return	string							HTML code for color thumb
      *		@see selectColor
      */
-    static function showColor($color, $textifnotdefined='')
+    static function showColor($color, $textifnotdefined = '')
     {
     	$textcolor='FFF';
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -646,7 +646,7 @@ class FormOther
      * 		@deprecated Use instead selectColor
      *      @see selectColor()
      */
-    function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
+    function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
     {
         // phpcs:enable
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -664,7 +664,7 @@ class FormOther
      * 		@return	string
      *		@see showColor
      */
-    static function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
     {
 	    // Deprecation warning
 	    if ($form_name) {
@@ -763,7 +763,7 @@ class FormOther
      *	@param	int		$y      	Hauteur de l'image en pixels
      *	@return	void
      */
-    function CreateColorIcon($color,$module,$name,$x='12',$y='12')
+    function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
     {
         // phpcs:enable
         global $conf;
@@ -802,7 +802,7 @@ class FormOther
      *    	@param  int			$useempty          Affiche valeur vide dans liste
      *    	@return	string
      */
-    function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
+    function select_dayofweek($selected = '', $htmlname = 'weekid', $useempty = 0)
     {
         // phpcs:enable
         global $langs;
@@ -850,7 +850,7 @@ class FormOther
      *      @param	string		$morecss			More Css
      *      @return string
      */
-    function select_month($selected='', $htmlname='monthid', $useempty=0, $longlabel=0, $morecss='')
+    function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = '')
     {
         // phpcs:enable
         global $langs;
@@ -897,7 +897,7 @@ class FormOther
      *  @param	string		$morecss		More CSS
      *  @return	string
      */
-    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
+    function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle widthauto')
     {
         // phpcs:enable
         print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
@@ -917,7 +917,7 @@ class FormOther
      *  @param	string	$morecss		More css
      *  @return	string
      */
-    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
+    function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle widthauto')
     {
         $out='';
 
@@ -968,7 +968,7 @@ class FormOther
      * @param  	int		$originid      	Id de l'origine
      * @return	void
      */
-    function form_address($page, $selected, $socid, $htmlname='address_id', $origin='', $originid='')
+    function form_address($page, $selected, $socid, $htmlname = 'address_id', $origin = '', $originid = '')
     {
         // phpcs:enable
         global $langs,$conf;
@@ -1011,7 +1011,7 @@ class FormOther
      * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
      * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
-    static function getBoxesArea($user,$areacode)
+    static function getBoxesArea($user, $areacode)
     {
         global $conf,$langs,$db;
 
@@ -1231,7 +1231,7 @@ class FormOther
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
-    function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0,$moreattrib='')
+    function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
     {
         // phpcs:enable
         global $langs, $conf;

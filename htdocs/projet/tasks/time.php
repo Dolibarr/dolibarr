@@ -837,12 +837,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		{
 			if ($search_year > 0 && empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-			else if ($search_year > 0 && ! empty($search_day))
+			elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
 		}
-		else if ($search_year > 0)
+		elseif ($search_year > 0)
 		{
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
 		}
@@ -1273,7 +1273,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
-			else if ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
+			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{

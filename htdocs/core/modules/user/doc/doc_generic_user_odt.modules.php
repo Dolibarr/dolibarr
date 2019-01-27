@@ -216,7 +216,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -449,7 +449,7 @@ class doc_generic_user_odt extends ModelePDFUser
      * @param string        $array_key      key for array
      * @return array                        array of substitutions
      */
-    function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+    function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
 		$array_other = array();

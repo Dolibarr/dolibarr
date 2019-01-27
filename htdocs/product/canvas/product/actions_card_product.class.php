@@ -73,7 +73,7 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+	function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
@@ -409,16 +409,16 @@ class ActionsCardProduct
 							$this->entity	= $obj->entity;
 							$datas[$alias] 	= $this->getNomUrl(1, '', 24);
 						}
-						else if ($alias == 'stock')
+						elseif ($alias == 'stock')
 						{
 							$this->load_stock();
 							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
 							else $datas[$alias] = $this->stock_reel;
 						}
-						else if ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
-						else if (preg_match('/price/i', $alias))	$datas[$alias] = price($obj->$alias);
-						else if ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
-						else if ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias, 5);
+						elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
+						elseif (preg_match('/price/i', $alias))	$datas[$alias] = price($obj->$alias);
+						elseif ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
+						elseif ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias, 5);
 						else $datas[$alias] = $obj->$alias;
 					}
 				}

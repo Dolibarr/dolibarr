@@ -126,7 +126,7 @@ function ticket_prepare_head($object)
  *    @param  string $car Char to generate key
  *     @return void
  */
-function generate_random_id($car=16)
+function generate_random_id($car = 16)
 {
     $string = "";
     $chaine = "abcdefghijklmnopqrstuvwxyz123456789";

@@ -590,7 +590,7 @@ if ($ret) exit($ret);
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements($db,$langs,$conf)
+function migrate_paiements($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -684,7 +684,7 @@ function migrate_paiements($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements_orphelins_1($db,$langs,$conf)
+function migrate_paiements_orphelins_1($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -811,7 +811,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiements_orphelins_2($db,$langs,$conf)
+function migrate_paiements_orphelins_2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -954,7 +954,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_det($db,$langs,$conf)
+function migrate_contracts_det($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1052,7 +1052,7 @@ function migrate_contracts_det($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_links_transfert($db,$langs,$conf)
+function migrate_links_transfert($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1136,7 +1136,7 @@ function migrate_links_transfert($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_date1($db,$langs,$conf)
+function migrate_contracts_date1($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1167,7 +1167,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 /*
  * Mise a jour date contrat avec date min effective mise en service si inferieur
  */
-function migrate_contracts_date2($db,$langs,$conf)
+function migrate_contracts_date2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1236,7 +1236,7 @@ function migrate_contracts_date2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_date3($db,$langs,$conf)
+function migrate_contracts_date3($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1263,7 +1263,7 @@ function migrate_contracts_date3($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_contracts_open($db,$langs,$conf)
+function migrate_contracts_open($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -1322,7 +1322,7 @@ function migrate_contracts_open($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_paiementfourn_facturefourn($db,$langs,$conf)
+function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 {
     global $bc;
 
@@ -1439,7 +1439,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_facture($db,$langs,$conf)
+function migrate_price_facture($db, $langs, $conf)
 {
     $err=0;
 
@@ -1558,7 +1558,7 @@ function migrate_price_facture($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_propal($db,$langs,$conf)
+function migrate_price_propal($db, $langs, $conf)
 {
    	$tmpmysoc=new Societe($db);
 	$tmpmysoc->setMysoc($conf);
@@ -1666,7 +1666,7 @@ function migrate_price_propal($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_contrat($db,$langs,$conf)
+function migrate_price_contrat($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1755,7 +1755,7 @@ function migrate_price_contrat($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_commande($db,$langs,$conf)
+function migrate_price_commande($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1872,7 +1872,7 @@ function migrate_price_commande($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_price_commande_fournisseur($db,$langs,$conf)
+function migrate_price_commande_fournisseur($db, $langs, $conf)
 {
     $db->begin();
 
@@ -1989,7 +1989,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_modeles($db,$langs,$conf)
+function migrate_modeles($db, $langs, $conf)
 {
     //print '<br>';
     //print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
@@ -2047,7 +2047,7 @@ function migrate_modeles($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_expedition($db,$langs,$conf)
+function migrate_commande_expedition($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_expedition");
 
@@ -2124,7 +2124,7 @@ function migrate_commande_expedition($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_livraison($db,$langs,$conf)
+function migrate_commande_livraison($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_livraison");
 
@@ -2217,7 +2217,7 @@ function migrate_commande_livraison($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_detail_livraison($db,$langs,$conf)
+function migrate_detail_livraison($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_detail_livraison");
 
@@ -2338,7 +2338,7 @@ function migrate_detail_livraison($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_stocks($db,$langs,$conf)
+function migrate_stocks($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_stocks");
 
@@ -2412,7 +2412,7 @@ function migrate_stocks($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_menus($db,$langs,$conf)
+function migrate_menus($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_menus");
 
@@ -2494,7 +2494,7 @@ function migrate_menus($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_commande_deliveryaddress($db,$langs,$conf)
+function migrate_commande_deliveryaddress($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_commande_deliveryaddress");
 
@@ -2578,7 +2578,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	integer|null
  */
-function migrate_restore_missing_links($db,$langs,$conf)
+function migrate_restore_missing_links($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_restore_missing_links");
 
@@ -2734,7 +2734,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_user_resp($db,$langs,$conf)
+function migrate_project_user_resp($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_user_resp");
 
@@ -2831,7 +2831,7 @@ function migrate_project_user_resp($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_task_actors($db,$langs,$conf)
+function migrate_project_task_actors($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_task_actors");
 
@@ -2928,7 +2928,7 @@ function migrate_project_task_actors($db,$langs,$conf)
  * @param	string		$targettype		Type of element target
  * @return	void
  */
-function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
+function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $sourcetype, $fk_target, $targettype)
 {
     print '<tr><td colspan="4">';
 
@@ -3024,7 +3024,7 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_project_task_time($db,$langs,$conf)
+function migrate_project_task_time($db, $langs, $conf)
 {
     dolibarr_install_syslog("upgrade2::migrate_project_task_time");
 
@@ -3145,7 +3145,7 @@ function migrate_project_task_time($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_customerorder_shipping($db,$langs,$conf)
+function migrate_customerorder_shipping($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3246,7 +3246,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_shipping_delivery($db,$langs,$conf)
+function migrate_shipping_delivery($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3358,7 +3358,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_shipping_delivery2($db,$langs,$conf)
+function migrate_shipping_delivery2($db, $langs, $conf)
 {
     print '<tr><td colspan="4">';
 
@@ -3442,7 +3442,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_actioncomm_element($db,$langs,$conf)
+function migrate_actioncomm_element($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3508,7 +3508,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
  * @param	Conf		$conf	Object conf
  * @return	void
  */
-function migrate_mode_reglement($db,$langs,$conf)
+function migrate_mode_reglement($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3608,7 +3608,7 @@ function migrate_mode_reglement($db,$langs,$conf)
  * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_clean_association($db,$langs,$conf,$versionto)
+function migrate_clean_association($db, $langs, $conf, $versionto)
 {
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
     if ($result)	// result defined for version 3.2 or -
@@ -3695,7 +3695,7 @@ function migrate_clean_association($db,$langs,$conf,$versionto)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_categorie_association($db,$langs,$conf)
+function migrate_categorie_association($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3788,7 +3788,7 @@ function migrate_categorie_association($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_event_assignement($db,$langs,$conf)
+function migrate_event_assignement($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3865,7 +3865,7 @@ function migrate_event_assignement($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_event_assignement_contact($db,$langs,$conf)
+function migrate_event_assignement_contact($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -3943,7 +3943,7 @@ function migrate_event_assignement_contact($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_reset_blocked_log($db,$langs,$conf)
+function migrate_reset_blocked_log($db, $langs, $conf)
 {
 	global $user;
 
@@ -4061,7 +4061,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_remise_entity($db,$langs,$conf)
+function migrate_remise_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4138,7 +4138,7 @@ function migrate_remise_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_remise_except_entity($db,$langs,$conf)
+function migrate_remise_except_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4175,7 +4175,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f";
 					$sqlSelect2.= " WHERE f.rowid = " . $fk_facture;
 				}
-				else if (!empty($obj->fk_facture_line))
+				elseif (!empty($obj->fk_facture_line))
 				{
 					$sqlSelect2 = "SELECT f.entity";
 					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
@@ -4250,7 +4250,7 @@ function migrate_remise_except_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_user_rights_entity($db,$langs,$conf)
+function migrate_user_rights_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4326,7 +4326,7 @@ function migrate_user_rights_entity($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @return	void
  */
-function migrate_usergroup_rights_entity($db,$langs,$conf)
+function migrate_usergroup_rights_entity($db, $langs, $conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -4536,7 +4536,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param   int         $force          1=Reload module even if not already loaded
  * @return	void
  */
-function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $force=0)
+function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
 	if (count($listofmodule) == 0) return;
 
@@ -4786,7 +4786,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $forc
  * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_reload_menu($db,$langs,$conf,$versionto)
+function migrate_reload_menu($db, $langs, $conf, $versionto)
 {
     global $conf;
     dolibarr_install_syslog("upgrade2::migrate_reload_menu");

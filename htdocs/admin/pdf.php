@@ -86,7 +86,7 @@ if ($action == 'activate_pdfsecurity')
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
-else if ($action == 'disable_pdfsecurity')
+elseif ($action == 'disable_pdfsecurity')
 {
 	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION", $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");

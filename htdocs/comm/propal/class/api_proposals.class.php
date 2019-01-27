@@ -559,7 +559,7 @@ class Proposals extends DolibarrApi
      *
      * @return array
 	 */
-	function validate($id, $notrigger=0)
+	function validate($id, $notrigger = 0)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
@@ -607,7 +607,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return  array
 	 */
-	function close($id, $status, $note_private='', $notrigger=0)
+	function close($id, $status, $note_private = '', $notrigger = 0)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);

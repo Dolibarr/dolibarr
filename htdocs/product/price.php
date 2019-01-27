@@ -1958,7 +1958,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print $langs->trans('None');
 		}
 	}
-	else if ($action != 'showlog_default_price' && $action != 'edit_price')
+	elseif ($action != 'showlog_default_price' && $action != 'edit_price')
 	{
 		// List of all prices by customers
         print '<!-- list of all prices per customer -->'."\n";

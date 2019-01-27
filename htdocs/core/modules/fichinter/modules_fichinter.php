@@ -48,7 +48,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -162,7 +162,7 @@ abstract class ModeleNumRefFicheinter
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  */
-function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
     // phpcs:enable
 	global $conf,$langs,$user;

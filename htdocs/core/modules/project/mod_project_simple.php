@@ -167,7 +167,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
-    function project_get_num($objsoc=0, $project='')
+    function project_get_num($objsoc = 0, $project = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $project);

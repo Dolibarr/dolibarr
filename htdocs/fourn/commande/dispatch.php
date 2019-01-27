@@ -886,7 +886,7 @@ if ($id > 0 || ! empty($ref)) {
 						}
 					}
 					print '</td>';
-				}else if(!empty($conf->reception->enabled)){
+				}elseif(!empty($conf->reception->enabled)){
 					print '<td align="right">';
 					if(!empty($reception->id)){
 						print $reception->getLibStatut(5);

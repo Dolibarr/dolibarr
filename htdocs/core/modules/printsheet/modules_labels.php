@@ -48,7 +48,7 @@ class ModelePDFLabels
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -77,7 +77,7 @@ class ModelePDFLabels
  *  @param  string      $filename           Short file name of PDF output file
  *	@return int        						<0 if KO, >0 if OK
  */
-function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel', $filename='tmp_address_sheet.pdf')
+function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
     // phpcs:enable
 	global $conf,$langs;

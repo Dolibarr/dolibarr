@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -94,7 +94,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);

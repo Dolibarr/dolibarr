@@ -132,7 +132,7 @@ class Task extends CommonObject
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int 		        	<0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -231,7 +231,7 @@ class Task extends CommonObject
 	 *  @param	int		$loadparentdata		Also load parent data
 	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id, $ref='', $loadparentdata=0)
+	function fetch($id, $ref = '', $loadparentdata = 0)
 	{
 		global $langs, $conf;
 
@@ -333,7 +333,7 @@ class Task extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int			         	<=0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -444,7 +444,7 @@ class Task extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 
 		global $conf, $langs;
@@ -643,7 +643,7 @@ class Task extends CommonObject
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user;
 
@@ -731,7 +731,7 @@ class Task extends CommonObject
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
 	 * @return 	array						Array of tasks
 	 */
-	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus='-1', $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
+	function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0)
 	{
 		global $conf;
 
@@ -890,7 +890,7 @@ class Task extends CommonObject
 	 * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
-	function getUserRolesForProjectsOrTasks($userp, $usert, $projectid='', $taskid=0, $filteronprojstatus=-1)
+	function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
 		$arrayroles = array();
 
@@ -967,7 +967,7 @@ class Task extends CommonObject
 	 *	@param	string	$source		Source
 	 *  @return array				Array of id of contacts
 	 */
-	function getListContactId($source='internal')
+	function getListContactId($source = 'internal')
 	{
 		$contactAlreadySelected = array();
 		$tab = $this->liste_contact(-1, $source);
@@ -991,7 +991,7 @@ class Task extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return	int                     <=0 if KO, >0 if OK
 	 */
-	function addTimeSpent($user, $notrigger=0)
+	function addTimeSpent($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -1096,7 +1096,7 @@ class Task extends CommonObject
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
-	function getSummaryOfTimeSpent($userobj=null, $morewherefilter='')
+	function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
 		global $langs;
 
@@ -1159,7 +1159,7 @@ class Task extends CommonObject
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
 	 */
-	function getSumOfAmount($fuser='', $dates='', $datee='')
+	function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
 		global $langs;
 
@@ -1266,7 +1266,7 @@ class Task extends CommonObject
 	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 *  @return int							<0 if KO, array of time spent if OK
 	 */
-	function fetchAllTimeSpent(User $userobj, $morewherefilter='')
+	function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
 		global $langs;
 
@@ -1356,7 +1356,7 @@ class Task extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return	int						<0 if KO, >0 if OK
 	 */
-	function updateTimeSpent($user, $notrigger=0)
+	function updateTimeSpent($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -1441,7 +1441,7 @@ class Task extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return	int						<0 if KO, >0 if OK
 	 */
-	function delTimeSpent($user, $notrigger=0)
+	function delTimeSpent($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -1516,7 +1516,7 @@ class Task extends CommonObject
 	  *	@param	bool	$clone_prog				clone progress of project
 	  * 	@return	int								New id of clone
 	  */
-	function createFromClone($fromid,$project_id,$parent_task_id,$clone_change_dt=false,$clone_affectation=false,$clone_time=false,$clone_file=false,$clone_note=false,$clone_prog=false)
+	function createFromClone($fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
 	{
 		global $user,$langs,$conf;
 
@@ -1743,7 +1743,7 @@ class Task extends CommonObject
 	 *	@param	integer	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  			Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->fk_statut, $mode);
 	}
@@ -1756,7 +1756,7 @@ class Task extends CommonObject
 	 *	@param	integer		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  				Label
 	 */
-	function LibStatut($statut, $mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		// list of Statut of the task
@@ -1844,7 +1844,7 @@ class Task extends CommonObject
 	 *  @param  int			$hideref        Hide ref
 	 *  @return int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$langs;
 

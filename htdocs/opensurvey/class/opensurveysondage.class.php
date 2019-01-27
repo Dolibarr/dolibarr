@@ -121,7 +121,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create(User $user, $notrigger=0)
+    function create(User $user, $notrigger = 0)
     {
 		$error=0;
 
@@ -208,7 +208,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsurvey			Ref of survey (admin or not)
      *  @return int          				<0 if KO, >0 if OK
      */
-    function fetch($id, $numsurvey='')
+    function fetch($id, $numsurvey = '')
     {
     	$sql = "SELECT";
 		$sql.= " t.id_sondage,";
@@ -283,7 +283,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update(User $user, $notrigger=0)
+    function update(User $user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -356,7 +356,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsondage			Num sondage admin to delete
      *  @return	int					 		<0 if KO, >0 if OK
      */
-    function delete(User $user, $notrigger=0, $numsondage='')
+    function delete(User $user, $notrigger = 0, $numsondage = '')
     {
 		global $conf, $langs;
 		$error=0;
@@ -424,7 +424,7 @@ class Opensurveysondage extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -637,7 +637,7 @@ class Opensurveysondage extends CommonObject
 	 *	@param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					  Label of status
 	 */
-	function LibStatut($status,$mode)
+	function LibStatut($status, $mode)
 	{
         // phpcs:enable
 	    global $langs, $conf;

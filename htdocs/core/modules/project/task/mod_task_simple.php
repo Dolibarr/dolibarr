@@ -123,7 +123,7 @@ class mod_task_simple extends ModeleNumRefTask
 	*  @param   Task	$object		Object Task
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$object)
+    function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -167,7 +167,7 @@ class mod_task_simple extends ModeleNumRefTask
      *  @param  Task	$object     Object task
      *  @return string              Next not used reference
      */
-    function task_get_num($objsoc=0,$object='')
+    function task_get_num($objsoc = 0, $object = '')
     {
         return $this->getNextValue($objsoc, $object);
     }

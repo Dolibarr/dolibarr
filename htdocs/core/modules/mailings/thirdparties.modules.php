@@ -218,7 +218,7 @@ class mailing_thirdparties extends MailingTargets
 	 *  @param      string	$sql        Requete sql de comptage
 	 *	@return		int					Nb of recipients
 	 */
-	function getNbOfRecipients($sql='')
+	function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 

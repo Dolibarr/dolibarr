@@ -61,7 +61,7 @@ class FormSocialContrib
      *  @param	string	$morecss		Add more CSS on select
      * 	@return	void
      */
-    function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1, $morecss='minwidth300')
+    function select_type_socialcontrib($selected = '', $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300')
     {
         // phpcs:enable
         global $conf,$db,$langs,$user,$mysoc;

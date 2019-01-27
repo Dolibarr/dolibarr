@@ -186,7 +186,7 @@ if ($action=='selectfield')     // Selection of field at step 2
             if (is_array($tmp)) $listofdependencies=$tmp;
             else $listofdependencies=array($tmp);
         }
-        else if (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
+        elseif (! empty($field) && ! empty($fieldsdependenciesarray[$field]))
         {
             // We found a dependency on a dedicated field
             $tmp=$fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
@@ -1293,7 +1293,7 @@ exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 
  * 	@param	string	$sqlmaxforexport	SQL request to parse
  * 	@return	string						Table name of field
  */
-function getablenamefromfield($code,$sqlmaxforexport)
+function getablenamefromfield($code, $sqlmaxforexport)
 {
 	$alias=preg_replace('/\.(.*)$/i', '', $code);         // Keep only 'Alias' and remove '.Fieldname'
 	$regexstring='/([a-zA-Z_]+) as '.preg_quote($alias).'[, \)]/i';

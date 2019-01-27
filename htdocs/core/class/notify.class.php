@@ -105,7 +105,7 @@ class Notify
 	 *  @param	Object	$object		Object the notification is about
 	 *	@return	string				Message
 	 */
-	function confirmMessage($action,$socid,$object)
+	function confirmMessage($action, $socid, $object)
 	{
 		global $langs;
 		$langs->load("mails");
@@ -146,7 +146,7 @@ class Notify
 	 * @param   array   $scope          Scope where to search
 	 * @return	array|int				<0 if KO, array of notifications to send if OK
 	 */
-	function getNotificationsArray($notifcode, $socid=0, $object=null, $userid=0, $scope=array('thirdparty', 'user', 'global'))
+	function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
 		global $conf, $user;
 
@@ -309,7 +309,7 @@ class Notify
 	 *	@param 	array	$mimefilename_list	List of attached file name in message
 	 *	@return	int							<0 if KO, or number of changes if OK
 	 */
-	function send($notifcode, $object, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array())
+	function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
 		global $user,$conf,$langs,$mysoc;
 		global $hookmanager;

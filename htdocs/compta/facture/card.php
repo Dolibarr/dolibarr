@@ -178,7 +178,7 @@ if (empty($reshook))
 	}
 
 	// Change status of invoice
-	else if ($action == 'reopen' && $usercancreate) {
+	elseif ($action == 'reopen' && $usercancreate) {
 		$result = $object->fetch($id);
 		if ($object->statut == 2 || ($object->statut == 3 && $object->close_code != 'replaced') || ($object->statut == 1 && $object->paye == 1)) {    // ($object->statut == 1 && $object->paye == 1) should not happened but can be found when data are corrupted
 			$result = $object->set_unpaid($user);
@@ -192,7 +192,7 @@ if (empty($reshook))
 	}
 
 	// Delete invoice
-	else if ($action == 'confirm_delete' && $confirm == 'yes') {
+	elseif ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -222,7 +222,7 @@ if (empty($reshook))
 	}
 
 	// Delete line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -256,7 +256,7 @@ if (empty($reshook))
 	}
 
 	// Delete link of credit note to invoice
-	else if ($action == 'unlinkdiscount' && $usercancreate)
+	elseif ($action == 'unlinkdiscount' && $usercancreate)
 	{
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOST("discountid"));
@@ -264,7 +264,7 @@ if (empty($reshook))
 	}
 
 	// Validation
-	else if ($action == 'valid' && $usercancreate)
+	elseif ($action == 'valid' && $usercancreate)
 	{
 		$object->fetch($id);
 
@@ -284,7 +284,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'set_thirdparty' && $usercancreate)
+	elseif ($action == 'set_thirdparty' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->setValueFrom('fk_soc', $socid, '', null, 'int', '', $user, 'BILL_MODIFY');
@@ -293,13 +293,13 @@ if (empty($reshook))
 		exit();
 	}
 
-	else if ($action == 'classin' && $usercancreate)
+	elseif ($action == 'classin' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->setProject($_POST['projectid']);
 	}
 
-	else if ($action == 'setmode' && $usercancreate)
+	elseif ($action == 'setmode' && $usercancreate)
 	{
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -308,16 +308,16 @@ if (empty($reshook))
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $usercancreate) {
+	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $usercancreate) {
+	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	}
 
-	else if ($action == 'setinvoicedate' && $usercancreate)
+	elseif ($action == 'setinvoicedate' && $usercancreate)
 	{
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
@@ -336,7 +336,7 @@ if (empty($reshook))
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'setdate_pointoftax' && $usercancreate)
+	elseif ($action == 'setdate_pointoftax' && $usercancreate)
 	{
 		$object->fetch($id);
 		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
@@ -345,7 +345,7 @@ if (empty($reshook))
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'setconditions' && $usercancreate)
+	elseif ($action == 'setconditions' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
@@ -361,7 +361,7 @@ if (empty($reshook))
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'setpaymentterm' && $usercancreate)
+	elseif ($action == 'setpaymentterm' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->date_lim_reglement = dol_mktime(12, 0, 0, $_POST['paymenttermmonth'], $_POST['paymenttermday'], $_POST['paymenttermyear']);
@@ -374,7 +374,7 @@ if (empty($reshook))
 			dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'setrevenuestamp' && $usercancreate)
+	elseif ($action == 'setrevenuestamp' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->revenuestamp = GETPOST('revenuestamp');
@@ -391,18 +391,18 @@ if (empty($reshook))
 	}
 
 	// bank account
-	else if ($action == 'setbankaccount' && $usercancreate)
+	elseif ($action == 'setbankaccount' && $usercancreate)
 	{
 		$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
-	else if ($action == 'setremisepercent' && $usercancreate)
+	elseif ($action == 'setremisepercent' && $usercancreate)
 	{
 		$object->fetch($id);
 		$result = $object->set_remise($user, $_POST['remise_percent']);
 	}
 
-	else if ($action == "setabsolutediscount" && $usercancreate)
+	elseif ($action == "setabsolutediscount" && $usercancreate)
 	{
 		// POST[remise_id] or POST[remise_id_for_payment]
 
@@ -460,14 +460,14 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setref_client' && $usercancreate)
+	elseif ($action == 'setref_client' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
 	}
 
 	// Classify to validated
-	else if ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate)
+	elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate)
 	{
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
@@ -567,7 +567,7 @@ if (empty($reshook))
 	}
 
 	// Go back to draft status (unvalidate)
-	else if ($action == 'confirm_modif' && $usercanunvalidate)
+	elseif ($action == 'confirm_modif' && $usercanunvalidate)
 	{
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
@@ -647,13 +647,13 @@ if (empty($reshook))
 	}
 
 	// Classify "paid"
-	else if ($action == 'confirm_paid' && $confirm == 'yes' && $usercanissuepayment)
+	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
 		$result = $object->set_paid($user);
 		if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 	} // Classif "paid partialy"
-	else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $usercanissuepayment)
+	elseif ($action == 'confirm_paid_partially' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
 		$close_code = GETPOST("close_code", 'none');
@@ -665,7 +665,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
 		}
 	} // Classify "abandoned"
-	else if ($action == 'confirm_canceled' && $confirm == 'yes') {
+	elseif ($action == 'confirm_canceled' && $confirm == 'yes') {
 		$object->fetch($id);
 		$close_code = GETPOST("close_code", 'none');
 		$close_note = GETPOST("close_note", 'none');
@@ -678,7 +678,7 @@ if (empty($reshook))
 	}
 
 	// Convertir en reduc
-	else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate)
+	elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -733,20 +733,31 @@ if (empty($reshook))
 			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
+				// Total payments
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND pf.fk_paiement = p.rowid';
-				$sql.= ' AND p.entity IN (' . getEntity('invoice').')';
-
+				$sql.= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
 
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
 
-				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
+				// Total credit note and deposit
+				$total_creditnote_and_deposit = 0;
+		                $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+		                $sql .= " re.description, re.fk_facture_source";
+		                $sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+		                $sql .= " WHERE fk_facture = " . $object->id;
+		                $resql = $db->query($sql);
+		                if (!empty($resql)) {
+		                        while ($obj = $db->fetch_object($resql)) $total_creditnote_and_deposit += $obj->amount_ttc;
+		                } else dol_print_error($db);
+
+				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
 
@@ -824,7 +835,7 @@ if (empty($reshook))
 	/*
 	 * Insert new invoice in database
 	 */
-	else if ($action == 'add' && $usercancreate)
+	elseif ($action == 'add' && $usercancreate)
 	{
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
 
@@ -1648,7 +1659,7 @@ if (empty($reshook))
 	}
 
 	// Add a new line
-	else if ($action == 'addline' && $usercancreate)
+	elseif ($action == 'addline' && $usercancreate)
 	{
 		$langs->load('errors');
 		$error = 0;
@@ -1777,16 +1788,16 @@ if (empty($reshook))
 
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
-				
+
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
-				
+
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
 				$price_base_type = $datapriceofproduct['price_base_type'];
 				$tva_tx = $datapriceofproduct['tva_tx'];
 				$tva_npr = $datapriceofproduct['tva_npr'];
-				
+
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
@@ -2172,7 +2183,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updatealllines' && $usercancreate && $_POST['all_percent'] == $langs->trans('Modifier'))
+	elseif ($action == 'updatealllines' && $usercancreate && $_POST['all_percent'] == $langs->trans('Modifier'))
 	{
 		if (!$object->fetch($id) > 0) dol_print_error($db);
 		if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "")
@@ -2189,7 +2200,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateline' && $usercancreate && $_POST['cancel'] == $langs->trans('Cancel')) {
+	elseif ($action == 'updateline' && $usercancreate && $_POST['cancel'] == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -3283,7 +3294,7 @@ if ($action == 'create')
 
 	print '<br>';
 }
-else if ($id > 0 || ! empty($ref))
+elseif ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Show object in view mode
@@ -4540,7 +4551,7 @@ else if ($id > 0 || ! empty($ref))
 							} else {
 								print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans('Modify') . '</span></div>';
 							}
-						} else if (!$object->is_last_in_cycle()) {
+						} elseif (!$object->is_last_in_cycle()) {
 							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("NotLastInCycle") . '">' . $langs->trans('Modify') . '</span></div>';
 						} else {
 							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Modify') . '</span></div>';
@@ -4758,7 +4769,7 @@ else if ($id > 0 || ! empty($ref))
 			if ($usercancreate && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create&amp;type=5&amp;origin=facture&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '" >' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';
-				} else if (!$object->is_last_in_cycle()) {
+				} elseif (!$object->is_last_in_cycle()) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseNotLastInCycle") . '">' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("DisabledBecauseFinal") . '">' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';

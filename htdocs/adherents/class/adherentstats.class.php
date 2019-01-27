@@ -52,7 +52,7 @@ class AdherentStats extends Stats
 	 * 	@param 		int			$socid	   	Id third party
      * 	@param   	int			$userid    	Id user for filter
 	 */
-	function __construct($db, $socid=0, $userid=0)
+	function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -85,7 +85,7 @@ class AdherentStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of nb each month
 	 */
-	function getNbByMonth($year, $format=0)
+	function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -126,7 +126,7 @@ class AdherentStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of amount each month
 	 */
-	function getAmountByMonth($year, $format=0)
+	function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 

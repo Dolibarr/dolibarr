@@ -58,8 +58,8 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		{
 			$date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
-			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
-			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
 	else
@@ -229,7 +229,7 @@ if($calc ==0 || $calc == 2)
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-		else if ($coll_list == -2)
+		elseif ($coll_list == -2)
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		else
 			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
@@ -305,7 +305,7 @@ if($calc ==0 || $calc == 1){
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-		else if ($coll_list == -2)
+		elseif ($coll_list == -2)
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		else
 			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';

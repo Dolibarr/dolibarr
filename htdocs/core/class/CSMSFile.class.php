@@ -59,7 +59,7 @@ class CSMSFile
 	 *	@param 	int		$priority			Priority
 	 *	@param 	int		$class				Class
 	 */
-	function __construct($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
+	function __construct($to, $from, $msg, $deliveryreceipt = 0, $deferred = 0, $priority = 3, $class = 1)
 	{
 		global $conf;
 
@@ -139,7 +139,7 @@ class CSMSFile
 					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
 			}
-		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+		    elseif (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 		    {
 		        $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
 		        $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);

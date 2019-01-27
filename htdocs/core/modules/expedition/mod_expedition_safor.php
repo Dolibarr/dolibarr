@@ -117,7 +117,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$shipment)
+	function getNextValue($objsoc, $shipment)
 	{
 		global $db,$conf;
 
@@ -158,7 +158,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-	function expedition_get_num($objsoc,$objforref)
+	function expedition_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

@@ -104,7 +104,7 @@ class Invoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -600,7 +600,7 @@ class Invoices extends DolibarrApi
      * @throws 500
      *
      */
-    function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger=0)
+    function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
@@ -650,7 +650,7 @@ class Invoices extends DolibarrApi
      * @throws 500
      *
      */
-    function settodraft($id, $idwarehouse=-1)
+    function settodraft($id, $idwarehouse = -1)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
@@ -702,7 +702,7 @@ class Invoices extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
     		throw new RestException(401);
@@ -753,7 +753,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 500
      */
-    function settopaid($id, $close_code='', $close_note='')
+    function settopaid($id, $close_code = '', $close_note = '')
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
@@ -994,7 +994,7 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='')
+    function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -1114,7 +1114,7 @@ class Invoices extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='')
+    function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 

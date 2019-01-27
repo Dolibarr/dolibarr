@@ -133,7 +133,7 @@ if ($action == 'specimen') {
 if ($action == 'set') {
     $ret = addDocumentModel($value, $type, $label, $scandir);
 }
-else if ($action == 'del') {
+elseif ($action == 'del') {
     $ret = delDocumentModel($value, $type);
     if ($ret > 0) {
         if ($conf->global->BANKADDON_PDF == "$value")
@@ -141,7 +141,7 @@ else if ($action == 'del') {
     }
 }
 // Set default model
-else if ($action == 'setdoc') {
+elseif ($action == 'setdoc') {
     if (dolibarr_set_const($db, "BANKADDON_PDF", $value, 'chaine', 0, '',
                     $conf->entity)) {
         // The constant that was read before the new set

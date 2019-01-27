@@ -83,7 +83,7 @@ if ($action == 'add' || $action == 'update')
         		header("Location: ".$backtopage);
         		exit;
         	}
-            else if ($origin == 'commande')
+            elseif ($origin == 'commande')
             {
                 header("Location: ../commande/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
@@ -112,7 +112,7 @@ if ($action == 'add' || $action == 'update')
     }
 
     // Update address
-    else if ($action == 'update')
+    elseif ($action == 'update')
     {
         $result 	= $object->update($id, $socid, $user);
 
@@ -123,7 +123,7 @@ if ($action == 'add' || $action == 'update')
         		header("Location: ".$backtopage);
         		exit;
         	}
-            else if ($origin == 'commande')
+            elseif ($origin == 'commande')
             {
                 header("Location: ../commande/contact.php?id=".$originid);
                 exit;
@@ -153,7 +153,7 @@ if ($action == 'add' || $action == 'update')
     }
 }
 
-else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
+elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
 {
     $result = $object->delete($id, $socid);
 

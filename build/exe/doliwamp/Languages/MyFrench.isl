@@ -2,47 +2,47 @@
 [CustomMessages]
 
 NameAndVersion=%1 version %2
-Additionalcons=Icï¿½nes supplï¿½mentaires :
-CreateDesktopIcon=Crï¿½er une icï¿½ne sur le &Bureau
-CreateQuickLaunchIcon=Crï¿½er une icï¿½ne dans la barre de &Lancement rapide
+AdditionalIcons=Icônes supplémentaires :
+CreateDesktopIcon=Créer une icône sur le &Bureau
+CreateQuickLaunchIcon=Créer une icône dans la barre de &Lancement rapide
 ProgramOnTheWeb=Page d'accueil de %1
-UninstallProgram=Dï¿½sinstaller %1
-LaunchProgram=Exï¿½cuter %1
+UninstallProgram=Désinstaller %1
+LaunchProgram=Exécuter %1
 AssocFileExtension=&Associer %1 avec l'extension de fichier %2
 AssocingFileExtension=Associe %1 avec l'extension de fichier %2...
 
-YouWillInstallDoliWamp=Vous allez installer ou mettre ï¿½ jour DoliWamp (Apache+Mysql+PHP+Dolibarr) sur votre ordinateur.
-ThisAssistantInstallOrUpgrade=Cet assistant installe ou met ï¿½ jour Dolibarr ERP-CRM et tous ses composants prï¿½requis (Apache, Mysql et PHP) optimisï¿½s pour une utilisation de Dolibarr.
-IfYouHaveTechnicalKnowledge=Si vous cherchez un hï¿½bergement dans le Cloud, aller voir sur https://saas.dolibarr.org. Si vous avez des compï¿½tences techniques et voulez gï¿½rer vous mï¿½me Apache, Mysql et PHP, vous ne devriez pas utiliser cet assistant mais faire plutï¿½t une installation manuelle de Dolibarr sur votre socle Apache, Mysql et PHP existant.
-ButIfYouLook=Mais si vous recherchez une installation automatisï¿½e locale sur votre ordinateur, clï¿½ en main, vous ï¿½tes sur la bonne voie...
-DoYouWantToStart=Voulez-vous dï¿½marrer le processus d'installation/mise ï¿½ jour ?
+YouWillInstallDoliWamp=Vous allez installer ou mettre à jour DoliWamp sur votre ordinateur (donc Dolibarr + tous ses composants prérequis comme Apache, Mysql et PHP).
+ThisAssistantInstallOrUpgrade=AVERTISSEMENT: L'utilisation d'un ERP CRM installé sur un ordinateur local peut être dangereuse: si votre ordinateur tombe en panne, vous pouvez perdre toutes vos données. Faites-le si vous êtes prêt à gérer les sauvegardes vous-même sérieusement. Sinon, utilisez plutôt une installation en Saas (voir https://saas.dolibarr.org).
+IfYouHaveTechnicalKnowledge=De plus, si vous avez des compétences techniques et envisagez de partager votre Apache, Mysql et PHP avec d''autres applications que Dolibarr, vous ne devriez pas utiliser cet assistant mais faire plutôt une installation manuelle de Dolibarr sur un serveur existant équipé de Apache, Mysql et PHP.
+ButIfYouLook=Mais si vous recherchez une installation clé en main automatisée sur une poste local, vous êtes sur la bonne voie...
+DoYouWantToStart=Voulez-vous démarrer le processus d'installation/mise à jour ?
 
-TechnicalParameters=Paramï¿½tres techniques
-IfFirstInstall=S'il s'agit de la premiï¿½re installation, merci de spï¿½cifier ces quelques paramï¿½tres techniques. Si vous ne les comprennez pas, ï¿½tes non sï¿½r, ou procï¿½dez ï¿½ une mise ï¿½ jour, laissez les champs avec les valeurs proposï¿½es par dï¿½faut.
+TechnicalParameters=Paramètres techniques
+IfFirstInstall=S'il s'agit de la première installation, merci de spécifier ces quelques paramètres techniques. Si vous ne les comprennez pas, êtes non sûr, ou procédez à une mise à jour, laissez les champs avec les valeurs proposées par défaut.
 
 
 ; WARNING !!! STRINGS FOR THIS 4 STRINGS MUST BE LOWER THAN 70 CHARACTERS
-SMTPServer=Serveur SMTP (le votre ou de votre FAI, premiï¿½re installation uniquement):
-ApachePort=Port Apache (premiï¿½re installation uniquement, le choix standard est 80):
-MySqlPort=Port Mysql (premiï¿½re installation uniquement, le choix standard est 3306):
-MySqlPassword=Mot de passe serveur+base MySql de root (premiï¿½re installation uniquement):
+SMTPServer=Serveur SMTP (le votre ou de votre FAI, première installation uniquement):
+ApachePort=Port Apache (première installation uniquement, le choix standard est 80):
+MySqlPort=Port Mysql (première installation uniquement, le choix standard est 3306):
+MySqlPassword=Mot de passe serveur+base MySql de root (première installation uniquement):
 
-FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalï¿½. Cliquez sur OK pour continuer...
+FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lock. Vous pouvez ignorer l'avertissement mais il est possible que vous deviez le supprimer manuellement plus tard. Dans ce cas, cela vous sera signalé. Cliquez sur OK pour continuer...
 
-PortAlreadyInUse=Le port %1 semble dï¿½jï¿½ utilisï¿½. Il est recommandï¿½ d'annuler pour revenir en arriï¿½re et spï¿½cifier une autre valeur pour le port %2. Annuler le choix et choisir une autre valeur ?
+PortAlreadyInUse=Le port %1 semble déjà utilisé. Il est recommandé d'annuler pour revenir en arrière et spécifier une autre valeur pour le port %2. Annuler le choix et choisir une autre valeur ?
 
-FirefoxDetected=Firefox a ï¿½tï¿½ dï¿½tectï¿½ sur votre ordinateur. Voulez-vous en faire votre navigateur par dï¿½faut pour Dolibarr ?
-ChromeDetected=Chrome a ï¿½tï¿½ dï¿½tectï¿½ sur votre ordinateur. Voulez-vous en faire votre navigateur par dï¿½faut pour Dolibarr ?
-ChooseDefaultBrowser=Merci de choisir votre navigateur par dï¿½faut. Si vous n'ï¿½tes pas sï¿½r, cliquez simplement sur Ouvrir :
+FirefoxDetected=Firefox a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
+ChromeDetected=Chrome a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
+ChooseDefaultBrowser=Merci de choisir votre navigateur par défaut (iexplore.exe, firefox.exe, chrome.exe, MicrosoftEdge.exe...). Si vous n'êtes pas sûr, cliquez simplement sur Ouvrir :
 
 LaunchNow=Lancer Dolibarr maintenant
 
-ProgramHasBeenRemoved=Les fichiers du programme Dolibarr ont ï¿½tï¿½ supprimï¿½s. Toutefois, tous vos fichiers de donnï¿½es sont toujours dans le rï¿½pertoire %1. Vous devez supprimer ce rï¿½pertoire manuellement pour avoir une dï¿½sinstallation complï¿½te.
+ProgramHasBeenRemoved=Les fichiers du programme Dolibarr ont été supprimés. Toutefois, tous vos fichiers de données sont toujours dans le répertoire %1. Vous devez supprimer ce répertoire manuellement pour avoir une désinstallation complète.
 
-DoliWampWillStartApacheMysql=L'installeur DoliWamp va maintenant dï¿½marrer ou redï¿½marrer Apache et Mysql, ceci peut durer de quelques secondes ï¿½ une minute aprï¿½s cette confirmation. Dï¿½marrer l'installation ou mise ï¿½ jour du serveur web et base de donnï¿½es requis par Dolibarr ?
+DoliWampWillStartApacheMysql=L'installeur DoliWamp va maintenant démarrer ou redémarrer Apache et Mysql, ceci peut durer de quelques secondes à une minute après cette confirmation. Démarrer l'installation ou mise à jour du serveur web et base de données requis par Dolibarr ?
 
-OldVersionFoundAndMoveInNew=Une ancienne version de base a ï¿½tï¿½ trouvï¿½e et dï¿½placï¿½e pour fonctionner avec la nouvelle version de Dolibarr.
-OldVersionFoundButFailedToMoveInNew=Une ancienne version de base a ï¿½tï¿½ trouvï¿½e mais ne peut ï¿½tre dï¿½placï¿½e pour ï¿½tre utilisï¿½e avec la nouvelle version de Dolibarr.
+OldVersionFoundAndMoveInNew=Une ancienne version de base a été trouvée et déplacée pour fonctionner avec la nouvelle version de Dolibarr.
+OldVersionFoundButFailedToMoveInNew=Une ancienne version de base a été trouvée mais ne peut être déplacée pour être utilisée avec la nouvelle version de Dolibarr.
 
-DLLMissing=L'installation de votre Windows est incomplï¿½te. Il manque le composant "Micrsoft Visual C++ Redistributable for Visual Studio 2012". Installer la version 32-bit version (vcredist_x86.exe) d'abord (vous pourrez le trouver ï¿½ https://www.microsoft.com/en-us/download/) puis relancer l'installation de DoliWamp aprÃ¨s.
-ContinueAnyway=Continuer malgrï¿½ tout (le process d'installaton Ã©chouera)
+DLLMissing=L'installation de votre Windows est incomplète. Il manque le composant "Micrsoft Visual C++ Redistributable for Visual Studio 2012". Installer la version 32-bit (vcredist_x86.exe) d'abord (vous pourrez le trouver à https://www.microsoft.com/fr-fr/download/) puis relancer l'installation de DoliWamp après.
+ContinueAnyway=Continuer malgré tout (le process d'installaton échouera)

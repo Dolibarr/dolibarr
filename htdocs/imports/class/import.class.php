@@ -73,7 +73,7 @@ class Import
 	 *  @param  	string	$filter		Load a particular dataset only. Index will start to 0.
  	 *  @return		int					<0 if KO, >0 if OK
 	 */
-	function load_arrays($user,$filter='')
+	function load_arrays($user, $filter = '')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -196,7 +196,7 @@ class Import
 	 *  @param		string	$datatoimport		Dataset to import
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
-	function build_example_file($model, $headerlinefields, $contentlinevalues,$datatoimport)
+	function build_example_file($model, $headerlinefields, $contentlinevalues, $datatoimport)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -316,7 +316,7 @@ class Import
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

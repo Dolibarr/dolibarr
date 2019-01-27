@@ -123,7 +123,7 @@ class mod_task_universal extends ModeleNumRefTask
 	*  @param   Task		$object	    Object task
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$object)
+    function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -153,7 +153,7 @@ class mod_task_universal extends ModeleNumRefTask
      *  @param  Task		$object	    Object task
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc=0,$object='')
+    function project_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $object);

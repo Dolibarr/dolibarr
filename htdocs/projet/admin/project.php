@@ -61,7 +61,7 @@ if ($action == 'setmainoptions')
 	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS", 1, 'chaine', 0, '', $conf->entity);
 }
 
-else if ($action == 'updateMask')
+elseif ($action == 'updateMask')
 {
 	$maskconstproject=GETPOST('maskconstproject', 'alpha');
 	$maskproject=GETPOST('maskproject', 'alpha');
@@ -99,7 +99,7 @@ if ($action == 'updateMaskTask')
 	}
 }
 
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
 
@@ -144,7 +144,7 @@ else if ($action == 'specimen')
 	}
 }
 
-else if ($action == 'specimentask')
+elseif ($action == 'specimentask')
 {
 	$modele=GETPOST('module', 'alpha');
 
@@ -190,17 +190,17 @@ else if ($action == 'specimentask')
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 // Activate a model for task
-else if ($action == 'settask')
+elseif ($action == 'settask')
 {
 	$ret = addDocumentModel($value, 'project_task', $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -218,7 +218,7 @@ if ($action == 'deltask')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	dolibarr_set_const($db, "PROJECT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity);
 
@@ -230,7 +230,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setdoctask')
+elseif ($action == 'setdoctask')
 {
 	if (dolibarr_set_const($db, "PROJECT_TASK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
@@ -247,7 +247,7 @@ else if ($action == 'setdoctask')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -255,7 +255,7 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "PROJECT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-else if ($action == 'setmodtask')
+elseif ($action == 'setmodtask')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated

@@ -86,40 +86,40 @@ if ($id > 0 && $removeelem > 0)
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
 	}
-	else if ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+	elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier';
 	}
-	else if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
+	elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
 	}
-	else if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
+	elseif ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
 	}
-	else if ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
+	elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
 
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
     }
-    else if ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+    elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
     {
         require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
         $tmpobject = new Account($db);
         $result = $tmpobject->fetch($removeelem);
         $elementtype = 'account';
     }
-    else if ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+    elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
     {
         require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         $tmpobject = new Project($db);

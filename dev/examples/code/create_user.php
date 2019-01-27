@@ -80,7 +80,7 @@ if ($idobject > 0)
 		dol_print_error($db, $obj->error);
 	}
 }
-else if ($obj->error == 'ErrorLoginAlreadyExists')
+elseif ($obj->error == 'ErrorLoginAlreadyExists')
 {
      print "User with login ".$obj->login." already exists\n";
 }

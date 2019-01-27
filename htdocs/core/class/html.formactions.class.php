@@ -64,7 +64,7 @@ class FormActions
      *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
+    function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
     {
         // phpcs:enable
         global $langs,$conf;
@@ -168,7 +168,7 @@ class FormActions
      *  @param	string	$morehtmlright			More html text on right of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
-    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='', $morehtmlright='')
+    function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -327,7 +327,7 @@ class FormActions
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
-    function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
+    function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
     {
         // phpcs:enable
         global $langs,$user,$form,$conf;

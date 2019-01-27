@@ -301,7 +301,7 @@ $server->register(
  * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
-function getUser($authentication,$id,$ref='',$ref_ext='')
+function getUser($authentication, $id, $ref = '', $ref_ext = '')
 {
     global $db,$conf,$langs;
 
@@ -473,7 +473,7 @@ function getListOfGroups($authentication)
  * @param	array		$thirdpartywithuser Datas
  * @return	mixed
  */
-function createUserFromThirdparty($authentication,$thirdpartywithuser)
+function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
 	global $db,$conf,$langs;
 
@@ -681,7 +681,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
  * @param	array		$shortuser			Array of login/password info
  * @return	mixed
  */
-function setUserPassword($authentication,$shortuser)
+function setUserPassword($authentication, $shortuser)
 {
 
 	global $db,$conf,$langs;

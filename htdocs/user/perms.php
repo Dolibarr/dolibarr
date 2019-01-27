@@ -350,7 +350,7 @@ if ($result)
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
-        else if (in_array($obj->id, $permsuser))					// Permission granted by user
+        elseif (in_array($obj->id, $permsuser))					// Permission granted by user
         {
         	if ($caneditperms)
         	{
@@ -361,7 +361,7 @@ if ($result)
         	print '</td>';
         }
 
-        else if (is_array($permsgroupbyentity[$entity]))
+        elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
 	        {

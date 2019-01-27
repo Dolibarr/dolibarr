@@ -130,7 +130,7 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
     ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 )

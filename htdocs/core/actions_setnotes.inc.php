@@ -32,7 +32,7 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 {
 	if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	if (empty($object->id)) $object->fetch($id);	// Fetch may not be already done
-	
+
 	$result_update=$object->update_note(dol_html_entity_decode(GETPOST('note_public', 'none'), ENT_QUOTES), '_public');
 
 	if ($result_update < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -55,15 +55,13 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 			$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 			$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			
+
 			if ($result < 0) dol_print_error($db, $result);
 		}
 	}
-}
-// Set public note
-else if ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('cancel', 'alpha'))
-{
-	if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
+} elseif ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('cancel', 'alpha')) {
+    // Set public note
+    if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
 	if (empty($object->id)) $object->fetch($id);	// Fetch may not be already done
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES), '_private');
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');

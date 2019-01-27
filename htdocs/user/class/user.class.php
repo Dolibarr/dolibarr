@@ -219,7 +219,7 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id='', $login='', $sid='', $loadpersonalconf=0, $entity=-1)
+	function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
 	{
 		global $conf, $user;
 
@@ -279,7 +279,7 @@ class User extends CommonObject
 		{
 			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
-		else if ($login)
+		elseif ($login)
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
@@ -501,7 +501,7 @@ class User extends CommonObject
 	 *  @return int						> 0 if OK, < 0 if KO
 	 *  @see	clearrights, delrights, getrights
 	 */
-	function addrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
+	function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -538,7 +538,7 @@ class User extends CommonObject
 			$whereforadd="id=".$this->db->escape($rid);
 			// Ajout des droits induits
 			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			elseif (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 		}
 		else {
 			// On a pas demande un droit en particulier mais une liste de droits
@@ -627,7 +627,7 @@ class User extends CommonObject
 	 *  @return int         		> 0 if OK, < 0 if OK
 	 *  @see	clearrights, addrights, getrights
 	 */
-	function delrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
+	function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -762,7 +762,7 @@ class User extends CommonObject
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
 	 */
-	function getrights($moduletag='', $forcereload=0)
+	function getrights($moduletag = '', $forcereload = 0)
 	{
 		global $conf;
 
@@ -1102,7 +1102,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1236,7 +1236,7 @@ class User extends CommonObject
 	 *  @param  string	$password   Password to force
 	 *  @return int 				<0 if error, if OK returns id of created user
 	 */
-	function create_from_contact($contact,$login='',$password='')
+	function create_from_contact($contact, $login = '', $password = '')
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1316,7 +1316,7 @@ class User extends CommonObject
 	 * 	@param	string		$login		Login to force
 	 *  @return int						<0 if KO, if OK, return id of created account
 	 */
-	function create_from_member($member,$login='')
+	function create_from_member($member, $login = '')
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1438,7 +1438,7 @@ class User extends CommonObject
 	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
-	function update($user, $notrigger=0, $nosyncmember=0, $nosyncmemberpass=0, $nosynccontact=0)
+	function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
 	{
 		global $conf, $langs;
 
@@ -1777,7 +1777,7 @@ class User extends CommonObject
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
+	function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/security2.lib.php';
@@ -1909,7 +1909,7 @@ class User extends CommonObject
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
-	function send_password($user, $password='', $changelater=0)
+	function send_password($user, $password = '', $changelater = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -2102,7 +2102,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
-	function SetInGroup($group, $entity, $notrigger=0)
+	function SetInGroup($group, $entity, $notrigger = 0)
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -2164,7 +2164,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
 	 */
-	function RemoveFromGroup($group, $entity, $notrigger=0)
+	function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -2224,7 +2224,7 @@ class User extends CommonObject
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($width, $height, $cssclass='', $imagesize='')
+	function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
 		$result ='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
@@ -2248,7 +2248,7 @@ class User extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $db, $hookmanager, $user;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -2385,7 +2385,7 @@ class User extends CommonObject
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
-	function getLoginUrl($withpicto=0,$option='')
+	function getLoginUrl($withpicto = 0, $option = '')
 	{
 		global $langs, $user;
 
@@ -2422,7 +2422,7 @@ class User extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
@@ -2435,7 +2435,7 @@ class User extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2484,7 +2484,7 @@ class User extends CommonObject
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
-	function _load_ldap_dn($info,$mode=0)
+	function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2735,7 +2735,7 @@ class User extends CommonObject
 	 *  @param	int		$admin		Filter on admin tag
 	 *  @return int  				Number of users
 	 */
-	function getNbOfUsers($limitTo, $option='', $admin=-1)
+	function getNbOfUsers($limitTo, $option = '', $admin = -1)
 	{
 		global $conf;
 
@@ -2891,7 +2891,7 @@ class User extends CommonObject
 	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
-	function get_full_tree($deleteafterid=0, $filter='')
+	function get_full_tree($deleteafterid = 0, $filter = '')
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -2993,7 +2993,7 @@ class User extends CommonObject
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
 	 *  @see get_children
 	 */
-	function getAllChildIds($addcurrentuser=0)
+	function getAllChildIds($addcurrentuser = 0)
 	{
 		$childids=array();
 
@@ -3031,7 +3031,7 @@ class User extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
 	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
 	 */
-	function build_path_from_id_user($id_user,$protection=0)
+	function build_path_from_id_user($id_user, $protection = 0)
 	{
         // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
@@ -3134,7 +3134,7 @@ class User extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $user, $langs;
 
@@ -3166,7 +3166,7 @@ class User extends CommonObject
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
-	function user_get_property($rowid,$mode)
+	function user_get_property($rowid, $mode)
 	{
         // phpcs:enable
 		$user_property='';
@@ -3187,7 +3187,7 @@ class User extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
-				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+				elseif ($mode == 'mobile') $user_property = $obj->user_mobile;
 			}
 			return $user_property;
 		}
@@ -3208,7 +3208,7 @@ class User extends CommonObject
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
 	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
+	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND')
 	{
 		global $conf;
 

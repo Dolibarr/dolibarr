@@ -215,7 +215,7 @@ class Projects extends DolibarrApi
      *
      * @url	GET {id}/tasks
      */
-    function getLines($id, $includetimespent=0)
+    function getLines($id, $includetimespent = 0)
     {
       if(! DolibarrApiAccess::$user->rights->projet->lire) {
 		  	throw new RestException(401);
@@ -258,7 +258,7 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function getRoles($id, $userid=0)
+    function getRoles($id, $userid = 0)
     {
         global $db;
 
@@ -503,7 +503,7 @@ class Projects extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $notrigger=0)
+    function validate($id, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);

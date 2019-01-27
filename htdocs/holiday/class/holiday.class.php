@@ -250,7 +250,7 @@ class Holiday extends CommonObject
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *   @return    int			         	<0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf;
 		$error=0;
@@ -336,7 +336,7 @@ class Holiday extends CommonObject
 	 *  @param	string	$ref        Ref object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $ref='')
+	function fetch($id, $ref = '')
 	{
 		global $langs;
 
@@ -420,7 +420,7 @@ class Holiday extends CommonObject
 	 *  @param      string			$filter     SQL Filter
 	 *  @return     int      					-1 if KO, 1 if OK, 2 if no result
 	 */
-	function fetchByUser($user_id, $order='', $filter='')
+	function fetchByUser($user_id, $order = '', $filter = '')
 	{
 		global $langs, $conf;
 
@@ -548,7 +548,7 @@ class Holiday extends CommonObject
 	 *  @param      string	$filter     SQL Filter
 	 *  @return     int      			-1 if KO, 1 if OK, 2 if no result
 	 */
-	function fetchAll($order,$filter)
+	function fetchAll($order, $filter)
 	{
 		global $langs;
 
@@ -674,7 +674,7 @@ class Holiday extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function validate($user=null, $notrigger=0)
+	function validate($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -745,7 +745,7 @@ class Holiday extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function approve($user=null, $notrigger=0)
+	function approve($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -858,7 +858,7 @@ class Holiday extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -972,7 +972,7 @@ class Holiday extends CommonObject
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	 @return	int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -1030,7 +1030,7 @@ class Holiday extends CommonObject
 	 * 	@return boolean					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
 	 *  @see verifDateHolidayForTimestamp
 	 */
-	function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday=0)
+	function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday = 0)
 	{
 		$this->fetchByUser($fk_user, '', '');
 
@@ -1112,7 +1112,7 @@ class Holiday extends CommonObject
 	 * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
 	 *  @see verifDateHolidayCP
 	 */
-	function verifDateHolidayForTimestamp($fk_user, $timestamp, $status='-1')
+	function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
 	{
 		global $langs, $conf;
 
@@ -1175,7 +1175,7 @@ class Holiday extends CommonObject
 	 *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
 		global $langs;
 
@@ -1211,7 +1211,7 @@ class Holiday extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode, $this->date_debut);
 	}
@@ -1225,7 +1225,7 @@ class Holiday extends CommonObject
 	 *  @param		date	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
-	function LibStatut($statut, $mode=0, $startdate='')
+	function LibStatut($statut, $mode = 0, $startdate = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -1290,7 +1290,7 @@ class Holiday extends CommonObject
 	 *   @param		string	$htmlname		Name of HTML select field
 	 *   @return    string					Show select of status
 	 */
-    function selectStatutCP($selected='', $htmlname='select_statut')
+    function selectStatutCP($selected = '', $htmlname = 'select_statut')
     {
 
 		global $langs;
@@ -1324,7 +1324,7 @@ class Holiday extends CommonObject
 	 *  @param	string	$value      vrai si mise à jour OK sinon faux
 	 *  @return boolean				ok or ko
 	 */
-    function updateConfCP($name,$value)
+    function updateConfCP($name, $value)
     {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
@@ -1348,7 +1348,7 @@ class Holiday extends CommonObject
 	 *  @param  string  $createifnotfound     'stringvalue'=Create entry with string value if not found. For example 'YYYYMMDDHHMMSS'.
 	 *  @return string      		          Value of parameter. Example: 'YYYYMMDDHHMMSS' or < 0 if error
 	 */
-	function getConfCP($name, $createifnotfound='')
+	function getConfCP($name, $createifnotfound = '')
 	{
 		$sql = "SELECT value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
@@ -1403,7 +1403,7 @@ class Holiday extends CommonObject
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
-	function updateSoldeCP($userID='',$nbHoliday='', $fk_type='')
+	function updateSoldeCP($userID = '', $nbHoliday = '', $fk_type = '')
 	{
 		global $user, $langs;
 
@@ -1579,7 +1579,7 @@ class Holiday extends CommonObject
 	 *  @param	int			$userid		Id user
 	 *  @return void
 	 */
-	function createCPusers($single=false,$userid='')
+	function createCPusers($single = false, $userid = '')
 	{
 		// Si c'est l'ensemble des utilisateurs à ajouter
 		if (! $single)
@@ -1631,7 +1631,7 @@ class Holiday extends CommonObject
 	 *  @param	int		$fk_type	Filter on type
 	 *  @return float        		Retourne le solde de congés payés de l'utilisateur
 	 */
-	function getCPforUser($user_id, $fk_type=0)
+	function getCPforUser($user_id, $fk_type = 0)
 	{
 		$sql = "SELECT nb_holiday";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users";
@@ -1661,7 +1661,7 @@ class Holiday extends CommonObject
 	 *    @param      string            $filters        Filters
 	 *    @return     array|string|int      			Return an array
 	 */
-	function fetchUsers($stringlist=true, $type=true, $filters='')
+	function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
 		global $conf;
 
@@ -2045,7 +2045,7 @@ class Holiday extends CommonObject
 	 *  @param  string	$filter     Filtre de séléction
 	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
 	 */
-	function fetchLog($order,$filter)
+	function fetchLog($order, $filter)
 	{
 		global $langs;
 
@@ -2122,7 +2122,7 @@ class Holiday extends CommonObject
 	 *  @param		int		$affect		Filter on affect (a request will change sold or not). -1 = Both
 	 *  @return     array	    		Return array with list of types
 	 */
-	function getTypes($active=-1, $affect=-1)
+	function getTypes($active = -1, $affect = -1)
 	{
 		global $mysoc;
 

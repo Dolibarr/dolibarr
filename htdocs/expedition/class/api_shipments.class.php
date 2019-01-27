@@ -493,7 +493,7 @@ class Shipments extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $notrigger=0)
+    function validate($id, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 			throw new RestException(401);

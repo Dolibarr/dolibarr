@@ -19,12 +19,12 @@
 /**
  *  \file       htdocs/core/modules/expensereport/mod_expensereport_jade.php
  *  \ingroup    expensereport
- *  \brief      File of class to manage customer order numbering rules Jade
+ *  \brief      File of class to manage expensereport numbering rules Jade
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expensereport.php';
 
 /**
- *	Class to manage customer order numbering rules Jade
+ *	Class to manage expensereport numbering rules Jade
  */
 class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
@@ -55,7 +55,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
     /**
-     *  Return description of numbering module
+     *  Return description of numbering model
      *
      *  @return     string      Text with description
      */
@@ -67,7 +67,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Returns an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
@@ -78,8 +78,8 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
 	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Test whether the numbers already in force in the base do not cause conflicts 
+	 *  that would prevent this numbering from working.
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
@@ -174,7 +174,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			return $newref;
 		}
 
-		// D'abord on recupere la valeur max
+		// First we get the max value
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport";

@@ -100,7 +100,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object, $outputlangs)
 	{
         // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -285,7 +285,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf,$mysoc;
 
@@ -387,7 +387,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

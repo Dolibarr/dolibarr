@@ -90,7 +90,7 @@ if (! $id && empty($ref))
         //$title=$langs->trans("StatisticsOfProducts");
         $title=$langs->trans("Statistics");
     }
-    else if ($type == '1')
+    elseif ($type == '1')
     {
         $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
         //$title=$langs->trans("StatisticsOfServices");

@@ -56,7 +56,7 @@ if ($id > 0 || ! empty($ref))
 		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$error++;
 	}
-	else if ($ret < 0)
+	elseif ($ret < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 		$error++;
@@ -105,7 +105,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->propale->creer)
+elseif ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	if ($object->id > 0)
 	{
@@ -114,7 +114,7 @@ else if ($action == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Deletes a contact
-else if ($action == 'deletecontact' && $user->rights->propale->creer)
+elseif ($action == 'deletecontact' && $user->rights->propale->creer)
 {
 	$result = $object->delete_contact($lineid);
 

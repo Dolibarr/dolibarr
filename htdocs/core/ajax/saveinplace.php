@@ -79,14 +79,14 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 
 	if ($element == 'propal') $newelement = 'propale';
-	else if ($element == 'fichinter') $newelement = 'ficheinter';
-	else if ($element == 'product') $newelement = 'produit';
-	else if ($element == 'member') $newelement = 'adherent';
-	else if ($element == 'order_supplier') {
+	elseif ($element == 'fichinter') $newelement = 'ficheinter';
+	elseif ($element == 'product') $newelement = 'produit';
+	elseif ($element == 'member') $newelement = 'adherent';
+	elseif ($element == 'order_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'commande';
 	}
-	else if ($element == 'invoice_supplier') {
+	elseif ($element == 'invoice_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -131,13 +131,13 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		}
-		else if ($type == 'datepicker')
+		elseif ($type == 'datepicker')
 		{
 			$timestamp	= GETPOST('timestamp', 'int', 2);
 			$format		= 'date';
 			$newvalue	= ($timestamp / 1000);
 		}
-		else if ($type == 'select')
+		elseif ($type == 'select')
 		{
 			$loadmethodname	= 'load_cache_'.$loadmethod;
 			$loadcachename	= 'cache_'.$loadmethod;
@@ -211,7 +211,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			if ($ret > 0)
 			{
 				if ($type == 'numeric') $value = price($newvalue);
-				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
+				elseif ($type == 'textarea') $value = dol_nl2br($newvalue);
 
 				$return['value'] = $value;
 				$return['view'] = (! empty($view) ? $view : $value);

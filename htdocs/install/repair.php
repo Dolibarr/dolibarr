@@ -617,32 +617,32 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance=new Facture($db);
         }
-        else if ($modulepart == 'invoice_supplier')
+        elseif ($modulepart == 'invoice_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance=new FactureFournisseur($db);
         }
-        else if ($modulepart == 'propal')
+        elseif ($modulepart == 'propal')
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($db);
         }
-        else if ($modulepart == 'order')
+        elseif ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance=new Commande($db);
         }
-        else if ($modulepart == 'order_supplier')
+        elseif ($modulepart == 'order_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance=new CommandeFournisseur($db);
         }
-        else if ($modulepart == 'contract')
+        elseif ($modulepart == 'contract')
         {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($db);
         }
-        else if ($modulepart == 'tax')
+        elseif ($modulepart == 'tax')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($db);
@@ -702,7 +702,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
                         }
                         print "</td></tr>";
                     }
-                    else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+                    elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
                 }
             }
         }

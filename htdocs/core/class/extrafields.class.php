@@ -171,7 +171,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list='-1', $help='', $computed='', $entity='', $langfile='', $enabled='1')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -221,7 +221,7 @@ class ExtraFields
 	 *  @param  string  $computed           Computed value
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='', $perms='', $list='0', $computed='')
+	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -317,7 +317,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list='-1', $help='', $default='', $computed='',$entity='', $langfile='', $enabled='1')
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
 	{
         // phpcs:enable
 		global $conf,$user;
@@ -414,7 +414,7 @@ class ExtraFields
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete($attrname, $elementtype='member')
+	function delete($attrname, $elementtype = 'member')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -472,7 +472,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @return int              			< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	private function delete_label($attrname, $elementtype='member')
+	private function delete_label($attrname, $elementtype = 'member')
 	{
         // phpcs:enable
 		global $conf;
@@ -529,7 +529,7 @@ class ExtraFields
      *  @param  int     $totalizable        Is extrafield totalizable on list
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $help='', $default='', $computed='', $entity='', $langfile='', $enabled='1', $totalizable=0)
+	function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -639,7 +639,7 @@ class ExtraFields
      *  @param  int     $totalizable        Is extrafield totalizable on list
      *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list='0',$help='',$default='',$computed='',$entity='',$langfile='',$enabled='1', $totalizable=0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -770,7 +770,7 @@ class ExtraFields
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
-	function fetch_name_optionals_label($elementtype,$forceload=false)
+	function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
         // phpcs:enable
 		global $conf;
@@ -893,7 +893,7 @@ class ExtraFields
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return string
 	 */
-	function showInputField($key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss='', $objectid=0, $extrafieldsobjectkey='')
+	function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs,$form;
 
@@ -979,7 +979,7 @@ class ExtraFields
 				{
 					$morecss = 'minwidth100';
 				}
-				else if (round($size) <= 48)
+				elseif (round($size) <= 48)
 				{
 					$morecss = 'minwidth200';
 				}
@@ -1333,7 +1333,7 @@ class ExtraFields
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$', $objectid, $InfoFieldList[4]);
-					} else if (preg_match("#^.*list.php$#", $_SERVER["DOCUMENT_URI"])) {
+					} elseif (preg_match("#^.*list.php$#", $_SERVER["DOCUMENT_URI"])) {
 						// Pattern for word=$ID$
 						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
@@ -1371,7 +1371,7 @@ class ExtraFields
 									$boolCond =(( $matchCondition[1] == "AND" )?' AND 1 ':' OR 0 ');
 									$InfoFieldList[4]=str_replace($matchCondition[0], $boolCond.$matchCondition[3], $InfoFieldList[4]);
 								}
-								else if (! empty($matchCondition[3])) {
+								elseif (! empty($matchCondition[3])) {
 									$boolCond =(( $matchCondition[3] == "AND" )?' 1 AND ':' 0 OR');
 									$InfoFieldList[4]=str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
 								}
@@ -1508,7 +1508,7 @@ class ExtraFields
 	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
-	function showOutputField($key, $value, $moreparam='', $extrafieldsobjectkey='')
+	function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs;
 
@@ -1820,7 +1820,7 @@ class ExtraFields
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
-	function getAlignFlag($key, $extrafieldsobjectkey='')
+	function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs;
 
@@ -1890,7 +1890,7 @@ class ExtraFields
 	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	function setOptionalsFromPost($extralabels, &$object, $onlykey='')
+	function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
 		$nofillrequired='';// For error when required field left blank
@@ -1945,7 +1945,7 @@ class ExtraFields
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
 				}
-				else if (in_array($key_type, array('checkbox','chkbxlst')))
+				elseif (in_array($key_type, array('checkbox','chkbxlst')))
 				{
 					$value_arr=GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -1954,7 +1954,7 @@ class ExtraFields
 						$value_key='';
 					}
 				}
-				else if (in_array($key_type, array('price','double')))
+				elseif (in_array($key_type, array('price','double')))
 				{
 					$value_arr=GETPOST("options_".$key, 'alpha');
 					$value_key=price2num($value_arr);
@@ -1989,7 +1989,7 @@ class ExtraFields
 	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int								array_options set or 0 if no value
 	 */
-	function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix='', $keysuffix='')
+	function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
 	{
 		global $_POST;
 
@@ -2020,14 +2020,22 @@ class ExtraFields
 					// Clean parameters
 					$value_key=dol_mktime($_POST[$keysuffix."options_".$key.$keyprefix."hour"], $_POST[$keysuffix."options_".$key.$keyprefix."min"], 0, $_POST[$keysuffix."options_".$key.$keyprefix."month"], $_POST[$keysuffix."options_".$key.$keyprefix."day"], $_POST[$keysuffix."options_".$key.$keyprefix."year"]);
 				}
+<<<<<<< HEAD
 				else if (in_array($key_type, array('checkbox', 'chkbxlst')))
+=======
+				elseif (in_array($key_type,array('checkbox', 'chkbxlst')))
+>>>>>>> upstream/develop
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr=(array) $value_arr;
 					$value_key=implode(',', $value_arr);
 				}
+<<<<<<< HEAD
 				else if (in_array($key_type, array('price','double')))
+=======
+				elseif (in_array($key_type,array('price','double')))
+>>>>>>> upstream/develop
 				{
 					$value_arr=GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key=price2num($value_arr);

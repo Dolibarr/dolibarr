@@ -393,7 +393,7 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function getLibStatut($mode=0,$alreadypaid=-1)
+	function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
 		return $this->LibStatut($this->paid, $mode, $alreadypaid);
 	}
@@ -407,7 +407,7 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function LibStatut($statut,$mode=0,$alreadypaid=-1)
+	function LibStatut($statut, $mode = 0, $alreadypaid = -1)
 	{
         // phpcs:enable
 		global $langs;
@@ -460,7 +460,7 @@ class Loan extends CommonObject
 	 *  @param	int		$maxlen			Label max length
 	 *  @return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 

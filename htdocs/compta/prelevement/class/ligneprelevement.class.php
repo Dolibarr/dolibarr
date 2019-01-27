@@ -123,7 +123,7 @@ class LignePrelevement
 	 *    @param	int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
@@ -136,7 +136,7 @@ class LignePrelevement
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;

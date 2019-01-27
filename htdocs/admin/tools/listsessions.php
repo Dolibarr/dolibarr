@@ -115,7 +115,7 @@ if ($action == 'purge')
 	$formquestion=array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
 }
-else if ($action == 'lock')
+elseif ($action == 'lock')
 {
 	$formquestion=array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);

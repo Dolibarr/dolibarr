@@ -104,9 +104,7 @@ if ($action === 'downloadblockchain') {
 	echo $bc;
 
 	exit;
-}
-else if (GETPOST('downloadcsv', 'alpha'))
-{
+} elseif (GETPOST('downloadcsv', 'alpha')) {
 	$error = 0;
 
 	$previoushash='';

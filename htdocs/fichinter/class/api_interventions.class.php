@@ -334,7 +334,7 @@ class Interventions extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $notrigger=0)
+    function validate($id, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");

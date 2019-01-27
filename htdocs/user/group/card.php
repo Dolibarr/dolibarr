@@ -472,15 +472,17 @@ else
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-						if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"), 'redstar');
-						else if ($useringroup->admin) print img_picto($langs->trans("Administrator"), 'star');
+						if ($useringroup->admin  && ! $useringroup->entity) {
+                            print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+                        } elseif ($useringroup->admin) {
+                            print img_picto($langs->trans("Administrator"), 'star');
+                        }
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
 						print '<td>'.$useringroup->firstname.'</td>';
 						print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
 						print '<td align="right">';
-						if (! empty($user->admin))
-						{
+						if (! empty($user->admin)) {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';

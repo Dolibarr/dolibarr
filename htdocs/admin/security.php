@@ -108,7 +108,7 @@ if ($action == 'activate_encrypt')
 		dol_print_error($db, '');
 	}
 }
-else if ($action == 'disable_encrypt')
+elseif ($action == 'disable_encrypt')
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	//Do not allow "disable encryption" as passwords cannot be decrypted
@@ -137,7 +137,7 @@ if ($action == 'activate_encryptdbpassconf')
 		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
 	}
 }
-else if ($action == 'disable_encryptdbpassconf')
+elseif ($action == 'disable_encryptdbpassconf')
 {
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
@@ -161,7 +161,7 @@ if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 	header("Location: security.php");
 	exit;
 }
-else if ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", $conf->entity);
 	header("Location: security.php");

@@ -1074,7 +1074,7 @@ if (! function_exists("llxHeader"))
 	 * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
 	 * @return	void
 	 */
-	function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $morecssonbody='', $replacemainareaby='')
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '')
 	{
 		global $conf;
 
@@ -1112,7 +1112,7 @@ if (! function_exists("llxHeader"))
  *  @param	int		$forcenocache	Force disabling of cache for the page
  *  @return	void
  */
-function top_httphead($contenttype='text/html', $forcenocache=0)
+function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 {
 	global $db, $conf, $hookmanager;
 
@@ -1178,7 +1178,7 @@ function top_httphead($contenttype='text/html', $forcenocache=0)
  * @param   int     $disablenofollow Disable no follow tag
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disablejmobile = 0, $disablenofollow = 0)
 {
 	global $db, $conf, $langs, $user, $hookmanager;
 
@@ -1226,7 +1226,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<title>';
 		$titletoshow='';
 		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/', $conf->global->MAIN_HTML_TITLE)) $titletoshow = dol_htmlentities($title);
-		else if ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
+		elseif ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
 		else $titletoshow = dol_htmlentities($appli);
 
 		$parameters=array('title'=>$titletoshow);
@@ -1501,7 +1501,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  * 						                    For other external page: http://server/url
  *  @return		void
  */
-function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $helppagename='')
+function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $helppagename = '')
 {
 	global $user, $conf, $langs, $db;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1706,7 +1706,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  string  $acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
  *  @return	void
  */
-function left_menu($menu_array_before, $helppagename='', $notused='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='', $acceptdelayedhtml=0)
+function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_array_after = '', $leftmenuwithoutmainarea = 0, $title = '', $acceptdelayedhtml = 0)
 {
 	global $user, $conf, $langs, $db, $form;
 	global $hookmanager, $menumanager;
@@ -1883,7 +1883,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
  *  @param	string	$title		Title
  *  @return	void
  */
-function main_area($title='')
+function main_area($title = '')
 {
 	global $conf, $langs;
 
@@ -1904,7 +1904,7 @@ function main_area($title='')
  *  @param  Translate	$langs				Language
  *  @return	array		Array of help urls
  */
-function getHelpParamFor($helppagename,$langs)
+function getHelpParamFor($helppagename, $langs)
 {
 	$helpbaseurl='';
 	$helppage='';
@@ -1957,7 +1957,7 @@ function getHelpParamFor($helppagename,$langs)
  *  @param	string	$autofocus			Set autofocus on field
  *  @return	string
  */
-function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='', $showtitlebefore=0, $autofocus=0)
+function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey = '', $prefhtmlinputname = '', $img = '', $showtitlebefore = 0, $autofocus = 0)
 {
 	global $conf,$langs,$user;
 
@@ -1994,7 +1994,7 @@ if (! function_exists("llxFooter"))
 	 * @param	int		$disabledoutputofmessages	Clear all messages stored into session without diplaying them
 	 * @return	void
 	 */
-	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
+	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent;

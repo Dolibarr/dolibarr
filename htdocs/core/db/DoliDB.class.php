@@ -75,7 +75,7 @@ abstract class DoliDB implements Database
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
 	 */
-	function ifsql($test,$resok,$resko)
+	function ifsql($test, $resok, $resko)
 	{
 		return 'IF('.$test.','.$resok.','.$resko.')';
 	}
@@ -135,7 +135,7 @@ abstract class DoliDB implements Database
 	 * @param	string	$log		Add more log to default log line
 	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit($log='')
+	function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
@@ -165,7 +165,7 @@ abstract class DoliDB implements Database
 	 * 	@param	string			$log		Add more log to default log line
 	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback($log='')
+	function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
@@ -189,7 +189,7 @@ abstract class DoliDB implements Database
 	 *	@param	int		$offset     Numero of line from where starting fetch
 	 *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
-	function plimit($limit=0,$offset=0)
+	function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
 		if (empty($limit)) return "";
@@ -225,7 +225,7 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	function order($sortfield=null,$sortorder=null)
+	function order($sortfield = null, $sortorder = null)
 	{
 		if (! empty($sortfield))
 		{
@@ -278,7 +278,7 @@ abstract class DoliDB implements Database
 	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	function jdate($string, $gm=false)
+	function jdate($string, $gm = false)
 	{
 		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';

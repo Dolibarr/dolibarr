@@ -90,7 +90,7 @@ class mailing_fraise extends MailingTargets
      *  @param    string    $sql        Requete sql de comptage
      *    @return        int            Nb of recipients
      */
-    function getNbOfRecipients($sql='')
+    function getNbOfRecipients($sql = '')
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";

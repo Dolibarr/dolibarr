@@ -163,7 +163,7 @@ class ExportCsv extends ModeleExports
 	 * 	@param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
-	function open_file($file,$outputlangs)
+	function open_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $langs;
@@ -208,7 +208,7 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
+	function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;
@@ -244,7 +244,7 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
+	function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;

@@ -76,7 +76,7 @@ class mailing_xinputuser extends MailingTargets
 	 *  @param      string	$sql   	Sql request to count
 	 *	@return		string			'' means NA
 	 */
-	function getNbOfRecipients($sql='')
+	function getNbOfRecipients($sql = '')
 	{
 		return '';
 	}

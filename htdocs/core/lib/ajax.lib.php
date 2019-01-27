@@ -43,7 +43,7 @@
  *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
-function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
+function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array())
 {
     if (empty($minLength)) $minLength=1;
 
@@ -221,7 +221,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
  *	@param	int		$autoselect			Automatic selection if just one value
  *	@return string              		Script
  */
-function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLength=2, $autoselect=0)
+function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLength = 2, $autoselect = 0)
 {
 	$script = '<!-- Autocomplete -->'."\n";
 	$script.= '<script>';
@@ -328,7 +328,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
  *	@param	int		$h			height of dialog box
  *	@return	void
  */
-function ajax_dialog($title,$message,$w=350,$h=150)
+function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
 	global $langs;
 
@@ -371,7 +371,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax of html.form.class
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve')
 {
 	global $conf;
 
@@ -481,7 +481,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
  *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
  * 	@return	string
  */
-function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0, $strict=0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0)
 {
 	global $conf, $langs;
 
@@ -549,7 +549,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return string              html for button on/off
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array())
 {
     global $langs;
 

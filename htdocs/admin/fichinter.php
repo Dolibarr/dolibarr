@@ -70,7 +70,7 @@ if ($action == 'updateMask')
     }
 }
 
-else if ($action == 'specimen') // For fiche inter
+elseif ($action == 'specimen') // For fiche inter
 {
 	$modele= GETPOST('module', 'alpha');
 
@@ -116,12 +116,12 @@ else if ($action == 'specimen') // For fiche inter
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -131,7 +131,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
@@ -148,7 +148,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -156,7 +156,7 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "FICHEINTER_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-else if ($action == 'set_FICHINTER_FREE_TEXT')
+elseif ($action == 'set_FICHINTER_FREE_TEXT')
 {
 	$freetext= GETPOST('FICHINTER_FREE_TEXT', 'none');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
@@ -173,7 +173,7 @@ else if ($action == 'set_FICHINTER_FREE_TEXT')
     }
 }
 
-else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
+elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);

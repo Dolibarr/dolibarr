@@ -122,12 +122,12 @@ if ($action == 'specimen')  // For invoices
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -137,7 +137,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
     {
@@ -153,7 +153,7 @@ else if ($action == 'setdoc')
         $ret = addDocumentModel($value, $type, $label, $scandir);
     }
 }
-else if ($action == 'unsetdoc')
+elseif ($action == 'unsetdoc')
 {
     dolibarr_del_const($db, "INVOICE_SUPPLIER_ADDON_PDF", $conf->entity);
 }

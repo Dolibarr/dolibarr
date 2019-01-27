@@ -163,7 +163,7 @@ class ModeleImports
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");

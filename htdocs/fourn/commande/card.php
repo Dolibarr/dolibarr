@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db, $object->error);
 }
-else if (! empty($socid) && $socid > 0)
+elseif (! empty($socid) && $socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$ret=$fourn->fetch($socid);
@@ -170,12 +170,12 @@ if (empty($reshook))
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $user->rights->fournisseur->commande->creer) {
+	elseif ($action == 'setmulticurrencycode' && $user->rights->fournisseur->commande->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $user->rights->fournisseur->commande->creer) {
+	elseif ($action == 'setmulticurrencyrate' && $user->rights->fournisseur->commande->creer) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
@@ -211,10 +211,10 @@ if (empty($reshook))
 		if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9)))
 		{
 			if ($object->statut == 1) $newstatus=0;	// Validated->Draft
-			else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
-			else if ($object->statut == 3) $newstatus=2;	// Ordered->Approved
-			else if ($object->statut == 4) $newstatus=3;
-			else if ($object->statut == 5)
+			elseif ($object->statut == 2) $newstatus=0;	// Approved->Draft
+			elseif ($object->statut == 3) $newstatus=2;	// Ordered->Approved
+			elseif ($object->statut == 4) $newstatus=3;
+			elseif ($object->statut == 5)
 			{
 				//$newstatus=2;    // Ordered
 				// TODO Can we set it to submited ?
@@ -222,9 +222,9 @@ if (empty($reshook))
 				// TODO If there is at least one reception, we can set to Received->Received partially
 				$newstatus=4;  // Received partially
 			}
-			else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
-			else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
-			else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
+			elseif ($object->statut == 6) $newstatus=2;	// Canceled->Approved
+			elseif ($object->statut == 7) $newstatus=3;	// Canceled->Process running
+			elseif ($object->statut == 9) $newstatus=1;	// Refused->Validated
 			else $newstatus = 2;
 
 			//print "old status = ".$object->statut.' new status = '.$newstatus;
@@ -458,7 +458,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 			}
 		}
-		else if (empty($error)) // $price_ht is already set
+		elseif (empty($error)) // $price_ht is already set
 		{
 			$pu_ht = price2num($price_ht, 'MU');
 			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -921,7 +921,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("DeliveryStateSaved"), null);
 				$action = '';
 			}
-			else if($result == -3)
+			elseif($result == -3)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1235,13 +1235,11 @@ if (empty($reshook))
 		//Is sync supplier web services module activated? and everything filled?
 		if (empty($conf->syncsupplierwebservices->enabled)) {
 			setEventMessages($langs->trans("WarningModuleNotActive", $langs->transnoentities("Module2650Name")), null, 'mesgs');
-		} else if (empty($ws_url) || empty($ws_key)) {
+		} elseif (empty($ws_url) || empty($ws_key)) {
 			setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
-		} else if (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
+		} elseif (empty($ws_user) || empty($ws_password) || empty($ws_thirdparty)) {
 			setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			//Create SOAP client and connect it to order
 			$soapclient_order = new nusoap_client($ws_url."/webservices/server_order.php");
 			$soapclient_order->soap_defencoding='UTF-8';
@@ -1295,7 +1293,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
 			}
-			else if ($result_order["result"]["result_code"] != "OK") //Something went wrong
+			elseif ($result_order["result"]["result_code"] != "OK") //Something went wrong
 			{
 				setEventMessages($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
 			}
@@ -1336,13 +1334,13 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut' && $object->id > 0)
+		elseif ($action == 'swapstatut' && $object->id > 0)
 		{
 			$result=$object->swapContactStatus(GETPOST('ligne'));
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact' && $object->id > 0)
+		elseif ($action == 'deletecontact' && $object->id > 0)
 		{
 			$result = $object->delete_contact($_GET["lineid"]);
 
@@ -2407,7 +2405,7 @@ elseif (! empty($object->id))
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 					}
-					else if (!empty($object->linkedObjectsIds['invoice_supplier']))
+					elseif (!empty($object->linkedObjectsIds['invoice_supplier']))
 					{
 						if ($user->rights->fournisseur->facture->creer)
 						{
@@ -2575,7 +2573,7 @@ elseif (! empty($object->id))
 				setEventMessages($langs->trans("ErrorWebServicesFieldsRequired"), null, 'errors');
 				$mode = "init";
 				$error_occurred = true; //Don't allow to set the user/pass if thirdparty fields are not filled
-			} else if ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
+			} elseif ($mode != "init" && (empty($ws_user) || empty($ws_password))) {
 				setEventMessages($langs->trans("ErrorFieldsRequired"), null, 'errors');
 				$mode = "init";
 			}
@@ -2674,7 +2672,7 @@ elseif (! empty($object->id))
 							{
 								setEventMessages($langs->trans("SOAPError")." '".$soapclient_order->error_str."'", null, 'errors');
 							}
-							else if ($status_code != "OK") //Something went wrong
+							elseif ($status_code != "OK") //Something went wrong
 							{
 								if ($status_code == "NOT_FOUND")
 								{

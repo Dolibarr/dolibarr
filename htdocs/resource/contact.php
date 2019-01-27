@@ -77,13 +77,13 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->resource->write)
+elseif ($action == 'swapstatut' && $user->rights->resource->write)
 {
     $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Erase a contact
-else if ($action == 'deletecontact' && $user->rights->resource->write)
+elseif ($action == 'deletecontact' && $user->rights->resource->write)
 {
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 

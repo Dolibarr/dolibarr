@@ -195,7 +195,7 @@ if ($result >= 0)
 
 			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
 				$fuser->fetch('', '', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
-			} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
+			} elseif ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
 				$fuser->fetch('', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le login
 			}
 

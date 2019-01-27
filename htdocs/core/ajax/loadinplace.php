@@ -56,14 +56,14 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 
 	if ($element == 'propal') $element = 'propale';
-	else if ($element == 'fichinter') $element = 'ficheinter';
-	else if ($element == 'product') $element = 'produit';
-	else if ($element == 'member') $element = 'adherent';
-	else if ($element == 'order_supplier') {
+	elseif ($element == 'fichinter') $element = 'ficheinter';
+	elseif ($element == 'product') $element = 'produit';
+	elseif ($element == 'member') $element = 'adherent';
+	elseif ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
 	}
-	else if ($element == 'invoice_supplier') {
+	elseif ($element == 'invoice_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -84,7 +84,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$ret = $form->$methodname();
 				if ($ret > 0) echo json_encode($form->$cachename);
 			}
-			else if (! empty($ext_element))
+			elseif (! empty($ext_element))
 			{
 				$module = $subelement = $ext_element;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))

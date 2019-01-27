@@ -109,7 +109,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc,$object)
+	function getNextValue($objsoc, $object)
 	{
 		global $db,$conf;
 
@@ -153,7 +153,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	function chequereceipt_get_num($objsoc,$objforref)
+	function chequereceipt_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

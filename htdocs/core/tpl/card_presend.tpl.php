@@ -81,7 +81,7 @@ if ($action == 'presend')
 	$topicmail='';
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
-	} else if (! empty($object->ref_client)) {
+	} elseif (! empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
 	}
 

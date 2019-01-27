@@ -128,7 +128,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -141,7 +141,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
@@ -174,7 +174,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -189,7 +189,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$sql  = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";

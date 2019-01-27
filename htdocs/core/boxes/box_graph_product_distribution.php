@@ -51,7 +51,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param)
+	function __construct($db, $param)
 	{
 		global $user, $conf;
 
@@ -70,7 +70,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -368,17 +368,17 @@ class box_graph_product_distribution extends ModeleBoxes
 			if ($nbofgraph == 1)
 			{
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				else $stringtoshow.=$px3->show();
 			}
 			if ($nbofgraph == 2)
 			{
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				$stringtoshow.='</div><div class="fichehalfright">';
 				if ($showordernb) $stringtoshow.=$px3->show();
-				else if ($showpropalnb) $stringtoshow.=$px2->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
 				$stringtoshow.='</div></div></div>';
 			}
 			if ($nbofgraph == 3)
@@ -412,7 +412,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

@@ -159,7 +159,7 @@ class Ctyperesource
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id,$code='',$label='')
+	public function fetch($id, $code = '', $label = '')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -223,7 +223,7 @@ class Ctyperesource
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 

@@ -47,7 +47,7 @@ abstract class ModelePDFProduct extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -118,7 +118,7 @@ abstract class ModeleProductCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objproduct=0,$type=-1)
+    function getNextValue($objproduct = 0, $type = -1)
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -149,7 +149,7 @@ abstract class ModeleProductCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         $liste=array();
@@ -182,7 +182,7 @@ abstract class ModeleProductCode
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$product,$type)
+    function getToolTip($langs, $product, $type)
     {
         global $conf;
 

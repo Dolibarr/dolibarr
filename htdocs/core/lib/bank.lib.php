@@ -292,7 +292,7 @@ function checkBanForAccount($account)
     if ($country_code == 'AU') {  // Australian
         if (strlen($account->code_banque) > 7)
             return false; // Sould be 6 but can be 123-456
-        else if (strlen($account->code_banque) < 6)
+        elseif (strlen($account->code_banque) < 6)
             return false; // Sould be 6
         else
             return true;

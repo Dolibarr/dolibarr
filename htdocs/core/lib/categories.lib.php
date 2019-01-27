@@ -29,7 +29,7 @@
  * @param	string	$type		Type of category
  * @return  array				Array of tabs to show
  */
-function categories_prepare_head($object,$type)
+function categories_prepare_head($object, $type)
 {
 	global $langs, $conf, $user;
 

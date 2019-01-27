@@ -79,7 +79,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->commande->creer)
+elseif ($action == 'swapstatut' && $user->rights->commande->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -92,7 +92,7 @@ else if ($action == 'swapstatut' && $user->rights->commande->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->commande->creer)
+elseif ($action == 'deletecontact' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);

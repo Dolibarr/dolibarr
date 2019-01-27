@@ -333,7 +333,7 @@ $server->register(
  * @param   string      $lang               Lang to force
  * @return	mixed
  */
-function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang='')
+function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
 {
     global $db,$conf,$langs;
 
@@ -467,7 +467,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
  * @param	Product		$product			Product
  * @return	array							Array result
  */
-function createProductOrService($authentication,$product)
+function createProductOrService($authentication, $product)
 {
     global $db,$conf,$langs;
 
@@ -635,7 +635,7 @@ function createProductOrService($authentication,$product)
  * @param	Product		$product			Product
  * @return	array							Array result
  */
-function updateProductOrService($authentication,$product)
+function updateProductOrService($authentication, $product)
 {
     global $db,$conf,$langs;
 
@@ -823,7 +823,7 @@ function updateProductOrService($authentication,$product)
  * @param	string		$listofidstring		List of id with comma
  * @return	array							Array result
  */
-function deleteProductOrService($authentication,$listofidstring)
+function deleteProductOrService($authentication, $listofidstring)
 {
     global $db,$conf,$langs;
 
@@ -903,7 +903,7 @@ function deleteProductOrService($authentication,$listofidstring)
         //$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'listofid'=>$listofiddeleted);
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
     }
-    else if (count($listofiddeleted) == 0)
+    elseif (count($listofiddeleted) == 0)
     {
    		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
    		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',', $listofid).' found'), 'nbdeleted'=>0);
@@ -920,7 +920,7 @@ function deleteProductOrService($authentication,$listofidstring)
  * @param	array		$filterproduct		Filter fields
  * @return	array							Array result
  */
-function getListOfProductsOrServices($authentication,$filterproduct)
+function getListOfProductsOrServices($authentication, $filterproduct)
 {
     global $db,$conf,$langs;
 
@@ -997,7 +997,7 @@ function getListOfProductsOrServices($authentication,$filterproduct)
  * @param	$lang		$lang				Force lang
  * @return	array							Array result
  */
-function getProductsForCategory($authentication,$id,$lang='')
+function getProductsForCategory($authentication, $id, $lang = '')
 {
 	global $db,$conf,$langs;
 

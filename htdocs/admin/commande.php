@@ -73,7 +73,7 @@ if ($action == 'updateMask')
     }
 }
 
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
 
@@ -119,12 +119,12 @@ else if ($action == 'specimen')
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -134,7 +134,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
@@ -151,7 +151,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
@@ -159,7 +159,7 @@ else if ($action == 'setmod')
 	dolibarr_set_const($db, "COMMANDE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
+elseif ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -176,7 +176,7 @@ else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-else if ($action == 'set_ORDER_FREE_TEXT')
+elseif ($action == 'set_ORDER_FREE_TEXT')
 {
 	$freetext = GETPOST("ORDER_FREE_TEXT", 'none');	// No alpha here, we want exact string
 
@@ -192,10 +192,8 @@ else if ($action == 'set_ORDER_FREE_TEXT')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-// Activate Set Shippable Icon In List
-else if ($action=="setshippableiconinlist") {
+} elseif ($action=="setshippableiconinlist") {
+    // Activate Set Shippable Icon In List
     $setshippableiconinlist = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
     if (! $res > 0) $error++;
@@ -207,7 +205,7 @@ else if ($action=="setshippableiconinlist") {
 }
 
 // Activate ask for payment bank
-else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
+elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
 {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
@@ -224,7 +222,7 @@ else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
 }
 
 // Activate ask for warehouse
-else if ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
+elseif ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
 {
     $res = dolibarr_set_const($db, "WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 

@@ -53,7 +53,7 @@ class Utils
 	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function purgeFiles($choice='tempfilesold')
+	function purgeFiles($choice = 'tempfilesold')
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
@@ -182,7 +182,7 @@ class Utils
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function dumpDatabase($compression='none', $type='auto', $usedefault=1, $file='auto', $keeplastnfiles=0, $execmethod=0)
+	function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -501,7 +501,7 @@ class Utils
 	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	function executeCLI($command, $outputfile, $execmethod=0)
+	function executeCLI($command, $outputfile, $execmethod = 0)
 	{
 		global $conf, $langs;
 
@@ -835,7 +835,7 @@ class Utils
 	 *	@param	string	$tables			Table name or '*' for all
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function backupTables($outputfile, $tables='*')
+	function backupTables($outputfile, $tables = '*')
 	{
 		global $db, $langs;
 		global $errormsg;

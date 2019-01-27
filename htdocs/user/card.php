@@ -390,7 +390,7 @@ if (empty($reshook)) {
 					{
 						$object->entity = 0;
 					}
-					else if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+					elseif (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 					{
 						$object->entity = 1; // all users in master entity
 					}
@@ -1404,11 +1404,11 @@ else
 					{
 						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("LdapUacf_".$statutUACF);
 					}
-					else if($userChangePassNextLogon)
+					elseif($userChangePassNextLogon)
 					{
 						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').'<span class="warning">'.$langs->trans("UserMustChangePassNextLogon", $ldap->domainFQDN).'</span>';
 					}
-					else if($userDisabled)
+					elseif($userDisabled)
 					{
 						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').'<span class="warning">'.$langs->trans("LdapUacf_".$statutUACF, $ldap->domainFQDN).'</span>';
 					}
@@ -1460,7 +1460,7 @@ else
 			{
 				print $form->textwithpicto(yn($object->admin), $langs->trans("SuperAdministratorDesc"), 1, "superadmin");
 			}
-			else if ($object->admin)
+			elseif ($object->admin)
 			{
 				print $form->textwithpicto(yn($object->admin), $langs->trans("AdministratorDesc"), 1, "admin");
 			}
@@ -1774,7 +1774,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
 					}
-					else if (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
 					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 					{
 						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';

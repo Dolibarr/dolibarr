@@ -180,7 +180,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setDraft($user);
 		if ($result >= 0)
@@ -209,7 +209,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'add' && $user->rights->ficheinter->creer)
+	elseif ($action == 'add' && $user->rights->ficheinter->creer)
 	{
 	    $object->socid			= $socid;
 	    $object->duration		= GETPOST('duration', 'int');
@@ -432,7 +432,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'update' && $user->rights->ficheinter->creer)
+	elseif ($action == 'update' && $user->rights->ficheinter->creer)
 	{
 		$object->socid			= $socid;
 		$object->fk_project		= GETPOST('projectid', 'int');
@@ -448,20 +448,20 @@ if (empty($reshook))
 	}
 
 	// Set into a project
-	else if ($action == 'classin' && $user->rights->ficheinter->creer)
+	elseif ($action == 'classin' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setProject(GETPOST('projectid', 'int'));
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
 	// Set into a contract
-	else if ($action == 'setcontract' && $user->rights->contrat->creer)
+	elseif ($action == 'setcontract' && $user->rights->contrat->creer)
 	{
 		$result=$object->set_contrat($user, GETPOST('contratid', 'int'));
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer)
 	{
 		$result=$object->delete($user);
 		if ($result<0) {
@@ -472,14 +472,14 @@ if (empty($reshook))
 		exit;
 	}
 
-	else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
+	elseif ($action == 'setdescription' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->set_description($user, GETPOST('description'));
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
 	// Add line
-	else if ($action == "addline" && $user->rights->ficheinter->creer)
+	elseif ($action == "addline" && $user->rights->ficheinter->creer)
 	{
 		if (!GETPOST('np_desc', 'none') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
  		{
@@ -547,7 +547,7 @@ if (empty($reshook))
 	}
 
 	// Classify Billed
-	else if ($action == 'classifybilled' && $user->rights->ficheinter->creer)
+	elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setStatut(2);
 		if ($result > 0)
@@ -562,7 +562,7 @@ if (empty($reshook))
 	}
 
 	// Classify unbilled
-	else if ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
+	elseif ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
 	{
 		$result=$object->setStatut(1);
 		if ($result > 0)
@@ -577,7 +577,7 @@ if (empty($reshook))
 	}
 
 	// Classify Done
-	else if ($action == 'classifydone' && $user->rights->ficheinter->creer)
+	elseif ($action == 'classifydone' && $user->rights->ficheinter->creer)
 	{
 	    $result=$object->setStatut(3);
 	    if ($result > 0)
@@ -594,8 +594,7 @@ if (empty($reshook))
 	/*
 	 *  Mise a jour d'une ligne d'intervention
 	 */
-	else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save"))
-	{
+	elseif ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save")) {
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0)
 		{
@@ -650,7 +649,7 @@ if (empty($reshook))
 	/*
 	 *  Supprime une ligne d'intervention AVEC confirmation
 	*/
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$objectline = new FichinterLigne($db);
 		if ($objectline->fetch($lineid) <= 0)
@@ -683,7 +682,7 @@ if (empty($reshook))
 	 * Ordonnancement des lignes
 	*/
 
-	else if ($action == 'up' && $user->rights->ficheinter->creer)
+	elseif ($action == 'up' && $user->rights->ficheinter->creer)
 	{
 		$object->line_up($lineid);
 
@@ -703,7 +702,7 @@ if (empty($reshook))
 		exit;
 	}
 
-	else if ($action == 'down' && $user->rights->ficheinter->creer)
+	elseif ($action == 'down' && $user->rights->ficheinter->creer)
 	{
 		$object->line_down($lineid);
 
@@ -789,13 +788,13 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut')
+		elseif ($action == 'swapstatut')
 		{
 			$result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact')
+		elseif ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
@@ -1099,7 +1098,7 @@ if ($action == 'create')
 		print '</form>';
 	}
 }
-else if ($id > 0 || ! empty($ref))
+elseif ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Affichage en mode visu

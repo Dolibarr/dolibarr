@@ -296,7 +296,7 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -309,7 +309,7 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatut($status,$mode=0)
+	function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -396,7 +396,7 @@ class Establishment extends CommonObject
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto = 0)
     {
         global $langs;
 

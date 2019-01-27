@@ -79,7 +79,7 @@ else {
 	$result=restrictedArea($user, 'reception');
 	if($origin == 'supplierorder'){
 		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) accessforbidden();
-	}else if (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
+	}elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
 }
 
 $action		= GETPOST('action', 'alpha');
@@ -209,7 +209,7 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-	        } else if ($reshook < 0)
+	        } elseif ($reshook < 0)
 	            $error++;
 	    }
 
@@ -388,7 +388,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+	elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->reception_advance->validate)))
 	)
@@ -424,7 +424,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer)
 	{
 	    $result = $object->delete($user);
 	    if ($result > 0)
@@ -447,7 +447,7 @@ if (empty($reshook))
 	    }
 	}*/
 
-	else if ($action == 'setdate_livraison' && $user->rights->reception->creer)
+	elseif ($action == 'setdate_livraison' && $user->rights->reception->creer)
 	{
 	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	    $datedelivery=dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
@@ -461,7 +461,7 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if ($action == 'settracking_number' || $action == 'settracking_url'
+	elseif ($action == 'settracking_number' || $action == 'settracking_url'
 	|| $action == 'settrueWeight'
 	|| $action == 'settrueWidth'
 	|| $action == 'settrueHeight'
@@ -498,7 +498,7 @@ if (empty($reshook))
 	}
 
 	// Build document
-	else if ($action == 'builddoc')	// En get ou en post
+	elseif ($action == 'builddoc')	// En get ou en post
 	{
 		// Save last template used to generate document
 		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -590,7 +590,7 @@ if (empty($reshook))
 	/*
 	 *  Update a line
 	 */
-	else if ($action == 'updateline' && $user->rights->reception->creer && GETPOST('save'))
+	elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('save'))
 	{
 		// Clean parameters
 		$qty = 0;
@@ -687,9 +687,7 @@ if (empty($reshook))
 			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 			exit();
 		}
-	}
-
-	else if ($action == 'updateline' && $user->rights->reception->creer && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
+	} elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1218,7 +1216,7 @@ if ($action == 'create')
         }
     }
 }
-else if ($id || $ref)
+elseif ($id || $ref)
 /* *************************************************************************** */
 /*                                                                             */
 /* Edit and view mode                                                          */
@@ -1979,7 +1977,7 @@ else if ($id || $ref)
 				print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 			}
-			else if ($object->statut == 0)
+			elseif ($object->statut == 0)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit" align="center">';

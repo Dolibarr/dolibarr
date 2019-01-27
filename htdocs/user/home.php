@@ -156,7 +156,7 @@ if ($resql)
 		{
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		}
-		else if ($obj->admin)
+		elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star');
 		}

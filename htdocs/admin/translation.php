@@ -543,7 +543,7 @@ if ($mode == 'searchkey')
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
             }
-            else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
             {
             	//print $key.'-'.$val;
                 print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit_add($langs->trans("Overwrite")) . '</a>';

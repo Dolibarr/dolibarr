@@ -130,7 +130,7 @@ class CActionComm
      *  @param	int			$shortlabel		1=Get short label instead of long label
      *  @return mixed      					Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='', $shortlabel=0)
+    function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
     {
         // phpcs:enable
         global $langs,$conf;
@@ -223,7 +223,7 @@ class CActionComm
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
      *  @return string			      	Label of action type
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto = 0)
     {
         global $langs;
 

@@ -106,7 +106,7 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
     </div>
     <?php
     }
-    else if (in_array($type, array('pgsql')))
+    elseif (in_array($type, array('pgsql')))
     {
     ?>
     <div class="formelementrow">
@@ -164,7 +164,7 @@ if (in_array($type, array('mysql', 'mysqli')))
     </fieldset>
 <?php
 }
-else if (in_array($type, array('pgsql')))
+elseif (in_array($type, array('pgsql')))
 {
 ?>
     <fieldset id="postgresql_options">

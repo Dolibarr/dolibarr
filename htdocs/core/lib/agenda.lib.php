@@ -47,7 +47,7 @@
  * @param	int   	$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='', $excludetype='', $resourceid=0)
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
@@ -209,7 +209,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
-function show_array_actions_to_do($max=5)
+function show_array_actions_to_do($max = 5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -309,7 +309,7 @@ function show_array_actions_to_do($max=5)
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
-function show_array_last_actions_done($max=5)
+function show_array_last_actions_done($max = 5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 

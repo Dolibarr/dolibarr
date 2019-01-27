@@ -55,7 +55,7 @@ function SetXmlHeaders()
  * @param string	$currentFolder	Current folder
  * @return void
  */
-function CreateXmlHeader( $command, $resourceType, $currentFolder )
+function CreateXmlHeader($command, $resourceType, $currentFolder)
 {
 	SetXmlHeaders();
 

@@ -48,7 +48,7 @@ class ModelePDFCards
 	 *	@param	integer	$maxfilenamelength	Max length of value to show
 	 *	@return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -76,7 +76,7 @@ class ModelePDFCards
  *	@param	string		$template		pdf generenate document class to use default 'standard'
  *	@return int							<0 if KO, >0 if OK
  */
-function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir='', $template='standard')
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard')
 {
     // phpcs:enable
 	global $conf,$langs;

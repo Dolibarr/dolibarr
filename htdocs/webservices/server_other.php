@@ -181,7 +181,7 @@ function getVersions($authentication)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @return	void
  */
-function getDocument($authentication, $modulepart, $file, $refname='')
+function getDocument($authentication, $modulepart, $file, $refname = '')
 {
 	global $db,$conf,$langs,$mysoc;
 

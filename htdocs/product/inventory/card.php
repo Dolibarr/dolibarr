@@ -78,12 +78,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$permissiontoadd = $user->rights->stock->write;
-	$permissiontodelete = $user->rights->stock->write;
+	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontodelete = $user->rights->stock->supprimer;
 }
 else
 {
-	$permissiontoadd = $user->rights->stock->inventory_advance->create;
+	$permissiontoadd = $user->rights->stock->inventory_advance->write;
 	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
 

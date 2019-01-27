@@ -64,7 +64,7 @@ class DolEditor
 	 *      @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *      @param	int		$readonly						0=Read/Edit, 1=Read only
 	 */
-    function __construct($htmlname, $content, $width='', $height=200, $toolbarname='Basic', $toolbarlocation='In', $toolbarstartexpanded=false, $uselocalbrowser=true, $okforextendededitor=true, $rows=0, $cols=0, $readonly=0)
+    function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
     {
     	global $conf,$langs;
 
@@ -149,7 +149,7 @@ class DolEditor
      *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
-    function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
+    function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
     {
         // phpcs:enable
     	global $conf,$langs;

@@ -364,7 +364,7 @@ if ($action == 'create')
 	{
 		$selectedcode=$_POST["account_country_id"]?$_POST["account_country_id"]:$object->country_code;
 	}
-	else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
+	elseif (empty($selectedcode)) $selectedcode=$mysoc->country_code;
 	$object->country_code = getCountry($selectedcode, 2);	// Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
@@ -610,7 +610,7 @@ else
 		print '<td>';
 		$conciliate=$object->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
-		else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
+		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
 		print '</td></tr>';
 
@@ -846,7 +846,7 @@ else
 		$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;
 		$selectedcode=$object->country_code;
 		if (isset($_POST["account_country_id"])) $selectedcode=$_POST["account_country_id"];
-		else if (empty($selectedcode)) $selectedcode=$mysoc->country_code;
+		elseif (empty($selectedcode)) $selectedcode=$mysoc->country_code;
 		$object->country_code = getCountry($selectedcode, 2);	// Force country code on account to have following field on bank fields matching country rules
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
@@ -872,7 +872,7 @@ else
 		print '<td>';
 		$conciliate=$object->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
-		else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
+		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		else print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0)?'':' checked="checked"').'"> '.$langs->trans("DisableConciliation");
 		print '</td></tr>';
 

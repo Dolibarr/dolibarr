@@ -186,7 +186,7 @@ else {
 		if ($object->element == 'contrat')
 		{
 			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
-			else if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=3;
+			elseif (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=3;
 		}
 
 		// Free line
@@ -231,13 +231,13 @@ else {
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
-			else if ((empty($conf->product->enabled) && ! empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
+			elseif ((empty($conf->product->enabled) && ! empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
 			else echo $langs->trans('PredefinedProductsAndServicesToSell');
 		}
 		else
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
-			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
+			elseif (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 			else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
 		}
 		echo '</label>';

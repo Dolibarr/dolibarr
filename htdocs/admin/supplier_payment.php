@@ -61,18 +61,18 @@ if ($action == 'updateMask')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}else  if ($action == 'setmod')
+}elseif ($action == 'setmod')
 {
     dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -82,7 +82,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
@@ -99,7 +99,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
     $modele=GETPOST('module', 'alpha');
 

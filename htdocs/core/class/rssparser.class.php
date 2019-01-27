@@ -184,7 +184,7 @@ class RssParser
      * 	@param	string	$cachedir	Directory where to save cache file
      *	@return	int					<0 if KO, >0 if OK
      */
-    public function parser($urlRSS, $maxNb=0, $cachedelay=60, $cachedir='')
+    public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
     {
         global $conf;
 
@@ -342,7 +342,7 @@ class RssParser
                 else $items=$rss->items;                                                              // With xmlparse
                 //var_dump($items);exit;
             }
-            else if ($rss->_format == 'atom')
+            elseif ($rss->_format == 'atom')
             {
                 //var_dump($rss);
                 if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
@@ -410,7 +410,7 @@ class RssParser
                             }
                         }
                     }
-                    else if ($rss->_format == 'atom')
+                    elseif ($rss->_format == 'atom')
                     {
                         if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
                         {
@@ -666,7 +666,7 @@ class RssParser
      *  @param	string	$str2		Str2
      *  @return	string				String cancatenated
      */
-    function concat(&$str1, $str2="")
+    function concat(&$str1, $str2 = "")
     {
         if (!isset($str1) ) {
             $str1="";

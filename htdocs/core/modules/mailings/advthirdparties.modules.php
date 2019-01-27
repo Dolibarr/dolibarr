@@ -60,7 +60,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
+	function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -208,7 +208,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string	$sql 		Not use here
 	 *	@return	    int			          Nb of recipients
 	 */
-	function getNbOfRecipients($sql='')
+	function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -287,7 +287,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string		$type	type
 	 *  @return string      	Url link
 	 */
-	function url($id,$type)
+	function url($id, $type)
 	{
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);

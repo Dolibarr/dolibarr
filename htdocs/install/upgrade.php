@@ -347,7 +347,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
             {
                 $filelist[]=$file;
             }
-            else if (preg_match('/'.$to.'/i', $file))	// First test may be false if we migrate from x.y.* to x.y.*
+            elseif (preg_match('/'.$to.'/i', $file))	// First test may be false if we migrate from x.y.* to x.y.*
             {
                 $filelist[]=$file;
             }

@@ -121,17 +121,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$thirdparty=$object->thirdparty;
 			$sendtosocid=$thirdparty->id;
 		}
-		else if ($object->element == 'member' || $object->element == 'user')
+		elseif ($object->element == 'member' || $object->element == 'user')
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
 		}
-		else if ($object->element == 'societe')
+		elseif ($object->element == 'societe')
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
 		}
-		else if ($object->element == 'contact')
+		elseif ($object->element == 'contact')
 		{
 			$contact=$object;
 			if ($contact->id > 0) $sendtosocid=$contact->fetch_thirdparty()->id;

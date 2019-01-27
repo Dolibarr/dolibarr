@@ -83,7 +83,7 @@ if ($query=="cat")
 	// Output
 	imagejpeg($image_p, null, 100);
 }
-else if ($query=="pro")
+elseif ($query=="pro")
 {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 

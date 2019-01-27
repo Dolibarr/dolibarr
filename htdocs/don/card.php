@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,24 +100,24 @@ if ($action == 'update')
 	{
 		$object->fetch($id);
 
-		$object->firstname   = GETPOST("firstname", 'alpha');
-		$object->lastname    = GETPOST("lastname", 'alpha');
-		$object->societe     = GETPOST("societe", 'alpha');
-		$object->address     = GETPOST("address", 'alpha');
-		$object->amount      = price2num(GETPOST("amount", 'alpha'));
-		$object->town        = GETPOST("town", 'alpha');
-		$object->zip         = GETPOST("zipcode", 'alpha');
-        $object->country_id  = GETPOST('country_id', 'int');
-        $object->email       = GETPOST("email", 'alpha');
-		$object->date        = $donation_date;
-		$object->public      = GETPOST("public", 'alpha');
-		$object->fk_project  = GETPOST("fk_project", 'alpha');
-		$object->note_private= GETPOST("note_private", 'none');
+		$object->firstname = GETPOST("firstname", 'alpha');
+		$object->lastname = GETPOST("lastname", 'alpha');
+		$object->societe = GETPOST("societe", 'alpha');
+		$object->address = GETPOST("address", 'alpha');
+		$object->amount = price2num(GETPOST("amount", 'alpha'));
+		$object->town = GETPOST("town", 'alpha');
+		$object->zip = GETPOST("zipcode", 'alpha');
+		$object->country_id = GETPOST('country_id', 'int');
+		$object->email = GETPOST("email", 'alpha');
+		$object->date = $donation_date;
+		$object->public = GETPOST("public", 'alpha');
+		$object->fk_project = GETPOST("fk_project", 'alpha');
+		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
 		$object->modepaymentid = GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0)
@@ -154,20 +154,21 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		$object->firstname   = GETPOST("firstname", 'alpha');
-		$object->lastname    = GETPOST("lastname", 'alpha');
-		$object->societe     = GETPOST("societe", 'alpha');
-		$object->address     = GETPOST("address", 'alpha');
-		$object->amount      = price2num(GETPOST("amount", 'alpha'));
-		$object->zip         = GETPOST("zipcode", 'alpha');
-		$object->town        = GETPOST("town", 'alpha');
-        $object->country_id  = GETPOST('country_id', 'int');
-        $object->email       = GETPOST("email", 'alpha');
-		$object->date        = $donation_date;
-		$object->note_private= GETPOST("note_private", 'none');
+  		$object->fk_soc = GETPOST("fk_soc", 'int');
+		$object->firstname = GETPOST("firstname", 'alpha');
+		$object->lastname = GETPOST("lastname", 'alpha');
+		$object->societe = GETPOST("societe", 'alpha');
+		$object->address = GETPOST("address", 'alpha');
+		$object->amount = price2num(GETPOST("amount", 'alpha'));
+		$object->zip = GETPOST("zipcode", 'alpha');
+		$object->town = GETPOST("town", 'alpha');
+		$object->country_id = GETPOST('country_id', 'int');
+		$object->email = GETPOST('email', 'alpha');
+    	$object->date = $donation_date;
+		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
-		$object->public      = GETPOST("public", 'alpha');
-		$object->fk_project  = GETPOST("fk_project", 'alpha');
+		$object->public = GETPOST("public", 'alpha');
+		$object->fk_project = GETPOST("fk_project", 'alpha');
 		$object->modepaymentid = GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
@@ -239,7 +240,7 @@ if ($action == 'set_paid')
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
-else if ($action == 'classin' && $user->rights->don->creer)
+elseif ($action == 'classin' && $user->rights->don->creer)
 {
 	$object->fetch($id);
 	$object->setProject($projectid);
@@ -516,7 +517,7 @@ if (! empty($id) && $action == 'edit')
 	// Amount
 	if ($object->statut == 0)
 	{
-		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.dol_escape_htmltag($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	else
 	{
@@ -529,6 +530,14 @@ if (! empty($id) && $action == 'edit')
 	print $form->selectyesno("public", 1, 1);
 	print "</td>";
 	print "</tr>\n";
+
+if ( $object->fk_soc && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
+
+	$company=new Societe($db);
+	$result=$company->fetch($object->fk_soc);
+
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+} else {
 
 	$langs->load("companies");
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
@@ -551,7 +560,7 @@ if (! empty($id) && $action == 'edit')
 	print '</td></tr>';
 
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
-
+}
 	// Payment mode
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
     if ($object->modepaymentid) $selected = $object->modepaymentid;
@@ -684,9 +693,18 @@ if (! empty($id) && $action != 'edit')
 	print yn($object->public);
 	print '</td></tr>';
 
+if ($object->fk_soc) {
+
+	$company=new Societe($db);
+	$result=$company->fetch($object->fk_soc);
+
+	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+} else {
+
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
+}
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";

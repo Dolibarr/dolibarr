@@ -186,7 +186,7 @@ $server->register(
  * @param	int			$id					Id of object
  * @return	mixed
  */
-function getCategory($authentication,$id)
+function getCategory($authentication, $id)
 {
 	global $db,$conf,$langs;
 

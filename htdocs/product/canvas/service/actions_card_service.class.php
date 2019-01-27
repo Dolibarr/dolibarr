@@ -48,7 +48,7 @@ class ActionsCardService
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function __construct($db,$targetmodule,$canvas,$card)
+	function __construct($db, $targetmodule, $canvas, $card)
 	{
 		$this->db 				= $db;
 		$this->targetmodule     = $targetmodule;
@@ -72,7 +72,7 @@ class ActionsCardService
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id=0, $ref='')
+	function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
@@ -206,7 +206,7 @@ class ActionsCardService
 			{
 				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 			}
-			else if ($this->object->duration_value > 0)
+			elseif ($this->object->duration_value > 0)
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 			}

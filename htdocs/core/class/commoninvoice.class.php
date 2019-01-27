@@ -97,7 +97,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		double						Remain of amount to pay
 	 */
-	function getRemainToPay($multicurrency=0)
+	function getRemainToPay($multicurrency = 0)
 	{
 	    $alreadypaid=0;
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
@@ -112,7 +112,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO
 	 */
-	function getSommePaiement($multicurrency=0)
+	function getSommePaiement($multicurrency = 0)
 	{
 		$table='paiement_facture';
 		$field='fk_facture';
@@ -149,7 +149,7 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
 	 */
-	function getSumDepositsUsed($multicurrency=0)
+	function getSumDepositsUsed($multicurrency = 0)
 	{
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
@@ -178,7 +178,7 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSumCreditNotesUsed($multicurrency=0)
+	function getSumCreditNotesUsed($multicurrency = 0)
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -233,7 +233,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$option		filtre sur statut ('', 'validated', ...)
 	 *	@return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
 	 */
-	function getIdReplacingInvoice($option='')
+	function getIdReplacingInvoice($option = '')
 	{
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
@@ -274,7 +274,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @return     array					Array with list of payments
 	 */
-	function getListOfPayments($filtertype='')
+	function getListOfPayments($filtertype = '')
 	{
 		$retarray=array();
 
@@ -447,7 +447,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return     string			        Label of status
 	 */
-	function getLibStatut($mode=0, $alreadypaid=-1)
+	function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
 		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
@@ -463,7 +463,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
-	function LibStatut($paye, $status, $mode=0, $alreadypaid=-1, $type=0)
+	function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -593,7 +593,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
 	 */
-	function calculate_date_lim_reglement($cond_reglement=0)
+	function calculate_date_lim_reglement($cond_reglement = 0)
 	{
         // phpcs:enable
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;

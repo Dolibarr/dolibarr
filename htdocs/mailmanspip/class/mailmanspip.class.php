@@ -321,7 +321,7 @@ class MailmanSpip
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
-    function add_to_mailman($object,$listes='')
+    function add_to_mailman($object, $listes = '')
     {
         // phpcs:enable
         global $conf,$langs,$user;
@@ -395,7 +395,7 @@ class MailmanSpip
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */
-    function del_to_mailman($object,$listes='')
+    function del_to_mailman($object, $listes = '')
     {
         // phpcs:enable
         global $conf,$langs,$user;

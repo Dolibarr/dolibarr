@@ -96,7 +96,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param)
+	function addSticker(&$pdf, $outputlangs, $param)
 	{
 		global $mysoc,$conf;
 
@@ -163,7 +163,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			// Output left area
 			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
-			else if ($code && !empty($encoding))
+			elseif ($code && !empty($encoding))
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
@@ -173,29 +173,29 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 		}
-		else if ($textleft!='' && $textright!='')	// left and right part
+		elseif ($textleft!='' && $textright!='')	// left and right part
 		{
 			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%') )	 // left part logo/barcode right part text
 			{
 				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, 0);
-				else if ($code && !empty($encoding))
+				elseif ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX+($widthtouse/2), $_PosY+$ytop);
 				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-			else if (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
+			elseif (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, 0);
-				else if ($code && !empty($encoding))
+				elseif ($code && !empty($encoding))
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
-			else if ($textleft == '%LOGO%')	 // left part logo right part text/barcode
+			elseif ($textleft == '%LOGO%')	 // left part logo right part text/barcode
 			{
 				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
@@ -206,7 +206,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					$pdf->MultiCell($widthtouse-$logoWidth1-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 				}
 			}
-			else if ($textright == '%LOGO%')  // right part logo left part text/barcode
+			elseif ($textright == '%LOGO%')  // right part logo left part text/barcode
 			{
 				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
@@ -229,7 +229,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, 0, $logoHeight);
-			else if ($code && !empty($encoding))
+			elseif ($code && !empty($encoding))
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
@@ -277,7 +277,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
+	function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;

@@ -696,7 +696,7 @@ $db->close();
  *  @param      string  $options        More parameters on img tag
  *  @return     string                  Return img tag of weather
  */
-function showWeather($totallate,$text,$options)
+function showWeather($totallate, $text, $options)
 {
     global $conf;
 

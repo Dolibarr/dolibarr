@@ -344,7 +344,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getOrder($authentication,$id='',$ref='',$ref_ext='')
+function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -496,7 +496,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
  */
-function getOrdersForThirdParty($authentication,$idthirdparty)
+function getOrdersForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -655,7 +655,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
  * @param	array		$order				Order info
  * @return	int								Id of new order
  */
-function createOrder($authentication,$order)
+function createOrder($authentication, $order)
 {
 	global $db,$conf,$langs;
 
@@ -795,7 +795,7 @@ function createOrder($authentication,$order)
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication,$id='',$id_warehouse=0)
+function validOrder($authentication, $id = '', $id_warehouse = 0)
 {
 	global $db,$conf,$langs;
 
@@ -875,7 +875,7 @@ function validOrder($authentication,$id='',$id_warehouse=0)
  * @param	array		$order				Order info
  * @return	array							Array result
  */
-function updateOrder($authentication,$order)
+function updateOrder($authentication, $order)
 {
 	global $db,$conf,$langs;
 

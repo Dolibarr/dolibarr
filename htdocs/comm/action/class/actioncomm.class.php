@@ -293,7 +293,7 @@ class ActionComm extends CommonObject
                 $this->type_id=$cactioncomm->id;
                 $this->type_code=$cactioncomm->code;
             }
-            else if ($result == 0)
+            elseif ($result == 0)
             {
                 $this->error='Failed to get record with id '.$this->type_id.' code '.$this->type_code.' from dictionary "type of events"';
                 return -1;
@@ -566,7 +566,7 @@ class ActionComm extends CommonObject
      *    @param	string	$ref_ext	Ref ext to get
      *    @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='',$ref_ext='')
+    function fetch($id, $ref = '', $ref_ext = '')
     {
         global $langs;
 
@@ -761,7 +761,7 @@ class ActionComm extends CommonObject
      *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
      *    @return   int 					<0 if KO, >0 if OK
      */
-    function delete($notrigger=0)
+    function delete($notrigger = 0)
     {
         global $user,$langs,$conf;
 
@@ -838,7 +838,7 @@ class ActionComm extends CommonObject
      *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
      *    @return   int     				<0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0)
+    function update($user, $notrigger = 0)
     {
         global $langs,$conf,$hookmanager;
 
@@ -999,7 +999,7 @@ class ActionComm extends CommonObject
      *   @param		string	$limit			Limit number of answers
      *   @return	array or string			Error string if KO, array with actions if OK
      */
-    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='', $sortfield='a.datep', $sortorder='DESC', $limit=0)
+    static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
     {
         global $conf, $langs;
 
@@ -1051,7 +1051,7 @@ class ActionComm extends CommonObject
      * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
-    function load_board($user, $load_state_board=0)
+    function load_board($user, $load_state_board = 0)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -1164,7 +1164,7 @@ class ActionComm extends CommonObject
      *      @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
      *    	@return string          		String with status
      */
-    function getLibStatut($mode,$hidenastatus=0)
+    function getLibStatut($mode, $hidenastatus = 0)
     {
         return $this->LibStatut($this->percentage, $mode, $hidenastatus, $this->datep);
     }
@@ -1179,7 +1179,7 @@ class ActionComm extends CommonObject
      *      @param  int     $datestart      Date start of event
      *    	@return string		    		Label
      */
-    function LibStatut($percent,$mode,$hidenastatus=0,$datestart='')
+    function LibStatut($percent, $mode, $hidenastatus = 0, $datestart = '')
     {
         // phpcs:enable
         global $langs;
@@ -1257,7 +1257,7 @@ class ActionComm extends CommonObject
      *  	@param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *		@return	string							Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $maxlength=0, $classname='', $option='', $overwritepicto=0, $notooltip=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
     {
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1391,7 +1391,7 @@ class ActionComm extends CommonObject
      *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
-    function build_exportfile($format,$type,$cachedelay,$filename,$filters)
+    function build_exportfile($format, $type, $cachedelay, $filename, $filters)
     {
         // phpcs:enable
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;

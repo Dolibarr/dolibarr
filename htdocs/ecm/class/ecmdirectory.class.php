@@ -230,7 +230,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param 	int		$notrigger	    0=no, 1=yes (no update trigger)
 	 *  @return int 			       	<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -306,8 +306,8 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
-		    else if ($value == '+') $this->cachenbofdoc++;
-		    else if ($value == '-') $this->cachenbofdoc--;
+		    elseif ($value == '+') $this->cachenbofdoc++;
+		    elseif ($value == '-') $this->cachenbofdoc--;
 		}
 
 		return 1;
@@ -375,7 +375,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$deletedirrecursive		1=Agree to delete content recursiveley (otherwise an error will be returned when trying to delete)
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	function delete($user, $mode='all', $deletedirrecursive=0)
+	function delete($user, $mode = 'all', $deletedirrecursive = 0)
 	{
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -468,7 +468,7 @@ class EcmDirectory // extends CommonObject
      *  @param	int		$notooltip		1=Disable tooltip
 	 *  @return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $max=0, $more='', $notooltip=0)
+	function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
 	{
 		global $langs;
 
@@ -501,7 +501,7 @@ class EcmDirectory // extends CommonObject
 	 * 	@param	int		$force		Force reload of full arbo even if already loaded
 	 *	@return	string				Relative physical path
 	 */
-	function getRelativePath($force=0)
+	function getRelativePath($force = 0)
 	{
 		$this->get_full_arbo($force);
 
@@ -579,7 +579,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -592,7 +592,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	static function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -620,7 +620,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
 	 *	@return	array			        Tableau de array
 	 */
-	function get_full_arbo($force=0)
+	function get_full_arbo($force = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -710,7 +710,7 @@ class EcmDirectory // extends CommonObject
 	 * 	@param	int		$protection		Deep counter to avoid infinite loop
 	 * 	@return	void
 	 */
-	function build_path_from_id_categ($id_categ,$protection=0)
+	function build_path_from_id_categ($id_categ, $protection = 0)
 	{
         // phpcs:enable
 		// Define fullpath
@@ -750,7 +750,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param		int		$all       	0=refresh record using this->id , 1=refresh record using this->entity
 	 * 	@return		int					-1 if KO, Nb of files in directory if OK
 	 */
-	function refreshcachenboffile($all=0)
+	function refreshcachenboffile($all = 0)
 	{
 		global $conf;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

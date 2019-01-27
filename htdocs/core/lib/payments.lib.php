@@ -95,7 +95,7 @@ function payment_supplier_prepare_head(Paiement $object)
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
  * @return	array						Array of valid payment method
  */
-function getValidOnlinePaymentMethods($paymentmethod='')
+function getValidOnlinePaymentMethods($paymentmethod = '')
 {
 	global $conf;
 
@@ -123,7 +123,7 @@ function getValidOnlinePaymentMethods($paymentmethod='')
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type,$ref)
+function showOnlinePaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -149,7 +149,7 @@ function showOnlinePaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='your_free_tag')
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
 {
 	global $conf;
 
@@ -274,7 +274,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
  * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $suffix='', $object=null)
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
 {
     global $conf;
 

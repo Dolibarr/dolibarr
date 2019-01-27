@@ -208,7 +208,7 @@ if ($permission) {
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
+				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>

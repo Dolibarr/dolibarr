@@ -234,7 +234,7 @@ class Categorie extends CommonObject
 	 *  @param		string	$type	Type of category ('product', '...') or (0, 1, ...)
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function fetch($id, $label='', $type=null)
+	function fetch($id, $label = '', $type = null)
 	{
 		global $conf;
 
@@ -501,7 +501,7 @@ class Categorie extends CommonObject
      *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -691,7 +691,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  int          1 if OK, -1 if KO
 	 */
-	function del_type($obj,$type)
+	function del_type($obj, $type)
 	{
         // phpcs:enable
 		global $user,$langs,$conf;
@@ -749,7 +749,7 @@ class Categorie extends CommonObject
 	 * @return  array|int              -1 if KO, array of instance of object if OK
 	 * @see containsObject
 	 */
-	function getObjectsInCateg($type, $onlyids=0)
+	function getObjectsInCateg($type, $onlyids = 0)
 	{
 		$objs = array();
 
@@ -821,7 +821,7 @@ class Categorie extends CommonObject
 	 * @param	int		$page		Page number
 	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
 	 */
-	function getListForItem($id, $type='customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		global $conf;
 
@@ -990,7 +990,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	function get_full_arbo($type, $markafterid=0)
+	function get_full_arbo($type, $markafterid = 0)
 	{
         // phpcs:enable
 	    global $conf, $langs;
@@ -1076,7 +1076,7 @@ class Categorie extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
-	function build_path_from_id_categ($id_categ,$protection=1000)
+	function build_path_from_id_categ($id_categ, $protection = 1000)
 	{
         // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
@@ -1143,7 +1143,7 @@ class Categorie extends CommonObject
 	 *	@param	boolean		$parent		Just parent categories if true
 	 *	@return	array|int				Table of Object Category, -1 on error
 	 */
-	function get_all_categories($type=null, $parent=false)
+	function get_all_categories($type = null, $parent = false)
 	{
         // phpcs:enable
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
@@ -1232,7 +1232,7 @@ class Categorie extends CommonObject
 	 *	@param		int		$type		Type of category (0, 1, ...)
 	 *	@return		array
 	 */
-	function get_main_categories($type=null)
+	function get_main_categories($type = null)
 	{
         // phpcs:enable
 		return $this->get_all_categories($type, true);
@@ -1248,7 +1248,7 @@ class Categorie extends CommonObject
 	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
-	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
+	function print_all_ways($sep = " &gt;&gt; ", $url = '', $nocolor = 0)
 	{
         // phpcs:enable
 		$ways = array();
@@ -1376,7 +1376,7 @@ class Categorie extends CommonObject
 	 *                      	    labels, 'id'= Get array of category IDs
 	 * @return  array|int           Array of category objects or < 0 if KO
 	 */
-	function containing($id, $type, $mode='object')
+	function containing($id, $type, $mode = 'object')
 	{
 		$cats = array();
 
@@ -1397,7 +1397,7 @@ class Categorie extends CommonObject
 		        {
     				if ($mode == 'id') {
     				    $cats[] = $obj->rowid;
-    				} else if ($mode == 'label') {
+    				} elseif ($mode == 'label') {
     				    $cats[] = $obj->label;
     				} else {
     				    $cat = new Categorie($this->db);
@@ -1427,7 +1427,7 @@ class Categorie extends CommonObject
     			{
     				if ($mode == 'id') {
     					$cats[] = $obj->rowid;
-    				} else if ($mode == 'label') {
+    				} elseif ($mode == 'label') {
     					$cats[] = $obj->label;
     				} else {
     					$cat = new Categorie($this->db);
@@ -1522,7 +1522,7 @@ class Categorie extends CommonObject
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlength=0)
+	function getNomUrl($withpicto = 0, $option = '', $maxlength = 0)
 	{
 		global $langs;
 
@@ -1608,7 +1608,7 @@ class Categorie extends CommonObject
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
-	function liste_photos($dir,$nbmax=0)
+	function liste_photos($dir, $nbmax = 0)
 	{
         // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
@@ -1747,7 +1747,7 @@ class Categorie extends CommonObject
 	                return -1;
 	            }
 	        }
-	        else if (isset($this->multilangs["$key"]))
+	        elseif (isset($this->multilangs["$key"]))
 	        {
 	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
 	            {

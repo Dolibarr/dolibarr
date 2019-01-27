@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES
 $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.datedon, d.fk_soc, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";

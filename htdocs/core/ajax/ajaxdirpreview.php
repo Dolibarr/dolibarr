@@ -185,33 +185,33 @@ if ($type == 'directory')
     // Auto area for suppliers invoices
     if ($module == 'company') $upload_dir = $conf->societe->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
+    elseif ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
+    elseif ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
     // Auto area for customers proposal
-    else if ($module == 'propal') $upload_dir = $conf->propal->dir_output;
+    elseif ($module == 'propal') $upload_dir = $conf->propal->dir_output;
     // Auto area for suppliers proposal
-    else if ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
+    elseif ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
     // Auto area for customers orders
-    else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
+    elseif ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
-    else if ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
+    elseif ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
+    elseif ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
     // Auto area for products
-    else if ($module == 'product') $upload_dir = $conf->product->dir_output;
+    elseif ($module == 'product') $upload_dir = $conf->product->dir_output;
     // Auto area for suppliers invoices
-    else if ($module == 'tax') $upload_dir = $conf->tax->dir_output;
+    elseif ($module == 'tax') $upload_dir = $conf->tax->dir_output;
     // Auto area for projects
-    else if ($module == 'project') $upload_dir = $conf->projet->dir_output;
+    elseif ($module == 'project') $upload_dir = $conf->projet->dir_output;
     // Auto area for interventions
-    else if ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
+    elseif ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
     // Auto area for users
-    else if ($module == 'user') $upload_dir = $conf->user->dir_output;
+    elseif ($module == 'user') $upload_dir = $conf->user->dir_output;
     // Auto area for expense report
-    else if ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
+    elseif ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
 	// Auto area for holiday
-    else if ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
+    elseif ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
 
     // Automatic list
     if (in_array($module, $automodules))
@@ -280,7 +280,7 @@ if ($type == 'directory')
 
             $textifempty = $langs->trans('NoFileFound');
         }
-        else if ($section === '0')
+        elseif ($section === '0')
         {
         	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         	else $textifempty = $langs->trans('NoFileFound');

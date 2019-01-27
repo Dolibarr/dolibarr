@@ -31,7 +31,7 @@
  * 	@param	int			$edit				1 to add edit form
  * 	@return	void
  */
-function show_skin($fuser,$edit=0)
+function show_skin($fuser, $edit = 0)
 {
     global $conf,$langs,$db;
     global $bc;

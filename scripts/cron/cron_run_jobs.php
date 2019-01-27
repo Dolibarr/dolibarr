@@ -255,7 +255,7 @@ exit(0);
  * @param string $script_file   filename
  * @return void
  */
-function usage($path,$script_file)
+function usage($path, $script_file)
 {
 	global $conf;
 

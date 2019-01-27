@@ -287,7 +287,7 @@ class modDav extends DolibarrModules
      *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		//$this->_load_tables('/dav/sql/');
 

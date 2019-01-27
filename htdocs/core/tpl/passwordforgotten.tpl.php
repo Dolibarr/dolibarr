@@ -214,7 +214,7 @@ if (! empty($morelogincontent)) {
 		}
 	}
 }
-else if (! empty($moreloginextracontent)) {
+elseif (! empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

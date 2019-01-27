@@ -108,7 +108,7 @@ class CommActionRapport
      *      @param  Translate	$outputlangs    Lang object for output language
      *      @return int             			1=OK, 0=KO
 	 */
-	function write_file($socid = 0, $catid = 0, $outputlangs='')
+	function write_file($socid = 0, $catid = 0, $outputlangs = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;

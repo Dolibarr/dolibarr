@@ -116,7 +116,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db=0)
+	function __construct($db = 0)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -154,7 +154,7 @@ class pdf_merou extends ModelePdfExpedition
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file(&$object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$hookmanager;
@@ -455,7 +455,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -493,7 +493,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$pdf->SetFont('', '', $default_font_size - 2);

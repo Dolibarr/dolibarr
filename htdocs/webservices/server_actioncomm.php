@@ -244,7 +244,7 @@ $server->register(
  * @param	int			$id					Id of object
  * @return	mixed
  */
-function getActionComm($authentication,$id)
+function getActionComm($authentication, $id)
 {
     global $db,$conf,$langs;
 
@@ -408,7 +408,7 @@ function getListActionCommType($authentication)
  * @param	ActionComm	$actioncomm		    $actioncomm
  * @return	array							Array result
  */
-function createActionComm($authentication,$actioncomm)
+function createActionComm($authentication, $actioncomm)
 {
 	global $db,$conf,$langs;
 
@@ -491,7 +491,7 @@ function createActionComm($authentication,$actioncomm)
  * @param	ActionComm	$actioncomm		    $actioncomm
  * @return	array							Array result
  */
-function updateActionComm($authentication,$actioncomm)
+function updateActionComm($authentication, $actioncomm)
 {
 	global $db,$conf,$langs;
 

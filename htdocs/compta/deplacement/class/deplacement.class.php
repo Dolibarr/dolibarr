@@ -245,7 +245,7 @@ class Deplacement extends CommonObject
 	* @param	string	$ref	Ref of record
 	* @return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id, $ref='')
+	function fetch($id, $ref = '')
 	{
 		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
@@ -316,7 +316,7 @@ class Deplacement extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
@@ -329,7 +329,7 @@ class Deplacement extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Libelle
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -374,7 +374,7 @@ class Deplacement extends CommonObject
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto = 0)
 	{
 		global $langs;
 
@@ -400,7 +400,7 @@ class Deplacement extends CommonObject
 	 * @param	int		$active		Active or not
 	 * @return	array
 	 */
-	function listOfTypes($active=1)
+	function listOfTypes($active = 1)
 	{
 	   global $langs;
 

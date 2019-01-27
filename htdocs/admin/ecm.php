@@ -100,7 +100,7 @@ else
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else if(! empty($conf->global->USER_MAIL_REQUIRED))
+	elseif(! empty($conf->global->USER_MAIL_REQUIRED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}

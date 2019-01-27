@@ -117,9 +117,8 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			if ($resupload < 0)	// Unknown error
 			{
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload))	// Files infected by a virus
-			{
+			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
+                // Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error

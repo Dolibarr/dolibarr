@@ -46,7 +46,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         global $conf;
@@ -122,7 +122,7 @@ abstract class ModeleThirdPartyCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objsoc=0,$type=-1)
+    function getNextValue($objsoc = 0, $type = -1)
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -153,7 +153,7 @@ abstract class ModeleThirdPartyCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         $liste=array();
@@ -186,7 +186,7 @@ abstract class ModeleThirdPartyCode
      *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *  @return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    function getToolTip($langs, $soc, $type)
     {
         global $conf;
 
@@ -289,7 +289,7 @@ abstract class ModeleAccountancyCode
      *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
      *      @return	string					Example
      */
-    function getExample($langs,$objsoc=0,$type=-1)
+    function getExample($langs, $objsoc = 0, $type = -1)
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -329,7 +329,7 @@ abstract class ModeleAccountancyCode
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    function getToolTip($langs, $soc, $type)
     {
         global $conf,$db;
 
@@ -367,7 +367,7 @@ abstract class ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
-    function get_code($db, $societe, $type='')
+    function get_code($db, $societe, $type = '')
     {
         // phpcs:enable
         global $langs;
@@ -394,7 +394,7 @@ abstract class ModeleAccountancyCode
  *  @deprecated Use the new function generateDocument of Facture class
  *  @see Societe::generateDocument()
  */
-function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
     // phpcs:enable
 	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);

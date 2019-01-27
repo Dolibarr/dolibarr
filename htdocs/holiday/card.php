@@ -95,8 +95,8 @@ if ($action == 'create')
 	    $type=GETPOST('type');
 	    $halfday=0;
 	    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	    else if ($starthalfday == 'afternoon') $halfday=-1;
-	    else if ($endhalfday == 'morning') $halfday=1;
+	    elseif ($starthalfday == 'afternoon') $halfday=-1;
+	    elseif ($endhalfday == 'morning') $halfday=1;
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
@@ -201,8 +201,8 @@ if ($action == 'update')
 	$endhalfday=GETPOST('endhalfday');
 	$halfday=0;
 	if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	else if ($starthalfday == 'afternoon') $halfday=-1;
-	else if ($endhalfday == 'morning') $halfday=1;
+	elseif ($starthalfday == 'afternoon') $halfday=-1;
+	elseif ($endhalfday == 'morning') $halfday=1;
 
     // If no right to modify a request
     if (! $user->rights->holiday->write)

@@ -235,7 +235,7 @@ $server->register(
  * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
-function getContact($authentication,$id,$ref_ext)
+function getContact($authentication, $id, $ref_ext)
 {
     global $db,$conf,$langs;
 
@@ -352,7 +352,7 @@ function getContact($authentication,$id,$ref_ext)
  * @param	Contact		$contact		    $contact
  * @return	array							Array result
  */
-function createContact($authentication,$contact)
+function createContact($authentication, $contact)
 {
 	global $db,$conf,$langs;
 
@@ -463,7 +463,7 @@ function createContact($authentication,$contact)
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
-function getContactsForThirdParty($authentication,$idthirdparty)
+function getContactsForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -595,7 +595,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
  * @param	Contact		$contact		    Contact
  * @return	array							Array result
  */
-function updateContact($authentication,$contact)
+function updateContact($authentication, $contact)
 {
 	global $db,$conf,$langs;
 

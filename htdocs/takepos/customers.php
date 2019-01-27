@@ -353,7 +353,7 @@ if ($search_level_from != '' && $search_level_to != '')
 	$sortwhere = '(sortorder BETWEEN '.$search_level_from.' AND '.$search_level_to.') AS is_in_range';
 }
 // If only "from" parameter is set, search for everything GREATER THAN it
-else if ($search_level_from != '')
+elseif ($search_level_from != '')
 {
 	// Ensure that this parameter is a number
 	$search_level_from = (int) $search_level_from;
@@ -362,7 +362,7 @@ else if ($search_level_from != '')
 	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
 }
 // If only "to" parameter is set, search for everything LOWER THAN it
-else if ($search_level_to != '')
+elseif ($search_level_to != '')
 {
 	// Ensure that this parameter is a number
 	$search_level_to = (int) $search_level_to;

@@ -80,7 +80,7 @@ if ($action == 'updateMask')
 	}
 }
 
-else if ($action == 'set_param')
+elseif ($action == 'set_param')
 {
 	$freetext=GETPOST('RECEPTION_FREE_TEXT', 'none');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "RECEPTION_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
@@ -104,7 +104,7 @@ else if ($action == 'set_param')
 	}
 }
 
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
 
@@ -150,12 +150,12 @@ else if ($action == 'specimen')
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -165,7 +165,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "RECEPTION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
@@ -182,7 +182,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmodel')
+elseif ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "RECEPTION_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 }

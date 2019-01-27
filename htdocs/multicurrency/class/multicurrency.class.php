@@ -519,7 +519,7 @@ class MultiCurrency extends CommonObject
 	 * @return 	array	[0] => id currency
 	 *					[1] => rate
 	 */
-	public static function getIdAndTxFromCode(&$db, $code, $date_document='')
+	public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
 	{
 		global $conf;
 
@@ -556,7 +556,7 @@ class MultiCurrency extends CommonObject
 	  * @param	string	$table			facture or facture_fourn
 	  * @return	double					amount converted
 	  */
-	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way='dolibarr', $table='facture')
+	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
 	  {
 		 global $db;
 
@@ -577,7 +577,7 @@ class MultiCurrency extends CommonObject
 	 *  @param 	string 	$table 			facture or facture_fourn
      *  @return bool
 	 */
-	public static function getInvoiceRate($fk_facture, $table='facture')
+	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
 		global $db;
 

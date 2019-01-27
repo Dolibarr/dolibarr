@@ -120,7 +120,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
      */
-	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $_GET,$_SERVER;
 		global $conf;
@@ -161,7 +161,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $conf,$filebarcode;
 

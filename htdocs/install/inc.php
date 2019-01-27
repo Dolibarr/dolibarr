@@ -225,10 +225,10 @@ if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS', '["mod_syslog_file"]
 if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
 {
 	if (@is_writable('/tmp')) define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
-	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
-	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
-	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
-	else if (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
+	elseif (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"])) define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+	elseif (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+	elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
+	elseif (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
 }
 if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
@@ -331,10 +331,10 @@ function conf($dolibarr_main_document_root)
     if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
     {
         if (@is_writable('/tmp')) define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
-        else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
-        else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
-        else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
-        else if (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
+        elseif (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+        elseif (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+        elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
+        elseif (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
     }
     if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
@@ -374,7 +374,7 @@ function conf($dolibarr_main_document_root)
  * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
+function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl = '', $csstable = 'main-inside')
 {
     global $conf;
     global $langs;
@@ -451,7 +451,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
  * @param	integer	$withpleasewait		Add also please wait tags
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
+function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleasewait = 0)
 {
     global $conf,$langs;
 
@@ -508,7 +508,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
  * @param 	int		$level		Level of log
  * @return	void
  */
-function dolibarr_install_syslog($message, $level=LOG_DEBUG)
+function dolibarr_install_syslog($message, $level = LOG_DEBUG)
 {
     if (! defined('LOG_DEBUG')) define('LOG_DEBUG', 6);
     dol_syslog($message, $level);

@@ -78,7 +78,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
     }
 }
 
-else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
+elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     if ($object->statut == 1)
@@ -96,7 +96,7 @@ else if ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
     }
 }
 
-else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
+elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
     $result=$object->delete($id);
     if ($result >= 0)
@@ -110,7 +110,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
 }
 
-else if ($action == 'add' && $user->rights->deplacement->creer)
+elseif ($action == 'add' && $user->rights->deplacement->creer)
 {
     if (! GETPOST('cancel', 'alpha'))
     {
@@ -169,7 +169,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 }
 
 // Update record
-else if ($action == 'update' && $user->rights->deplacement->creer)
+elseif ($action == 'update' && $user->rights->deplacement->creer)
 {
     if (! GETPOST('cancel', 'alpha'))
     {
@@ -203,7 +203,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
 }
 
 // Set into a project
-else if ($action == 'classin' && $user->rights->deplacement->creer)
+elseif ($action == 'classin' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setProject(GETPOST('projectid', 'int'));
@@ -211,14 +211,14 @@ else if ($action == 'classin' && $user->rights->deplacement->creer)
 }
 
 // Set fields
-else if ($action == 'setdated' && $user->rights->deplacement->creer)
+elseif ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
     $object->fetch($id);
     $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
-else if ($action == 'setkm' && $user->rights->deplacement->creer)
+elseif ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setValueFrom('km', GETPOST('km', 'int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
@@ -314,7 +314,7 @@ if ($action == 'create')
 
     print '</form>';
 }
-else if ($id)
+elseif ($id)
 {
     $result = $object->fetch($id);
     if ($result > 0)

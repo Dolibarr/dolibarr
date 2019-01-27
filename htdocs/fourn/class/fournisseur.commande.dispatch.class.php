@@ -135,7 +135,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create($user, $notrigger = 0)
     {
     	global $conf, $langs, $hookmanager;
 		$error=0;
@@ -256,7 +256,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -325,7 +325,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -420,7 +420,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -534,7 +534,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
      *  @return 	string        			Label
      */
-    function getLibStatut($mode=0)
+    function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->status, $mode);
     }
@@ -547,7 +547,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @return string				Label of status
      */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -623,7 +623,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 

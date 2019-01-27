@@ -50,7 +50,7 @@ class ExpenseReportStats extends Stats
      * @param   int			$userid    Id user for filter
 	 * @return 	void
 	 */
-	function __construct($db, $socid=0, $userid=0)
+	function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $conf, $user;
 
@@ -107,7 +107,7 @@ class ExpenseReportStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year, $format=0)
+	function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT MONTH(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
@@ -129,7 +129,7 @@ class ExpenseReportStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getAmountByMonth($year, $format=0)
+	function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;

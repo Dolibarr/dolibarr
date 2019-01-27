@@ -1925,7 +1925,7 @@ $db->close();
  * @param	int		$nostyle		Hide style
  * @return	void
  */
-function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
+function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 {
 	global $langs,$bc;
 
@@ -1997,7 +1997,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
  * @param	array	$listofkey		Array of keys
  * @return	integer
  */
-function getnewkey(&$fieldssource,&$listofkey)
+function getnewkey(&$fieldssource, &$listofkey)
 {
 	$i=count($fieldssource)+1;
 	// Max number of key

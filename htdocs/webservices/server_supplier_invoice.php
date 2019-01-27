@@ -223,7 +223,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
+function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -333,7 +333,7 @@ function getSupplierInvoice($authentication,$id='',$ref='',$ref_ext='')
  * @return	array							Array result
  *
  */
-function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
+function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 

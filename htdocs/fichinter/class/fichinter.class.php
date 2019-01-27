@@ -179,7 +179,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -313,7 +313,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
@@ -373,7 +373,7 @@ class Fichinter extends CommonObject
 	 *	@param		string	$ref		Ref of intervention
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid,$ref='')
+	function fetch($rowid, $ref = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
 		$sql.= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
@@ -483,7 +483,7 @@ class Fichinter extends CommonObject
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function setValid($user, $notrigger=0)
+	function setValid($user, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -625,7 +625,7 @@ class Fichinter extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int                                     0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$langs;
 
@@ -653,7 +653,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
@@ -666,7 +666,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		// Init/load array of translation of status
@@ -716,7 +716,7 @@ class Fichinter extends CommonObject
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -897,7 +897,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1112,7 +1112,7 @@ class Fichinter extends CommonObject
 	 *	@param		int			$socid			Id of thirdparty
 	 *	@return		int							New id of clone
 	 */
-	function createFromClone($socid=0)
+	function createFromClone($socid = 0)
 	{
 		global $user,$hookmanager;
 
@@ -1205,7 +1205,7 @@ class Fichinter extends CommonObject
 	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_options='')
+	function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -1443,7 +1443,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function insert($user, $notrigger=0)
+	function insert($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -1539,7 +1539,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function update($user,$notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -1660,7 +1660,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
-	function deleteline($user,$notrigger=0)
+	function deleteline($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 

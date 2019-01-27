@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -94,7 +94,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
 }
 
 // Deleting a contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);

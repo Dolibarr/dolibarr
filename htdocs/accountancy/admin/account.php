@@ -162,7 +162,7 @@ if (empty($reshook))
     	if ($result < 0) {
     		setEventMessages($accounting->error, $accounting->errors, 'errors');
     	}
-    } else if ($action == 'enable') {
+    } elseif ($action == 'enable') {
     	if ($accounting->fetch($id)) {
     		$result = $accounting->account_activate($id);
     	}

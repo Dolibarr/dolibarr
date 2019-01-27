@@ -62,7 +62,7 @@ class Translate
 	 *  @param	string	$srclang     	Language to use. If '' or 'auto', we use browser lang.
 	 *  @return	void
 	 */
-	function setDefaultLang($srclang='en_US')
+	function setDefaultLang($srclang = 'en_US')
 	{
 		global $conf;
 
@@ -105,7 +105,7 @@ class Translate
 			$longforshort=array('ar'=>'ar_SA');
 			$longforshortexcep=array('ar_EG');
 			if (isset($longforshort[strtolower($langpart[0])]) && ! in_array($codetouse, $longforshortexcep)) $srclang=$longforshort[strtolower($langpart[0])];
-			else if (! is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
+			elseif (! is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong=array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang=$longforlong[strtolower($srclang)];
@@ -116,7 +116,7 @@ class Translate
     	    // Array to convert short lang code into long code.
 	        $longforshort=array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
-			else if (! empty($langpart[0])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
+			elseif (! empty($langpart[0])) $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
 			else $srclang='en_US';
 		}
 
@@ -132,7 +132,7 @@ class Translate
 	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
-	function getDefaultLang($mode=0)
+	function getDefaultLang($mode = 0)
 	{
 	    if (empty($mode)) return $this->defaultlang;
 	    else return substr($this->defaultlang, 0, 2);
@@ -173,7 +173,7 @@ class Translate
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs
 	 */
-	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='',$loadfromfileonly=0)
+	function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
 	{
 		global $conf,$db;
 
@@ -247,7 +247,7 @@ class Translate
 					$usecachekey=$newdomain.'_'.$langofdir.'_'.md5($file_lang);    // Should not contains special chars
 				}
 				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+				elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 				{
 					$usecachekey=$newdomain;
 				}
@@ -441,7 +441,7 @@ class Translate
 			$usecachekey=$newdomain.'_'.$langofdir;    // Should not contains special chars
 		}
 		// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-		else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+		elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 		{
 			$usecachekey=$newdomain;
 		}
@@ -594,7 +594,7 @@ class Translate
 	 *	@param	int		$maxsize	Max length of text
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
-	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
+	function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
 	{
         global $conf;
 
@@ -655,7 +655,7 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
-	function transnoentities($key, $param1='', $param2='', $param3='', $param4='', $param5='')
+	function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
 		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5));
 	}
@@ -676,7 +676,7 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
-	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='', $param5='')
+	function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
 		global $conf;
 
@@ -747,7 +747,7 @@ class Translate
 	 *  @param	string	$pagecodefrom	Page code of src string
 	 *  @return string         			Converted string
 	 */
-	function convToOutputCharset($str,$pagecodefrom='UTF-8')
+	function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8')  $str=utf8_encode($str);
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode(str_replace('€', chr(128), $str));
@@ -764,7 +764,7 @@ class Translate
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
-	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
+	function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -804,7 +804,7 @@ class Translate
 	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
-	function file_exists($filename,$searchalt=0)
+	function file_exists($filename, $searchalt = 0)
 	{
         // phpcs:enable
 		// Test si fichier dans repertoire de la langue
@@ -836,7 +836,7 @@ class Translate
 	 * 									10 if setDefaultLang was en_US => ten
 	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
-	function getLabelFromNumber($number,$isamount=0)
+	function getLabelFromNumber($number, $isamount = 0)
 	{
 		global $conf;
 
@@ -879,7 +879,7 @@ class Translate
 	 *      @return string					Label in UTF8 (but without entities)
 	 *      @see dol_getIdFromCode
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='',$filteronentity=0)
+	function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)
 	{
 		// If key empty
 		if ($key == '') return '';
@@ -947,7 +947,7 @@ class Translate
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
-	function getCurrencySymbol($currency_code, $forceloadall=0)
+	function getCurrencySymbol($currency_code, $forceloadall = 0)
 	{
 		$currency_sign = '';	// By default return iso code
 

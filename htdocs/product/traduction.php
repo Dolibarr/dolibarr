@@ -277,7 +277,7 @@ if ($action == 'edit')
 
 	print '</form>';
 }
-else if ($action != 'add')
+elseif ($action != 'add')
 {
 	if (! empty($object->multilangs))
 	{
