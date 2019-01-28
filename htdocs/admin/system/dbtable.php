@@ -50,7 +50,7 @@ if (preg_match('/mysql/i',$conf->db->type))
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base=1;
 }
-else if ($conf->db->type == 'pgsql')
+elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base=2;

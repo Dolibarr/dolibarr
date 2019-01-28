@@ -221,10 +221,10 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
 		}
 	}
-	if ($id == 3 && ! is_numeric($_POST["code"]))
+	if (! is_numeric($_POST["code"]))
 	{
 	   	$ok=0;
-	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
+	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 	}
 
 	// Clean some parameters
@@ -270,7 +270,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			if ($value == 'price' || preg_match('/^amount/i',$value) || $value == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
-			else if ($value == 'entity') {
+			elseif ($value == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -318,7 +318,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			if ($field == 'price' || preg_match('/^amount/i',$field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
-			else if ($field == 'entity') {
+			elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -462,11 +462,6 @@ $linkback='';
 
 print load_fiche_titre($titre,$linkback,'title_accountancy');
 
-if (empty($id))
-{
-	print $langs->trans("DictionaryDesc");
-	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-}
 print "<br>\n";
 
 
@@ -540,7 +535,7 @@ if ($id)
 			{
 				print '<td align="'.$align.'">';
 				if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-				else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+				elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
 				else print $valuetoshow;
 				print '</td>';
 			 }
@@ -734,14 +729,14 @@ if ($id)
 							{
 								$valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
 							}
-							else if ($value == 'source')
+							elseif ($value == 'source')
 							{
 								$valuetoshow = isset($sourceList[$valuetoshow])?$sourceList[$valuetoshow]:$valuetoshow;
 							}
-							else if ($valuetoshow=='all') {
+							elseif ($valuetoshow=='all') {
 								$valuetoshow=$langs->trans('All');
 							}
-							else if ($fieldlist[$field]=='country') {
+							elseif ($fieldlist[$field]=='country') {
 								if (empty($obj->country_code))
 								{
 									$valuetoshow='-';
@@ -752,7 +747,7 @@ if ($id)
 									$valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
 								}
 							}
-							else if ($fieldlist[$field]=='country_id') {
+							elseif ($fieldlist[$field]=='country_id') {
 								$showfield=0;
 							}
 
@@ -816,7 +811,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf,$langs,$db;
 	global $form;

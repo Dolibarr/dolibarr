@@ -33,7 +33,7 @@
  * @param	int		$silent			Do not output indent and picto, returns only value
  * @return	integer[]					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
-function tree_showpad(&$fulltree,$key,$silent=0)
+function tree_showpad(&$fulltree, $key, $silent = 0)
 {
 	$pos=1;
 
@@ -113,7 +113,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
  *  @param  int     $showfk         1=show fk_links to parent into label  (used by menu editor only)
  *  @return	void
  */
-function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetalreadyloaded=0, $showfk=0)
+function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoresetalreadyloaded = 0, $showfk = 0)
 {
     global $tree_recur_alreadyadded;
 

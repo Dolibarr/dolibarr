@@ -12,7 +12,6 @@ namespace Stripe;
  * @property string $balance_transaction
  * @property int $created
  * @property string $currency
- * @property string $description
  * @property string $destination
  * @property string $destination_payment
  * @property bool $livemode
@@ -27,9 +26,6 @@ namespace Stripe;
  */
 class Transfer extends ApiResource
 {
-
-    const OBJECT_NAME = "transfer";
-
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\NestedResource;

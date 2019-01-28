@@ -91,7 +91,7 @@ class Menubase
 	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
      */
-    function __construct($db,$menu_handler='')
+    function __construct($db, $menu_handler = '')
     {
         $this->db = $db;
         $this->menu_handler = $menu_handler;
@@ -105,7 +105,7 @@ class Menubase
      *      @param      User	$user       User that create
      *      @return     int      			<0 if KO, Id of record if OK
      */
-    function create($user=null)
+    function create($user = null)
     {
         global $conf, $langs;
 
@@ -245,7 +245,7 @@ class Menubase
      *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
      *  @return int 		        	<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user = null, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -310,7 +310,7 @@ class Menubase
      *   @param		User    $user       User that load
      *   @return	int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user=null)
+    function fetch($id, $user = null)
     {
         global $langs;
 
@@ -634,7 +634,7 @@ class Menubase
                             $tab_titre = explode("/",$menu['titre']);
                             $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
                         }
-                        else if (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle)
+                        elseif (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle)
                         {
                         	$tab_title = explode("||",$menu['titre']);
                         	$alt_title = explode("@",$tab_title[1]);

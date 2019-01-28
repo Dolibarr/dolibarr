@@ -56,7 +56,7 @@ class box_external_rss extends ModeleBoxes
      * 	@param	DoliDB	$db			Database handler
      *  @param	string	$param		More parameters
      */
-    function __construct($db,$param)
+    function __construct($db, $param)
     {
 		$this->db=$db;
 		$this->paramdef=$param;
@@ -69,7 +69,7 @@ class box_external_rss extends ModeleBoxes
      *  @param	int		$cachedelay		Delay we accept for cache file
      *  @return	void
      */
-    function loadBox($max=5, $cachedelay=3600)
+    function loadBox($max = 5, $cachedelay = 3600)
     {
         global $user, $langs, $conf;
         $langs->load("boxes");
@@ -195,7 +195,7 @@ class box_external_rss extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }

@@ -285,15 +285,87 @@ if (! empty($project_ref) && ! empty($withproject))
 
 // To show all time lines for project
 $projectidforalltimes=0;
-if (GETPOST('projectid','int'))
+if (GETPOST('projectid','int') > 0)
 {
 	$projectidforalltimes=GETPOST('projectid','int');
+
+	$result=$projectstatic->fetch($projectidforalltimes);
+    if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+    $res=$projectstatic->fetch_optionals();
 }
 elseif (GETPOST('project_ref','alpha'))
 {
     $projectstatic->fetch(0, GETPOST('project_ref','alpha'));
     $projectidforalltimes=$projectstatic->id;
     $withproject=1;
+}
+
+if ($massaction == 'generateinvoice')
+{
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+
+        //->fetch_thirdparty();
+
+		if (! ($projectstatic->thirdparty->id > 0))
+		{
+			setEventMessages($langs->trans("ThirdPartyRequiredToGenerateInvoice"), null, 'errors');
+		}
+		else
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			$tmpinvoice = new Facture($db);
+			$tmptimespent=new Task($db);
+			$tmpproduct=new Product($db);
+			$fuser = new User($db);
+
+			$db->begin();
+
+			$idprod = GETPOST('idprod', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
+			}
+
+			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+			$pu_ht = $dataforprice['pu_ht'];
+			$txtva = $dataforprice['tva_tx'];
+
+			$tmpinvoice->fk_soc = $projectstatic->thirdparty->id;
+			$tmpinvoice->create($user);
+
+			$arrayoftasks=array();
+			foreach($toselect as $key => $value)
+			{
+				// Get userid, timepent
+				$object->fetchTimeSpent($value);
+
+				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+			}
+			foreach($arrayoftasks as $userid => $value)
+			{
+				$fuser->fetch($userid);
+				//$pu_ht = $value['timespent'] * $fuser->thm;
+				$username = $fuser->getFullName($langs);
+
+				// Add lines
+				$tmpinvoice->addline($langs->trans("TotalOfTimeSpentBy", $username).' : '.$value['timespent'], $pu_ht, 1, $txtva);
+			}
+
+			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $tmpinvoice->ref), null, 'mesgs');
+			//var_dump($tmpinvoice);
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
 }
 
 
@@ -315,7 +387,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	/*
 	 * Fiche projet en mode visu
  	 */
-    if ($projectidforalltimes)
+    if ($projectidforalltimes > 0)
     {
         $result=$projectstatic->fetch($projectidforalltimes);
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -765,12 +837,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		{
 			if ($search_year > 0 && empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-			else if ($search_year > 0 && ! empty($search_day))
+			elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
 		}
-		else if ($search_year > 0)
+		elseif ($search_year > 0)
 		{
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 		}
@@ -1201,7 +1273,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
-			else if ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
+			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{

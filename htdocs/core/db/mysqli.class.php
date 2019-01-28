@@ -54,7 +54,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
      */
-    function __construct($type, $host, $user, $pass, $name='', $port=0)
+    function __construct($type, $host, $user, $pass, $name = '', $port = 0)
     {
         global $conf,$langs;
 
@@ -162,7 +162,7 @@ class DoliDBMysqli extends DoliDB
      *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return    string   		SQL request line converted
      */
-    static function convertSQLFromMysql($line,$type='ddl')
+    static function convertSQLFromMysql($line, $type = 'ddl')
     {
         return $line;
     }
@@ -250,7 +250,7 @@ class DoliDBMysqli extends DoliDB
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *	@return	bool|mysqli_result		Resultset of answer
      */
-    function query($query,$usesavepoint=0,$type='auto')
+    function query($query, $usesavepoint = 0, $type = 'auto')
     {
     	global $conf;
 
@@ -382,7 +382,7 @@ class DoliDBMysqli extends DoliDB
      *	@param  mysqli_result	$resultset	Curseur de la requete voulue
      *	@return	void
      */
-    function free($resultset=null)
+    function free($resultset = null)
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
@@ -476,7 +476,7 @@ class DoliDBMysqli extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int|string			Id of row
      */
-    function last_insert_id($tab,$fieldid='rowid')
+    function last_insert_id($tab, $fieldid = 'rowid')
     {
         // phpcs:enable
         return $this->db->insert_id;
@@ -491,7 +491,7 @@ class DoliDBMysqli extends DoliDB
      * 	@return	string					XXX(field) or XXX('value') or field or 'value'
      *
      */
-    function encrypt($fieldorvalue, $withQuotes=0)
+    function encrypt($fieldorvalue, $withQuotes = 0)
     {
         global $conf;
 
@@ -509,7 +509,7 @@ class DoliDBMysqli extends DoliDB
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -542,7 +542,7 @@ class DoliDBMysqli extends DoliDB
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
@@ -582,7 +582,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	bool|mysqli_result		resource defined if OK, null if KO
      */
-    function DDLCreateDb($database,$charset='',$collation='',$owner='')
+    function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
     {
         // phpcs:enable
         if (empty($charset))   $charset=$this->forcecharset;
@@ -612,7 +612,7 @@ class DoliDBMysqli extends DoliDB
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
      */
-    function DDLListTables($database, $table='')
+    function DDLListTables($database, $table = '')
     {
         // phpcs:enable
         $listtables=array();
@@ -671,7 +671,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
-    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
+    function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
     {
         // phpcs:enable
 	    // FIXME: $fulltext_keys parameter is unused
@@ -768,7 +768,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	bool|mysqli_result	Resultset x (x->Field, x->Type, ...)
      */
-    function DDLDescTable($table,$field="")
+    function DDLDescTable($table, $field = "")
     {
         // phpcs:enable
         $sql="DESC ".$table." ".$field;
@@ -788,7 +788,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
      */
-    function DDLAddField($table,$field_name,$field_desc,$field_position="")
+    function DDLAddField($table, $field_name, $field_desc, $field_position = "")
     {
         // phpcs:enable
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
@@ -839,7 +839,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
      */
-    function DDLUpdateField($table,$field_name,$field_desc)
+    function DDLUpdateField($table, $field_name, $field_desc)
     {
         // phpcs:enable
         $sql = "ALTER TABLE ".$table;
@@ -885,7 +885,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
      */
-    function DDLDropField($table,$field_name)
+    function DDLDropField($table, $field_name)
     {
         // phpcs:enable
         $sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
@@ -908,7 +908,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
      */
-    function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
+    function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
     {
         // phpcs:enable
         $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'";
@@ -1082,7 +1082,7 @@ class DoliDBMysqli extends DoliDB
      * @param	string	$filter		Filter list on a particular value
 	 * @return	array				Array of key-values (key=>value)
      */
-    function getServerParametersValues($filter='')
+    function getServerParametersValues($filter = '')
     {
         $result=array();
 
@@ -1103,7 +1103,7 @@ class DoliDBMysqli extends DoliDB
      * @param	string	$filter		Filter list on a particular value
 	 * @return  array				Array of key-values (key=>value)
      */
-    function getServerStatusValues($filter='')
+    function getServerStatusValues($filter = '')
     {
         $result=array();
 

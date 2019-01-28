@@ -231,7 +231,7 @@ if ($result && $action == "dl")
                 if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
                 $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
         }
-        $zip->addFromString('log.csv', $log);
+        $zip->addFromString('transactions.csv', $log);
         $zip->close();
 
         ///Then download the zipped file.

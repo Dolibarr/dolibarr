@@ -56,7 +56,7 @@ function dol_basename($pathfile)
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="", $donotfollowsymlinks=0)
+function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -118,7 +118,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				{
 					$excludefilterarray=array_merge($excludefilterarray,$excludefilter);
 				}
-				else if ($excludefilter) $excludefilterarray[]=$excludefilter;
+				elseif ($excludefilter) $excludefilterarray[]=$excludefilter;
 				// Check if file is qualified
 				foreach($excludefilterarray as $filt)
 				{
@@ -167,7 +167,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							}
 						}
 					}
-					else if (! $isdir && (($types == "files") || ($types == "all")))
+					elseif (! $isdir && (($types == "files") || ($types == "all")))
 					{
 						// Add file into file_list array
 						if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
@@ -226,7 +226,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','type'=>'dir|file',...)
  *  @see dol_dir_list
  */
-function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
+function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
 {
 	global $conf, $db;
 
@@ -578,7 +578,7 @@ function dol_filemtime($pathoffile)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy dolReplaceRegExInFile
  */
-function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
+function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
 	global $conf;
 
@@ -648,7 +648,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy dolReplaceInFile
  */
-function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
+function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
 	// TODO
 }
@@ -663,7 +663,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newma
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
  * @see		dol_delete_file
  */
-function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
+function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 {
 	global $conf;
 
@@ -719,7 +719,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement=null)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null)
 {
 	global $conf;
 
@@ -811,7 +811,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file
  */
-function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1, $testvirus=0, $indexdatabase=1)
+function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1)
 {
 	global $user, $db, $conf;
 	$result=false;
@@ -993,7 +993,7 @@ function dolCheckVirus($src_file)
  *	@return int       			  		>0 if OK, <0 or string if KO
  *  @see    dol_move
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
 {
 	global $conf, $db, $user, $langs;
 	global $object, $hookmanager;
@@ -1136,7 +1136,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file, $disableglob=0, $nophperrors=0, $nohook=0, $object=null, $allowdotdot=false, $indexdatabase=1)
+function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1246,7 +1246,7 @@ function dol_delete_file($file, $disableglob=0, $nophperrors=0, $nohook=0, $obje
  *  @return boolean         		True if success, false if error
  *  @see dol_delete_file dol_copy
  */
-function dol_delete_dir($dir,$nophperrors=0)
+function dol_delete_dir($dir, $nophperrors = 0)
 {
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
@@ -1270,7 +1270,7 @@ function dol_delete_dir($dir,$nophperrors=0)
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
  *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
-function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$countdeleted=0)
+function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub = 0, &$countdeleted = 0)
 {
 	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
 	if (dol_is_dir($dir))
@@ -1478,7 +1478,7 @@ function dol_meta_create($object)
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_init_file_process($pathtoscan='', $trackid='')
+function dol_init_file_process($pathtoscan = '', $trackid = '')
 {
 	$listofpaths=array();
 	$listofnames=array();
@@ -1516,7 +1516,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @return	int                             <=0 if KO, >0 if OK
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='', $generatethumbs=1)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1)
 {
 	global $db,$user,$conf,$langs;
 
@@ -1608,7 +1608,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					{
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 					}
-					else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+					elseif (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 					{
 						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 					}
@@ -1660,7 +1660,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1,$trackid='')
+function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -1712,7 +1712,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
  *  @param		int		$setsharekey	Set also the share key
  *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
  */
-function addFileIntoDatabaseIndex($dir, $file, $fullpathorig='', $mode='uploaded', $setsharekey=0)
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0)
 {
 	global $db, $user;
 
@@ -1760,7 +1760,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig='', $mode='uploaded
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
  */
-function deleteFilesIntoDatabaseIndex($dir, $file, $mode='uploaded')
+function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 {
 	global $conf, $db, $user;
 
@@ -1816,7 +1816,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode='uploaded')
  *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput, $ext='png', $fileoutput='')
+function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
 {
 	global $langs;
 
@@ -1874,7 +1874,7 @@ function dol_convert_file($fileinput, $ext='png', $fileoutput='')
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_file($inputfile, $outputfile, $mode="gz")
+function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 {
 	$foundhandler=0;
 
@@ -1927,7 +1927,7 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
  * @param 	string	$outputdir		Target dir name
  * @return 	array					array('error'=>'Error code') or array() if no error
  */
-function dol_uncompress($inputfile,$outputdir)
+function dol_uncompress($inputfile, $outputdir)
 {
 	global $langs;
 
@@ -1988,7 +1988,7 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$mode			'zip'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode="zip")
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 {
 	$foundhandler=0;
 
@@ -2088,7 +2088,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode="zip")
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  * @return	string						Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta|_preview.*\.png)$','^\.'),$nohook=false,$mode='')
+function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$','^\.'), $nohook = false, $mode = '')
 {
 	$tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,$mode,$nohook);
 	return $tmparray[0];
@@ -2106,7 +2106,7 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea
  */
-function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
+function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
 	global $conf, $db, $user;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
@@ -2358,7 +2358,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for users
-	else if ($modulepart == 'user' && !empty($conf->user->dir_output))
+	elseif ($modulepart == 'user' && !empty($conf->user->dir_output))
 	{
 		$canreaduser=(! empty($fuser->admin) || $fuser->rights->user->user->{$lire});
 		if ($fuser->id == (int) $refname) { $canreaduser=1; } // A user can always read its own card
@@ -2370,7 +2370,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for third parties
-	else if (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
+	elseif (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i',$original_file))
@@ -2382,7 +2382,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for contact
-	else if ($modulepart == 'contact' && !empty($conf->societe->dir_output))
+	elseif ($modulepart == 'contact' && !empty($conf->societe->dir_output))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
@@ -2393,7 +2393,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for invoices
-	else if (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->dir_output))
+	elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->dir_output))
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2403,7 +2403,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping for mass actions
-	else if ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->multidir_output[$entity]))
+	elseif ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->multidir_output[$entity]))
 	{
 		if ($fuser->rights->propal->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2411,7 +2411,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->propal->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_orders')
+	elseif ($modulepart == 'massfilesarea_orders')
 	{
 		if ($fuser->rights->commande->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2419,7 +2419,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_invoices')
+	elseif ($modulepart == 'massfilesarea_invoices')
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2427,7 +2427,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_expensereport')
+	elseif ($modulepart == 'massfilesarea_expensereport')
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2435,7 +2435,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->expensereport->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_interventions')
+	elseif ($modulepart == 'massfilesarea_interventions')
 	{
 		if ($fuser->rights->ficheinter->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2443,7 +2443,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_supplier_proposal' && !empty($conf->supplier_proposal->dir_output))
+	elseif ($modulepart == 'massfilesarea_supplier_proposal' && !empty($conf->supplier_proposal->dir_output))
 	{
 		if ($fuser->rights->supplier_proposal->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2451,7 +2451,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->supplier_proposal->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_supplier_order')
+	elseif ($modulepart == 'massfilesarea_supplier_order')
 	{
 		if ($fuser->rights->fournisseur->commande->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2459,7 +2459,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_supplier_invoice')
+	elseif ($modulepart == 'massfilesarea_supplier_invoice')
 	{
 		if ($fuser->rights->fournisseur->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2467,7 +2467,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-	else if ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output))
+	elseif ($modulepart == 'massfilesarea_contract' && !empty($conf->contrat->dir_output))
 	{
 		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2477,7 +2477,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for interventions
-	else if (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output))
+	elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output))
 	{
 		if ($fuser->rights->ficheinter->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2488,7 +2488,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les deplacements et notes de frais
-	else if ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output))
+	elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output))
 	{
 		if ($fuser->rights->deplacement->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2498,7 +2498,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les propales
-	else if (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity]))
+	elseif (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity]))
 	{
 		if ($fuser->rights->propale->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2509,7 +2509,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les commandes
-	else if (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->dir_output))
+	elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->dir_output))
 	{
 		if ($fuser->rights->commande->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2520,7 +2520,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les projets
-	else if ($modulepart == 'project' && !empty($conf->projet->dir_output))
+	elseif ($modulepart == 'project' && !empty($conf->projet->dir_output))
 	{
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2529,7 +2529,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	}
-	else if ($modulepart == 'project_task' && !empty($conf->projet->dir_output))
+	elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output))
 	{
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2540,7 +2540,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les commandes fournisseurs
-	else if (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output))
+	elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output))
 	{
 		if ($fuser->rights->fournisseur->commande->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2551,7 +2551,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les factures fournisseurs
-	else if (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output))
+	elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output))
 	{
 		if ($fuser->rights->fournisseur->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2561,7 +2561,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les rapport de paiements
-	else if ($modulepart == 'supplier_payment')
+	elseif ($modulepart == 'supplier_payment')
 	{
 		if ($fuser->rights->fournisseur->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2572,7 +2572,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les rapport de paiements
-	else if ($modulepart == 'facture_paiement' && !empty($conf->facture->dir_output))
+	elseif ($modulepart == 'facture_paiement' && !empty($conf->facture->dir_output))
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2583,7 +2583,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for accounting exports
-	else if ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output))
+	elseif ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output))
 	{
 		if ($fuser->rights->accounting->bind->write || preg_match('/^specimen/i',$original_file))
 		{
@@ -2593,7 +2593,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les expedition
-	else if ($modulepart == 'expedition' && !empty($conf->expedition->dir_output))
+	elseif ($modulepart == 'expedition' && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2602,7 +2602,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->expedition->dir_output."/sending/".$original_file;
 	}
 	// Wrapping pour les bons de livraison
-	else if ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
+	elseif ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
 	{
 		if ($fuser->rights->expedition->livraison->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2612,7 +2612,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les actions
-	else if ($modulepart == 'actions' && !empty($conf->agenda->dir_output))
+	elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output))
 	{
 		if ($fuser->rights->agenda->myactions->{$read} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2622,7 +2622,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les actions
-	else if ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp))
+	elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp))
 	{
 		if ($fuser->rights->agenda->allactions->{$read} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2632,7 +2632,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les produits et services
-	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
+	elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
 	{
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i',$original_file))
@@ -2644,7 +2644,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les lots produits
-	else if ($modulepart == 'product_batch' || $modulepart == 'produitlot')
+	elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot')
 	{
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i',$original_file))
@@ -2655,7 +2655,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les contrats
-	else if ($modulepart == 'contract' && !empty($conf->contrat->dir_output))
+	elseif ($modulepart == 'contract' && !empty($conf->contrat->dir_output))
 	{
 		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2666,7 +2666,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les dons
-	else if ($modulepart == 'donation' && !empty($conf->don->dir_output))
+	elseif ($modulepart == 'donation' && !empty($conf->don->dir_output))
 	{
 		if ($fuser->rights->don->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2676,7 +2676,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les dons
-	else if ($modulepart == 'dolresource' && !empty($conf->resource->dir_output))
+	elseif ($modulepart == 'dolresource' && !empty($conf->resource->dir_output))
 	{
 		if ($fuser->rights->resource->{$read} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2686,7 +2686,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les remises de cheques
-	else if ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
+	elseif ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2697,7 +2697,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for bank
-	else if ($modulepart == 'bank' && !empty($conf->bank->dir_output))
+	elseif ($modulepart == 'bank' && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire})
 		{
@@ -2707,7 +2707,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for export module
-	else if ($modulepart == 'export' && !empty($conf->export->dir_temp))
+	elseif ($modulepart == 'export' && !empty($conf->export->dir_temp))
 	{
 		// Aucun test necessaire car on force le rep de download sur
 		// le rep export qui est propre a l'utilisateur
@@ -2716,35 +2716,35 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for import module
-	else if ($modulepart == 'import' && !empty($conf->import->dir_temp))
+	elseif ($modulepart == 'import' && !empty($conf->import->dir_temp))
 	{
 		$accessallowed=1;
 		$original_file=$conf->import->dir_temp.'/'.$original_file;
 	}
 
 	// Wrapping pour l'editeur wysiwyg
-	else if ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output))
+	elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output))
 	{
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping for backups
-	else if ($modulepart == 'systemtools' && !empty($conf->admin->dir_output))
+	elseif ($modulepart == 'systemtools' && !empty($conf->admin->dir_output))
 	{
 		if ($fuser->admin) $accessallowed=1;
 		$original_file=$conf->admin->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping for upload file test
-	else if ($modulepart == 'admin_temp' && !empty($conf->admin->dir_temp))
+	elseif ($modulepart == 'admin_temp' && !empty($conf->admin->dir_temp))
 	{
 		if ($fuser->admin) $accessallowed=1;
 		$original_file=$conf->admin->dir_temp.'/'.$original_file;
 	}
 
 	// Wrapping pour BitTorrent
-	else if ($modulepart == 'bittorrent' && !empty($conf->bittorrent->dir_output))
+	elseif ($modulepart == 'bittorrent' && !empty($conf->bittorrent->dir_output))
 	{
 		$accessallowed=1;
 		$dir='files';
@@ -2753,7 +2753,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour Foundation module
-	else if ($modulepart == 'member' && !empty($conf->adherent->dir_output))
+	elseif ($modulepart == 'member' && !empty($conf->adherent->dir_output))
 	{
 		if ($fuser->rights->adherent->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
@@ -2763,7 +2763,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for Scanner
-	else if ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp))
+	elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp))
 	{
 		$accessallowed=1;
 		$original_file=$conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
@@ -2790,7 +2790,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		}
-		else if (preg_match('/^([a-z]+)_temp$/i',$modulepart,$reg))
+		elseif (preg_match('/^([a-z]+)_temp$/i',$modulepart,$reg))
 		{
 			if (empty($conf->{$reg[1]}->dir_temp))	// modulepart not supported
 			{
@@ -2800,7 +2800,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_temp.'/'.$original_file;
 		}
-		else if (preg_match('/^([a-z]+)_user$/i',$modulepart,$reg))
+		elseif (preg_match('/^([a-z]+)_user$/i',$modulepart,$reg))
 		{
 			if (empty($conf->{$reg[1]}->dir_output))	// modulepart not supported
 			{
@@ -2810,7 +2810,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
 		}
-		else if (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg))
+		elseif (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg))
 		{
 			if (empty($conf->{$reg[1]}->dir_output))	// modulepart not supported
 			{

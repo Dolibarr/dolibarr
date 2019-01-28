@@ -166,7 +166,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			</div>
 			<?php
 		}
-		else if (in_array($type, array('pgsql')))
+		elseif (in_array($type, array('pgsql')))
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />

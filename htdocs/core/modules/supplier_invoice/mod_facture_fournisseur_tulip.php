@@ -153,7 +153,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc,$object,$mode='next')
+    function getNextValue($objsoc, $object, $mode = 'next')
     {
 		global $db,$conf;
 
@@ -169,8 +169,8 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 				$mask=$conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 			}
 		}
-		else if (is_object($object) && $object->type == 2) $mask=$conf->global->SUPPLIER_CREDIT_TULIP_MASK;
-		else if (is_object($object) && $object->type == 3) $mask=$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
+		elseif (is_object($object) && $object->type == 2) $mask=$conf->global->SUPPLIER_CREDIT_TULIP_MASK;
+		elseif (is_object($object) && $object->type == 3) $mask=$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
 		else $mask=$conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 		if (! $mask)
 		{
@@ -192,7 +192,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
-	function getNumRef($objsoc,$objforref,$mode='next')
+	function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}

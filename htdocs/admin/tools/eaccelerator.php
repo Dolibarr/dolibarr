@@ -48,17 +48,17 @@ if (isset($_POST['caching'])) {
     } else {
         eaccelerator_caching(true);
     }
-} else if (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
+} elseif (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
     if ($info['optimizer']) {
         eaccelerator_optimizer(false);
     } else {
         eaccelerator_optimizer(true);
     }
-} else if (isset($_POST['clear'])) {
+} elseif (isset($_POST['clear'])) {
     eaccelerator_clear();
-} else if (isset($_POST['clean'])) {
+} elseif (isset($_POST['clean'])) {
     eaccelerator_clean();
-} else if (isset($_POST['purge'])) {
+} elseif (isset($_POST['purge'])) {
     eaccelerator_purge();
 }
 $info = eaccelerator_info();
@@ -81,7 +81,7 @@ function compare($x, $y)
 
     if ( $x[$sortby] == $y[$sortby] ) {
         return 0;
-    } else if ($x[$sortby] < $y[$sortby]) {
+    } elseif ($x[$sortby] < $y[$sortby]) {
         return -1;
     } else {
         return 1;
@@ -101,7 +101,7 @@ function revcompare($x, $y)
 
     if ($x[$sortby] == $y[$sortby]) {
         return 0;
-    } else if ($x[$sortby] < $y[$sortby]) {
+    } elseif ($x[$sortby] < $y[$sortby]) {
         return 1;
     } else {
         return -1;

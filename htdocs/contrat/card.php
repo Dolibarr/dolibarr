@@ -119,7 +119,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
+	elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
 	{
 		if (! GETPOST('dateend'))
 		{
@@ -408,13 +408,13 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'classin' && $user->rights->contrat->creer)
+	elseif ($action == 'classin' && $user->rights->contrat->creer)
 	{
 		$object->setProject(GETPOST('projectid'));
 	}
 
 	// Add a new line
-	else if ($action == 'addline' && $user->rights->contrat->creer)
+	elseif ($action == 'addline' && $user->rights->contrat->creer)
 	{
 		// Set if we used free entry or predefined product
 		$predef='';
@@ -653,7 +653,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
+	elseif ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
 		$error = 0;
 
@@ -761,7 +761,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->deleteline(GETPOST('lineid'),$user);
 
@@ -776,7 +776,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
+	elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->validate($user);
 
@@ -805,7 +805,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'reopen' && $user->rights->contrat->creer)
+	elseif ($action == 'reopen' && $user->rights->contrat->creer)
 	{
 		$result = $object->reopen($user);
 		if ($result < 0)
@@ -815,7 +815,7 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
+	elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->closeAll($user);
 		if ($result < 0)
@@ -825,7 +825,7 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
+	elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->activateAll($user);
 		if ($result < 0)
@@ -834,7 +834,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
 	{
 		$result=$object->delete($user);
 		if ($result >= 0)
@@ -848,7 +848,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
+	elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		if (GETPOST('newcid') > 0)
 		{
@@ -871,7 +871,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
 	}
-	else if ($action == 'update_extras')
+	elseif ($action == 'update_extras')
 	{
 		$object->oldcopy = dol_clone($object);
 
@@ -1042,13 +1042,13 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut')
+		elseif ($action == 'swapstatut')
 		{
 			$result=$object->swapContactStatus(GETPOST('ligne'));
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact')
+		elseif ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact(GETPOST('lineid'));
 

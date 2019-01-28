@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
@@ -212,7 +212,8 @@ if (empty($chartaccountcode))
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
 $sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-$sql.= " aa.rowid as aarowid,";
+$sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+$sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql.= " co.code as country_code, co.label as country,";
 $sql.= " s.tva_intra";
 $parameters=array();
@@ -257,12 +258,12 @@ if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
 		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-		else if ($search_year > 0 && ! empty($search_day))
+		elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($search_year > 0)
+elseif ($search_year > 0)
 {
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
@@ -437,7 +438,9 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-		if ($objp->type_l == 1) {
+        $isinEEC = isInEEC($objp->country_code);
+
+    	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
@@ -450,8 +453,19 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
+        if ($objp->country_sell == '1') {
+            $objp->code_sell_p = $objp->code_sell;
+            $objp->aarowid_suggest = $objp->aarowid;
+        } elseif ($isinEEC == true) {
+            $objp->code_sell_p = $objp->code_sell_intra;
+            $objp->aarowid_suggest = $objp->aarowid_intra;
+        } else {
+            $objp->code_sell_p = $objp->code_sell_export;
+            $objp->aarowid_suggest = $objp->aarowid_export;
+        }
+
 		if (! empty($objp->code_sell)) {
-			$objp->code_sell_p = $objp->code_sell;       // Code on product
+			//$objp->code_sell_p = $objp->code_sell;       // Code on product
 		} else {
 			$code_sell_p_notset = 'color:orange';
 		}

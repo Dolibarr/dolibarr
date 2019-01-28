@@ -17,9 +17,6 @@ namespace Stripe;
  */
 class SubscriptionItem extends ApiResource
 {
-
-    const OBJECT_NAME = "subscription_item";
-
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;
@@ -27,17 +24,13 @@ class SubscriptionItem extends ApiResource
     use ApiOperations\Update;
 
     /**
-     * @param array|null $params
-     * @param array|string|null $options
+     * This is a special case because the subscription items endpoint has an
+     *    underscore in it. The parent `className` function strips underscores.
      *
-     * @return Collection The list of source transactions.
+     * @return string The name of the class.
      */
-    public function usageRecordSummaries($params = null, $options = null)
+    public static function className()
     {
-        $url = $this->instanceUrl() . '/usage_record_summaries';
-        list($response, $opts) = $this->_request('get', $url, $params, $options);
-        $obj = Util\Util::convertToStripeObject($response, $opts);
-        $obj->setLastResponse($response);
-        return $obj;
+        return 'subscription_item';
     }
 }

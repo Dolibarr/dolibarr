@@ -289,7 +289,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create(User $user, $notrigger=0, $forceduedate=0)
+	function create(User $user, $notrigger = 0, $forceduedate = 0)
 	{
 		global $langs,$conf,$mysoc,$hookmanager;
 		$error=0;
@@ -854,7 +854,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$invertdetail	Reverse sign of amounts for lines
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function createFromCurrent(User $user, $invertdetail=0)
+	function createFromCurrent(User $user, $invertdetail = 0)
 	{
 		global $conf;
 
@@ -945,7 +945,7 @@ class Facture extends CommonInvoice
 	 *		@param		int				$socid			Id of thirdparty
 	 * 	 	@return		int								New id of clone
 	 */
-	function createFromClone($socid=0)
+	function createFromClone($socid = 0)
 	{
 		global $user,$hookmanager, $conf;
 
@@ -1162,7 +1162,7 @@ class Facture extends CommonInvoice
 	 * @param	int				$withpicto			Add download picto into link
 	 * @return	string			HTML link to file
 	 */
-	function getDirectExternalLink($withpicto=0)
+	function getDirectExternalLink($withpicto = 0)
 	{
 		global $dolibarr_main_url_root;
 
@@ -1193,7 +1193,7 @@ class Facture extends CommonInvoice
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return string 			         			String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $max=0, $short=0, $moretitle='', $notooltip=0, $addlinktonotes=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1301,7 +1301,7 @@ class Facture extends CommonInvoice
 	 *  @param		bool	$fetch_situation	Fetch the previous and next situation in $tab_previous_situation_invoice and $tab_next_situation_invoice
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $fetch_situation=false)
+	function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $fetch_situation = false)
 	{
 		global $conf;
 
@@ -1604,7 +1604,7 @@ class Facture extends CommonInvoice
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger=0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -1819,7 +1819,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function set_ref_client($ref_client, $notrigger=0)
+	function set_ref_client($ref_client, $notrigger = 0)
 	{
         // phpcs:enable
 	    global $user;
@@ -1884,7 +1884,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, 0=Refused, >0 if OK
 	 */
-	function delete($user, $notrigger=0, $idwarehouse=-1)
+	function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $langs,$conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2058,7 +2058,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_paid($user, $close_code='', $close_note='')
+	function set_paid($user, $close_code = '', $close_note = '')
 	{
         // phpcs:enable
 		$error=0;
@@ -2168,7 +2168,7 @@ class Facture extends CommonInvoice
 	 *	@param	string	$close_note		Comment
 	 *	@return int         			<0 if KO, >0 if OK
 	 */
-	function set_canceled($user, $close_code='', $close_note='')
+	function set_canceled($user, $close_code = '', $close_note = '')
 	{
         // phpcs:enable
 
@@ -2231,7 +2231,7 @@ class Facture extends CommonInvoice
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
-	function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
+	function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2313,7 +2313,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $force_number;
 		}
-		else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+		elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		{
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
@@ -2529,7 +2529,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function set_draft($user,$idwarehouse=-1)
+	function set_draft($user, $idwarehouse = -1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2649,7 +2649,7 @@ class Facture extends CommonInvoice
 	 * 		@param		double		$pu_ht_devise		Unit price in currency
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id=0, $fk_unit = null, $pu_ht_devise = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = 0, $fk_remise_except = '', $price_base_type = 'HT', $pu_ttc = 0, $type = self::TYPE_STANDARD, $rang = -1, $special_code = 0, $origin = '', $origin_id = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $situation_percent = 100, $fk_prev_id = 0, $fk_unit = null, $pu_ht_devise = 0)
 	{
 		// Deprecation warning
 		if ($label) {
@@ -2879,7 +2879,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=100, $fk_unit = null, $pu_ht_devise = 0, $notrigger=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
 		global $conf,$user;
 		// Deprecation warning
@@ -3197,7 +3197,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
-	function set_remise($user, $remise, $notrigger=0)
+	function set_remise($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		// Clean parameters
@@ -3263,7 +3263,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function set_remise_absolue($user, $remise, $notrigger=0)
+	function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		if (empty($remise)) $remise=0;
@@ -3330,15 +3330,15 @@ class Facture extends CommonInvoice
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumRef($soc,$mode='next')
+	function getNextNumRef($soc, $mode = 'next')
 	{
 		global $conf, $langs;
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->FACTURE_ADDON)) $conf->global->FACTURE_ADDON='mod_facture_terre';
-		else if ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
-		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
+		elseif ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
+		elseif ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
 
 		if (! empty($conf->global->FACTURE_ADDON))
 		{
@@ -3472,7 +3472,7 @@ class Facture extends CommonInvoice
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
-	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='f.datef,f.rowid', $sortorder='DESC')
+	function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
         // phpcs:enable
 		global $conf,$user;
@@ -3511,7 +3511,7 @@ class Facture extends CommonInvoice
 					{
 						$ga[$obj->fid] = $obj->ref;
 					}
-					else if ($shortlist == 2)
+					elseif ($shortlist == 2)
 					{
 						$ga[$obj->fid] = $obj->ref.' ('.$obj->name.')';
 					}
@@ -3543,7 +3543,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
-	function list_replacable_invoices($socid=0)
+	function list_replacable_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -3593,7 +3593,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
-	function list_qualified_avoir_invoices($socid=0)
+	function list_qualified_avoir_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -3668,7 +3668,7 @@ class Facture extends CommonInvoice
 	 *  @param		float	$amount		Amount we request direct debit for
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function demande_prelevement($fuser, $amount=0)
+	function demande_prelevement($fuser, $amount = 0)
 	{
         // phpcs:enable
 
@@ -3894,7 +3894,7 @@ class Facture extends CommonInvoice
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option='')
+	function initAsSpecimen($option = '')
 	{
 		global $langs;
 
@@ -3971,7 +3971,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ttc=-239.2;
 					$line->multicurrency_total_tva=-39.2;
 				}
-				else if ($xnbp == 2)    // UP is negative (free line)
+				elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice=-100;
 					$line->total_ht=-100;
@@ -3982,7 +3982,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ttc=-239.2;
 					$line->multicurrency_total_tva=-39.2;
 				}
-				else if ($xnbp == 3)    // Discount is 50% (product line)
+				elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
@@ -4110,7 +4110,7 @@ class Facture extends CommonInvoice
 	 *  @param   null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$langs;
 
@@ -4215,7 +4215,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function setFinal(User $user, $notrigger=0)
+	function setFinal(User $user, $notrigger = 0)
 	{
 		$error=0;
 
@@ -4512,7 +4512,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
 	 *	@return		int						                 <0 if KO, >0 if OK
 	 */
-	function insert($notrigger=0, $noerrorifdiscountalreadylinked=0)
+	function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
 		global $langs,$user,$conf;
 
@@ -4729,7 +4729,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	@param		int		$notrigger	Disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function update($user='',$notrigger=0)
+	function update($user = '', $notrigger = 0)
 	{
 		global $user,$conf;
 
@@ -4945,7 +4945,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return int                     >= 0
 	 */
-	function get_prev_progress($invoiceid, $include_credit_note=true)
+	function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
         // phpcs:enable
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {

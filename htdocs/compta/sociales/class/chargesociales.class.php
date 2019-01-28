@@ -93,7 +93,7 @@ class ChargeSociales extends CommonObject
      *  @param	string  $ref	Ref
      *  @return	int <0 KO >0 OK
      */
-    function fetch($id, $ref='')
+    function fetch($id, $ref = '')
     {
         $sql = "SELECT cs.rowid, cs.date_ech";
         $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
@@ -419,7 +419,7 @@ class ChargeSociales extends CommonObject
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
-    function getLibStatut($mode=0,$alreadypaid=-1)
+    function getLibStatut($mode = 0, $alreadypaid = -1)
     {
         return $this->LibStatut($this->paye,$mode,$alreadypaid);
     }
@@ -433,7 +433,7 @@ class ChargeSociales extends CommonObject
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
-    function LibStatut($statut,$mode=0,$alreadypaid=-1)
+    function LibStatut($statut, $mode = 0, $alreadypaid = -1)
     {
         // phpcs:enable
         global $langs;
@@ -491,7 +491,7 @@ class ChargeSociales extends CommonObject
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string								String with link
      */
-    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0, $short=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
     {
     	global $langs, $conf, $user, $form;
 

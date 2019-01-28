@@ -124,7 +124,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		    exit;
 		}
 	}
-} else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (! $cancel) {
 		$result = $object->fetch($id);
 
@@ -177,7 +177,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	    header("Location: " . $urltogo);
 		exit();
 	}
-} else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
 
 	if (! empty($object->id)) {
@@ -272,7 +272,7 @@ if ($action == 'create') {
 
 	print '</form>';
 }
-else if ($id > 0 || $ref) {
+elseif ($id > 0 || $ref) {
 
 	$result = $object->fetch($id, $ref, 1);
 

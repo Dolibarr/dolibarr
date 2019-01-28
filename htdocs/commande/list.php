@@ -1025,7 +1025,7 @@ if ($resql)
 		// Amount HT
 		if (! empty($arrayfields['c.total_ht']['checked']))
 		{
-			  print '<td align="right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
 			  if (! $i) $totalarray['nbfield']++;
 			  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
 			  $totalarray['totalht'] += $obj->total_ht;
@@ -1033,7 +1033,7 @@ if ($resql)
 		// Amount VAT
 		if (! empty($arrayfields['c.total_vat']['checked']))
 		{
-			print '<td align="right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="right">'.price($obj->total_tva)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
 			$totalarray['totalvat'] += $obj->total_tva;
@@ -1041,7 +1041,7 @@ if ($resql)
 		// Amount TTC
 		if (! empty($arrayfields['c.total_ttc']['checked']))
 		{
-			print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->total_ttc;
@@ -1072,7 +1072,7 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['c.fk_statut']['checked']))
 		{
-			print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';
+			print '<td class="nowrap right">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Billed
@@ -1118,9 +1118,9 @@ if ($resql)
 				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
 			else print '<td></td>';
 		}
 		print '</tr>';

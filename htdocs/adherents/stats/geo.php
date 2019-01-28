@@ -210,9 +210,9 @@ if ($mode && ! count($data))
 else
 {
     if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-    else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-    else if ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
+    elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
+    elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
+    elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
     else
     {
         print $langs->trans("MembersStatisticsDesc").'<br>';

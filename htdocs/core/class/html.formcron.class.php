@@ -58,7 +58,7 @@ class FormCron extends Form
 	 * @param   integer	$readonly		Select is read only or not
 	 * @return	string					HTML select field
 	 */
-	function select_typejob($htmlname,$selected=0,$readonly=0)
+	function select_typejob($htmlname, $selected = 0, $readonly = 0)
 	{
         // phpcs:enable
 		global $langs;

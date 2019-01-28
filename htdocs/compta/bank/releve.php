@@ -435,8 +435,8 @@ if (empty($numref))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
-		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
+		print '<td class="right">'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td class="right">'.$langs->trans("EndBankBalance").'</td>';
 		print '<td></td>';
 		print '</tr>';
 
@@ -480,7 +480,7 @@ if (empty($numref))
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td align="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td class="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -494,7 +494,7 @@ if (empty($numref))
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td align="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td class="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
 
 				print '<td align="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
@@ -546,9 +546,9 @@ else
 	print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td align="right" width="60">'.$langs->trans("Debit").'</td>';
-	print '<td align="right" width="60">'.$langs->trans("Credit").'</td>';
-	print '<td align="right">'.$langs->trans("Balance").'</td>';
+	print '<td class="right" width="60">'.$langs->trans("Debit").'</td>';
+	print '<td class="right" width="60">'.$langs->trans("Credit").'</td>';
+	print '<td class="right">'.$langs->trans("Balance").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 

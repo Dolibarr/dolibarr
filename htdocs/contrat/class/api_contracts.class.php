@@ -555,7 +555,7 @@ class Contracts extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $notrigger=0)
+    function validate($id, $notrigger = 0)
     {
         if (! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
@@ -601,7 +601,7 @@ class Contracts extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function close($id, $notrigger=0)
+    function close($id, $notrigger = 0)
     {
     	if (! DolibarrApiAccess::$user->rights->contrat->creer) {
     		throw new RestException(401);

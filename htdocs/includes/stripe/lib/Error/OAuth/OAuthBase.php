@@ -13,11 +13,11 @@ class OAuthBase extends \Stripe\Error\Base
         $httpHeaders = null
     ) {
         parent::__construct($description, $httpStatus, $httpBody, $jsonBody, $httpHeaders);
-        $this->errorCode = $code;
+        $this->code = $code;
     }
 
     public function getErrorCode()
     {
-        return $this->errorCode;
+        return $this->code;
     }
 }

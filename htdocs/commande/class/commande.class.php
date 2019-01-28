@@ -313,7 +313,7 @@ class Commande extends CommonOrder
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
 	 */
-	function valid($user, $idwarehouse=0, $notrigger=0)
+	function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -474,7 +474,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function set_draft($user, $idwarehouse=-1)
+	function set_draft($user, $idwarehouse = -1)
 	{
         //phpcs:enable
 		global $conf,$langs;
@@ -617,7 +617,7 @@ class Commande extends CommonOrder
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function cloture($user, $notrigger=0)
+	function cloture($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -677,7 +677,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function cancel($idwarehouse=-1)
+	function cancel($idwarehouse = -1)
 	{
 		global $conf,$user,$langs;
 
@@ -758,7 +758,7 @@ class Commande extends CommonOrder
 	 *	@param		int	    $notrigger	Disable all triggers
 	 *	@return 	int			        <0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 		$error=0;
@@ -1060,7 +1060,7 @@ class Commande extends CommonOrder
 	 *	@param		int			$socid			Id of thirdparty
 	 *	@return		int							New id of clone
 	 */
-	function createFromClone($socid=0)
+	function createFromClone($socid = 0)
 	{
 		global $user,$hookmanager;
 
@@ -1302,7 +1302,7 @@ class Commande extends CommonOrder
 	 *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -1531,7 +1531,7 @@ class Commande extends CommonOrder
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *			insere dans tableau $this->products
 	 */
-	function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
+	function add_product($idproduct, $qty, $remise_percent = 0.0, $date_start = '', $date_end = '')
 	{
         // phpcs:enable
 		global $conf, $mysoc;
@@ -1616,7 +1616,7 @@ class Commande extends CommonOrder
 	 * 	@param		string		$ref_int		Internal reference of other object
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($id, $ref='', $ref_ext='', $ref_int='')
+	function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
 	{
 
 		// Check parameters
@@ -1845,7 +1845,7 @@ class Commande extends CommonOrder
 	 *	@param		int		$only_product	Return only physical products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function fetch_lines($only_product=0)
+	function fetch_lines($only_product = 0)
 	{
         // phpcs:enable
 		$this->lines=array();
@@ -2027,7 +2027,7 @@ class Commande extends CommonOrder
 	 *	@param      int		$filtre_statut      Filter on shipment status
 	 * 	@return     int                			<0 if KO, Nb of lines found if OK
 	 */
-	function loadExpeditions($filtre_statut=-1)
+	function loadExpeditions($filtre_statut = -1)
 	{
 		$this->expeditions = array();
 
@@ -2103,7 +2103,7 @@ class Commande extends CommonOrder
 	 *
 	 *	TODO		FONCTION NON FINIE A FINIR
 	 */
-	function stock_array($filtre_statut=self::STATUS_CANCELED)
+	function stock_array($filtre_statut = self::STATUS_CANCELED)
 	{
         // phpcs:enable
 		$this->stocks = array();
@@ -2143,7 +2143,7 @@ class Commande extends CommonOrder
 	 *  @param      int		$lineid		Id of line to delete
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	function deleteline($user=null, $lineid=0)
+	function deleteline($user = null, $lineid = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT)
 		{
@@ -2221,7 +2221,7 @@ class Commande extends CommonOrder
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
 	 */
-	function set_remise($user, $remise, $notrigger=0)
+	function set_remise($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2289,7 +2289,7 @@ class Commande extends CommonOrder
 	 * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *		@return		int 					<0 if KO, >0 if OK
 	 */
-	function set_remise_absolue($user, $remise, $notrigger=0)
+	function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2357,7 +2357,7 @@ class Commande extends CommonOrder
 	 * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function set_date($user, $date, $notrigger=0)
+	function set_date($user, $date, $notrigger = 0)
 	{
         // phpcs:enable
 		if ($user->rights->commande->creer)
@@ -2423,7 +2423,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 si ko, >0 si ok
 	 */
-	function set_date_livraison($user, $date_livraison, $notrigger=0)
+	function set_date_livraison($user, $date_livraison, $notrigger = 0)
 	{
         // phpcs:enable
 		if ($user->rights->commande->creer)
@@ -2494,7 +2494,7 @@ class Commande extends CommonOrder
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
-	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
+	function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{
         // phpcs:enable
 		global $user;
@@ -2533,7 +2533,7 @@ class Commande extends CommonOrder
 					{
 						$ga[$obj->cid] = $obj->ref;
 					}
-					else if ($shortlist == 2)
+					elseif ($shortlist == 2)
 					{
 						$ga[$obj->cid] = $obj->ref.' ('.$obj->name.')';
 					}
@@ -2562,7 +2562,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				>0 if OK, <0 if KO
 	 */
-	function availability($availability_id, $notrigger=0)
+	function availability($availability_id, $notrigger = 0)
 	{
 		global $user;
 
@@ -2633,7 +2633,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *  @return     int        			 		>0 if ok, <0 if ko
 	 */
-	function demand_reason($demand_reason_id, $notrigger=0)
+	function demand_reason($demand_reason_id, $notrigger = 0)
 	{
         // phpcs:enable
 		global $user;
@@ -2706,7 +2706,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     int             		<0 if KO, >0 if OK
 	 */
-	function set_ref_client($user, $ref_client, $notrigger=0)
+	function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
         // phpcs:enable
 		if ($user->rights->commande->creer)
@@ -2769,7 +2769,7 @@ class Commande extends CommonOrder
 	 * @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled(User $user, $notrigger=0)
+	function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2904,7 +2904,7 @@ class Commande extends CommonOrder
 	 * 	@param		int				$notrigger			disable line update trigger
 	 *  @return   	int              					< 0 if KO, > 0 if OK
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null, $pu_ht_devise = 0, $notrigger=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
 		global $conf, $mysoc, $langs, $user;
 
@@ -3094,7 +3094,7 @@ class Commande extends CommonOrder
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger=0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -3189,7 +3189,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int					<=0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -3408,7 +3408,7 @@ class Commande extends CommonOrder
 	 *  @param      int     $donotshowbilled  Do not show billed status after order status
 	 *  @return     string					  Label of status
 	 */
-	function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
+	function LibStatut($statut, $billed, $mode, $donotshowbilled = 0)
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3501,7 +3501,7 @@ class Commande extends CommonOrder
 	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return     string          			          String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $max=0, $short=0, $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user;
 
@@ -3782,7 +3782,7 @@ class Commande extends CommonOrder
 	 *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$langs;
 
@@ -4022,7 +4022,7 @@ class OrderLine extends CommonOrderLine
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	 int  <0 si ko, >0 si ok
 	 */
-	function delete(User $user, $notrigger=0)
+	function delete(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -4083,7 +4083,7 @@ class OrderLine extends CommonOrderLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function insert($user=null, $notrigger=0)
+	function insert($user = null, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -4228,7 +4228,7 @@ class OrderLine extends CommonOrderLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return		int		<0 si ko, >0 si ok
 	 */
-	function update(User $user, $notrigger=0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $conf,$langs;
 

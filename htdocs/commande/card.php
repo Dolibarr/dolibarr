@@ -159,7 +159,7 @@ if (empty($reshook))
 	}
 
 	// Reopen a closed order
-	else if ($action == 'reopen' && $user->rights->commande->creer)
+	elseif ($action == 'reopen' && $user->rights->commande->creer)
 	{
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED)
 		{
@@ -176,7 +176,7 @@ if (empty($reshook))
 	}
 
 	// Remove order
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->commande->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->commande->supprimer)
 	{
 		$result = $object->delete($user);
 		if ($result > 0)
@@ -191,7 +191,7 @@ if (empty($reshook))
 	}
 
 	// Remove a product line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->commande->creer)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->commande->creer)
 	{
 		$result = $object->deleteline($user, $lineid);
 		if ($result > 0)
@@ -222,13 +222,13 @@ if (empty($reshook))
 	}
 
 	// Link to a project
-	else if ($action == 'classin' && $user->rights->commande->creer)
+	elseif ($action == 'classin' && $user->rights->commande->creer)
 	{
 		$object->setProject(GETPOST('projectid','int'));
 	}
 
 	// Add order
-	else if ($action == 'add' && $user->rights->commande->creer)
+	elseif ($action == 'add' && $user->rights->commande->creer)
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
@@ -481,7 +481,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'classifybilled' && $user->rights->commande->creer)
+	elseif ($action == 'classifybilled' && $user->rights->commande->creer)
 	{
 		$ret=$object->classifyBilled($user);
 
@@ -489,7 +489,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else if ($action == 'classifyunbilled' && $user->rights->commande->creer)
+	elseif ($action == 'classifyunbilled' && $user->rights->commande->creer)
 	{
 		$ret=$object->classifyUnBilled();
 		if ($ret < 0) {
@@ -498,7 +498,7 @@ if (empty($reshook))
 	}
 
 	// Positionne ref commande client
-	else if ($action == 'setref_client' && $user->rights->commande->creer) {
+	elseif ($action == 'setref_client' && $user->rights->commande->creer) {
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
 		if ($result < 0)
 		{
@@ -506,7 +506,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setremise' && $user->rights->commande->creer) {
+	elseif ($action == 'setremise' && $user->rights->commande->creer) {
 		$result = $object->set_remise($user, GETPOST('remise'));
 		if ($result < 0)
 		{
@@ -514,7 +514,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setabsolutediscount' && $user->rights->commande->creer) {
+	elseif ($action == 'setabsolutediscount' && $user->rights->commande->creer) {
 		if (GETPOST('remise_id')) {
 			if ($object->id > 0) {
 				$object->insert_discount(GETPOST('remise_id'));
@@ -524,7 +524,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate' && $user->rights->commande->creer) {
+	elseif ($action == 'setdate' && $user->rights->commande->creer) {
 		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$date = dol_mktime(0, 0, 0, GETPOST('order_month'), GETPOST('order_day'), GETPOST('order_year'));
 
@@ -534,7 +534,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate_livraison' && $user->rights->commande->creer) {
+	elseif ($action == 'setdate_livraison' && $user->rights->commande->creer) {
 		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datelivraison = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
@@ -544,35 +544,35 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setmode' && $user->rights->commande->creer) {
+	elseif ($action == 'setmode' && $user->rights->commande->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $user->rights->commande->creer) {
+	elseif ($action == 'setmulticurrencycode' && $user->rights->commande->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $user->rights->commande->creer) {
+	elseif ($action == 'setmulticurrencyrate' && $user->rights->commande->creer) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
-	else if ($action == 'setavailability' && $user->rights->commande->creer) {
+	elseif ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	else if ($action == 'setdemandreason' && $user->rights->commande->creer) {
+	elseif ($action == 'setdemandreason' && $user->rights->commande->creer) {
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	else if ($action == 'setconditions' && $user->rights->commande->creer) {
+	elseif ($action == 'setconditions' && $user->rights->commande->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
@@ -604,7 +604,7 @@ if (empty($reshook))
 	}
 
 	// bank account
-	else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
+	elseif ($action == 'setbankaccount' && $user->rights->commande->creer) {
 		$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -612,7 +612,7 @@ if (empty($reshook))
 	}
 
 	// shipping method
-	else if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+	elseif ($action == 'setshippingmethod' && $user->rights->commande->creer) {
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -620,23 +620,23 @@ if (empty($reshook))
 	}
 
 	// warehouse
-	else if ($action == 'setwarehouse' && $user->rights->commande->creer) {
+	elseif ($action == 'setwarehouse' && $user->rights->commande->creer) {
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
+	elseif ($action == 'setremisepercent' && $user->rights->commande->creer) {
 		$result = $object->set_remise($user, GETPOST('remise_percent'));
 	}
 
-	else if ($action == 'setremiseabsolue' && $user->rights->commande->creer) {
+	elseif ($action == 'setremiseabsolue' && $user->rights->commande->creer) {
 		$result = $object->set_remise_absolue($user, GETPOST('remise_absolue'));
 	}
 
 	// Add a new line
-	else if ($action == 'addline' && $user->rights->commande->creer)
+	elseif ($action == 'addline' && $user->rights->commande->creer)
 	{
 		$langs->load('errors');
 		$error = 0;
@@ -998,7 +998,7 @@ if (empty($reshook))
 	/*
 	 *  Update a line
 	 */
-	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save'))
+	elseif ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save'))
 	{
 		// Clean parameters
 		$date_start='';
@@ -1134,12 +1134,12 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
+	elseif ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
-	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
+	elseif ($action == 'confirm_validate' && $confirm == 'yes' &&
 		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
 	   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
 	)
@@ -1196,7 +1196,7 @@ if (empty($reshook))
 	}
 
 	// Go back to draft status
-	else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
+	elseif ($action == 'confirm_modif' && $user->rights->commande->creer) {
 		$idwarehouse = GETPOST('idwarehouse');
 
 		$qualified_for_stock_change=0;
@@ -1244,14 +1244,14 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer) {
+	elseif ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer) {
 		$result = $object->cloture($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	else if ($action == 'confirm_cancel' && $confirm == 'yes' &&
+	elseif ($action == 'confirm_cancel' && $confirm == 'yes' &&
 		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->creer))
 	   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->validate)))
 	)
@@ -1441,7 +1441,7 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut')
+		elseif ($action == 'swapstatut')
 		{
 			if ($object->id > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
@@ -1451,7 +1451,7 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact')
+		elseif ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact($lineid);
 

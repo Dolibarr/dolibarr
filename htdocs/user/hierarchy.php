@@ -121,7 +121,7 @@ foreach($fulltree as $key => $val)
 	{
 		$li.=img_picto($langs->trans("SuperAdministrator"),'redstar');
 	}
-	else if ($userstatic->admin)
+	elseif ($userstatic->admin)
 	{
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}

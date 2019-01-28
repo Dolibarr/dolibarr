@@ -73,7 +73,7 @@ if ($action == 'updateMask')
 	}
 }
 
-else if ($action == 'specimen')  // For orders
+elseif ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
 
@@ -120,12 +120,12 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -135,7 +135,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -152,7 +152,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
@@ -160,13 +160,13 @@ else if ($action == 'setmod')
     dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
 
-else if ($action == 'addcat')
+elseif ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
     $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-else if ($action == 'set_SUPPLIER_ORDER_OTHER')
+elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT','none');	// No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED','alpha');
@@ -206,7 +206,7 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 }
 
 // Activate ask for payment bank
-else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
+elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
 {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER",$value,'chaine',0,'',$conf->entity);
 
@@ -503,7 +503,7 @@ $var=false;
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
 	print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
 
@@ -560,7 +560,7 @@ else
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
@@ -584,7 +584,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';

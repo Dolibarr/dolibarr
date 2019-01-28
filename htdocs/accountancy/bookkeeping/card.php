@@ -140,7 +140,7 @@ if ($action == "confirm_update") {
 	}
 }
 
-else if ($action == "add") {
+elseif ($action == "add") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -171,8 +171,8 @@ else if ($action == "add") {
 		$object->doc_ref = GETPOST('doc_ref','alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOST('fk_doc','alpha');
-		$object->fk_docdet = GETPOST('fk_docdet','alpha');
+		$object->fk_doc = GETPOST('fk_doc','int');
+		$object->fk_docdet = GETPOST('fk_docdet','int');
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit;
@@ -201,7 +201,7 @@ else if ($action == "add") {
 	}
 }
 
-else if ($action == "confirm_delete") {
+elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -218,7 +218,7 @@ else if ($action == "confirm_delete") {
 	$action = '';
 }
 
-else if ($action == "confirm_create") {
+elseif ($action == "confirm_create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);

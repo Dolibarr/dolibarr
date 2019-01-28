@@ -106,13 +106,13 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->reception->creer)
+elseif ($action == 'swapstatut' && $user->rights->reception->creer)
 {
     $result=$objectsrc->swapContactStatus(GETPOST('ligne'));
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->reception->creer)
+elseif ($action == 'deletecontact' && $user->rights->reception->creer)
 {
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));
 

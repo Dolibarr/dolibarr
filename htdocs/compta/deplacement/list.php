@@ -184,10 +184,10 @@ if ($resql)
         if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
 
-        print '<td align="right">'.$obj->km.'</td>';
+        print '<td class="right">'.$obj->km.'</td>';
 
         $tripandexpense_static->statut=$obj->fk_statut;
-        print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+        print '<td class="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
         print "</tr>\n";
 
         $i++;

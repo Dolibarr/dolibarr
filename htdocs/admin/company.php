@@ -137,7 +137,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 					}
 					else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
 				}
-				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
 				{
 					$error++;
 					$langs->load("errors");
@@ -602,7 +602,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -635,7 +635,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="140">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 		// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
@@ -678,7 +678,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -821,7 +821,7 @@ else
 	{
 		print '<a class="img_logo" href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
 	}
-	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+	elseif ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
 		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
@@ -1040,7 +1040,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -1077,7 +1077,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1097,11 +1097,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}
 
@@ -1131,7 +1131,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1151,11 +1151,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
 		{
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}

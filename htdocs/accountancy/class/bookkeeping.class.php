@@ -411,7 +411,7 @@ class BookKeeping extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -470,7 +470,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode 	   Mode
 	 * @return int				 <0 if KO, Id of created object if OK
 	 */
-    public function createStd(User $user, $notrigger = false, $mode='')
+    public function createStd(User $user, $notrigger = false, $mode = '')
     {
 		global $conf;
 
@@ -641,7 +641,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function fetch($id, $ref = null, $mode='')
+    public function fetch($id, $ref = null, $mode = '')
     {
 		global $conf;
 
@@ -1090,7 +1090,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode       Mode
 	 * @return int                 <0 if KO, >0 if OK
 	 */
-    public function update(User $user, $notrigger = false, $mode='')
+    public function update(User $user, $notrigger = false, $mode = '')
     {
 		$error = 0;
 
@@ -1225,7 +1225,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode           Mode
 	 * @return number                  <0 if KO, >0 if OK
 	 */
-	public function updateByMvt($piece_num='', $field='', $value='', $mode='')
+	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{
 		$error=0;
 
@@ -1260,7 +1260,7 @@ class BookKeeping extends CommonObject
 	 * @param string $mode Mode
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function delete(User $user, $notrigger = false, $mode='')
+    public function delete(User $user, $notrigger = false, $mode = '')
     {
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -1338,7 +1338,7 @@ class BookKeeping extends CommonObject
 	 * @param  string $mode 		Mode
 	 * @return int					<0 if KO, >0 if OK
 	 */
-    function deleteByYearAndJournal($delyear='', $journal='', $mode='')
+    function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
     {
 		global $conf;
 
@@ -1500,7 +1500,7 @@ class BookKeeping extends CommonObject
 	 * @param string $mode Mode
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function fetchPerMvt($piecenum, $mode='')
+    public function fetchPerMvt($piecenum, $mode = '')
     {
 		global $conf;
 
@@ -1536,7 +1536,7 @@ class BookKeeping extends CommonObject
 	 * @param	string	$mode	Mode
 	 * @return	string			Next numero to use
 	 */
-	public function getNextNumMvt($mode='')
+	public function getNextNumMvt($mode = '')
 	{
 		global $conf;
 
@@ -1565,7 +1565,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode       Mode
 	 * @return int                 <0 if KO, >0 if OK
 	 */
-    function fetchAllPerMvt($piecenum, $mode='')
+    function fetchAllPerMvt($piecenum, $mode = '')
     {
 		global $conf;
 
@@ -1687,7 +1687,7 @@ class BookKeeping extends CommonObject
 	 * @param  string   $piece_num      Piece num
 	 * @return int                      int <0 if KO, >0 if OK
 	 */
-	public function transformTransaction($direction=0,$piece_num='')
+	public function transformTransaction($direction = 0, $piece_num = '')
 	{
 		$error = 0;
 

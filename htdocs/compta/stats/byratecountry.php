@@ -210,7 +210,7 @@ if ($modecompta=="CREANCES-DETTES") {
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -221,12 +221,12 @@ else if ($modecompta=="RECETTES-DEPENSES")
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 
 
 }
-else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
 
 

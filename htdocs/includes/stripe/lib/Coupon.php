@@ -15,7 +15,6 @@ namespace Stripe;
  * @property bool $livemode
  * @property int $max_redemptions
  * @property StripeObject $metadata
- * @property string $name
  * @property int $percent_off
  * @property int $redeem_by
  * @property int $times_redeemed
@@ -25,9 +24,6 @@ namespace Stripe;
  */
 class Coupon extends ApiResource
 {
-
-    const OBJECT_NAME = "coupon";
-
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;

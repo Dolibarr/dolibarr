@@ -905,7 +905,7 @@ $db->close();
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */
-function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
+function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $showheader = false, $colorsbytype = array(), $var = false)
 {
 	global $db;
 	global $user, $conf, $langs, $hookmanager, $action;
@@ -970,7 +970,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 					if (! empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color=$event->type_color;
 				}
-				else if ($event->type_code == 'ICALEVENT')
+				elseif ($event->type_code == 'ICALEVENT')
 				{
 					$numical++;
 					if (! empty($event->icalname))
@@ -984,7 +984,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$color=$event->icalcolor;
 					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
 				}
-				else if ($event->type_code == 'BIRTHDAY')
+				elseif ($event->type_code == 'BIRTHDAY')
 				{
 					$numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
 				}
@@ -1201,7 +1201,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
-		else if (count($cases1[$h]) > 1)
+		elseif (count($cases1[$h]) > 1)
 		{
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			$color1='222222';
@@ -1214,7 +1214,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
-		else if (count($cases2[$h]) > 1)
+		elseif (count($cases2[$h]) > 1)
 		{
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			$color2='222222';

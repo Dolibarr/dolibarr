@@ -232,7 +232,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
+	print '<td class="right"><b>'.price($totsorties[$annee]).'</b></td><td class="right"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 

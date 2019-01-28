@@ -479,7 +479,7 @@ foreach ($fieldlist as $field => $value)
 	{
 		print '<td align="'.$align.'">';
 		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-		else if (! empty($tabhelp[$id][$value]))
+		elseif (! empty($tabhelp[$id][$value]))
 		{
 			if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
 			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
@@ -525,7 +525,7 @@ if (empty($reshook))
 	}
 }
 
-print '<td align="right">';
+print '<td class="right">';
 print '</td>';
 print "</tr>";
 
@@ -552,7 +552,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	if ($tmpfieldlist == 'topic') {
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
 	}
-	else if ($tmpfieldlist == 'joinfiles') {
+	elseif ($tmpfieldlist == 'joinfiles') {
 		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1') . '">';
 	}
 	else
@@ -947,7 +947,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;

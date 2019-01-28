@@ -504,7 +504,7 @@ while ($i < min($num,$limit))
 		{
 		  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 		}
-		else if ($obj->admin)
+		elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 		}
@@ -553,7 +553,7 @@ while ($i < min($num,$limit))
 			$companystatic->canvas=$obj->canvas;
 			print $companystatic->getNomUrl(1);
 		}
-		else if ($obj->ldap_sid)
+		elseif ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
 		}
@@ -604,7 +604,7 @@ while ($i < min($num,$limit))
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			}
-			else if ($obj->admin2)
+			elseif ($obj->admin2)
 			{
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 			}

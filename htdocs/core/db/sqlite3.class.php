@@ -57,7 +57,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
      */
-    function __construct($type, $host, $user, $pass, $name='', $port=0)
+    function __construct($type, $host, $user, $pass, $name = '', $port = 0)
     {
         global $conf;
 
@@ -134,7 +134,7 @@ class DoliDBSqlite3 extends DoliDB
      *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return    string   		SQL request line converted
      */
-    static function convertSQLFromMysql($line,$type='ddl')
+    static function convertSQLFromMysql($line, $type = 'ddl')
     {
         // Removed empty line if this is a comment line for SVN tagging
         if (preg_match('/^--\s\$Id/i',$line)) {
@@ -150,8 +150,8 @@ class DoliDBSqlite3 extends DoliDB
             if ($type == 'auto')
             {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
-              else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
-              else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
+              elseif (preg_match('/CREATE TABLE/i',$line)) $type='dml';
+              elseif (preg_match('/DROP TABLE/i',$line)) $type='dml';
             }
 
             if ($type == 'dml')
@@ -323,7 +323,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@return		SQLite3				Database access handler
 	 *	@see		close
      */
-    function connect($host, $login, $passwd, $name, $port=0)
+    function connect($host, $login, $passwd, $name, $port = 0)
     {
         global $main_data_dir;
 
@@ -401,7 +401,7 @@ class DoliDBSqlite3 extends DoliDB
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *	@return	SQLite3Result			Resultset of answer
      */
-    function query($query,$usesavepoint=0,$type='auto')
+    function query($query, $usesavepoint = 0, $type = 'auto')
     {
         $ret=null;
         $query = trim($query);
@@ -602,7 +602,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param  SQLite3Result	$resultset   Curseur de la requete voulue
 	 *	@return	void
      */
-    function free($resultset=null)
+    function free($resultset = null)
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
@@ -710,7 +710,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row
      */
-    function last_insert_id($tab,$fieldid='rowid')
+    function last_insert_id($tab, $fieldid = 'rowid')
     {
         // phpcs:enable
         return $this->db->lastInsertRowId();
@@ -724,7 +724,7 @@ class DoliDBSqlite3 extends DoliDB
      *  @param	int		$withQuotes     Return string with quotes
      *  @return string          		XXX(field) or XXX('value') or field or 'value'
      */
-    function encrypt($fieldorvalue, $withQuotes=0)
+    function encrypt($fieldorvalue, $withQuotes = 0)
     {
         global $conf;
 
@@ -742,7 +742,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -775,7 +775,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
-            else if ($cryptType == 1)
+            elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
@@ -810,7 +810,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	SQLite3Result   		resource defined if OK, null if KO
      */
-    function DDLCreateDb($database,$charset='',$collation='',$owner='')
+    function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
     {
         // phpcs:enable
         if (empty($charset))   $charset=$this->forcecharset;
@@ -840,7 +840,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param	string		$table		Name of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
      */
-    function DDLListTables($database, $table='')
+    function DDLListTables($database, $table = '')
     {
         // phpcs:enable
         $listtables=array();
@@ -900,7 +900,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
-    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
+    function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
     {
         // phpcs:enable
         // FIXME: $fulltext_keys parameter is unused
@@ -915,19 +915,19 @@ class DoliDBSqlite3 extends DoliDB
             $sqlfields[$i]  .= $field_desc['type'];
             if( preg_match("/^[^\s]/i",$field_desc['value']))
             $sqlfields[$i]  .= "(".$field_desc['value'].")";
-            else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['attribute']))
             $sqlfields[$i]  .= " ".$field_desc['attribute'];
-            else if( preg_match("/^[^\s]/i",$field_desc['default']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['default']))
             {
                 if(preg_match("/null/i",$field_desc['default']))
                 $sqlfields[$i]  .= " default ".$field_desc['default'];
                 else
                 $sqlfields[$i]  .= " default '".$field_desc['default']."'";
             }
-            else if( preg_match("/^[^\s]/i",$field_desc['null']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['null']))
             $sqlfields[$i]  .= " ".$field_desc['null'];
 
-            else if( preg_match("/^[^\s]/i",$field_desc['extra']))
+            elseif( preg_match("/^[^\s]/i",$field_desc['extra']))
             $sqlfields[$i]  .= " ".$field_desc['extra'];
             $i++;
         }
@@ -993,7 +993,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	SQLite3Result		Resource
      */
-    function DDLDescTable($table,$field="")
+    function DDLDescTable($table, $field = "")
     {
         // phpcs:enable
         $sql="DESC ".$table." ".$field;
@@ -1013,7 +1013,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
      */
-    function DDLAddField($table,$field_name,$field_desc,$field_position="")
+    function DDLAddField($table, $field_name, $field_desc, $field_position = "")
     {
         // phpcs:enable
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
@@ -1057,7 +1057,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
      */
-    function DDLUpdateField($table,$field_name,$field_desc)
+    function DDLUpdateField($table, $field_name, $field_desc)
     {
         // phpcs:enable
         $sql = "ALTER TABLE ".$table;
@@ -1080,7 +1080,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
      */
-    function DDLDropField($table,$field_name)
+    function DDLDropField($table, $field_name)
     {
         // phpcs:enable
         $sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
@@ -1104,7 +1104,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
      */
-    function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
+    function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
     {
         // phpcs:enable
         $sql = "INSERT INTO user ";
@@ -1236,7 +1236,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param	string	$filter		Filter list on a particular value
 	 * @return	array				Array of key-values (key=>value)
      */
-    function getServerParametersValues($filter='')
+    function getServerParametersValues($filter = '')
     {
         $result=array();
         static $pragmas;
@@ -1285,7 +1285,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param	string	$filter		Filter list on a particular value
 	 * @return  array				Array of key-values (key=>value)
      */
-    function getServerStatusValues($filter='')
+    function getServerStatusValues($filter = '')
     {
         $result=array();
         /*

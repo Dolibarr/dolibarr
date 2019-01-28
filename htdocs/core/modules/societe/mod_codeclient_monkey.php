@@ -103,7 +103,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objsoc=0,$type=-1)
+	function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
@@ -116,7 +116,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	@param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
 	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objsoc=0,$type=-1)
+	function getNextValue($objsoc = 0, $type = -1)
 	{
 		global $db, $conf, $mc;
 
@@ -188,7 +188,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}
@@ -234,7 +234,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $soc, $type=0)
+	function verif_dispo($db, $code, $soc, $type = 0)
 	{
         // phpcs:enable
 		global $conf, $mc;

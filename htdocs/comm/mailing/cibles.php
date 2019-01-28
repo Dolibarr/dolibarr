@@ -557,7 +557,7 @@ if ($object->fetch($id) >= 0)
 						$objectstatic->fetch($obj->source_id);
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'user')
+                    elseif ($obj->source_type == 'user')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
                         $objectstatic=new User($db);
@@ -565,14 +565,14 @@ if ($object->fetch($id) >= 0)
                         $objectstatic->id=$obj->source_id;
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'thirdparty')
+                    elseif ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'contact')
+                    elseif ($obj->source_type == 'contact')
                     {
                     	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
                     	$objectstatic=new Contact($db);
@@ -602,7 +602,7 @@ if ($object->fetch($id) >= 0)
 				}
 
 				// Search Icon
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
