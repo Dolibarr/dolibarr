@@ -663,7 +663,7 @@ if ($ispaymentok)
 						$result=$paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 						if ($result < 0)
 						{
-							$postactionmessages[] = $paiement->error.' '.joint("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						}

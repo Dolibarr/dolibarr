@@ -832,6 +832,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print '<td>'.$langs->trans('Note').'</td>';
 		print '<td>'.$langs->trans('DateModification').'</td>';
+		// Hook fields
+		$parameters=array('arrayfields'=>array(),'param'=>'','sortfield'=>'','sortorder'=>'', 'linetype'=>'stripetitle');
+		$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Action column
 		print "<td></td>";
 		print "</tr>\n";
 
@@ -846,7 +851,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
 
 			$sql='SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
-			$sql.=" WHERE type in ('card', 'paypal')";
+			$sql.=" WHERE type in ('card')";
 			$sql.=" AND fk_soc = ".$object->id;
 			$sql.=" AND status = ".$servicestatus;
 
@@ -917,6 +922,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
 							print '</td>';
+							// Fields from hook
+							$parameters=array('arrayfields'=>array(), 'obj'=>$obj, 'linetype'=>'stripecard');
+							$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+							print $hookmanager->resPrint;
+							// Action column
 							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
 							{
@@ -1042,6 +1052,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				//var_dump($src);
 				print '';
 				print '</td>';
+				// Fields from hook
+				$parameters=array('arrayfields'=>array(), 'stripesource'=>$src, 'linetype'=>'stripecardremoteonly');
+				$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
+				// Action column
 				print '<td align="right" class="nowraponall">';
 				if ($user->rights->societe->creer)
 				{
