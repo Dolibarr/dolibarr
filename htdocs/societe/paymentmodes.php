@@ -832,6 +832,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print '<td>'.$langs->trans('Note').'</td>';
 		print '<td>'.$langs->trans('DateModification').'</td>';
+		// Hook fields
+		$parameters=array('arrayfields'=>array(),'param'=>'','sortfield'=>'','sortorder'=>'');
+		$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Action column
 		print "<td></td>";
 		print "</tr>\n";
 
@@ -917,6 +922,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
 							print '</td>';
+							// Fields from hook
+							$parameters=array('arrayfields'=>array(), 'obj'=>$obj);
+							$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+							print $hookmanager->resPrint;
+							// Action column
 							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
 							{
