@@ -3016,9 +3016,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $result = $this->db->query($sql);
         if ($result)
         {
-            if ($this->db->num_rows($result))
+            $objp = $this->db->fetch_object($result);
+            
+            if (!empty($objp))
             {
-                $objp = $this->db->fetch_object($result);
+                
     
                 $this->rowid            = $objp->rowid;
                 $this->id               = $objp->rowid;
