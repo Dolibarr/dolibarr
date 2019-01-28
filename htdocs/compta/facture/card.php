@@ -4650,7 +4650,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseDispatchedInAccounting") . '">' . $langs->trans('Modify') . '</span></div>';
+					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Modify') . '</span></div>';
 				}
 			}
 
