@@ -278,6 +278,7 @@ class ChargeSociales extends CommonObject
      *      Met a jour une charge sociale
      *
      *      @param	User	$user   Utilisateur qui modifie
+     *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return int     		<0 si erreur, >0 si ok
      */
     function update($user,$notrigger=0)
