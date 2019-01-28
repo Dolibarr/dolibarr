@@ -1031,7 +1031,7 @@ if ($resql)
         {
 	        // Inventory code
 	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_list.php'
+								.DOL_URL_ROOT.'/product/stock/movement_card.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode
 							    .'&amp;search_type_mouvement='.$objp->type_mouvement
