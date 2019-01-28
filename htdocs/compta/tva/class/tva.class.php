@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *

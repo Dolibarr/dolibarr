@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
