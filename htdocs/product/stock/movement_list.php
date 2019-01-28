@@ -1160,14 +1160,14 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 	if(!empty($search_inventorycode)) $objectref.="_".$id."_".$search_inventorycode;
 	if($search_type_mouvement) $objectref.="_".$search_type_mouvement;
     $relativepath = $comref . '/' . $objectref . '.pdf';
-    $filedir = $conf->stock->dir_output . '/movement/' . $objectref;
+    $filedir = $conf->stock->dir_output . '/' . $modulepart .'/' . $objectref;
 
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
 
-	$genallowed=$user->rights->stock->mouvement->lire;
-    $delallowed=$user->rights->stock->mouvement->creer;
+	$genallowed=$user->rights->stock->lire;
+    $delallowed=$user->rights->stock->creer;
 
     print $formfile->showdocuments($modulepart,$objectref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
@@ -1183,7 +1183,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
     // List of actions on element
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+    $somethingshown = $formactions->showactions($object, $modulepart, 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
 
     print '</div></div></div>';
 }
