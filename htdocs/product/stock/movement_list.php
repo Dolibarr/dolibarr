@@ -403,12 +403,12 @@ if ($action == "transfert_stock" && ! $cancel)
 /*
  * Build document
  */
-/* The builddoc action for object of a movement must be on the movement card
+// The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
-$upload_dir = $conf->stock->dir_output;
+$upload_dir = $conf->stock->dir_output . "movement/";
 $permissioncreate = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-*/
+
 
 if (empty($reshook) && $action != 'remove_file')
 {
@@ -416,7 +416,7 @@ if (empty($reshook) && $action != 'remove_file')
     $objectlabel='Movements';
     $permtoread = $user->rights->stock->lire;
     $permtodelete = $user->rights->stock->supprimer;
-    $uploaddir = $conf->stock->dir_output;
+    $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -1145,8 +1145,8 @@ else
 /*
  * Documents generes
  */
-/* Area for doc and last events of warehouse are stored on the main card of warehouse
-$modulepart='mouvement';
+//Area for doc and last events of warehouse are stored on the main card of warehouse
+$modulepart='movement';
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 {
@@ -1183,11 +1183,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
     // List of actions on element
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+    $somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
 
     print '</div></div></div>';
 }
-*/
+
 
 // End of page
 llxFooter();
