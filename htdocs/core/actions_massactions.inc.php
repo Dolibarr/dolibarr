@@ -435,7 +435,7 @@ if (! $error && $massaction == 'confirm_presend')
 							// Insert logs into agenda
 							foreach($listofqualifiedobj as $objid2 => $objectobj2)
 							{
-							    if (()! $oneemailperrecipient) && $objid2 != $objid) continue;  // We discard this pass to avoid duplicate with other pass in looparray at higher level
+							    if ((! $oneemailperrecipient) && $objid2 != $objectid) continue;  // We discard this pass to avoid duplicate with other pass in looparray at higher level
 
 								dol_syslog("Try to insert email event into agenda for objid=".$objid2." => objectobj=".get_class($objectobj2));
 
