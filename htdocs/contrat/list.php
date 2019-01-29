@@ -61,6 +61,7 @@ $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_product_category=GETPOST('search_product_category','int');
+$search_type_contact=GETPOST('search_type_contact','int');
 $search_dfmonth=GETPOST('search_dfmonth','int');
 $search_dfyear=GETPOST('search_dfyear','int');
 $search_op2df=GETPOST('search_op2df','alpha');
@@ -173,6 +174,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_user='';
 	$search_sale='';
 	$search_product_category='';
+	$search_type_contact='';
 	$sall="";
 	$search_status="";
 	$toselect='';
@@ -227,7 +229,7 @@ $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contrat_extrafields as ef on (c.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
-if ($search_user > 0)
+if ($search_user > 0 || $search_type_contact > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -261,6 +263,7 @@ if ($search_sale > 0)
 }
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+if ($search_type_contact > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='external' AND ec.element_id = c.rowid AND ec.fk_c_type_contact = ".$search_type_contact;
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -357,6 +360,7 @@ if ($search_dfmonth != '')      $param.='&search_dfmonth='.urlencode($search_dfm
 if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
 if ($search_user != '')			$param.='&search_user=' .urlencode($search_user);
 if ($search_product_category != '')	$param.='&search_product_category=' .urlencode($search_product_category);
+if ($search_type_contact != '')	$param.='&search_type_contact=' .urlencode($search_type_contact);
 if ($show_files)                $param.='&show_files=' .urlencode($show_files);
 if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -431,6 +435,15 @@ if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights-
 	$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 	$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+	$moreforfilter.='</div>';
+}
+// If the user can view contract type contact
+if ($conf->contrat->enabled && $user->rights->contrat->lire && $user->rights->service->lire)
+{
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('LinkedToSpecificThirdParty'). ': ';
+	$type_contact = $objecttmp->liste_type_contact('external', 'position', 0, 1);
+	$moreforfilter.=$form->selectarray('search_type_contact', $type_contact, $search_type_contact, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 	$moreforfilter.='</div>';
 }
 

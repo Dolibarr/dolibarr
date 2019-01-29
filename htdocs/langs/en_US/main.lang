@@ -770,6 +770,7 @@ ByMonth=By month
 ByDay=By day
 BySalesRepresentative=By sales representative
 LinkedToSpecificUsers=Linked to a particular user contact
+LinkedToSpecificThirdParty=Linked to a particular thirdparty contact
 NoResults=No results
 AdminTools=Admin Tools
 SystemTools=System tools
