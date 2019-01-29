@@ -312,6 +312,12 @@ abstract class CommonObject
 	public $modelpdf;
 
 	/**
+	 * @var string
+	 * Contains relative path of last generated main file
+	 */
+	public $last_main_doc;
+
+	/**
 	 * @var int Bank account ID
 	 * @see SetBankAccount()
 	 */
@@ -4611,10 +4617,15 @@ abstract class CommonObject
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))
 						{
-							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
 							$sql.= ' WHERE rowid = '.$this->id;
+
 							$resql = $this->db->query($sql);
 							if (! $resql) dol_print_error($this->db);
+							else
+							{
+							    $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+							}
 						}
 					}
 				}
