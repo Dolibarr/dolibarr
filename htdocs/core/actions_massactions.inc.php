@@ -74,10 +74,11 @@ if (! $error && $massaction == 'confirm_presend')
 	if (! $error)
 	{
 		$thirdparty=new Societe($db);
+
+		$objecttmp=new $objectclass($db);
 		if ($objecttmp->element == 'expensereport') $thirdparty=new User($db);
 		if ($objecttmp->element == 'holiday')       $thirdparty=new User($db);
 
-		$objecttmp=new $objectclass($db);
 		foreach($toselect as $toselectid)
 		{
 			$objecttmp=new $objectclass($db);	// we must create new instance because instance is saved into $listofobjectref array for future use
@@ -85,12 +86,15 @@ if (! $error && $massaction == 'confirm_presend')
 			if ($result > 0)
 			{
 				$listofobjectid[$toselectid]=$toselectid;
+
 				$thirdpartyid=($objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid);
 				if ($objecttmp->element == 'societe')       $thirdpartyid=$objecttmp->id;
 				if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
 				if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
-				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
-				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
+				if (empty($thirdpartyid)) $thirdpartyid=0;
+
+			    $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+			    $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
 			}
 		}
 	}
@@ -235,6 +239,12 @@ if (! $error && $massaction == 'confirm_presend')
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
 					}
+					elseif ($objectobj->element == 'holiday')
+					{
+					    $fuser = new User($db);
+					    $fuser->fetch($objectobj->fk_user);
+					    $sendto = $fuser->email;
+					}
 					else
 					{
 						$objectobj->fetch_thirdparty();
@@ -283,15 +293,14 @@ if (! $error && $massaction == 'confirm_presend')
 					}
 				}
 
-				// Object of thirdparty qualified
+				// Object of thirdparty qualified, we add it
 				$listofqualifiedobj[$objectid]=$objectobj;
 				$listofqualifiedref[$objectid]=$objectobj->ref;
-
 
 				//var_dump($listofqualifiedref);
 			}
 
-			// Send email if there is at least one qualified record
+			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0)
 			{
 				$langs->load("commercial");
@@ -337,25 +346,27 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objectclass == 'FactureFournisseur')	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
 
 				// $listofqualifiedobj is array with key = object id and value is instance of qualified objects, for the current thirdparty (but thirdparty property is not loaded yet)
-				$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
+				// $looparray will be an array with number of email to send for the current thirdparty (so 1 or n if n object for same thirdparty)
+				$oneemailperrecipient=(GETPOST('oneemailperrecipient','alpha')=='on'?1:0);
 				$looparray=array();
 				if (! $oneemailperrecipient)
 				{
 					$looparray = $listofqualifiedobj;
 					foreach ($looparray as $key => $objecttmp)
 					{
-						$looparray[$key]->thirdparty = $thirdparty;
+						$looparray[$key]->thirdparty = $thirdparty;   // Force thirdparty on object
 					}
 				}
 				else
 				{
 					$objectforloop=new $objectclass($db);
-					$objectforloop->thirdparty = $thirdparty;
+					$objectforloop->thirdparty = $thirdparty;          // Force thirdparty on object (even if object was not loaded)
 					$looparray[0]=$objectforloop;
 				}
 				//var_dump($looparray);exit;
+                dol_syslog("We have set an array of ".count($looparray)." emails to send");
 
-				foreach ($looparray as $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per record
+				foreach ($looparray as $objectid => $objecttmp)		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 				{
 					// Make substitution in email content
 					$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -422,9 +433,11 @@ if (! $error && $massaction == 'confirm_presend')
 							$error=0;
 
 							// Insert logs into agenda
-							foreach($listofqualifiedobj as $objid => $objectobj)
+							foreach($listofqualifiedobj as $objid2 => $objectobj2)
 							{
-								dol_syslog("Try to insert email event into agenda for objid=".$objid." => objectobj=".get_class($objectobj));
+							    if (()! $oneemailperrecipient) && $objid2 != $objid) continue;  // We discard this pass to avoid duplicate with other pass in looparray at higher level
+
+								dol_syslog("Try to insert email event into agenda for objid=".$objid2." => objectobj=".get_class($objectobj2));
 
 								/*if ($objectclass == 'Propale') $actiontypecode='AC_PROP';
 	                            if ($objectclass == 'Commande') $actiontypecode='AC_COM';
@@ -444,13 +457,13 @@ if (! $error && $massaction == 'confirm_presend')
 								$actionmsg2='';
 
 								// Initialisation donnees
-								$objectobj->sendtoid		= 0;
-								$objectobj->actionmsg		= $actionmsg;  // Long text
-								$objectobj->actionmsg2		= $actionmsg2; // Short text
-								$objectobj->fk_element		= $objid;
-								$objectobj->elementtype	= $objectobj->element;
+								$objectobj2->sendtoid		= 0;
+								$objectobj2->actionmsg		= $actionmsg;  // Long text
+								$objectobj2->actionmsg2		= $actionmsg2; // Short text
+								$objectobj2->fk_element		= $objid2;
+								$objectobj2->elementtype	= $objectobj2->element;
 
-								$triggername = strtoupper(get_class($objectobj)) .'_SENTBYMAIL';
+								$triggername = strtoupper(get_class($objectobj2)) .'_SENTBYMAIL';
 								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYMAIL';
 								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYMAIL';
 								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYMAIL';
@@ -465,7 +478,7 @@ if (! $error && $massaction == 'confirm_presend')
 									// Appel des triggers
 									include_once DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php";
 									$interface=new Interfaces($db);
-									$result=$interface->run_triggers($triggername, $objectobj, $user, $langs, $conf);
+									$result=$interface->run_triggers($triggername, $objectobj2, $user, $langs, $conf);
 									if ($result < 0) { $error++; $errors=$interface->errors; }
 									// Fin appel triggers
 
@@ -475,9 +488,9 @@ if (! $error && $massaction == 'confirm_presend')
 										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
-
-								$nbsent++;
 							}
+
+							$nbsent++;   // Nb of email sent (may be lower than number of record selected if we group thirdparties)
 						}
 						else
 						{
@@ -544,7 +557,7 @@ if ($massaction == 'confirm_createbills')
 		else {
 			// Load extrafields of order
 			$cmd->fetch_optionals();
-			
+
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = Facture::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
