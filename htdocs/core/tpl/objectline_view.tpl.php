@@ -209,7 +209,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 			// must also not be output for most entities (proposal, intervention, ...)
 			//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-			echo $line->qty;
+			echo price($line->qty, 0, '', 0, 0);  // Yes, it is a quantity, not a price, but we just want the formating role of function price
 		} else echo '&nbsp;';	?>
 	</td>
 
