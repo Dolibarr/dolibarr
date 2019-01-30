@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2016-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -335,7 +335,7 @@ class ChargeSociales extends CommonObject
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('SOCIALCHARGES_MODIFY',$user);
+                $result=$this->call_trigger('SOCIALCHARGES_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -362,8 +362,8 @@ class ChargeSociales extends CommonObject
     /**
      * Calculate amount remaining to pay by year
      *
-     * @param	int		$year		Year
-     * @return	number
+     * @param   int     $year       Year
+     * @return  number
      */
     function solde($year = 0)
     {
@@ -403,8 +403,8 @@ class ChargeSociales extends CommonObject
     /**
      *    Tag social contribution as payed completely
      *
-     *    @param	User	$user       Object user making change
-     *    @return	int					<0 if KO, >0 if OK
+     *    @param    User    $user       Object user making change
+     *    @return   int					<0 if KO, >0 if OK
      */
     function set_paid($user)
     {

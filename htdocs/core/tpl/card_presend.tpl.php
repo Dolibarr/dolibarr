@@ -27,10 +27,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -103,7 +102,7 @@ if ($action == 'presend')
 			}
 			if ($object->element == 'invoice_supplier')
 			{
-			    $fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+			    $fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 			}
 			else
 			{
