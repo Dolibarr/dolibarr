@@ -91,7 +91,7 @@ if ($action == 'presend')
 		if ((! $file || ! is_readable($file)) && method_exists($object, 'generateDocument'))
 		{
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
+			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
