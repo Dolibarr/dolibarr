@@ -1153,7 +1153,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					$sum_pdf_tva = 0;
 					foreach($this->tva as $tvakey => $tvaval){
-						$sum_pdf_tva+=$tvaval; // sum VAT amounts to compare to object
+						if($tvakey != 0)$sum_pdf_tva+=$tvaval; // sum VAT amounts to compare to object
 					}
 
 					if($sum_pdf_tva!=$object->total_tva) { // apply coef to recover the VAT object amount (the good one)
