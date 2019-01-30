@@ -150,6 +150,18 @@ class modStripe extends DolibarrModules
 			'target' => '',
 			'user' => 0
 		);
+	    		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripePayoutList',
+			'url' => '/stripe/payout.php',
+			'langs' => 'stripe',
+			'position' => 103,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
 
         // Exports
         $r=1;
