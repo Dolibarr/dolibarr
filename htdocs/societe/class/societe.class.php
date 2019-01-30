@@ -1379,7 +1379,7 @@ class Societe extends CommonObject
 
 				$this->prefix_comm = $obj->prefix_comm;
 
-				$this->remise_percent		= $obj->remise_client;
+				$this->remise_percent		= price2num($obj->remise_client);        // 0.000000 must be 0
 				$this->remise_supplier_percent		= $obj->remise_supplier;
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
