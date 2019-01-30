@@ -278,7 +278,7 @@ class modAccounting extends DolibarrModules
 		$this->import_fieldshidden_array[$r]=array('b.fk_user_author'=>'user->id');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r]=array(
-		    'b.doc_date'=>'2019-01-01',
+		    'b.doc_date'=>'formatted as \'.dol_print_date(dol_now(),\'%Y-%m-%d\')',
             'b.piece_num'=>'1',
             'b.code_journal'=>"VTE",
             'b.journal_label'=>"Journal des ventes",
