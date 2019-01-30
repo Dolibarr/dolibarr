@@ -387,7 +387,7 @@ if ($object->id > 0)
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
-	print '</td><td>'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.price2num($object->remise_percent).'%</a>':'').'</td>';
+	print '</td><td>'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
