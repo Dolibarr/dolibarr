@@ -205,8 +205,7 @@ if (empty($reshook))
 
 	    $date_delivery = dol_mktime(GETPOST('date_deliveryhour','int'), GETPOST('date_deliverymin','int'), 0, GETPOST('date_deliverymonth','int'), GETPOST('date_deliveryday','int'), GETPOST('date_deliveryyear','int'));
 
-	    // On va boucler sur chaque ligne du document d'origine pour completer objet expedition
-	    // avec info diverses + qte a livrer
+	    // We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
 	    $classname = ucfirst($object->origin);
 	    $objectsrc = new $classname($db);
 	    $objectsrc->fetch($object->origin_id);
@@ -839,13 +838,13 @@ if (empty($reshook))
 		}
 		else
 		{
-			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 			exit();
 		}
 	}
 
 	elseif ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
-		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 		exit();
 	}
 
