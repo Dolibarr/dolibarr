@@ -3801,6 +3801,7 @@ class Societe extends CommonObject
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 		$sql .= " AND fk_statut <> 3";		// Not abandonned
 		$sql .= " AND fk_statut <> 2";		// Not clasified as paid

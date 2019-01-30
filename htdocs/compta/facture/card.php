@@ -4551,7 +4551,7 @@ else if ($id > 0 || ! empty($ref))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline' && ($object->is_first() || !$object->situation_cycle_ref))
+	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline')
 	{
 	    if ($action != 'editline' && $action != 'selectlines')
 		{
