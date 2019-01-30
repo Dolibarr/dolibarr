@@ -2225,6 +2225,10 @@ class Form
 				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 				else $textifempty.=$langs->trans("All");
 			}
+			else
+			{
+			    if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
+			}
 			if ($showempty) $out.='<option value="0" selected>'.$textifempty.'</option>';
 
 			$i = 0;

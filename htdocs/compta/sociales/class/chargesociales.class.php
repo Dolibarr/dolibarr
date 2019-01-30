@@ -303,13 +303,15 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *      Met a jour une charge sociale
+     *      Update social or fiscal contribution
      *
-     *      @param	User	$user   Utilisateur qui modifie
-     *      @return int     		<0 si erreur, >0 si ok
+     *      @param	User	$user           User that modify
+     *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *      @return int     		        <0 if KO, >0 if OK
      */
-    function update($user)
+    function update($user, $notrigger = 0)
     {
+        $error=0;
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
@@ -323,16 +325,37 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
+
+        if (! $resql) {
+            $error++; $this->errors[]="Error ".$this->db->lasterror();
+        }
+
+        if (! $error)
         {
-            $this->db->commit();
-            return 1;
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('SOCIALCHARGES_MODIFY',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
         }
         else
         {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
+            $this->db->commit();
+            return 1;
         }
     }
 
