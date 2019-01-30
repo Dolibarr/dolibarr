@@ -251,7 +251,7 @@ class DolibarrApi
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
 	    $ok=0;
-	    $i=0; $nb=count($tmp);
+	    $i=0; $nb=strlen($tmp);
 	    $counter=0;
 	    while ($i < $nb)
 	    {
