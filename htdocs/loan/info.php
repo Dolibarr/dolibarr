@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify

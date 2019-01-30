@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013   Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014   Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify

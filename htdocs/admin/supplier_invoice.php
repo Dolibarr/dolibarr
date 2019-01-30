@@ -43,6 +43,8 @@ accessforbidden();
 $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
 $action=GETPOST('action', 'alpha');
+
+$label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 
 $specimenthirdparty=new Societe($db);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *

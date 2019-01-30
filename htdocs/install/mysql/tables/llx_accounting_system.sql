@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
--- Copyright (C) 2011-2016 Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2011-2016 Alexandre Spangaro	 <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

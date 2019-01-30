@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>

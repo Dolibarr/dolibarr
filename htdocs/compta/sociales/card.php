@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

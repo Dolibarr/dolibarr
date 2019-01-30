@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016-2017  Jamal Elbaz             <jamelbaz@gmail.com>
- * Copyright (C) 2016       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
