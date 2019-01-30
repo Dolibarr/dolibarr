@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
