@@ -303,13 +303,13 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *      Met a jour une charge sociale
+     *      Update social or fiscal contribution
      *
-     *      @param	User	$user   Utilisateur qui modifie
+     *      @param	User	$user           User that modify
      *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return int     		<0 si erreur, >0 si ok
+     *      @return int     		        <0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0)
+    function update($user, $notrigger=0)
     {
         $error=0;
         $this->db->begin();
@@ -325,11 +325,11 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        
+
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
         }
-        
+
         if (! $error)
         {
             if (! $notrigger)
@@ -340,7 +340,7 @@ class ChargeSociales extends CommonObject
                 // End call triggers
             }
         }
-        
+
         // Commit or rollback
         if ($error)
         {
@@ -357,8 +357,6 @@ class ChargeSociales extends CommonObject
             $this->db->commit();
             return 1;
         }
-        
-        
     }
 
     /**
