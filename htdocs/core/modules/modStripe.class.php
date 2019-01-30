@@ -167,4 +167,3 @@ class modStripe extends DolibarrModules
         $r=1;
     }
 }
-

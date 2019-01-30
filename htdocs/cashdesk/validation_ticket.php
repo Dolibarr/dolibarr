@@ -40,4 +40,3 @@ if (empty($reshook))
 
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
-

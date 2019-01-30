@@ -280,4 +280,3 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	if ($error) return -1;
 	else return $result;
 }
-

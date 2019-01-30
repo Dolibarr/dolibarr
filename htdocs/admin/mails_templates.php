@@ -1065,4 +1065,3 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		}
 	}
 }
-

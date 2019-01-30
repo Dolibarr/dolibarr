@@ -132,4 +132,3 @@ if ($id > 0)
 // End of page
 llxFooter();
 $db->close();
-

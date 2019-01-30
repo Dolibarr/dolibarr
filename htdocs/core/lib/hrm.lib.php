@@ -88,4 +88,3 @@ function hrm_admin_prepare_head()
 
     return $head;
 }
-

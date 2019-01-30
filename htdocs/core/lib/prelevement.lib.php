@@ -83,4 +83,3 @@ function prelevement_check_config()
     if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }
-

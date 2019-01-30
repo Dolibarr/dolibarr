@@ -197,4 +197,3 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 }
-

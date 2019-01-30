@@ -873,4 +873,3 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 		}
 	}
 }
-

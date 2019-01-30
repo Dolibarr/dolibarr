@@ -152,4 +152,3 @@ else
 {
 	print 'The wrapper search.php was called without any search criteria';
 }
-

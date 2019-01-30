@@ -298,4 +298,3 @@ abstract class DoliDB implements Database
 		return $this->lastqueryerror;
 	}
 }
-

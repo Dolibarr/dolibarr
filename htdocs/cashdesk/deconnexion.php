@@ -34,4 +34,3 @@ unset($_SESSION['uid']);
 
 header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php');
 exit;
-

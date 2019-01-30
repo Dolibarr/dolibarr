@@ -270,4 +270,3 @@ function dol_getshmop($memoryid)
 	}
 	return $data;
 }
-
