@@ -67,4 +67,3 @@ function emailing_prepare_head(Mailing $object)
 
 	return $head;
 }
-

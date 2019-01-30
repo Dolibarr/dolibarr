@@ -143,4 +143,3 @@ class ExpeditionStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
-

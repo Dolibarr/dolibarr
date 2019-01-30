@@ -739,4 +739,3 @@ function getApiError()
 
 	return $errors;
 }
-

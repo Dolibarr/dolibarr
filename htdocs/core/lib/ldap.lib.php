@@ -184,4 +184,3 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 	}
 	return 1;
 }
-

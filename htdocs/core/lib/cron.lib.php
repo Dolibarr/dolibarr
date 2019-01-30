@@ -132,5 +132,3 @@ function dol_print_cron_urls()
 	
 	return 0;
 }
-
-

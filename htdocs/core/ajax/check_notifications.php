@@ -116,4 +116,3 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 }
 
 print json_encode($eventfound);
-

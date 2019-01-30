@@ -180,4 +180,3 @@ if (isset($action) && ! empty($action))
 		$db->query($sql);
 	}
 }
-

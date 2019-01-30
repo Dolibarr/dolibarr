@@ -161,5 +161,3 @@ if (! empty($conf->use_javascript_ajax))
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';
-
-

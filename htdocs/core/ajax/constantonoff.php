@@ -64,4 +64,3 @@ if (! empty($action) && ! empty($name))
 		}
 	}
 }
-

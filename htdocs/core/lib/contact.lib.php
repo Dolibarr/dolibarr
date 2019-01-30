@@ -107,4 +107,3 @@ function contact_prepare_head(Contact $object)
 
 	return $head;
 }
-

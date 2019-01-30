@@ -177,4 +177,3 @@ abstract class ModeleNumRefBarCode
         return $s;
     }
 }
-

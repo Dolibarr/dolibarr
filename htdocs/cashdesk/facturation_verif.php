@@ -233,4 +233,3 @@ $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 //var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
-

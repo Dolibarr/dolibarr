@@ -164,4 +164,3 @@ class SalariesStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
-

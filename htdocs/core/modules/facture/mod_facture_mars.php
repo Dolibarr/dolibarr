@@ -228,4 +228,3 @@ class mod_facture_mars extends ModeleNumRefFactures
 		return $this->getNextValue($objsoc, $objforref, $mode);
 	}
 }
-

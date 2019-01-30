@@ -242,4 +242,3 @@ if ($action == 'presend')
 
 	dol_fiche_end();
 }
-

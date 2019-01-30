@@ -78,4 +78,3 @@ function stock_prepare_head($object)
 
     return $head;
 }
-

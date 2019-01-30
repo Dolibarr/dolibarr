@@ -103,5 +103,3 @@ function categoriesadmin_prepare_head()
 
 	return $head;
 }
-
-

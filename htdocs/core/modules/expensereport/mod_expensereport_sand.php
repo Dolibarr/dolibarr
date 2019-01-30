@@ -156,4 +156,3 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		return $numFinal;
 	}
 }
-

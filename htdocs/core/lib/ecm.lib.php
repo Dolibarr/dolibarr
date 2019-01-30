@@ -140,4 +140,3 @@ function ecm_prepare_head_fm($object)
 
 	return $head;
 }
-

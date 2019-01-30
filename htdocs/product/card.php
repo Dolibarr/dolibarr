@@ -1176,7 +1176,13 @@ else
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
+            if($type = 0)
+            {
+                $accountancy_code_sell = (GETPOST('accountancy_code_sell','alpha')?(GETPOST('accountancy_code_sell','alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+            } else {
+                $accountancy_code_sell = (GETPOST('accountancy_code_sell','alpha')?(GETPOST('accountancy_code_sell','alpha')):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+            }
+            print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
 
 			// Accountancy_code_sell_intra
@@ -1184,20 +1190,32 @@ else
 			{
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 				print '<td>';
-				print $formaccounting->select_account(GETPOST('accountancy_code_sell_intra'), 'accountancy_code_sell_intra', 1, null, 1, 1, '');
-				print '</td></tr>';
+                if($type = 0)
+                {
+                    $accountancy_code_sell_intra = (GETPOST('accountancy_code_sell_intra','alpha')?(GETPOST('accountancy_code_sell_intra','alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
+                } else {
+                    $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra','alpha');
+                }
+                print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, '');
+                print '</td></tr>';
 			}
 
 			// Accountancy_code_sell_export
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_sell_export'), 'accountancy_code_sell_export', 1, null, 1, 1, '');
-			print '</td></tr>';
+            if($type = 0)
+            {
+                $accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export','alpha')?(GETPOST('accountancy_code_sell_export','alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
+            } else {
+                $accountancy_code_sell_export = GETPOST('accountancy_code_sell_export','alpha');
+            }
+            print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, '');
+            print '</td></tr>';
 
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
+			print $formaccounting->select_account(GETPOST('accountancy_code_buy','alpha'), 'accountancy_code_buy', 1, null, 1, 1, '');
 			print '</td></tr>';
 		}
 		else // For external software

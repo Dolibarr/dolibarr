@@ -77,4 +77,3 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	    }
 	}
 }
-

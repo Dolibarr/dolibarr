@@ -172,4 +172,3 @@ else // If entry on page with no parameter, we arrive here
 // No view at all, just actions
 
 $db->close();
-

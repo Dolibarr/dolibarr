@@ -467,7 +467,7 @@ if ($id)
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-            $align="left";
+            $class="left";
             if ($fieldlist[$field]=='type')            {
 				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
 				else $valuetoshow=$langs->trans("Type");
@@ -531,7 +531,7 @@ if ($id)
        		fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'add');
         }
 
-        print '<td colspan="4" align="right">';
+        print '<td colspan="4" class="right">';
        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         print '</td>';
         print "</tr>";
@@ -559,7 +559,7 @@ if ($id)
         // There is several pages
         if ($num > $listlimit)
         {
-            print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+            print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
             print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
             print '</td></tr>';
         }
@@ -607,7 +607,7 @@ if ($id)
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de donnees
             $showfield=1;							  	// By defaut
-            $align="left";
+            $class="left";
             $sortable=1;
             $valuetoshow='';
 
@@ -693,7 +693,7 @@ if ($id)
                         {
 
                             $showfield=1;
-                        	$align="left";
+                        	$class="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};
                             if ($value == 'category_type')
                             {
@@ -873,4 +873,3 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 		}
 	}
 }
-

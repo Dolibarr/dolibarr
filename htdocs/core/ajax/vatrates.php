@@ -67,4 +67,3 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 
 	echo json_encode($return);
 }
-

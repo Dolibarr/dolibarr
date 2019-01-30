@@ -115,4 +115,3 @@ class modExternalSite extends DolibarrModules
 		$r++;
 	}
 }
-

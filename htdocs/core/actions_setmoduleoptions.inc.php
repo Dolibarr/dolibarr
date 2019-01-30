@@ -114,4 +114,3 @@ if ($action == 'setModuleOptions')
         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
     }
 }
-

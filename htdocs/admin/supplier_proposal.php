@@ -585,4 +585,3 @@ print "</table>\n<br>";
 // End of page
 llxFooter();
 $db->close();
-

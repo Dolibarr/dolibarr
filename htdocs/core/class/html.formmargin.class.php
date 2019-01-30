@@ -281,4 +281,3 @@ class FormMargin
 		print '</div>';
 	}
 }
-

@@ -69,5 +69,3 @@ elseif(!empty($newblock)){
 else{
 	echo 'idontunderstandwhatihavetodo';
 }
-
-

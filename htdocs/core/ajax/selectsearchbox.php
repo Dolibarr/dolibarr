@@ -170,4 +170,3 @@ if (! isset($usedbyinclude) || empty($usedbyinclude))
     print json_encode($arrayresult);
     if (is_object($db)) $db->close();
 }
-

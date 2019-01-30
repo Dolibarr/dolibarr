@@ -179,4 +179,3 @@ class modECM extends DolibarrModules
 		$r++;
 	}
 }
-

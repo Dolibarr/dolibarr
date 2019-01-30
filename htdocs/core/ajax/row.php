@@ -73,4 +73,3 @@ if ((! empty($_POST['roworder'])) && (! empty($_POST['table_element_line']))
 		$result=$row->line_order(true);
 	}
 }
-

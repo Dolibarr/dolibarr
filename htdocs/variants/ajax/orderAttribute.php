@@ -50,4 +50,3 @@ if (isset($_POST['roworder'])) {
 
 	ProductAttribute::bulkUpdateOrder($db, $newrowordertab);
 }
-

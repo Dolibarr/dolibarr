@@ -63,4 +63,3 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 
 	echo json_encode($return);
 }
-

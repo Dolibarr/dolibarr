@@ -314,4 +314,3 @@ class Lettering extends BookKeeping
 		}
 	}
 }
-

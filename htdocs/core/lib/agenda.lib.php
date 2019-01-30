@@ -561,4 +561,3 @@ function calendars_prepare_head($param)
 
     return $head;
 }
-

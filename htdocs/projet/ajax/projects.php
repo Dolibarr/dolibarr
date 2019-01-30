@@ -70,4 +70,3 @@ $arrayresult=$form->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discar
 $db->close();
 
 print json_encode($arrayresult);
-

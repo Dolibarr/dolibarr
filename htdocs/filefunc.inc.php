@@ -294,4 +294,3 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_
 	}
 	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
-

@@ -277,4 +277,3 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
         return -1;
     }
 }
-

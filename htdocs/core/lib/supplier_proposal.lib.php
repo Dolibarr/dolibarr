@@ -130,5 +130,3 @@ function supplier_proposal_admin_prepare_head()
 
 	return $head;
 }
-
-

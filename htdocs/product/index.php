@@ -182,7 +182,7 @@ elseif ($type == '1')
 else
 {
 	print $statProducts.$statServices;
-	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
+	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
 }
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
 print $total;
@@ -507,4 +507,3 @@ function activitytrim($product_type)
 			print '</table>';
 	}
 }
-

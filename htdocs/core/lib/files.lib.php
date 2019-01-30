@@ -2973,4 +2973,3 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 
 	return $file_list;
 }
-

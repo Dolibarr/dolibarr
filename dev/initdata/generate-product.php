@@ -96,5 +96,3 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";
 	else print " OK with ref ".$produit->ref."\n";
 }
-
-

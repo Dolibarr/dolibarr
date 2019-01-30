@@ -97,4 +97,3 @@ if ($idprod > 0)
 }
 
 echo json_encode($prices);
-

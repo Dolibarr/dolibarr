@@ -125,4 +125,3 @@ class modFTP extends DolibarrModules
 		$r++;
 	}
 }
-

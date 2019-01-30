@@ -172,4 +172,3 @@ if (! $error)
 
 print 'Module initialized'."\n";
 exit(0);
-

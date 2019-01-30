@@ -245,4 +245,3 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	return $login;
 }
-

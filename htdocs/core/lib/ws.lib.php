@@ -95,4 +95,3 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
     return $fuser;
 }
-

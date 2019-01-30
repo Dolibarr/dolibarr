@@ -43,4 +43,3 @@ if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel', '
 	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
-

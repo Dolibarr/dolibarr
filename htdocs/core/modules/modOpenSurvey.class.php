@@ -183,4 +183,3 @@ class modOpenSurvey extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 }
-
