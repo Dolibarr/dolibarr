@@ -35,7 +35,7 @@ if (!$user->admin)
     accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'agenda'));
+$langs->loadLangs(array('admin', 'other', 'agenda', 'users'));
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
@@ -353,7 +353,8 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+$htmltext=$langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
