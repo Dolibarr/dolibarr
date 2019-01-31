@@ -578,7 +578,7 @@ class Adherent extends CommonObject
 					$lthirdparty=new Societe($this->db);
 					$result=$lthirdparty->fetch($this->fk_soc);
 
-					if ($result >= 0)
+					if ($result > 0)
 					{
 						$lthirdparty->address=$this->address;
 						$lthirdparty->zip=$this->zip;
@@ -600,7 +600,7 @@ class Adherent extends CommonObject
 							$error++;
 						}
 					}
-					else
+					elseif(!empty($lthirdparty->error))
 					{
 						$this->error=$lthirdparty->error;
 						$error++;

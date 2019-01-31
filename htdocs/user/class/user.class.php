@@ -1485,7 +1485,7 @@ class User extends CommonObject
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 
-					if ($result > 0 && $adh->entity == $conf->entity)
+					if ($result > 0)
 					{
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
