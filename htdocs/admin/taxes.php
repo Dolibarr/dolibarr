@@ -147,7 +147,7 @@ else
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
 	if (! $conf->use_javascript_ajax)
 	{
-		print '<td class="nowrap" align="right">';
+		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
 		print "</td>";
 	}
