@@ -1483,9 +1483,9 @@ class User extends CommonObject
 					// This user is linked with a member, so we also update member information
 					// if this is an update.
 					$adh=new Adherent($this->db);
-					$result=$adh->fetch('',$this->fk_member);
+					$result=$adh->fetch($this->fk_member);
 
-					if ($result > 0)
+					if ($result > 0 && $adh->entity == $conf->entity)
 					{
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
