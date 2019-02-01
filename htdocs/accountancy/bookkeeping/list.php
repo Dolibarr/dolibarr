@@ -546,14 +546,14 @@ if (! empty($arrayfields['t.label_operation']['checked']))
 // Debit
 if (! empty($arrayfields['t.debit']['checked']))
 {
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'">';
 	print '</td>';
 }
 // Credit
 if (! empty($arrayfields['t.credit']['checked']))
 {
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
 	print '</td>';
 }
@@ -611,8 +611,8 @@ if (! empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($a
 if (! empty($arrayfields['t.numero_compte']['checked']))		print_liste_field_titre($arrayfields['t.numero_compte']['label'], $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_titre($arrayfields['t.subledger_account']['label'], $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
