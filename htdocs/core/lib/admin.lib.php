@@ -1358,18 +1358,23 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all (form is output by caller, recommanded)
  *  @param  string  $helptext       Help
  *	@return	void
  */
 function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 {
-    global $db,$bc,$langs,$conf,$user;
+    global $db,$langs,$conf,$user;
     global $_Avery_Labels;
 
     $form = new Form($db);
 
-    if (! empty($strictw3c) && $strictw3c == 1) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if (! empty($strictw3c) && $strictw3c == 1)
+    {
+        print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="updateall">';
+    }
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -1382,7 +1387,6 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
     print "</tr>\n";
 
     $label='';
-    $listofparam=array();
     foreach($tableau as $key => $const)	// Loop on each param
     {
     	$label='';
@@ -1550,6 +1554,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 	            print "</td>";
             }
     	    print "</tr>\n";
+
             if (empty($strictw3c)) print "</form>\n";
         }
     }

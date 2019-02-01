@@ -98,6 +98,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_e
  */
 
 if (GETPOST('cancel','alpha')) { $action=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice') { $massaction=''; }
 
 $parameters=array('socid'=>$socid, 'projectid'=>$projectid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -300,7 +301,7 @@ elseif (GETPOST('project_ref','alpha'))
     $withproject=1;
 }
 
-if ($massaction == 'generateinvoice')
+if ($massaction == 'confirm_generateinvoice')
 {
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
@@ -754,7 +755,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->bill_time));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -771,7 +772,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     	        //'builddoc'=>$langs->trans("PDFMerge"),
     	    );
     	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-    	    if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+    	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
     	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	    }
 
@@ -809,6 +810,51 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    print '<input type="hidden" name="id" value="'.$id.'">';
 	    print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 	    print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+
+	    if ($massaction == 'generateinvoice')
+	    {
+	        $langs->load("bills");
+
+	        //var_dump($_REQUEST);
+	        print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+	        print '<table class="noborder" width="100%" >';
+	        print '<tr>';
+	        print '<td class="titlefield">';
+	        print $langs->trans('DateInvoice');
+	        print '</td>';
+	        print '<td>';
+	        print $form->selectDate('', '', '', '', '', '', 1, 1);
+	        print '</td>';
+	        print '</tr>';
+	        if ($conf->service->enabled)
+	        {
+    	        print '<tr>';
+    	        print '<td>';
+    	        print $langs->trans('Service');
+    	        print '</td>';
+    	        print '<td>';
+    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        print '</td>';
+    	        print '</tr>';
+	        }
+	        /*print '<tr>';
+	        print '<td>';
+	        print $langs->trans('ValidateInvoices');
+	        print '</td>';
+	        print '<td>';
+            print $form->selectyesno('valdate_invoices', 0, 1);
+	        print '</td>';
+	        print '</tr>';*/
+	        print '</table>';
+
+	        print '<br>';
+	        print '<div class="center">';
+	        print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoice').'">  ';
+	        print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+	        print '</div>';
+	        print '<br>';
+	    }
 
 		/*
 		 *  List of time spent

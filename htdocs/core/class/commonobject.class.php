@@ -6355,10 +6355,13 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey',$params) && $key != $params['onlykey']) continue;
 
+				// @TODO Add test also on 'enabled' (different than 'list' that is 'visibility')
 				$enabled = 1;
-				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key]))
+
+				$visibility = 1;
+				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
 				{
-					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+				    $visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
 				}
 
 				$perms = 1;
@@ -6367,7 +6370,7 @@ abstract class CommonObject
 					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
 				}
 
-				if (($mode == 'create' || $mode == 'edit') && abs($enabled) != 1 && abs($enabled) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 				if (empty($perms)) continue;
 
 				// Load language if required

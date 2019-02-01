@@ -621,7 +621,7 @@ if ($resql)
     // There is several pages
     if ($num > $listlimit)
     {
-        print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+        print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
         print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
         print '</td></tr>';
     }
@@ -657,7 +657,7 @@ if ($resql)
     }
     if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
     // Action column
-    print '<td class="liste_titre" align="right" width="64">';
+    print '<td class="liste_titre right" width="64">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';

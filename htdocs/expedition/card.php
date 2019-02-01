@@ -1751,7 +1751,7 @@ elseif ($id || $ref)
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield" width="100%">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
