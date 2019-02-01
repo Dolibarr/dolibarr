@@ -27,9 +27,38 @@ namespace Stripe;
  */
 class Source extends ApiResource
 {
+
+    const OBJECT_NAME = "source";
+
     use ApiOperations\Create;
     use ApiOperations\Retrieve;
     use ApiOperations\Update;
+
+    /**
+     * Possible string representations of source flows.
+     * @link https://stripe.com/docs/api#source_object-flow
+     */
+    const FLOW_REDIRECT          = 'redirect';
+    const FLOW_RECEIVER          = 'receiver';
+    const FLOW_CODE_VERIFICATION = 'code_verification';
+    const FLOW_NONE              = 'none';
+
+    /**
+     * Possible string representations of source statuses.
+     * @link https://stripe.com/docs/api#source_object-status
+     */
+    const STATUS_CANCELED   = 'canceled';
+    const STATUS_CHARGEABLE = 'chargeable';
+    const STATUS_CONSUMED   = 'consumed';
+    const STATUS_FAILED     = 'failed';
+    const STATUS_PENDING    = 'pending';
+
+    /**
+     * Possible string representations of source usage.
+     * @link https://stripe.com/docs/api#source_object-usage
+     */
+    const USAGE_REUSABLE   = 'reusable';
+    const USAGE_SINGLE_USE = 'single_use';
 
     /**
      * @param array|null $params

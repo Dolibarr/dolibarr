@@ -47,4 +47,3 @@ else
     if (GETPOST('transphrase','alphanohtml')) print GETPOST('transphrase','alphanohtml');
     if (GETPOST('transkey','alphanohtml')) print $langs->trans(GETPOST('transkey','alphanohtml'));
 }
-

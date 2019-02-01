@@ -195,4 +195,3 @@ class modPaypal extends DolibarrModules
         // $r++;
     }
 }
-

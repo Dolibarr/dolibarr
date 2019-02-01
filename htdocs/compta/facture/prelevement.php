@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/facture/prelevement.php
  *	\ingroup    facture
- *	\brief      Gestion des prelevement d'une facture
+ *	\brief      Manage payment intents of an object
  */
 
 require '../../main.inc.php';
@@ -109,7 +109,7 @@ if ($action == "delete")
 
 $now=dol_now();
 
-$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('StandingOrders');
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('PaymentIntents');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 
@@ -468,8 +468,26 @@ if ($object->id > 0)
 	print '</div>';
 	print '</div>';
 	print '</div>';
+  
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+{
+	$service = 'StripeTest';
+	$servicestatus = '0';
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+}
+else
+{
+	$service = 'StripeLive';
+	$servicestatus = '1';
+}
 
-	print '<div class="clearboth"></div>';
+$stripe = new Stripe($db);
+$stripeacc = $stripe->getStripeAccount($service);
+$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);
+print $stripe->getPaymentIntent($object, $stripecu, $stripeacc,$servicestatus, 1, 'automatic');
+	
+  print '<div class="clearboth"></div>';
 
 
 	dol_fiche_end();

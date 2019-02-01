@@ -49,4 +49,3 @@ $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
 // Add hidden option to force decrease of stock whatever is user setup
 if (! empty($conf->global->CASHDESK_FORCE_STOCK_ON_BILL)) $conf->global->STOCK_CALCULATE_ON_BILL=1;
-

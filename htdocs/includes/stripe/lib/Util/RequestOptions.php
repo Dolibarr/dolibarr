@@ -16,11 +16,13 @@ class RequestOptions
 
     public $headers;
     public $apiKey;
+    public $apiBase;
 
-    public function __construct($key = null, $headers = [])
+    public function __construct($key = null, $headers = [], $base = null)
     {
         $this->apiKey = $key;
         $this->headers = $headers;
+        $this->apiBase = $base;
     }
 
     /**
@@ -35,6 +37,9 @@ class RequestOptions
         $other_options = self::parse($options);
         if ($other_options->apiKey === null) {
             $other_options->apiKey = $this->apiKey;
+        }
+        if ($other_options->apiBase === null) {
+            $other_options->apiBase = $this->apiBase;
         }
         $other_options->headers = array_merge($this->headers, $other_options->headers);
         return $other_options;
@@ -65,16 +70,17 @@ class RequestOptions
         }
 
         if (is_null($options)) {
-            return new RequestOptions(null, []);
+            return new RequestOptions(null, [], null);
         }
 
         if (is_string($options)) {
-            return new RequestOptions($options, []);
+            return new RequestOptions($options, [], null);
         }
 
         if (is_array($options)) {
             $headers = [];
             $key = null;
+            $base = null;
             if (array_key_exists('api_key', $options)) {
                 $key = $options['api_key'];
             }
@@ -87,7 +93,10 @@ class RequestOptions
             if (array_key_exists('stripe_version', $options)) {
                 $headers['Stripe-Version'] = $options['stripe_version'];
             }
-            return new RequestOptions($key, $headers);
+            if (array_key_exists('api_base', $options)) {
+                $base = $options['api_base'];
+            }
+            return new RequestOptions($key, $headers, $base);
         }
 
         $message = 'The second argument to Stripe API method calls is an '

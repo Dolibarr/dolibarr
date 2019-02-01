@@ -44,5 +44,3 @@ if (GETPOST('formfilteraction') == 'listafterchangingselectedfields')
     //$action='list';
     //var_dump($tabparam);exit;
 }
-
-

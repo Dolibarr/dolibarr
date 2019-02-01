@@ -75,4 +75,3 @@ $PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
 $PROXY_USER = $conf->global->MAIN_PROXY_USER;
 $PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
 $USE_PROXY = empty($conf->global->MAIN_PROXY_USE)?false:true;
-

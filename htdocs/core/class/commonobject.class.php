@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
@@ -309,6 +309,12 @@ abstract class CommonObject
 	 * @see SetDocModel()
 	 */
 	public $modelpdf;
+
+	/**
+	 * @var string
+	 * Contains relative path of last generated main file
+	 */
+	public $last_main_doc;
 
 	/**
 	 * @var int Bank account ID
@@ -4667,10 +4673,15 @@ abstract class CommonObject
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))
 						{
-							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
 							$sql.= ' WHERE rowid = '.$this->id;
+
 							$resql = $this->db->query($sql);
 							if (! $resql) dol_print_error($this->db);
+							else
+							{
+							    $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+							}
 						}
 					}
 				}
@@ -4900,7 +4911,7 @@ abstract class CommonObject
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 					}
-					
+
 					// If field is a computed field, value must become result of compute
 					foreach ($tab as $key => $value) {
 						if (! empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key]))

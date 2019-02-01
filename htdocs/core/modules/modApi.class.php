@@ -252,4 +252,3 @@ class modApi extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 }
-

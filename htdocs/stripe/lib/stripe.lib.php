@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,4 +199,3 @@ function html_print_stripe_footer($fromcompany, $langs)
 	print $line2;
 	print '</font></div>'."\n";
 }
-

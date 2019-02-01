@@ -8,7 +8,7 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $amount
- * @property mixed $balance_transactions
+ * @property BalanceTransaction[] $balance_transactions
  * @property string $charge
  * @property int $created
  * @property string $currency
@@ -24,6 +24,9 @@ namespace Stripe;
  */
 class Dispute extends ApiResource
 {
+
+    const OBJECT_NAME = "dispute";
+
     use ApiOperations\All;
     use ApiOperations\Retrieve;
     use ApiOperations\Update;

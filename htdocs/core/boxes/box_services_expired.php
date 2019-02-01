@@ -190,4 +190,3 @@ class box_services_expired extends ModeleBoxes
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

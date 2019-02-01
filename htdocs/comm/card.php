@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
- * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * This program is free software; you can redistribute it and/or modify

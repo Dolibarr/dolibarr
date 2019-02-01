@@ -211,4 +211,3 @@ class FichinterStats extends Stats
 		return $this->_getAllByProduct($sql);
 	}
 }
-

@@ -132,4 +132,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-

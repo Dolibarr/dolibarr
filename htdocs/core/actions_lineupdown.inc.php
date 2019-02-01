@@ -70,4 +70,3 @@ if ($action == 'down' && $permissiontoedit)
 	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
 	exit();
 }
-

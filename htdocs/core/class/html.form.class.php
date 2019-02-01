@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -2004,7 +2004,7 @@ class Form
 		}
 		else
 		{
-			print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel, $warehouseStatus);
+			print $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 	}
 
@@ -2224,6 +2224,10 @@ class Form
 			{
 				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 				else $textifempty.=$langs->trans("All");
+			}
+			else
+			{
+			    if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 			}
 			if ($showempty) $out.='<option value="0" selected>'.$textifempty.'</option>';
 

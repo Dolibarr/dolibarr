@@ -314,4 +314,3 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
         return -1;
     }
 }
-

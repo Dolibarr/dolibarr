@@ -142,4 +142,3 @@ function clean_data_ecm_directories()
 
 	return;
 }
-

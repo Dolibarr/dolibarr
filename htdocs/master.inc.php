@@ -246,4 +246,3 @@ $hookmanager=new HookManager($db);
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-

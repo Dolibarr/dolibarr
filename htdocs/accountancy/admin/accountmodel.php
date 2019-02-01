@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -517,7 +517,7 @@ if ($id)
 			// dans les dictionnaires de donnees
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			$align="left";
+			$class="left";
 			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
@@ -573,7 +573,7 @@ if ($id)
 			fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
 		}
 
-		print '<td colspan="3" align="right">';
+		print '<td colspan="3" class="right">';
 		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
@@ -606,7 +606,7 @@ if ($id)
 		// There is several pages
 		if ($num > $listlimit)
 		{
-			print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+			print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
 			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
 			print '</td></tr>';
 		}
@@ -634,7 +634,7 @@ if ($id)
 			}
 		}
 		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre" colspan="2" align="right">';
+		print '<td class="liste_titre right" colspan="2">';
 		$searchpicto=$form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
@@ -647,7 +647,7 @@ if ($id)
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
 			$showfield=1;							  	// By defaut
-			$align="left";
+			$class="left";
 			$sortable=1;
 			$valuetoshow='';
 			/*
@@ -702,7 +702,7 @@ if ($id)
 
 					if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
-					print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				}
 				else
@@ -719,7 +719,7 @@ if ($id)
 						{
 
 							$showfield=1;
-							$align="left";
+							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};
 							if ($value == 'type_template')
 							{
@@ -874,4 +874,3 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 		}
 	}
 }
-

@@ -410,4 +410,3 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	return $result;
 }
-

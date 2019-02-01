@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
  *
