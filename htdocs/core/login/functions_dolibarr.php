@@ -33,7 +33,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=1)
+function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotest = 1)
 {
 	global $db,$conf,$langs;
 

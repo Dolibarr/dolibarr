@@ -89,32 +89,32 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".$urlfrom);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
@@ -179,32 +179,32 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".$backtopage);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;

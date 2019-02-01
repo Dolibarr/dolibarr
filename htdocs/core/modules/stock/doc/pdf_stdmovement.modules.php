@@ -22,7 +22,7 @@
  *	\brief      File of class to build PDF documents for stocks movements
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_movement.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -192,7 +192,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -287,7 +287,7 @@ class pdf_stdmovement extends ModelePDFMovement
 			else
 			$sql.= " AND date_format(m.datem, '%m') = '$month'";
 		}
-		else if ($year > 0)
+		elseif ($year > 0)
 		{
 			$sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 		}
@@ -818,7 +818,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -944,7 +944,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="")
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
@@ -1172,7 +1172,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 	    global $conf;
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@zendsi.com>
+ * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ class modSalaries extends DolibarrModules
 	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		global $conf;
 

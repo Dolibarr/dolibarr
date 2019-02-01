@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 					}
 					else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
 				}
-				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
 				{
 					$error++;
 					$langs->load("errors");
@@ -821,7 +821,7 @@ else
 	{
 		print '<a class="img_logo" href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
 	}
-	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+	elseif ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
 		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
@@ -1097,11 +1097,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}
 
@@ -1151,11 +1151,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
 		{
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}

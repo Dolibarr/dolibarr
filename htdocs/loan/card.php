@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -162,7 +162,7 @@ if (empty($reshook))
 	}
 
 	// Update record
-	else if ($action == 'update' && $user->rights->loan->write)
+	elseif ($action == 'update' && $user->rights->loan->write)
 	{
 		if (! $cancel)
 		{

@@ -224,7 +224,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
      *    @return	int								<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='', $multicurrency_buyprice=0, $multicurrency_price_base_type='HT',$multicurrency_tx=1,$multicurrency_code='', $desc_fourn='')
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -329,11 +329,11 @@ class ProductFournisseur extends Product
 			if ($resql)
 			{
                 // Call trigger
-                $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$user);
+                $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
@@ -542,7 +542,7 @@ class ProductFournisseur extends Product
      *    @param	int		$offset		Offset
      *    @return	array				Array of Products with new properties to define supplier price
      */
-    function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='', $limit=0, $offset=0)
+    function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         // phpcs:enable
         global $conf;
@@ -643,7 +643,7 @@ class ProductFournisseur extends Product
      *  @param	int		$socid		get min price for specific supplier
      *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
-    function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
+    function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -680,11 +680,12 @@ class ProductFournisseur extends Product
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe').")";
+        $sql.= " AND pfp.entity = ".$conf->entity; // only current entity
         $sql.= " AND pfp.fk_product = ".$prodid;
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status = 1"; // only enabled society
         if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
-	if ($socid > 0) $sql.= ' AND pfp.fk_soc = '.$socid;
+		if ($socid > 0) $sql.= ' AND pfp.fk_soc = '.$socid;
 
         dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
 
@@ -815,7 +816,7 @@ class ProductFournisseur extends Product
      *	@return	string					String with supplier price
 	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto=0,$option='supplier',$maxlen=0,$notooltip=0)
+    function getSocNomUrl($withpicto = 0, $option = 'supplier', $maxlen = 0, $notooltip = 0)
     {
         $thirdparty = new Fournisseur($this->db);
         $thirdparty->fetch($this->fourn_id);
@@ -835,7 +836,7 @@ class ProductFournisseur extends Product
      *                                    to display in table format.
      *  @return string                    String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0, $productFournList=array())
+    function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
     {
         // phpcs:enable
         global $langs;
@@ -888,7 +889,7 @@ class ProductFournisseur extends Product
      *    @param	int		$offset		Offset
      *    @return	array				Array of Log prices
      */
-    function listProductFournisseurPriceLog($fourn_id, $sortfield='', $sortorder='', $limit=0, $offset=0)
+    function listProductFournisseurPriceLog($fourn_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         global $conf;
 
@@ -934,7 +935,7 @@ class ProductFournisseur extends Product
      *                                          to display in table format.
      *  @return string  HTML String with supplier price
      */
-    function displayPriceProductFournisseurLog($productFournLogList=array())
+    function displayPriceProductFournisseurLog($productFournLogList = array())
     {
         global $langs;
 
@@ -968,7 +969,7 @@ class ProductFournisseur extends Product
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string								String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
         global $db, $conf, $langs;
 

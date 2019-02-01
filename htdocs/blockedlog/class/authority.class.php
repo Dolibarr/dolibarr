@@ -142,7 +142,7 @@ class BlockedLogAuthority
 	 *	@param      string		$signature		Signature of object to load
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-    public function fetch($id, $signature='')
+    public function fetch($id, $signature = '')
     {
 
 		global $langs;
@@ -161,7 +161,7 @@ class BlockedLogAuthority
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
 		if ($id) $sql.= " WHERE b.rowid = ". $id;
-		else if($signature)$sql.= " WHERE b.signature = '". $this->db->escape( $signature ) ."'" ;
+		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape( $signature ) ."'" ;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

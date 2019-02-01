@@ -55,7 +55,7 @@ function versiontostring($versionarray)
  * 												0 if same
  * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
  */
-function versioncompare($versionarray1,$versionarray2)
+function versioncompare($versionarray1, $versionarray2)
 {
     $ret=0;
     $level=0;
@@ -127,7 +127,7 @@ function versiondolibarrarray()
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0, $offsetforchartofaccount=0)
+function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0)
 {
     global $db, $conf, $langs, $user;
 
@@ -432,7 +432,7 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
  *
  *	@see		dolibarr_get_const, dolibarr_set_const, dol_set_user_param
  */
-function dolibarr_del_const($db, $name, $entity=1)
+function dolibarr_del_const($db, $name, $entity = 1)
 {
     global $conf;
 
@@ -472,7 +472,7 @@ function dolibarr_del_const($db, $name, $entity=1)
  *
  *	@see		dolibarr_del_const, dolibarr_set_const, dol_set_user_param
  */
-function dolibarr_get_const($db, $name, $entity=1)
+function dolibarr_get_const($db, $name, $entity = 1)
 {
     global $conf;
     $value='';
@@ -507,7 +507,7 @@ function dolibarr_get_const($db, $name, $entity=1)
  *
  *	@see		dolibarr_del_const, dolibarr_get_const, dol_set_user_param
  */
-function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='', $entity=1)
+function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
     global $conf;
 
@@ -864,7 +864,7 @@ function purgeSessions($mysessionid)
  *  @param      int			$withdeps   Activate/Disable also all dependencies
  *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value,$withdeps=1)
+function activateModule($value, $withdeps = 1)
 {
     global $db, $modules, $langs, $conf, $mysoc;
 
@@ -1008,7 +1008,7 @@ function activateModule($value,$withdeps=1)
  *  @param      int			$requiredby          1=Desactive aussi modules dependants
  *  @return     string     				         Error message or '';
  */
-function unActivateModule($value, $requiredby=1)
+function unActivateModule($value, $requiredby = 1)
 {
     global $db, $modules, $conf;
 
@@ -1085,7 +1085,7 @@ function unActivateModule($value, $requiredby=1)
  *  @param		array		$tabfieldcheck		Tabfieldcheck
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond,&$tabhelp,&$tabfieldcheck)
+function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck)
 {
     global $db, $modules, $conf, $langs;
 
@@ -1358,18 +1358,23 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all (form is output by caller, recommanded)
  *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c=0, $helptext='')
+function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 {
-    global $db,$bc,$langs,$conf,$user;
+    global $db,$langs,$conf,$user;
     global $_Avery_Labels;
 
     $form = new Form($db);
 
-    if (! empty($strictw3c) && $strictw3c == 1) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    if (! empty($strictw3c) && $strictw3c == 1)
+    {
+        print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="updateall">';
+    }
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -1382,7 +1387,6 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
     print "</tr>\n";
 
     $label='';
-    $listofparam=array();
     foreach($tableau as $key => $const)	// Loop on each param
     {
     	$label='';
@@ -1550,6 +1554,7 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
 	            print "</td>";
             }
     	    print "</tr>\n";
+
             if (empty($strictw3c)) print "</form>\n";
         }
     }
@@ -1606,7 +1611,7 @@ function showModulesExludedForExternal($modules)
  *	@param		string	$description	Model description
  *	@return		int						<0 if KO, >0 if OK
  */
-function addDocumentModel($name, $type, $label='', $description='')
+function addDocumentModel($name, $type, $label = '', $description = '')
 {
 	global $db, $conf;
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -219,12 +219,12 @@ if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
 		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-		else if ($search_year > 0 && ! empty($search_day))
+		elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($search_year > 0)
+elseif ($search_year > 0)
 {
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
-	function write_file($don,$outputlangs,$currency='')
+	function write_file($don, $outputlangs, $currency = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc;
@@ -136,10 +136,10 @@ class html_cerfafr extends ModeleDon
 				if ($don->modepaymentcode=='CHQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaymentcode=='LIQ'){
+				elseif ($don->modepaymentcode=='LIQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaymentcode=='VIR' || $don->modepaymentcode=='PRE' || $don->modepaymentcode=='CB'){
+				elseif ($don->modepaymentcode=='VIR' || $don->modepaymentcode=='PRE' || $don->modepaymentcode=='CB'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
 				}
 				else
@@ -283,7 +283,7 @@ class html_cerfafr extends ModeleDon
 	 * @param   mixed   $devise2    devise 2 ex: centimes
 	 * @return string               amount in letters
 	 */
-	private function amountToLetters($montant, $devise1='', $devise2='')
+	private function amountToLetters($montant, $devise1 = '', $devise2 = '')
 	{
 		$unite = array();
 		$dix = array();
@@ -316,11 +316,11 @@ class html_cerfafr extends ModeleDon
 				$secon[$i]='';
 				$prim[$i]=$chif[$unite[$i]];
 			}
-			else if($dix[$i]==1){
+			elseif($dix[$i]==1){
 				$secon[$i]='';
 				$prim[$i]=$chif[($unite[$i]+10)];
 			}
-			else if($dix[$i]==2){
+			elseif($dix[$i]==2){
 				if($unite[$i]==1){
 				$secon[$i]='vingt et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -330,7 +330,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==3){
+			elseif($dix[$i]==3){
 				if($unite[$i]==1){
 				$secon[$i]='trente et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -340,7 +340,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==4){
+			elseif($dix[$i]==4){
 				if($unite[$i]==1){
 				$secon[$i]='quarante et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -350,7 +350,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==5){
+			elseif($dix[$i]==5){
 				if($unite[$i]==1){
 				$secon[$i]='cinquante et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -360,7 +360,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==6){
+			elseif($dix[$i]==6){
 				if($unite[$i]==1){
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -370,7 +370,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==7){
+			elseif($dix[$i]==7){
 				if($unite[$i]==1){
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]+10];
@@ -380,7 +380,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
 			}
-			else if($dix[$i]==8){
+			elseif($dix[$i]==8){
 				if($unite[$i]==1){
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]];
@@ -390,7 +390,7 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			else if($dix[$i]==9){
+			elseif($dix[$i]==9){
 				if($unite[$i]==1){
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]+10];
@@ -401,25 +401,25 @@ class html_cerfafr extends ModeleDon
 				}
 			}
 			if($cent[$i]==1) $trio[$i]='cent';
-			else if($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
+			elseif($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
 		}
 
 
 		$chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
 		$secon_c=$chif2[$dix_c];
 		if($cent_c==1) $trio_c='cent';
-		else if($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
+		elseif($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
 
 		if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
 			$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
-		else if(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
+		elseif(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
 		else
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
 
 		if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
 			$somme = $somme.' mille ';
-		else if(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
+		elseif(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
 		else
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];

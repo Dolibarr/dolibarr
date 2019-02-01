@@ -2,7 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ class ChargeSociales extends CommonObject
      *  @param	string  $ref	Ref
      *  @return	int <0 KO >0 OK
      */
-    function fetch($id, $ref='')
+    function fetch($id, $ref = '')
     {
         $sql = "SELECT cs.rowid, cs.date_ech";
         $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
@@ -303,13 +303,15 @@ class ChargeSociales extends CommonObject
 
 
     /**
-     *      Met a jour une charge sociale
+     *      Update social or fiscal contribution
      *
-     *      @param	User	$user   Utilisateur qui modifie
-     *      @return int     		<0 si erreur, >0 si ok
+     *      @param	User	$user           User that modify
+     *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *      @return int     		        <0 if KO, >0 if OK
      */
-    function update($user)
+    function update($user, $notrigger = 0)
     {
+        $error=0;
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
@@ -323,16 +325,37 @@ class ChargeSociales extends CommonObject
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
+
+        if (! $resql) {
+            $error++; $this->errors[]="Error ".$this->db->lasterror();
+        }
+
+        if (! $error)
         {
-            $this->db->commit();
-            return 1;
+            if (! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('SOCIALCHARGES_MODIFY',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
         }
         else
         {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
+            $this->db->commit();
+            return 1;
         }
     }
 
@@ -419,7 +442,7 @@ class ChargeSociales extends CommonObject
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
-    function getLibStatut($mode=0,$alreadypaid=-1)
+    function getLibStatut($mode = 0, $alreadypaid = -1)
     {
         return $this->LibStatut($this->paye,$mode,$alreadypaid);
     }
@@ -433,7 +456,7 @@ class ChargeSociales extends CommonObject
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
-    function LibStatut($statut,$mode=0,$alreadypaid=-1)
+    function LibStatut($statut, $mode = 0, $alreadypaid = -1)
     {
         // phpcs:enable
         global $langs;
@@ -491,7 +514,7 @@ class ChargeSociales extends CommonObject
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string								String with link
      */
-    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0, $short=0, $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
     {
     	global $langs, $conf, $user, $form;
 

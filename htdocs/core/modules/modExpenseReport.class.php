@@ -210,7 +210,7 @@ class modExpenseReport extends DolibarrModules
 	 *	@param		string	$options	Options
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		global $conf;
 

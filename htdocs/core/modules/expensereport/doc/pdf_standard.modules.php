@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
@@ -541,7 +541,7 @@ class pdf_standard extends ModeleExpenseReport
      * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
      * @return  void
      */
-    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails=0)
+    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
         global $conf;
         $pdf->SetFont('','', $default_font_size - 1);
@@ -780,7 +780,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outputlangs),0,'L');
 				}
 			}
-			else if($object->fk_statut==4)
+			elseif($object->fk_statut==4)
 			{
 				if ($object->fk_user_cancel > 0) {
 					$userfee=new User($this->db);
@@ -835,7 +835,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1057,7 +1057,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

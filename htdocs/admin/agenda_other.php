@@ -35,7 +35,7 @@ if (!$user->admin)
     accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'agenda'));
+$langs->loadLangs(array('admin', 'other', 'agenda', 'users'));
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
@@ -86,7 +86,7 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
-else if ($action == 'specimen')  // For orders
+elseif ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
 
@@ -133,13 +133,13 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
-else if ($action == 'setmodel')
+elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -149,7 +149,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -353,7 +353,8 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+$htmltext=$langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));

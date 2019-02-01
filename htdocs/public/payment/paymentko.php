@@ -216,7 +216,7 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';

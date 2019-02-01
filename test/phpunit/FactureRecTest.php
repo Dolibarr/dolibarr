@@ -171,7 +171,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
      * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
 	 * @return	array								Array with differences
      */
-    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {
         $retAr=array();
 

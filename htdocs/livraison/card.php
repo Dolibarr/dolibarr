@@ -130,7 +130,7 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
     ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 )
@@ -346,7 +346,7 @@ else
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
 
 			/*
 			 * Confirmation de la suppression
@@ -434,7 +434,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-		    print '<table class="border" width="100%">';
+		    print '<table class="border tableforfield" width="100%">';
 
 			// Shipment
 			/*

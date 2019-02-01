@@ -78,8 +78,10 @@ $subcategories = array_filter($categories, function ($item) {
     return false;
 });
 ?>
-var categories = JSON.parse( '<?php echo json_encode($maincategories);?>' );
-var subcategories = JSON.parse( '<?php echo json_encode($subcategories);?>' );
+
+var categories = <?php echo json_encode($categories); ?>;
+var subcategories = <?php echo json_encode($subcategories); ?>;
+
 var currentcat;
 var pageproducts=0;
 var pagecategories=0;
@@ -467,7 +469,7 @@ foreach($menus as $menu) {
 		echo '<button type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
 		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 	}
-    else if ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+    elseif ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 	else echo '<button type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 }
 ?>

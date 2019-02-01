@@ -310,7 +310,7 @@ foreach($filesToProcess as $fileToProcess)
 			{
 				//print "Key $key is a key we always want to see into secondary file (line: $cnt).\n";
 			}
-			else if ( ! array_key_exists($key, $aSecondary))
+			elseif ( ! array_key_exists($key, $aSecondary))
 			{
 				//print "Key $key does NOT exist in secondary language (line: $cnt).\n";
 				continue;

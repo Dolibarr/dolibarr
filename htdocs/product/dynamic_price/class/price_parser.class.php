@@ -104,15 +104,15 @@ class PriceParser
 		{
 			return $langs->trans("ErrorPriceExpression".$code);
 		}
-		else if (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
+		elseif (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info);
 		}
-		else if (in_array($code, array(6, 23))) //Errors which have 2 args
+		elseif (in_array($code, array(6, 23))) //Errors which have 2 args
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		}
-		else if (in_array($code, array(7, 12, 13, 15, 16, 18))) //Internal errors
+		elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) //Internal errors
 		{
 			return $langs->trans("ErrorPriceExpressionInternal", $code);
 		}

@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -270,7 +270,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			if ($value == 'price' || preg_match('/^amount/i',$value) || $value == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
-			else if ($value == 'entity') {
+			elseif ($value == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -318,7 +318,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 			if ($field == 'price' || preg_match('/^amount/i',$field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
-			else if ($field == 'entity') {
+			elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -517,7 +517,7 @@ if ($id)
 			// dans les dictionnaires de donnees
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			$align="left";
+			$class="left";
 			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
@@ -535,7 +535,7 @@ if ($id)
 			{
 				print '<td align="'.$align.'">';
 				if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-				else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+				elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
 				else print $valuetoshow;
 				print '</td>';
 			 }
@@ -573,7 +573,7 @@ if ($id)
 			fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
 		}
 
-		print '<td colspan="3" align="right">';
+		print '<td colspan="3" class="right">';
 		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
@@ -606,7 +606,7 @@ if ($id)
 		// There is several pages
 		if ($num > $listlimit)
 		{
-			print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+			print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
 			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
 			print '</td></tr>';
 		}
@@ -634,7 +634,7 @@ if ($id)
 			}
 		}
 		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre" colspan="2" align="right">';
+		print '<td class="liste_titre right" colspan="2">';
 		$searchpicto=$form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
@@ -647,7 +647,7 @@ if ($id)
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
 			$showfield=1;							  	// By defaut
-			$align="left";
+			$class="left";
 			$sortable=1;
 			$valuetoshow='';
 			/*
@@ -702,7 +702,7 @@ if ($id)
 
 					if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
-					print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				}
 				else
@@ -719,7 +719,7 @@ if ($id)
 						{
 
 							$showfield=1;
-							$align="left";
+							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};
 							if ($value == 'type_template')
 							{
@@ -729,14 +729,14 @@ if ($id)
 							{
 								$valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
 							}
-							else if ($value == 'source')
+							elseif ($value == 'source')
 							{
 								$valuetoshow = isset($sourceList[$valuetoshow])?$sourceList[$valuetoshow]:$valuetoshow;
 							}
-							else if ($valuetoshow=='all') {
+							elseif ($valuetoshow=='all') {
 								$valuetoshow=$langs->trans('All');
 							}
-							else if ($fieldlist[$field]=='country') {
+							elseif ($fieldlist[$field]=='country') {
 								if (empty($obj->country_code))
 								{
 									$valuetoshow='-';
@@ -747,7 +747,7 @@ if ($id)
 									$valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
 								}
 							}
-							else if ($fieldlist[$field]=='country_id') {
+							elseif ($fieldlist[$field]=='country_id') {
 								$showfield=0;
 							}
 
@@ -811,7 +811,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf,$langs,$db;
 	global $form;
@@ -874,4 +874,3 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 	}
 }
-

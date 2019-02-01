@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ class PaymentDonation extends CommonObject
 	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
-	function create($user, $notrigger=false)
+	function create($user, $notrigger = false)
 	{
 		global $conf, $langs;
 
@@ -264,7 +264,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -344,7 +344,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -467,7 +467,7 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *  @return string        		Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 	    return '';
 	}
@@ -480,7 +480,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
         global $langs;
@@ -526,7 +526,7 @@ class PaymentDonation extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -629,7 +629,7 @@ class PaymentDonation extends CommonObject
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 

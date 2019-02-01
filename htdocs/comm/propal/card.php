@@ -205,7 +205,7 @@ if (empty($reshook))
 	}
 
 	// Delete proposal
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -218,7 +218,7 @@ if (empty($reshook))
 	}
 
 	// Remove line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
 	{
 		$result = $object->deleteline($lineid);
 		// reorder lines
@@ -242,7 +242,7 @@ if (empty($reshook))
 	}
 
 	// Validation
-	else if ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
+	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
 	{
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -269,7 +269,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate' && $usercancreate)
+	elseif ($action == 'setdate' && $usercancreate)
 	{
 		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -284,13 +284,13 @@ if (empty($reshook))
 				dol_print_error($db, $object->error);
 		}
 	}
-	else if ($action == 'setecheance' && $usercancreate)
+	elseif ($action == 'setecheance' && $usercancreate)
 	{
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
-	else if ($action == 'setdate_livraison' && $usercancreate)
+	elseif ($action == 'setdate_livraison' && $usercancreate)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
@@ -298,7 +298,7 @@ if (empty($reshook))
 	}
 
 	// Positionne ref client
-	else if ($action == 'setref_client' && $usercancreate)
+	elseif ($action == 'setref_client' && $usercancreate)
 	{
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
 		if ($result < 0)
@@ -314,7 +314,7 @@ if (empty($reshook))
 	}
 
 	// Create proposal
-	else if ($action == 'add' && $usercancreate)
+	elseif ($action == 'add' && $usercancreate)
 	{
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
@@ -619,7 +619,7 @@ if (empty($reshook))
 	}
 
 	// Classify billed
-	else if ($action == 'classifybilled' && $usercanclose)
+	elseif ($action == 'classifybilled' && $usercanclose)
 	{
 		$db->begin();
 
@@ -641,7 +641,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel','alpha'))
+	elseif ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel','alpha'))
 	{
 		if (! (GETPOST('statut','int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
@@ -672,7 +672,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel','alpha'))
+	elseif ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel','alpha'))
 	{
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
@@ -808,7 +808,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == "setabsolutediscount" && $usercancreate) {
+	elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -820,7 +820,7 @@ if (empty($reshook))
 	}
 
 	// Add line
-	else if ($action == 'addline' && $usercancreate) {
+	elseif ($action == 'addline' && $usercancreate) {
 
 		// Set if we used free entry or predefined product
 		$predef='';
@@ -1184,7 +1184,7 @@ if (empty($reshook))
 	}
 
 	// Update a line within proposal
-	else if ($action == 'updateline' && $usercancreate && GETPOST('save'))
+	elseif ($action == 'updateline' && $usercancreate && GETPOST('save'))
 	{
 		// Define info_bits
 		$info_bits = 0;
@@ -1320,66 +1320,66 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateline' && $usercancreate && GETPOST('cancel','alpha'))
+	elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel','alpha'))
 	{
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
 	// Set project
-	else if ($action == 'classin' && $usercancreate) {
+	elseif ($action == 'classin' && $usercancreate) {
 		$object->setProject(GETPOST('projectid','int'));
 	}
 
 	// Delai de livraison
-	else if ($action == 'setavailability' && $usercancreate) {
+	elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->set_availability($user, GETPOST('availability_id','int'));
 	}
 
 	// Origine de la propale
-	else if ($action == 'setdemandreason' && $usercancreate) {
+	elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id','int'));
 	}
 
 	// Conditions de reglement
-	else if ($action == 'setconditions' && $usercancreate) {
+	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
 
-	else if ($action == 'setremisepercent' && $usercancreate) {
+	elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
 	}
 
-	else if ($action == 'setremiseabsolue' && $usercancreate) {
+	elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
 	// Mode de reglement
-	else if ($action == 'setmode' && $usercancreate) {
+	elseif ($action == 'setmode' && $usercancreate) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $usercancreate) {
+	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $usercancreate) {
+	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
 	// bank account
-	else if ($action == 'setbankaccount' && $usercancreate) {
+	elseif ($action == 'setbankaccount' && $usercancreate) {
 		$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
 	// shipping method
-	else if ($action == 'setshippingmethod' && $usercancreate) {
+	elseif ($action == 'setshippingmethod' && $usercancreate) {
 		$result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 	}
 
-	else if ($action == 'update_extras') {
+	elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -1421,7 +1421,7 @@ if (empty($reshook))
 		}
 
 		// Bascule du statut d'un contact
-		else if ($action == 'swapstatut') {
+		elseif ($action == 'swapstatut') {
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
@@ -1430,7 +1430,7 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact') {
+		elseif ($action == 'deletecontact') {
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
 
@@ -1909,22 +1909,22 @@ if ($action == 'create')
 	}
 
 	// Confirm delete
-	else if ($action == 'delete') {
+	elseif ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm reopen
-	else if ($action == 'reopen') {
+	elseif ($action == 'reopen') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirmation delete product/service line
-	else if ($action == 'ask_deleteline') {
+	elseif ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Confirm validate proposal
-	else if ($action == 'validate') {
+	elseif ($action == 'validate') {
 		$error = 0;
 
 		// We verifie whether the object is provisionally numbering

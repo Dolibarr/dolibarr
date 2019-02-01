@@ -197,4 +197,3 @@ else
 	if ($outjson)
 		print json_encode($arrayresult);
 }
-

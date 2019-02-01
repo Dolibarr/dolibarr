@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018 Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ class box_task extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param='')
+    function __construct($db, $param = '')
     {
         global $user, $langs;
 
@@ -73,7 +73,7 @@ class box_task extends ModeleBoxes
 	 *  @param  int     $max        Maximum number of records to load
 	 *  @return void
 	 */
-	function loadBox($max=5)
+	function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -104,12 +104,10 @@ class box_task extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-			if ($result)
-			{
+			$i = 0;
+			if ($result) {
 				$num = $db->num_rows($result);
-				$i = 0;
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
                         'td' => '',
@@ -131,10 +129,10 @@ class box_task extends ModeleBoxes
 
 					$i++;
 				}
-			}
-			else dol_print_error($this->db);
+			} else {
+                dol_print_error($this->db);
+            }
 		}
-
 
 		// Add the sum at the bottom of the boxes
 		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
@@ -152,7 +150,7 @@ class box_task extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-	function showBox($head = null, $contents = null, $nooutput=0)
+	function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

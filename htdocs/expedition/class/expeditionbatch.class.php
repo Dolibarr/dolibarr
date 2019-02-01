@@ -155,7 +155,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_expedition	rowid of shipment
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
-	static function deletefromexp($db,$id_expedition)
+	static function deletefromexp($db, $id_expedition)
 	{
 		$id_expedition = (int) $id_expedition;
 
@@ -181,7 +181,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int			$fk_product			If provided, load also detailed information of lot
 	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	static function fetchAll($db, $id_line_expdet, $fk_product=0)
+	static function fetchAll($db, $id_line_expdet, $fk_product = 0)
 	{
 		$sql="SELECT";
 		$sql.= " eb.rowid,";

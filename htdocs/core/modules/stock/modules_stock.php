@@ -37,7 +37,7 @@ abstract class ModelePDFStock extends CommonDocGenerator
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         global $conf;

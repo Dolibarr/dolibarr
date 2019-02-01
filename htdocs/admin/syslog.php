@@ -230,7 +230,7 @@ foreach ($syslogModules as $moduleName)
 		    if (! empty($tmpoption))
 		    {
     			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
-    			else if (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+    			elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
 		    }
 			else $value = (isset($option['default']) ? $option['default'] : '');
 

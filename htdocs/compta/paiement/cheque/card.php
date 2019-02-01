@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -270,7 +270,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 }
 
 // Remove file in doc form
-else if ($action == 'remove_file' && $user->rights->banque->cheque)
+elseif ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
 	{

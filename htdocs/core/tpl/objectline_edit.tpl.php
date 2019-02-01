@@ -100,7 +100,7 @@ $coldisplay=-1; // We remove first td
 	}
 
 	// Do not allow editing during a situation cycle
-	if (empty($this->situation_cycle_ref) || $this->situation_counter == 1)
+	if ($line->fk_prev_id == null )
 	{
 		// editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -138,15 +138,15 @@ $coldisplay=-1; // We remove first td
 	}
 
 	$coldisplay++;
-	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
-		print '<td class="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
+	if ($line->fk_prev_id == null) {
+		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
-	if ($this->situation_counter > 1) print ' readonly';
+	print '<td align="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	if ($line->fk_prev_id != null) print ' readonly';
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
@@ -156,8 +156,8 @@ $coldisplay=-1; // We remove first td
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
-		if ($this->situation_counter > 1) print ' readonly';
+		print '<td align="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
+		if ($line->fk_prev_id != null) print ' readonly';
 		print '></td>';
 	}
 	?>
@@ -168,7 +168,7 @@ $coldisplay=-1; // We remove first td
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
 		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '"';
-		if ($this->situation_counter > 1) print ' readonly';
+		if ($line->fk_prev_id != null ) print ' readonly';
 		print '>';
 	} else { ?>
 		&nbsp;
@@ -187,7 +187,7 @@ $coldisplay=-1; // We remove first td
 	<td class="nowrap right"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
-		if ($this->situation_counter > 1) print ' readonly';
+		if ($line->fk_prev_id != null ) print ' readonly';
 		print '>%';
 	} else { ?>
 		&nbsp;

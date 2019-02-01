@@ -105,7 +105,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $_GET;
 
@@ -152,7 +152,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $conf,$_GET;
 
@@ -255,7 +255,7 @@ class modTcpdfbarcode extends ModeleBarCode
 		if (array_key_exists($dolEncodingType, $tcpdf1dEncodingTypes)) {
 			$this->is2d = false;
 			return $tcpdf1dEncodingTypes[$dolEncodingType];
-		} else if (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
+		} elseif (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
 			$this->is2d = true;
 			return $tcpdf2dEncodingTypes[$dolEncodingType];
 		} else {

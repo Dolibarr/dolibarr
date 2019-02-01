@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+-- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 --

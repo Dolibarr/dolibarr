@@ -110,7 +110,7 @@ class mailing_example extends MailingTargets
      *  @param		string		$sql		Requete sql de comptage
      *	@return		int|string				Number of recipient or '?'
      */
-    function getNbOfRecipients($sql='')
+    function getNbOfRecipients($sql = '')
     {
         // CHANGE THIS: Optionnal
 

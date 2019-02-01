@@ -32,7 +32,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
+function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 {
 	global $db,$conf,$langs;
 	global $_POST;
@@ -245,4 +245,3 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 
 	return $login;
 }
-

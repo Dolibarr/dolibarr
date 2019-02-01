@@ -205,8 +205,7 @@ if (empty($reshook))
 
 	    $date_delivery = dol_mktime(GETPOST('date_deliveryhour','int'), GETPOST('date_deliverymin','int'), 0, GETPOST('date_deliverymonth','int'), GETPOST('date_deliveryday','int'), GETPOST('date_deliveryyear','int'));
 
-	    // On va boucler sur chaque ligne du document d'origine pour completer objet expedition
-	    // avec info diverses + qte a livrer
+	    // We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
 	    $classname = ucfirst($object->origin);
 	    $objectsrc = new $classname($db);
 	    $objectsrc->fetch($object->origin_id);
@@ -281,7 +280,7 @@ if (empty($reshook))
 			        }
 			    }
 			}
-			else if (isset($_POST[$stockLocation]))
+			elseif (isset($_POST[$stockLocation]))
 			{
 			    //shipment line from multiple stock locations
 			    $qty .= '_'.$j;
@@ -416,7 +415,7 @@ if (empty($reshook))
 	/*
 	 * Build a receiving receipt
 	 */
-	else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
+	elseif ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 	{
 	    $result = $object->create_delivery($user);
 	    if ($result > 0)
@@ -430,7 +429,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+	elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
        	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
 	)
@@ -466,7 +465,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
 	    $result = $object->delete();
 	    if ($result > 0)
@@ -489,7 +488,7 @@ if (empty($reshook))
 	    }
 	}*/
 
-	else if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
+	elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 	{
 	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	    $datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
@@ -503,7 +502,7 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if (
+	elseif (
 		($action == 'settracking_number'
 		|| $action == 'settracking_url'
 		|| $action == 'settrueWeight'
@@ -614,7 +613,7 @@ if (empty($reshook))
 	/*
 	 *  Update a line
 	 */
-	else if ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('save'))
+	elseif ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('save'))
 	{
 		// Clean parameters
 		$qty=0;
@@ -701,7 +700,7 @@ if (empty($reshook))
 									$lineIdToAddLot = $line_id;
 								}
 							}
-							else if (count($lines[$i]->details_entrepot) > 1)
+							elseif (count($lines[$i]->details_entrepot) > 1)
 							{
 								// multi warehouse shipment lines
 								foreach ($lines[$i]->details_entrepot as $detail_entrepot)
@@ -776,7 +775,7 @@ if (empty($reshook))
 							unset($_POST[$stockLocation]);
 							unset($_POST[$qty]);
 						}
-						else if (count($lines[$i]->details_entrepot) > 1)
+						elseif (count($lines[$i]->details_entrepot) > 1)
 						{
 							// multi warehouse shipment lines
 							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
@@ -839,13 +838,13 @@ if (empty($reshook))
 		}
 		else
 		{
-			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 			exit();
 		}
 	}
 
-	else if ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
-		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+	elseif ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
+		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 		exit();
 	}
 
@@ -940,7 +939,7 @@ if ($action == 'create')
             // Ref client
             print '<tr><td>';
             if ($origin == 'commande') print $langs->trans('RefCustomerOrder');
-            else if ($origin == 'propal') print $langs->trans('RefCustomerOrder');
+            elseif ($origin == 'propal') print $langs->trans('RefCustomerOrder');
             else print $langs->trans('RefCustomer');
             print '</td><td colspan="3">';
             print '<input type="text" name="ref_customer" value="'.$object->ref_client.'" />';
@@ -1604,7 +1603,7 @@ if ($action == 'create')
         }
     }
 }
-else if ($id || $ref)
+elseif ($id || $ref)
 /* *************************************************************************** */
 /*                                                                             */
 /* Edit and view mode                                                          */
@@ -1752,7 +1751,7 @@ else if ($id || $ref)
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield" width="100%">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -2253,7 +2252,7 @@ else if ($id || $ref)
 					print '<td>' . $formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product). '</td>';
 					print '</tr>';
 				}
-				else if (! empty($conf->stock->enabled))
+				elseif (! empty($conf->stock->enabled))
 				{
 					if ($lines[$i]->fk_product > 0)
 					{
@@ -2269,7 +2268,7 @@ else if ($id || $ref)
 							print '<td> - ' . $langs->trans("NA") . '</td>';
 							print '</tr>';
 						}
-						else if (count($lines[$i]->details_entrepot) > 1)
+						elseif (count($lines[$i]->details_entrepot) > 1)
 						{
 							print '<!-- case edit 3 -->';
 							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
@@ -2320,7 +2319,7 @@ else if ($id || $ref)
 						$entrepot->fetch($lines[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);
 					}
-					else if (count($lines[$i]->details_entrepot) > 1)
+					elseif (count($lines[$i]->details_entrepot) > 1)
 					{
 						$detail = '';
 						foreach ($lines[$i]->details_entrepot as $detail_entrepot)
@@ -2389,7 +2388,7 @@ else if ($id || $ref)
 				print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 			}
-			else if ($object->statut == 0)
+			elseif ($object->statut == 0)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit" align="center">';

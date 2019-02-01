@@ -123,7 +123,7 @@ class CoreObject extends CommonObject
      * @param   bool    $try_to_load    Force the fetch if an id is given
      * @return                          int
      */
-    public function addChild($tabName, $id=0, $key='id', $try_to_load = false)
+    public function addChild($tabName, $id = 0, $key = 'id', $try_to_load = false)
     {
 		if(!empty($id))
 		{
@@ -154,7 +154,7 @@ class CoreObject extends CommonObject
      * @param   string  $key            Attribute name of the object id
      * @return                          bool
      */
-    public function removeChild($tabName, $id, $key='id')
+    public function removeChild($tabName, $id, $key = 'id')
     {
 		foreach ($this->{$tabName} as &$object)
 		{
@@ -370,7 +370,7 @@ class CoreObject extends CommonObject
      * @param   string  $format Output date format
      * @return          string
      */
-    public function getDate($field, $format='')
+    public function getDate($field, $format = '')
     {
 		if(empty($this->{$field})) return '';
 		else
@@ -416,15 +416,15 @@ class CoreObject extends CommonObject
 			{
 				$this->setDate($key, $value);
 			}
-			else if( $this->checkFieldType($key, 'array'))
+			elseif( $this->checkFieldType($key, 'array'))
 			{
 				$this->{$key} = $value;
 			}
-			else if( $this->checkFieldType($key, 'float') )
+			elseif( $this->checkFieldType($key, 'float') )
 			{
 				$this->{$key} = (double) price2num($value);
 			}
-			else if( $this->checkFieldType($key, 'int') ) {
+			elseif( $this->checkFieldType($key, 'int') ) {
 				$this->{$key} = (int) price2num($value);
 			}
 			else

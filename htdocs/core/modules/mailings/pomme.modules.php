@@ -88,7 +88,7 @@ class mailing_pomme extends MailingTargets
      *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
-	function getNbOfRecipients($sql='')
+	function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 

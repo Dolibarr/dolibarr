@@ -940,7 +940,7 @@ if ($resql)
 					print $nbofsalesrepresentative;
 					print '</a>';
 				}
-				else if ($nbofsalesrepresentative > 0)
+				elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic=new User($db);
 					$j=0;

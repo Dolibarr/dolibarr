@@ -38,7 +38,7 @@
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function report_header($reportname,$notused,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function report_header($reportname, $notused, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
 	global $langs;
 
@@ -122,4 +122,3 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 
 	print "\n<!-- end banner of report -->\n\n";
 }
-

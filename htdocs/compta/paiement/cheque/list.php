@@ -2,7 +2,7 @@
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,12 +100,12 @@ if ($month > 0)
 {
     if ($year > 0 && empty($day))
     $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
+    elseif ($year > 0 && ! empty($day))
     $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
     $sql.= " AND date_format(bc.date_bordereau, '%m') = '".$month."'";
 }
-else if ($year > 0)
+elseif ($year > 0)
 {
 	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }

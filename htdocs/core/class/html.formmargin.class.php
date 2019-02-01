@@ -59,7 +59,7 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	True of not
 	 * 	@return array							Array with info
 	 */
-	function getMarginInfosArray($object, $force_price=false)
+	function getMarginInfosArray($object, $force_price = false)
 	{
 		global $conf, $db;
 
@@ -191,7 +191,7 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	Force price
 	 * 	@return	void
 	 */
-	function displayMarginInfos($object, $force_price=false)
+	function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user;
 
@@ -281,4 +281,3 @@ class FormMargin
 		print '</div>';
 	}
 }
-

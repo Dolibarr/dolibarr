@@ -136,7 +136,7 @@ if ($conf->use_javascript_ajax)
 }
 
 
-print $langs->trans("BlankSubscriptionFormDesc").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
 
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';

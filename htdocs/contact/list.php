@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
@@ -113,13 +113,13 @@ if ($type == "c")
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="card.php";
 }
-else if ($type == "f")
+elseif ($type == "f")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactsupplierlist';
 	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="card.php";
 }
-else if ($type == "o")
+elseif ($type == "o")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactotherlist';
 	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
@@ -330,15 +330,15 @@ if ($type == "o")        // filtre sur type
 {
 	$sql .= " AND p.fk_soc IS NULL";
 }
-else if ($type == "f")        // filtre sur type
+elseif ($type == "f")        // filtre sur type
 {
 	$sql .= " AND s.fournisseur = 1";
 }
-else if ($type == "c")        // filtre sur type
+elseif ($type == "c")        // filtre sur type
 {
 	$sql .= " AND s.client IN (1, 3)";
 }
-else if ($type == "p")        // filtre sur type
+elseif ($type == "p")        // filtre sur type
 {
 	$sql .= " AND s.client IN (2, 3)";
 }
@@ -487,7 +487,7 @@ if (! empty($conf->categorie->enabled))
 	{
 		$moreforfilter.='<div class="divsearchfield">';
 		if ($type == 'c') $moreforfilter.=$langs->trans('CustomersCategoriesShort'). ': ';
-		else if ($type == 'p') $moreforfilter.=$langs->trans('ProspectsCategoriesShort'). ': ';
+		elseif ($type == 'p') $moreforfilter.=$langs->trans('ProspectsCategoriesShort'). ': ';
 		else $moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort'). ': ';
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ_thirdparty,'search_categ_thirdparty',1);
 		$moreforfilter.='</div>';

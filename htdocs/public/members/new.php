@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
     global $user, $conf, $langs, $mysoc;
 
@@ -353,7 +353,7 @@ if ($action == 'add')
             }
 
             if (! empty($backtopage)) $urlback=$backtopage;
-            else if (! empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION))
+            elseif (! empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION))
             {
                 $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
                 // TODO Make replacement of __AMOUNT__, etc...
@@ -379,7 +379,7 @@ if ($action == 'add')
                         }
                     }
                 }
-            	else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+            	elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
@@ -396,7 +396,7 @@ if ($action == 'add')
                     	}
                     }
                 }
-                else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
+                elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
@@ -413,7 +413,7 @@ if ($action == 'add')
                         }
                     }
                 }
-				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
+				elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));

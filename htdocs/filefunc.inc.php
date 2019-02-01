@@ -80,7 +80,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
         $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
         if (! preg_match('/\/$/', $path)) $path.='/';
     }
-    else if (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
+    elseif (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
     {
         // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
         // when using apache alias like '/dolibarr/' that point to htdocs.
@@ -294,4 +294,3 @@ if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_d
 	}
 	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
-

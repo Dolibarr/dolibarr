@@ -56,7 +56,7 @@ class CdavLib
 	 * @param	int|boolean	$ouri			Ouri
 	 * @return string
 	 */
-	public function getSqlCalEvents($calid, $oid=false, $ouri=false)
+	public function getSqlCalEvents($calid, $oid = false, $ouri = false)
 	{
 		// TODO : replace GROUP_CONCAT by
 		$sql = 'SELECT

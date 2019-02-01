@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -95,8 +95,8 @@ if ($action == 'create')
 	    $type=GETPOST('type');
 	    $halfday=0;
 	    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	    else if ($starthalfday == 'afternoon') $halfday=-1;
-	    else if ($endhalfday == 'morning') $halfday=1;
+	    elseif ($starthalfday == 'afternoon') $halfday=-1;
+	    elseif ($endhalfday == 'morning') $halfday=1;
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
@@ -201,8 +201,8 @@ if ($action == 'update')
 	$endhalfday=GETPOST('endhalfday');
 	$halfday=0;
 	if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
-	else if ($starthalfday == 'afternoon') $halfday=-1;
-	else if ($endhalfday == 'morning') $halfday=1;
+	elseif ($starthalfday == 'afternoon') $halfday=-1;
+	elseif ($endhalfday == 'morning') $halfday=1;
 
     // If no right to modify a request
     if (! $user->rights->holiday->write)

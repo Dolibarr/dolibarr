@@ -53,7 +53,7 @@ class box_factures_fourn extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	function __construct($db, $param)
 	{
 	    global $user;
 
@@ -68,7 +68,7 @@ class box_factures_fourn extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -214,9 +214,8 @@ class box_factures_fourn extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

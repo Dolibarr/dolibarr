@@ -148,7 +148,7 @@ class ExpenseReportRule extends CoreObject
 	 * @param type	$fk_user		user of expense
 	 * @return array \ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees='', $date='', $fk_user='')
+	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
 		global $db;
 

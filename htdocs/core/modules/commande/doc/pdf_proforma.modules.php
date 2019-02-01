@@ -67,7 +67,7 @@ class pdf_proforma extends pdf_einstein
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
 	{
 		global $conf,$langs,$hookmanager;
 

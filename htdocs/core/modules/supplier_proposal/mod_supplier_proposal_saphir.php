@@ -125,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$supplier_proposal)
+	function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -295,7 +295,7 @@ function user_admin_prepare_head()
  * 	@param	boolean		$foruserprofile		Show for user profile view
  * 	@return	void
  */
-function show_theme($fuser,$edit=0,$foruserprofile=false)
+function show_theme($fuser, $edit = 0, $foruserprofile = false)
 {
 	global $conf,$langs,$db,$form;
 	global $bc;

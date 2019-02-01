@@ -127,5 +127,3 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     	print "Error: ".$soc->error."\n";
     }
 }
-
-

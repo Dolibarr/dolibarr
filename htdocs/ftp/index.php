@@ -107,7 +107,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			{
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			elseif (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
@@ -529,7 +529,7 @@ else
 				// Is it a directory ?
 				$is_directory=0;
 				if ($file == '..') $is_directory=1;
-				else if (! $rawlisthasfailed)
+				elseif (! $rawlisthasfailed)
 				{
 					if (preg_match('/^d/',$vals[0])) $is_directory=1;
 					if (preg_match('/^l/',$vals[0])) $is_link=1;
@@ -586,7 +586,7 @@ else
 					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 					else print '&nbsp;';
 				}
-				else if ($is_link)
+				elseif ($is_link)
 				{
 					$newfile=$file;
 					$newfile=preg_replace('/ ->.*/','',$newfile);
@@ -671,7 +671,7 @@ if ($conn_id)
     {
 
     }
-    else if (! empty($conf->global->FTP_CONNECT_WITH_SSL))
+    elseif (! empty($conf->global->FTP_CONNECT_WITH_SSL))
     {
         ftp_close($conn_id);
     }
@@ -698,7 +698,7 @@ $db->close();
  * @param	integer	$ftp_passive	Use a passive mode
  * @return	int 	<0 if OK, >0 if KO
  */
-function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive=0)
+function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
 {
 	global $langs, $conf;
 
@@ -719,7 +719,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		    dol_syslog('Try to connect with ssh2_ftp');
 		    $tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
 		}
-		else if (! empty($conf->global->FTP_CONNECT_WITH_SSL))
+		elseif (! empty($conf->global->FTP_CONNECT_WITH_SSL))
 		{
 		    dol_syslog('Try to connect with ftp_ssl_connect');
 		    $conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
@@ -798,7 +798,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
  * @param 		string		$dir			Directory
  * @return		int			1=directory, 0=not a directory
  */
-function ftp_isdir($connect_id,$dir)
+function ftp_isdir($connect_id, $dir)
 {
 	if (@ftp_chdir($connect_id,$dir))
 	{

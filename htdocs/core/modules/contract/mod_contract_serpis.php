@@ -119,7 +119,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$contract)
+	function getNextValue($objsoc, $contract)
 	{
 		global $db,$conf;
 
@@ -161,7 +161,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	@param	Object		$objforref  contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function contract_get_num($objsoc,$objforref)
+	function contract_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);

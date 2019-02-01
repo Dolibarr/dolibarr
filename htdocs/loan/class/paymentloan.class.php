@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -273,7 +273,7 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -361,7 +361,7 @@ class PaymentLoan extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -546,7 +546,7 @@ class PaymentLoan extends CommonObject
 	 * 	@param	int		$maxlen			Max length label
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 

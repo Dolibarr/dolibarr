@@ -402,4 +402,3 @@ if ($action == 'delete')
 		$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
 	}
 }
-

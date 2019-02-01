@@ -91,7 +91,7 @@ class mailing_contacts1 extends MailingTargets
 	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
-	function getNbOfRecipients($sql='')
+	function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 

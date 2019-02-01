@@ -202,7 +202,7 @@ class Setup extends DolibarrApi
         if ($country->fetch($id) < 0) {
             throw new RestException(503, 'Error when retrieving country : '.$country->error);
         }
-        else if ($country->fetch($id) == 0) {
+        elseif ($country->fetch($id) == 0) {
             throw new RestException(404, 'country not found');
         }
 

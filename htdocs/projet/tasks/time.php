@@ -98,6 +98,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_e
  */
 
 if (GETPOST('cancel','alpha')) { $action=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice') { $massaction=''; }
 
 $parameters=array('socid'=>$socid, 'projectid'=>$projectid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -300,7 +301,7 @@ elseif (GETPOST('project_ref','alpha'))
     $withproject=1;
 }
 
-if ($massaction == 'generateinvoice')
+if ($massaction == 'confirm_generateinvoice')
 {
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
@@ -754,7 +755,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->bill_time));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -771,7 +772,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     	        //'builddoc'=>$langs->trans("PDFMerge"),
     	    );
     	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-    	    if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+    	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
     	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	    }
 
@@ -810,6 +811,51 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 	    print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
+	    if ($massaction == 'generateinvoice')
+	    {
+	        $langs->load("bills");
+
+	        //var_dump($_REQUEST);
+	        print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+	        print '<table class="noborder" width="100%" >';
+	        print '<tr>';
+	        print '<td class="titlefield">';
+	        print $langs->trans('DateInvoice');
+	        print '</td>';
+	        print '<td>';
+	        print $form->selectDate('', '', '', '', '', '', 1, 1);
+	        print '</td>';
+	        print '</tr>';
+	        if ($conf->service->enabled)
+	        {
+    	        print '<tr>';
+    	        print '<td>';
+    	        print $langs->trans('Service');
+    	        print '</td>';
+    	        print '<td>';
+    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        print '</td>';
+    	        print '</tr>';
+	        }
+	        /*print '<tr>';
+	        print '<td>';
+	        print $langs->trans('ValidateInvoices');
+	        print '</td>';
+	        print '<td>';
+            print $form->selectyesno('valdate_invoices', 0, 1);
+	        print '</td>';
+	        print '</tr>';*/
+	        print '</table>';
+
+	        print '<br>';
+	        print '<div class="center">';
+	        print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoice').'">  ';
+	        print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+	        print '</div>';
+	        print '<br>';
+	    }
+
 		/*
 		 *  List of time spent
 		 */
@@ -837,12 +883,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		{
 			if ($search_year > 0 && empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-			else if ($search_year > 0 && ! empty($search_day))
+			elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
 		}
-		else if ($search_year > 0)
+		elseif ($search_year > 0)
 		{
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 		}
@@ -1273,7 +1319,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
-			else if ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
+			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
