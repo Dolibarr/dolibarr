@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,7 +320,7 @@ class modAsset extends DolibarrModules
 	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		global $conf;
 

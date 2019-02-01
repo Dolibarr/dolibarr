@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *

@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
@@ -425,7 +425,7 @@ function societe_admin_prepare_head()
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
-function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entconv=1, $searchlabel='')
+function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
 {
     global $db,$langs;
 
@@ -459,9 +459,9 @@ function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entc
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
             if ($withcode == 1) $result=$label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) $result=$obj->code;
-            else if ($withcode == 3) $result=$obj->rowid;
-            else if ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
+            elseif ($withcode == 2) $result=$obj->code;
+            elseif ($withcode == 3) $result=$obj->rowid;
+            elseif ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
             else $result=$label;
         }
         else
@@ -490,7 +490,7 @@ function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entc
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$entconv=1)
+function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlangs = '', $entconv = 1)
 {
     global $db,$langs;
 
@@ -525,7 +525,7 @@ function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$ent
                     return $label = $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
             }
-            else if ($withcode == 2) {
+            elseif ($withcode == 2) {
                 if ($withregion == 1) {
                     return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
@@ -533,7 +533,7 @@ function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$ent
                     return $label = ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
                 }
             }
-            else if ($withcode === 'all') {
+            elseif ($withcode === 'all') {
                 if ($withregion == 1) {
                     return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label,'region_code'=>$obj->region_code,'region'=>$obj->region_name);
                 }
@@ -566,7 +566,7 @@ function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$ent
  *    @param      Translate $outputlangs    Output language
  *    @return     string     			    Label translated of currency
  */
-function currency_name($code_iso, $withcode='', $outputlangs=null)
+function currency_name($code_iso, $withcode = '', $outputlangs = null)
 {
     global $langs,$db;
 
@@ -717,7 +717,7 @@ function isInEEC($object)
  *      @param	string		$morehtmlright	More html on right of title
  *      @return	void
  */
-function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelink=0, $morehtmlright='')
+function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
     global $user;
 
@@ -845,7 +845,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
  *      @param  string		$backtopage	Url to go once contact is created
  *      @return	void
  */
-function show_contacts($conf,$langs,$db,$object,$backtopage='')
+function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 {
 	global $user,$conf,$extrafields,$hookmanager;
 	global $contextpage;
@@ -1176,7 +1176,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  *      @param  string		$backtopage	Url to go once address is created
  *      @return	void
  */
-function show_addresses($conf,$langs,$db,$object,$backtopage='')
+function show_addresses($conf, $langs, $db, $object, $backtopage = '')
 {
 	global $user;
 
@@ -1270,7 +1270,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  *      @param  int			$actioncode 	   Filter on actioncode
  *      @return	mixed						   Return html part or void if noprint is 1
  */
-function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$actioncode='')
+function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
 {
     global $user,$conf;
 
@@ -1296,7 +1296,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  *      @param  string             $sortorder      Sort order
  *      @return	mixed					           Return html part or void if noprint is 1
  */
-function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=0, $actioncode='', $donetodo='done', $filters=array(), $sortfield='a.datep,a.id', $sortorder='DESC')
+function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
     global $user, $conf;
     global $form;
@@ -1763,7 +1763,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
  * 		@param	Societe		$object		Third party object
  * 		@return	void
  */
-function show_subsidiaries($conf,$langs,$db,$object)
+function show_subsidiaries($conf, $langs, $db, $object)
 {
 	global $user;
 
@@ -1836,6 +1836,3 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	return $i;
 }
-
-
-

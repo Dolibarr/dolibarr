@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ function stripeadmin_prepare_head()
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showStripePaymentUrl($type,$ref)
+function showStripePaymentUrl($type, $ref)
 {
 	global $conf, $langs;
 
@@ -87,7 +87,7 @@ function showStripePaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
 {
 	global $conf;
 
@@ -140,7 +140,7 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param   Translate	$langs			Output language
  * @return	void
  */
-function html_print_stripe_footer($fromcompany,$langs)
+function html_print_stripe_footer($fromcompany, $langs)
 {
 	global $conf;
 
@@ -199,4 +199,3 @@ function html_print_stripe_footer($fromcompany,$langs)
 	print $line2;
 	print '</font></div>'."\n";
 }
-

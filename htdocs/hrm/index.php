@@ -2,7 +2,7 @@
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expenserepor
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips'));
+$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
 
 $socid=GETPOST("socid","int");
 
@@ -48,6 +48,8 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
+
+$max=3;
 
 
 
@@ -160,10 +162,6 @@ if (! empty($conf->holiday->enabled))
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-$max=10;
-
-$langs->load("boxes");
 
 
 

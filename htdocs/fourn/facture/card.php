@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -245,7 +245,7 @@ if (empty($reshook))
 	}
 
 	// Remove a product line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$result = $object->deleteline($lineid);
 		if ($result > 0)
@@ -278,7 +278,7 @@ if (empty($reshook))
 	}
 
 	// Delete link of credit note to invoice
-	else if ($action == 'unlinkdiscount' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'unlinkdiscount' && $user->rights->fournisseur->facture->creer)
 	{
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOST("discountid"));
@@ -336,23 +336,23 @@ if (empty($reshook))
 	}
 
 	// payment mode
-	else if ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
 	{
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $user->rights->fournisseur->facture->creer) {
+	elseif ($action == 'setmulticurrencycode' && $user->rights->fournisseur->facture->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $user->rights->fournisseur->facture->creer) {
+	elseif ($action == 'setmulticurrencyrate' && $user->rights->fournisseur->facture->creer) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
 	}
 
 	// bank account
-	else if ($action == 'setbankaccount' && $user->rights->fournisseur->facture->creer) {
+	elseif ($action == 'setbankaccount' && $user->rights->fournisseur->facture->creer) {
 		$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
@@ -459,7 +459,7 @@ if (empty($reshook))
 		}
 	}
 	// Convertir en reduc
-	else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -972,7 +972,7 @@ if (empty($reshook))
 						$error++;
 					}
 				}
-				else if (! $error)
+				elseif (! $error)
 				{
 					$id = $object->create($user);
 					if ($id < 0)
@@ -1301,7 +1301,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 			}
 		}
-		else if (empty($error)) // $price_ht is already set
+		elseif (empty($error)) // $price_ht is already set
 		{
 			$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 			$tva_tx = str_replace('*', '', $tva_tx);
@@ -1576,7 +1576,7 @@ if (empty($reshook))
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut')
+		elseif ($action == 'swapstatut')
 		{
 			if ($object->fetch($id))
 			{
@@ -1589,7 +1589,7 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact')
+		elseif ($action == 'deletecontact')
 		{
 			$object->fetch($id);
 			$result = $object->delete_contact($_GET["lineid"]);

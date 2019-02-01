@@ -194,4 +194,3 @@ class modGravatar extends DolibarrModules
 		// $r++;
 	}
 }
-

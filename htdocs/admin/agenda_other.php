@@ -35,7 +35,7 @@ if (!$user->admin)
     accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'agenda'));
+$langs->loadLangs(array('admin', 'other', 'agenda', 'users'));
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
@@ -86,7 +86,7 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
-else if ($action == 'specimen')  // For orders
+elseif ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
 
@@ -133,13 +133,13 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
-else if ($action == 'setmodel')
+elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -149,7 +149,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -331,7 +331,7 @@ print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 // Manual or automatic
@@ -339,7 +339,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
+print '<td class="right">'."\n";
 //print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
 if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
@@ -353,9 +353,10 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+$htmltext=$langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
+print '<td class="right">'."\n";
 $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
@@ -367,7 +368,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
-    print '<td align="right" class="nowrap">'."\n";
+    print '<td class="right" class="nowrap">'."\n";
     $formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
     print '</td></tr>'."\n";
 }
@@ -376,7 +377,7 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right" class="nowrap">'."\n";
+print '<td class="right" class="nowrap">'."\n";
 $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1);
 print '</td></tr>'."\n";
 
@@ -385,7 +386,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
+print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
 

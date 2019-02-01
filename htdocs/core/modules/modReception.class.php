@@ -243,7 +243,7 @@ class modReception extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		global $conf,$langs;
 

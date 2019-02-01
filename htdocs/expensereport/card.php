@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -2417,7 +2417,7 @@ if ($action != 'create' && $action != 'edit')
 	    // Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
-	else if($user->rights->expensereport->supprimer && $object->fk_statut != 6)
+	elseif($user->rights->expensereport->supprimer && $object->fk_statut != 6)
 	{
     	// Delete
 	    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';

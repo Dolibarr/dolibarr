@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2019 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -1829,7 +1829,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	elseif ($action == 'showlog_customer_price')
 	{
 		// List of all log of prices by customers
-		print '<!-- list of all lof of prices per customer -->'."\n";
+		print '<!-- list of all log of prices per customer -->'."\n";
 
 	    $filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
@@ -1852,7 +1852,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$title=$langs->trans('PriceByCustomerLog');
 		$title.=' - '.$staticsoc->getNomUrl(1);
 
-		$backbutton='<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Back") . '</a>';
+		$backbutton='<a class="justalink" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Back") . '</a>';
 
 		print_barre_liste($title, $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
@@ -1958,7 +1958,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print $langs->trans('None');
 		}
 	}
-	else if ($action != 'showlog_default_price' && $action != 'edit_price')
+	elseif ($action != 'showlog_default_price' && $action != 'edit_price')
 	{
 		// List of all prices by customers
         print '<!-- list of all prices per customer -->'."\n";

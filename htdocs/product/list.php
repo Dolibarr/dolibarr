@@ -115,7 +115,7 @@ if (! empty($canvas))
 
 // Security check
 if ($search_type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas);
-else if ($search_type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
+elseif ($search_type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
 else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
 
 // Define virtualdiffersfromphysical
@@ -266,6 +266,7 @@ $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p
 $sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 $sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
+$sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units,';
 $sql.= ' MIN(pfp.unitprice) as minsellprice';
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && ! $show_childproducts )) {
 	$sql .= ', pac.rowid prod_comb_id';
@@ -326,7 +327,8 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp';
+$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp,';
+$sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.width, p.width_units, p.height, p.height_units';
 
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && ! $show_childproducts )) {
 	$sql .= ', pac.rowid';
@@ -379,7 +381,7 @@ if ($resql)
 		{
 			$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		}
-		else if ($search_type == 1)
+		elseif ($search_type == 1)
 		{
 			$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		}
@@ -710,6 +712,18 @@ if ($resql)
 		$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
 		$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
 		$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
+		$product_static->length = $obj->length;
+		$product_static->length_units = $obj->length_units;
+		$product_static->width = $obj->width;
+		$product_static->width_units = $obj->width_units;
+		$product_static->height = $obj->height;
+		$product_static->height_units = $obj->height_units;
+		$product_static->weight = $obj->weight;
+		$product_static->weight_units = $obj->weight_units;
+		$product_static->volume = $obj->volume;
+		$product_static->volume_units = $obj->volume_units;
+		$product_static->surface = $obj->surface;
+		$product_static->surface_units = $obj->surface_units;
 
 		if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 		{
@@ -773,7 +787,7 @@ if ($resql)
 				{
 				    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 				}
-				else if ((float) $duration_value > 0)
+				elseif ((float) $duration_value > 0)
 				{
 				    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}

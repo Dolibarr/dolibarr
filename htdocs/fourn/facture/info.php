@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify

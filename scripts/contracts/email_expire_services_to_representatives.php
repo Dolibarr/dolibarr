@@ -187,7 +187,7 @@ else
  *  @param  int		$duration_value			duration value
  * 	@return	int						<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative,$duration_value)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative, $duration_value)
 {
     global $conf,$langs;
 
@@ -280,4 +280,3 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
         return -1;
     }
 }
-

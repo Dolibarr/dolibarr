@@ -96,7 +96,7 @@ abstract class ModeleNumRefBarCode
      *	@param	string		$type		Type of barcode (EAN, ISBN, ...)
      *  @return string      			Value
      */
-    function getNextValue($objproduct,$type='')
+    function getNextValue($objproduct, $type = '')
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -126,7 +126,7 @@ abstract class ModeleNumRefBarCode
      *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    function getToolTip($langs, $soc, $type)
     {
         global $conf;
 
@@ -177,4 +177,3 @@ abstract class ModeleNumRefBarCode
         return $s;
     }
 }
-

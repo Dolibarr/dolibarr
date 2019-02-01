@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc,$object,$mode='next')
+    function getNextValue($objsoc, $object, $mode = 'next')
     {
 		global $db,$conf;
 
@@ -169,8 +169,8 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 				$mask=$conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 			}
 		}
-		else if (is_object($object) && $object->type == 2) $mask=$conf->global->SUPPLIER_CREDIT_TULIP_MASK;
-		else if (is_object($object) && $object->type == 3) $mask=$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
+		elseif (is_object($object) && $object->type == 2) $mask=$conf->global->SUPPLIER_CREDIT_TULIP_MASK;
+		elseif (is_object($object) && $object->type == 3) $mask=$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
 		else $mask=$conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 		if (! $mask)
 		{
@@ -192,9 +192,8 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
-	function getNumRef($objsoc,$objforref,$mode='next')
+	function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 }
-

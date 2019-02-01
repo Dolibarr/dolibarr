@@ -145,4 +145,3 @@ class modMargin extends DolibarrModules
 		$this->rights[$r][5] = 'all';
 	}
 }
-

@@ -8,7 +8,7 @@
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -812,7 +812,7 @@ class Societe extends CommonObject
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
-	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update', $nosyncmember=1)
+	function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
 		global $langs,$conf,$hookmanager;
 
@@ -1224,7 +1224,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='', $ref_alias='')
+	function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $langs;
 		global $conf;
@@ -1243,7 +1243,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1256,6 +1256,7 @@ class Societe extends CommonObject
 		$sql .= ', st.libelle as stcomm';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as libelle_incoterms';
+		$sql .= ', sr.remise_client';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -1264,6 +1265,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity = '.$conf->entity.')';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
@@ -1377,7 +1379,7 @@ class Societe extends CommonObject
 
 				$this->prefix_comm = $obj->prefix_comm;
 
-				$this->remise_percent		= $obj->remise_client;
+				$this->remise_percent		= price2num($obj->remise_client);        // 0.000000 must be 0
 				$this->remise_supplier_percent		= $obj->remise_supplier;
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
@@ -1449,7 +1451,7 @@ class Societe extends CommonObject
 	 *    @param    int		$call_trigger   0=No, 1=yes
 	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
 	 */
-	function delete($id, User $fuser=null, $call_trigger=1)
+	function delete($id, User $fuser = null, $call_trigger = 1)
 	{
 		global $langs, $conf, $user;
 
@@ -1745,7 +1747,7 @@ class Societe extends CommonObject
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *		@return	int					<0 if KO, id of discount record if OK
 	 */
-	function set_remise_except($remise, User $user, $desc, $tva_tx=0, $discount_type=0)
+	function set_remise_except($remise, User $user, $desc, $tva_tx = 0, $discount_type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -1805,7 +1807,7 @@ class Societe extends CommonObject
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *	@return	int					<0 if KO, Credit note amount otherwise
 	 */
-	function getAvailableDiscounts($user='',$filter='',$maxvalue=0,$discount_type=0)
+	function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -1829,7 +1831,7 @@ class Societe extends CommonObject
 	 *  @param	int		$mode		0=Array with properties, 1=Array of id.
 	 *  @return array       		Array of sales representatives of third party
 	 */
-	function getSalesRepresentatives(User $user, $mode=0)
+	function getSalesRepresentatives(User $user, $mode = 0)
 	{
 		global $conf;
 
@@ -2000,7 +2002,7 @@ class Societe extends CommonObject
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *		@return	string					          String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2195,7 +2197,7 @@ class Societe extends CommonObject
 	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    @return   string        		Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
@@ -2208,7 +2210,7 @@ class Societe extends CommonObject
 	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string          		Libelle du statut
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2258,7 +2260,7 @@ class Societe extends CommonObject
 	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
 	 *    @return     array       					Array of contacts emails
 	 */
-	function thirdparty_and_contact_email_array($addthirdparty=0)
+	function thirdparty_and_contact_email_array($addthirdparty = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2303,7 +2305,7 @@ class Societe extends CommonObject
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
 	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
 	 */
-	function contact_property_array($mode='email', $hidedisabled=0)
+	function contact_property_array($mode = 'email', $hidedisabled = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2332,7 +2334,7 @@ class Societe extends CommonObject
 				{
 					$obj = $this->db->fetch_object($resql);
 					if ($mode == 'email') $property=$obj->email;
-					else if ($mode == 'mobile') $property=$obj->phone_mobile;
+					elseif ($mode == 'mobile') $property=$obj->phone_mobile;
 					else $property=$obj->$mode;
 
 					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
@@ -2341,7 +2343,7 @@ class Societe extends CommonObject
 						if (empty($property))
 						{
 							if ($mode == 'email') $property=$langs->transnoentitiesnoconv("NoEMail");
-							else if ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
+							elseif ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
 						}
 
 						if (!empty($obj->poste))
@@ -2444,7 +2446,7 @@ class Societe extends CommonObject
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of contact with format: "Full name <email>"
 	 */
-	function contact_get_property($rowid,$mode)
+	function contact_get_property($rowid, $mode)
 	{
         // phpcs:enable
 		$contact_property='';
@@ -2465,7 +2467,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') $contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
-				else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
+				elseif ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;
 		}
@@ -2483,7 +2485,7 @@ class Societe extends CommonObject
 	 *	@param	string	$mode	'label' or 'rum' or 'format'
 	 *  @return	string			Bank number
 	 */
-	function display_rib($mode='label')
+	function display_rib($mode = 'label')
 	{
         // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
@@ -2553,7 +2555,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
-	function get_codeclient($objsoc=0,$type=0)
+	function get_codeclient($objsoc = 0, $type = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2585,7 +2587,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */
-	function get_codefournisseur($objsoc=0,$type=1)
+	function get_codefournisseur($objsoc = 0, $type = 1)
 	{
         // phpcs:enable
 		global $conf;
@@ -2787,7 +2789,7 @@ class Societe extends CommonObject
 				$result = $mod->get_code($this->db, $this, $type);
 
 				if ($type == 'customer') $this->code_compta = $mod->code;
-				else if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
+				elseif ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
 
 				return $result;
 			}
@@ -2800,7 +2802,7 @@ class Societe extends CommonObject
 		else
 		{
 			if ($type == 'customer') $this->code_compta = '';
-			else if ($type == 'supplier') $this->code_compta_fournisseur = '';
+			elseif ($type == 'supplier') $this->code_compta_fournisseur = '';
 
 			return 0;
 		}
@@ -2884,7 +2886,7 @@ class Societe extends CommonObject
 	 *    @param	int		$socid		Id of thirdparty to exclude (if update)
 	 *    @return   boolean				True if exists, False if not
 	 */
-	function id_prof_exists($idprof, $value, $socid=0)
+	function id_prof_exists($idprof, $value, $socid = 0)
 	{
         // phpcs:enable
 		$field = $idprof;
@@ -2944,7 +2946,7 @@ class Societe extends CommonObject
 	 *  @return int             			<=0 if KO, >0 if OK
 	 *  TODO better to have this in a lib than into a business class
 	 */
-	function id_prof_check($idprof,$soc)
+	function id_prof_check($idprof, $soc)
 	{
         // phpcs:enable
 		global $conf;
@@ -3095,7 +3097,7 @@ class Societe extends CommonObject
 	 *   @return	string          		Url or empty string if no URL known
 	 *   TODO better in a lib than into business class
 	 */
-	function id_prof_url($idprof,$thirdparty)
+	function id_prof_url($idprof, $thirdparty)
 	{
         // phpcs:enable
 		global $conf,$langs,$hookmanager;
@@ -3225,7 +3227,7 @@ class Societe extends CommonObject
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
 		if (! empty($this->tva_intra)) $isacompany=1;
-		else if (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
+		elseif (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
 		{
 			// TODO Add a field is_a_company into dictionary
 			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) $isacompany=0;
@@ -3310,7 +3312,7 @@ class Societe extends CommonObject
 	 *  @param	string		$customercode	Customer code
 	 *  @return int							<0 if KO, id of created account if OK
 	 */
-	function create_from_member(Adherent $member, $socname='', $socalias='', $customercode='')
+	function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
         // phpcs:enable
 		global $user,$langs;
@@ -3508,7 +3510,7 @@ class Societe extends CommonObject
 	 *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
 	 *  @return		boolean					true or false
 	 */
-	function useLocalTax($localTaxNum=0)
+	function useLocalTax($localTaxNum = 0)
 	{
 		$sql  = "SELECT t.localtax1, t.localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
@@ -3627,7 +3629,7 @@ class Societe extends CommonObject
 	 *  @param	string	$label		Label to use for status for added status
 	 *  @return string        		Libelle
 	 */
-	function getLibProspCommStatut($mode=0, $label='')
+	function getLibProspCommStatut($mode = 0, $label = '')
 	{
 		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label);
 	}
@@ -3641,7 +3643,7 @@ class Societe extends CommonObject
 	 *  @param	string		$label			Label to use for status for added status
 	 *  @return string       	 			Libelle du statut
 	 */
-	function LibProspCommStatut($statut, $mode=0, $label='')
+	function LibProspCommStatut($statut, $mode = 0, $label = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -3707,7 +3709,7 @@ class Societe extends CommonObject
 	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return    array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingProposals($mode='customer')
+	function getOutstandingProposals($mode = 'customer')
 	{
 		$table='propal';
 		if ($mode == 'supplier') $table = 'supplier_proposal';
@@ -3747,7 +3749,7 @@ class Societe extends CommonObject
 	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingOrders($mode='customer')
+	function getOutstandingOrders($mode = 'customer')
 	{
 		$table='commande';
 		if ($mode == 'supplier') $table = 'commande_fournisseur';
@@ -3787,7 +3789,7 @@ class Societe extends CommonObject
 	 *  @param     string      $mode    'customer' or 'supplier'
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-	function getOutstandingBills($mode='customer')
+	function getOutstandingBills($mode = 'customer')
 	{
 		$table='facture';
 		if ($mode == 'supplier') $table = 'facture_fourn';
@@ -3877,6 +3879,7 @@ class Societe extends CommonObject
 		$sql .= " AND entity IN (".getEntity('invoice').")";
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
+		$sql .= " AND entity IN (".getEntity('invoice').")";
 		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 		$sql .= " AND fk_statut <> 3";		// Not abandonned
 		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
@@ -3942,7 +3945,7 @@ class Societe extends CommonObject
 	 *  @param  null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$user,$langs;
 

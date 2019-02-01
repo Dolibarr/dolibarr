@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class FormAccounting extends Form
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
 	 * @return	string				String with HTML select
 	 */
-	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
+	function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -151,7 +151,7 @@ class FormAccounting extends Form
      *  @param  int     $allcountries   All countries
      * 	@return	void
      */
-    function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=0, $help=1, $allcountries=0)
+    function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
     {
         // phpcs:enable
         global $db,$langs,$user,$mysoc;
@@ -267,7 +267,7 @@ class FormAccounting extends Form
 	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @return string                      String with HTML select
 	 */
-	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
+	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '')
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -356,7 +356,7 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-    function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200')
+    function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth200')
     {
         // phpcs:enable
 

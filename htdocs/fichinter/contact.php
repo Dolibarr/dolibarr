@@ -81,13 +81,13 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
+elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 {
     $result=$object->swapContactStatus(GETPOST('ligne','int'));
 }
 
 // Deletes a contact
-else if ($action == 'deletecontact' && $user->rights->ficheinter->creer)
+elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer)
 {
 	$result = $object->delete_contact(GETPOST('lineid','int'));
 

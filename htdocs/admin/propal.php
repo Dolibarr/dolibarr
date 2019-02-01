@@ -188,7 +188,7 @@ if ($action == 'set')
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -197,7 +197,7 @@ else if ($action == 'del')
 	}
 }
 
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -212,7 +212,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -522,7 +522,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
 
@@ -534,7 +534,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
@@ -562,7 +562,7 @@ else
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
@@ -575,7 +575,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
@@ -585,7 +585,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td class="right">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
@@ -644,7 +644,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';

@@ -192,7 +192,7 @@ else
  *  @param	string	$oldsalerepresentative	Old sale representative
  * 	@return	int								<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative)
 {
     global $conf,$langs;
 
@@ -277,4 +277,3 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
         return -1;
     }
 }
-

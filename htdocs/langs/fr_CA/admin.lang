@@ -116,7 +116,6 @@ Module2600Desc=Active le serveur de Web Services de Dolibarr
 Module2610Name=services API / Web ( serveur REST )
 Module2610Desc=Activer le serveur REST de services API de les services
 Module2660Name=WebServices appel ( client SOAP )
-Module3100Desc=Ajouter un bouton Skype aux utilisateurs / tiers / contacts / cartes membres
 Module4000Name=Gestion des ressources humaines
 Module10000Name=Sites Internet
 Module20000Name=Gestion des demandes de congès

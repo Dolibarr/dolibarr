@@ -53,7 +53,7 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
 		}
-		else if ($output == 'price_ht') {
+		elseif ($output == 'price_ht') {
 
 			$price = price2num($amount / (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
@@ -63,4 +63,3 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 
 	echo json_encode($return);
 }
-

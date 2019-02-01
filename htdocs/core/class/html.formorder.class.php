@@ -39,7 +39,7 @@ class FormOrder extends Form
      *    @param	string	$hmlname	Name of HTML select element
      *    @return	void
      */
-    public function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
+    public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
     {
 	    $options = array();
 
@@ -74,7 +74,7 @@ class FormOrder extends Form
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
 	 *  @return	array					Tableau des sources de commandes
 	 */
-	public function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
+	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{
 		global $langs;
 
@@ -101,4 +101,3 @@ class FormOrder extends Form
 		return 1;
 	}
 }
-

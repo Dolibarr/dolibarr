@@ -127,7 +127,7 @@ class doc_generic_task_odt extends ModelePDFTask
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+	function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
         // phpcs:enable
 		global $conf;
@@ -171,7 +171,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_tasks($task,$outputlangs)
+	function get_substitutionarray_tasks($task, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -202,7 +202,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_contacts($contact,$outputlangs)
+	function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -227,7 +227,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_file($file,$outputlangs)
+	function get_substitutionarray_project_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -247,7 +247,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_reference($refdetail,$outputlangs)
+	function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -271,7 +271,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_tasksressource($taskressource,$outputlangs)
+	function get_substitutionarray_tasksressource($taskressource, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -295,7 +295,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_taskstime($tasktime,$outputlangs)
+	function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -320,7 +320,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_task_file($file,$outputlangs)
+	function get_substitutionarray_task_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -431,7 +431,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
 	 *	@return	int         						1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath)
+	function write_file($object, $outputlangs, $srctemplatepath)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;

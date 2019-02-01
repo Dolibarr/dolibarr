@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -704,8 +704,8 @@ if ($resql)
 			$form->select_comptes(GETPOST('add_account','int')?GETPOST('add_account','int'):$search_account,'add_account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
 			print '</td>';
 		//}
-		print '<td align="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit","alpha").'"></td>';
-		print '<td align="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit","alpha").'"></td>';
+		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit","alpha").'"></td>';
+		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit","alpha").'"></td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
@@ -896,32 +896,32 @@ if ($resql)
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
-    	print '<td class="liste_titre" align="right">';
+    	print '<td class="liste_titre right">';
     	$form->select_comptes($search_account,'search_account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.debit']['checked']))
 	{
-    	print '<td class="liste_titre" align="right">';
+    	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat" name="debit" size="4" value="'.dol_escape_htmltag($debit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.credit']['checked']))
 	{
-    	print '<td class="liste_titre" align="right">';
+    	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['balancebefore']['checked']))
 	{
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
@@ -1072,13 +1072,13 @@ if ($resql)
 
             	if (! empty($arrayfields['balancebefore']['checked']))
             	{
-	            	print '<td align="right">';
+	            	print '<td class="right">';
 	            	print price(price2num($balance, 'MT'), 1, $langs);
 	            	print '</td>';
             	}
             	if (! empty($arrayfields['balance']['checked']))
             	{
-            		print '<td align="right">';
+            		print '<td class="right">';
 					print price(price2num($balance, 'MT'), 1, $langs);
 					print '</td>';
             	}
@@ -1126,7 +1126,7 @@ if ($resql)
         // Ref
     	if (! empty($arrayfields['b.rowid']['checked']))
     	{
-                print '<td align="left" class="nowrap">';
+                print '<td class="nowrap left">';
                 print "<a href=\"ligne.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
@@ -1346,7 +1346,7 @@ if ($resql)
     	// Bank account
     	if (! empty($arrayfields['ba.ref']['checked']))
     	{
-        	print '<td align="right" class="nowrap">';
+        	print '<td class="nowrap right">';
 			print $bankaccount->getNomUrl(1);
 			print "</td>\n";
             if (! $i) $totalarray['nbfield']++;
@@ -1369,7 +1369,7 @@ if ($resql)
     	// Credit
     	if (! empty($arrayfields['b.credit']['checked']))
     	{
-    	    print '<td align="right">';
+    	    print '<td class="right">';
     	    if ($objp->amount > 0)
     	    {
 				print price($objp->amount);
@@ -1387,11 +1387,11 @@ if ($resql)
     		{
     			if ($balancebefore >= 0)
     			{
-    				print '<td align="right" class="nowrap">&nbsp;'.price($balancebefore).'</td>';
+    				print '<td class="nowrap right">&nbsp;'.price($balancebefore).'</td>';
     			}
     			else
     			{
-    				print '<td align="right" class="error nowrap">&nbsp;'.price($balancebefore).'</td>';
+    				print '<td class="error nowrap right">&nbsp;'.price($balancebefore).'</td>';
     			}
     		}
     		else
@@ -1407,7 +1407,7 @@ if ($resql)
     		{
     			if ($balance >= 0)
     			{
-    				print '<td align="right" class="nowrap">&nbsp;'.price($balance).'</td>';
+    				print '<td class="nowrap right">&nbsp;'.price($balance).'</td>';
     			}
     			else
     			{
@@ -1523,8 +1523,8 @@ if ($resql)
 	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
-	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
 	        elseif ($i == $posconciliatecol)
 	        {
 	        	print '<td class="center">';

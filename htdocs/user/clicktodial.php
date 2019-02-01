@@ -35,10 +35,7 @@ $id=GETPOST('id','int');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
-{
-	$feature2='';
-}
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

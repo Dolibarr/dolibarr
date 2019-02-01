@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ class modLoan extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		global $conf;
 

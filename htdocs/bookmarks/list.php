@@ -179,7 +179,7 @@ if ($resql)
 		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day')."</td>";
 
 		// Position
-		print '<td align="right">'.$obj->position."</td>";
+		print '<td class="right">'.$obj->position."</td>";
 
 		// Actions
 		print '<td align="right" class="nowrap">';
@@ -212,5 +212,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-
-

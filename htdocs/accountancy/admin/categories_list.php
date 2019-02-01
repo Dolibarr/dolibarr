@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             if ($field == 'fk_country' && $_POST['country'] > 0) {
             	$_POST[$listfieldvalue[$i]] = $_POST['country'];
             }
-            else if ($field == 'entity') {
+            elseif ($field == 'entity') {
             	$_POST[$listfieldvalue[$i]] = $conf->entity;
             }
             if ($i) $sql.=",";
@@ -467,7 +467,7 @@ if ($id)
             // dans les dictionnaires de donnees
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-            $align="left";
+            $class="left";
             if ($fieldlist[$field]=='type')            {
 				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
 				else $valuetoshow=$langs->trans("Type");
@@ -492,7 +492,7 @@ if ($id)
             {
                 print '<td align="'.$align.'">';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-            	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+            	elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
                 print '</td>';
              }
@@ -531,7 +531,7 @@ if ($id)
        		fieldListAccountingCategories($fieldlist,$obj,$tabname[$id],'add');
         }
 
-        print '<td colspan="4" align="right">';
+        print '<td colspan="4" class="right">';
        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         print '</td>';
         print "</tr>";
@@ -559,7 +559,7 @@ if ($id)
         // There is several pages
         if ($num > $listlimit)
         {
-            print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+            print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
             print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
             print '</td></tr>';
         }
@@ -607,7 +607,7 @@ if ($id)
             // Determine le nom du champ par rapport aux noms possibles
             // dans les dictionnaires de donnees
             $showfield=1;							  	// By defaut
-            $align="left";
+            $class="left";
             $sortable=1;
             $valuetoshow='';
 
@@ -693,16 +693,16 @@ if ($id)
                         {
 
                             $showfield=1;
-                        	$align="left";
+                        	$class="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};
                             if ($value == 'category_type')
                             {
                                 $valuetoshow = yn($valuetoshow);
                             }
-                            else if ($valuetoshow=='all') {
+                            elseif ($valuetoshow=='all') {
                                 $valuetoshow=$langs->trans('All');
                             }
-                            else if ($fieldlist[$field]=='country') {
+                            elseif ($fieldlist[$field]=='country') {
                                 if (empty($obj->country_code))
                                 {
                                     $valuetoshow='-';
@@ -713,20 +713,20 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
                                 }
                             }
-                            else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_country') {
+                            elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_country') {
                                 $key=$langs->trans("Country".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
-                            else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
+                            elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
                                 $langs->loadLangs(array("propal"));
                                 $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_actioncomm') {
+                            elseif ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_actioncomm') {
                                 $key=$langs->trans("Action".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Action".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
-                            else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') {
+                            elseif ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') {
                                 $showfield=0;
                             }
 
@@ -813,7 +813,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountingCategories($fieldlist, $obj='', $tabname='', $context='')
+function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf,$langs,$db;
 	global $form, $mysoc;
@@ -873,4 +873,3 @@ function fieldListAccountingCategories($fieldlist, $obj='', $tabname='', $contex
 		}
 	}
 }
-

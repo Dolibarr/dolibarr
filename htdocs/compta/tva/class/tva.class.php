@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -173,7 +173,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update($user, $notrigger = 0)
     {
     	global $conf, $langs;
 
@@ -241,7 +241,7 @@ class Tva extends CommonObject
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user=null)
+    function fetch($id, $user = null)
     {
     	global $langs;
         $sql = "SELECT";
@@ -687,7 +687,7 @@ class Tva extends CommonObject
      *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
+	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $conf;
 
@@ -813,7 +813,7 @@ class Tva extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 	    return $this->LibStatut($this->statut,$mode);
 	}
@@ -826,7 +826,7 @@ class Tva extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-    function LibStatut($status,$mode=0)
+    function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage

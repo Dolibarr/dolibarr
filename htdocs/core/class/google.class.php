@@ -44,7 +44,7 @@ class GoogleAPI
 	 * @param 	DoliDB		$db			Database handler
 	 * @param	string		$key		Google key
 	 */
-	function __construct($db,$key)
+	function __construct($db, $key)
 	{
 		$this->db=$db;
 		$this->key=$key;

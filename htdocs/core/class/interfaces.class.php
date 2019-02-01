@@ -65,7 +65,7 @@ class Interfaces
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
-    function run_triggers($action,$object,$user,$langs,$conf)
+    function run_triggers($action, $object, $user, $langs, $conf)
     {
         // phpcs:enable
         // Check parameters
@@ -212,7 +212,7 @@ class Interfaces
                     $nbtotal++;
                     $nbko++;
                     if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
-                    else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
+                    elseif (! empty($objMod->error))  $this->errors[]=$objMod->error;
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
             }
@@ -241,7 +241,7 @@ class Interfaces
      *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
      * 	@return	array								Array list of triggers
      */
-    function getTriggersList($forcedirtriggers=null)
+    function getTriggersList($forcedirtriggers = null)
     {
         global $conf, $langs, $db;
 
@@ -338,7 +338,7 @@ class Interfaces
                 $module=preg_replace('/^mod/i','',$reg[2]);
                 $constparam='MAIN_MODULE_'.strtoupper($module);
                 if (strtolower($module) == 'all') $disabledbymodule=0;
-                else if (empty($conf->global->$constparam)) $disabledbymodule=2;
+                elseif (empty($conf->global->$constparam)) $disabledbymodule=2;
                 $triggers[$j]['module']=strtolower($module);
             }
 

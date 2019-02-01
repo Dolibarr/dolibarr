@@ -132,7 +132,7 @@ print "</tr>\n";
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ConnectionTimeout").'</td><td align="right">';
+print '<td>'.$langs->trans("ConnectionTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"])?GETPOST("MAIN_USE_CONNECT_TIMEOUT"):$conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
@@ -142,7 +142,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ResponseTimeout").'</td><td align="right">';
+print '<td>'.$langs->trans("ResponseTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_USE_RESPONSE_TIMEOUT" type="text" size="4" value="'.$conf->global->MAIN_USE_RESPONSE_TIMEOUT.'">';
@@ -152,7 +152,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print $form->selectyesno('MAIN_PROXY_USE',$conf->global->MAIN_PROXY_USE,1);
@@ -161,7 +161,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'.$conf->global->MAIN_PROXY_HOST.'">';
@@ -170,7 +170,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.$conf->global->MAIN_PROXY_PORT.'">';
@@ -179,7 +179,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'.$conf->global->MAIN_PROXY_USER.'">';
@@ -188,7 +188,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td align="right">';
+print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_PROXY_PASS" type="text" size="16" value="'.$conf->global->MAIN_PROXY_PASS.'">';

@@ -71,7 +71,7 @@ if ($action == 'setvalue' && $user->admin)
 				$newval=GETPOST($shortkey.'_key');
 				//print $newkey.' - '.$newval.'<br>';
 	    	}
-	    	else if (preg_match('/^NOTIF_(.*)_new_key/',$key,$reg))
+	    	elseif (preg_match('/^NOTIF_(.*)_new_key/',$key,$reg))
 	    	{
 		    	// Add a new entry
 	    		$newkey='NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
@@ -151,7 +151,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
 /*print '<td>'.$langs->trans("Code").'</td>';
  print '<td>'.$langs->trans("Label").'</td>';*/
-//print '<td align="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
+//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
 print "</tr>\n";
 
 // Load array of available notifications

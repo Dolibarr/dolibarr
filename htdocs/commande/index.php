@@ -145,7 +145,7 @@ if ($resql)
 	    {
         	print '<tr class="oddeven">';
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
             print '</a>';
             print '</td>';
@@ -153,7 +153,7 @@ if ($resql)
         }
     }
     //if ($totalinprocess != $total)
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else
@@ -289,7 +289,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -302,7 +302,7 @@ if ($resql)
             print $companystatic->getNomUrl(1,'company',16);
             print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -369,7 +369,7 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -382,7 +382,7 @@ if (! empty($conf->commande->enabled))
                 print $companystatic->getNomUrl(1,'company',24);
                 print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -451,7 +451,7 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -464,7 +464,7 @@ if (! empty($conf->commande->enabled))
 				print $companystatic->getNomUrl(1,'company');
 				print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
 
 				print '</tr>';
 				$i++;

@@ -48,7 +48,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-	static function liste_modeles($db, $maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -120,7 +120,7 @@ abstract class ModeleNumRefSuppliersInvoices
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc,$object,$mode)
+    function getNextValue($objsoc, $object, $mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

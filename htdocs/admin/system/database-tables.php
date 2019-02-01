@@ -56,17 +56,17 @@ if (preg_match('/mysql/i',$conf->db->type))
 	$sql = "SHOW TABLE STATUS";
 	$base=1;
 }
-else if ($conf->db->type == 'pgsql')
+elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
 	$base=2;
 }
-else if ($conf->db->type == 'mssql')
+elseif ($conf->db->type == 'mssql')
 {
 	//$sqls[0] = "";
 	//$base=3;
 }
-else if ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;

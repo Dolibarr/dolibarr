@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -172,7 +172,7 @@ if ($resql)
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td align="right">'.price($cashcontrol->opening).'</td>';
+			print '<td></td><td></td><td></td><td class="right">'.price($cashcontrol->opening).'</td>';
 			print '</tr>';
 			$first = "no";
 		}*/
@@ -180,7 +180,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		// Ref
-        print '<td align="left" class="nowrap">';
+        print '<td class="nowrap left">';
         $invoicetmp->fetch($objp->facid);
         print $invoicetmp->getNomUrl(1);
         print '</td>';
@@ -188,13 +188,13 @@ if ($resql)
 
 
         // Date ope
-    	print '<td align="left" class="nowrap">';
+    	print '<td class="nowrap left">';
     	print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do),"day")."</span>";
     	print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
     	// Bank account
-        print '<td align="right" class="nowrap">';
+        print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
 		if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
 		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
@@ -204,7 +204,7 @@ if ($resql)
         if (! $i) $totalarray['nbfield']++;
 
     	// Debit
-    	print '<td align="right">';
+    	print '<td class="right">';
     	if ($objp->amount < 0)
     	{
     	    print price($objp->amount * -1);
@@ -215,7 +215,7 @@ if ($resql)
     	if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
 
     	// Credit
-    	print '<td align="right">';
+    	print '<td class="right">';
     	if ($objp->amount > 0)
     	{
 			print price($objp->amount);
@@ -243,8 +243,8 @@ if ($resql)
 	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
-	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
 	        else print '<td></td>';
 	    }
 	    print '</tr>';

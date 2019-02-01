@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -166,7 +166,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-	function update($user,$notrigger=0)
+	function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -350,7 +350,7 @@ class AssetType extends CommonObject
 	 *  									2=Return array of asset id only
 	 * 	@return	mixed						Array of asset or -1 on error
 	 */
-	function listAssetForAssetType($excludefilter='', $mode=0)
+	function listAssetForAssetType($excludefilter = '', $mode = 0)
 	{
 		global $conf, $user;
 
@@ -405,7 +405,7 @@ class AssetType extends CommonObject
 	 *  	@param		int  	$notooltip		1=Disable tooltip
 	 *		@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
+	function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
 	{
 		global $langs;
 

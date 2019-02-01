@@ -54,4 +54,3 @@ if (! empty($id))
 
 	echo json_encode($return);
 }
-

@@ -67,7 +67,7 @@ if ($action == 'updateform')
 
 
 // Delete file
-else if ($action == 'delete')
+elseif ($action == 'delete')
 {
 	$langs->load("other");
 	$file = $conf->admin->dir_temp . '/' . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -126,7 +126,7 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UMask").'</td><td align="right">';
+print '<td>'.$langs->trans("UMask").'</td><td class="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';

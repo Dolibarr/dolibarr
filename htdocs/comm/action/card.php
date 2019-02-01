@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -791,11 +791,11 @@ if ($action == 'create')
 	print '<td>';
 	$percent=-1;
 	if (isset($_GET['status']) || isset($_POST['status'])) $percent=GETPOST('status');
-	else if (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent=GETPOST('percentage');
+	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent=GETPOST('percentage');
 	else
 	{
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
-		else if (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
+		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
 	}
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';

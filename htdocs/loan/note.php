@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,4 +132,3 @@ if ($id > 0)
 // End of page
 llxFooter();
 $db->close();
-

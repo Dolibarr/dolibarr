@@ -673,11 +673,11 @@ else
 	{
 		print $langs->trans('RobotEmail');
 	}
-	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+	elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
 	{
 		print $langs->trans('UserEmail');
 	}
-	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
+	elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
 	{
 		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
 	}

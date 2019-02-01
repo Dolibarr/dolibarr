@@ -24,4 +24,3 @@
 include_once 'inc.php';
 
 phpinfo();
-

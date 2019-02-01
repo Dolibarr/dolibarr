@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $permissiontoedit)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $permissiontoedit)
+elseif ($action == 'swapstatut' && $permissiontoedit)
 {
 	if ($object->fetch($id))
 	{
@@ -94,7 +94,7 @@ else if ($action == 'swapstatut' && $permissiontoedit)
 }
 
 // Deleting a contact
-else if ($action == 'deletecontact' && $permissiontoedit)
+elseif ($action == 'deletecontact' && $permissiontoedit)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid",'int'));

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify

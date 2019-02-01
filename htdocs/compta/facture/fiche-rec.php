@@ -6,7 +6,7 @@
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -405,7 +405,7 @@ if (empty($reshook))
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	}
-	else if ($action == 'update_extras')
+	elseif ($action == 'update_extras')
 	{
 		$object->oldcopy = dol_clone($object);
 
@@ -1145,7 +1145,7 @@ if ($action == 'create')
 		$title = $langs->trans("ProductsAndServices");
 		if (empty($conf->service->enabled))
 			$title = $langs->trans("Products");
-		else if (empty($conf->product->enabled))
+		elseif (empty($conf->product->enabled))
 			$title = $langs->trans("Services");
 
 		print load_fiche_titre($title, '', '');

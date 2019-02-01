@@ -109,7 +109,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			{
 				$nouveauchoix.="1";
 			}
-			else if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+			elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
 			{
 				$nouveauchoix.="2";
 			}
@@ -211,7 +211,7 @@ if ($testmodifier)
 		{
 			$nouveauchoix.="1";
 		}
-		else if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
+		elseif (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
 		{
 			$nouveauchoix.="2";
 		}
@@ -462,7 +462,7 @@ while ($compteur < $num)
 			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 			{
 				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("Yes").'</td>'."\n";
-				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
+				elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
 				else print '<td class="vide">&nbsp;</td>'."\n";
 				// Total
 				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -473,7 +473,7 @@ while ($compteur < $num)
 			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 			{
 				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+				elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 				else print '<td class="vide">&nbsp;</td>'."\n";
 				// Total
 				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -527,7 +527,7 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
 					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+					elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 					else print '<td class="vide">&nbsp;</td>'."\n";
 					// Total
 					if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -538,7 +538,7 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 				{
 					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+					elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 					else print '<td class="vide">&nbsp;</td>'."\n";
 					// Total
 					if (! isset($sumfor[$i])) $sumfor[$i] = 0;

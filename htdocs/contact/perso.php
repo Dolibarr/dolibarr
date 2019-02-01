@@ -293,7 +293,7 @@ else
         $ageyear=convertSecondToTime($now-$object->birthday,'year')-1970;
         $agemonth=convertSecondToTime($now-$object->birthday,'month')-1;
         if ($ageyear >= 2) print '('.$ageyear.' '.$langs->trans("DurationYears").')';
-        else if ($agemonth >= 2) print '('.$agemonth.' '.$langs->trans("DurationMonths").')';
+        elseif ($agemonth >= 2) print '('.$agemonth.' '.$langs->trans("DurationMonths").')';
         else print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
 
 

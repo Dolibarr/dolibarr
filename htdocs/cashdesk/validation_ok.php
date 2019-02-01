@@ -23,4 +23,3 @@
 
 // Affichage des templates
 require 'tpl/validation2.tpl.php';
-

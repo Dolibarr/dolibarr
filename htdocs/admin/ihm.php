@@ -173,7 +173,7 @@ if ($action == 'update')
 				{
 					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND",$original_file,'chaine',0,'',$conf->entity);
 				}
-				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
 				{
 					$error++;
 					$langs->load("errors");

@@ -92,7 +92,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array or Code or Label of preselected country
 	 * @return string HTML string with select
 	 */
-    function multiselectCountry($htmlname = 'country_id', $selected_array=array())
+    function multiselectCountry($htmlname = 'country_id', $selected_array = array())
     {
 		global $conf, $langs;
 
@@ -194,7 +194,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
-    function multiselectselectLanguage($htmlname='', $selected_array=array())
+    function multiselectselectLanguage($htmlname = '', $selected_array = array())
     {
 
 		global $conf,$langs;
@@ -290,7 +290,7 @@ class FormAdvTargetEmailing extends Form
 	 *  @param  array  $selected_array     Array
 	 *  @return	string                     HTML combo
 	 */
-	function multiselectCivility($htmlname='civilite_id',$selected_array = array())
+	function multiselectCivility($htmlname = 'civilite_id', $selected_array = array())
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -356,7 +356,7 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	array	$selected_array	value selected
 	 *  @return	string HTML combo
 	 */
-	function multiselectCustomerCategories($htmlname='cust_cat',$selected_array = array())
+	function multiselectCustomerCategories($htmlname = 'cust_cat', $selected_array = array())
 	{
 		return $this->multiselectCategories($htmlname,$selected_array,2);
 	}
@@ -368,7 +368,7 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	array	$selected_array	value selected
 	 *  @return	string HTML combo
 	 */
-	function multiselectContactCategories($htmlname='contact_cat',$selected_array = array())
+	function multiselectContactCategories($htmlname = 'contact_cat', $selected_array = array())
 	{
 		return $this->multiselectCategories($htmlname,$selected_array,4);
 	}
@@ -381,7 +381,7 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	int		$type			Type
 	 *  @return	string 					HTML combo
 	 */
-	public function multiselectCategories($htmlname='',$selected_array = array(), $type=0)
+	public function multiselectCategories($htmlname = '', $selected_array = array(), $type = 0)
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -427,7 +427,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param	string		$type_element	Type element. Example: 'mailing'
 	 * @return	string 						HTML combo
 	 */
-    public function selectAdvtargetemailingTemplate($htmlname='template_id', $selected=0, $showempty=0, $type_element='mailing')
+    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing')
     {
 		global $conf, $user, $langs;
 

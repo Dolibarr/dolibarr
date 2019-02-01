@@ -111,7 +111,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false, $id_product_batch=0)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
 	{
 		global $conf, $langs;
 
@@ -433,7 +433,7 @@ class MouvementStock extends CommonObject
 					//print "qty=".$qty." newpmp=".$newpmp;
 					//exit;
 				}
-				else if ($type == 1 || $type == 2)
+				elseif ($type == 1 || $type == 2)
 				{
 					// After a stock decrease, we don't change value of PMP for product.
 					$newpmp = $oldpmp;
@@ -465,7 +465,7 @@ class MouvementStock extends CommonObject
 					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
-				else if (empty($fk_product_stock))
+				elseif (empty($fk_product_stock))
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
@@ -640,7 +640,7 @@ class MouvementStock extends CommonObject
 	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return 	int     				<0 if KO, 0 if OK
 	 */
-	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='')
+	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '')
 	{
 		global $langs;
 
@@ -712,7 +712,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$id_product_batch	Id product_batch
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='', $id_product_batch=0)
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0)
 	{
 	    global $conf;
 
@@ -735,7 +735,7 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$batch			batch number
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $eatby='', $sellby='', $batch='')
+	function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '')
 	{
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', '', $eatby, $sellby, $batch);
 	}
@@ -822,7 +822,7 @@ class MouvementStock extends CommonObject
 				$result = -2;
 			}
 		}
-		else if (is_array($dluo))
+		elseif (is_array($dluo))
 		{
 			if (isset($dluo['fk_product_stock']))
 			{
@@ -994,7 +994,7 @@ class MouvementStock extends CommonObject
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
 
@@ -1027,7 +1027,7 @@ class MouvementStock extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($mode);
 	}
@@ -1039,7 +1039,7 @@ class MouvementStock extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($mode=0)
+	function LibStatut($mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -1076,7 +1076,7 @@ class MouvementStock extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$user,$langs;
 

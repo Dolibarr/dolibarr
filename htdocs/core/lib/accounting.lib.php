@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,7 +152,7 @@ function length_accounta($accounta)
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
     global $langs;
 
@@ -226,4 +226,3 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }
-
