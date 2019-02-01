@@ -67,6 +67,11 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
    
 - Follow the installer instructions
 
+### Saas/Cloud setup
+
+If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
+
+
 
 ## UPGRADING
 
