@@ -164,7 +164,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Met a jour en base donnees du type
+	 *  Updating the type in the database
 	 *
 	 *  @param	User	$user			Object user making change
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
@@ -234,9 +234,9 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *	Fonction qui permet de supprimer le status de l'adherent
+	 *	Function to delete the member's status
 	 *
-	 *  @return		int					>0 if OK, 0 if not found, < 0 if KO
+	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
 	 */
 	function delete()
 	{
@@ -267,7 +267,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Fonction qui permet de recuperer le status de l'adherent
+	 *  Function that retrieves the status of the member
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK

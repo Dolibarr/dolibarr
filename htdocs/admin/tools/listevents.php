@@ -255,7 +255,7 @@ if ($result)
 	//print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	print '<td align="right" class="liste_titre">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';

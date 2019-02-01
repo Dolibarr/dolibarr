@@ -116,7 +116,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
-	print '<td align="right" width="300">';
+	print '<td class="right" width="300">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';

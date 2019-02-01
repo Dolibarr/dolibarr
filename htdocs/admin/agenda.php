@@ -144,7 +144,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -179,7 +179,7 @@ if (! empty($triggers))
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
-				print '<td align="right" width="40">';
+				print '<td class="right" width="40">';
 				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 				$value=$conf->global->$key;
 				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';

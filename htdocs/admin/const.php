@@ -304,10 +304,10 @@ print '</div>';
 if ($conf->use_javascript_ajax)
 {
 	print '<br>';
-	print '<div id="updateconst" align="right">';
+	print '<div id="updateconst" class="right">';
 	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
-	print '<div id="delconst" align="right">';
+	print '<div id="delconst" class="right">';
 	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }

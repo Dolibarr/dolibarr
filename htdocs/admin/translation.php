@@ -500,7 +500,7 @@ if ($mode == 'searchkey')
     //}
     print '</td>';
     // Action column
-    print '<td class="nowrap" align="right">';
+    print '<td class="nowrap right">';
     $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpicto;
     print '</td>';

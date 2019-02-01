@@ -566,7 +566,7 @@ if (! empty($arrayfields['d.tms']['checked']))
 // Status
 if (! empty($arrayfields['d.statut']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+	print '<td class="liste_titre right maxwidthonsmartphone">';
 	$liststatus=array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
@@ -613,7 +613,7 @@ $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // N
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
@@ -842,7 +842,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['d.statut']['checked']))
 	{
-		print '<td align="right" class="nowrap">';
+		print '<td class="nowrap right">';
 		print $memberstatic->LibStatut($obj->statut, $obj->subscription, $datefin, 5);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

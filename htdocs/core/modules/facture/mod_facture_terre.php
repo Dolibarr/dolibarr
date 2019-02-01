@@ -180,7 +180,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE ref LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-		
+
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
@@ -204,7 +204,8 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-		   
+            $sql.= " ORDER BY ref DESC";
+
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)

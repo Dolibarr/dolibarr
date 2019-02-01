@@ -599,7 +599,7 @@ if ($rowid > 0)
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			print '<td align="right" colspan="2" class="liste_titre">';
+			print '<td class="liste_titre right" colspan="2">';
 			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		    print '&nbsp; ';
 		    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

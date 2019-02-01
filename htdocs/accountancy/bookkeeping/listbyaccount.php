@@ -295,22 +295,22 @@ print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
 print '</td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="' . dol_escape_htmltag($search_doc_ref) . '"/></td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
-print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
-print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
+print '<td class="liste_titre right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
+print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
 print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
-print '<td class="liste_titre" align="right" colspan="2">';
+print '<td class="liste_titre right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
-print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Piece", $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label");
-print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
@@ -340,7 +340,7 @@ while ($i < min($num, $limit))
 
 		// Affiche un Sous-Total par compte comptable
 		if (isset($displayed_account_number)) {
-			print '<tr class="liste_total"><td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+			print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
 			print "<td>&nbsp;</td>\n";
 			print "<td>&nbsp;</td>\n";
 			print '</tr>';
@@ -401,7 +401,7 @@ while ($i < min($num, $limit))
 
 // Affiche un Sous-Total du dernier compte comptable affiché
 print '<tr class="liste_total">';
-print '<td align="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+print '<td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
 print "<td>&nbsp;</td>\n";
 print "<td>&nbsp;</td>\n";
 print '</tr>';
@@ -409,11 +409,11 @@ print '</tr>';
 
 // Affiche le Total
 print '<tr class="liste_total">';
-print '<td align="right" colspan="5">'.$langs->trans("Total").':</td>';
-print '<td  align="right">';
+print '<td class="right" colspan="5">'.$langs->trans("Total").':</td>';
+print '<td  class="right">';
 print price($total_debit);
 print '</td>';
-print '<td  align="right">';
+print '<td  class="right">';
 print price($total_credit);
 print '</td>';
 print '<td colspan="2"></td>';

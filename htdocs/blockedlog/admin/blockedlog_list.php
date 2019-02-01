@@ -325,7 +325,7 @@ if (GETPOST('withtab', 'alpha')) $param.='&withtab='.urlencode(GETPOST('withtab'
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
-print '<div align="right">';
+print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
 $smonth=GETPOST('monthtoexport', 'int');
 // Month
@@ -428,7 +428,7 @@ print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'use
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
@@ -436,8 +436,7 @@ print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="c
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
 print '</tr>';
 
-if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
-{
+if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests

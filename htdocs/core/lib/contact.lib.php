@@ -58,6 +58,15 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
+	// Related items
+    if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->fournisseur->enabled))
+    {
+        $head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
+        $head[$tab][1] = $langs->trans("Referers");
+        $head[$tab][2] = 'consumption';
+        $tab++;
+    }
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

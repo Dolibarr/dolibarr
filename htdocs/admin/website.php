@@ -502,7 +502,7 @@ if ($id)
 
         fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
 
-        print '<td colspan="3" align="right">';
+        print '<td colspan="3" class="right">';
         if ($action != 'edit')
         {
         	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
@@ -585,7 +585,7 @@ if ($id)
 
                     if (empty($reshook)) fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
 
-                    print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                    print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else

@@ -2520,7 +2520,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *      Charge les informations d'ordre info dans l'objet adherent
+	 *      Load type info information in the member object
 	 *
 	 *      @param  int		$id       Id of member to load
 	 *      @return	void

@@ -220,7 +220,7 @@ while ($i <= $MAXAGENDA)
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ'.$key.'" value="'. (GETPOST('AGENDA_EXT_OFFSETTZ'.$key)?GETPOST('AGENDA_EXT_OFFSETTZ'.$key):$conf->global->$offsettz) . '" size="2"></td>';
 	// Color (Possible colors are limited by Google)
-	print '<td class="nowrap" align="right">';
+	print '<td class="nowrap right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
 	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR".$key)?GETPOST("AGENDA_EXT_COLOR".$key):$conf->global->$color), "AGENDA_EXT_COLOR".$key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';

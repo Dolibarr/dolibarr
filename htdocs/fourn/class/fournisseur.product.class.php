@@ -74,6 +74,11 @@ class ProductFournisseur extends Product
     public $product_fourn_id;        // product-supplier id
 
     /**
+     * @var int ID user_id - user who created/updated supplier price
+     */
+    public $user_id;
+
+    /**
      * @var int ID availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
      */
     public $fk_availability;
@@ -294,7 +299,32 @@ class ProductFournisseur extends Product
 
         if ($this->product_fourn_price_id > 0)
         {
-	  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
+            // check if price already logged, if not first log current price
+            $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id);
+            if (is_array($logPrices) && count($logPrices) == 0)
+            {
+                $currentPfp = new self($this->db);
+                $result =  $currentPfp->fetch_product_fournisseur_price($this->product_fourn_price_id);
+                if ($result > 0 && $currentPfp->fourn_price != 0)
+                {
+                    $currentPfpUser = new User($this->db);
+                    $result = $currentPfpUser->fetch($currentPfp->user_id);
+                    if ($result > 0) {
+                        $currentPfp->logPrice(
+                            $currentPfpUser,
+                            $currentPfp->date_creation,
+                            $currentPfp->fourn_price,
+                            $currentPfp->fourn_qty,
+                            $currentPfp->fourn_multicurrency_price,
+                            $currentPfp->fourn_multicurrency_unitprice,
+                            $currentPfp->fourn_multicurrency_tx,
+                            $currentPfp->fourn_multicurrency_id,
+                            $currentPfp->fourn_multicurrency_code
+                        );
+                    }
+                }
+            }
+            $sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET fk_user = " . $user->id." ,";
             $sql.= " ref_fourn = '" . $this->db->escape($ref_fourn) . "',";
             $sql.= " desc_fourn = '" . $this->db->escape($desc_fourn) . "',";
@@ -332,8 +362,9 @@ class ProductFournisseur extends Product
                 $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
-                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
+                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
+                {
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
@@ -457,7 +488,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
-        $sql.= " pfp.supplier_reputation";
+        $sql.= " pfp.supplier_reputation, pfp.fk_user, pfp.datec";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
@@ -491,7 +522,8 @@ class ProductFournisseur extends Product
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
                 $this->supplier_reputation      = $obj->supplier_reputation;
                 $this->default_vat_code         = $obj->default_vat_code;
-
+                $this->user_id                  = $obj->fk_user;
+                $this->date_creation            = $this->db->jdate($obj->datec);
                 $this->fourn_multicurrency_price       = $obj->multicurrency_price;
                 $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
                 $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
@@ -882,14 +914,14 @@ class ProductFournisseur extends Product
     /**
      *    List supplier prices log of a supplier price
      *
-     *    @param    int		$fourn_id	    Id of supplier price
-     *    @param	string	$sortfield	Sort field
-     *    @param	string	$sortorder	Sort order
-     *    @param	int		$limit		Limit
-     *    @param	int		$offset		Offset
-     *    @return	array				Array of Log prices
+     *    @param    int     $product_fourn_price_id Id of supplier price
+     *    @param	string  $sortfield	            Sort field
+     *    @param	string  $sortorder              Sort order
+     *    @param	int     $limit                  Limit
+     *    @param	int     $offset                 Offset
+     *    @return	array   Array of Log prices
      */
-    function listProductFournisseurPriceLog($fourn_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
+    function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         global $conf;
 
@@ -902,7 +934,7 @@ class ProductFournisseur extends Product
         $sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
         $sql.= " AND pfpl.fk_user = u.rowid";
         $sql.= " AND pfp.rowid = pfpl.fk_product_fournisseur";
-        $sql.= " AND pfpl.fk_product_fournisseur = ".$fourn_id;
+        $sql.= " AND pfpl.fk_product_fournisseur = ".$product_fourn_price_id;
         if (empty($sortfield)) $sql.= " ORDER BY pfpl.datec";
         else $sql.= $this->db->order($sortfield, $sortorder);
         $sql.=$this->db->plimit($limit, $offset);

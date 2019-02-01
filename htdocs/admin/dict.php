@@ -1246,7 +1246,7 @@ if ($id)
         }
         if ($id == 4) print '<td></td>';
         print '<td class="liste_titre"></td>';
-    	print '<td class="liste_titre" colspan="2" align="right">';
+    	print '<td class="liste_titre right" colspan="2">';
     	if ($filterfound)
     	{
         	$searchpicto=$form->showFilterAndCheckAddButtons(0);

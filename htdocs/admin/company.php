@@ -415,7 +415,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
-	print '</td><td class="nocellnopadd" valign="middle" align="right">';
+	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
