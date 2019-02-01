@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,12 +45,13 @@ $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'aZ09');
 $backtopage	= GETPOST('backtopage', 'alpha');
 
-$accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
-$label=GETPOST("label","alpha");
-$sens=GETPOST("sens","int");
-$amount=GETPOST("amount");
-$paymenttype=GETPOST("paymenttype");
-$accountancy_code=GETPOST("accountancy_code","int");
+$accountid=GETPOST("accountid",'int') > 0 ? GETPOST("accountid",'int') : 0;
+$label=GETPOST("label",'alpha');
+$sens=GETPOST("sens",'int');
+$amount=GETPOST("amount",'alpha');
+$paymenttype=GETPOST("paymenttype",'int');
+$accountancy_code=GETPOST("accountancy_code",'int');
+$subledger_account=GETPOST("subledger_account",'int');
 $projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
 
 // Security check
@@ -113,6 +114,7 @@ if (empty($reshook))
 		$object->num_payment=GETPOST("num_payment",'alpha');
 		$object->fk_user_author=$user->id;
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
+        $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account","int") : "";
 		$object->sens=GETPOST('sens');
 		$object->fk_project= GETPOST('fk_project','int');
 
@@ -325,6 +327,21 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+    // Subledger account
+    if (! empty($conf->accounting->enabled))
+    {
+        print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
+        print '<td>';
+        print $formaccounting->select_subledger_account($subledger_account, 'subledger_account', 1, null, 1, 1, '');
+        print '</td></tr>';
+    }
+    else // For external software
+    {
+        print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
+        print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="subledger_account" value="'.$subledger_account.'">';
+        print '</td></tr>';
+    }
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -433,19 +450,34 @@ if ($id)
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	// Accountancy code
-	print '<tr><td class="nowrap">';
-	print $langs->trans("AccountAccounting");
-	print '</td><td>';
-	if (! empty($conf->accounting->enabled))
-	{
-		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$object->accountancy_code, 1);
+    print '<tr><td class="nowrap">';
+    print $langs->trans("AccountAccounting");
+    print '</td><td>';
+    if (! empty($conf->accounting->enabled))
+    {
+        $accountingaccount = new AccountingAccount($db);
+        $accountingaccount->fetch('',$object->accountancy_code, 1);
 
-		print $accountingaccount->getNomUrl(0,1,1,'',1);
-	} else {
-		print $object->accountancy_code;
-	}
-	print '</td></tr>';
+        print $accountingaccount->getNomUrl(0,1,1,'',1);
+    } else {
+        print $object->accountancy_code;
+    }
+    print '</td></tr>';
+
+    // Subledger account
+    print '<tr><td class="nowrap">';
+    print $langs->trans("SubledgerAccount");
+    print '</td><td>';
+    if (! empty($conf->accounting->enabled))
+    {
+        $subledgeraccount = new AccountingAccount($db);
+        $subledgeraccount->fetch('',$object->subledger_account, 1);
+
+        print $subledgeraccount->getNomUrl(0,1,1,'',1);
+    } else {
+        print $object->subledger_account;
+    }
+    print '</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
