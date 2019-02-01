@@ -605,4 +605,3 @@ abstract class Stats
 		return $result;
 	}
 }
-

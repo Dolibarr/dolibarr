@@ -4924,4 +4924,3 @@ On les corrige:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */
-

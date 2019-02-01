@@ -234,4 +234,3 @@ header("Location: dolibarr_export.php");
 $time_end = time();
 
 $db->close();
-

@@ -54,4 +54,3 @@ print 'List of available SOAP Web services is visible on the setup area, setup p
 
 
 $db->close();
-

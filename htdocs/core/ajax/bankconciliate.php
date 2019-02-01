@@ -94,4 +94,3 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 
     exit;
 }
-

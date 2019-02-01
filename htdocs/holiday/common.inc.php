@@ -40,4 +40,3 @@ if (empty($conf->holiday->enabled))
     llxFooter();
     exit();
 }
-

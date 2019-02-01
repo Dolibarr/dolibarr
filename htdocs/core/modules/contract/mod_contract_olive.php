@@ -121,4 +121,3 @@ class mod_contract_olive extends ModelNumRefContracts
 		return $result;
 	}
 }
-

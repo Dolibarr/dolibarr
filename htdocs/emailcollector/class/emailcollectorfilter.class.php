@@ -490,4 +490,3 @@ class EmailCollectorFilter extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 }
-

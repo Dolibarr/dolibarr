@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (c) 2018      Fidesio              <contact@fidesio.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,4 +164,3 @@ class SalariesStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
-

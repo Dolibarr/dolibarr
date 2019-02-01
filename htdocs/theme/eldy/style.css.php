@@ -1562,7 +1562,7 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
-div.tmenusep {
+div.topmenuimage {
 <?php if ($disableimages) { ?>
 	display: none;
 <?php } ?>

@@ -225,4 +225,3 @@ class FactureStats extends Stats
 		return $this->_getAllByProduct($sql);
 	}
 }
-

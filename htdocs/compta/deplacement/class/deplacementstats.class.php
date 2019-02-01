@@ -166,4 +166,3 @@ class DeplacementStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
-
