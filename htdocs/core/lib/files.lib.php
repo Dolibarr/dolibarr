@@ -2653,6 +2653,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
+	
+	// Wrapping pour les mouvements stocks
+	else if ($modulepart == 'movement' || $modulepart == 'mouvement' )
+	{
+		if (empty($entity) || (empty($conf->stock->multidir_output[$entity]) )) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire}  || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		if (! empty($conf->stock->enabled)) $original_file=$conf->stock->multidir_output[$entity].'/movement/'.$original_file;
+	}
 
 	// Wrapping pour les contrats
 	elseif ($modulepart == 'contract' && !empty($conf->contrat->dir_output))
