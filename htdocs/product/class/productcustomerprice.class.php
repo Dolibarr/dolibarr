@@ -924,7 +924,8 @@ class Productcustomerprice extends CommonObject
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
-			$error ++;
+			$this->errors=array_merge($this->errors, $object->errors);
+			$error++;
 		}
 
 		if (! $error) {

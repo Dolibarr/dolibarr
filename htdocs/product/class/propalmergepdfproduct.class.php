@@ -589,6 +589,7 @@ class Propalmergepdfproduct extends CommonObject
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
