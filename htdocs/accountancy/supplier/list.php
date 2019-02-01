@@ -498,7 +498,7 @@ if ($result) {
 		// Vat rate
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
-		print '<td style="' . $code_vat_differ . '" align="right">';
+		print '<td style="' . $code_vat_differ . '" class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
