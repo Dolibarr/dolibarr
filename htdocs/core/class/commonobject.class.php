@@ -6283,6 +6283,7 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey',$params) && $key != $params['onlykey']) continue;
 
+				// @TODO Merge column list -> enabled
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key]))
 				{
