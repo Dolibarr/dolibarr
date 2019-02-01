@@ -362,7 +362,7 @@ class ProductFournisseur extends Product
                 $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
-                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) 
+                if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
                 {
                     $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
                     if ($result < 0) {
@@ -921,7 +921,7 @@ class ProductFournisseur extends Product
      *    @param	int     $offset                 Offset
      *    @return	array   Array of Log prices
      */
-    function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield='', $sortorder='', $limit=0, $offset=0)
+    function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         global $conf;
 
