@@ -249,7 +249,7 @@ if ($resql) {
 	}
 
 	print '<tr class="oddeven">';
-	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
+	print '<td class="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
 	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
 	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';

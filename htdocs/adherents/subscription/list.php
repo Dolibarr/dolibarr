@@ -355,7 +355,7 @@ if (! empty($arrayfields['d.date_fin']['checked']))
 
 if (! empty($arrayfields['d.amount']['checked']))
 {
-	print '<td align="right" class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'" size="4">';
 	print '</td>';
 }
@@ -380,7 +380,7 @@ if (! empty($arrayfields['d.tms']['checked']))
 }
 
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -427,7 +427,7 @@ if (! empty($arrayfields['d.date_fin']['checked']))
 }
 if (! empty($arrayfields['d.amount']['checked']))
 {
-	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'class="right"',$sortfield,$sortorder);
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
