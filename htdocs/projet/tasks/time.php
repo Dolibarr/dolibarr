@@ -334,7 +334,7 @@ if ($action == 'confirm_generateinvoice')
 			$txtva = $dataforprice['tva_tx'];
 
 			$tmpinvoice->socid = $projectstatic->thirdparty->id;
-			$tmpinvoice->date = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+			$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			$tmpinvoice->fk_project = $projectstatic->id;
 
 			$result = $tmpinvoice->create($user);
