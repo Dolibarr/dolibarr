@@ -777,7 +777,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -909,7 +909,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -1021,7 +1021,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -1360,7 +1360,7 @@ class BookKeeping extends CommonObject
 
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -1394,7 +1394,7 @@ class BookKeeping extends CommonObject
 
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}

@@ -153,7 +153,7 @@ class AccountingJournal extends CommonObject
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
 					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
 				} elseif ($key == 't.rowid' || $key == 't.active') {

@@ -296,7 +296,7 @@ class printing_printipp extends PrintingDriver
         $jobs = $ipp->jobs_attributes;
 
         //$html .= '<pre>'.print_r($jobs,true).'</pre>';
-        foreach ($jobs as $value ) {
+        foreach ($jobs as $value) {
             $html .= '<tr class="oddeven">';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';

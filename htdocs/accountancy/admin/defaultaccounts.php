@@ -96,7 +96,7 @@ if (GETPOST('change_chart', 'alpha'))
 if ($action == 'update') {
 	$error = 0;
 
-	foreach ( $list_account_main as $constname ) {
+	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -104,7 +104,7 @@ if ($action == 'update') {
 		}
 	}
 
-	foreach ( $list_account as $constname ) {
+	foreach ($list_account as $constname) {
 	    $constvalue = GETPOST($constname, 'alpha');
 
 	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {

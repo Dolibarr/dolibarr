@@ -200,7 +200,7 @@ if ($action == 'writebookkeeping') {
 		// Thirdparty
 		if (! $errorforline)
 		{
-			foreach ( $tabttc[$key] as $k => $mt ) {
+			foreach ($tabttc[$key] as $k => $mt) {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -251,7 +251,7 @@ if ($action == 'writebookkeeping') {
 		// Fees
 		if (! $errorforline)
 		{
-			foreach ( $tabht[$key] as $k => $mt ) {
+			foreach ($tabht[$key] as $k => $mt) {
 				if ($mt) {
 					// get compte id and label
 					if ($accountingaccount->fetch(null, $k, true)) {
@@ -309,7 +309,7 @@ if ($action == 'writebookkeeping') {
 				if ($numtax == 1) $arrayofvat = $tablocaltax1;
 				if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-				foreach ( $arrayofvat[$key] as $k => $mt ) {
+				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
 					// get compte id and label
 					$bookkeeping = new BookKeeping($db);
@@ -442,14 +442,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"' . $langs->transnoentitiesnoconv("Credit") . '"' . $sep;
 	print "\n";
 
-	foreach ( $taber as $key => $val ) {
+	foreach ($taber as $key => $val) {
 	  $date = dol_print_date($val["date"], 'day');
 	  
 	  $userstatic->id = $tabuser[$key]['id'];
 	  $userstatic->name = $tabuser[$key]['name'];
 	  
 	  // Fees
-	  foreach ( $tabht[$key] as $k => $mt ) {
+	  foreach ($tabht[$key] as $k => $mt) {
 	    $accountingaccount = new AccountingAccount($db);
 	    $accountingaccount->fetch(null, $k, true);
 	    if ($mt) {
@@ -463,7 +463,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	    }
 	  }
 	  // VAT
-	  foreach ( $tabtva[$key] as $k => $mt ) {
+	  foreach ($tabtva[$key] as $k => $mt) {
 	    if ($mt) {
 	      print '"' . $date . '"' . $sep;
 	      print '"' . $val["ref"] . '"' . $sep;
@@ -476,7 +476,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	  }
 	  
 	  // Third party
-	  foreach ( $tabttc[$key] as $k => $mt ) {
+	  foreach ($tabttc[$key] as $k => $mt) {
 	    print '"' . $date . '"' . $sep;
 	    print '"' . $val["ref"] . '"' . $sep;
 	    print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
@@ -564,7 +564,7 @@ if (empty($action) || $action == 'view') {
 	$expensereportstatic = new ExpenseReport($db);
 	$expensereportlinestatic = new ExpenseReportLine($db);
 
-	foreach ( $taber as $key => $val ) {
+	foreach ($taber as $key => $val) {
 		$expensereportstatic->id = $key;
 		$expensereportstatic->ref = $val["ref"];
 		$expensereportlinestatic->comments = html_entity_decode(dol_trunc($val["comments"], 32));
@@ -572,7 +572,7 @@ if (empty($action) || $action == 'view') {
 		$date = dol_print_date($val["date"], 'day');
 
 		// Fees
-		foreach ( $tabht[$key] as $k => $mt ) {
+		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
@@ -605,7 +605,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Third party
-		foreach ( $tabttc[$key] as $k => $mt ) {
+		foreach ($tabttc[$key] as $k => $mt) {
 			print '<tr class="oddeven">';
 			print "<td><!-- Thirdparty --></td>";
 			print "<td>" . $date . "</td>";
@@ -643,7 +643,7 @@ if (empty($action) || $action == 'view') {
 			if ($numtax == 1) $arrayofvat = $tablocaltax1;
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-			foreach ( $arrayofvat[$key] as $k => $mt ) {
+			foreach ($arrayofvat[$key] as $k => $mt) {
 			if ($mt) {
 				print '<tr class="oddeven">';
 				print "<td><!-- VAT --></td>";

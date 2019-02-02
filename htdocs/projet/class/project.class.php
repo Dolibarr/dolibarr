@@ -722,18 +722,14 @@ class Project extends CommonObject
 	        }
         }
 
-        if (empty($error))
-        {
+        if (empty($error)) {
             // We remove directory
             $projectref = dol_sanitizeFileName($this->ref);
-            if ($conf->projet->dir_output)
-            {
+            if ($conf->projet->dir_output) {
                 $dir = $conf->projet->dir_output . "/" . $projectref;
-                if (file_exists($dir))
-                {
+                if (file_exists($dir)) {
                     $res = @dol_delete_dir_recursive($dir);
-                    if (!$res)
-                    {
+                    if (!$res) {
                         $this->errors[] = 'ErrorFailToDeleteDir';
                         $error++;
                     }
@@ -758,9 +754,9 @@ class Project extends CommonObject
             return 1;
         }
         else
-       {
-        	foreach ( $this->errors as $errmsg )
-        	{
+        {
+            foreach ($this->errors as $errmsg)
+            {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -955,48 +951,37 @@ class Project extends CommonObject
         // phpcs:enable
         global $langs;
 
-        if ($mode == 0)
-        {
+        if ($mode == 0) {
             return $langs->trans($this->statuts_long[$statut]);
-        }
-        if ($mode == 1)
-        {
+        } elseif ($mode == 1) {
             return $langs->trans($this->statuts_short[$statut]);
-        }
-        if ($mode == 2)
-        {
+        } elseif ($mode == 2) {
             if ($statut == 0)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            if ($statut == 1)
+            elseif ($statut == 1)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            if ($statut == 2)
+            elseif ($statut == 2)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6') . ' ' . $langs->trans($this->statuts_short[$statut]);
-        }
-        if ($mode == 3)
-        {
+        } elseif ($mode == 3) {
             if ($statut == 0)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0');
-            if ($statut == 1)
+            elseif ($statut == 1)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4');
-            if ($statut == 2)
+            elseif ($statut == 2)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6');
-        }
-        if ($mode == 4)
-        {
+        } elseif ($mode == 4) {
             if ($statut == 0)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0') . ' ' . $langs->trans($this->statuts_long[$statut]);
-            if ($statut == 1)
+            elseif ($statut == 1)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4') . ' ' . $langs->trans($this->statuts_long[$statut]);
             if ($statut == 2)
                 return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6') . ' ' . $langs->trans($this->statuts_long[$statut]);
-        }
-        if ($mode == 5)
-        {
+        } elseif ($mode == 5) {
             if ($statut == 0)
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut0');
-            if ($statut == 1)
+            elseif ($statut == 1)
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut4');
-            if ($statut == 2)
+            elseif ($statut == 2)
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut6');
         }
     }

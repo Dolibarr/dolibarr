@@ -121,7 +121,7 @@ if ($action == 'add') {
 
 	// Get extra fields
 
-	foreach ( $_POST as $key => $value ) {
+	foreach ($_POST as $key => $value) {
 		// print '$key='.$key.' $value='.$value.'<BR>';
 		if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 			// Special case for start date come with 3 inputs day, month, year
@@ -177,7 +177,7 @@ if ($action == 'add') {
 					'contact_create_st_dt',
 					'contact_create_end_dt'
 			);
-			foreach ( $specials_date_key as $date_key ) {
+			foreach ($specials_date_key as $date_key) {
 				if ($key == $date_key) {
 					$dt = GETPOST($date_key);
 					if (! empty($dt)) {
@@ -276,7 +276,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 		$array_query = array ();
 
 		// Get extra fields
-		foreach ( $_POST as $key => $value ) {
+		foreach ($_POST as $key => $value) {
 			if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 				// Special case for start date come with 3 inputs day, month, year
 				if (preg_match("/st_dt/", $key)) {
@@ -334,7 +334,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 						'contact_create_st_dt',
 						'contact_create_end_dt'
 				);
-				foreach ( $specials_date_key as $date_key ) {
+				foreach ($specials_date_key as $date_key) {
 					if ($key == $date_key) {
 						$dt = GETPOST($date_key);
 						if (! empty($dt)) {

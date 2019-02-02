@@ -107,7 +107,7 @@ if ( $retour >= 0 )
 	{
 		$tab = $db->fetch_array($res);
 
-		foreach ( $tab as $key => $value )
+		foreach ($tab as $key => $value)
 		{
 			$return[$key] = $value;
 		}

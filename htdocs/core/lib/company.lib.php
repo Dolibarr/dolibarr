@@ -1713,7 +1713,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
             } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$out .= '<td>';
-				foreach ( $histo[$key]['socpeopleassigned'] as $cid => $Tab ) {
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
 					$contact = new Contact($db);
 					$result = $contact->fetch($cid);
 
