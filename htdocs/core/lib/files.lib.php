@@ -2658,7 +2658,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	else if ($modulepart == 'movement' || $modulepart == 'mouvement' )
 	{
 		if (empty($entity) || (empty($conf->stock->multidir_output[$entity]) )) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
-		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire}  || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i',$original_file))
+		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire}  || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}

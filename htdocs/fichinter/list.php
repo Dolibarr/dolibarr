@@ -531,7 +531,7 @@ if ($resql)
 		}
 		if (! empty($arrayfields['fd.date']['checked']))
 		{
-		    print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'dayhour')."</td>\n";
+		    print '<td align="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 		    if (! $i) $totalarray['nbfield']++;
 		}
 		if (! empty($arrayfields['fd.duree']['checked']))

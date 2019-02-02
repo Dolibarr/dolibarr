@@ -117,10 +117,10 @@ if ($resql)
 	//print "<td>&nbsp;</td>";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url","", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Target", '', '', '', '', 'align="center"');
 	print_liste_field_titre("Owner", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param,'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
