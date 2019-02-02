@@ -25,9 +25,9 @@
  */
 
 /**
- *	\file	   fichinter/card-rec.php
- *	\ingroup	fichinter
- *	\brief	  Page to show predefined fichinter
+ *	\file	     fichinter/card-rec.php
+ *	\ingroup     intervention
+ *	\brief	     Page to show predefined fichinter
  */
 
 require '../main.inc.php';
