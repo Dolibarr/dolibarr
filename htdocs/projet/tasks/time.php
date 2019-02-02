@@ -301,12 +301,11 @@ elseif (GETPOST('project_ref', 'alpha'))
     $withproject=1;
 }
 
-if ($massaction == 'confirm_generateinvoice')
+if ($action == 'confirm_generateinvoice')
 {
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
         //->fetch_thirdparty();
-
 		if (! ($projectstatic->thirdparty->id > 0))
 		{
 			setEventMessages($langs->trans("ThirdPartyRequiredToGenerateInvoice"), null, 'errors');
@@ -324,43 +323,71 @@ if ($massaction == 'confirm_generateinvoice')
 
 			$db->begin();
 
-			$idprod = GETPOST('idprod', 'int');
+			$idprod = GETPOST('productid', 'int');
 			if ($idprod > 0)
 			{
 				$tmpproduct->fetch($idprod);
 			}
 
 			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
-			$pu_ht = $dataforprice['pu_ht'];
+			$pu_ht = empty($dataforprice['pu_ht'])?0:$dataforprice['pu_ht'];
 			$txtva = $dataforprice['tva_tx'];
 
-			$tmpinvoice->fk_soc = $projectstatic->thirdparty->id;
-			$tmpinvoice->create($user);
+			$tmpinvoice->socid = $projectstatic->thirdparty->id;
+			$tmpinvoice->date = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+			$tmpinvoice->fk_project = $projectstatic->id;
 
-			$arrayoftasks=array();
-			foreach($toselect as $key => $value)
+			$result = $tmpinvoice->create($user);
+			if ($result <= 0)
 			{
-				// Get userid, timepent
-				$object->fetchTimeSpent($value);
-
-				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+			    $error++;
+			    setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
 			}
-			foreach($arrayoftasks as $userid => $value)
-			{
-				$fuser->fetch($userid);
-				//$pu_ht = $value['timespent'] * $fuser->thm;
-				$username = $fuser->getFullName($langs);
-
-				// Add lines
-				$tmpinvoice->addline($langs->trans("TotalOfTimeSpentBy", $username).' : '.$value['timespent'], $pu_ht, 1, $txtva);
-			}
-
-			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $tmpinvoice->ref), null, 'mesgs');
-			//var_dump($tmpinvoice);
 
 			if (! $error)
 			{
-				$db->commit();
+    			$arrayoftasks=array();
+    			foreach($toselect as $key => $value)
+    			{
+    				// Get userid, timepent
+    				$object->fetchTimeSpent($value);
+
+    				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+    			}
+
+    			foreach($arrayoftasks as $userid => $value)
+    			{
+    				$fuser->fetch($userid);
+    				//$pu_ht = $value['timespent'] * $fuser->thm;
+    				$username = $fuser->getFullName($langs);
+
+    				// Define qty per hour
+    				$qtyhour = round($value['timespent'] / 3600, 2);
+    				$qtyhourtext = convertSecondToTime($value['timespent']);
+
+    				// Add lines
+    				$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva);
+
+    				// Update lineid into line of timespent
+    				$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+    				$sql.=' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+    				$result = $db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    				    setEventMessages($db->lasterror(), null, 'errors');
+    				    break;
+    				}
+    			}
+			}
+
+			if (! $error)
+			{
+			    $urltoinvoice = $tmpinvoice->getNomUrl(0);
+			    setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
+			    //var_dump($tmpinvoice);
+
+			    $db->commit();
 			}
 			else
 			{
@@ -802,6 +829,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
 	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
 	    elseif ($action == 'createtime' && empty($id) && $user->rights->projet->lire) print '<input type="hidden" name="action" value="addtimespent">';
+	    elseif ($massaction == 'generateinvoice' && empty($id) && $user->rights->facture->lire) print '<input type="hidden" name="action" value="confirm_generateinvoice">';
 	    else print '<input type="hidden" name="action" value="list">';
 	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -827,11 +855,20 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        print $form->selectDate('', '', '', '', '', '', 1, 1);
 	        print '</td>';
 	        print '</tr>';
+	        print '<tr>';
+	        print '<td>';
+	        print $langs->trans('Mode');
+	        print '</td>';
+	        print '<td>';
+	        $tmparray=array('onelineperuser'=>'OneLinePerUser');
+	        print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
+	        print '</td>';
+	        print '</tr>';
 	        if ($conf->service->enabled)
 	        {
     	        print '<tr>';
     	        print '<td>';
-    	        print $langs->trans('Service');
+    	        print $langs->trans('ServiceToUseOnLines');
     	        print '</td>';
     	        print '<td>';
     	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
@@ -1125,6 +1162,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print "</tr>\n";
 
 		$tasktmp = new Task($db);
+		$tmpinvoice = new Facture($db);
 
 		$i = 0;
 
@@ -1281,8 +1319,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                     {
                         if ($task_time->invoice_id)
                         {
-                            $tmpinvoice->fetch($task_time->invoice_id);
-                            print $tmpinvoice->getNomUrl(1);
+                            $result = $tmpinvoice->fetch($task_time->invoice_id);
+                            if ($result > 0)
+                            {
+                                print $tmpinvoice->getNomUrl(1);
+                            }
                         }
                         else
                         {
