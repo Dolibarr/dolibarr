@@ -419,9 +419,9 @@ $( document ).ready(function() {
 if (empty($conf->global->CASHDESK_ID_THIRDPARTY) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
-if (count($maincategories)==0){
+if (count($maincategories)==0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
-}	
+}
 // User menu and external TakePOS modules
 $menus = array();
 $r=0;
