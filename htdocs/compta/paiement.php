@@ -43,9 +43,9 @@ $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
 
 $facid		= GETPOST('facid','int');
-$socname	= GETPOST('socname');
-$accountid	= GETPOST('accountid');
-$paymentnum	= GETPOST('num_paiement');
+$accountid	= GETPOST('accountid','int');
+$paymentnum	= GETPOST('num_paiement','alpha');
+$socid=GETPOST('socid','int');
 
 $sortfield	= GETPOST('sortfield','alpha');
 $sortorder	= GETPOST('sortorder','alpha');
@@ -59,7 +59,6 @@ $multicurrency_amounts=array();
 $multicurrency_amountsresttopay=array();
 
 // Security check
-$socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
@@ -219,6 +218,9 @@ if (empty($reshook))
 
 	    $db->begin();
 
+	    $thirdparty = new Societe($db);
+	    if ($socid > 0) $thirdparty->fetch($socid);
+
 	    // Clean parameters amount if payment is for a credit note
 	    if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE)
 	    {
@@ -238,7 +240,7 @@ if (empty($reshook))
 	    if (! empty($conf->banque->enabled))
 	    {
 	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
-	    	if (GETPOST('accountid') <= 0)
+	    	if (GETPOST('accountid','int') <= 0)
 	    	{
 	    		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
 	    		$error++;
@@ -256,7 +258,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices and regenerating documents
+	        $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0), $thirdparty);    // This include closing invoices and regenerating documents
 	    	if ($paiement_id < 0)
 	        {
 	            setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -280,7 +282,7 @@ if (empty($reshook))
 	    {
 	        $db->commit();
 
-	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise jump on invoice card
+	        // If payment dispatching on more than one invoice, we stay on summary page, otherwise jump on invoice card
 	        $invoiceid=0;
 	        foreach ($paiement->amounts as $key => $amount)
 	        {

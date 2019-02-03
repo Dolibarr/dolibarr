@@ -216,15 +216,16 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Create payment of invoices into database.
-	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  Create payment of invoices into database.
+	 *  Use this->amounts to have list of invoices for the payment.
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
-	 *    @param	User	$user                	Object user
-	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
-	 *    @return   int                 			id of created payment, < 0 if error
+	 *  @param	User	  $user                	Object user
+	 *  @param  int		  $closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @return int                 			id of created payment, < 0 if error
 	 */
-	function create($user, $closepaidinvoices = 0)
+	function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
 		global $conf, $langs;
 
@@ -274,7 +275,7 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$this->ref = $this->getNextNumRef('');
+		$this->ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 
 		if ($way == 'dolibarr')
 		{
@@ -424,6 +425,7 @@ class Paiement extends CommonObject
 					    // Regenerate documents of invoices
                         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                         {
+                            $newlang='';
                             $outputlangs = $langs;
                             if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
                             if (! empty($newlang)) {

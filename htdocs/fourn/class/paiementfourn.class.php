@@ -141,11 +141,12 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Create payment in database
 	 *
-	 *	@param		User	$user        			Object of creating user
-	 *	@param		int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *	@param		User	   $user        		Object of creating user
+	 *	@param		int		   $closepaidinvoices   1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param      Societe    $thirdparty          Thirdparty
 	 *	@return     int         					id of created payment, < 0 if error
 	 */
-	function create($user, $closepaidinvoices = 0)
+	function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
 		global $langs,$conf;
 
@@ -186,7 +187,7 @@ class PaiementFourn extends Paiement
 
 		if ($totalamount <> 0) // On accepte les montants negatifs
 		{
-			$ref = $this->getNextNumRef('');
+		    $ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 			$now=dol_now();
 
 			if ($way == 'dolibarr')
@@ -245,7 +246,8 @@ class PaiementFourn extends Paiement
 							// Regenerate documents of invoices
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 							{
-								$outputlangs = $langs;
+							    $newlang='';
+							    $outputlangs = $langs;
 								if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
 								if (! empty($newlang)) {
 									$outputlangs = new Translate("", $conf);

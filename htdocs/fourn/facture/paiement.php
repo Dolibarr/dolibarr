@@ -253,6 +253,9 @@ if (empty($reshook))
 	    {
 	        $db->begin();
 
+	        $thirdparty = new Societe($db);
+            if ($socid > 0) $thirdparty->fetch($socid);
+
 	        // Creation de la ligne paiement
 	        $paiement = new PaiementFourn($db);
 	        $paiement->datepaye     = $datepaye;
@@ -263,7 +266,7 @@ if (empty($reshook))
 	        $paiement->note         = $_POST['comment'];
 	        if (! $error)
 	        {
-	            $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+	            $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0), $thirdparty);
 	            if ($paiement_id < 0)
 	            {
 	            	setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -285,7 +288,7 @@ if (empty($reshook))
 	        {
 	            $db->commit();
 
-	            // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+	            // If payment dispatching on more than one invoice, we stay on summary page, otherwise go on invoice card
 	            $invoiceid=0;
 	            foreach ($paiement->amounts as $key => $amount)
 	            {
