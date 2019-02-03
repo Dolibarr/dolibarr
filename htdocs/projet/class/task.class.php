@@ -1226,6 +1226,7 @@ class Task extends CommonObject
 		$sql.= " t.task_date_withhour,";
 		$sql.= " t.task_duration,";
 		$sql.= " t.fk_user,";
+		$sql.= " t.thm,";
 		$sql.= " t.note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql.= " WHERE t.rowid = ".$id;
@@ -1245,6 +1246,7 @@ class Task extends CommonObject
 				$this->timespent_withhour   = $obj->task_date_withhour;
 				$this->timespent_duration	= $obj->task_duration;
 				$this->timespent_fk_user	= $obj->fk_user;
+				$this->timespent_thm    	= $obj->thm;       // hourly rate
 				$this->timespent_note		= $obj->note;
 			}
 

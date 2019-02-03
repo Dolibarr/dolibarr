@@ -322,16 +322,24 @@ if ($action == 'confirm_generateinvoice')
 			$fuser = new User($db);
 
 			$db->begin();
-
 			$idprod = GETPOST('productid', 'int');
 			if ($idprod > 0)
 			{
 				$tmpproduct->fetch($idprod);
-			}
 
-			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
-			$pu_ht = empty($dataforprice['pu_ht'])?0:$dataforprice['pu_ht'];
-			$txtva = $dataforprice['tva_tx'];
+				$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+				$pu_ht = empty($dataforprice['pu_ht'])?0:$dataforprice['pu_ht'];
+				$txtva = $dataforprice['tva_tx'];
+				$localtax1 = $dataforprice['localtax1'];
+				$localtax2 = $dataforprice['localtax2'];
+			}
+			else
+			{
+			    $pu_ht = 0;
+			    $txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
+			    $localtax1 = get_default_localtax($mysoc, $projectstatic->thirdparty, 1);
+			    $localtax2 = get_default_localtax($mysoc, $projectstatic->thirdparty, 2);
+			}
 
 			$tmpinvoice->socid = $projectstatic->thirdparty->id;
 			$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -351,8 +359,8 @@ if ($action == 'confirm_generateinvoice')
     			{
     				// Get userid, timepent
     				$object->fetchTimeSpent($value);
-
     				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+    				$arrayoftasks[$object->timespent_fk_user]['totalvaluetodivideby3600']+=($object->timespent_duration * $object->timespent_thm);
     			}
 
     			foreach($arrayoftasks as $userid => $value)
@@ -365,8 +373,14 @@ if ($action == 'confirm_generateinvoice')
     				$qtyhour = round($value['timespent'] / 3600, 2);
     				$qtyhourtext = convertSecondToTime($value['timespent']);
 
+    				// If no unit price known
+    				if (empty($pu_ht))
+    				{
+    				    $pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+    				}
+
     				// Add lines
-    				$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva);
+    				$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
     				// Update lineid into line of timespent
     				$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
