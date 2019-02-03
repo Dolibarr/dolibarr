@@ -242,3 +242,4 @@ GenerateInvoice=Generate invoice
 OneLinePerUser=One line per user
 ServiceToUseOnLines=Service to use on lines
 InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
+ProjectBillTimeDescription=Check if you enter timesheet on project and plan to generate invoice from the timesheet to invoice the customer of project.
