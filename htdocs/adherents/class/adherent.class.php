@@ -600,7 +600,7 @@ class Adherent extends CommonObject
 							$error++;
 						}
 					}
-					elseif(!empty($lthirdparty->error))
+					elseif ($result < 0)
 					{
 						$this->error=$lthirdparty->error;
 						$error++;
@@ -689,7 +689,6 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
