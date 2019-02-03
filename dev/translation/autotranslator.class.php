@@ -167,7 +167,7 @@ class autoTranslator
 			fwrite($fp, "\n");
 			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->_time.").\n");
 			fwrite($fp, "// Reference language: ".$this->_refLang." -> ".$my_destlang."\n");
-			foreach( $this->_translatedFiles[$file] as $line) {
+			foreach($this->_translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\n");
 			}
 			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->_time_end.").\n");
@@ -209,7 +209,7 @@ class autoTranslator
 	{
 
 		//print "key    =".$key."\n";
-		foreach( $content as $line ) {
+		foreach($content as $line) {
 			$destKey = $this->getLineKey($line);
 			$destValue = $this->getLineValue($line);
 			// If translated return

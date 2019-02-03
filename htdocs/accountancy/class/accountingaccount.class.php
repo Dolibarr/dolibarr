@@ -440,7 +440,7 @@ class AccountingAccount extends CommonObject
 
 			// Commit or rollback
 			if ($error) {
-				foreach ( $this->errors as $errmsg ) {
+				foreach ($this->errors as $errmsg) {
 					dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 					$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 				}

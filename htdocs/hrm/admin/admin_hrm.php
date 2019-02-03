@@ -85,7 +85,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
-foreach ( $list as $key ) {
+foreach ($list as $key) {
 	$var = ! $var;
 	
 	print '<tr ' . $bc[$var] . ' class="value">';

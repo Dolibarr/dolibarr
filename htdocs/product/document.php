@@ -142,7 +142,7 @@ if ($action=='filemerge')
 
 		// for each file checked add it to the product
 		if (is_array($filetomerge_file_array)) {
-			foreach ( $filetomerge_file_array as $filetomerge_file ) {
+			foreach ($filetomerge_file_array as $filetomerge_file) {
 				$filetomerge->fk_product = $object->id;
 				$filetomerge->file_name = $filetomerge_file;
 

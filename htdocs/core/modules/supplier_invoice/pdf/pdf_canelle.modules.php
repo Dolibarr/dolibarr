@@ -656,7 +656,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
 
-		foreach( $this->tva as $tvakey => $tvaval )
+		foreach($this->tva as $tvakey => $tvaval)
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
 			{
@@ -714,7 +714,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
 				//Local tax 1
-				foreach( $this->localtax1 as $tvakey => $tvaval )
+				foreach($this->localtax1 as $tvakey => $tvaval)
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -742,7 +742,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
 				//Local tax 2
-				foreach( $this->localtax2 as $tvakey => $tvaval )
+				foreach($this->localtax2 as $tvakey => $tvaval)
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{

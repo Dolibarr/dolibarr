@@ -296,7 +296,7 @@ if ($action == 'writebookkeeping') {
 		// Thirdparty
 		if (! $errorforline)
 		{
-			foreach ( $tabttc[$key] as $k => $mt ) {
+			foreach ($tabttc[$key] as $k => $mt) {
 				//if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -351,7 +351,7 @@ if ($action == 'writebookkeeping') {
 		// Product / Service
 		if (! $errorforline)
 		{
-			foreach ( $tabht[$key] as $k => $mt ) {
+			foreach ($tabht[$key] as $k => $mt) {
 				//if ($mt) {
 					// get compte id and label
 					if ($accountingaccount->fetch(null, $k, true)) {
@@ -414,7 +414,7 @@ if ($action == 'writebookkeeping') {
 				if ($numtax == 1) $arrayofvat = $tablocaltax1;
 				if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-				foreach ( $arrayofvat[$key] as $k => $mt ) {
+				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -471,7 +471,7 @@ if ($action == 'writebookkeeping') {
 		// var_dump($tabother);
 		if (! $errorforline && is_array($tabother[$key]))
 		{
-			foreach ( $tabother[$key] as $k => $mt ) {
+			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -593,7 +593,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$companystatic = new Fournisseur($db);
 	$invoicestatic = new FactureFournisseur($db);
 
-	foreach ( $tabfac as $key => $val )
+	foreach ($tabfac as $key => $val)
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -628,7 +628,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Third party
-		foreach ( $tabttc[$key] as $k => $mt ) {
+		foreach ($tabttc[$key] as $k => $mt) {
 			//if ($mt) {
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
@@ -647,7 +647,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Product / Service
-		foreach ( $tabht[$key] as $k => $mt ) {
+		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 			//if ($mt) {
@@ -695,7 +695,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			// VAT counterpart for NPR
 			if (is_array($tabother[$key]))
 			{
-				foreach ( $tabother[$key] as $k => $mt ) {
+				foreach ($tabother[$key] as $k => $mt) {
 					if ($mt) {
 						print '"' . $key . '"' . $sep;
 						print '"' . $date . '"' . $sep;
@@ -797,7 +797,7 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new FactureFournisseur($db);
 	$companystatic = new Fournisseur($db);
 
-	foreach ( $tabfac as $key => $val )
+	foreach ($tabfac as $key => $val)
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -868,7 +868,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Third party
-		foreach ( $tabttc[$key] as $k => $mt ) {
+		foreach ($tabttc[$key] as $k => $mt) {
 			//if ($mt) {
 				print '<tr class="oddeven">';
 				print "<td><!-- Thirdparty --></td>";
@@ -900,7 +900,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Product / Service
-		foreach ( $tabht[$key] as $k => $mt ) {
+		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
@@ -937,7 +937,7 @@ if (empty($action) || $action == 'view') {
 			if ($numtax == 1) $arrayofvat = $tablocaltax1;
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-			foreach ( $arrayofvat[$key] as $k => $mt ) {
+			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<td><!-- VAT --></td>";
@@ -968,7 +968,7 @@ if (empty($action) || $action == 'view') {
 		// VAT counterpart for NPR
 		if (is_array($tabother[$key]))
 		{
-			foreach ( $tabother[$key] as $k => $mt ) {
+			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<td><!-- VAT counterpart NPR --></td>";

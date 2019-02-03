@@ -68,7 +68,7 @@ if ($_POST["action"] == 'import') {
 			$obj = $db->fetch_object($result);
 
 			$cpt = 0;
-			foreach ( $to_import as $maLigneCochee ) {
+			foreach ($to_import as $maLigneCochee) {
 
 				$accounting = new AccountingAccount($db);
 

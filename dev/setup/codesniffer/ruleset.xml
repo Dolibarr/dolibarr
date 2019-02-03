@@ -190,6 +190,9 @@
     </rule>
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
+
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>

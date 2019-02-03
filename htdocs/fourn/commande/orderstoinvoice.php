@@ -172,7 +172,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 
 			if ($_POST['origin'] && $_POST['originid']) {
 				$linked_orders_ids=array();
-				foreach ( $orders_id as $origin => $origin_id ) {
+				foreach ($orders_id as $origin => $origin_id) {
 					$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
 					$linked_orders_ids[]=$origin_id;
 				}
@@ -352,7 +352,7 @@ if ($action == 'create' && !$error) {
 
 	$objectsrc = new CommandeFournisseur($db);
 	$listoforders = array ();
-	foreach ( $selected as $sel ) {
+	foreach ($selected as $sel) {
 		$result = $objectsrc->fetch($sel);
 		if ($result > 0) {
 			$listoforders[] = $objectsrc->ref;
