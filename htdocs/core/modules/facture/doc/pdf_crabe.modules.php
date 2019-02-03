@@ -1312,7 +1312,6 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
-				}
 				//}
 
 				// Revenue stamp

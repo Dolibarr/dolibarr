@@ -1470,43 +1470,43 @@ class Form
 					$contactstatic->id=$obj->rowid;
 					$contactstatic->lastname=$obj->lastname;
 					$contactstatic->firstname=$obj->firstname;
-					if ($obj->statut == 1){
-					if ($htmlname != 'none')
-					{
-						$disabled=0;
-						if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) $disabled=1;
-						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid, $limitto)) $disabled=1;
-						if (!empty($selected) && in_array($obj->rowid, $selected))
-						{
-							$out.= '<option value="'.$obj->rowid.'"';
-							if ($disabled) $out.= ' disabled';
-							$out.= ' selected>';
-							$out.= $contactstatic->getFullName($langs);
-							if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
-							if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
-							$out.= '</option>';
-						}
-						else
-						{
-							$out.= '<option value="'.$obj->rowid.'"';
-							if ($disabled) $out.= ' disabled';
-							$out.= '>';
-							$out.= $contactstatic->getFullName($langs);
-							if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
-							if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
-							$out.= '</option>';
-						}
-					}
-					else
-					{
-						if (in_array($obj->rowid, $selected))
-						{
-							$out.= $contactstatic->getFullName($langs);
-							if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
-							if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
-						}
-					}
-				}
+					if ($obj->statut == 1) {
+					    if ($htmlname != 'none')
+					    {
+						    $disabled=0;
+						    if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) $disabled=1;
+						    if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid, $limitto)) $disabled=1;
+						    if (!empty($selected) && in_array($obj->rowid, $selected))
+						    {
+							    $out.= '<option value="'.$obj->rowid.'"';
+							    if ($disabled) $out.= ' disabled';
+							    $out.= ' selected>';
+							    $out.= $contactstatic->getFullName($langs);
+							    if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+							    if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
+							    $out.= '</option>';
+						    }
+						    else
+						    {
+							    $out.= '<option value="'.$obj->rowid.'"';
+							    if ($disabled) $out.= ' disabled';
+							    $out.= '>';
+							    $out.= $contactstatic->getFullName($langs);
+							    if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+							    if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
+							    $out.= '</option>';
+						    }
+					    }
+					    else
+					    {
+						    if (in_array($obj->rowid, $selected))
+						    {
+							    $out.= $contactstatic->getFullName($langs);
+							    if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+							    if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
+						    }
+					    }
+				    }
 					$i++;
 				}
 			}

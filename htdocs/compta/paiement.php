@@ -240,7 +240,7 @@ if (empty($reshook))
 	    if (! empty($conf->banque->enabled))
 	    {
 	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
-	    	if (GETPOST('accountid','int') <= 0)
+	    	if (GETPOST('accountid', 'int') <= 0)
 	    	{
 	    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
 	    		$error++;
