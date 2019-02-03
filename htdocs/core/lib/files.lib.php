@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2654,10 +2655,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
 	
-	// Wrapping pour les mouvements stocks
-	else if ($modulepart == 'movement' || $modulepart == 'mouvement' )
+	// Wrapping for stock movements
+	elseif ($modulepart == 'movement' || $modulepart == 'mouvement')
 	{
-		if (empty($entity) || (empty($conf->stock->multidir_output[$entity]) )) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+		if (empty($entity) || (empty($conf->stock->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire}  || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
