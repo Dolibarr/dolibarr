@@ -36,10 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (! empty($conf->projet->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -226,11 +225,11 @@ if ($action == "correct_stock")
             exit;
         }
         else
-       {
-       		$error++;
-        	setEventMessages($product->error, $product->errors, 'errors');
-        	$action='correction';
-       }
+        {
+            $error++;
+            setEventMessages($product->error, $product->errors, 'errors');
+            $action='correction';
+        }
     }
 
     if (! $error) $action='';
@@ -1048,7 +1047,7 @@ if ($resql)
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
             // Type of movement
-        		switch($objp->type_mouvement){
+            switch($objp->type_mouvement){
                 case "0":
                     print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
                     break;

@@ -89,9 +89,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -314,7 +314,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         return 0;
-        }
+    }
 
     /**
      * testPropalBuild

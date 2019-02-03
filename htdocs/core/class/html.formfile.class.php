@@ -1346,7 +1346,7 @@ class FormFile
 							   	print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"').'>';
 							   	print '</td>';
 							}
-					   }
+					    }
 					}
 					else
 					{

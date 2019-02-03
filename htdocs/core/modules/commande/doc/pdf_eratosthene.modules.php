@@ -828,30 +828,29 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy=$pdf->GetY()+1;
 		}
 
-      	// Show payment mode
+        // Show payment mode
         if ($object->mode_reglement_code
-        	 && $object->mode_reglement_code != 'CHQ'
-           	 && $object->mode_reglement_code != 'VIR')
-           	 {
-	            $pdf->SetFont('','B', $default_font_size - 2);
-	            $pdf->SetXY($this->marge_gauche, $posy);
-	            $titre = $outputlangs->transnoentities("PaymentMode").':';
-	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+            && $object->mode_reglement_code != 'CHQ'
+            && $object->mode_reglement_code != 'VIR') {
+            $pdf->SetFont('','B', $default_font_size - 2);
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $titre = $outputlangs->transnoentities("PaymentMode").':';
+            $pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-				$pdf->SetFont('','', $default_font_size - 2);
-	            $pdf->SetXY($posxval, $posy);
-	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
-	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
+            $pdf->SetFont('','', $default_font_size - 2);
+            $pdf->SetXY($posxval, $posy);
+            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
-	            $posy=$pdf->GetY()+2;
-           	 }
+            $posy=$pdf->GetY()+2;
+        }
 
-		// Show payment mode CHQ
+        // Show payment mode CHQ
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
         {
-        	// Si mode reglement non force ou si force a CHQ
-	        if (! empty($conf->global->FACTURE_CHQ_NUMBER))
-	        {
+            // Si mode reglement non force ou si force a CHQ
+            if (! empty($conf->global->FACTURE_CHQ_NUMBER))
+            {
 	            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 	            {
 	                $account = new Account($this->db);

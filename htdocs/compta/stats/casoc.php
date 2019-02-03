@@ -74,8 +74,7 @@ $date_startday = GETPOST("date_startday",'alpha');
 $date_endyear = GETPOST("date_endyear",'alpha');
 $date_endmonth = GETPOST("date_endmonth",'alpha');
 $date_endday = GETPOST("date_endday",'alpha');
-if (empty($year))
-{
+if (empty($year)) {
 	$year_current = strftime("%Y",dol_now());
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year_current;
@@ -451,9 +450,9 @@ if ($modecompta == 'CREANCES-DETTES') {
            'align="right"',
            $sortfield,
            $sortorder
-	);
-    } else {
-	print_liste_field_titre('');
+    );
+} else {
+    print_liste_field_titre('');
 }
 print_liste_field_titre(
 	$langs->trans("AmountTTC"),
@@ -464,7 +463,7 @@ print_liste_field_titre(
 	'align="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("Percentage"),
 	$_SERVER["PHP_SELF"],
@@ -474,7 +473,7 @@ print_liste_field_titre(
 	'align="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("OtherStatistics"),
 	$_SERVER["PHP_SELF"],
@@ -482,7 +481,7 @@ print_liste_field_titre(
 	"",
 	"",
 	'align="center" width="20%"'
-	);
+);
 print "</tr>\n";
 
 
@@ -569,34 +568,34 @@ if (count($amount)) {
 		// Amount w/o VAT
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
-                    if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
+            if ($key > 0) {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
-		    }
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
+            }
 		} else {
 		    if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="#">';
+                print '<a href="#">';
 		    }
-		print price($amount_ht[$key]);
+            print price($amount_ht[$key]);
 		}
 		print '</td>';
 
 		// Amount with VAT
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
-                    if ($key > 0) {
-                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
+            if ($key > 0) {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
 		    }
 		} else {
-                    if ($key > 0) {
-                        print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
+            if ($key > 0) {
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
 		    } else {
-			print '<a href="#">';
+                print '<a href="#">';
 		    }
 		}
 		print price($amount[$key]);
@@ -609,18 +608,18 @@ if (count($amount)) {
         // Other stats
         print '<td align="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+        }
         if (! empty($conf->commande->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+        }
         if (! empty($conf->facture->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+        }
         print '</td>';
-	print "</tr>\n";
-	$i++;
-	}
+        print "</tr>\n";
+        $i++;
+    }
 
 	// Total
 	print '<tr class="liste_total">';

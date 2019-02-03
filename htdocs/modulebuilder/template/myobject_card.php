@@ -115,31 +115,31 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	$error=0;
+    $error=0;
 
-	$permissiontoadd = $user->rights->mymodule->write;
-	$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
-    	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
-	if (empty($backtopage)) {
-	    if (empty($id)) $backtopage = $backurlforlist;
-	    else $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).($id > 0 ? $id : '__ID__');
-    	}
-	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
+    $permissiontoadd = $user->rights->mymodule->write;
+    $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
+    $backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
+    if (empty($backtopage)) {
+        if (empty($id)) $backtopage = $backurlforlist;
+        else $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).($id > 0 ? $id : '__ID__');
+    }
+    $triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update, delete or clone
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+    // Actions cancel, add, update, delete or clone
+    include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// Actions when linking object each other
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+    // Actions when linking object each other
+    include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-	// Actions when printing a doc from card
-	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+    // Actions when printing a doc from card
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$trigger_name='MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+    // Actions to send emails
+    $trigger_name='MYOBJECT_SENTBYMAIL';
+    $autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+    $trackid='myobject'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 

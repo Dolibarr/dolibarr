@@ -900,7 +900,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	// First line of company infos
 	$line1=""; $line2=""; $line3=""; $line4="";
 
-		if ($showdetails == 1 || $showdetails == 3)
+    if ($showdetails == 1 || $showdetails == 3)
 	{
 		// Company name
 		if ($fromcompany->name)
@@ -1969,9 +1969,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         	}
         	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
-	}
+        }
     }
-	return $result;
+    return $result;
 }
 
 /**

@@ -2365,15 +2365,18 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		{//ex: +66_A_BCD_EF_GHI
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,3);
 		}
-		}
+	}
 	elseif (strtoupper($countrycode) == "MU")
-	{//Maurice
+	{
+        //Maurice
 		if(dol_strlen($phone) == 11)
-		{//ex: +230_ABC_DE_FG
+		{
+            //ex: +230_ABC_DE_FG
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
 		}
 		elseif(dol_strlen($phone) == 12)
-		{//ex: +230_ABCD_EF_GH
+		{
+            //ex: +230_ABCD_EF_GH
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,4).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
@@ -2514,9 +2517,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	elseif(strtoupper($countrycode) == "AU")
-	{//Australie
-		 if(dol_strlen($phone) == 12)
-		{//ex: +61_A_BCDE_FGHI
+	{
+        //Australie
+		if(dol_strlen($phone) == 12)
+		{
+            //ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,4).$separ.substr($newphone,8,4);
 		}
 	}
@@ -2593,7 +2598,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
-	  }
+	}
 
 	return $rep;
 }

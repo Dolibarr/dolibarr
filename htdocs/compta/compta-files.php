@@ -112,16 +112,16 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 
     if ($resd)
     {
-         $numd = $db->num_rows($resd);
+        $numd = $db->num_rows($resd);
 
-         $tmpinvoice=new Facture($db);
-         $tmpinvoicesupplier=new FactureFournisseur($db);
-         $tmpdonation=new Don($db);
+        $tmpinvoice=new Facture($db);
+        $tmpinvoicesupplier=new FactureFournisseur($db);
+        $tmpdonation=new Don($db);
 
-         $upload_dir ='';
-         $i=0;
-         while($i<$numd)
-         {
+        $upload_dir ='';
+        $i=0;
+        while($i<$numd)
+        {
             $objd = $db->fetch_object($resd);
 
             switch($objd->item)
@@ -197,14 +197,14 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 }
             }
             $i++;
-         }
-     }
-     else
-     {
-         dol_print_error($db);
-     }
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 
-     $db->free($resd);
+    $db->free($resd);
 }
 
 /*
@@ -315,57 +315,57 @@ if (!empty($date_start) && !empty($date_stop))
     if ($result)
     {
         $TData = dol_sort_array($filesarray, 'date', 'ASC');
-            if(empty($TData)) {
-                            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-            } else {
-                            // Sort array by date ASC to calucalte balance
+        if(empty($TData)) {
+            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
+        } else {
+            // Sort array by date ASC to calucalte balance
 
-                            $totalDebit = 0;
-                            $totalCredit = 0;
-                            // Balance calculation
-                            $balance = 0;
-                            foreach($TData as &$data1) {
-                                    if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
-                                         $data1['amount']=-$data1['amount'];
-                                    }
-                                    if ($data1['amount']>0){
-                                   }else{
-                                   }
-                                   $balance += $data1['amount'];
-                                    $data1['balance'] = $balance;
-                            }
-                    // Display array
-                    foreach($TData as $data) {
-                            $html_class = '';
-                            //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-                            //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
-                            print '<tr class="oddeven '.$html_class.'">';
-                            print "<td align=\"center\">";
-                            print dol_print_date($data['date'],'day');
-                            print "</td>\n";
-                            print '<td aling="left">'.$data['item'].'</td>';
-                            print '<td aling="left">'.$data['ref'].'</td>';
-
-                            // File link
-                            print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
-
-                            print '<td aling="left">'.$data['paid'].'</td>';
-                            print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
-                            $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-                            print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
-                            $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
-                            // Balance
-                            print '<td align="right">'.price($data['balance'])."</td>\n";
-                            print "</tr>\n";
-                    }
-                    print '<tr class="liste_total">';
-                    print '<td colspan="5">&nbsp;</td>';
-                    print '<td align="right">'.price($totalDebit).'</td>';
-                    print '<td align="right">'.price($totalCredit).'</td>';
-                    print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-                    print "</tr>\n";
-                    }
+            $totalDebit = 0;
+            $totalCredit = 0;
+            // Balance calculation
+            $balance = 0;
+            foreach($TData as &$data1) {
+                if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
+                    $data1['amount']=-$data1['amount'];
+                }
+                if ($data1['amount']>0){
+                }else{
+                }
+                $balance += $data1['amount'];
+                $data1['balance'] = $balance;
             }
+            // Display array
+            foreach($TData as $data) {
+                $html_class = '';
+                //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+                //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+                print '<tr class="oddeven '.$html_class.'">';
+                print "<td align=\"center\">";
+                print dol_print_date($data['date'],'day');
+                print "</td>\n";
+                print '<td aling="left">'.$data['item'].'</td>';
+                print '<td aling="left">'.$data['ref'].'</td>';
+
+                // File link
+                print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
+
+                print '<td aling="left">'.$data['paid'].'</td>';
+                print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+                $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+                print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+                $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+                // Balance
+                print '<td align="right">'.price($data['balance'])."</td>\n";
+                print "</tr>\n";
+            }
+            print '<tr class="liste_total">';
+            print '<td colspan="5">&nbsp;</td>';
+            print '<td align="right">'.price($totalDebit).'</td>';
+            print '<td align="right">'.price($totalCredit).'</td>';
+            print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+            print "</tr>\n";
+        }
+    }
     print "</table>";
     print '</div>';
 }

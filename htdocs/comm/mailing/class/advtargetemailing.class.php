@@ -875,32 +875,32 @@ class AdvanceTargetingMailing extends CommonObject
 
 						foreach($extralabels as $key=>$val) {
 
-							if (($extrafields->attribute_type[$key] == 'varchar') ||
-									($extrafields->attribute_type[$key] == 'text')) {
-										if (!empty($arrayquery['options_'.$key])) {
-											$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
-										}
-									} elseif (($extrafields->attribute_type[$key] == 'int') ||
-											($extrafields->attribute_type[$key] == 'double')) {
-												if (!empty($arrayquery['options_'.$key.'_max'])) {
-													$sqlwhere[]= " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
-												}
-									} elseif (($extrafields->attribute_type[$key] == 'date') ||
-											($extrafields->attribute_type[$key] == 'datetime')) {
-												if (!empty($arrayquery['options_'.$key.'_end_dt'])){
-													$sqlwhere[]= " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
-												}
-											}elseif ($extrafields->attribute_type[$key] == 'boolean') {
-												if ($arrayquery['options_'.$key]!=''){
-													$sqlwhere[]= " (tse.".$key." = ".$arrayquery['options_'.$key].")";
-												}
-											}else{
-												if (is_array($arrayquery['options_'.$key])) {
-													$sqlwhere[]= " (tse.".$key." IN ('".implode("','",$arrayquery['options_'.$key])."'))";
-												} elseif (!empty($arrayquery['options_'.$key])) {
-													$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
-												}
-											}
+                            if (($extrafields->attribute_type[$key] == 'varchar')
+                                || ($extrafields->attribute_type[$key] == 'text')) {
+								if (!empty($arrayquery['options_'.$key])) {
+									$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+								}
+							} elseif (($extrafields->attribute_type[$key] == 'int') ||
+								($extrafields->attribute_type[$key] == 'double')) {
+								if (!empty($arrayquery['options_'.$key.'_max'])) {
+									$sqlwhere[]= " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
+								}
+							} elseif (($extrafields->attribute_type[$key] == 'date') ||
+								($extrafields->attribute_type[$key] == 'datetime')) {
+								if (!empty($arrayquery['options_'.$key.'_end_dt'])){
+									$sqlwhere[]= " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
+								}
+							} elseif ($extrafields->attribute_type[$key] == 'boolean') {
+								if ($arrayquery['options_'.$key]!=''){
+									$sqlwhere[]= " (tse.".$key." = ".$arrayquery['options_'.$key].")";
+								}
+							} else {
+								if (is_array($arrayquery['options_'.$key])) {
+									$sqlwhere[]= " (tse.".$key." IN ('".implode("','",$arrayquery['options_'.$key])."'))";
+								} elseif (!empty($arrayquery['options_'.$key])) {
+									$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+								}
+							}
 						}
 					}
 				}

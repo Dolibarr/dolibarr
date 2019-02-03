@@ -328,12 +328,12 @@ function getContact($authentication, $id, $ref_ext)
 	            $error++;
 	            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
 	        }
-         }
-         else
-         {
-             $error++;
-             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref_ext='.$ref_ext;
-         }
+        }
+        else
+        {
+            $error++;
+            $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref_ext='.$ref_ext;
+        }
     }
 
     if ($error)

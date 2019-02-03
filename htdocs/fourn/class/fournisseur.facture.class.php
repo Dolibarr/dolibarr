@@ -3218,4 +3218,4 @@ class SupplierInvoiceLine extends CommonObjectLine
             return -2;
         }
     }
- }
+}

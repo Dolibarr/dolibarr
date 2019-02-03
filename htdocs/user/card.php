@@ -269,7 +269,7 @@ if (empty($reshook)) {
 				if (GETPOST('password')) {
 					$object->setPassword($user, GETPOST('password'));
 				}
-						if (! empty($conf->categorie->enabled)) {
+				if (! empty($conf->categorie->enabled)) {
 					// Categories association
 					$usercats = GETPOST('usercats', 'array');
 					$object->setCategories($usercats);
@@ -1125,7 +1125,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			{
 				 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 			}
-		 }
+		}
 	}
 
 	// Other attributes
@@ -1639,8 +1639,8 @@ else
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (! method_exists($mc, 'formObjectOptions'))
 				{
-				     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-				     {
+				    if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+				    {
 				     	print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
 				     	if (empty($object->entity)) {
 				     		print $langs->trans("AllEntities");
@@ -1649,8 +1649,8 @@ else
 				     		print $mc->label;
 				     	}
 				     	print "</td></tr>\n";
-				     }
-			     }
+				    }
+                }
 			}
 
 			// Other attributes

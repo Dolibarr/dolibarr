@@ -328,15 +328,15 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
     	while ($row = $db->fetch_row($resql)) {
     		print '<tr><td>' . $row[0] . '</td>';
-    			for($i = 1; $i <= 12; $i ++) {
+            for($i = 1; $i <= 12; $i ++) {
     			print '<td class="right">' . price($row[$i]) . '</td>';
     		}
     		print '<td class="right"><b>' . price($row[13]) . '</b></td>';
     		print '</tr>';
     	}
-    	$db->free($resql);
+        $db->free($resql);
     } else {
-    	print $db->lasterror(); // Show last sql error
+        print $db->lasterror(); // Show last sql error
     }
     print "</table>\n";
     print '</div>';

@@ -3082,54 +3082,56 @@ class CommandeFournisseur extends CommonOrder
     					    }
     					    return 4;
     					}
-    				}elseif(! empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED) )
-				{//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
+    				} elseif (! empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED) ) {
+                        //set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
 
-					$close=0;
+					    $close=0;
 
-					if( count($diff_array) > 0 )
-					{//there are some difference between  the two arrays
+					    if( count($diff_array) > 0 )
+					    {
+                            //there are some difference between  the two arrays
 
-						//scan the array of results
-						foreach($diff_array as $key => $value)
-						{//if the quantity delivered is greater or equal to wish quantity
-							if($qtydelivered[$key] >= $qtywished[$key] )
-							{
-								$close++;
-							}
-						}
-					}
+						    //scan the array of results
+						    foreach($diff_array as $key => $value)
+						    {
+                                //if the quantity delivered is greater or equal to wish quantity
+							    if($qtydelivered[$key] >= $qtywished[$key] )
+							    {
+								    $close++;
+							    }
+						    }
+					    }
 
 
-					if($close == count($diff_array))
-					{//all the products are received equal or more than the wished quantity
-						if ($closeopenorder)
-    						{
-    							$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
-        						if ($ret<0) {
-        							return -1;
-        						}
-    					    		return 5;
-    						}
-    						else
-    						{
-    					   	 	//Diff => received partially
-    					  		$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
-							if ($ret<0) {
-								return -1;
-							}
-							return 4;
-						}
-					}
-					else
-					{//all the products are not received
-						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
-						if ($ret<0) {
-							return -1;
-						}
-						return 4;
-					}
-				}
+					    if($close == count($diff_array)) {
+                            //all the products are received equal or more than the wished quantity
+						    if ($closeopenorder) {
+    						    $ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+        					    if ($ret<0) {
+        						    return -1;
+        					    }
+    					        return 5;
+    					    }
+    					    else
+    					    {
+    					        //Diff => received partially
+    					        $ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							    if ($ret<0) {
+								    return -1;
+							    }
+							    return 4;
+						    }
+					    }
+					    else
+					    {
+                            //all the products are not received
+						    $ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						    if ($ret<0) {
+							    return -1;
+						    }
+						    return 4;
+					    }
+				    }
     				else
     				{
     					//Diff => received partially
@@ -3145,7 +3147,7 @@ class CommandeFournisseur extends CommonOrder
     	}
     	return 0;
     }
-	
+
     /**
      *	Load array this->receptions of lines of shipments with nb of products sent for each order line
      *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
@@ -3169,7 +3171,7 @@ class CommandeFournisseur extends CommonOrder
         if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
         if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
-        
+
 
         dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -3184,7 +3186,7 @@ class CommandeFournisseur extends CommonOrder
                 $i++;
             }
             $this->db->free();
-			
+
             return $num;
         }
         else
@@ -3319,7 +3321,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	            $this->total_ttc        = $objp->total_ttc;
 	            $this->product_type     = $objp->product_type;
 	            $this->special_code     = $objp->special_code;
-	
+
     	        $this->ref	            = $objp->product_ref;
 	            $this->product_ref      = $objp->product_ref;
 	            $this->product_libelle  = $objp->product_libelle;

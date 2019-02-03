@@ -66,22 +66,20 @@ print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
-if ($resql)
-{
-  if ($row = $db->fetch_row($resql) )
-    {
-      $num = $row[0];
+if ($resql) {
+    if ($row = $db->fetch_row($resql) ) {
+        $num = $row[0];
     }
-  print '<tr class="oddeven">';
-  print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-  print '</td></tr>';
-  print "</table>\n";
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+    print '<td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+    print '</td></tr>';
+    print "</table>\n";
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 

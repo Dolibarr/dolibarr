@@ -582,12 +582,12 @@ if ($resql)
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
-        		$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
+        	$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
 		}
-        	elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
-            		$arrayofmassactions['predelete'] = $langs->trans("Delete");
-        	}
-    	}
+        elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
+            $arrayofmassactions['predelete'] = $langs->trans("Delete");
+        }
+    }
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

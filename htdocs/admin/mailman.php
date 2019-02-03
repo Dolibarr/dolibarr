@@ -127,7 +127,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         if ($action == 'testunsubscribe')
         {
             $result=$mailmanspip->del_to_mailman($object);
-        			if ($result < 0)
+            if ($result < 0)
 			{
 				$error++;
 				setEventMessages($mailmanspip->error,$mailmanspip->errors,'errors');
@@ -160,7 +160,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
-    
+
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
     //$link.=$langs->trans("Disable");
@@ -200,10 +200,10 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     </script>';
 
     form_constantes($constantes,2);
-    
+
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
-    
+
     dol_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
@@ -213,7 +213,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 else
 {
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
-    
+
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
     $link.=img_picto($langs->trans("Disabled"),'switch_off');

@@ -1771,7 +1771,7 @@ class Project extends CommonObject
                 }
                 $this->db->free($resql);
                 return 1;
-         }
+        }
         else
         {
                 $this->error="Error ".$this->db->lasterror();

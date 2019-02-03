@@ -157,15 +157,16 @@ if ($mode)
 							'lastdate'=>$db->jdate($obj->lastdate)
                 );
             }
-	    if ($mode == 'memberbyregion') //+
+            if ($mode == 'memberbyregion') //+
             {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
+                $data[]=array(
+                    'label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+				    'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
+					'nb'=>$obj->nb,
+					'lastdate'=>$db->jdate($obj->lastdate)
                 );
-	}
+	        }
             if ($mode == 'memberbystate')
             {
                 $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),

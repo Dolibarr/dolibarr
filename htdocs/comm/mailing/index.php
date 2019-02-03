@@ -109,20 +109,18 @@ if (is_resource($handle))
                         print '<tr class="oddeven">';
 
                         $result=$db->query($sql);
-                        if ($result)
-                        {
-                          $num = $db->num_rows($result);
+                        if ($result) {
+                            $num = $db->num_rows($result);
 
-                          $i = 0;
+                            $i = 0;
 
-                          while ($i < $num )
-                            {
-                              $obj = $db->fetch_object($result);
-                              print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
-                              $i++;
+                            while ($i < $num ) {
+                                $obj = $db->fetch_object($result);
+                                print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
+                                $i++;
                             }
 
-                          $db->free($result);
+                            $db->free($result);
                         }
                         else
                         {
@@ -154,45 +152,42 @@ $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " ORDER BY m.date_creat DESC";
 $sql.= " LIMIT ".$limit;
 $result=$db->query($sql);
-if ($result)
-{
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
-  print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-  print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
-  print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
+if ($result) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
+    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
+    print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
-  $num = $db->num_rows($result);
-  if ($num > 0)
-  {
-      $i = 0;
+    $num = $db->num_rows($result);
+    if ($num > 0) {
+        $i = 0;
 
-    while ($i < $num )
-	{
-	  $obj = $db->fetch_object($result);
+        while ($i < $num ) {
+            $obj = $db->fetch_object($result);
 
-	  print '<tr class="oddeven">';
-	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
-	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
-	  print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';
-	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	  $mailstatic=new Mailing($db);
-	  print '<td class="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
-      print '</tr>';
-	  $i++;
-	}
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
+            print '<td>'.dol_trunc($obj->titre,38).'</td>';
+            print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';
+            print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
+            $mailstatic=new Mailing($db);
+            print '<td class="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
+            print '</tr>';
+            $i++;
+        }
     }
-  else
+    else
     {
-     print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-  print "</table><br>";
-  $db->free($result);
+    print "</table><br>";
+    $db->free($result);
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -207,7 +202,7 @@ if ($langs->file_exists("html/spam.html",0)) {
     print '</div>';
 
     print '<br>';
- }
+}
 
 // End of page
 llxFooter();

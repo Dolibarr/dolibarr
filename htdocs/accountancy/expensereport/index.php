@@ -326,11 +326,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     dol_syslog('htdocs/accountancy/expensereport/index.php');
     $resql = $db->query($sql);
     if ($resql) {
-    	$num = $db->num_rows($resql);
+        $num = $db->num_rows($resql);
 
     	while ($row = $db->fetch_row($resql)) {
     		print '<tr><td>' . $row[0] . '</td>';
-    			for($i = 1; $i <= 12; $i ++) {
+            for($i = 1; $i <= 12; $i ++) {
     			print '<td class="right">' . price($row[$i]) . '</td>';
     		}
     		print '<td class="right"><b>' . price($row[13]) . '</b></td>';

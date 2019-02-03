@@ -312,7 +312,7 @@ class CommandeFournisseurDispatch extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+            $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -391,7 +391,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	            $result=$this->call_trigger('LINERECEPTION_UPDATE',$user);
 	            if ($result < 0) $error++;
 	            //// End call triggers
-			 }
+			}
 		}
 
         // Commit or rollback

@@ -459,8 +459,8 @@ while ($i < min($num, $limit))
 	$adherent->statut=$obj->statut;
 	$adherent->login=$obj->login;
 	$adherent->photo=$obj->photo;
-  
-  $adht = new AdherentType($db);
+
+    $adht = new AdherentType($db);
 	$adht->fetch($obj->fk_type);
 
 	print '<tr class="oddeven">';
@@ -471,13 +471,13 @@ while ($i < min($num, $limit))
 		print '<td>'.$subscription->getNomUrl(1).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-  // Type
-  if (! empty($arrayfields['d.fk_type']['checked']))
+    // Type
+    if (! empty($arrayfields['d.fk_type']['checked']))
 	{
-    print '<td>';
-    if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
-    print '</td>';
-    if (! $i) $totalarray['nbfield']++;
+        print '<td>';
+        if ( ! empty($obj->fk_type) ) print $adht->getNomUrl(1);
+        print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Lastname

@@ -134,7 +134,7 @@ function LoadProducts(position, issubcat=false){
     if (currentcat=="") return;
 	pageproducts=0;
 	ishow=0; //product to show counter
-	
+
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent){
 			$("#prodesc"+ishow).text(val.label);
@@ -144,13 +144,13 @@ function LoadProducts(position, issubcat=false){
 			ishow++;
 		}
 	});
-	
-	idata=0; //product data counter	
+
+	idata=0; //product data counter
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -188,8 +188,8 @@ function MoreProducts(moreorless){
 		ishow=0; //product to show counter
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -373,11 +373,11 @@ function MoreActions(totalactions){
 	}
 	else if (pageactions==1){
 		pageactions=0;
-		for (i = 0; i <= totalactions; i++){ 
+		for (i = 0; i <= totalactions; i++){
 			if (i<9) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
-	}		
+	}
 }
 
 $( document ).ready(function() {
@@ -453,10 +453,9 @@ if ($conf->global->TAKEPOSCONNECTOR){
 
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook=$hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook))
-	{
-		$menus[$r++]=$reshook;
-	}
+if (!empty($reshook)) {
+    $menus[$r++]=$reshook;
+}
 
 ?>
 		<div class="div3">
@@ -498,17 +497,17 @@ foreach($menus as $menu) {
 <?php
 $count=0;
 while ($count<32)
-	{
-	?>
+{
+?>
 			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
 				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
 				<div class='description'>
 					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
 				</div>
 			</div>
-	<?php
-	$count++;
-	}
+<?php
+    $count++;
+}
 ?>
 		</div>
 	</div>

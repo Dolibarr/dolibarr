@@ -280,7 +280,7 @@ if (! empty($search_credit)) {
 if (! empty($search_lettering_code)) {
 	$filter['t.lettering_code'] = $search_lettering_code;
 	$param .= '&search_lettering_code=' . urlencode($search_lettering_code);
- }
+}
 
 
 if ($action == 'delbookkeeping') {

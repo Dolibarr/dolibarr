@@ -188,18 +188,17 @@ if ($action == 'create' || empty($action))
 	$total = $expensereport->total_ttc;
 
 	// autofill remainder amount
-	if (! empty($conf->use_javascript_ajax))
-		{
-			print "\n".'<script type="text/javascript" language="javascript">';
-			//Add js for AutoFill
-			print ' $(document).ready(function () {';
-			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
-                            var amount = $(this).data("value");
-							document.getElementById($(this).data(\'rowid\')).value = amount ;
-						});';
-			print '	});'."\n";
-			print '	</script>'."\n";
-		}
+	if (! empty($conf->use_javascript_ajax)) {
+		print "\n".'<script type="text/javascript" language="javascript">';
+		//Add js for AutoFill
+		print ' $(document).ready(function () {';
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                        var amount = $(this).data("value");
+						document.getElementById($(this).data(\'rowid\')).value = amount ;
+					});';
+        print "\t});\n";
+        print "</script>\n";
+    }
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
