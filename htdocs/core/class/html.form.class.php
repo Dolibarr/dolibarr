@@ -3830,7 +3830,7 @@ class Form
 		global $langs,$conf;
 		global $useglobalvars;
 
-		$more='';
+		$more='<!-- formconfirm -->';
 		$formconfirm='';
 		$inputok=array();
 		$inputko=array();
@@ -3875,7 +3875,7 @@ class Form
 					elseif ($input['type'] == 'select')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop left>';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop left">';
 						$more.=$this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
 						$more.='</td></tr>'."\n";
 					}
