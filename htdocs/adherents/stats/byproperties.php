@@ -38,7 +38,7 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'adherent','','','cotisation');
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
@@ -54,7 +54,7 @@ $langs->loadLangs(array("companies","members"));
 
 $memberstatic=new Adherent($db);
 
-llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('https://www.google.com/jsapi'));
+llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
 
 $title=$langs->trans("MembersStatisticsByProperties");
 
@@ -112,7 +112,7 @@ if (! count($data))
 }
 else
 {
-	print load_fiche_titre($langs->trans("MembersByNature"),'','');
+	print load_fiche_titre($langs->trans("MembersByNature"), '', '');
 }
 
 // Print array
@@ -133,7 +133,7 @@ foreach ($data as $val)
 	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+	print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

@@ -37,17 +37,17 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $langs->loadLangs(array("companies","members","other"));
 
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'adherent',$id);
+$result=restrictedArea($user, 'adherent', $id);
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -83,7 +83,7 @@ $form = new Form($db);
 
 $title=$langs->trans("Member") . " - " . $langs->trans("Documents");
 $helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id > 0)
 {
@@ -92,7 +92,7 @@ if ($id > 0)
 	{
 
 		// Build file list
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -144,7 +144,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 		//Total taille
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 		print '</table>';
 

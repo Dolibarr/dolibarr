@@ -65,7 +65,7 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+        if( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -191,7 +191,7 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+        if( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -231,12 +231,12 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+        if ( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         if (! $membertype->delete($membertype->id)) {
-            throw new RestException(401,'error when deleting member type');
+            throw new RestException(401, 'error when deleting member type');
         }
 
         return array(

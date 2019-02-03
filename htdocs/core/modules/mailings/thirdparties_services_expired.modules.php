@@ -87,7 +87,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
     function add_to_target($mailing_id)
     {
         // phpcs:enable
-        $key=GETPOST('filter','int');
+        $key=GETPOST('filter', 'int');
 
         $cibles = array();
         $j = 0;
@@ -135,8 +135,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					'lastname' => $obj->name,	// For thirdparties, lastname must be name
                     'firstname' => '',			// For thirdparties, firstname is ''
 					'other' =>
-                    ('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
-                    ('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
+                    ('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture), 'day')).';'.
+                    ('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite), 'day')).';'.
                     ('Contract='.$obj->fk_contrat).';'.
                     ('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
@@ -201,7 +201,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql.= " WHERE s.entity IN (".getEntity('societe').")";
         $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-        $sql.= " AND p.ref IN ('".join("','",$this->arrayofproducts)."')";
+        $sql.= " AND p.ref IN ('".join("','", $this->arrayofproducts)."')";
         $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 
         $a=parent::getNbOfRecipients($sql);
@@ -240,6 +240,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('', "company").'</a>';
     }
 }

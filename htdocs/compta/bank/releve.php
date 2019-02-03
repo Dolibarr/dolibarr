@@ -45,20 +45,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('account','int');
-$ref=GETPOST('ref','alpha');
-$dvid=GETPOST('dvid','alpha');
-$numref=GETPOST('num','alpha');
-$ve=GETPOST("ve",'alpha');
-$brref=GETPOST('brref','alpha');
-$oldbankreceipt=GETPOST('oldbankreceipt','alpha');
-$newbankreceipt=GETPOST('newbankreceipt','alpha');
+$id=GETPOST('account', 'int');
+$ref=GETPOST('ref', 'alpha');
+$dvid=GETPOST('dvid', 'alpha');
+$numref=GETPOST('num', 'alpha');
+$ve=GETPOST("ve", 'alpha');
+$brref=GETPOST('brref', 'alpha');
+$oldbankreceipt=GETPOST('oldbankreceipt', 'alpha');
+$newbankreceipt=GETPOST('newbankreceipt', 'alpha');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
+$result=restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
 {
@@ -73,11 +73,11 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-$pageplusone = GETPOST("pageplusone",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+$pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -233,13 +233,13 @@ if ($action=="dl" && $numref > 0)
 
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
                                 // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
-                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
+                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
                                 // build list of files with full path
                                 $files = array();
                                 foreach($listoffiles as $filefound)
                                 {
-                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    if (strstr($filefound["name"], $facturestatic->ref))
                                     {
                                         $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
                                         break;
@@ -270,13 +270,13 @@ if ($action=="dl" && $numref > 0)
 
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
                                 // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
-                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
+                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
                                 // build list of files with full path
                                 $files = array();
                                 foreach($listoffiles as $filefound)
                                 {
-                                    if (strstr($filefound["name"],$facturestatic->ref))
+                                    if (strstr($filefound["name"], $facturestatic->ref))
                                     {
                                         $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
                                         break;
@@ -352,7 +352,7 @@ if ($action=="dl" && $numref > 0)
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
 $helpurl = "";
-llxHeader('',$title,$helpurl);
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $societestatic=new Societe($db);
@@ -381,7 +381,7 @@ if (empty($numref))
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.fk_account = ".$object->id;
-	$sql.=$db->order($sortfield,$sortorder);
+	$sql.=$db->order($sortfield, $sortorder);
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
@@ -391,7 +391,7 @@ if (empty($numref))
 		$nbtotalofrecords = $db->num_rows($result);
 	}
 
-	$sql.= $db->plimit($conf->liste_limit+1,$offset);
+	$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 	$result = $db->query($sql);
 	if ($result)
@@ -401,7 +401,7 @@ if (empty($numref))
 
 		// Onglets
 		$head=bank_prepare_head($object);
-		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
+		dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -424,7 +424,7 @@ if (empty($numref))
 		print '</div>';
 
 
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows, $totalnboflines, '');
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -443,7 +443,7 @@ if (empty($numref))
 		$balancestart=array();
 		$content=array();
 
-		while ($i < min($numrows,$conf->liste_limit))
+		while ($i < min($numrows, $conf->liste_limit))
 		{
 			$objp = $db->fetch_object($result);
 
@@ -480,7 +480,7 @@ if (empty($numref))
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td class="right">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -494,7 +494,7 @@ if (empty($numref))
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
+				print '<td class="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</td>';
 
 				print '<td align="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
@@ -589,11 +589,11 @@ else
 			print '<tr class="oddeven">';
 
 			// Date operation
-			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
+			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
 
 			// Date de valeur
 			print '<td align="center" valign="center" class="nowrap">';
-			print dol_print_date($db->jdate($objp->dv),"day") .' ';
+			print dol_print_date($db->jdate($objp->dv), "day") .' ';
 			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
 			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
@@ -618,7 +618,7 @@ else
 			// Description
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg=array();
-			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
+			preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 			else print $objp->label;
 			print '</a>';
@@ -649,7 +649,7 @@ else
 				elseif ($links[$key]['type']=='payment_sc')
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
 					$newline=0;
@@ -663,7 +663,7 @@ else
 				elseif ($links[$key]['type']=='payment_salary')
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
-					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
 					print $langs->trans("Payment");
 					print '</a>';
 					$newline=0;
@@ -676,11 +676,11 @@ else
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
 						print ' ('.$langs->trans("from").' ';
-						print $bankstatic->getNomUrl(1,'transactions');
+						print $bankstatic->getNomUrl(1, 'transactions');
 						print ' '.$langs->trans("toward").' ';
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
-						print $bankstatic->getNomUrl(1,'');
+						print $bankstatic->getNomUrl(1, '');
 						print ')';
 					}
 					else
@@ -688,12 +688,12 @@ else
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
 						print ' ('.$langs->trans("from").' ';
-						print $bankstatic->getNomUrl(1,'');
+						print $bankstatic->getNomUrl(1, '');
 						print ' '.$langs->trans("toward").' ';
 						$banklinestatic->fetch($links[$key]['url_id']);
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
-						print $bankstatic->getNomUrl(1,'transactions');
+						print $bankstatic->getNomUrl(1, 'transactions');
 						print ')';
 					}
 				}
@@ -705,21 +705,21 @@ else
 				}
 				elseif ($links[$key]['type']=='member') {
 					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowMember'),'user').' ';
+					print img_object($langs->trans('ShowMember'), 'user').' ';
 					print $links[$key]['label'];
 					print '</a>';
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='user') {
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowUser'),'user').' ';
+					print img_object($langs->trans('ShowUser'), 'user').' ';
 					print $links[$key]['label'];
 					print '</a>';
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='sc') {
 					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('ShowBill'),'bill').' ';
+					print img_object($langs->trans('ShowBill'), 'bill').' ';
 					print $langs->trans("SocialContribution");
 					print '</a>';
 					$newline=0;

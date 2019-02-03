@@ -67,7 +67,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $langs;
 		$langs->load("bills");
-		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote,$this->prefixdeposit);
+		return $langs->trans('TerreNumRefModelDesc1', $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
 	}
 
 	/**
@@ -105,12 +105,12 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($fayymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+		if ($fayymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 
@@ -127,11 +127,11 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($fayymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+		if ($fayymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 
@@ -148,11 +148,11 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($fayymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+		if ($fayymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 
@@ -197,7 +197,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($mode == 'last')
 		{
     		if ($max >= (pow(10, 4) - 1)) $num=$max;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    		else $num = sprintf("%04s",$max);
+    		else $num = sprintf("%04s", $max);
 
             $ref='';
             $sql = "SELECT ref as ref";
@@ -220,15 +220,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 		elseif ($mode == 'next')
 		{
 			$date=$invoice->date;	// This is invoice date (not creation date)
-    		$yymm = strftime("%y%m",$date);
+    		$yymm = strftime("%y%m", $date);
 
     		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    		else $num = sprintf("%04s",$max+1);
+    		else $num = sprintf("%04s", $max+1);
 
     		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
     		return $prefix.$yymm."-".$num;
 		}
-		else dol_print_error('','Bad parameter for getNextValue');
+		else dol_print_error('', 'Bad parameter for getNextValue');
 	}
 
 	/**
@@ -241,6 +241,6 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
-		return $this->getNextValue($objsoc,$objforref,$mode);
+		return $this->getNextValue($objsoc, $objforref, $mode);
 	}
 }

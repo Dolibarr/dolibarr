@@ -77,15 +77,15 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_FOURNISSEUR_ORCHIDEE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -108,7 +108,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc,'');
+    	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -140,7 +140,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc,$object->date_commande);
+		$numFinal=get_next_value($db, $mask, 'commande_fournisseur', 'ref', '', $objsoc, $object->date_commande);
 
 		return  $numFinal;
 	}
@@ -157,6 +157,6 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
     function commande_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$object);
+        return $this->getNextValue($objsoc, $object);
     }
 }

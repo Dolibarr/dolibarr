@@ -43,7 +43,7 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
+$result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
@@ -58,7 +58,7 @@ $hookmanager->initHooks(array('banktreso','globalcard'));
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
 $helpurl = "";
-llxHeader('',$title,$helpurl);
+llxHeader('', $title, $helpurl);
 
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);
@@ -85,7 +85,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 	if ($_GET["ref"])
 	{
-		$result=$object->fetch(0,$_GET["ref"]);
+		$result=$object->fetch(0, $_GET["ref"]);
 		$_GET["account"]=$object->id;
 	}
 
@@ -197,7 +197,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Sort array
 	if (! $error)
 	{
-		array_multisort($tab_sqlobjOrder,$tab_sqlobj);
+		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
 
 		// Apply distinct filter
 		foreach ($tab_sqlobj as $key=>$value) {
@@ -230,11 +230,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$facturefournstatic->ref=$ref;
 					$facturefournstatic->id=$obj->objid;
 					$facturefournstatic->type=$obj->type;
-					$ref = $facturefournstatic->getNomUrl(1,'');
+					$ref = $facturefournstatic->getNomUrl(1, '');
 
 					$societestatic->id = $obj->socid;
 					$societestatic->name = $obj->name;
-					$refcomp=$societestatic->getNomUrl(1,'',24);
+					$refcomp=$societestatic->getNomUrl(1, '', 24);
 
 					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
@@ -244,11 +244,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->objid;
 				$facturestatic->type=$obj->type;
-				$ref = $facturestatic->getNomUrl(1,'');
+				$ref = $facturestatic->getNomUrl(1, '');
 
 				$societestatic->id = $obj->socid;
 				$societestatic->name = $obj->name;
-				$refcomp=$societestatic->getNomUrl(1,'',24);
+				$refcomp=$societestatic->getNomUrl(1, '', 24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done
 				$paiement+= $facturestatic->getSumDepositsUsed();
@@ -259,7 +259,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
 				$socialcontribstatic->lib=$obj->type;
-				$ref = $socialcontribstatic->getNomUrl(1,24);
+				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
@@ -282,7 +282,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     			// Show line
     			print '<tr class="oddeven">';
     			print '<td>';
-    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr),"day");
+    			if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr), "day");
     			else print $langs->trans("NotDefined");
     			print "</td>";
     			print "<td>".$ref."</td>";

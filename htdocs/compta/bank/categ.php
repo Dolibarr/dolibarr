@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$action=GETPOST('action','aZ09');
-$optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
+$action=GETPOST('action', 'aZ09');
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -128,7 +128,7 @@ if ($result)
 
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST('action','aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
+		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
 		{
 			print "<td colspan=2>";
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';

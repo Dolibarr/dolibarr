@@ -141,12 +141,12 @@ class box_supplier_orders extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
+                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut, 3),
                     );
 
                     $line++;

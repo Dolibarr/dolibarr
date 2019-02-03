@@ -558,7 +558,7 @@ class Mailing extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -595,7 +595,7 @@ class Mailing extends CommonObject
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -610,7 +610,7 @@ class Mailing extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -633,31 +633,31 @@ class Mailing extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
 		}
 	}
 
@@ -687,37 +687,37 @@ class Mailing extends CommonObject
 		elseif ($mode == 2)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
-			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
-			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
-			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"), 'statut6');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"), 'statut4');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"), 'statut3');
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
-			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
-			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
-			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"), 'statut6');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"), 'statut4');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"), 'statut3');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
-			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
-			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
-			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"), 'statut6');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"), 'statut4');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"), 'statut3');
 		}
 		elseif ($mode == 5)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
-		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
-		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
-		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
+		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"), 'statut6');
+		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"), 'statut4');
+		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"), 'statut3');
 		}
 		elseif ($mode == 6)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
-		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
-		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
-		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
+		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"), 'statut6');
+		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"), 'statut4');
+		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"), 'statut3');
 		}
 	}
 }

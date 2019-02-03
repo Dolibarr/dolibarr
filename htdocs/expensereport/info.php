@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->load("trips");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
@@ -45,12 +45,12 @@ $form = new Form($db);
 
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
 $helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id > 0 || ! empty($ref))
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$ref);
+	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);

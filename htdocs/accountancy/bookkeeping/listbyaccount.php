@@ -62,10 +62,10 @@ $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page','int');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -104,7 +104,7 @@ $object = new BookKeeping($db);
 /*
  * Action
  */
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_doc_date = '';
 	$search_accountancy_code = '';
@@ -382,8 +382,8 @@ while ($i < min($num, $limit))
 	print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
 	$accountingjournal = new AccountingJournal($db);
-	$result = $accountingjournal->fetch('',$line->code_journal);
-	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $line->code_journal);
+	$result = $accountingjournal->fetch('', $line->code_journal);
+	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 	print '<td align="center">' . $journaltoshow . '</td>';
 
 	print '<td align="center">';

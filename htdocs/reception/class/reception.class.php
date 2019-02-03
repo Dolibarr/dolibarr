@@ -143,14 +143,14 @@ class Reception extends CommonObject
 
 	        if (! $mybool)
 	        {
-		        dol_print_error('',"Failed to include file ".$file);
+		        dol_print_error('', "Failed to include file ".$file);
 		        return '';
 	        }
 
 			$obj = new $classname();
 
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			if ( $numref != "")
 			{
@@ -158,7 +158,7 @@ class Reception extends CommonObject
 			}
 			else
 			{
-				dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				dol_print_error($this->db, get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
         }
@@ -285,7 +285,7 @@ class Reception extends CommonObject
 				$action='add';
 				$hookmanager->initHooks(array('receptiondao'));
 				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				if (empty($reshook))
 				{
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -302,7 +302,7 @@ class Reception extends CommonObject
 				if (! $error && ! $notrigger)
 				{
                     // Call trigger
-                    $result=$this->call_trigger('RECEPTION_CREATE',$user);
+                    $result=$this->call_trigger('RECEPTION_CREATE', $user);
                     if ($result < 0) { $error++; }
                     // End call triggers
 
@@ -453,8 +453,8 @@ class Reception extends CommonObject
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
+				$this->fetch_optionals($this->id, $extralabels);
 
 				/*
 				 * Lines
@@ -588,7 +588,7 @@ class Reception extends CommonObject
 						// line without batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr",$numref));
+						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref));
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
@@ -602,7 +602,7 @@ class Reception extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 					    // Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
-						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr",$numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+						$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 						if ($result < 0) {
 							$error++;
 							$this->errors[]=$mouvS->error;
@@ -631,7 +631,7 @@ class Reception extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('RECEPTION_VALIDATE',$user);
+            $result=$this->call_trigger('RECEPTION_VALIDATE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -657,11 +657,11 @@ class Reception extends CommonObject
 					{
 					    dol_syslog("Rename ok");
                         // Rename docs starting with $oldref with $newref
-                        $listoffiles=dol_dir_list($conf->reception->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+                        $listoffiles=dol_dir_list($conf->reception->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
                         foreach($listoffiles as $fileentry)
                         {
                         	$dirsource=$fileentry['name'];
-                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+                        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
                         	$dirsource=$fileentry['path'].'/'.$dirsource;
                         	$dirdest=$fileentry['path'].'/'.$dirdest;
                         	@rename($dirsource, $dirdest);
@@ -834,7 +834,7 @@ class Reception extends CommonObject
 			if (! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('RECEPTION_MODIFY',$user);
+                $result=$this->call_trigger('RECEPTION_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 	    	}
@@ -903,7 +903,7 @@ class Reception extends CommonObject
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
 
-					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref),'', $obj->eatby, $obj->sellby, $obj->batch);  // Price is set to 0, because we don't want to see WAP changed
+					$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch);  // Price is set to 0, because we don't want to see WAP changed
 				}
 			}
 			else
@@ -931,7 +931,7 @@ class Reception extends CommonObject
 					if ($this->db->query($sql))
 					{
 						// Call trigger
-						$result=$this->call_trigger('RECEPTION_DELETE',$user);
+						$result=$this->call_trigger('RECEPTION_DELETE', $user);
 						if ($result < 0) { $error++; }
 						// End call triggers
 
@@ -972,7 +972,7 @@ class Reception extends CommonObject
 								{
 									if (!dol_delete_dir_recursive($dir))
 									{
-										$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+										$this->error=$langs->trans("ErrorCanNotDeleteDir", $dir);
 										return 0;
 									}
 								}
@@ -1125,7 +1125,7 @@ class Reception extends CommonObject
      */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1155,21 +1155,21 @@ class Reception extends CommonObject
 		}
 		if ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'),'statut6');
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'),'statut6').' '.$langs->trans('StatusReceptionProcessed');
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'),'statut6');
+			if ($statut==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+			if ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+			if ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
 		}
 	}
 
@@ -1378,7 +1378,7 @@ class Reception extends CommonObject
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }
-        if ($resql < 0) dol_print_error($this->db,'');
+        if ($resql < 0) dol_print_error($this->db, '');
     }
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1443,7 +1443,7 @@ class Reception extends CommonObject
 		if (!empty($tracking) && !empty($value))
 		{
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
+			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>', $url, $url);
 		}
 		else
 		{
@@ -1541,7 +1541,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr",$numref));
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1553,7 +1553,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr",$numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
@@ -1573,7 +1573,7 @@ class Reception extends CommonObject
 			// Call trigger
 			if (! $error)
 			{
-    			$result=$this->call_trigger('RECEPTION_CLOSED',$user);
+    			$result=$this->call_trigger('RECEPTION_CLOSED', $user);
     			if ($result < 0) {
     			    $error++;
     			}
@@ -1623,7 +1623,7 @@ class Reception extends CommonObject
 			$this->billed=1;
 
 			// Call trigger
-			$result=$this->call_trigger('RECEPTION_BILLED',$user);
+			$result=$this->call_trigger('RECEPTION_BILLED', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -1706,7 +1706,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref));
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1718,7 +1718,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1737,7 +1737,7 @@ class Reception extends CommonObject
 			if (! $error)
 			{
     			// Call trigger
-    			$result=$this->call_trigger('RECEPTION_REOPEN',$user);
+    			$result=$this->call_trigger('RECEPTION_REOPEN', $user);
     			if ($result < 0) {
     				$error++;
     			}
@@ -1746,7 +1746,7 @@ class Reception extends CommonObject
 			if($this->origin == 'order_supplier'){
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
-				$commande->setStatus($user,4);
+				$commande->setStatus($user, 4);
 			}
 		} else {
 			$error++;
@@ -1843,7 +1843,7 @@ class Reception extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr",$this->ref));
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1856,7 +1856,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr",$this->ref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1874,7 +1874,7 @@ class Reception extends CommonObject
 
             if (!$error) {
             	// Call trigger
-            	$result=$this->call_trigger('RECEPTION_UNVALIDATE',$user);
+            	$result=$this->call_trigger('RECEPTION_UNVALIDATE', $user);
             	if ($result < 0) $error++;
             }
 			if ($this->origin == 'order_supplier')

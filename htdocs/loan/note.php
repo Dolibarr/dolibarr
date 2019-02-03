@@ -34,13 +34,13 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
@@ -64,7 +64,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($id > 0)
 {

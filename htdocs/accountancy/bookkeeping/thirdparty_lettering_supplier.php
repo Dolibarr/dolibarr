@@ -57,9 +57,9 @@ if ($sortorder == "")
 if ($sortfield == "")
 	$sortfield = "bk.doc_date";
 
-$search_year = GETPOST("search_year",'int');
-$search_doc_type = GETPOST("search_doc_type",'alpha');
-$search_doc_ref = GETPOST("search_doc_ref",'alpha');
+$search_year = GETPOST("search_year", 'int');
+$search_doc_type = GETPOST("search_doc_type", 'alpha');
+$search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 
 $lettering = GETPOST('lettering', 'alpha');
 if (!empty($lettering)) {
@@ -68,7 +68,7 @@ if (!empty($lettering)) {
 
 // Did we click on purge search criteria ?
 // All tests are required to be compatible with all browsers
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha'))
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha'))
 {
 	$search_year='';
 	$search_doc_type='';
@@ -123,7 +123,7 @@ $formaccounting = new FormAccounting($db);
 
 $title=$object->name." - ".$langs->trans('TabLetteringSupplier');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -149,7 +149,7 @@ if (dol_strlen($search_year)) {
 	$sql .= " AND ( bk.doc_date BETWEEN  '".$db->idate($date_start)."' AND  '".$db->idate($date_end)."' )";
 }
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $debit = 0;
 $credit = 0;
@@ -196,14 +196,14 @@ if ($resql) {
 
 	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Docref", $_SERVER["PHP_SELF"], "bk.doc_ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Docref", $_SERVER["PHP_SELF"], "bk.doc_ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder);
 	print "</tr>\n";
 

@@ -74,7 +74,7 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -387,7 +387,7 @@ class Shipments extends DolibarrApi
     		throw new RestException(404, 'Shipment not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -423,7 +423,7 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
@@ -458,7 +458,7 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -503,7 +503,7 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -519,7 +519,7 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+	if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
        }
 

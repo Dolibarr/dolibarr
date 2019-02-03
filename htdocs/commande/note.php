@@ -35,15 +35,15 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'orders'));
 
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$id,'');
+$result=restrictedArea($user, 'commande', $id, '');
 
 
 $object = new Commande($db);
@@ -67,7 +67,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 

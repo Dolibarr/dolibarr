@@ -8,7 +8,8 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 [*.php]
-indent_style = tab
+indent_style = space
+trim_trailing_whitespace = true
 [*.js]
 indent_style = tab
 [*.css]

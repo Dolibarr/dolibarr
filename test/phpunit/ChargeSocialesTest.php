@@ -132,7 +132,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new ChargeSociales($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user,$langs,$conf);
+    	$result=$localobject->create($user, $langs, $conf);
     	print __METHOD__." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);

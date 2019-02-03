@@ -34,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id   = GETPOST('id','int');
-$label= GETPOST('label','alpha');
-$type = GETPOST('type','az09');
-$action=GETPOST('action','aZ09');
-$confirm    = GETPOST('confirm','alpha');
-$removeelem = GETPOST('removeelem','int');
-$elemid     = GETPOST('elemid','alpha');
+$id   = GETPOST('id', 'int');
+$label= GETPOST('label', 'alpha');
+$type = GETPOST('type', 'az09');
+$action=GETPOST('action', 'aZ09');
+$confirm    = GETPOST('confirm', 'alpha');
+$removeelem = GETPOST('removeelem', 'int');
+$elemid     = GETPOST('elemid', 'alpha');
 
 if ($id == "" && $label == "")
 {
-	dol_print_error('','Missing parameter id');
+	dol_print_error('', 'Missing parameter id');
 	exit();
 }
 
@@ -54,11 +54,11 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result=$object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db,$object->error); exit;
+	dol_print_error($db, $object->error); exit;
 }
 $object->fetch_optionals();
 if ($result <= 0) {
-	dol_print_error($db,$object->error); exit;
+	dol_print_error($db, $object->error); exit;
 }
 
 $type=$object->type;
@@ -75,7 +75,7 @@ $hookmanager->initHooks(array('categorycard','globalcard'));
  *	Actions
  */
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0)
 {
@@ -127,8 +127,8 @@ if ($id > 0 && $removeelem > 0)
         $elementtype = 'project';
     }
 
-	$result=$object->del_type($tmpobject,$elementtype);
-	if ($result < 0) dol_print_error('',$object->error);
+	$result=$object->del_type($tmpobject, $elementtype);
+	if ($result < 0) dol_print_error('', $object->error);
 }
 
 if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
@@ -152,10 +152,10 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	$elementtype = 'product';
 
 	// TODO Add into categ
-	$result=$object->add_type($newobject,$elementtype);
+	$result=$object->add_type($newobject, $elementtype);
 	if ($result >= 0)
 	{
-		setEventMessages($langs->trans("WasAddedSuccessfully",$newobject->ref), null, 'mesgs');
+		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
 	}
 	else
 	{
@@ -165,7 +165,7 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 		}
 		else
 		{
-			setEventMessages($object->error,$object->errors,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -180,7 +180,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $helpurl='';
-llxHeader("",$langs->trans("Categories"),$helpurl);
+llxHeader("", $langs->trans("Categories"), $helpurl);
 
 if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
@@ -192,7 +192,7 @@ elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCatego
 elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
-$head = categories_prepare_head($object,$type);
+$head = categories_prepare_head($object, $type);
 
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
@@ -282,7 +282,7 @@ else
 	if ($user->rights->categorie->creer)
 	{
 		print "<a href='".DOL_URL_ROOT."/categories/card.php?action=create&amp;catorigin=".$object->id."&amp;socid=".$object->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type)."'>";
-		print img_picto($langs->trans("Create"),'filenew');
+		print img_picto($langs->trans("Create"), 'filenew');
 		print "</a>";
 	}
 	print "</td>";
@@ -344,7 +344,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td width="40%">';
 			print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
-			print $form->select_produits('','elemid','',0,0,-1,2,'',1);
+			print $form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
 			print '</td><td>';
 			print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
@@ -514,7 +514,7 @@ if ($type == Categorie::TYPE_MEMBER)
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
-				print $member->getNomUrl(1,0);
+				print $member->getNomUrl(1, 0);
 				print "</td>\n";
 				print '<td class="tdtop">'.$member->lastname."</td>\n";
 				print '<td class="tdtop">'.$member->firstname."</td>\n";
@@ -566,7 +566,7 @@ if ($type == Categorie::TYPE_CONTACT)
 
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
-				print $contact->getNomUrl(1,'category');
+				print $contact->getNomUrl(1, 'category');
 				print "</td>\n";
 				// Link to delete from category
 				print '<td class="right">';
@@ -616,7 +616,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
             {
                 print "\t".'<tr class="oddeven">'."\n";
                 print '<td class="nowrap" valign="top">';
-                print $account->getNomUrl(1,0);
+                print $account->getNomUrl(1, 0);
                 print "</td>\n";
                 print '<td class="tdtop">'.$account->bank."</td>\n";
                 print '<td class="tdtop">'.$account->number."</td>\n";

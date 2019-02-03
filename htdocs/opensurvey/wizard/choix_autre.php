@@ -69,7 +69,7 @@ if (isset($_POST["confirmecreation"]))
 		}
 	}
 
-	$toutchoix=substr("$toutchoix",1);
+	$toutchoix=substr("$toutchoix", 1);
 	$_SESSION["toutchoix"]=$toutchoix;
 
 	//test de remplissage des cases

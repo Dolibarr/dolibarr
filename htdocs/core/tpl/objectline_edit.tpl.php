@@ -40,7 +40,7 @@ if (empty($object) || ! is_object($object))
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -52,7 +52,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element, array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (empty($user->rights->margins->creer)) $colspan++;
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
 ?>
@@ -78,8 +78,8 @@ $coldisplay=-1; // We remove first td
 
 		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
-		if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
-		else print img_object($langs->trans('ShowProduct'),'product');
+		if ($line->product_type==1) echo img_object($langs->trans('ShowService'), 'service');
+		else print img_object($langs->trans('ShowProduct'), 'product');
 		echo ' '.$line->ref;
 		?>
 		</a>
@@ -96,7 +96,7 @@ $coldisplay=-1; // We remove first td
 	{
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
 	    $parameters=array('line'=>$line,'fk_parent_line'=>$fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
-	    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
+	    $reshook=$hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	// Do not allow editing during a situation cycle
@@ -109,7 +109,7 @@ $coldisplay=-1; // We remove first td
 		$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 		$toolbarname='dolibarr_details';
 		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-		$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
+		$doleditor=new DolEditor('product_desc', $line->description, '', 164, $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
@@ -145,7 +145,7 @@ $coldisplay=-1; // We remove first td
 	}
 
 	$coldisplay++;
-	print '<td align="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht, 0, '', 0):price($line->subprice, 0, '', 0)) . '"';
 	if ($line->fk_prev_id != null) print ' readonly';
 	print '></td>';
 
@@ -156,7 +156,7 @@ $coldisplay=-1; // We remove first td
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
-		print '<td align="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
+		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc, 0, '', 0):'').'"';
 		if ($line->fk_prev_id != null) print ' readonly';
 		print '></td>';
 	}
@@ -208,13 +208,13 @@ $coldisplay=-1; // We remove first td
 			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
+			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
 		</td>
 		<?php } ?>
 	    <?php if ($user->rights->margins->creer) {
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				  {
-				    $margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate","alpha",2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				    $margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate", "alpha", 2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -224,7 +224,7 @@ $coldisplay=-1; // We remove first td
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
-				    $mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):price($line->marque_tx));
+				    $mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';

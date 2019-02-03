@@ -33,7 +33,7 @@ function showOnlineSignatureUrl($type, $ref)
 
 	$servicename='Online';
 
-	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature",$servicename).'<br>';
+	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'<br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinesignatureurl", 0);
@@ -53,7 +53,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 {
 	global $conf, $db, $langs;
 
-	$ref=str_replace(' ','',$ref);
+	$ref=str_replace(' ', '', $ref);
 	$out='';
 
 	if ($type == 'proposal')

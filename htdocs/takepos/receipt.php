@@ -29,8 +29,8 @@ $langs->loadLangs(array("main", "cashdesk"));
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid','int');
-$place=GETPOST('place','int');
+$facid=GETPOST('facid', 'int');
+$place=GETPOST('place', 'int');
 if ($place>0){
     $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
@@ -55,7 +55,7 @@ $object->fetch($facid);
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_HEADER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER,$substitutionarray);
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
 	echo $newfreetext;
 }
 ?>
@@ -115,7 +115,7 @@ print $object->ref;
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_FOOTER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER,$substitutionarray);
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
 	echo $newfreetext;
 }
 ?>

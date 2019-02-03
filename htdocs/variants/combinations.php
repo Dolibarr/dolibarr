@@ -35,17 +35,17 @@ $price_impact = (float) GETPOST('price_impact');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 
-$action=GETPOST('action','alpha');
-$massaction=GETPOST('massaction','alpha');
-$show_files=GETPOST('show_files','int');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$cancel = GETPOST('cancel','alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -79,7 +79,7 @@ if ($action == 'add')
 	unset($selectedvariant);
 	unset($_SESSION['addvariant_'.$object->id]);
 }
-if ($action == 'create' && GETPOST('selectvariant','alpha'))	// We click on select combination
+if ($action == 'create' && GETPOST('selectvariant', 'alpha'))	// We click on select combination
 {
     $action = 'add';
     if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
@@ -358,7 +358,7 @@ if (! empty($id) || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	if ($object->weight != '')
 	{
-		print $object->weight." ".measuring_units_string($object->weight_units,"weight");
+		print $object->weight." ".measuring_units_string($object->weight_units, "weight");
 	}
 	else
 	{

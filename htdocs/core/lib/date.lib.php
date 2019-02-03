@@ -83,10 +83,10 @@ function getServerTimeZoneString()
 function getServerTimeZoneInt($refgmtdate = 'now')
 {
     global $conf;
-    if (method_exists('DateTimeZone','getOffset'))
+    if (method_exists('DateTimeZone', 'getOffset'))
     {
         // Method 1 (include daylight)
-        $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
+        $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow, '%Y'); $monthref=dol_print_date($gmtnow, '%m'); $dayref=dol_print_date($gmtnow, '%d');
         if ($refgmtdate == 'now') $newrefgmtdate=$yearref.'-'.$monthref.'-'.$dayref;
         elseif ($refgmtdate == 'summer') $newrefgmtdate=$yearref.'-08-01';
         else $newrefgmtdate=$yearref.'-01-01';
@@ -99,7 +99,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
     else
     {
     	$tmp=0;
-    	dol_print_error('','PHP version must be 5.3+');
+    	dol_print_error('', 'PHP version must be 5.3+');
     }
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
@@ -230,25 +230,25 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 		{
 			if ($iSecond || empty($sDay))
 			{
-				$sTime.= dol_print_date($iSecond,'hourduration',true);
+				$sTime.= dol_print_date($iSecond, 'hourduration', true);
 			}
 		}
 		elseif ($format == 'allhourminsec')
 		{
-		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60))).':'.sprintf("%02d",((int) ($iSecond % 60)));
+		    return sprintf("%02d", ($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
 		}
 		elseif ($format == 'allhourmin')
 		{
-		    return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d",((int) floor(($iSecond % 3600)/60)));
+		    return sprintf("%02d", ($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
 		}
 		elseif ($format == 'allhour')
 		{
-			return sprintf("%02d",($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
+			return sprintf("%02d", ($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}
 	}
 	elseif ($format == 'hour')	// only hour part
 	{
-		$sTime=dol_print_date($iSecond,'%H',true);
+		$sTime=dol_print_date($iSecond, '%H', true);
 	}
 	elseif ($format == 'fullhour')
 	{
@@ -262,19 +262,19 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	}
 	elseif ($format == 'min')	// only min part
 	{
-		$sTime=dol_print_date($iSecond,'%M',true);
+		$sTime=dol_print_date($iSecond, '%M', true);
 	}
     elseif ($format == 'sec')	// only sec part
     {
-        $sTime=dol_print_date($iSecond,'%S',true);
+        $sTime=dol_print_date($iSecond, '%S', true);
     }
     elseif ($format == 'month')	// only month part
     {
-        $sTime=dol_print_date($iSecond,'%m',true);
+        $sTime=dol_print_date($iSecond, '%m', true);
     }
     elseif ($format == 'year')	// only year part
     {
-        $sTime=dol_print_date($iSecond,'%Y',true);
+        $sTime=dol_print_date($iSecond, '%Y', true);
     }
     return trim($sTime);
 }
@@ -330,7 +330,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
 function dol_stringtotime($string, $gm = 1)
 {
     // Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
-    if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
+    if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg))
     {
         dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
         // Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
@@ -343,12 +343,12 @@ function dol_stringtotime($string, $gm = 1)
         $ssec = $reg[6];
         if ($syear < 50) $syear+=1900;
         if ($syear >= 50 && $syear < 100) $syear+=2000;
-        $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
+        $string=sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
     }
     elseif (
-    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
-    	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
-   		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ
+    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i', $string, $reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+    	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i', $string, $reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
+   		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
     )
     {
         $syear = $reg[1];
@@ -357,12 +357,12 @@ function dol_stringtotime($string, $gm = 1)
         $shour = $reg[4];
         $smin = $reg[5];
         $ssec = $reg[6];
-        $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
+        $string=sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
     }
 
-    $string=preg_replace('/([^0-9])/i','',$string);
+    $string=preg_replace('/([^0-9])/i', '', $string);
     $tmp=$string.'000000';
-    $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),($gm?1:0));
+    $date=dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), ($gm?1:0));
     return $date;
 }
 
@@ -376,9 +376,9 @@ function dol_stringtotime($string, $gm = 1)
  */
 function dol_get_prev_day($day, $month, $year)
 {
-	$time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+	$time=dol_mktime(12, 0, 0, $month, $day, $year, 1, 0);
 	$time-=24*60*60;
-	$tmparray=dol_getdate($time,true);
+	$tmparray=dol_getdate($time, true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -391,9 +391,9 @@ function dol_get_prev_day($day, $month, $year)
  */
 function dol_get_next_day($day, $month, $year)
 {
-	$time=dol_mktime(12,0,0,$month,$day,$year,1,0);
+	$time=dol_mktime(12, 0, 0, $month, $day, $year, 1, 0);
 	$time+=24*60*60;
-	$tmparray=dol_getdate($time,true);
+	$tmparray=dol_getdate($time, true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -451,9 +451,9 @@ function dol_get_prev_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
 
-	$time=dol_mktime(12,0,0,$month,$tmparray['first_day'],$year,1,0);
+	$time=dol_mktime(12, 0, 0, $month, $tmparray['first_day'], $year, 1, 0);
 	$time-=24*60*60*7;
-	$tmparray=dol_getdate($time,true);
+	$tmparray=dol_getdate($time, true);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -469,9 +469,9 @@ function dol_get_next_week($day, $week, $month, $year)
 {
 	$tmparray = dol_get_first_day_week($day, $month, $year);
 
-	$time=dol_mktime(12,0,0,$tmparray['first_month'],$tmparray['first_day'],$tmparray['first_year'],1,0);
+	$time=dol_mktime(12, 0, 0, $tmparray['first_month'], $tmparray['first_day'], $tmparray['first_year'], 1, 0);
 	$time+=24*60*60*7;
-	$tmparray=dol_getdate($time,true);
+	$tmparray=dol_getdate($time, true);
 
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
@@ -488,7 +488,7 @@ function dol_get_next_week($day, $week, $month, $year)
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
 	if ($year > 9999) return '';
-	return dol_mktime(0,0,0,$month,1,$year,$gm);
+	return dol_mktime(0, 0, 0, $month, 1, $year, $gm);
 }
 
 
@@ -513,7 +513,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	}
 
 	// On se deplace au debut du mois suivant, et on retire un jour
-	$datelim=dol_mktime(23,59,59,$month,1,$year,$gm);
+	$datelim=dol_mktime(23, 59, 59, $month, 1, $year, $gm);
 	$datelim -= (3600 * 24);
 
 	return $datelim;
@@ -532,12 +532,12 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	global $conf;
 
 	//$day=2; $month=2; $year=2015;
-	$date = dol_mktime(0,0,0,$month,$day,$year,$gm);
+	$date = dol_mktime(0, 0, 0, $month, $day, $year, $gm);
 
 	//Checking conf of start week
 	$start_week = (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1);
 
-	$tmparray = dol_getdate($date,true);	// detail of current day
+	$tmparray = dol_getdate($date, true);	// detail of current day
 
 	//Calculate days = offset from current day
 	$days = $start_week - $tmparray['wday'];
@@ -548,7 +548,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 
     //Get first day of week
     $tmpdaytms = date($tmparray[0])-$seconds; // $tmparray[0] is day of parameters
-	$tmpday = date("d",$tmpdaytms);
+	$tmpday = date("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday>$day)
@@ -571,9 +571,9 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	$tmpyear = $prev_year;
 
 	//Get first day of next week
-	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
+	$tmptime=dol_mktime(12, 0, 0, $month, $tmpday, $year, 1, 0);
 	$tmptime-=24*60*60*7;
-	$tmparray=dol_getdate($tmptime,true);
+	$tmparray=dol_getdate($tmptime, true);
     $prev_day   = $tmparray['mday'];
 
     //Check prev day of week is in same month than first day or not
@@ -589,7 +589,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
     	}
     }
 
-    $week = date("W",dol_mktime(0,0,0,$tmpmonth,$tmpday,$tmpyear,$gm));
+    $week = date("W", dol_mktime(0, 0, 0, $tmpmonth, $tmpday, $tmpyear, $gm));
 
 	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'first_month' => $tmpmonth, 'first_year' => $tmpyear, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
@@ -630,10 +630,10 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		// Check into var $conf->global->HOLIDAY_MORE_DAYS   MM-DD,YYYY-MM-DD, ...
 		if (! empty($conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS))
 		{
-			$arrayofdaystring=explode(',',$conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
+			$arrayofdaystring=explode(',', $conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
 			foreach($arrayofdaystring as $daystring)
 			{
-				$tmp=explode('-',$daystring);
+				$tmp=explode('-', $daystring);
 				if ($tmp[2])
 				{
 					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie=true;

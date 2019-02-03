@@ -319,12 +319,12 @@ class Contacts extends DolibarrApi
 	    $login = $request_data["login"];
 	    $password = $request_data["password"];
 	    $useraccount = new User($this->db);
-	    $result = $useraccount->create_from_contact($contact,$login,$password);
+	    $result = $useraccount->create_from_contact($contact, $login, $password);
 	    if ($result <= 0) {
 	        throw new RestException(500, "User not created");
 	    }
 	    // password parameter not used in create_from_contact
-	    $useraccount->setPassword($useraccount,$password);
+	    $useraccount->setPassword($useraccount, $password);
 
 	    return $result;
 	}

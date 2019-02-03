@@ -32,7 +32,7 @@ require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
-$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[1])?'auto':$argv[1]);
+$setuplang=GETPOST('selectlang', 'aZ09', 3)?GETPOST('selectlang', 'aZ09', 3):(empty($argv[1])?'auto':$argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -57,13 +57,13 @@ $ok = 0;
  *	View
  */
 
-pHeader($langs->trans("AdminAccountCreation"),"step5");
+pHeader($langs->trans("AdminAccountCreation"), "step5");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
-    pFooter(1,$setuplang,'jscheckparam');
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+    pFooter(1, $setuplang, 'jscheckparam');
     exit;
 }
 
@@ -75,7 +75,7 @@ print $langs->trans("LastStepDesc").'<br><br>';
 
 print '<table cellspacing="0" cellpadding="2">';
 
-$db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+$db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 if ($db->ok)
 {
@@ -117,7 +117,7 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step4: end");
 
-pFooter($error,$setuplang);
+pFooter($error, $setuplang);
 
 $db->close();
 

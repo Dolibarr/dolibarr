@@ -97,7 +97,7 @@ function dolGetModulesDirs($subdir = '')
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/disabled/',$file)) continue;   // We discard module if it contains disabled into name.
+                if (preg_match('/disabled/', $file)) continue;   // We discard module if it contains disabled into name.
 
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
@@ -252,7 +252,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_creation, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -288,7 +288,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_modification, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -324,7 +324,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_validation, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -360,7 +360,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_approve, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -388,7 +388,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_approve2, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -424,7 +424,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_cloture, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -460,7 +460,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_rappro, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -473,7 +473,7 @@ function dol_print_object_info($object, $usetable = 0)
         if ($usetable) print '</td><td>';
         else print ': ';
         print dol_print_date($object->date_envoi, 'dayhour');
-        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
         if ($usetable) print '</td></tr>';
         else print '<br>';
     }
@@ -492,7 +492,7 @@ function dol_print_object_info($object, $usetable = 0)
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
-	$tmp=explode('@',$email);
+	$tmp=explode('@', $email);
 	return $tmp[0].'+'.$trackingid.'@'.(isset($tmp[1])?$tmp[1]:'');
 }
 
@@ -576,7 +576,7 @@ function clean_url($url, $http = 1)
     // Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
     // To include the minus sign in a char class, we must not escape it but put it at the end of the class
     // Also, there's no need of escape a dot sign in a class
-    if (preg_match('/^(https?:[\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?/i',$url,$regs))
+    if (preg_match('/^(https?:[\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?/i', $url, $regs))
     {
         $proto=$regs[1];
         $domain=$regs[2];
@@ -589,15 +589,15 @@ function clean_url($url, $http = 1)
         $newproto=$proto;
         if ($http==0)
         {
-            if (preg_match('/^http:[\\/]+/i',$url))
+            if (preg_match('/^http:[\\/]+/i', $url))
             {
-                $url = preg_replace('/^http:[\\/]+/i','',$url);
+                $url = preg_replace('/^http:[\\/]+/i', '', $url);
                 $newproto = '';
             }
         }
 
         // On passe le nom de domaine en minuscule
-        $CleanUrl = preg_replace('/^'.preg_quote($proto.$domain,'/').'/i', $newproto.strtolower($domain), $url);
+        $CleanUrl = preg_replace('/^'.preg_quote($proto.$domain, '/').'/i', $newproto.strtolower($domain), $url);
 
         return $CleanUrl;
     }
@@ -621,7 +621,7 @@ function dolObfuscateEmail($mail, $replace = "*", $nbreplace = 8, $nbdisplaymail
 {
 	if(!isValidEmail($mail))return '';
 	$tab = explode('@', $mail);
-	$tab2 = explode('.',$tab[1]);
+	$tab2 = explode('.', $tab[1]);
 	$string_replace = '';
 	$mail_name = $tab[0];
 	$mail_domaine = $tab2[0];
@@ -684,7 +684,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
     if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
     foreach($data as $key => $item){
         if(is_array($item)){
-            $text.=array2tr($item,$troptions,$tdoptions);
+            $text.=array2tr($item, $troptions, $tdoptions);
         } else {
             $text.= '<tr '.$troptions.'>' ;
             $text.= '<td '.$tdoptions.'>'.$key.'</td>' ;
@@ -736,7 +736,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
     $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg))
+    if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg))
     {
         $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
         $maskcounter=$reg[1];
@@ -755,14 +755,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) return 'ErrorCounterMustHaveMoreThan3Digits';
 
     // Extract value for third party mask counter
-    if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
+    if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
     {
         $maskrefclient=$regClientRef[1].$regClientRef[2];
         $maskrefclient_maskclientcode=$regClientRef[1];
         $maskrefclient_maskcounter=$regClientRef[2];
         $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr($valueforccc,0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code where n is length in mask
-        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
+        $maskrefclient_clientcode=substr($valueforccc, 0, dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code where n is length in mask
+        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
@@ -775,11 +775,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     }
 
     // Extract value for third party type
-    if (preg_match('/\{(t+)\}/i',$mask,$regType))
+    if (preg_match('/\{(t+)\}/i', $mask, $regType))
     {
         $masktype=$regType[1];
-        $masktype_value=substr(preg_replace('/^TE_/','',$objsoc->typent_code),0,dol_strlen($regType[1]));// get n first characters of thirdpaty typent_code (where n is length in mask)
-        $masktype_value=str_pad($masktype_value,dol_strlen($regType[1]),"#",STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+        $masktype_value=substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1]));// get n first characters of thirdpaty typent_code (where n is length in mask)
+        $masktype_value=str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
     }
     else
     {
@@ -788,14 +788,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     }
 
     // Extract value for user
-    if (preg_match('/\{(u+)\}/i',$mask,$regType))
+    if (preg_match('/\{(u+)\}/i', $mask, $regType))
     {
     	$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
     	if (is_object($objuser)) $lastname = $objuser->lastname;
 
     	$maskuser=$regType[1];
-    	$maskuser_value=substr($lastname,0,dol_strlen($regType[1]));// get n first characters of user firstname (where n is length in mask)
-    	$maskuser_value=str_pad($maskuser_value,dol_strlen($regType[1]),"#",STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+    	$maskuser_value=substr($lastname, 0, dol_strlen($regType[1]));// get n first characters of user firstname (where n is length in mask)
+    	$maskuser_value=str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
     }
     else
     {
@@ -807,14 +807,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     $maskperso=array();
     $maskpersonew=array();
     $tmpmask=$mask;
-    while (preg_match('/\{([A-Z]+)\-([1-9])\}/',$tmpmask,$regKey))
+    while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey))
     {
         $maskperso[$regKey[1]]='{'.$regKey[1].'-'.$regKey[2].'}';
         $maskpersonew[$regKey[1]]=str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
         $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
     }
 
-    if (strstr($mask,'user_extra_'))
+    if (strstr($mask, 'user_extra_'))
     {
 			$start = "{user_extra_";
 			$end = "\}";
@@ -824,28 +824,28 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
     }
     $maskwithonlyymcode=$mask;
-    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(u+)\}/i',$maskuser_value,$maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(t+)\}/i', $masktype_value, $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(u+)\}/i', $maskuser_value, $maskwithonlyymcode);
     foreach($maskperso as $key => $val)
     {
-        $maskwithonlyymcode=preg_replace('/'.preg_quote($val,'/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
+        $maskwithonlyymcode=preg_replace('/'.preg_quote($val, '/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
     }
     $maskwithnocode=$maskwithonlyymcode;
-    $maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{y\}/i','y',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{mm\}/i','mm',$maskwithnocode);
+    $maskwithnocode=preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{y\}/i', 'y', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
     // Now maskwithnocode = 0000ddmmyyyyccc for example
     // and maskcounter    = 0000 for example
     //print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
     //var_dump($reg);
 
     // If an offset is asked
-    if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
+    if (! empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset=preg_replace('/^\+/', '', $reg[2]);
+    if (! empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset=preg_replace('/^\+/', '', $reg[3]);
 
     // Define $sqlwhere
     $sqlwhere='';
@@ -853,8 +853,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     $yearoffsettype=false;		// false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$yearoffsettype = preg_replace('/^@/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$yearoffsettype = preg_replace('/^@/','',$reg[3]);
+    if (! empty($reg[2]) && preg_match('/^@/', $reg[2]))	$yearoffsettype = preg_replace('/^@/', '', $reg[2]);
+    if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))	$yearoffsettype = preg_replace('/^@/', '', $reg[3]);
 
     //print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
     if (is_numeric($yearoffsettype) && $yearoffsettype >= 1)
@@ -873,17 +873,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // Define posy, posm and reg
         if ($maskraz > 1)	// if reset is not first month, we need month and year into mask
         {
-            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
-            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
+            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=3; }
+            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=3; $posm=2; }
             else return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 
             if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
         }
         else // if reset is for a specific month in year, we need year
         {
-            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
-        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
-            elseif (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
+            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=3; $posm=2; }
+        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=3; }
+            elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy=2; $posm=0; }
             else return 'ErrorCantUseRazIfNoYearInMask';
         }
         // Define length
@@ -905,9 +905,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// $yearoffsettype is - or +
         {
         	$currentyear=date("Y", $date);
-        	$fiscaldate=dol_mktime('0','0','0',$maskraz,'1',$currentyear);
-        	$newyeardate=dol_mktime('0','0','0','1','1',$currentyear);
-        	$nextnewyeardate=dol_mktime('0','0','0','1','1',$currentyear+1);
+        	$fiscaldate=dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
+        	$newyeardate=dol_mktime('0', '0', '0', '1', '1', $currentyear);
+        	$nextnewyeardate=dol_mktime('0', '0', '0', '1', '1', $currentyear+1);
         	//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
 
         	// If after or equal of current fiscal date
@@ -920,15 +920,15 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         	elseif ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
         }
         // For backward compatibility
-        elseif (date("m",$date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+        elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
 
-        if ($yearlen == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
-        elseif ($yearlen == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
-        elseif ($yearlen == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
+        if ($yearlen == 4) $yearcomp=sprintf("%04d", date("Y", $date)+$yearoffset);
+        elseif ($yearlen == 2) $yearcomp=sprintf("%02d", date("y", $date)+$yearoffset);
+        elseif ($yearlen == 1) $yearcomp=substr(date("y", $date), 2, 1)+$yearoffset;
         if ($monthcomp > 1 && empty($resetEveryMonth))	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
         {
-            if ($yearlen == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
-            elseif ($yearlen == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+            if ($yearlen == 4) $yearcomp1=sprintf("%04d", date("Y", $date)+$yearoffset+1);
+            elseif ($yearlen == 2) $yearcomp1=sprintf("%02d", date("y", $date)+$yearoffset+1);
 
             $sqlwhere.="(";
             $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
@@ -954,31 +954,31 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     // Define $sqlstring
     if (function_exists('mb_strrpos'))
     	{
-    	$posnumstart=mb_strrpos($maskwithnocode,$maskcounter, 'UTF-8');
+    	$posnumstart=mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
 	}
 	else
 	{
-    	$posnumstart=strrpos($maskwithnocode,$maskcounter);
+    	$posnumstart=strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
     $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
 
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
-    $maskLike = str_replace("%","_",$maskLike);
+    $maskLike = str_replace("%", "_", $maskLike);
     // Replace protected special codes with matching number of _ as wild card caracter
-    $maskLike = preg_replace('/\{yyyy\}/i','____',$maskLike);
-    $maskLike = preg_replace('/\{yy\}/i','__',$maskLike);
-    $maskLike = preg_replace('/\{y\}/i','_',$maskLike);
-    $maskLike = preg_replace('/\{mm\}/i','__',$maskLike);
-    $maskLike = preg_replace('/\{dd\}/i','__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
-    if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
-    if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
-    if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
+    $maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
+    $maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
+    $maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
+    $maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
+    $maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
+    $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
+    if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
+    if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'), $masktype_value, $maskLike);
+    if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'), $maskuser_value, $maskLike);
     foreach($maskperso as $key => $val)
     {
-    	$maskLike = str_replace(dol_string_nospecial($maskperso[$key]),$maskpersonew[$key],$maskLike);
+    	$maskLike = str_replace(dol_string_nospecial($maskperso[$key]), $maskpersonew[$key], $maskLike);
     }
 
     // Get counter in database
@@ -1006,7 +1006,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
     // Check if we must force counter to maskoffset
     if (empty($counter)) $counter=$maskoffset;
-    elseif (preg_match('/[^0-9]/i',$counter))
+    elseif (preg_match('/[^0-9]/i', $counter))
     {
     	$counter=0;
     	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
@@ -1015,21 +1015,21 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
-        $counterpadded=str_pad($counter,dol_strlen($maskcounter),"0",STR_PAD_LEFT);
+        $counterpadded=str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
 
         // Define $maskLike
         $maskLike = dol_string_nospecial($mask);
-        $maskLike = str_replace("%","_",$maskLike);
+        $maskLike = str_replace("%", "_", $maskLike);
         // Replace protected special codes with matching number of _ as wild card caracter
-        $maskLike = preg_replace('/\{yyyy\}/i','____',$maskLike);
-        $maskLike = preg_replace('/\{yy\}/i','__',$maskLike);
-        $maskLike = preg_replace('/\{y\}/i','_',$maskLike);
-        $maskLike = preg_replace('/\{mm\}/i','__',$maskLike);
-        $maskLike = preg_replace('/\{dd\}/i','__',$maskLike);
-        $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),$counterpadded,$maskLike);
-        if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
-        if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
-        if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
+        $maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
+        $maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
+        $maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
+        $maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
+        $maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
+        $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), $counterpadded, $maskLike);
+        if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
+        if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'), $masktype_value, $maskLike);
+        if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'), $maskuser_value, $maskLike);
 
         $ref='';
         $sql = "SELECT ".$field." as ref";
@@ -1069,22 +1069,22 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             //print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
 
             // Define $sqlstring
-            $maskrefclient_posnumstart=strpos($maskwithnocode,$maskrefclient_maskcounter,strpos($maskwithnocode,$maskrefclient));	// Pos of counter in final string (from 0 to ...)
+            $maskrefclient_posnumstart=strpos($maskwithnocode, $maskrefclient_maskcounter, strpos($maskwithnocode, $maskrefclient));	// Pos of counter in final string (from 0 to ...)
             if ($maskrefclient_posnumstart <= 0) return 'ErrorBadMask';
             $maskrefclient_sqlstring='SUBSTRING('.$field.', '.($maskrefclient_posnumstart+1).', '.dol_strlen($maskrefclient_maskcounter).')';
             //print "x".$sqlstring;
 
             // Define $maskrefclient_maskLike
             $maskrefclient_maskLike = dol_string_nospecial($mask);
-            $maskrefclient_maskLike = str_replace("%","_",$maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace("%", "_", $maskrefclient_maskLike);
             // Replace protected special codes with matching number of _ as wild card caracter
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskrefclient_maskLike);
-            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),$maskrefclient_clientcode.str_pad("",dol_strlen($maskrefclient_maskcounter),"_"),$maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), '____', $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), '__', $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), '__', $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), '__', $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskrefclient_maskLike);
+            $maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
             // Get counter in database
             $maskrefclient_counter=0;
@@ -1098,7 +1098,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             	$sql.= " AND entity IN (".$forceentity.")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
-            $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
+            $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 
             dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
             $maskrefclient_resql=$db->query($maskrefclient_sql);
@@ -1109,7 +1109,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             }
             else dol_print_error($db);
 
-            if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
+            if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i', $maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
 			$maskrefclient_counter++;
         }
 
@@ -1119,32 +1119,32 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // We replace special codes except refclient
 		if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
 		{
-	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1)+$yearoffset, $numFinal);
+	        $numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y", $date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y", $date), 1, 1)+$yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
-        	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
-        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),1,1), $numFinal);
+        	$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y", $date), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y", $date), 1, 1), $numFinal);
 		}
-        $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
-        $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
+        $numFinal = preg_replace('/\{mm\}/i',  date("m", $date), $numFinal);
+        $numFinal = preg_replace('/\{dd\}/i',  date("d", $date), $numFinal);
 
         // Now we replace the counter
         $maskbefore='{'.$masktri.'}';
-        $maskafter=str_pad($counter,dol_strlen($maskcounter),"0",STR_PAD_LEFT);
+        $maskafter=str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
         //print 'x'.$maskbefore.'-'.$maskafter.'y';
-        $numFinal = str_replace($maskbefore,$maskafter,$numFinal);
+        $numFinal = str_replace($maskbefore, $maskafter, $numFinal);
 
         // Now we replace the refclient
         if ($maskrefclient)
         {
             //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
             $maskrefclient_maskbefore='{'.$maskrefclient.'}';
-            $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter,dol_strlen($maskrefclient_maskcounter),"0",STR_PAD_LEFT);
-            $numFinal = str_replace($maskrefclient_maskbefore,$maskrefclient_maskafter,$numFinal);
+            $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+            $numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
         }
 
         // Now we replace the type
@@ -1152,7 +1152,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         {
             $masktype_maskbefore='{'.$masktype.'}';
             $masktype_maskafter=$masktype_value;
-            $numFinal = str_replace($masktype_maskbefore,$masktype_maskafter,$numFinal);
+            $numFinal = str_replace($masktype_maskbefore, $masktype_maskafter, $numFinal);
         }
 
         // Now we replace the user
@@ -1160,11 +1160,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         {
         	$maskuser_maskbefore='{'.$maskuser.'}';
         	$maskuser_maskafter=$maskuser_value;
-        	$numFinal = str_replace($maskuser_maskbefore,$maskuser_maskafter,$numFinal);
+        	$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
         }
     }
 
-    dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
+    dol_syslog("functions2::get_next_value return ".$numFinal, LOG_DEBUG);
     return $numFinal;
 }
 
@@ -1179,11 +1179,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 function get_string_between($string, $start, $end)
 {
     $string = " ".$string;
-     $ini = strpos($string,$start);
+     $ini = strpos($string, $start);
      if ($ini == 0) return "";
      $ini += strlen($start);
-     $len = strpos($string,$end,$ini) - $ini;
-     return substr($string,$ini,$len);
+     $len = strpos($string, $end, $ini) - $ini;
+     return substr($string, $ini, $len);
 }
 
 /**
@@ -1199,7 +1199,7 @@ function check_value($mask, $value)
 
     $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
     {
         $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
         $maskcounter=$reg[1];
@@ -1217,14 +1217,14 @@ function check_value($mask, $value)
     if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
 
     // Extract value for third party mask counter
-    if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
+    if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
     {
         $maskrefclient=$regClientRef[1].$regClientRef[2];
         $maskrefclient_maskclientcode=$regClientRef[1];
         $maskrefclient_maskcounter=$regClientRef[2];
         $maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-        $maskrefclient_clientcode=substr('',0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
-        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
+        $maskrefclient_clientcode=substr('', 0, dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
+        $maskrefclient_clientcode=str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
@@ -1237,34 +1237,34 @@ function check_value($mask, $value)
     }
 
     $maskwithonlyymcode=$mask;
-    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
-    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $maskcounter, $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
     $maskwithnocode=$maskwithonlyymcode;
-    $maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{y\}/i','y',$maskwithnocode);
-    $maskwithnocode=preg_replace('/\{mm\}/i','mm',$maskwithnocode);
+    $maskwithnocode=preg_replace('/\{yyyy\}/i', 'yyyy', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{yy\}/i', 'yy', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{y\}/i', 'y', $maskwithnocode);
+    $maskwithnocode=preg_replace('/\{mm\}/i', 'mm', $maskwithnocode);
     // Now maskwithnocode = 0000ddmmyyyyccc for example
     // and maskcounter    = 0000 for example
     //print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 
     // If an offset is asked
-    if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
+    if (! empty($reg[2]) && preg_match('/^\+/', $reg[2])) $maskoffset=preg_replace('/^\+/', '', $reg[2]);
+    if (! empty($reg[3]) && preg_match('/^\+/', $reg[3])) $maskoffset=preg_replace('/^\+/', '', $reg[3]);
 
     // Define $sqlwhere
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))  $maskraz=preg_replace('/^@/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
+    if (! empty($reg[2]) && preg_match('/^@/', $reg[2]))  $maskraz=preg_replace('/^@/', '', $reg[2]);
+    if (! empty($reg[3]) && preg_match('/^@/', $reg[3]))  $maskraz=preg_replace('/^@/', '', $reg[3]);
     if ($maskraz >= 0)
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define reg
-        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+        if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+        if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazIfNoYearInMask';
         //print "x".$maskwithonlyymcode." ".$maskraz;
     }
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
@@ -1290,7 +1290,7 @@ function check_value($mask, $value)
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
 	*/
 
-    dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
+    dol_syslog("functions2::check_value result=".$result, LOG_DEBUG);
     return $result;
 }
 
@@ -1305,7 +1305,7 @@ function check_value($mask, $value)
 function binhex($bin, $pad = false, $upper = false)
 {
     $last = dol_strlen($bin)-1;
-    for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2,$i); }
+    for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2, $i); }
     $x = dechex($x);
     if($pad){ while(dol_strlen($x) < intval(dol_strlen($bin))/4){ $x = "0$x"; } }
     if($upper){ $x = strtoupper($x); }
@@ -1324,7 +1324,7 @@ function hexbin($hexa)
     $strLength = dol_strlen($hexa);
     for($i=0;$i<$strLength;$i++)
     {
-        $bin.=str_pad(decbin(hexdec($hexa{$i})),4,'0',STR_PAD_LEFT);
+        $bin.=str_pad(decbin(hexdec($hexa{$i})), 4, '0', STR_PAD_LEFT);
     }
     return $bin;
 }
@@ -1337,9 +1337,9 @@ function hexbin($hexa)
  */
 function numero_semaine($time)
 {
-    $stime = strftime('%Y-%m-%d',$time);
+    $stime = strftime('%Y-%m-%d', $time);
 
-    if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i',$stime,$reg))
+    if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg))
     {
         // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $annee = $reg[1];
@@ -1355,39 +1355,39 @@ function numero_semaine($time)
      */
 
     // Definition du Jeudi de la semaine
-    if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
-    $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
-    elseif (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
-    $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)+(4-date("w",mktime(12,0,0,$mois,$jour,$annee)))*24*60*60;
-    elseif (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
-    $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
+    if (date("w", mktime(12, 0, 0, $mois, $jour, $annee))==0) // Dimanche
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-3*24*60*60;
+    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))<4) // du Lundi au Mercredi
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)+(4-date("w", mktime(12, 0, 0, $mois, $jour, $annee)))*24*60*60;
+    elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee))>4) // du Vendredi au Samedi
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee)-(date("w", mktime(12, 0, 0, $mois, $jour, $annee))-4)*24*60*60;
     else // Jeudi
-    $jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
+    $jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 
     // Definition du premier Jeudi de l'annee
-    if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
+    if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==0) // Dimanche
     {
-        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+4*24*60*60;
     }
-    elseif (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
+    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))<4) // du Lundi au Mercredi
     {
-        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(4-date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine))))*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+(4-date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))))*24*60*60;
     }
-    elseif (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
+    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))>4) // du Vendredi au Samedi
     {
-        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(7-(date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))-4))*24*60*60;
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))+(7-(date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))-4))*24*60*60;
     }
     else // Jeudi
     {
-        $premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
+        $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
     }
 
     // Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
     $numeroSemaine =     (
     (
-    date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
+    date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
     -
-    date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee)))
+    date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
     ) / 7
     ) + 1;
 
@@ -1395,7 +1395,7 @@ function numero_semaine($time)
     if ($numeroSemaine==53)
     {
         // Les annees qui commence un Jeudi et les annees bissextiles commencant un Mercredi en possede 53
-        if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
+        if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))==3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine)))==365))
         {
             $numeroSemaine = 53;
         }
@@ -1407,7 +1407,7 @@ function numero_semaine($time)
 
     //echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
 
-    return sprintf("%02d",$numeroSemaine);
+    return sprintf("%02d", $numeroSemaine);
 }
 
 /**
@@ -1431,13 +1431,13 @@ function weight_convert($weight, &$from_unit, $to_unit)
         {
             $weight = $weight * 10;
             $from_unit = $from_unit - 1;
-            $weight = weight_convert($weight,$from_unit, $to_unit);
+            $weight = weight_convert($weight, $from_unit, $to_unit);
         }
         if ($from_unit < $to_unit)
         {
             $weight = $weight / 10;
             $from_unit = $from_unit + 1;
-            $weight = weight_convert($weight,$from_unit, $to_unit);
+            $weight = weight_convert($weight, $from_unit, $to_unit);
         }
     }
 
@@ -1531,7 +1531,7 @@ function dol_print_reduction($reduction, $langs)
     }
     else
     {
-    	$string = vatrate($reduction,true);
+    	$string = vatrate($reduction, true);
     }
 
     return $string;
@@ -1622,22 +1622,22 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 
                 $const=$obj->description;
                 //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-                $dirtoscan= preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
+                $dirtoscan= preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
 
 		$listoffiles=array();
 
                 // Now we add models found in directories scanned
-                $listofdir=explode(',',$dirtoscan);
+                $listofdir=explode(',', $dirtoscan);
                 foreach($listofdir as $key=>$tmpdir)
                 {
                     $tmpdir=trim($tmpdir);
-                    $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+                    $tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
 			// all type of template is allowed
 			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
-                        if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+                        if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
                     }
                 }
 
@@ -1646,7 +1646,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                     foreach($listoffiles as $record)
                     {
                         $max=($maxfilenamelength?$maxfilenamelength:28);
-                        $liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'],$max,'middle');
+                        $liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'], $max, 'middle');
                     }
                 }
                 else
@@ -1719,7 +1719,7 @@ function dol_buildlogin($lastname, $firstname)
     $login=strtolower(dol_string_unaccent($firstname));
     $login.=($login?'.':'');
     $login.=strtolower(dol_string_unaccent($lastname));
-    $login=dol_string_nospecial($login,''); // For special names
+    $login=dol_string_nospecial($login, ''); // For special names
     return $login;
 }
 
@@ -1786,7 +1786,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	// Parse element/subelement (ex: project_task)
 	$module = $element = $subelement = $objecttype;
-	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+	if (preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 	{
 		$module = $element = $regs[1];
 		$subelement = $regs[2];
@@ -1882,7 +1882,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 				$object = new $classname($db);
 				$res=$object->fetch($objectid);
 				if ($res > 0) {
-					$ret=$object->getNomUrl($withpicto,$option);
+					$ret=$object->getNomUrl($withpicto, $option);
 				} elseif($res==0) {
 					$ret=$langs->trans('Deleted');
 				}
@@ -1974,7 +1974,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
+		$sql.= " WHERE rowid IN (".join(',', $listofidtoclean).")";	// So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1983,7 +1983,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			{
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
-				print join(',',$listofidtoclean);
+				print join(',', $listofidtoclean);
 			}
 
 			$totalnb+=$nb;
@@ -1993,7 +1993,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
-		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
+		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',', $listofid).")";	// So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -2002,7 +2002,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			{
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
-				print join(',',$listofid);
+				print join(',', $listofid);
 			}
 
 			$totalnb+=$nb;
@@ -2026,14 +2026,14 @@ function getElementProperties($element_type)
     $module = $element = $subelement = $element_type;
 
     // If we ask an resource form external module (instead of default path)
-    if (preg_match('/^([^@]+)@([^@]+)$/i',$element_type,$regs))
+    if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs))
     {
         $element = $subelement = $regs[1];
         $module 	= $regs[2];
     }
 
     //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-    if ( preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
     {
         $module = $element = $regs[1];
         $subelement = $regs[2];
@@ -2174,7 +2174,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
 	if (empty($arraycolor)) return $colorifnotfound;
-	return sprintf("%02s",dechex($arraycolor[0])).sprintf("%02s",dechex($arraycolor[1])).sprintf("%02s",dechex($arraycolor[2]));
+	return sprintf("%02s", dechex($arraycolor[0])).sprintf("%02s", dechex($arraycolor[1])).sprintf("%02s", dechex($arraycolor[2]));
 }
 
 /**
@@ -2190,10 +2190,10 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
-	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
+	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
 	if (! $tmp)
 	{
-		$tmp=explode(',',$stringcolor);
+		$tmp=explode(',', $stringcolor);
 		if (count($tmp) < 3) return $colorifnotfound;
 		return $tmp;
 	}
@@ -2240,7 +2240,7 @@ function cartesianArray(array $input)
 function getModuleDirForApiClass($module)
 {
     $moduledirforclass=$module;
-    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i','',$moduledirforclass);
+    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i', '', $moduledirforclass);
 
     if ($module == 'contracts') {
     	$moduledirforclass = 'contrat';

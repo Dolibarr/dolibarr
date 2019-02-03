@@ -44,7 +44,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 	if($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
-	$TNum = explode('.',$num);
+	$TNum = explode('.', $num);
     $num = (int) $TNum[0];
     $words = array();
     $list1 = array(
@@ -151,7 +151,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	if ($numero >= 1000000000001)
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
-	$strnumber = number_format ($numero,10);
+	$strnumber = number_format ($numero, 10);
 	$len=strlen($strnumber);
 	for ($i=0; $i<$len; $i++)
 	{

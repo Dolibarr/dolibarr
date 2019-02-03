@@ -73,7 +73,7 @@ class box_bookmarks extends ModeleBoxes
 		$this->max=$max;
 
 		$this->info_box_head = array(
-            'text' => $langs->trans("BoxMyLastBookmarks",$max),
+            'text' => $langs->trans("BoxMyLastBookmarks", $max),
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
         );
         if ($user->rights->bookmark->creer) {
@@ -92,7 +92,7 @@ class box_bookmarks extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql.= " WHERE fk_user = ".$user->id;
             $sql.= " AND b.entity = ".$conf->entity;
-			$sql.= $db->order("position","ASC");
+			$sql.= $db->order("position", "ASC");
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
