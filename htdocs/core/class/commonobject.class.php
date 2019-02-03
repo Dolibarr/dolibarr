@@ -5015,7 +5015,7 @@ abstract class CommonObject
 			   		if ($this->array_options[$key] === '') $mandatorypb=true;
 			   		if ($mandatorypb)
 			   		{
-			   			dol_syslog($this->error);
+			   		    dol_syslog("Mandatory extra field ".$key." is empty");
 			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
 			   			return -1;
 			   		}
