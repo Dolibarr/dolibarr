@@ -197,7 +197,9 @@ class Users extends DolibarrApi
 	 *
 	 * @param int   $id             Id of account to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @return array
+     *
+     * @throws 	RestException
 	 */
     function put($id, $request_data = null)
     {

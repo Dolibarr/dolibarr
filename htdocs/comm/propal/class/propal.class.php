@@ -1285,7 +1285,12 @@ class Propal extends CommonObject
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
-		if ($result < 0) $error++;
+		if ($result < 0)
+		{
+		    $this->error = $object->error;
+		    $this->errors = array_merge($this->errors, $object->errors);
+		    $error++;
+		}
 
 		if (! $error)
 		{
