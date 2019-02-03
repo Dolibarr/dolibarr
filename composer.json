@@ -23,6 +23,8 @@
     "config": {
         "vendor-dir": "htdocs/includes"
     },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
         "php": ">=5.3.0",
         "ext-curl": "*",
@@ -31,8 +33,28 @@
         "mike42/escpos-php": "1.2.1",
         "mobiledetect/mobiledetectlib": "2.8.17",
         "phpoffice/phpexcel": "1.8.1",
+        "phpoffice/phpspreadsheet": "*",
         "restler/framework": "3.0.0-RC6",
-        "tecnickcom/tcpdf": "6.2.12"
+        "tecnickcom/tcpdf": "6.2.12",
+        "econea/nusoap": "~0.9.5.1",
+        "geoip/geoip": "*",
+        "mike42/escpos.php": "*",
+        "erusev/parsedown": "*",
+        "globalcitizen/php-iban": "2.6.9",
+        "webit/eval-math": "*",
+        "stiwl/php-print-ipp": "*",
+        "psr/psr-simple-cache": "*",
+        "luracast/restler":"3.*",
+        "sabre/dav": "*",
+        "sabre/event": "*",
+        "sabre/http": "*",
+        "sabre/uri": "*",
+        "sabre/vobject": "*",
+        "sabre/xml": "*",
+        "stripe/stripe-php": "*",
+        "swiftmailer/swiftmailer": "*",
+        "doctrine/lexer": "*",
+        "propa/tcpdi": "^1.1"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^0",
@@ -56,5 +78,11 @@
         "ext-zip": "ODT and Excel support",
         "ext-xml": "Excel support",
         "firephp/firephp-core": "Logging to Firebug console support"
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
 }
