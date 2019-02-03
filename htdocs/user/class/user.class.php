@@ -1520,7 +1520,7 @@ class User extends CommonObject
 							$error++;
 						}
 					}
-					elseif(!empty($adh->error) || !empty($adh->errors))
+					elseif ($result < 0)
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
