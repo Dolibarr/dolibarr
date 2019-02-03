@@ -128,7 +128,7 @@ if ($massaction == 'ventil') {
         $ok=0;
         $ko=0;
 
-        foreach ( $mesCasesCochees as $maLigneCochee ) {
+        foreach ($mesCasesCochees as $maLigneCochee) {
             $maLigneCourante = explode("_", $maLigneCochee);
             $monId = $maLigneCourante[0];
             $monCompte = GETPOST('codeventil'.$monId);

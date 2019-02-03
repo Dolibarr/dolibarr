@@ -187,6 +187,9 @@
     </rule>
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
+
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>
@@ -429,5 +432,5 @@
     <rule ref="PSR2.Classes.ClassDeclaration" />
     <rule ref="PSR2.Methods.FunctionClosingBrace" />
     <rule ref="PSR2.Files.EndFileNewline.TooMany" />
-
+    <rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 </ruleset>

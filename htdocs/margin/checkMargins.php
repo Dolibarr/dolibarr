@@ -88,7 +88,7 @@ if (empty($reshook))
     if ($action == 'update') {
         $datapost = $_POST;
 
-        foreach ( $datapost as $key => $value ) {
+        foreach ($datapost as $key => $value) {
             if (strpos($key, 'buyingprice_') !== false) {
                 $tmp_array = explode('_', $key);
                 if (count($tmp_array) > 0) {

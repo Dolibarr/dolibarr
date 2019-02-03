@@ -76,7 +76,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$ret=array(); $i=0;
 			while ( $tab = $db->fetch_array($result) )
 			{
-				foreach ( $tab as $cle => $valeur )
+				foreach ($tab as $cle => $valeur)
 				{
 					$ret[$i][$cle] = $valeur;
 				}

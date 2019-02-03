@@ -1424,7 +1424,7 @@ class ExtraFields
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($fields_label)) {
 							$notrans = true;
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$labeltoshow .= $obj->$field_toshow . ' ';
 							}
 						} else {
@@ -1433,7 +1433,7 @@ class ExtraFields
 						$labeltoshow = dol_trunc($labeltoshow, 45);
 
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$translabel = $langs->trans($obj->$field_toshow);
 								if ($translabel != $obj->$field_toshow) {
 									$labeltoshow = dol_trunc($translabel, 18) . ' ';
@@ -1731,7 +1731,7 @@ class ExtraFields
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 						if (is_array($fields_label) && count($fields_label) > 1) {
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$translabel = '';
 								if (! empty($obj->$field_toshow)) {
 									$translabel = $langs->trans($obj->$field_toshow);

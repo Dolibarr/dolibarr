@@ -1143,11 +1143,11 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					foreach($this->localtax1 as $localtax_type => $localtax_rate)
 					{
 						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
-						foreach( $localtax_rate as $tvakey => $tvaval )
+						foreach($localtax_rate as $tvakey => $tvaval)
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
 							{
@@ -1176,11 +1176,11 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 2 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					foreach($this->localtax2 as $localtax_type => $localtax_rate)
 					{
 						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 
-						foreach( $localtax_rate as $tvakey => $tvaval )
+						foreach($localtax_rate as $tvakey => $tvaval)
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
 							{
@@ -1254,11 +1254,11 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 1 after VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					foreach($this->localtax1 as $localtax_type => $localtax_rate)
 					{
 						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
 
-						foreach( $localtax_rate as $tvakey => $tvaval )
+						foreach($localtax_rate as $tvakey => $tvaval)
 						{
 							if ($tvakey != 0)    // On affiche pas taux 0
 							{
@@ -1286,11 +1286,11 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 2 after VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					foreach($this->localtax2 as $localtax_type => $localtax_rate)
 					{
 						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
 
-						foreach( $localtax_rate as $tvakey => $tvaval )
+						foreach($localtax_rate as $tvakey => $tvaval)
 						{
 						    // retrieve global local tax
 							if ($tvakey != 0)    // On affiche pas taux 0

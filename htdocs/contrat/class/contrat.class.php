@@ -2454,7 +2454,7 @@ class Contrat extends CommonObject
         }
 
 		if (! $error) {
-			foreach ( $this->lines as $line ) {
+			foreach ($this->lines as $line) {
 				$result = $clonedObj->addline($line->desc, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit);
 				if ($result < 0) {
 					$error ++;

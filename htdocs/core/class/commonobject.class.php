@@ -5015,7 +5015,7 @@ abstract class CommonObject
 			   		if ($this->array_options[$key] === '') $mandatorypb=true;
 			   		if ($mandatorypb)
 			   		{
-			   			dol_syslog($this->error);
+			   		    dol_syslog("Mandatory extra field ".$key." is empty");
 			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
 			   			return -1;
 			   		}
@@ -5835,7 +5835,7 @@ abstract class CommonObject
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($fields_label)) {
 							$notrans = true;
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$labeltoshow .= $obj->$field_toshow . ' ';
 							}
 						} else {
@@ -5844,7 +5844,7 @@ abstract class CommonObject
 						$labeltoshow = dol_trunc($labeltoshow, 45);
 
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$translabel = $langs->trans($obj->$field_toshow);
 								if ($translabel != $obj->$field_toshow) {
 									$labeltoshow = dol_trunc($translabel, 18) . ' ';
@@ -6244,7 +6244,7 @@ abstract class CommonObject
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 						if (is_array($fields_label) && count($fields_label) > 1) {
-							foreach ( $fields_label as $field_toshow ) {
+							foreach ($fields_label as $field_toshow) {
 								$translabel = '';
 								if (! empty($obj->$field_toshow)) {
 									$translabel = $langs->trans($obj->$field_toshow);

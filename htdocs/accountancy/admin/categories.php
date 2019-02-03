@@ -61,7 +61,7 @@ $accountingcategory = new AccountancyCategory($db);
 // si ajout de comptes
 if (! empty($selectcpt)) {
 	$cpts = array ();
-	foreach ( $selectcpt as $selectedoption ) {
+	foreach ($selectcpt as $selectedoption) {
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";
 	}
@@ -167,7 +167,7 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			foreach ( $accountingcategory->lines_display as $cpt ) {
+			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';

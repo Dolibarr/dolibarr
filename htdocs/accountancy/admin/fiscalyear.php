@@ -58,7 +58,7 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
-foreach ( $tmpstatut2label as $key => $val )
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
 
 $errors = array ();

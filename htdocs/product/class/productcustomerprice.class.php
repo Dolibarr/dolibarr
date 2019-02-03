@@ -240,7 +240,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -374,7 +374,7 @@ class Productcustomerprice extends CommonObject
 
 		// Manage filter
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
 				{
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
@@ -486,7 +486,7 @@ class Productcustomerprice extends CommonObject
 
 		// Manage filter
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
 				{
 					$sql .= ' AND ' . $key . ' = \'' . $value . '\'';
@@ -732,7 +732,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -880,7 +880,7 @@ class Productcustomerprice extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -924,7 +924,8 @@ class Productcustomerprice extends CommonObject
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
-			$error ++;
+			$this->errors=array_merge($this->errors, $object->errors);
+			$error++;
 		}
 
 		if (! $error) {

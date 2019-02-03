@@ -134,7 +134,7 @@ if ($action == 'update') {
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid )
+			foreach ($chk_prod as $productid)
 			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 

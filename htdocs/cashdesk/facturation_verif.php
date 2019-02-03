@@ -64,7 +64,7 @@ switch($action)
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);
-					foreach ( $tab as $key => $value )
+					foreach ($tab as $key => $value)
 					{
 						$ret[$key] = $value;
 					}

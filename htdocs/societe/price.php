@@ -450,7 +450,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			foreach ( $prodcustprice->lines as $line ) {
+			foreach ($prodcustprice->lines as $line) {
 
 				print '<tr class="oddeven">';
 				$staticprod = new Product($db);

@@ -107,7 +107,7 @@ $cancel != $langs->trans("Cancel") &&
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ( $object->multilangs as $key => $value ) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ($object->multilangs as $key => $value) // enregistrement des nouvelles valeurs dans l'objet
 	{
 		if ( $key == $current_lang )
 		{

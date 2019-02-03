@@ -580,7 +580,7 @@ class SMTPs
 				// 'RCPT TO:' must be given a single address, so this has to loop
 				// through the list of addresses, regardless of TO, CC or BCC
 				// and send it out "single file"
-				foreach ( $this->get_RCPT_list() as $_address )
+				foreach ($this->get_RCPT_list() as $_address)
 				{
 				    /* Note:
 				     * BCC email addresses must be listed in the RCPT TO command list,
@@ -1006,7 +1006,7 @@ class SMTPs
 			}
 
 			// take the array of addresses and split them further
-			foreach ( $_addrList as $_strAddr )
+			foreach ($_addrList as $_strAddr)
 			{
 				// Strip off the end '>'
 				$_strAddr = str_replace('>', '', $_strAddr);
@@ -1110,11 +1110,11 @@ class SMTPs
 		$_RCPT_list=array();
 
 		// walk down Recipients array and pull just email addresses
-		foreach ( $this->_msgRecipients as $_host => $_list )
+		foreach ($this->_msgRecipients as $_host => $_list)
 		{
-			foreach ( $_list as $_subList )
+			foreach ($_list as $_subList)
 			{
-				foreach ( $_subList as $_name => $_addr )
+				foreach ($_subList as $_name => $_addr)
 				{
 					// build RCPT list
 					$_RCPT_list[] = $_name . '@' . $_host;
@@ -1143,11 +1143,11 @@ class SMTPs
 			{
 				$_RCPT_list=array();
 				// walk down Recipients array and pull just email addresses
-				foreach ( $this->_msgRecipients as $_host => $_list )
+				foreach ($this->_msgRecipients as $_host => $_list)
 				{
 					if ( $this->_msgRecipients[$_host][$_which] )
 					{
-						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
+						foreach ($this->_msgRecipients[$_host][$_which] as $_addr => $_realName)
 						{
 							if ( $_realName )	// @CHANGE LDR
 							{
@@ -1459,12 +1459,12 @@ class SMTPs
 
 
 			// Loop through message content array
-			foreach ($this->_msgContent as $type => $_content )
+			foreach ($this->_msgContent as $type => $_content)
 			{
 				if ( $type == 'attachment' )
 				{
 					// loop through all attachments
-					foreach ( $_content as $_file => $_data )
+					foreach ($_content as $_file => $_data)
 					{
 						$content .= "--" . $this->_getBoundary('mixed') . "\r\n"
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
@@ -1482,7 +1482,7 @@ class SMTPs
 				elseif ( $type == 'image' )
 				{
 					// loop through all images
-					foreach ( $_content as $_image => $_data )
+					foreach ($_content as $_image => $_data)
 					{
 						$content .= "--" . $this->_getBoundary('related') . "\r\n";  // always related for an inline image
 
@@ -1847,7 +1847,7 @@ class SMTPs
 
 		if (is_array($this->_smtpsErrors))
 		{
-			foreach ( $this->_smtpsErrors as $_err => $_info )
+			foreach ($this->_smtpsErrors as $_err => $_info)
 			{
 				$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
 			}

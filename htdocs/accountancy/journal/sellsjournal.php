@@ -307,7 +307,7 @@ if ($action == 'writebookkeeping') {
 		// Thirdparty
 		if (! $errorforline)
 		{
-			foreach ( $tabttc[$key] as $k => $mt ) {
+			foreach ($tabttc[$key] as $k => $mt) {
 				//if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -362,7 +362,7 @@ if ($action == 'writebookkeeping') {
 		// Product / Service
 		if (! $errorforline)
 		{
-			foreach ( $tabht[$key] as $k => $mt ) {
+			foreach ($tabht[$key] as $k => $mt) {
 				//if ($mt) {
 					// get compte id and label
 					if ($accountingaccount->fetch(null, $k, true)) {
@@ -424,7 +424,7 @@ if ($action == 'writebookkeeping') {
 				if ($numtax == 1) $arrayofvat = $tablocaltax1;
 				if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-				foreach ( $arrayofvat[$key] as $k => $mt ) {
+				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -553,7 +553,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
 
-	foreach ( $tabfac as $key => $val )
+	foreach ($tabfac as $key => $val)
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -734,7 +734,7 @@ if (empty($action) || $action == 'view') {
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
 
-	foreach ( $tabfac as $key => $val )
+	foreach ($tabfac as $key => $val)
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -875,7 +875,7 @@ if (empty($action) || $action == 'view') {
 			if ($numtax == 1) $arrayofvat = $tablocaltax1;
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-			foreach ( $arrayofvat[$key] as $k => $mt ) {
+			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<td><!-- VAT --></td>";

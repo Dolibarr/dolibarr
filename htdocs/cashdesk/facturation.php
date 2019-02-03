@@ -74,7 +74,7 @@ if ( GETPOST('filtre', 'alpha') ) {
 
 		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql) )
 		{
-			foreach ( $tab as $cle => $valeur )
+			foreach ($tab as $cle => $valeur)
 			{
 				$ret[$i][$cle] = $valeur;
 			}
@@ -110,7 +110,7 @@ if ( GETPOST('filtre', 'alpha') ) {
 
 		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
 		{
-			foreach ( $tab as $cle => $valeur )
+			foreach ($tab as $cle => $valeur)
 			{
 				$ret[$i][$cle] = $valeur;
 			}
