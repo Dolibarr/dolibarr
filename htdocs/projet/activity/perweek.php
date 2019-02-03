@@ -38,10 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects','users','companies'));
 
-$action=GETPOST('action','aZ09');
-$mode=GETPOST("mode",'alpha');
-$id=GETPOST('id','int');
-$taskid=GETPOST('taskid','int');
+$action=GETPOST('action', 'aZ09');
+$mode=GETPOST("mode", 'alpha');
+$id=GETPOST('id', 'int');
+$taskid=GETPOST('taskid', 'int');
 
 $mine=0;
 if ($mode == 'mine') $mine=1;
@@ -61,13 +61,13 @@ $nowday=$nowtmp['mday'];
 $nowmonth=$nowtmp['mon'];
 $nowyear=$nowtmp['year'];
 
-$year=GETPOST('reyear')?GETPOST('reyear','int'):(GETPOST("year")?GETPOST("year","int"):date("Y"));
-$month=GETPOST('remonth')?GETPOST('remonth','int'):(GETPOST("month")?GETPOST("month","int"):date("m"));
-$day=GETPOST('reday')?GETPOST('reday','int'):(GETPOST("day")?GETPOST("day","int"):date("d"));
+$year=GETPOST('reyear')?GETPOST('reyear', 'int'):(GETPOST("year")?GETPOST("year", "int"):date("Y"));
+$month=GETPOST('remonth')?GETPOST('remonth', 'int'):(GETPOST("month")?GETPOST("month", "int"):date("m"));
+$day=GETPOST('reday')?GETPOST('reday', 'int'):(GETPOST("day")?GETPOST("day", "int"):date("d"));
 $day = (int) $day;
-$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+$week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
 
-$search_categ=GETPOST("search_categ",'alpha');
+$search_categ=GETPOST("search_categ", 'alpha');
 $search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
 $search_task_ref=GETPOST('search_task_ref', 'alpha');
 $search_task_label=GETPOST('search_task_label', 'alpha');
@@ -92,7 +92,7 @@ $next_month = $next['month'];
 $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
+$firstdaytoshow=dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
 $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
@@ -119,7 +119,7 @@ $object=new Task($db);
  */
 
 // Purge criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$action = '';
 	$search_categ='';
@@ -133,7 +133,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	// We redefine $usertoprocess
 	$usertoprocess=$user;
 }
-if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
+if (GETPOST("button_search_x", 'alpha') || GETPOST("button_search.x", 'alpha') || GETPOST("button_search", 'alpha'))
 {
 	$action = '';
 }
@@ -240,7 +240,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				$amountoadd=$timetoadd[$taskid][$key];
 				if (! empty($amountoadd))
 				{
-					$tmpduration=explode(':',$amountoadd);
+					$tmpduration=explode(':', $amountoadd);
 					$newduration=0;
 					if (! empty($tmpduration[0])) $newduration+=($tmpduration[0] * 3600);
 					if (! empty($tmpduration[1])) $newduration+=($tmpduration[1] * 60);
@@ -327,7 +327,7 @@ $holiday = new Holiday($db);
 
 $title=$langs->trans("TimeSpent");
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,(empty($usertoprocess->id)?2:0),1);  // Return all project i have permission on (assigned to me+public). I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess, (empty($usertoprocess->id)?2:0), 1);  // Return all project i have permission on (assigned to me+public). I want my tasks and some of my task may be on a public projet that is not my project
 //var_dump($projectsListId);
 if ($id)
 {
@@ -356,7 +356,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 //var_dump($taskrole);
 
 
-llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
+llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
@@ -370,7 +370,7 @@ $param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav.='<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
@@ -421,7 +421,7 @@ print '<div class="taskiddiv inline-block">';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
+print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
@@ -501,7 +501,7 @@ if (! empty($moreforfilter))
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -673,7 +673,7 @@ if (count($tasksarray) > 0)
 			if ($timeonothertasks)
 			{
 				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled="" id="timespent[-1]['.$idw.']" name="task[-1]['.$idw.']" value="';
-				print convertSecondToTime($timeonothertasks,'allhourmin');
+				print convertSecondToTime($timeonothertasks, 'allhourmin');
 				print '"></span>';
 			}
 			print '</td>';

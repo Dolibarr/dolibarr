@@ -71,14 +71,14 @@ $conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									/
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
-	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+	$values=preg_split('/[;,]/', $dolibarr_main_document_root_alt);
 	$i=0;
 	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
-	$values=preg_split('/[;,]/',$dolibarr_main_url_root_alt);
+	$values=preg_split('/[;,]/', $dolibarr_main_url_root_alt);
 	$i=0;
 	foreach($values as $value)
 	{
-		if (preg_match('/^http(s)?:/',$value))
+		if (preg_match('/^http(s)?:/', $value))
 		{
 			// Show error message
 			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
@@ -109,7 +109,7 @@ if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs = new Translate('',$conf);	// Must be after reading conf
+	$langs = new Translate('', $conf);	// Must be after reading conf
 }
 
 /*
@@ -117,11 +117,11 @@ if (! defined('NOREQUIRETRAN'))
  */
 if (! defined('NOREQUIREDB'))
 {
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 	if ($db->error)
 	{
-		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;
 	}
 }
@@ -133,8 +133,7 @@ unset($conf->db->pass);				// This is to avoid password to be shown in memory/sw
 /*
  * Object $user
  */
-if (! defined('NOREQUIREUSER'))
-{
+if (! defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
@@ -152,9 +151,9 @@ elseif (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-elseif (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
+elseif (isset($_POST["loginfunction"]) && GETPOST("entity", 'int'))	// Just after a login page
 {
-	$conf->entity = GETPOST("entity",'int');
+	$conf->entity = GETPOST("entity", 'int');
 }
 elseif (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 {
@@ -234,7 +233,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-    $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langcode=(GETPOST('lang', 'aZ09')?GETPOST('lang', 'aZ09', 1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
     $langs->setDefaultLang($langcode);
 }
@@ -245,4 +244,4 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 
 
-if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR', 'NPR');

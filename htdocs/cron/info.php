@@ -32,7 +32,7 @@ $langs->loadLangs(array('admin', 'cron'));
 // Security check
 if (!$user->rights->cron->read) accessforbidden();
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 
 $mesg = '';
 
@@ -40,7 +40,7 @@ $mesg = '';
  * View
 */
 
-llxHeader('',$langs->trans("CronInfo"));
+llxHeader('', $langs->trans("CronInfo"));
 
 $object = new Cronjob($db);
 $object->fetch($id);

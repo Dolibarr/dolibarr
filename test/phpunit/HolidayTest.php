@@ -204,11 +204,11 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';
 
-		$result=$localobject->update($localobject->id,$user);
+		$result=$localobject->update($localobject->id, $user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update error');
 
-    	$result=$localobject->update_note($localobject->note_private,'_private');
+    	$result=$localobject->update_note($localobject->note_private, '_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
 
@@ -223,7 +223,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0, 'Holiday::fetch error');
 
     	print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
-    	$this->assertEquals($localobject->note, $newobject->note,'Holiday::update_note error compare note');
+    	$this->assertEquals($localobject->note, $newobject->note, 'Holiday::update_note error compare note');
     	//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
 

@@ -76,7 +76,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -229,7 +229,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 		    throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $this->contract->getLinesArray();
@@ -261,7 +261,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 		$request_data = (object) $request_data;
@@ -314,7 +314,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contrat not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -374,7 +374,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contrat not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -412,7 +412,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contrat not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -523,7 +523,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -565,7 +565,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -611,7 +611,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contract not found');
     	}
 
-    	if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 

@@ -51,12 +51,12 @@ $langs->load('users');
 
 $cp = new Holiday($db);
 
-$alltypeleaves=$cp->getTypes(1,-1);    // To have labels
+$alltypeleaves=$cp->getTypes(1, -1);    // To have labels
 
 llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
 // Recent changes are more important than old changes
-$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs
+$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year, 1, 1))."' AND '".$db->idate(dol_get_last_day($year, 12, 1))."'");	// Load $cp->logs
 
 $pagination='<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'"><i class="fa fa-chevron-left" title="Previous"></i></a><li class="pagination"><span class="active">'.$langs->trans("Year").' '.$year.'</span></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'"><i class="fa fa-chevron-right" title="Next"></i></a></li></lu></div>';
 print load_fiche_titre($langs->trans('LogCP'), $pagination, 'title_hrm.png');
@@ -67,7 +67,7 @@ if ($lastUpdate)
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+    print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
@@ -121,8 +121,8 @@ foreach($cp->logs as $logs_CP)
    	$label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code'])!=$alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
 	print $label?$label:$logs_CP['fk_type'];
    	print '</td>';
-   	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
-   	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
+   	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'], 5).' '.$langs->trans('days').'</td>';
+   	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'], 5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
 }
 

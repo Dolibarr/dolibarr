@@ -75,7 +75,7 @@ class Tasks extends DolibarrApi
             throw new RestException(404, 'Task not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('task',$this->task->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -278,7 +278,7 @@ class Tasks extends DolibarrApi
             throw new RestException(404, 'Task not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('tasks',$this->task->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -291,7 +291,7 @@ class Tasks extends DolibarrApi
         $this->task->roles = $this->task->getUserRolesForProjectsOrTasks(0, $usert, 0, $id);
         $result = array();
         foreach ($this->task->roles as $line) {
-            array_push($result,$this->_cleanObjectDatas($line));
+            array_push($result, $this->_cleanObjectDatas($line));
         }
         return $result;
     }
@@ -438,9 +438,9 @@ class Tasks extends DolibarrApi
             throw new RestException(404, 'Task not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('tasks',$this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if ( ! DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->task->$field = $value;
@@ -473,7 +473,7 @@ class Tasks extends DolibarrApi
             throw new RestException(404, 'Task not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('tasks',$this->project->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

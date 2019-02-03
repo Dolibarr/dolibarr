@@ -93,7 +93,7 @@ class pdf_beluga extends ModelePDFProjects
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
 		// Defini position des colonnes
 		$this->posxref=$this->marge_gauche+1;
@@ -142,14 +142,14 @@ class pdf_beluga extends ModelePDFProjects
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
-			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
+			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
@@ -165,12 +165,12 @@ class pdf_beluga extends ModelePDFProjects
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1,0);
+				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
@@ -205,7 +205,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				$pdf->Open();
 				$pagenb=0;
-				$pdf->SetDrawColor(128,128,128);
+				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
@@ -221,9 +221,9 @@ class pdf_beluga extends ModelePDFProjects
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('','', $default_font_size - 1);
+				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetTextColor(0,0,0);
+				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
@@ -240,13 +240,13 @@ class pdf_beluga extends ModelePDFProjects
 
 					$tab_top -= 2;
 
-					$pdf->SetFont('','', $default_font_size - 1);
+					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
 					// Rect prend une longueur en 3eme param
-					$pdf->SetDrawColor(192,192,192);
+					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
 
 					$tab_height = $tab_height - $height_note;
@@ -388,8 +388,8 @@ class pdf_beluga extends ModelePDFProjects
                         $nexY = $pdf->GetY() + 5;
 
                         $curY = $nexY;
-                        $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
-                        $pdf->SetTextColor(0,0,0);
+                        $pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+                        $pdf->SetTextColor(0, 0, 0);
 
                         $pdf->SetXY($this->posxref, $curY);
                         $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
@@ -425,12 +425,12 @@ class pdf_beluga extends ModelePDFProjects
                             $total_ttc = 0;
                             $num = count($elementarray);
 
-			                // Loop on each lines
+				            // Loop on each lines
 				            for ($i = 0; $i < $num; $i ++)
 				            {
 					            $curY = $nexY;
-					            $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
-					            $pdf->SetTextColor(0,0,0);
+					            $pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+					            $pdf->SetTextColor(0, 0, 0);
 
 					            $pdf->setTopMargin($tab_top_newpage);
 					            $pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -438,13 +438,13 @@ class pdf_beluga extends ModelePDFProjects
 
 					            // Description of line
 					            $idofelement=$elementarray[$i];
-                                if ($classname == 'ExpenseReport')
-                                {
-                                    // We get id of expense report
-                                    $expensereportline=new ExpenseReportLine($this->db);
-                                    $expensereportline->fetch($idofelement);
-                                    $idofelement = $expensereportline->fk_expensereport;
-                                }
+                             	if ($classname == 'ExpenseReport')
+                               	{
+                               		// We get id of expense report
+                               		$expensereportline=new ExpenseReportLine($this->db);
+                               		$expensereportline->fetch($idofelement);
+                               		$idofelement = $expensereportline->fk_expensereport;
+                               	}
 
                                 $element = new $classname($this->db);
                                 $element->fetch($idofelement);
@@ -480,7 +480,7 @@ class pdf_beluga extends ModelePDFProjects
 						            {
 							            if ($i == ($num-1))	// No more lines, and no space left to show total, so we create a new page
 							            {
-								            $pdf->AddPage('','',true);
+								            $pdf->AddPage('', '', true);
 								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								            $pdf->setPage($pageposafter+1);
@@ -497,13 +497,13 @@ class pdf_beluga extends ModelePDFProjects
 								            $pageposafter=$pageposbefore;
 								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 
-								            $pdf->AddPage('','',true);
+								            $pdf->AddPage('', '', true);
 								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								            $pdf->setPage($pageposafter+1);
-								            $pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+								            $pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
 								            $pdf->MultiCell(0, 3, '');		// Set interline to 3
-								            $pdf->SetTextColor(0,0,0);
+								            $pdf->SetTextColor(0, 0, 0);
 
 								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 								            $curY = $tab_top_newpage + $heightoftitleline + 1;
@@ -516,39 +516,39 @@ class pdf_beluga extends ModelePDFProjects
 								            $posyafter=$pdf->GetY();
 							            }
 						            }
-						        //var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
+						            //var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
 					            }
 					            else	// No pagebreak
 					            {
 						            $pdf->commitTransaction();
 					            }
-					        $posYAfterDescription=$pdf->GetY();
+					            $posYAfterDescription=$pdf->GetY();
 
-					        $nexY = $pdf->GetY();
-					        $pageposafter=$pdf->getPage();
-					        $pdf->setPage($pageposbefore);
-					        $pdf->setTopMargin($this->marge_haute);
-					        $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					            $nexY = $pdf->GetY();
+					            $pageposafter=$pdf->getPage();
+					            $pdf->setPage($pageposbefore);
+					            $pdf->setTopMargin($this->marge_haute);
+					            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-					        // We suppose that a too long description is moved completely on next page
-					        if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						        //var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
-						        $pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
-					        }
+					            // We suppose that a too long description is moved completely on next page
+					            if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
+						            //var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
+						            $pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
+					            }
 
-					        $pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+					            $pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
 
-					        // Date
-					        if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
+					            // Date
+					            if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
 						            $date = $element->date_commande;
 					            else {
 						            $date = $element->date;
-						        if (empty($date))
-							        $date = $element->datep;
-						        if (empty($date))
-							        $date = $element->date_contrat;
-						        if (empty($date))
-							        $date = $element->datev; // Fiche inter
+						            if (empty($date))
+							            $date = $element->datep;
+						            if (empty($date))
+							            $date = $element->date_contrat;
+						            if (empty($date))
+							            $date = $element->datev; // Fiche inter
 					            }
 
 					            $pdf->SetXY($this->posxdate, $curY);
@@ -625,7 +625,7 @@ class pdf_beluga extends ModelePDFProjects
 					while ($pagenb < $pageposafter)
 					{
 						$pdf->setPage($pagenb);
-						$this->_pagefoot($pdf,$object,$outputlangs,1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -656,13 +656,13 @@ class pdf_beluga extends ModelePDFProjects
 			}
 			else
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->transnoentities("ErrorConstantNotDefined","PROJECT_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined", "PROJECT_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -688,7 +688,7 @@ class pdf_beluga extends ModelePDFProjects
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetDrawColor(128, 128, 128);
 
 		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
@@ -696,11 +696,11 @@ class pdf_beluga extends ModelePDFProjects
 		// line prend une position y en 3eme param
 		$pdf->line($this->marge_gauche, $tab_top+$heightoftitleline, $this->page_largeur-$this->marge_droite, $tab_top+$heightoftitleline);
 
-		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('','', $default_font_size);
+		$pdf->SetTextColor(0, 0, 0);
+		$pdf->SetFont('', '', $default_font_size);
 
 		$pdf->SetXY($this->posxref, $tab_top+1);
-		$pdf->MultiCell($this->posxlabel-$this->posxref,3, $outputlangs->transnoentities("Tasks"),'','L');
+		$pdf->MultiCell($this->posxlabel-$this->posxref, 3, $outputlangs->transnoentities("Tasks"), '', 'L');
 
 		$pdf->SetXY($this->posxlabel, $tab_top+1);
 		$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
@@ -733,15 +733,15 @@ class pdf_beluga extends ModelePDFProjects
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
+		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B', $default_font_size + 3);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
 
         $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
-		$pdf->SetXY($this->marge_gauche,$posy);
+		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
@@ -754,37 +754,37 @@ class pdf_beluga extends ModelePDFProjects
 			}
 			else
 			{
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
 		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
 
-		$pdf->SetFont('','B', $default_font_size + 3);
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Project")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
-		$pdf->SetFont('','', $default_font_size + 2);
+		$pdf->SetFont('', '', $default_font_size + 2);
 
 		$posy+=6;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start,'day',false,$outputlangs,true), '', 'R');
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start, 'day', false, $outputlangs, true), '', 'R');
 
 		$posy+=6;
-		$pdf->SetXY($posx,$posy);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
+		$pdf->SetXY($posx, $posy);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end, 'day', false, $outputlangs, true), '', 'R');
 
 		if (is_object($object->thirdparty))
 		{
 			$posy+=6;
-			$pdf->SetXY($posx,$posy);
+			$pdf->SetXY($posx, $posy);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty->getFullName($outputlangs), '', 'R');
 		}
 
-		$pdf->SetTextColor(0,0,60);
+		$pdf->SetTextColor(0, 0, 60);
 	}
 
 	/**
@@ -800,6 +800,6 @@ class pdf_beluga extends ModelePDFProjects
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

@@ -72,16 +72,16 @@ class Categories extends DolibarrApi
      */
     function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+        if (! DolibarrApiAccess::$user->rights->categorie->lire) {
             throw new RestException(401);
         }
 
         $result = $this->category->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'category not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -118,7 +118,7 @@ class Categories extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('category').')';
         if (!empty($type))
         {
-            $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
+            $sql.= ' AND t.type='.array_search($type, Categories::$TYPES);
         }
         // Add sql filters
         if ($sqlfilters)
@@ -209,7 +209,7 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -244,12 +244,12 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         if (! $this->category->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when delete category');
+            throw new RestException(401, 'error when delete category');
         }
 
         return array(

@@ -49,7 +49,7 @@ $form = new Form($db);
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 
-top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
+top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 

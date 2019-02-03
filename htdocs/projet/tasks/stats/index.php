@@ -35,8 +35,8 @@ if (! $user->rights->projet->lire)
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title=$langs->trans("TasksStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title,'','title_project.png');
+print load_fiche_titre($title, '', 'title_project.png');
 
 dol_mkdir($dir);
 
@@ -81,7 +81,7 @@ if (!empty($year)) $stats_tasks->year=$year;
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
-$data = $stats_tasks->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats_tasks->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $conf->project->dir_output . "/stats/tasknbprevyear-".$year.".png";
@@ -110,7 +110,7 @@ if (! $mesg)
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("ProjectNbTaskByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 
@@ -133,9 +133,9 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"), -1, '');
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -157,10 +157,10 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 arsort($arrayyears);
-print $form->selectarray('year',$arrayyears,$year,0);
+print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';

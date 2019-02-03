@@ -20,11 +20,11 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
 
@@ -34,9 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = GETPOST('place','int');
+$place = GETPOST('place', 'int');
 if ($place=="") $place="0";
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
@@ -387,12 +387,12 @@ $( document ).ready(function() {
 });
 </script>
 
-<body style="overflow: hidden; background-color:#E8E8E8;">
+<body style="overflow: hidden; background-color:#D1D1D1;">
 
 <div class="container">
 	<div class="row1">
 
-		<div id="poslines" class="div1" style="overflow: auto;">
+		<div id="poslines" class="div1">
 		</div>
 
 		<div class="div2">
@@ -415,6 +415,13 @@ $( document ).ready(function() {
 		</div>
 
 <?php
+// TakePOS setup check
+if (empty($conf->global->CASHDESK_ID_THIRDPARTY) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) {
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+}
+if (count($maincategories)==0) {
+	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
+}
 // User menu and external TakePOS modules
 $menus = array();
 $r=0;
@@ -447,8 +454,10 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 }
 
 if ($conf->global->TAKEPOSCONNECTOR){
-	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
-					'action'=>'OpenDrawer();');
+    $menus[$r++]=array(
+        'title'=>$langs->trans("DOL_OPEN_DRAWER"),
+        'action'=>'OpenDrawer();'
+    );
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));

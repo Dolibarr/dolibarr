@@ -40,7 +40,7 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 $testsubscribeemail = GETPOST("testsubscribeemail");
 $testunsubscribeemail = GETPOST("testunsubscribeemail");
 
@@ -57,7 +57,7 @@ if ($action == 'update' || $action == 'add')
 		$constvalue=$_POST["constvalue"][$key];
 		$consttype=$_POST["consttype"][$key];
 		$constnote=$_POST["constnote"][$key];
-		$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+		$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
 		if (! $res > 0) $error++;
 	}
@@ -98,7 +98,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     if (! isValidEmail($email))
     {
         $langs->load("errors");
-        setEventMessages($langs->trans("ErrorBadEMail",$email), null, 'errors');
+        setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
     }
     else
     {
@@ -117,7 +117,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
 			if ($result < 0)
 			{
 				$error++;
-				setEventMessages($mailmanspip->error,$mailmanspip->errors,'errors');
+				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
 			}
 			else
 			{
@@ -130,7 +130,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
             if ($result < 0)
 			{
 				$error++;
-				setEventMessages($mailmanspip->error,$mailmanspip->errors,'errors');
+				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
 			}
 			else
 			{
@@ -147,11 +147,11 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
 
 $help_url='';
 
-llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
+llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setup');
 
 $head = mailmanspip_admin_prepare_head();
 
@@ -164,7 +164,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
     //$link.=$langs->trans("Disable");
-    $link.=img_picto($langs->trans("Activated"),'switch_on');
+    $link.=img_picto($langs->trans("Activated"), 'switch_on');
     $link.='</a>';
     // Edition des varibales globales
     $constantes=array(
@@ -174,7 +174,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
         'ADHERENT_MAILMAN_LISTS'
     );
 
-    print load_fiche_titre($langs->trans('MailmanTitle'), $link,'');
+    print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
     print '<br>';
 
@@ -199,7 +199,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 	});
     </script>';
 
-    form_constantes($constantes,2);
+    form_constantes($constantes, 2);
 
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
@@ -216,9 +216,9 @@ else
 
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
-    $link.=img_picto($langs->trans("Disabled"),'switch_off');
+    $link.=img_picto($langs->trans("Disabled"), 'switch_off');
     $link.='</a>';
-    print load_fiche_titre($langs->trans('MailmanTitle'), $link,'');
+    print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
     dol_fiche_end();
 }

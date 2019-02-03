@@ -77,7 +77,7 @@ class box_ficheinter extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic=new Fichinter($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
 		if (! empty($user->rights->ficheinter->lire))
 		{
@@ -124,11 +124,11 @@ class box_ficheinter extends ModeleBoxes
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][] = array('td' => '',
-					'text' => dol_trunc($objp->name,40),
+					'text' => dol_trunc($objp->name, 40),
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][] = array('td' => 'class="right"',
-					'text' => dol_print_date($datec,'day'));
+					'text' => dol_print_date($datec, 'day'));
 
 					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap"',
 					'text' => $ficheinterstatic->getLibStatut(6),

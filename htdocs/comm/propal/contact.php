@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies'));
 
-$id=GETPOST('id','int');
-$ref= GETPOST('ref','alpha');
-$lineid=GETPOST('lineid','int');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref= GETPOST('ref', 'alpha');
+$lineid=GETPOST('lineid', 'int');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 {
     if ($object->id > 0)
     {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -140,7 +140,7 @@ else if ($action == 'setaddress' && $user->rights->propale->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
@@ -162,7 +162,7 @@ if ($object->id > 0)
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -204,7 +204,7 @@ if ($object->id > 0)
 
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach($dirtpls as $reldir)
 	{
 		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');

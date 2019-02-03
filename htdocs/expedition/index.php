@@ -39,7 +39,7 @@ $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('',$langs->trans("Shipment"),$helpurl);
+llxHeader('', $langs->trans("Shipment"), $helpurl);
 
 print load_fiche_titre($langs->trans("SendingsArea"));
 
@@ -158,7 +158,7 @@ if ($resql)
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer',32);
+			print $companystatic->getNomUrl(1, 'customer', 32);
 			print '</td>';
 			print '<td align="right">';
 			print $orderstatic->getLibStatut(3);
@@ -217,7 +217,7 @@ if ( $resql )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer');
+			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
             print '<td align="right">';
             print $orderstatic->getLibStatut(3);
@@ -270,7 +270,7 @@ if ($resql)
 			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
 			print '<td>';
 			if ($obj->commande_id > 0)
 			{

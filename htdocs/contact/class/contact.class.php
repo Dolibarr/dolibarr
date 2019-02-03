@@ -276,7 +276,7 @@ class Contact extends CommonObject
 			if (! $error)
             {
                 // Call trigger
-                $result=$this->call_trigger('CONTACT_CREATE',$user);
+                $result=$this->call_trigger('CONTACT_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -465,7 +465,7 @@ class Contact extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('CONTACT_MODIFY',$user);
+				$result=$this->call_trigger('CONTACT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -477,7 +477,7 @@ class Contact extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
@@ -658,7 +658,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
+		    $result=$this->call_trigger('CONTACT_MODIFY', $user);
 		    if ($result < 0) { $error++; }
 		    // End call triggers
 		}
@@ -670,7 +670,7 @@ class Contact extends CommonObject
 		}
 		else
 		{
-		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
 		}
@@ -1019,7 +1019,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('CONTACT_DELETE',$user);
+            $result=$this->call_trigger('CONTACT_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -1033,7 +1033,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_syslog("Error ".$this->error,LOG_ERR);
+			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1140,7 +1140,7 @@ class Contact extends CommonObject
         if ($this->phone_pro) $phonelist[]=$this->phone_pro;
         if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
         if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ', $phonelist);
         $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
         $url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
@@ -1149,7 +1149,7 @@ class Contact extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -1185,13 +1185,13 @@ class Contact extends CommonObject
 
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs), $maxlen):$this->getFullName($langs));
 		$result.=$linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -1221,7 +1221,7 @@ class Contact extends CommonObject
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1249,23 +1249,23 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			if ($statut==0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
 		}
 	}
 
@@ -1359,7 +1359,7 @@ class Contact extends CommonObject
 		if ($result)
 		{
             // Call trigger
-            $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
+            $result=$this->call_trigger('CONTACT_ENABLEDISABLE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}

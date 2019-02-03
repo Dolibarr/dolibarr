@@ -263,7 +263,7 @@ class SimpleOpenID
         if (!isset($u['path']) || ($u['path'] == '/')) {
             $u['path'] = '';
         }
-        if(substr($u['path'],-1,1) == '/'){
+        if(substr($u['path'], -1, 1) == '/'){
             $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
         }
         if (isset($u['query'])){ // If there is a query string, then use identity as is
@@ -434,11 +434,11 @@ class SimpleOpenID
 
         if (isset($this->fields['required'])
         && (count($this->fields['required']) > 0)) {
-            $params['openid.sreg.required'] = implode(',',$this->fields['required']);
+            $params['openid.sreg.required'] = implode(',', $this->fields['required']);
         }
         if (isset($this->fields['optional'])
         && (count($this->fields['optional']) > 0)) {
-            $params['openid.sreg.optional'] = implode(',',$this->fields['optional']);
+            $params['openid.sreg.optional'] = implode(',', $this->fields['optional']);
         }
         return $this->URLs['openid_server'] . "?". $this->array2url($params);
     }
@@ -480,11 +480,11 @@ class SimpleOpenID
 			'openid.sig' => urlencode($_GET['openid_sig'])
         );
         // Send only required parameters to confirm validity
-        $arr_signed = explode(",",str_replace('sreg.','sreg_',$_GET['openid_signed']));
+        $arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
         $num = count($arr_signed);
         for ($i = 0; $i < $num; $i++)
         {
-            $s = str_replace('sreg_','sreg.', $arr_signed[$i]);
+            $s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
             $c = $_GET['openid_' . $arr_signed[$i]];
             // if ($c != ""){
             $params['openid.' . $s] = urlencode($c);
@@ -497,7 +497,7 @@ class SimpleOpenID
         {
             return false;
         }
-        $response = $this->CURL_Request($openid_server,'POST',$params);
+        $response = $this->CURL_Request($openid_server, 'POST', $params);
         $data = $this->splitResponse($response);
         if ($data['is_valid'] == "true")
         {
@@ -545,7 +545,7 @@ class SimpleOpenID
 		$content=$response['content'];
 
         $server='';
-        if (preg_match('/'.preg_quote('<URI>','/').'(.*)'.preg_quote('</URI>','/').'/is', $content, $reg))
+        if (preg_match('/'.preg_quote('<URI>', '/').'(.*)'.preg_quote('</URI>', '/').'/is', $content, $reg))
         {
         	$server=$reg[1];
         }

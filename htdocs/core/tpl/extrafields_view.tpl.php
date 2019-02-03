@@ -144,7 +144,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $datenotinstring;
 			}
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute','none') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $key)
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';

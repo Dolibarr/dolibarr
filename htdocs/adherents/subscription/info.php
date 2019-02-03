@@ -34,7 +34,7 @@ $langs->loadLangs(array("companies","members","bills","users"));
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
-$rowid=GETPOST("rowid",'int');
+$rowid=GETPOST("rowid", 'int');
 
 
 

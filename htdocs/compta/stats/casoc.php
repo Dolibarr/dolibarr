@@ -47,7 +47,7 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="nom";
 
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
@@ -58,37 +58,38 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Date range
-$year=GETPOST("year",'int');
-$month=GETPOST("month",'int');
-$search_societe = GETPOST("search_societe",'alpha');
-$search_zip = GETPOST("search_zip",'alpha');
-$search_town = GETPOST("search_town",'alpha');
-$search_country = GETPOST("search_country",'alpha');
-$date_startyear = GETPOST("date_startyear",'alpha');
-$date_startmonth = GETPOST("date_startmonth",'alpha');
-$date_startday = GETPOST("date_startday",'alpha');
-$date_endyear = GETPOST("date_endyear",'alpha');
-$date_endmonth = GETPOST("date_endmonth",'alpha');
-$date_endday = GETPOST("date_endday",'alpha');
-if (empty($year)) {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+$year=GETPOST("year", 'int');
+$month=GETPOST("month", 'int');
+$search_societe = GETPOST("search_societe", 'alpha');
+$search_zip = GETPOST("search_zip", 'alpha');
+$search_town = GETPOST("search_town", 'alpha');
+$search_country = GETPOST("search_country", 'alpha');
+$date_startyear = GETPOST("date_startyear", 'alpha');
+$date_startmonth = GETPOST("date_startmonth", 'alpha');
+$date_startday = GETPOST("date_startday", 'alpha');
+$date_endyear = GETPOST("date_endyear", 'alpha');
+$date_endmonth = GETPOST("date_endmonth", 'alpha');
+$date_endday = GETPOST("date_endday", 'alpha');
+if (empty($year))
+{
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
-$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q","int")?GETPOST("q","int"):0;
+	$q=GETPOST("q", "int")?GETPOST("q", "int"):0;
 	if (empty($q))
 	{
 		// We define date_start and date_end
@@ -106,12 +107,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 else
 {
@@ -207,7 +208,7 @@ $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$f
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -378,7 +379,7 @@ if ($subcat) {
 }
 print'></td>';
 print '<td colspan="7" align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
 
@@ -411,7 +412,7 @@ print_liste_field_titre(
 	"",
 	$paramslink,
 	"",
-	$sortfield,$sortorder
+	$sortfield, $sortorder
 	);
 print_liste_field_titre(
 	$langs->trans("Zip"),
@@ -420,7 +421,7 @@ print_liste_field_titre(
 	"",
 	$paramslink,
 	"",
-	$sortfield,$sortorder
+	$sortfield, $sortorder
 	);
 print_liste_field_titre(
 	$langs->trans("Town"),
@@ -429,7 +430,7 @@ print_liste_field_titre(
 	"",
 	$paramslink,
 	"",
-	$sortfield,$sortorder
+	$sortfield, $sortorder
 	);
 print_liste_field_titre(
 	$langs->trans("Country"),
@@ -438,7 +439,7 @@ print_liste_field_titre(
 	"",
 	$paramslink,
 	"",
-	$sortfield,$sortorder
+	$sortfield, $sortorder
 	);
 if ($modecompta == 'CREANCES-DETTES') {
     print_liste_field_titre(
@@ -547,7 +548,7 @@ if (count($amount)) {
 		    $thirdparty_static->id=$key;
 		    $thirdparty_static->name=$fullname;
 		    $thirdparty_static->client=1;
-		    $linkname=$thirdparty_static->getNomUrl(1,'customer');
+		    $linkname=$thirdparty_static->getNomUrl(1, 'customer');
 		} else {
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
 		}
@@ -608,13 +609,13 @@ if (count($amount)) {
         // Other stats
         print '<td align="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
         }
         if (! empty($conf->commande->enabled) && $key>0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
         }
         if (! empty($conf->facture->enabled) && $key>0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
         }
         print '</td>';
         print "</tr>\n";

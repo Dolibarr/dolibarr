@@ -87,7 +87,7 @@ function ldap_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,'',$head,$h,'ldap');
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
 
 	return $head;
 }
@@ -170,13 +170,13 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 				print '</td><td>';
 				if (strtolower($key) == 'userpassword') $hide=1;
 			}
-			show_ldap_content($val,$level+1,$count,$var,$hide,$val["count"]);
+			show_ldap_content($val, $level+1, $count, $var, $hide, $val["count"]);
 		}
 		elseif ($subcount)
 		{
 			$subcount--;
 			$newstring=dol_htmlentitiesbr($val);
-			if ($hide) print preg_replace('/./i','*',$newstring);
+			if ($hide) print preg_replace('/./i', '*', $newstring);
 			else print $newstring;
 			print '<br>';
 		}

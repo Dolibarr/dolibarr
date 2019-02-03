@@ -79,7 +79,7 @@ abstract class CommonDocGenerator
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
-            'myuser_fullname'=>$user->getFullName($outputlangs,1),
+            'myuser_fullname'=>$user->getFullName($outputlangs, 1),
             'myuser_login'=>$user->login,
             'myuser_phone'=>$user->office_phone,
        		'myuser_address'=>$user->address,
@@ -122,7 +122,7 @@ abstract class CommonDocGenerator
         }
         if (empty($mysoc->state) && ! empty($mysoc->state_code))
         {
-        	$mysoc->state=getState($mysoc->state_code,0);
+        	$mysoc->state=getState($mysoc->state_code, 0);
         }
 
         $logotouse=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -178,7 +178,7 @@ abstract class CommonDocGenerator
         }
         if (empty($object->state) && ! empty($object->state_code))
         {
-        	$object->state=getState($object->state_code,0);
+        	$object->state=getState($object->state_code, 0);
         }
 
         $array_thirdparty = array(
@@ -221,14 +221,14 @@ abstract class CommonDocGenerator
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
-        	$extralabels = $extrafields->fetch_name_optionals_label('societe',true);
+        	$extralabels = $extrafields->fetch_name_optionals_label('societe', true);
         	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
         		if($extrafields->attribute_type[$key] == 'price')
         		{
-        			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
+        			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
         		}
         		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
         		{
@@ -329,15 +329,15 @@ abstract class CommonDocGenerator
     	$now=dol_now('gmt');	// gmt
     	$array_other = array(
     	    // Date in default language
-    	    'current_date'=>dol_print_date($now,'day','tzuser'),
-    	    'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
-   			'current_server_date'=>dol_print_date($now,'day','tzserver'),
-   			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
+    	    'current_date'=>dol_print_date($now, 'day', 'tzuser'),
+    	    'current_datehour'=>dol_print_date($now, 'dayhour', 'tzuser'),
+   			'current_server_date'=>dol_print_date($now, 'day', 'tzserver'),
+   			'current_server_datehour'=>dol_print_date($now, 'dayhour', 'tzserver'),
     	    // Date in requested output language
-    	    'current_date_locale'=>dol_print_date($now,'day','tzuser',$outputlangs),
-   			'current_datehour_locale'=>dol_print_date($now,'dayhour','tzuser',$outputlangs),
-   			'current_server_date_locale'=>dol_print_date($now,'day','tzserver',$outputlangs),
-   			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
+    	    'current_date_locale'=>dol_print_date($now, 'day', 'tzuser', $outputlangs),
+   			'current_datehour_locale'=>dol_print_date($now, 'dayhour', 'tzuser', $outputlangs),
+   			'current_server_date_locale'=>dol_print_date($now, 'day', 'tzserver', $outputlangs),
+   			'current_server_datehour_locale'=>dol_print_date($now, 'dayhour', 'tzserver', $outputlangs),
     	);
 
 
@@ -389,16 +389,16 @@ abstract class CommonDocGenerator
 		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($date,'hour'),
-		$array_key.'_date'=>dol_print_date($date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
-		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
-	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
-		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
-		$array_key.'_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-		$array_key.'_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
-		$array_key.'_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
-		$array_key.'_date_close'=>(! empty($object->date_cloture)?dol_print_date($object->date_cloture,'dayhour'):''),
+        $array_key.'_hour'=>dol_print_date($date, 'hour'),
+		$array_key.'_date'=>dol_print_date($date, 'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
+		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement, 'day'):''),
+	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite, 'day'):''),
+		$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
+		$array_key.'_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification, 'day'):''),
+		$array_key.'_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation, 'dayhour'):''),
+		$array_key.'_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison, 'day'):''),
+		$array_key.'_date_close'=>(! empty($object->date_cloture)?dol_print_date($object->date_cloture, 'dayhour'):''),
 
 		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
 		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
@@ -505,10 +505,10 @@ abstract class CommonDocGenerator
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 			$object->fetch_optionals();
 
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
+			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
 		}
 		
 		return $resarray;
@@ -528,13 +528,13 @@ abstract class CommonDocGenerator
 		global $conf;
 
 		$resarray= array(
-			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
 			'line_product_label'=>$line->product_label,
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
-			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 			'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_total_up'=>price2num($line->subprice * $line->qty),
@@ -578,10 +578,10 @@ abstract class CommonDocGenerator
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key=$array_key, $outputlangs);
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
@@ -617,9 +617,9 @@ abstract class CommonDocGenerator
 	    	$array_key.'_ref'=>$object->ref,
 	    	$array_key.'_ref_ext'=>$object->ref_ext,
 	    	$array_key.'_ref_customer'=>$object->ref_customer,
-	    	$array_key.'_date_delivery'=>dol_print_date($object->date_delivery,'day'),
-	    	$array_key.'_hour_delivery'=>dol_print_date($object->date_delivery,'hour'),
-	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
+	    	$array_key.'_date_delivery'=>dol_print_date($object->date_delivery, 'day'),
+	    	$array_key.'_hour_delivery'=>dol_print_date($object->date_delivery, 'hour'),
+	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
 	    	$array_key.'_total_ht'=>price($object->total_ht),
 	    	$array_key.'_total_vat'=>price($object->total_tva),
 	    	$array_key.'_total_ttc'=>price($object->total_ttc),
@@ -648,10 +648,10 @@ abstract class CommonDocGenerator
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('expedition',true);
+    		$extralabels = $extrafields->fetch_name_optionals_label('expedition', true);
     		$object->fetch_optionals();
 
-    		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
+    		$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
     	}
 
     	return $array_shipment;
@@ -673,11 +673,11 @@ abstract class CommonDocGenerator
         dol_include_once('/core/lib/product.lib.php');
 
         $resarray = array(
-	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+	    	'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
 	    	'line_product_ref'=>$line->product_ref,
 	    	'line_product_label'=>$line->product_label,
 	    	'line_desc'=>$line->desc,
-	    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+	    	'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 	    	'line_up'=>price($line->subprice),
 		'line_total_up'=>price($line->subprice * $line->qty),
 	    	'line_qty'=>$line->qty,
@@ -727,7 +727,7 @@ abstract class CommonDocGenerator
                         $array_other['object_'.$key] = $value;
                     }
                     if (is_array($value) && $recursive) {
-                        $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
+                        $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
                     }
                 }
             }
@@ -756,9 +756,9 @@ abstract class CommonDocGenerator
 			if($extrafields->attribute_type[$key] == 'price')
 			{
 				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
-				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
+				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
 				//Add value to store price with currency
-				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
+				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
 			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
 			{
@@ -769,9 +769,9 @@ abstract class CommonDocGenerator
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
 					$date = $object->array_options['options_'.$key];
-					$object->array_options['options_'.$key] = dol_print_date($date,'day');                                       // using company output language
-					$object->array_options['options_'.$key.'_locale'] = dol_print_date($date,'day','tzserver',$outputlangs);     // using output language format
-					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date,'dayrfc');                             // international format
+					$object->array_options['options_'.$key] = dol_print_date($date, 'day');                                       // using company output language
+					$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs);     // using output language format
+					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc');                             // international format
 				}
 				else
 				{
@@ -779,17 +779,17 @@ abstract class CommonDocGenerator
 					$object->array_options['options_'.$key.'_locale'] = '';
 					$object->array_options['options_'.$key.'_rfc'] = '';
 				}
-				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
 			elseif($extrafields->attribute_type[$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
-				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
-				$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour','tzserver',$outputlangs):'');    // using output language format
-				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhourrfc'):'');                             // international format
-				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
+				$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour', 'tzserver', $outputlangs):'');    // using output language format
+				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc'):'');                             // international format
+				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
 			elseif($extrafields->attribute_type[$key] == 'link')
 			{
@@ -815,7 +815,7 @@ abstract class CommonDocGenerator
 				}
 			}
 
-			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+			$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}
 
 		return $array_to_fill;
@@ -874,7 +874,7 @@ abstract class CommonDocGenerator
     {
         global $conf;
 
-        $this->defineColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
+        $this->defineColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 
         // Sorting
@@ -1038,14 +1038,14 @@ abstract class CommonDocGenerator
             'columnText' => $columnText,
             'colKey' => $colKey
         );
-        $reshook=$hookmanager->executeHooks('printStdColumnContent',$parameters,$this);    // Note that $action and $object may have been modified by hook
-        if ($reshook < 0) setEventMessages($hookmanager->error,$hookmanager->errors,'errors');
+        $reshook=$hookmanager->executeHooks('printStdColumnContent', $parameters, $this);    // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
         if (!$reshook)
         {
             if(empty($columnText)) return;
-            $pdf->SetXY($this->getColumnContentXStart($colKey),$curY); // Set curent position
+            $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey),2,$this->getColumnContentXStart($colKey),$curY, $columnText,0,0,0,true,$colDef['content']['align']);
+            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
     }
 

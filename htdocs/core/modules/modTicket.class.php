@@ -18,8 +18,7 @@
  */
 
 /**
- *     \defgroup    ticket    Ticket module
- *     \brief       Ticket module descriptor.
+ *     \defgroup    ticket    Module Ticket
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket

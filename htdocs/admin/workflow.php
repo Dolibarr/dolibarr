@@ -37,7 +37,7 @@ $action = GETPOST('action', 'alpha');
 /*
  * Actions
  */
-if (preg_match('/set(.*)/',$action,$reg))
+if (preg_match('/set(.*)/', $action, $reg))
 {
     if (! dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
     {
@@ -45,7 +45,7 @@ if (preg_match('/set(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del(.*)/',$action,$reg))
+if (preg_match('/del(.*)/', $action, $reg))
 {
     if (! dolibarr_del_const($db, $reg[1], $conf->entity) > 0)
     {
@@ -58,10 +58,10 @@ if (preg_match('/del(.*)/',$action,$reg))
  * 	View
  */
 
-llxHeader('',$langs->trans("WorkflowSetup"),'');
+llxHeader('', $langs->trans("WorkflowSetup"), '');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
 print $langs->trans("WorkflowDesc").'<br>';
 print "<br>";
@@ -170,13 +170,13 @@ foreach($workflowcodes as $key => $params)
    		if (! empty($conf->global->$key))
    		{
    			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
-  			print img_picto($langs->trans("Activated"),'switch_on');
+  			print img_picto($langs->trans("Activated"), 'switch_on');
    			print '</a>';
    		}
    		else
    		{
    			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
-  			print img_picto($langs->trans("Disabled"),'switch_off');
+  			print img_picto($langs->trans("Disabled"), 'switch_off');
    			print '</a>';
    		}
    	}

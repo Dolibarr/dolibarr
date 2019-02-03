@@ -32,10 +32,10 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/cla
 // Load translation files required by the page
 $langs->loadLangs(array("companies","donations"));
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -43,17 +43,17 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$statut=(GETPOST("statut",'intcomma')!='')?GETPOST("statut",'intcomma'):"-1";
+$statut=(GETPOST("statut", 'intcomma')!='')?GETPOST("statut", 'intcomma'):"-1";
 $search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref=GETPOST('search_ref','alpha');
-$search_company=GETPOST('search_company','alpha');
-$search_name=GETPOST('search_name','alpha');
-$search_amount = GETPOST('search_amount','alpha');
-$optioncss = GETPOST('optioncss','alpha');
+$search_ref=GETPOST('search_ref', 'alpha');
+$search_company=GETPOST('search_company', 'alpha');
+$search_name=GETPOST('search_name', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_all="";
     $search_ref="";
@@ -81,7 +81,7 @@ $fieldstosearchall = array(
 $form=new Form($db);
 if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
 $donationstatic=new Don($db);
 
@@ -113,7 +113,7 @@ if (trim($search_name) != '')
 }
 if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -156,12 +156,12 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
 
 	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
     }
 
     print '<div class="div-table-responsive">';
@@ -196,21 +196,21 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    print_liste_field_titre("Project",$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
+	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
-	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
 
@@ -222,7 +222,7 @@ if ($resql)
 		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
         print "<td>".$objp->societe."</td>\n";
 		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))
 		{
 			print "<td>";
@@ -239,7 +239,7 @@ if ($resql)
 			print "</td>\n";
 		}
 		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
+		print '<td align="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
         print '<td></td>';
 		print "</tr>";
 		$i++;

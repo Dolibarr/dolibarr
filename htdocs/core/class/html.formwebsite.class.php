@@ -148,7 +148,7 @@ class FormWebsite
     				$i++;
     			}
     			print "</select>";
-    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
     		}
     		else
     		{
