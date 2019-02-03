@@ -1586,7 +1586,7 @@ class User extends CommonObject
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 
-					if ($result >= 0)
+					if ($result > 0)
 					{
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
@@ -1625,7 +1625,7 @@ class User extends CommonObject
 							$error++;
 						}
 					}
-					else
+					elseif ($result < 0)
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;

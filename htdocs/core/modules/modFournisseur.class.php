@@ -20,11 +20,10 @@
  */
 
 /**
- * 		\defgroup   fournisseur     suppliers Module
- *		\brief      Module to manage companies and contacts of supplier type
+ * 		\defgroup   fournisseur     Module suppliers
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Description and activation file for module Fournisseur
+ *		\brief      Description and activation file for module Supplier
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
