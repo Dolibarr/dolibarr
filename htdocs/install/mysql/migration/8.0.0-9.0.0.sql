@@ -258,5 +258,9 @@ CREATE TABLE llx_pos_cash_fence(
 	import_key VARCHAR(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
+ALTER TABLE llx_facture CHANGE facnumber ref VARCHAR(30) NOT NULL;
+ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
+
 -- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;
