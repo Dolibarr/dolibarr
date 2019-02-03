@@ -1562,7 +1562,7 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
-div.tmenusep {
+div.topmenuimage {
 <?php if ($disableimages) { ?>
 	display: none;
 <?php } ?>
@@ -3935,6 +3935,7 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
+	line-height: 28px;
 }
 .websitetools {
 	float: right;

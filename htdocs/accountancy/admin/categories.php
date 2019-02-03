@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ if ($action == 'display' || $action == 'delete') {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
-				print '<td align="right">';
+				print '<td class="right">';
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
 				print img_delete($langs->trans("DeleteFromCat")).' ';
 				print $langs->trans("DeleteFromCat")."</a>";

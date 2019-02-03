@@ -64,7 +64,7 @@ class FormActions
      *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
+    function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
     {
         // phpcs:enable
         global $langs,$conf;
@@ -168,7 +168,7 @@ class FormActions
      *  @param	string	$morehtmlright			More html text on right of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
-    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='', $morehtmlright='')
+    function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -218,14 +218,14 @@ class FormActions
         	$total = 0;
 
         	print '<div class="div-table-responsive-no-min">';
-        	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
+        	print '<table class="centpercent noborder'.($morecss?' '.$morecss:'').'">';
         	print '<tr class="liste_titre">';
         	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
         	print '</tr>';
         	print "\n";
 
@@ -273,7 +273,7 @@ class FormActions
 	        		// Label
 	        		print '<td>'.$label.'</td>';
 	        		// Date
-	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
+	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{
 		        		$tmpa=dol_getdate($action->datep);
@@ -285,7 +285,7 @@ class FormActions
 		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
-	        		print '<td align="right">';
+	        		print '<td class="right">';
 	        		if (! empty($action->author->id))
 	        		{
 	        			print $action->getLibStatut(3);
@@ -327,7 +327,7 @@ class FormActions
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
-    function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
+    function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
     {
         // phpcs:enable
         global $langs,$user,$form,$conf;

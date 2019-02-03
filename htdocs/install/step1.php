@@ -546,11 +546,11 @@ if (! $error && $db->connected && $action == "set")
             {
                 $databasefortest='mysql';
             }
-            else if ($conf->db->type == 'pgsql')
+            elseif ($conf->db->type == 'pgsql')
             {
                 $databasefortest='postgres';
             }
-            else if ($conf->db->type == 'mssql')
+            elseif ($conf->db->type == 'mssql')
             {
                 $databasefortest='master';
             }
@@ -816,7 +816,7 @@ if ($ret) exit($ret);
  *  @param	string		$main_dir		Full path name to main.inc.php file
  *  @return	void
  */
-function write_main_file($mainfile,$main_dir)
+function write_main_file($mainfile, $main_dir)
 {
     $fp = @fopen("$mainfile", "w");
     if($fp)
@@ -837,7 +837,7 @@ function write_main_file($mainfile,$main_dir)
  *  @param	string		$main_dir		Full path name to master.inc.php file
  *  @return	void
  */
-function write_master_file($masterfile,$main_dir)
+function write_master_file($masterfile, $main_dir)
 {
     $fp = @fopen("$masterfile", "w");
     if($fp)

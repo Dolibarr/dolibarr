@@ -98,6 +98,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_e
  */
 
 if (GETPOST('cancel','alpha')) { $action=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_generateinvoice') { $massaction=''; }
 
 $parameters=array('socid'=>$socid, 'projectid'=>$projectid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -285,15 +286,114 @@ if (! empty($project_ref) && ! empty($withproject))
 
 // To show all time lines for project
 $projectidforalltimes=0;
-if (GETPOST('projectid','int'))
+if (GETPOST('projectid','int') > 0)
 {
 	$projectidforalltimes=GETPOST('projectid','int');
+
+	$result=$projectstatic->fetch($projectidforalltimes);
+    if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+    $res=$projectstatic->fetch_optionals();
 }
 elseif (GETPOST('project_ref','alpha'))
 {
     $projectstatic->fetch(0, GETPOST('project_ref','alpha'));
     $projectidforalltimes=$projectstatic->id;
     $withproject=1;
+}
+
+if ($action == 'confirm_generateinvoice')
+{
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+
+        //->fetch_thirdparty();
+		if (! ($projectstatic->thirdparty->id > 0))
+		{
+			setEventMessages($langs->trans("ThirdPartyRequiredToGenerateInvoice"), null, 'errors');
+		}
+		else
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			$tmpinvoice = new Facture($db);
+			$tmptimespent=new Task($db);
+			$tmpproduct=new Product($db);
+			$fuser = new User($db);
+
+			$db->begin();
+
+			$idprod = GETPOST('productid', 'int');
+			if ($idprod > 0)
+			{
+				$tmpproduct->fetch($idprod);
+			}
+
+			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+			$pu_ht = empty($dataforprice['pu_ht'])?0:$dataforprice['pu_ht'];
+			$txtva = $dataforprice['tva_tx'];
+
+			$tmpinvoice->socid = $projectstatic->thirdparty->id;
+			$tmpinvoice->date = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+			$tmpinvoice->fk_project = $projectstatic->id;
+
+			$result = $tmpinvoice->create($user);
+			if ($result <= 0)
+			{
+			    $error++;
+			    setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
+			}
+
+			if (! $error)
+			{
+    			$arrayoftasks=array();
+    			foreach($toselect as $key => $value)
+    			{
+    				// Get userid, timepent
+    				$object->fetchTimeSpent($value);
+
+    				$arrayoftasks[$object->timespent_fk_user]['timespent']+=$object->timespent_duration;
+    			}
+
+    			foreach($arrayoftasks as $userid => $value)
+    			{
+    				$fuser->fetch($userid);
+    				//$pu_ht = $value['timespent'] * $fuser->thm;
+    				$username = $fuser->getFullName($langs);
+
+    				// Define qty per hour
+    				$qtyhour = round($value['timespent'] / 3600, 2);
+    				$qtyhourtext = convertSecondToTime($value['timespent']);
+
+    				// Add lines
+    				$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, $qtyhour, $txtva);
+
+    				// Update lineid into line of timespent
+    				$sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+    				$sql.=' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+    				$result = $db->query($sql);
+    				if (! $result)
+    				{
+    				    $error++;
+    				    setEventMessages($db->lasterror(), null, 'errors');
+    				    break;
+    				}
+    			}
+			}
+
+			if (! $error)
+			{
+			    $urltoinvoice = $tmpinvoice->getNomUrl(0);
+			    setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
+			    //var_dump($tmpinvoice);
+
+			    $db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
 }
 
 
@@ -315,7 +415,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	/*
 	 * Fiche projet en mode visu
  	 */
-    if ($projectidforalltimes)
+    if ($projectidforalltimes > 0)
     {
         $result=$projectstatic->fetch($projectidforalltimes);
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -682,7 +782,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->bill_time));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -699,7 +799,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     	        //'builddoc'=>$langs->trans("PDFMerge"),
     	    );
     	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-    	    if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+    	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
     	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	    }
 
@@ -729,6 +829,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
 	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
 	    elseif ($action == 'createtime' && empty($id) && $user->rights->projet->lire) print '<input type="hidden" name="action" value="addtimespent">';
+	    elseif ($massaction == 'generateinvoice' && empty($id) && $user->rights->facture->lire) print '<input type="hidden" name="action" value="confirm_generateinvoice">';
 	    else print '<input type="hidden" name="action" value="list">';
 	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -737,6 +838,60 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    print '<input type="hidden" name="id" value="'.$id.'">';
 	    print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 	    print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+
+	    if ($massaction == 'generateinvoice')
+	    {
+	        $langs->load("bills");
+
+	        //var_dump($_REQUEST);
+	        print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+	        print '<table class="noborder" width="100%" >';
+	        print '<tr>';
+	        print '<td class="titlefield">';
+	        print $langs->trans('DateInvoice');
+	        print '</td>';
+	        print '<td>';
+	        print $form->selectDate('', '', '', '', '', '', 1, 1);
+	        print '</td>';
+	        print '</tr>';
+	        print '<tr>';
+	        print '<td>';
+	        print $langs->trans('Mode');
+	        print '</td>';
+	        print '<td>';
+	        $tmparray=array('onelineperuser'=>'OneLinePerUser');
+	        print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
+	        print '</td>';
+	        print '</tr>';
+	        if ($conf->service->enabled)
+	        {
+    	        print '<tr>';
+    	        print '<td>';
+    	        print $langs->trans('ServiceToUseOnLines');
+    	        print '</td>';
+    	        print '<td>';
+    	        print $form->select_produits('', 'productid', '1', 0, 0, 1, 2, '', 0, array(), 0, 'None', 0, 'maxwidth500');
+    	        print '</td>';
+    	        print '</tr>';
+	        }
+	        /*print '<tr>';
+	        print '<td>';
+	        print $langs->trans('ValidateInvoices');
+	        print '</td>';
+	        print '<td>';
+            print $form->selectyesno('valdate_invoices', 0, 1);
+	        print '</td>';
+	        print '</tr>';*/
+	        print '</table>';
+
+	        print '<br>';
+	        print '<div class="center">';
+	        print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoice').'">  ';
+	        print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+	        print '</div>';
+	        print '<br>';
+	    }
 
 		/*
 		 *  List of time spent
@@ -765,12 +920,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		{
 			if ($search_year > 0 && empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-			else if ($search_year > 0 && ! empty($search_day))
+			elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
 		}
-		else if ($search_year > 0)
+		elseif ($search_year > 0)
 		{
 			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 		}
@@ -1007,6 +1162,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print "</tr>\n";
 
 		$tasktmp = new Task($db);
+		$tmpinvoice = new Facture($db);
 
 		$i = 0;
 
@@ -1105,7 +1261,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Note
             if (! empty($arrayfields['t.note']['checked']))
             {
-                print '<td align="left">';
+                print '<td class="left">';
     			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
     				print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1163,8 +1319,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                     {
                         if ($task_time->invoice_id)
                         {
-                            $tmpinvoice->fetch($task_time->invoice_id);
-                            print $tmpinvoice->getNomUrl(1);
+                            $result = $tmpinvoice->fetch($task_time->invoice_id);
+                            if ($result > 0)
+                            {
+                                print $tmpinvoice->getNomUrl(1);
+                            }
                         }
                         else
                         {
@@ -1201,7 +1360,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<br>';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
-			else if ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
+			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)    // Read project and enter time consumed on assigned tasks
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
@@ -1320,7 +1479,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Note
 			    if (! empty($arrayfields['t.note']['checked']))
 			    {
-			        print '<td align="left">';
+			        print '<td class="left">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1468,7 +1627,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Note
 			    if (! empty($arrayfields['t.note']['checked']))
 			    {
-			        print '<td align="left">';
+			        print '<td class="left">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
@@ -1548,8 +1707,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		        $i++;
 		        if ($i == 1)
 		        {
-		            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-		            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		        }
 		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';
 		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';

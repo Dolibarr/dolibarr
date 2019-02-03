@@ -6,11 +6,11 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -471,7 +471,7 @@ if (empty($reshook))
 			}
 
 	        if (GETPOST('deletephoto')) $object->logo = '';
-	        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+	        elseif (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
 	        // Check parameters
 	        if (! GETPOST('cancel','alpha'))
@@ -631,7 +631,7 @@ if (empty($reshook))
                 	{
                     	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
-                    	else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
+                    	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
                 		header("Location: ".$url);
                     	exit;
@@ -1786,7 +1786,7 @@ else
                 if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
                 print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
-            else if ($object->codeclient_modifiable())
+            elseif ($object->codeclient_modifiable())
             {
             	print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
             }
@@ -1826,7 +1826,7 @@ else
 	                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
 	                }
-	                else if ($object->codefournisseur_modifiable())
+	                elseif ($object->codefournisseur_modifiable())
 	                {
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
@@ -2335,7 +2335,7 @@ else
 			        print '<tr><td>'.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editRE')
 			        {
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }
@@ -2352,7 +2352,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td>'.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editIRPF'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
@@ -2373,7 +2373,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td> '.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editRE'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
@@ -2395,7 +2395,7 @@ else
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			        print '<tr><td> '.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</td>';
 			        if($action == 'editIRPF'){
-			            print '<td align="left">';
+			            print '<td class="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			        }else{

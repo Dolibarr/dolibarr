@@ -124,7 +124,7 @@ class FormTicket
      * @param  int	 $withdolfichehead			With dol_fiche_head
      * @return void
      */
-    public function showForm($withdolfichehead=0)
+    public function showForm($withdolfichehead = 0)
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -431,7 +431,7 @@ class FormTicket
      *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
+    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
     {
         global $langs, $user;
 
@@ -531,7 +531,7 @@ class FormTicket
      *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
+    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
     {
         global $langs, $user;
 
@@ -632,7 +632,7 @@ class FormTicket
      *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
+    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
     {
         global $langs, $user;
 

@@ -67,7 +67,7 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode, $moredata=null)
+	function showmenu($mode, $moredata = null)
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -225,7 +225,7 @@ class MenuManager
 		                {
 		                    $lastlevel[0]='enabled';
 		                }
-		                else if ($showmenu)                 // Not enabled but visible (so greyed)
+		                elseif ($showmenu)                 // Not enabled but visible (so greyed)
 		                {
 		                    $lastlevel[0]='greyed';
 		                }
@@ -532,7 +532,7 @@ function print_start_menu_array_empty()
  * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry_empty($idsel,$classname,$showmode)
+function print_start_menu_entry_empty($idsel, $classname, $showmode)
 {
 	if ($showmode)
 	{
@@ -602,4 +602,3 @@ function print_end_menu_array_empty()
 	print '</div>';
 	print "\n";
 }
-

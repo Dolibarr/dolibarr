@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ if ($result)
 	print '<td>' . $langs->trans("DateEnd") . '</td>';
 	print '<td align="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
 	print '<td align="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
-	print '<td align="right">' . $langs->trans("Statut") . '</td>';
+	print '<td class="right">' . $langs->trans("Statut") . '</td>';
 	print '</tr>';
 
 	if ($num) {
@@ -149,7 +149,7 @@ if ($result)
 			print '<td class="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
 			print '<td align="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
 			print '<td align="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
-			print '<td align="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
+			print '<td class="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
 			print '</tr>';
 			$i++;
 		}

@@ -82,7 +82,7 @@ class Comment extends CommonObject
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int 		        	<0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -155,7 +155,7 @@ class Comment extends CommonObject
 	 *  @param	int		$ref		ref object
 	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id, $ref='')
+	function fetch($id, $ref = '')
 	{
 		global $langs;
 
@@ -213,7 +213,7 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int			         	<=0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger=0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -278,7 +278,7 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';

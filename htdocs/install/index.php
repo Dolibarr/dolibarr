@@ -66,4 +66,3 @@ print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 
 // If there's no error, we display the next step button
 if ($err == 0) pFooter(0);
-

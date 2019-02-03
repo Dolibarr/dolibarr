@@ -62,7 +62,7 @@ class MenuManager
    	 * @param	string	$forceleftmenu		To force leftmenu to load
      * @return	void
      */
-    function loadMenu($forcemainmenu='',$forceleftmenu='')
+    function loadMenu($forcemainmenu = '', $forceleftmenu = '')
     {
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
@@ -123,7 +123,7 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
      */
-    function showmenu($mode, $moredata=null)
+    function showmenu($mode, $moredata = null)
     {
     	global $conf, $langs, $user;
 
@@ -225,7 +225,7 @@ class MenuManager
         			    {
         			        $lastlevel[0]='enabled';
         			    }
-        			    else if ($showmenu)                 // Not enabled but visible (so greyed)
+        			    elseif ($showmenu)                 // Not enabled but visible (so greyed)
         			    {
         			        $lastlevel[0]='greyed';
         			    }
@@ -337,4 +337,3 @@ class MenuManager
         return 0;
     }
 }
-

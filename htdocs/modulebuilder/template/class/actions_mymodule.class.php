@@ -76,7 +76,7 @@ class ActionsMyModule
 	 *                           				=0 if OK but we want to process standard actions too,
 	 *                            				>0 if OK and we want to replace standard actions.
 	 */
-	function getNomUrl($parameters,&$object,&$action)
+	function getNomUrl($parameters, &$object, &$action)
 	{
 		global $db,$langs,$conf,$user;
 		$this->resprints = '';

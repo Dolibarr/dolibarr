@@ -804,7 +804,7 @@ dol_fiche_end();
 print '<table class="notopnoleftnoright" width="100%">';
 
 // Navigation links
-print '<tr><td align="right">'.$morehtml.' &nbsp; &nbsp; ';
+print '<tr><td class="right">'.$morehtml.' &nbsp; &nbsp; ';
 if ($mode == 'showalltime')
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
@@ -830,7 +830,7 @@ if ($mode == 'standard')
 
 	// For month
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td align="right">'.$link.'</td></tr>';
+	print '<tr><td class="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
 	$file = "movement".$account."-".$year.$month.".png";
@@ -844,7 +844,7 @@ if ($mode == 'standard')
 	// For year
 	$prevyear=$year-1;$nextyear=$year+1;
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td align="right">'.$link.'</td></tr>';
+	print '<tr><td class="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
 	print $show5;

@@ -224,7 +224,7 @@ class modApi extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		$sql = array();
 
@@ -252,4 +252,3 @@ class modApi extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 }
-

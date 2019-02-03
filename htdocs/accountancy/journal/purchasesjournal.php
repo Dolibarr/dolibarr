@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -788,8 +788,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -841,8 +841,8 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
-			print '<td align="right"></td>';
-			print '<td align="right"></td>';
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
 			print "</tr>";
 
 			continue;
@@ -862,8 +862,8 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
-			print '<td align="right"></td>';
-			print '<td align="right"></td>';
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
 			print "</tr>";
 		}
 
@@ -879,7 +879,7 @@ if (empty($action) || $action == 'view') {
 				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
 				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
-					print '<span class="error">'.$langs->trans("MainAccountForSupplierssNotDefined").'</span>';
+					print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
 				}
 				else print $accountoshow;
 				print '</td>';
@@ -893,8 +893,8 @@ if (empty($action) || $action == 'view') {
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td align="right">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -924,8 +924,8 @@ if (empty($action) || $action == 'view') {
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label . "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -958,8 +958,8 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 					print "</td>";
-					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
@@ -987,8 +987,8 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
-					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}

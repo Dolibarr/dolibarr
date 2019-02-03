@@ -96,9 +96,7 @@ if ($action == "set")
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
-    } else
-
-    if (! $error)
+    } elseif (! $error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -252,7 +250,7 @@ print '</td></tr>';
 
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
-print '<td align="left">';
+print '<td class="left">';
 if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
@@ -495,7 +493,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("User").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';
-    print '<td align="right">'.$langs->trans("Action").'</td>';
+    print '<td class="right">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
     print '<tr class="impair"><td class="left">';
@@ -506,7 +504,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
     print '</td>';
 
-    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+    print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";
@@ -532,7 +530,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';
-	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	        $i++;
 	    }

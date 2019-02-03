@@ -149,14 +149,14 @@ class mod_facture_mars extends ModeleNumRefFactures
      * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
 	 */
-	function getNextValue($objsoc, $invoice, $mode='next')
+	function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $db;
 		$prefix=$this->prefixinvoice;
 
 		if ($invoice->type == 1) $prefix=$this->prefixreplacement;
-		else if ($invoice->type == 2) $prefix=$this->prefixcreditnote;
-		else if ($invoice->type == 3) $prefix=$this->prefixdeposit;
+		elseif ($invoice->type == 2) $prefix=$this->prefixcreditnote;
+		elseif ($invoice->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
 
 		// D'abord on recupere la valeur max
@@ -165,7 +165,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE ref LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-		
+
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
@@ -189,7 +189,8 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
-			 
+            $sql.= " ORDER BY ref DESC";
+
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
@@ -201,7 +202,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 
             return $ref;
 		}
-		else if ($mode == 'next')
+		elseif ($mode == 'next')
 		{
 			$date=$invoice->date;	// This is invoice date (not creation date)
     		$yymm = strftime("%y%m",$date);
@@ -223,9 +224,8 @@ class mod_facture_mars extends ModeleNumRefFactures
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
 	 */
-	function getNumRef($objsoc,$objforref,$mode='next')
+	function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 }
-

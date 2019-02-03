@@ -622,15 +622,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
 					}
 
-                    print '<tr class="oddeven">';
 
-                    print '<td>';
+					print '<tr class="oddeven">';
+
+					print '<td>';
                     print $invoice->getNomUrl(1,'');
                     if($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
                     print "</td>\n";
 
                     // Date
-                    print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+                   	print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 
                     // Date Max Payment
                     if ($objp->dlr > 0 )
@@ -700,7 +701,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Price
-                    print '<td align="right">'.price($sign * $objp->total_ttc).'</td>';
+                    print '<td align="right" '.(($invoice->id==$facid)?' style="font-weight: bold" ':'').'>'.price($sign * $objp->total_ttc).'</td>';
 
                     // Received or paid back
                     print '<td align="right">'.price($sign * $paiement);

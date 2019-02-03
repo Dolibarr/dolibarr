@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
- * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ class UserBankAccount extends Account
      * @param	int		$notrigger	1=Disable triggers
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create(User $user=null, $notrigger=0)
+    function create(User $user = null, $notrigger = 0)
     {
         $now=dol_now();
 
@@ -92,7 +92,7 @@ class UserBankAccount extends Account
      *	@param	int		$notrigger	1=Disable triggers
      *	@return	int					<=0 if KO, >0 if OK
      */
-    function update(User $user=null, $notrigger=0)
+    function update(User $user = null, $notrigger = 0)
     {
     	global $conf;
 
@@ -139,7 +139,7 @@ class UserBankAccount extends Account
      *  @param  int     $userid     User id
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='', $userid=0)
+    function fetch($id, $ref = '', $userid = 0)
     {
         if (empty($id) && empty($ref) && empty($userid)) return -1;
 

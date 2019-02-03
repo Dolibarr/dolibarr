@@ -248,7 +248,7 @@ class CommandeFournisseur extends CommonOrder
      * 	@param	string	$ref		Ref of object
      *	@return int 		        >0 if OK, <0 if KO, 0 if not found
      */
-    public function fetch($id, $ref='')
+    public function fetch($id, $ref = '')
     {
         global $conf;
 
@@ -382,7 +382,7 @@ class CommandeFournisseur extends CommonOrder
      * @param		int		$only_product	Return only physical products
      * @return		int						<0 if KO, >0 if OK
      */
-    function fetch_lines($only_product=0)
+    function fetch_lines($only_product = 0)
     {
         // phpcs:enable
     	//$result=$this->fetch_lines();
@@ -492,7 +492,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						<0 if KO, >0 if OK
      */
-    public function valid($user,$idwarehouse=0,$notrigger=0)
+    public function valid($user, $idwarehouse = 0, $notrigger = 0)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -611,7 +611,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
      *  @return 	string        			Label
      */
-    public function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut,$mode,$this->billed);
     }
@@ -625,7 +625,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    function LibStatut($statut,$mode=0,$billed=0)
+    function LibStatut($statut, $mode = 0, $billed = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
@@ -719,7 +719,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return		string								Chain with URL
      */
-    public function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $langs, $conf;
 
@@ -879,7 +879,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
      *	@return	int						<0 if KO, >0 if OK
      */
-    public function approve($user, $idwarehouse=0, $secondlevel=0)
+    public function approve($user, $idwarehouse = 0, $secondlevel = 0)
     {
         global $langs,$conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1088,7 +1088,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
      * 	@return	int						>0 if Ok, <0 if Ko
      */
-    function Cancel($user, $idwarehouse=-1)
+    function Cancel($user, $idwarehouse = -1)
     {
         // phpcs:enable
         global $langs,$conf;
@@ -1150,7 +1150,7 @@ class CommandeFournisseur extends CommonOrder
      * 	@param		string	$comment	Comment
      * 	@return		int			        <0 if KO, >0 if OK
      */
-    public function commande($user, $date, $methode, $comment='')
+    public function commande($user, $date, $methode, $comment = '')
     {
         global $langs;
         dol_syslog(get_class($this)."::commande");
@@ -1208,7 +1208,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$notrigger	Disable all triggers
      *  @return     int         		<0 if KO, Id of supplier order if OK
      */
-    public function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         global $langs,$conf,$hookmanager;
 
@@ -1495,7 +1495,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		int		$origin_id				Id of origin object
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $ref_supplier='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null, $pu_ht_devise=0, $origin='', $origin_id=0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
     {
         global $langs,$mysoc,$conf;
 
@@ -1754,7 +1754,7 @@ class CommandeFournisseur extends CommonOrder
      * @param	int			$notrigger          	1 = notrigger
      * @return 	int						<0 if KO, >0 if OK
      */
-    public function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
+    public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -1856,7 +1856,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$notrigger	1=Disable call to triggers
      *	@return	int					<0 if KO, >0 if OK
      */
-    public function deleteline($idline, $notrigger=0)
+    public function deleteline($idline, $notrigger = 0)
     {
         if ($this->statut == 0)
         {
@@ -1892,7 +1892,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	int					<0 if KO, >0 if OK
      */
-    public function delete(User $user, $notrigger=0)
+    public function delete(User $user, $notrigger = 0)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2049,7 +2049,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	int		$status		Filter on stats (-1 = no filter, 0 = lines draft to be approved, 1 = approved lines)
 	 * @return	array				Array of lines
      */
-    public function getDispachedLines($status=-1)
+    public function getDispachedLines($status = -1)
     {
     	$ret = array();
 
@@ -2219,7 +2219,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
-    function set_date_livraison($user, $date_livraison, $notrigger=0)
+    function set_date_livraison($user, $date_livraison, $notrigger = 0)
     {
         // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
@@ -2285,7 +2285,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
-    function set_id_projet($user, $id_projet, $notrigger=0)
+    function set_id_projet($user, $id_projet, $notrigger = 0)
     {
         // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
@@ -2467,7 +2467,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		string		$ref_supplier		Supplier ref
      *	@return    	int         	    			< 0 if error, > 0 if ok
      */
-    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise=0, $ref_supplier='')
+    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
     {
     	global $mysoc, $conf;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
@@ -2889,7 +2889,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int          				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
@@ -3014,7 +3014,7 @@ class CommandeFournisseur extends CommonOrder
      * @param		string	$comment				Comment
      * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1, $comment='')
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
     {
     	global $conf, $langs;
 
@@ -3153,7 +3153,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
-    function loadReceptions($filtre_statut=-1)
+    function loadReceptions($filtre_statut = -1)
     {
         $this->receptions = array();
 
@@ -3293,49 +3293,58 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
 
-            $this->rowid            = $objp->rowid;
-            $this->id               = $objp->rowid;
-            $this->fk_commande      = $objp->fk_commande;
-            $this->desc             = $objp->description;
-            $this->qty              = $objp->qty;
-            $this->ref_fourn        = $objp->ref;
-            $this->ref_supplier     = $objp->ref;
-            $this->subprice         = $objp->subprice;
-            $this->tva_tx           = $objp->tva_tx;
-            $this->localtax1_tx		= $objp->localtax1_tx;
-            $this->localtax2_tx		= $objp->localtax2_tx;
-            $this->localtax1_type	= $objp->localtax1_type;
-            $this->localtax2_type	= $objp->localtax2_type;
-            $this->remise           = $objp->remise;
-            $this->remise_percent   = $objp->remise_percent;
-            $this->fk_product       = $objp->fk_product;
-            $this->info_bits        = $objp->info_bits;
-            $this->total_ht         = $objp->total_ht;
-            $this->total_tva        = $objp->total_tva;
-            $this->total_localtax1	= $objp->total_localtax1;
-            $this->total_localtax2	= $objp->total_localtax2;
-            $this->total_ttc        = $objp->total_ttc;
-            $this->product_type     = $objp->product_type;
-            $this->special_code     = $objp->special_code;
+            if (!empty($objp))
+            {
+                $this->rowid            = $objp->rowid;
+	            $this->id               = $objp->rowid;
+	            $this->fk_commande      = $objp->fk_commande;
+	            $this->desc             = $objp->description;
+	            $this->qty              = $objp->qty;
+	            $this->ref_fourn        = $objp->ref;
+	            $this->ref_supplier     = $objp->ref;
+	            $this->subprice         = $objp->subprice;
+	            $this->tva_tx           = $objp->tva_tx;
+	            $this->localtax1_tx		= $objp->localtax1_tx;
+	            $this->localtax2_tx		= $objp->localtax2_tx;
+	            $this->localtax1_type	= $objp->localtax1_type;
+	            $this->localtax2_type	= $objp->localtax2_type;
+	            $this->remise           = $objp->remise;
+	            $this->remise_percent   = $objp->remise_percent;
+	            $this->fk_product       = $objp->fk_product;
+	            $this->info_bits        = $objp->info_bits;
+	            $this->total_ht         = $objp->total_ht;
+	            $this->total_tva        = $objp->total_tva;
+    	        $this->total_localtax1	= $objp->total_localtax1;
+	            $this->total_localtax2	= $objp->total_localtax2;
+	            $this->total_ttc        = $objp->total_ttc;
+	            $this->product_type     = $objp->product_type;
+	            $this->special_code     = $objp->special_code;
+	
+    	        $this->ref	            = $objp->product_ref;
+	            $this->product_ref      = $objp->product_ref;
+	            $this->product_libelle  = $objp->product_libelle;
+	            $this->product_desc     = $objp->product_desc;
 
-            $this->ref	            = $objp->product_ref;
-            $this->product_ref      = $objp->product_ref;
-            $this->product_libelle  = $objp->product_libelle;
-            $this->product_desc     = $objp->product_desc;
+	            $this->date_start       		= $this->db->jdate($objp->date_start);
+	            $this->date_end         		= $this->db->jdate($objp->date_end);
+		        $this->fk_unit          		= $objp->fk_unit;
 
-            $this->date_start       		= $this->db->jdate($objp->date_start);
-            $this->date_end         		= $this->db->jdate($objp->date_end);
-	        $this->fk_unit          		= $objp->fk_unit;
+				$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+				$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
+				$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
+				$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
 
-			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+				$this->fetch_optionals();
 
-			$this->fetch_optionals();
-
-            $this->db->free($result);
-            return 1;
+	            $this->db->free($result);
+    	        return 1;
+            }
+    	    else
+    	    {
+    	        $this->error='Supplier order line  with id='.$rowid.' not found';
+    	        dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
+    	        return 0;
+    	    }
         }
         else
         {
@@ -3350,7 +3359,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *	@param      int		$notrigger		1 = disable triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    public function insert($notrigger=0)
+    public function insert($notrigger = 0)
     {
         global $conf, $user;
 
@@ -3476,7 +3485,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *	@param      int		$notrigger		1 = disable triggers
      *	@return		int		<0 si ko, >0 si ok
      */
-    public function update($notrigger=0)
+    public function update($notrigger = 0)
     {
         global $conf,$user;
 

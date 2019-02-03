@@ -263,7 +263,7 @@ if ($object->fetch($id) >= 0)
 		//print '<td class="liste_titre" align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
 		print '<div class="tagtd" align="center">'.$langs->trans("NbOfUniqueEMails").'</div>';
 		//print '<td class="liste_titre" align="left">'.$langs->trans("Filter").'</td>';
-		print '<div class="tagtd" align="left">'.$langs->trans("Filter").'</div>';
+		print '<div class="tagtd left">'.$langs->trans("Filter").'</div>';
 		//print '<td class="liste_titre" align="center">&nbsp;</td>';
 		print '<div class="tagtd">&nbsp;</div>';
 		//print "</tr>\n";
@@ -363,7 +363,7 @@ if ($object->fetch($id) >= 0)
 					}
 					print '</div>';
 
-					print '<div class="tagtd" align="left">';
+					print '<div class="tagtd left">';
 					if ($allowaddtarget)
 					{
     					try {
@@ -378,7 +378,7 @@ if ($object->fetch($id) >= 0)
 					}
 					print '</div>';
 
-					print '<div class="tagtd" align="right">';
+					print '<div class="tagtd right">';
 					if ($allowaddtarget)
 					{
 						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
@@ -501,11 +501,11 @@ if ($object->fetch($id) >= 0)
 		print '&nbsp';
 		print '</td>';
 		//Statut
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print $formmailing->selectDestinariesStatus($search_dest_status,'search_dest_status',1);
 		print '</td>';
 		// Action column
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 		print $searchpicto;
 		print '</td>';
@@ -526,7 +526,7 @@ if ($object->fetch($id) >= 0)
 		{
 			print_liste_field_titre("DateSending",$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
 		}
-		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"mc.statut",$param,'','class="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print '</tr>';
 
@@ -557,7 +557,7 @@ if ($object->fetch($id) >= 0)
 						$objectstatic->fetch($obj->source_id);
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'user')
+                    elseif ($obj->source_type == 'user')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
                         $objectstatic=new User($db);
@@ -565,14 +565,14 @@ if ($object->fetch($id) >= 0)
                         $objectstatic->id=$obj->source_id;
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'thirdparty')
+                    elseif ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
                         print $objectstatic->getNomUrl(1);
                     }
-                    else if ($obj->source_type == 'contact')
+                    elseif ($obj->source_type == 'contact')
                     {
                     	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
                     	$objectstatic=new Contact($db);
@@ -590,19 +590,19 @@ if ($object->fetch($id) >= 0)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
-					print '<td align="right" class="nowrap">'.$langs->trans("MailingStatusNotSent");
+					print '<td class="nowrap right">'.$langs->trans("MailingStatusNotSent");
 					print '</td>';
 				}
 				else
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
-					print '<td align="right" class="nowrap">';
+					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
 					print '</td>';
 				}
 
 				// Search Icon
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {

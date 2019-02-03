@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -546,14 +546,14 @@ if (! empty($arrayfields['t.label_operation']['checked']))
 // Debit
 if (! empty($arrayfields['t.debit']['checked']))
 {
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'">';
 	print '</td>';
 }
 // Credit
 if (! empty($arrayfields['t.credit']['checked']))
 {
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
 	print '</td>';
 }
@@ -611,9 +611,9 @@ if (! empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($a
 if (! empty($arrayfields['t.numero_compte']['checked']))		print_liste_field_titre($arrayfields['t.numero_compte']['label'], $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_titre($arrayfields['t.subledger_account']['label'], $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'class="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -683,7 +683,7 @@ if ($num > 0)
 		// Amount debit
 		if (! empty($arrayfields['t.debit']['checked']))
 		{
-			print '<td align="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
+			print '<td class="right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
 			$totalarray['totaldebit'] += $line->debit;
@@ -692,7 +692,7 @@ if ($num > 0)
 		// Amount credit
 		if (! empty($arrayfields['t.credit']['checked']))
 		{
-			print '<td align="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+			print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
 			$totalarray['totalcredit'] += $line->credit;
@@ -754,8 +754,8 @@ if ($num > 0)
 					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				}
-				elseif ($totalarray['totaldebitfield'] == $i)  print '<td align="right">'.price($totalarray['totaldebit']).'</td>';
-				elseif ($totalarray['totalcreditfield'] == $i) print '<td align="right">'.price($totalarray['totalcredit']).'</td>';
+				elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="right">'.price($totalarray['totaldebit']).'</td>';
+				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="right">'.price($totalarray['totalcredit']).'</td>';
 				else print '<td></td>';
 		}
 		print '</tr>';

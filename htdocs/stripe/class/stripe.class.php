@@ -80,7 +80,7 @@ class Stripe extends CommonObject
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
-	public function getStripeAccount($mode='StripeTest')
+	public function getStripeAccount($mode = 'StripeTest')
 	{
 		global $conf;
 
@@ -120,7 +120,7 @@ class Stripe extends CommonObject
 	 * @param	int		$status		Status
 	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 */
-	public function getStripeCustomerAccount($id, $status=0)
+	public function getStripeCustomerAccount($id, $status = 0)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
@@ -137,7 +137,7 @@ class Stripe extends CommonObject
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\StripeCustomer|null 			Stripe Customer or null if not found
 	 */
-	public function customerStripe(Societe $object, $key='', $status=0, $createifnotlinkedtostripe=0)
+	public function customerStripe(Societe $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -248,7 +248,7 @@ class Stripe extends CommonObject
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
 	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
 	 */
-	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc='', $status=0, $createifnotlinkedtostripe=0)
+	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -358,7 +358,7 @@ class Stripe extends CommonObject
 	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0, $capture=true)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status = 0, $usethirdpartyemailforreceiptemail = 0, $capture = true)
 	{
 		global $conf;
 

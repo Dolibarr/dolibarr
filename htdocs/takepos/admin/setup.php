@@ -62,6 +62,7 @@ if (GETPOST('action','alpha') == 'set')
 	$res = dolibarr_set_const($db,"TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS','alpha'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER','alpha'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD','alpha'),'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
 
@@ -142,6 +143,14 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS",$conf->global->TAKEPOS_ORDER_PRINTERS,1);
 	print '</td></tr>';
 }
+
+// Payment numpad
+print '<tr class="oddeven"><td>';
+print $langs->trans("Paymentnumpad");
+print '<td colspan="2">';
+$array=array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD)?'0':$conf->global->TAKEPOS_NUMPAD), 0);
+print "</td></tr>\n";
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
@@ -264,14 +273,14 @@ print '<br><br>';
 // Marketplace
 print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">TakePOS Marketplace</td>';
+print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
 print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
-$url='https://www.dolistore.com/en/modules/980-TakePOS-7-mobile.html';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/takeposmobile.jpg"></a></td>';
-print '<td>TakePOS for mobile devices</td>';
+$url='https://www.dolistore.com/45-pos';
+    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
 
@@ -287,7 +296,7 @@ print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
 $url='http://www.takepos.com';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
+print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';

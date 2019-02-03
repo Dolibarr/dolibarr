@@ -154,7 +154,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '<td width="30%">'.$langs->trans('expenseReportPrintExample', price($range->ik->offset + 5 * $range->ik->coef)).'</td>';
 
 		// Action
-		echo '<td align="right">';
+		echo '<td class="right">';
 		if ($range->range_active == 1)
 		{
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)

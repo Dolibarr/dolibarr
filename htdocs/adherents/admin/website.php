@@ -136,7 +136,7 @@ if ($conf->use_javascript_ajax)
 }
 
 
-print $langs->trans("BlankSubscriptionFormDesc").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
 
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
@@ -168,14 +168,14 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td align="right">'.$langs->trans("Value").'</td>';
+	print '<td class="right">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
 	// Force Type
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td width="60" align="right">';
+	print '</td><td width="60" class="right">';
 	$listofval = array(-1 => $langs->trans("Undefined"));
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
@@ -185,21 +185,21 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
 	print "</td></tr>\n";
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("CanEditAmount");
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	$listofval=array();
 	$listofval['-1']=$langs->trans('No');
 	$listofval['all']=$langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';

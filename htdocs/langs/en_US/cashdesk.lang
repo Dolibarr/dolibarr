@@ -50,3 +50,7 @@ TheoricalAmount=Theorical amount
 RealAmount=Real amount
 CashFenceDone=Cash fence done for the period
 NbOfInvoices=Nb of invoices
+Paymentnumpad=Payment Num Pad
+Numberspad=Numbers Pad
+BillsCoinsPad=Bills and Coins Pad
+DolistorePosCategory=TakePOS modules and other POS solutions for Dolibarr

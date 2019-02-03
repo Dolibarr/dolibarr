@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+DROP TABLE llx_ticket_logs;
+
 CREATE TABLE llx_pos_cash_fence(
 	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
 	entity INTEGER DEFAULT 1 NOT NULL,
@@ -85,3 +87,10 @@ ALTER TABLE llx_subscription ADD fk_type integer(11);
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+
+
+ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
+

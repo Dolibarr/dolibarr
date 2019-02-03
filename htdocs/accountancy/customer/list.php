@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
@@ -212,7 +212,8 @@ if (empty($chartaccountcode))
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
 $sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-$sql.= " aa.rowid as aarowid,";
+$sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+$sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql.= " co.code as country_code, co.label as country,";
 $sql.= " s.tva_intra";
 $parameters=array();
@@ -257,12 +258,12 @@ if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
 		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-		else if ($search_year > 0 && ! empty($search_day))
+		elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($search_year > 0)
+elseif ($search_year > 0)
 {
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
@@ -382,8 +383,8 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
@@ -404,8 +405,8 @@ if ($result) {
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', 'align="center"');
@@ -437,7 +438,9 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-		if ($objp->type_l == 1) {
+        $isinEEC = isInEEC($objp->country_code);
+
+    	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
 			if ($objp->aarowid == '') {
 				$objp->aarowid_suggest = $aarowid_s;
@@ -450,8 +453,19 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
+        if ($objp->country_sell == '1') {
+            $objp->code_sell_p = $objp->code_sell;
+            $objp->aarowid_suggest = $objp->aarowid;
+        } elseif ($isinEEC == true) {
+            $objp->code_sell_p = $objp->code_sell_intra;
+            $objp->aarowid_suggest = $objp->aarowid_intra;
+        } else {
+            $objp->code_sell_p = $objp->code_sell_export;
+            $objp->aarowid_suggest = $objp->aarowid_export;
+        }
+
 		if (! empty($objp->code_sell)) {
-			$objp->code_sell_p = $objp->code_sell;       // Code on product
+			//$objp->code_sell_p = $objp->code_sell;       // Code on product
 		} else {
 			$code_sell_p_notset = 'color:orange';
 		}
@@ -483,14 +497,14 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->total_ht);
 		print '</td>';
 
 		// Vat rate
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
-		print '<td style="' . $code_vat_differ . '" align="right">';
+		print '<td style="' . $code_vat_differ . '" class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 

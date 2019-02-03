@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -219,12 +219,12 @@ if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
 		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-		else if ($search_year > 0 && ! empty($search_day))
+		elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(erd.date, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($search_year > 0)
+elseif ($search_year > 0)
 {
 	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
@@ -315,8 +315,8 @@ if ($result) {
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="center" class="liste_titre">';
@@ -331,8 +331,8 @@ if ($result) {
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("IntoAccount", '', '', '', '', 'align="center"', $sortfield, $sortorder);
 	$checkpicto='';
@@ -376,12 +376,12 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->price);
 		print '</td>';
 
 		// Vat rate
-		print '<td align="right">';
+		print '<td class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 

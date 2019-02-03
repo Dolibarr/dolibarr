@@ -233,7 +233,7 @@ $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
-else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+elseif (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
 $sql.= " ORDER BY entity, name ASC";
 
@@ -304,10 +304,10 @@ print '</div>';
 if ($conf->use_javascript_ajax)
 {
 	print '<br>';
-	print '<div id="updateconst" align="right">';
+	print '<div id="updateconst" class="right">';
 	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
-	print '<div id="delconst" align="right">';
+	print '<div id="delconst" class="right">';
 	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }

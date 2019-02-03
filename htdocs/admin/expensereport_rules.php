@@ -187,7 +187,7 @@ if ($action != 'edit')
 	echo '<td>'.$form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0).'</td>';
 	echo '<td><input type="text" value="" name="amount" class="amount" />'.$conf->currency.'</td>';
 	echo '<td>'.$form->selectyesno('restrictive', 0, 1).'</td>';
-	echo '<td align="right"><input type="submit" class="button" value="'.$langs->trans('Add').'" /></td>';
+	echo '<td class="right"><input type="submit" class="button" value="'.$langs->trans('Add').'" /></td>';
 	echo '</tr>';
 
 	echo '</table>';

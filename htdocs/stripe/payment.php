@@ -618,10 +618,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<table class="liste" width="100%">'."\n";
         // Titles with sort buttons
         print '<tr class="liste_titre">';
-        print '<td align="left"></td>';
-        print '<td align="left">'.$langs->trans('Type').'</td>';
-        print '<td align="left">'.$langs->trans('Informations').'</td>';
-        print '<td align="left"></td>';
+        print '<td class="left"></td>';
+        print '<td class="left">'.$langs->trans('Type').'</td>';
+        print '<td class="left">'.$langs->trans('Informations').'</td>';
+        print '<td class="left"></td>';
         print "<td></td></tr>\n";
         foreach ($customerstripe->sources->data as $src) {
             print '<tr>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
 }
 
-else if ($action == 'add')
+elseif ($action == 'add')
 {
     if (! $cancel)
     {
@@ -120,7 +120,7 @@ else if ($action == 'add')
 }
 
 // Update record
-else if ($action == 'update')
+elseif ($action == 'update')
 {
 	$error = 0;
 

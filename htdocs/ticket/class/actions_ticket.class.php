@@ -109,7 +109,7 @@ class ActionsTicket
      *     @param	Ticket	$object		Object Ticket
      *     @return	int						0
      */
-    public function doActions(&$action = '', Ticket $object=null)
+    public function doActions(&$action = '', Ticket $object = null)
     {
         global $conf, $user, $langs, $mysoc;
 

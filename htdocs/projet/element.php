@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -604,7 +604,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
-				else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
+				elseif($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -633,7 +633,7 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
 				if ($tablename == 'don' || $tablename == 'chargesociales') $total_ttc_by_line=$element->amount;
-				else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
+				elseif($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
@@ -674,7 +674,7 @@ foreach ($listofreferent as $key => $value)
 
 			print '<tr class="oddeven">';
 			// Module
-			print '<td align="left">'.$name.'</td>';
+			print '<td class="left">'.$name.'</td>';
 			// Nb
 			print '<td align="right">'.$i.'</td>';
 			// Amount HT
@@ -911,7 +911,7 @@ foreach ($listofreferent as $key => $value)
 						$element_doc='commande_fournisseur';
 						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					}
-					else if ($element_doc === 'invoice_supplier') {
+					elseif ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2,0,0,$element,'product').dol_sanitizeFileName($element->ref);
 						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
@@ -956,7 +956,7 @@ foreach ($listofreferent as $key => $value)
 				    print dol_print_date($element->datep,'dayhour');
 				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef,'dayhour');
 				}
-				else if (in_array($tablename, array('projet_task')))
+				elseif (in_array($tablename, array('projet_task')))
 				{
 				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
                     print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
@@ -968,21 +968,21 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
 				// Third party or user
-                print '<td align="left">';
+                print '<td class="left">';
                 if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
-                else if ($tablename == 'expensereport_det')
+                elseif ($tablename == 'expensereport_det')
                 {
                 	$tmpuser=new User($db);
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
-				else if ($tablename == 'payment_salary')
+				elseif ($tablename == 'payment_salary')
 				{
 					$tmpuser=new User($db);
 					$tmpuser->fetch($element->fk_user);
 					print $tmpuser->getNomUrl(1,'',48);
 				}
-				else if ($tablename == 'don' || $tablename == 'stock_mouvement')
+				elseif ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
                 	if ($element->fk_user_author > 0)
                 	{
@@ -991,7 +991,7 @@ foreach ($listofreferent as $key => $value)
 	                	print $tmpuser2->getNomUrl(1,'',48);
                 	}
                 }
-                else if ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
+                elseif ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
                 {
                     print $elementuser->getNomUrl(1);
                 }
@@ -1004,7 +1004,7 @@ foreach ($listofreferent as $key => $value)
 				    $total_ht_by_line=null;
 				    $othermessage='';
 					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
-					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
+					elseif($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
 					{
@@ -1045,7 +1045,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ttc_by_line=null;
 					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line=$element->amount;
-					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
+					elseif($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
 					{
@@ -1083,19 +1083,19 @@ foreach ($listofreferent as $key => $value)
 				{
 					print $expensereport->getLibStatut(5);
 				}
-				else if ($element instanceof CommonInvoice)
+				elseif ($element instanceof CommonInvoice)
 				{
 					//This applies for Facture and FactureFournisseur
 					print $element->getLibStatut(5, $element->getSommePaiement());
 				}
-				else if ($element instanceof Task)
+				elseif ($element instanceof Task)
 				{
 					if ($element->progress != '')
 					{
 						print $element->progress.' %';
 					}
 				}
-				else if ($tablename == 'stock_mouvement')
+				elseif ($tablename == 'stock_mouvement')
 				{
 					print $element->getLibStatut(3);
 				}

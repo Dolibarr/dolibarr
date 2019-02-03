@@ -40,8 +40,8 @@ class FormProduct
 	public $error='';
 
 	// Cache arrays
-	var $cache_warehouses=array();
-	var $cache_lot=array();
+	public $cache_warehouses=array();
+	public $cache_lot=array();
 
 
 	/**
@@ -69,7 +69,7 @@ class FormProduct
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $status='', $sumStock = true, $exclude='')
+	function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
 	{
 		global $conf, $langs;
 
@@ -104,7 +104,7 @@ class FormProduct
 				$sql.= ", ps.reel as stock";
 			}
 		}
-		else if ($sumStock)
+		elseif ($sumStock)
 		{
 			$sql.= ", sum(ps.reel) as stock";
 		}
@@ -173,7 +173,7 @@ class FormProduct
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
-    private function get_parent_path($tab, $final_label='')
+    private function get_parent_path($tab, $final_label = '')
     {
         //phpcs:enable
 		if(empty($final_label)) $final_label = $tab['label'];
@@ -210,7 +210,7 @@ class FormProduct
 	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
+	function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
 	{
 		global $conf,$langs,$user;
 
@@ -255,7 +255,7 @@ class FormProduct
      *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return   void
      */
-    function formSelectWarehouses($page, $selected='', $htmlname='warehouse_id', $addempty=0)
+    function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
     {
         global $langs;
         if ($htmlname != "none") {
@@ -266,7 +266,7 @@ class FormProduct
             print '<tr><td>';
             print $this->selectWarehouses($selected, $htmlname, '', $addempty);
             print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
         } else {
             if ($selected) {
@@ -291,7 +291,7 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	void
 	 */
-	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
+	function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
@@ -308,7 +308,7 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	string
 	 */
-	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
+	function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
 		global $langs,$conf,$mysoc;
@@ -318,9 +318,9 @@ class FormProduct
 
 		$measuring_units=array();
 		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,98=>1,99=>1);
-		else if ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
-        else if ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
-		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		elseif ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
+        elseif ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
+		elseif ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
 
 		$return.= '<select class="flat" name="'.$name.'">';
 		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
@@ -358,7 +358,7 @@ class FormProduct
 	 *
 	 * 	@return	string					HTML select
 	 */
-	function selectLotStock($selected='',$htmlname='batch_id',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$fk_entrepot=0,$objectLines = array(),$empty_label='', $forcecombo=0, $events=array(), $morecss='minwidth200')
+	function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
 		global $langs;
 

@@ -311,7 +311,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectTypePrinter($selected='', $htmlname='printertypeid')
+    function selectTypePrinter($selected = '', $htmlname = 'printertypeid')
     {
         global $langs;
 
@@ -335,7 +335,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectProfilePrinter($selected='', $htmlname='printerprofileid')
+    function selectProfilePrinter($selected = '', $htmlname = 'printerprofileid')
     {
         global $langs;
 

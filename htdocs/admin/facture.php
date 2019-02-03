@@ -124,12 +124,12 @@ if ($action == 'specimen')
 }
 
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -139,7 +139,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -156,7 +156,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
@@ -619,7 +619,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Name").'</td>';
-    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+    print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
     print "</tr>\n";
 
     $listtype=array(
@@ -662,7 +662,7 @@ print '<tr class="liste_titre">';
 print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
@@ -762,7 +762,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
@@ -789,7 +789,7 @@ else
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
@@ -802,7 +802,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td>';
 print '<td><input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
@@ -842,7 +842,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';

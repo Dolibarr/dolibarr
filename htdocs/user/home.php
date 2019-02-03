@@ -156,12 +156,12 @@ if ($resql)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
 		}
-		else if ($obj->admin)
+		elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"),'star');
 		}
 		print "</td>";
-		print '<td align="left">'.$obj->login.'</td>';
+		print '<td class="left">'.$obj->login.'</td>';
 		print "<td>";
 		if ($obj->fk_soc)
 		{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,7 +201,7 @@ if ($action == 'add' && $permtoadd)
 }
 
 // Deleting file
-else if ($action == 'confirm_deletesection' && $confirm == 'yes')
+elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');

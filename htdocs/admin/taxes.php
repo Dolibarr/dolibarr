@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ else
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
 	if (! $conf->use_javascript_ajax)
 	{
-		print '<td class="nowrap" align="right">';
+		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
 		print "</td>";
 	}

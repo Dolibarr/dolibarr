@@ -346,7 +346,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
@@ -360,7 +360,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
+			elseif ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}

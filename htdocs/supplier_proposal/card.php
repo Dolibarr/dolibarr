@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2011  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013  Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
@@ -151,7 +151,7 @@ if (empty($reshook))
 	}
 
 	// Delete askprice
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->supplier_proposal->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->supplier_proposal->supprimer)
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -164,7 +164,7 @@ if (empty($reshook))
 	}
 
 	// Remove line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->supplier_proposal->creer)
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->supplier_proposal->creer)
 	{
 		$result = $object->deleteline($lineid);
 		// reorder lines
@@ -188,7 +188,7 @@ if (empty($reshook))
 	}
 
 	// Validation
-	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
+	elseif ($action == 'confirm_validate' && $confirm == 'yes' &&
 		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->creer))
 	   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->supplier_proposal->validate_advance)))
 	)
@@ -222,7 +222,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate_livraison' && $user->rights->supplier_proposal->creer)
+	elseif ($action == 'setdate_livraison' && $user->rights->supplier_proposal->creer)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 		if ($result < 0)
@@ -230,7 +230,7 @@ if (empty($reshook))
 	}
 
 	// Create askprice
-	else if ($action == 'add' && $user->rights->supplier_proposal->creer)
+	elseif ($action == 'add' && $user->rights->supplier_proposal->creer)
 	{
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
@@ -445,7 +445,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
+	elseif ($action == 'confirm_reopen' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) {
 			$object->reopen($user, SupplierProposal::STATUS_VALIDATED);
@@ -453,7 +453,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
+	elseif ($action == 'close' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == SupplierProposal::STATUS_SIGNED) {
 			$object->setStatut(SupplierProposal::STATUS_CLOSE);
@@ -461,7 +461,7 @@ if (empty($reshook))
 	}
 
 	// Set accepted/refused
-	else if ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
+	elseif ($action == 'setstatut' && $user->rights->supplier_proposal->cloturer && ! GETPOST('cancel','alpha')) {
 		if (! GETPOST('statut')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), null, 'errors');
 			$action = 'statut';
@@ -507,7 +507,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == "setabsolutediscount" && $user->rights->supplier_proposal->creer) {
+	elseif ($action == "setabsolutediscount" && $user->rights->supplier_proposal->creer) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -688,7 +688,7 @@ if (empty($reshook))
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 				}
 			}
-			else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))    // Free product.  // $price_ht is already set
+			elseif((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))    // Free product.  // $price_ht is already set
 			{
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -793,7 +793,7 @@ if (empty($reshook))
 	}
 
 	// Mise a jour d'une ligne dans la demande de prix
-	else if ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
+	elseif ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
 
 		// Define info_bits
 		$info_bits = 0;
@@ -919,50 +919,50 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
+	elseif ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
 	// Set project
-	else if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'classin' && $user->rights->supplier_proposal->creer) {
 		$object->setProject(GETPOST('projectid'),'int');
 	}
 
 	// Delai de livraison
-	else if ($action == 'setavailability' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setavailability' && $user->rights->supplier_proposal->creer) {
 		$result = $object->availability($_POST['availability_id']);
 	}
 
 	// Conditions de reglement
-	else if ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
 
-	else if ($action == 'setremisepercent' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setremisepercent' && $user->rights->supplier_proposal->creer) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
 	}
 
-	else if ($action == 'setremiseabsolue' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setremiseabsolue' && $user->rights->supplier_proposal->creer) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
 	// Mode de reglement
-	else if ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setmulticurrencycode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $user->rights->supplier_proposal->creer) {
+	elseif ($action == 'setmulticurrencyrate' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
-	else if ($action == 'update_extras') {
+	elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -1329,22 +1329,22 @@ if ($action == 'create')
 	}
 
 	// Confirm delete
-	else if ($action == 'delete') {
+	elseif ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAsk'), $langs->trans('ConfirmDeleteAsk', $object->ref), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm reopen
-	else if ($action == 'reopen') {
+	elseif ($action == 'reopen') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenAsk', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirmation delete product/service line
-	else if ($action == 'ask_deleteline') {
+	elseif ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Confirm validate askprice
-	else if ($action == 'validate') {
+	elseif ($action == 'validate') {
 		$error = 0;
 
 		// on verifie si l'objet est en numerotation provisoire
@@ -1736,7 +1736,7 @@ if ($action == 'create')
 		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
-		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
+		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
@@ -1744,7 +1744,7 @@ if ($action == 'create')
 		$form_close .= '<option value="3">' . $langs->trans('SupplierProposalStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
+		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td class="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '<tr><td align="center" colspan="2">';
@@ -1800,7 +1800,7 @@ if ($action == 'create')
 				}
 
 				// Create an order
-				if (! empty($conf->commande->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (! empty($conf->fournisseur->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($user->rights->fournisseur->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}

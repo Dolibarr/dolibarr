@@ -105,7 +105,7 @@ if ($action === 'downloadblockchain') {
 
 	exit;
 }
-else if (GETPOST('downloadcsv','alpha'))
+elseif (GETPOST('downloadcsv','alpha'))
 {
 	$error = 0;
 
@@ -327,7 +327,7 @@ if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab',
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
-print '<div align="right">';
+print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
 $smonth=GETPOST('monthtoexport','int');
 // Month
@@ -430,7 +430,7 @@ print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','',$param,'',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'class="right"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
@@ -498,7 +498,7 @@ if (is_array($blocks))
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
-		   	print '<td align="right">'.price($block->amounts).'</td>';
+		   	print '<td class="right">'.price($block->amounts).'</td>';
 
 		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';

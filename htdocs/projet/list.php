@@ -320,12 +320,12 @@ if ($search_smonth > 0)
 {
 	if ($search_syear > 0 && empty($search_sday))
 		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,$search_smonth,false))."' AND '".$db->idate(dol_get_last_day($search_syear,$search_smonth,false))."'";
-	else if ($search_syear > 0 && ! empty($search_sday))
+	elseif ($search_syear > 0 && ! empty($search_sday))
 		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
 	else
 		$sql.= " AND date_format(p.dateo, '%m') = '".$search_smonth."'";
 }
-else if ($search_syear > 0)
+elseif ($search_syear > 0)
 {
 	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear,1,false))."' AND '".$db->idate(dol_get_last_day($search_syear,12,false))."'";
 }
@@ -333,12 +333,12 @@ if ($search_emonth > 0)
 {
 	if ($search_eyear > 0 && empty($search_eday))
 		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,$search_emonth,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,$search_emonth,false))."'";
-	else if ($search_eyear > 0 && ! empty($search_eday))
+	elseif ($search_eyear > 0 && ! empty($search_eday))
 		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
 	else
 		$sql.= " AND date_format(p.datee, '%m') = '".$search_emonth."'";
 }
-else if ($search_eyear > 0)
+elseif ($search_eyear > 0)
 {
 	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_eyear,12,false))."'";
 }
@@ -760,7 +760,7 @@ while ($i < min($num,$limit))
 					print $nbofsalesrepresentative;
 					print '</a>';
 				}
-				else if ($nbofsalesrepresentative > 0)
+				elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic=new User($db);
 					$j=0;
@@ -807,7 +807,7 @@ while ($i < min($num,$limit))
 		// Visibility
 		if (! empty($arrayfields['p.public']['checked']))
 		{
-			print '<td align="left">';
+			print '<td class="left">';
 			if ($obj->public) print $langs->trans('SharedProject');
 			else print $langs->trans('PrivateProject');
 			print '</td>';
@@ -922,8 +922,8 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
 		$i++;
 		if ($i == 1)
 		{
-			if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-			else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
 		elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
 		elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';

@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -246,7 +246,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='', $moreinheader='')
+	function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -358,7 +358,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
 	 *	@return	string					Label
 	 */
-	function getmorphylib($morphy='')
+	function getmorphylib($morphy = '')
 	{
 		global $langs;
 		if (! $morphy) { $morphy=$this->morphy; }
@@ -374,7 +374,7 @@ class Adherent extends CommonObject
 	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -500,7 +500,7 @@ class Adherent extends CommonObject
 	 * 	@param	string	$action				Current action for hookmanager
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
+	function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -817,7 +817,7 @@ class Adherent extends CommonObject
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
 	 */
-	function delete($rowid, $user, $notrigger=0)
+	function delete($rowid, $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -927,7 +927,7 @@ class Adherent extends CommonObject
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
 	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	function setPassword($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
+	function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
 		global $conf, $langs;
 
@@ -1147,7 +1147,7 @@ class Adherent extends CommonObject
 	 *	@param	string	$lastname	Lastname
 	 *	@return	void
 	 */
-	function fetch_name($firstname,$lastname)
+	function fetch_name($firstname, $lastname)
 	{
         // phpcs:enable
 		global $conf;
@@ -1183,7 +1183,7 @@ class Adherent extends CommonObject
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='',$fetch_optionals=true,$fetch_subscriptions=true)
+	function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
@@ -1400,7 +1400,7 @@ class Adherent extends CommonObject
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	function subscription($date, $amount, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
+	function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
 	{
 		global $conf,$langs,$user;
 
@@ -1486,7 +1486,7 @@ class Adherent extends CommonObject
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *	@return int									<0 if KO, >0 if OK
 	 */
-	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
+	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0)
 	{
 		global $conf, $langs, $user, $mysoc;
 
@@ -2018,7 +2018,7 @@ class Adherent extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpictoimg=0, $maxlen=0, $option='card', $mode='', $morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs;
 
@@ -2109,7 +2109,7 @@ class Adherent extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$this->need_subscription,$this->datefin,$mode);
 	}
@@ -2124,7 +2124,7 @@ class Adherent extends CommonObject
 	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string      						Label
 	 */
-	function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
+	function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2307,7 +2307,7 @@ class Adherent extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf,$langs;
 
@@ -2400,7 +2400,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-	function _load_ldap_dn($info,$mode=0)
+	function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2487,7 +2487,7 @@ class Adherent extends CommonObject
 			if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		}
 		// Set LDAP password if possible
-		else if ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 		{
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -2502,7 +2502,7 @@ class Adherent extends CommonObject
 				}
 			}
 			// Use $this->pass_indatabase value if exists
-			else if (! empty($this->pass_indatabase))
+			elseif (! empty($this->pass_indatabase))
 			{
 				if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass_indatabase;	// $this->pass_indatabase = mot de passe non crypte
 				if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 4); // md5 for OpenLdap TODO add type of encryption
@@ -2520,7 +2520,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *      Charge les informations d'ordre info dans l'objet adherent
+	 *      Load type info information in the member object
 	 *
 	 *      @param  int		$id       Id of member to load
 	 *      @return	void
@@ -2694,7 +2694,7 @@ class Adherent extends CommonObject
 	 * @param	string		$daysbeforeendlist		Nb of days before end of subscription (negative number = after subscription). Can be a list of delay, separated by a semicolon, for example '10;5;0;-5'
 	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendReminderForExpiredSubscription($daysbeforeendlist='10')
+	public function sendReminderForExpiredSubscription($daysbeforeendlist = '10')
 	{
 		global $conf, $langs, $mysoc, $user;
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ class AccountingJournal extends CommonObject
 	 * @param	int  	$notooltip		1=Disable tooltip
 	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
+	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -270,7 +270,7 @@ class AccountingJournal extends CommonObject
 	 *  @param	int		$mode		  0=libelle long, 1=libelle court
 	 *  @return	string 				   Label of type
 	 */
-	function getLibType($mode=0)
+	function getLibType($mode = 0)
 	{
 		return $this->LibType($this->nature,$mode);
 	}
@@ -283,7 +283,7 @@ class AccountingJournal extends CommonObject
 	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
 	 *  @return string 				   	Label of type
 	 */
-	function LibType($nature,$mode=0)
+	function LibType($nature, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;

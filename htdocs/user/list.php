@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -504,7 +504,7 @@ while ($i < min($num,$limit))
 		{
 		  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 		}
-		else if ($obj->admin)
+		elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 		}
@@ -553,7 +553,7 @@ while ($i < min($num,$limit))
 			$companystatic->canvas=$obj->canvas;
 			print $companystatic->getNomUrl(1);
 		}
-		else if ($obj->ldap_sid)
+		elseif ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
 		}
@@ -604,7 +604,7 @@ while ($i < min($num,$limit))
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			}
-			else if ($obj->admin2)
+			elseif ($obj->admin2)
 			{
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 			}

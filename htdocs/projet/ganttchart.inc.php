@@ -168,7 +168,7 @@ else
  * @param 	int		$project_id				Id of project
  * @return	void
  */
-function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project_id=null)
+function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $project_id = null)
 {
 	global $langs;
     global $dateformatinput2;

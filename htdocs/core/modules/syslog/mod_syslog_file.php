@@ -102,7 +102,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	string
 	 */
-	private function getFilename($suffixinfilename='')
+	private function getFilename($suffixinfilename = '')
 	{
 	    global $conf;
 
@@ -131,7 +131,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
 	 */
-	public function export($content, $suffixinfilename='')
+	public function export($content, $suffixinfilename = '')
 	{
 		global $conf, $dolibarr_main_prod;
 

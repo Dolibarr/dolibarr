@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -235,7 +235,7 @@ if (empty($reshook))
 
 					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), null, 'errors');
 				}
-				else if ($ret < 0)
+				elseif ($ret < 0)
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -796,14 +796,21 @@ SCRIPT;
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
 						// Supplier ref
-						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						{
+							print '<td align="left">'.$productfourn->getNomUrl().'</td>';
+						}
+						else
+						{
+							print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+						}
 
 						// Availability
 						if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 						{
 							$form->load_cache_availability();
                 			$availability= $form->cache_availability[$productfourn->fk_availability]['label'];
-							print '<td align="left">'.$availability.'</td>';
+							print '<td class="left">'.$availability.'</td>';
 						}
 
 						// Quantity

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ function checkBanForAccount($account)
     if ($country_code == 'AU') {  // Australian
         if (strlen($account->code_banque) > 7)
             return false; // Sould be 6 but can be 123-456
-        else if (strlen($account->code_banque) < 6)
+        elseif (strlen($account->code_banque) < 6)
             return false; // Sould be 6
         else
             return true;

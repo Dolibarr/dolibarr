@@ -8,7 +8,7 @@
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -479,7 +479,7 @@ foreach ($fieldlist as $field => $value)
 	{
 		print '<td align="'.$align.'">';
 		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-		else if (! empty($tabhelp[$id][$value]))
+		elseif (! empty($tabhelp[$id][$value]))
 		{
 			if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
 			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
@@ -525,7 +525,7 @@ if (empty($reshook))
 	}
 }
 
-print '<td align="right">';
+print '<td class="right">';
 print '</td>';
 print "</tr>";
 
@@ -552,7 +552,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	if ($tmpfieldlist == 'topic') {
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
 	}
-	else if ($tmpfieldlist == 'joinfiles') {
+	elseif ($tmpfieldlist == 'joinfiles') {
 		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1') . '">';
 	}
 	else
@@ -621,7 +621,7 @@ if ($resql)
     // There is several pages
     if ($num > $listlimit)
     {
-        print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+        print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
         print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
         print '</td></tr>';
     }
@@ -657,7 +657,7 @@ if ($resql)
     }
     if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) print '<td class="liste_titre"></td>';
     // Action column
-    print '<td class="liste_titre" align="right" width="64">';
+    print '<td class="liste_titre right" width="64">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -947,7 +947,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj='', $tabname='', $context='')
+function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;
@@ -1065,4 +1065,3 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		}
 	}
 }
-

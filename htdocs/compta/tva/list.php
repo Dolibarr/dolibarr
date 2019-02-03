@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ if ($month > 0)
 	else
 	$sql.= " AND date_format(t.datev, '%m') = '$month'";
 }
-else if ($year > 0)
+elseif ($year > 0)
 {
 	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }

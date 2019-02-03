@@ -121,7 +121,7 @@ if ($resql)
 	print_liste_field_titre("Target",'','','','','align="center"');
 	print_liste_field_titre("Owner",$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'class="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -179,10 +179,10 @@ if ($resql)
 		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day')."</td>";
 
 		// Position
-		print '<td align="right">'.$obj->position."</td>";
+		print '<td class="right">'.$obj->position."</td>";
 
 		// Actions
-		print '<td align="right" class="nowrap">';
+		print '<td class="nowrap right">';
 		if ($user->rights->bookmark->creer)
 		{
 			print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
@@ -212,5 +212,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-
-

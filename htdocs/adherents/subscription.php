@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -570,7 +570,7 @@ if ($rowid > 0)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans("LinkedToDolibarrThirdParty");
 		print '</td>';
-		if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+		if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editthirdparty')
@@ -610,7 +610,7 @@ if ($rowid > 0)
 	print '</td>';
 	if ($action != 'editlogin' && $user->rights->adherent->creer)
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($user->rights->user->user->creer)
 		{
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a>';
@@ -695,10 +695,10 @@ if ($rowid > 0)
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-            print '<td align="right">'.$langs->trans("Amount").'</td>';
+            print '<td class="right">'.$langs->trans("Amount").'</td>';
             if (! empty($conf->banque->enabled))
             {
-                print '<td align="right">'.$langs->trans("Account").'</td>';
+                print '<td class="right">'.$langs->trans("Account").'</td>';
             }
             print "</tr>\n";
 
@@ -716,10 +716,10 @@ if ($rowid > 0)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-                print '<td align="right">'.price($objp->subscription).'</td>';
+                print '<td class="right">'.price($objp->subscription).'</td>';
 				if (! empty($conf->banque->enabled))
 				{
-					print '<td align="right">';
+					print '<td class="right">';
 					if ($objp->bid)
 					{
 						$accountstatic->label=$objp->label;
@@ -793,8 +793,8 @@ if ($rowid > 0)
         else
         {
         	if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $bankviainvoice=1;
-        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
-        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $invoiceonly=1;
+        	elseif (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
+        	elseif (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $invoiceonly=1;
         }
 
         print "\n\n<!-- Form add subscription -->\n";

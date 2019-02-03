@@ -32,6 +32,7 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = GETPOST('place','int');
 if ($place=="") $place="0";
@@ -54,7 +55,7 @@ $head='<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
-<link rel="stylesheet" href="css/pos.css?a=xxx">
+<link rel="stylesheet" href="css/pos.css">
 <script type="text/javascript" src="js/takepos.js" ></script>
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>
@@ -62,8 +63,25 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 $categorie = new Categorie($db);
 $categories = $categorie->get_full_arbo('product');
+
+$maincategories = array_filter($categories, function ($item) {
+    if (($item['level']==1) !== false) {
+        return true;
+    }
+    return false;
+});
+
+$subcategories = array_filter($categories, function ($item) {
+    if (($item['level']!=1) !== false) {
+        return true;
+    }
+    return false;
+});
 ?>
-var categories = JSON.parse( '<?php echo json_encode($categories);?>' );
+
+var categories = <?php echo json_encode($categories); ?>;
+var subcategories = <?php echo json_encode($subcategories); ?>;
+
 var currentcat;
 var pageproducts=0;
 var pagecategories=0;
@@ -108,15 +126,27 @@ function MoreCategories(moreorless){
 	}
 }
 
-function LoadProducts(position){
+function LoadProducts(position, issubcat=false){
     $('#catimg'+position).animate({opacity: '0.5'}, 1);
 	$('#catimg'+position).animate({opacity: '1'}, 100);
-	currentcat=$('#catdiv'+position).data('rowid');
+	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
+	else currentcat=$('#catdiv'+position).data('rowid');
     if (currentcat=="") return;
 	pageproducts=0;
+	ishow=0; //product to show counter
+	
+	jQuery.each(subcategories, function(i, val) {
+		if (currentcat==val.fk_parent){
+			$("#prodesc"+ishow).text(val.label);
+			$("#proimg"+ishow).attr("src","genimg/?query=cat&w=55&h=50&id="+val.rowid);
+			$("#prodiv"+ishow).data("rowid",val.rowid);
+			$("#prodiv"+ishow).data("iscat",1);
+			ishow++;
+		}
+	});
+	
+	idata=0; //product data counter	
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		idata=0; //product data counter
-		ishow=0; //product to show counter
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text(""); 
@@ -129,6 +159,7 @@ function LoadProducts(position){
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
 				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
 			idata++; //Next data everytime
@@ -167,6 +198,7 @@ function MoreProducts(moreorless){
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
 				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
+				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
 			idata++; //Next data everytime
@@ -177,12 +209,16 @@ function MoreProducts(moreorless){
 function ClickProduct(position){
     $('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
-	idproduct=$('#prodiv'+position).data('rowid');
-    if (idproduct=="") return;
-	$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-	});
-
+	if ($('#prodiv'+position).data('iscat')==1){
+		LoadProducts(position, true);
+	}
+	else{
+		idproduct=$('#prodiv'+position).data('rowid');
+		if (idproduct=="") return;
+		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct, function() {
+			$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+	}
 }
 
 function deleteline(){
@@ -232,6 +268,7 @@ function Search2(){
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
 			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
+			$("#prodiv"+ishow).data("iscat",0);
 		}
 	});
 }
@@ -352,27 +389,30 @@ $( document ).ready(function() {
 
 <body style="overflow: hidden; background-color:#E8E8E8;">
 
-<div id="poslines" style="position:absolute; top:2%; left:0.5%; height:36%; width:31%; overflow: auto;">
-</div>
+<div class="container">
+	<div class="row1">
 
-<div style="position:absolute; top:1%; left:32.5%; height:37%; width:32.5%; font-size: 0;">
-    <button type="button" class="calcbutton" onclick="Edit(7);">7</button>
-    <button type="button" class="calcbutton" onclick="Edit(8);">8</button>
-    <button type="button" class="calcbutton" onclick="Edit(9);">9</button>
-    <button type="button" id="qty" class="calcbutton2" onclick="Edit('qty');"><?php echo $langs->trans("Qty"); ?></button>
-    <button type="button" class="calcbutton" onclick="Edit(4);">4</button>
-    <button type="button" class="calcbutton" onclick="Edit(5);">5</button>
-    <button type="button" class="calcbutton" onclick="Edit(6);">6</button>
-    <button type="button" id="price" class="calcbutton2" onclick="Edit('p');"><?php echo $langs->trans("Price"); ?></button>
-    <button type="button" class="calcbutton" onclick="Edit(1);">1</button>
-    <button type="button" class="calcbutton" onclick="Edit(2);">2</button>
-    <button type="button" class="calcbutton" onclick="Edit(3);">3</button>
-    <button type="button" id="reduction" class="calcbutton2" onclick="Edit('r');"><?php echo $langs->trans("ReductionShort"); ?></button>
-    <button type="button" class="calcbutton" onclick="Edit(0);">0</button>
-    <button type="button" class="calcbutton" onclick="Edit('.');">.</button>
-    <button type="button" class="calcbutton" onclick="Edit('c');">C</button>
-    <button type="button" class="calcbutton2" id="delete" style="color: red;" onclick="deleteline();"><b>X</b></button>
-</div>
+		<div id="poslines" class="div1" style="overflow: auto;">
+		</div>
+
+		<div class="div2">
+			<button type="button" class="calcbutton" onclick="Edit(7);">7</button>
+			<button type="button" class="calcbutton" onclick="Edit(8);">8</button>
+			<button type="button" class="calcbutton" onclick="Edit(9);">9</button>
+			<button type="button" id="qty" class="calcbutton2" onclick="Edit('qty');"><?php echo $langs->trans("Qty"); ?></button>
+			<button type="button" class="calcbutton" onclick="Edit(4);">4</button>
+			<button type="button" class="calcbutton" onclick="Edit(5);">5</button>
+			<button type="button" class="calcbutton" onclick="Edit(6);">6</button>
+			<button type="button" id="price" class="calcbutton2" onclick="Edit('p');"><?php echo $langs->trans("Price"); ?></button>
+			<button type="button" class="calcbutton" onclick="Edit(1);">1</button>
+			<button type="button" class="calcbutton" onclick="Edit(2);">2</button>
+			<button type="button" class="calcbutton" onclick="Edit(3);">3</button>
+			<button type="button" id="reduction" class="calcbutton2" onclick="Edit('r');"><?php echo $langs->trans("ReductionShort"); ?></button>
+			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
+			<button type="button" class="calcbutton" onclick="Edit('.');">.</button>
+			<button type="button" class="calcbutton" onclick="Edit('c');">C</button>
+			<button type="button" class="calcbutton2" id="delete" style="color: red;" onclick="deleteline();"><b>X</b></button>
+		</div>
 
 <?php
 // User menu and external TakePOS modules
@@ -410,8 +450,16 @@ if ($conf->global->TAKEPOSCONNECTOR){
 	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
 					'action'=>'OpenDrawer();');
 }
+
+$hookmanager->initHooks(array('takeposfrontend'));
+$reshook=$hookmanager->executeHooks('ActionButtons');
+if (!empty($reshook))
+	{
+		$menus[$r++]=$reshook;
+	}
+
 ?>
-<div style="position:absolute; top:1%; left:65.5%; height:37%; width:32.5%;">
+		<div class="div3">
 <?php
 $i = 0;
 foreach($menus as $menu) {
@@ -421,48 +469,50 @@ foreach($menus as $menu) {
 		echo '<button type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
 		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 	}
-    else if ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+    elseif ($i>9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 	else echo '<button type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
 }
 ?>
-</div>
-
-<div style="position:absolute; top:39%; left:0.3%; height:59%; width:32%;">
+		</div>
+	</div>
+	<div class="row2">
+		<div class="div4">
 	<?php
 	$count=0;
 	while ($count<16)
 	{
 	?>
-	<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; else if ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-		<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="98%" id='catimg<?php echo $count;?>'/>
-		<div class='description'>
-			<div class='description_content' id='catdesc<?php echo $count;?>'></div>
-		</div>
-	</div>
+			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
+				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="98%" id='catimg<?php echo $count;?>'/>
+				<div class='description'>
+					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
+				</div>
+			</div>
 	<?php
     $count++;
 	}
 	?>
-</div>
+		</div>
 
-<div style="position:absolute; top:39%; left:32%; height:58%; width:72%;">
+		<div class="div5">
 <?php
 $count=0;
 while ($count<32)
 	{
 	?>
-	<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-		<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
-		<div class='description'>
-			<div class='description_content' id='prodesc<?php echo $count;?>'></div>
-		</div>
-	</div>
+			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
+				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
+				<div class='description'>
+					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
+				</div>
+			</div>
 	<?php
 	$count++;
 	}
 ?>
+		</div>
+	</div>
 </div>
-
 </body>
 <?php
 

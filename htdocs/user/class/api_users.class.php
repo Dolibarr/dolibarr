@@ -17,7 +17,8 @@
 
 use Luracast\Restler\RestException;
 
-//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 /**
  * API class for users
@@ -217,11 +218,22 @@ class Users extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-            if ($field == 'id') continue;
-		    $this->useraccount->$field = $value;
+			if ($field == 'id') continue;
+			// The status must be updated using setstatus() because it
+			// is not handled by the update() method.
+			if ($field == 'statut') {
+				$result = $this->useraccount->setstatus($value);
+				if ($result < 0) {
+				   throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+				}
+			} else {
+			   $this->useraccount->$field = $value;
+			}
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		// If there is no error, update() returns the number of affected
+		// rows so if the update is a no op, the return value is zezo.
+		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0)
 		{
 			return $this->get($id);
 		}
@@ -230,6 +242,41 @@ class Users extends DolibarrApi
 			throw new RestException(500, $this->useraccount->error);
 		}
     }
+
+
+	/**
+	 * List the groups of a user
+	 *
+	 * @param int $id     Id of user
+	 * @return array      Array of group objects
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET {id}/groups
+	 */
+	function getGroups($id)
+	{
+		$obj_ret = array();
+
+		if (! DolibarrApiAccess::$user->rights->user->user->lire) {
+			throw new RestException(401);
+		}
+
+		$user = new User($this->db);
+		$result = $user->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'user not found');
+		}
+
+		$usergroup = new UserGroup($this->db);
+		$groups = $usergroup->listGroupsForUser($id, false);
+		$obj_ret = array();
+		foreach ($groups as $group) {
+			$obj_ret[] = $this->_cleanObjectDatas($group);
+		}
+		return $obj_ret;
+	}
+
 
     /**
 	 * Add a user into a group

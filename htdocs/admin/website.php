@@ -502,7 +502,7 @@ if ($id)
 
         fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
 
-        print '<td colspan="3" align="right">';
+        print '<td colspan="3" class="right">';
         if ($action != 'edit')
         {
         	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
@@ -585,7 +585,7 @@ if ($id)
 
                     if (empty($reshook)) fieldListWebsites($fieldlist,$obj,$tabname[$id],'edit');
 
-                    print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                    print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
@@ -659,7 +659,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
+function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf,$langs,$db;
 	global $form;
@@ -695,4 +695,3 @@ function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
 		}
 	}
 }
-

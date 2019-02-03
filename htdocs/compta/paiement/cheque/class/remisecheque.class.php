@@ -84,7 +84,7 @@ class RemiseCheque extends CommonObject
 	 *	@param 	string	$ref		 	Ref record
 	 * 	@return	int						<0 if KO, > 0 if OK
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref = '')
 	{
 		global $conf;
 
@@ -299,7 +299,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  User	$user 		Utilisateur qui effectue l'operation
 	 *	@return	int
 	 */
-	function delete($user='')
+	function delete($user = '')
 	{
 		global $conf;
 
@@ -416,15 +416,15 @@ class RemiseCheque extends CommonObject
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumRef($mode='next')
+	function getNextNumRef($mode = 'next')
 	{
 		global $conf, $db, $langs, $mysoc;
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
-		else if ($conf->global->CHEQUERECEIPTS_ADDON=='thyme') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_thyme';
-		else if ($conf->global->CHEQUERECEIPTS_ADDON=='mint') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		elseif ($conf->global->CHEQUERECEIPTS_ADDON=='thyme') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_thyme';
+		elseif ($conf->global->CHEQUERECEIPTS_ADDON=='mint') $conf->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
 
 		if (! empty($conf->global->CHEQUERECEIPTS_ADDON))
 		{
@@ -988,7 +988,7 @@ class RemiseCheque extends CommonObject
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option='')
+	function initAsSpecimen($option = '')
 	{
 		global $user,$langs,$conf;
 
@@ -1013,7 +1013,7 @@ class RemiseCheque extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs;
 
@@ -1064,7 +1064,7 @@ class RemiseCheque extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -1077,7 +1077,7 @@ class RemiseCheque extends CommonObject
 	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
-	function LibStatut($status,$mode=0)
+	function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage

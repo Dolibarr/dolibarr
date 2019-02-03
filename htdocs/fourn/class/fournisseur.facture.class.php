@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -547,7 +547,7 @@ class FactureFournisseur extends CommonInvoice
      *    @param	string	$ref		Ref supplier invoice
      *    @return   int        			<0 if KO, >0 if OK, 0 if not found
      */
-    public function fetch($id='',$ref='')
+    public function fetch($id = '', $ref = '')
     {
         global $langs;
 
@@ -813,7 +813,7 @@ class FactureFournisseur extends CommonInvoice
      *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
      *  @return int 			         <0 if KO, >0 if OK
      */
-    public function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
         global $conf, $langs;
         $error=0;
@@ -1045,7 +1045,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    public function delete(User $user, $notrigger=0)
+    public function delete(User $user, $notrigger = 0)
     {
         global $langs,$conf;
 
@@ -1196,7 +1196,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
      *	@return int         		<0 si ko, >0 si ok
      */
-    function set_paid($user, $close_code='', $close_note='')
+    function set_paid($user, $close_code = '', $close_note = '')
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1295,7 +1295,7 @@ class FactureFournisseur extends CommonInvoice
      *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
      */
-    public function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
+    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
     {
         global $conf,$langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1335,7 +1335,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $num = $force_number;
         }
-        else if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+        elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
         {
             $num = $this->getNextNumRef($this->thirdparty);
         }
@@ -1458,7 +1458,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user, $idwarehouse=-1)
+    function set_draft($user, $idwarehouse = -1)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1557,7 +1557,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		string	$ref_supplier		Supplier ref
      *	@return    	int             			>0 if OK, <0 if KO
      */
-    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0, $pu_ht_devise=0, $ref_supplier='')
+    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '')
     {
     	global $langs, $mysoc, $conf;
 
@@ -1799,7 +1799,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @param		string		$ref_supplier		Supplier ref
      * @return    	int           					<0 if KO, >0 if OK
      */
-    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null, $pu_ht_devise=0, $ref_supplier='')
+    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
@@ -1927,7 +1927,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      * 	@return	int						<0 if KO, >0 if OK
      */
-    public function deleteline($rowid, $notrigger=0)
+    public function deleteline($rowid, $notrigger = 0)
     {
         if (!$rowid) {
 	        $rowid = $this->id;
@@ -2038,7 +2038,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
      *                                  <0 if error
      */
-	function list_replacable_supplier_invoices($socid=0)
+	function list_replacable_supplier_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2090,7 +2090,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
      *                                  <0 if error
 	 */
-	function list_qualified_avoir_supplier_invoices($socid=0)
+	function list_qualified_avoir_supplier_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2204,7 +2204,7 @@ class FactureFournisseur extends CommonInvoice
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      * 	@return		string								String with URL
      */
-    public function getNomUrl($withpicto=0, $option='',$max=0, $short=0, $moretitle='', $notooltip=0, $save_lastsearch_value=-1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $langs, $conf;
 
@@ -2281,7 +2281,7 @@ class FactureFournisseur extends CommonInvoice
       *      @param    string		$mode		'next' for next value or 'last' for last value
       *      @return   string					free ref or last ref
       */
-    public function getNextNumRef($soc,$mode='next')
+    public function getNextNumRef($soc, $mode = 'next')
     {
         global $db, $langs, $conf;
         $langs->load("orders");
@@ -2335,7 +2335,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
      *  @return	void
      */
-    public function initAsSpecimen($option='')
+    public function initAsSpecimen($option = '')
     {
         global $langs,$conf;
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -2481,7 +2481,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param		int		$invertdetail	Reverse sign of amounts for lines
      * 	@return		int						New id of clone
      */
-    public function createFromClone($fromid,$invertdetail=0)
+    public function createFromClone($fromid, $invertdetail = 0)
     {
         global $user,$langs;
 
@@ -2560,7 +2560,7 @@ class FactureFournisseur extends CommonInvoice
          *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $user, $langs;
 
@@ -3047,7 +3047,7 @@ class SupplierInvoiceLine extends CommonObjectLine
      *	@param      int		$notrigger		1 no triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-    public function insert($notrigger=0)
+    public function insert($notrigger = 0)
     {
         global $user,$conf;
 

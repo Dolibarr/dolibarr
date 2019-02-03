@@ -69,7 +69,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_user($user,$outputlangs)
+    function get_substitutionarray_user($user, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -107,7 +107,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_mysoc($mysoc,$outputlangs)
+    function get_substitutionarray_mysoc($mysoc, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -167,7 +167,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_thirdparty($object,$outputlangs)
+    function get_substitutionarray_thirdparty($object, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -230,7 +230,7 @@ abstract class CommonDocGenerator
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
         		}
-        		else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+        		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
         		{
         			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
         		}
@@ -361,7 +361,7 @@ abstract class CommonDocGenerator
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+	function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
         // phpcs:enable
 		global $conf;
@@ -472,6 +472,7 @@ abstract class CommonDocGenerator
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines)>0)
 		{
+			$totalUp = 0;
 			foreach ($object->lines as $line)
 			{
 			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
@@ -483,8 +484,20 @@ abstract class CommonDocGenerator
 				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
 				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+				
+				$totalUp += $line->subprice * $line->qty;
+			}
+		
+			// @GS: Calculate total up and total discount percentage
+			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
+			$resarray['object_total_up'] = $totalUp;
+			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
+			if (method_exists($object, 'getTotalDiscount')) {
+				$resarray['object_total_discount'] = round(100 / $totalUp * $object->getTotalDiscount(), 2);
+				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
 			}
 		}
+		
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
@@ -497,6 +510,7 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
+		
 		return $resarray;
 	}
 
@@ -523,6 +537,8 @@ abstract class CommonDocGenerator
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
+			'line_total_up'=>price2num($line->subprice * $line->qty),
+			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
 			'line_qty'=>$line->qty,
 			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
 			'line_price_ht'=>price2num($line->total_ht),
@@ -588,7 +604,7 @@ abstract class CommonDocGenerator
      * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
-    function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
+    function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
     	global $conf;
@@ -663,6 +679,7 @@ abstract class CommonDocGenerator
 	    	'line_desc'=>$line->desc,
 	    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 	    	'line_up'=>price($line->subprice),
+		'line_total_up'=>price($line->subprice * $line->qty),
 	    	'line_qty'=>$line->qty,
 	    	'line_qty_shipped'=>$line->qty_shipped,
 	    	'line_qty_asked'=>$line->qty_asked,
@@ -699,7 +716,7 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
     {
         // phpcs:enable
         $array_other = array();
@@ -730,7 +747,7 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
+    function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -743,11 +760,11 @@ abstract class CommonDocGenerator
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			else if($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
 			{
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
 			}
-			else if($extrafields->attribute_type[$key] == 'date')
+			elseif($extrafields->attribute_type[$key] == 'date')
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
@@ -765,7 +782,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			else if($extrafields->attribute_type[$key] == 'datetime')
+			elseif($extrafields->attribute_type[$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
 				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');                            // using company output language
@@ -774,7 +791,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			else if($extrafields->attribute_type[$key] == 'link')
+			elseif($extrafields->attribute_type[$key] == 'link')
 			{
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")
@@ -817,7 +834,7 @@ abstract class CommonDocGenerator
 	 * @param	int		$hidebottom		Hide bottom
 	 * @return	void
 	 */
-    function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
+    function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
     {
         if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
         $pdf->line($x+$l, $y, $x+$l, $y+$h);
@@ -853,7 +870,7 @@ abstract class CommonDocGenerator
      *      @param	int				$hideref			Do not show ref
      *      @return	null
      */
-    function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
         global $conf;
 

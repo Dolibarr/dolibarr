@@ -215,8 +215,8 @@ foreach ($dups as $string => $pages)
 	$s.="\n";
 
 	if ($duplicateinsamefile) $sduplicateinsamefile .= $s;
-	else if ($inmain) $sinmainandother .= $s;
-	else if ($inadmin) $sininstallandadmin .= $s;
+	elseif ($inmain) $sinmainandother .= $s;
+	elseif ($inadmin) $sininstallandadmin .= $s;
 	else $sother .= $s;
 }
 
@@ -388,4 +388,3 @@ if ($web)
 }
 
 exit;
-

@@ -473,7 +473,7 @@ else
 						print '<td>';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
-						else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
+						elseif ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
 						print '<td>'.$useringroup->firstname.'</td>';

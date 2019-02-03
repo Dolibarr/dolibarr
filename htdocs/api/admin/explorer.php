@@ -221,4 +221,3 @@ print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules
 
 llxFooter();
 $db->close();
-

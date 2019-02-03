@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -566,7 +566,7 @@ if (! empty($arrayfields['d.tms']['checked']))
 // Status
 if (! empty($arrayfields['d.statut']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+	print '<td class="liste_titre right maxwidthonsmartphone">';
 	$liststatus=array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
@@ -613,7 +613,7 @@ $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // No
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'],$_SERVER["PHP_SELF"],"d.statut","",$param,'align="right"',$sortfield,$sortorder);
+if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'],$_SERVER["PHP_SELF"],"d.statut","",$param,'class="right"',$sortfield,$sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -842,7 +842,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['d.statut']['checked']))
 	{
-		print '<td align="right" class="nowrap">';
+		print '<td class="nowrap right">';
 		print $memberstatic->LibStatut($obj->statut,$obj->subscription,$datefin,5);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -870,7 +870,7 @@ if (isset($totalarray['pos']))
 	while ($i < $totalarray['nbfield'])
 	{
 		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 		else
 		{
 			if ($i == 1)

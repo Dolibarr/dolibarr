@@ -202,7 +202,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName)
@@ -230,7 +230,7 @@ foreach ($syslogModules as $moduleName)
 		    if (! empty($tmpoption))
 		    {
     			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
-    			else if (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+    			elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
 		    }
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
@@ -275,7 +275,7 @@ print '<input type="hidden" name="action" value="setlevel">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';

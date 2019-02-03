@@ -97,7 +97,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte.=$langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		$texte.= '</td>';
-		$texte.= '<td align="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte.= '</tr></table>';
         $texte.= '</form>';
 
@@ -112,7 +112,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objsoc=0,$type=-1)
+	function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		$s='';
 		$s.=$this->prefixcustomeraccountancycode.'CUSTCODE';
@@ -131,7 +131,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
-	function get_code($db, $societe, $type='')
+	function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
 		global $conf;
@@ -147,7 +147,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			$codetouse=(! empty($societe->code_client)?$societe->code_client:'CUSTCODE');
 			$prefix = $this->prefixcustomeraccountancycode;
 		}
-		else if ($type == 'supplier')
+		elseif ($type == 'supplier')
 		{
 			$codetouse=(! empty($societe->code_fournisseur)?$societe->code_fournisseur:'SUPPCODE');
 			$prefix = $this->prefixsupplieraccountancycode;
@@ -200,11 +200,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	{
 		$sql = "SELECT ";
 		if ($type == 'customer') $sql.= "code_compta";
-		else if ($type == 'supplier') $sql.= "code_compta_fournisseur";
+		elseif ($type == 'supplier') $sql.= "code_compta_fournisseur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ";
 		if ($type == 'customer') $sql.= "code_compta";
-		else if ($type == 'supplier') $sql.= "code_compta_fournisseur";
+		elseif ($type == 'supplier') $sql.= "code_compta_fournisseur";
 		$sql.= " = '".$db->escape($code)."'";
 		if (! empty($societe->id)) $sql.= " AND rowid <> ".$societe->id;
 

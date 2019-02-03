@@ -163,7 +163,7 @@ class Localtax extends CommonObject
      *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function update(User $user, $notrigger=0)
+    function update(User $user, $notrigger = 0)
     {
     	global $conf, $langs;
 
@@ -628,7 +628,7 @@ class Localtax extends CommonObject
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $option='')
+	function getNomUrl($withpicto = 0, $option = '')
 	{
 		global $langs;
 
@@ -652,7 +652,7 @@ class Localtax extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -665,7 +665,7 @@ class Localtax extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string              Libelle du statut
 	 */
-    function LibStatut($status, $mode=0)
+    function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;  // TODO Renvoyer le libelle anglais et faire traduction a affichage

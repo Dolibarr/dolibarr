@@ -275,4 +275,3 @@ else
 }
 
 $db->close();
-

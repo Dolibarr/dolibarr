@@ -81,7 +81,7 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
-else if ($action == 'specimen')  // For orders
+elseif ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
 
@@ -128,13 +128,13 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
-else if ($action == 'setmodel')
+elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -144,7 +144,7 @@ else if ($action == 'del')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -186,7 +186,7 @@ print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
@@ -196,7 +196,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
 	print '<td align="center">&nbsp;</td>'."\n";
-	print '<td align="right">'."\n";
+	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
@@ -213,7 +213,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
     print '<td align="center">&nbsp;</td>'."\n";
-    print '<td align="right">'."\n";
+    print '<td class="right">'."\n";
 
     if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
@@ -225,7 +225,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
         print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
         print '<td align="center">&nbsp;</td>'."\n";
-        print '<td align="right">'."\n";
+        print '<td class="right">'."\n";
 
         if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';

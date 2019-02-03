@@ -210,9 +210,9 @@ if ($mode && ! count($data))
 else
 {
     if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-    else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-    else if ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
+    elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
+    elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
+    elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
     else
     {
         print $langs->trans("MembersStatisticsDesc").'<br>';
@@ -286,7 +286,7 @@ if ($mode)
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td align="center">'.$label2.'</td>';
-    print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
     print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
     print '</tr>';
 
@@ -297,7 +297,7 @@ if ($mode)
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
-        print '<td align="right">'.$val['nb'].'</td>';
+        print '<td class="right">'.$val['nb'].'</td>';
         print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
         print '</tr>';
         $oldyear=$year;

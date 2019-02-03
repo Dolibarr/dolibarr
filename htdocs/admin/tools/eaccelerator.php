@@ -48,17 +48,17 @@ if (isset($_POST['caching'])) {
     } else {
         eaccelerator_caching(true);
     }
-} else if (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
+} elseif (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
     if ($info['optimizer']) {
         eaccelerator_optimizer(false);
     } else {
         eaccelerator_optimizer(true);
     }
-} else if (isset($_POST['clear'])) {
+} elseif (isset($_POST['clear'])) {
     eaccelerator_clear();
-} else if (isset($_POST['clean'])) {
+} elseif (isset($_POST['clean'])) {
     eaccelerator_clean();
-} else if (isset($_POST['purge'])) {
+} elseif (isset($_POST['purge'])) {
     eaccelerator_purge();
 }
 $info = eaccelerator_info();
@@ -81,7 +81,7 @@ function compare($x, $y)
 
     if ( $x[$sortby] == $y[$sortby] ) {
         return 0;
-    } else if ($x[$sortby] < $y[$sortby]) {
+    } elseif ($x[$sortby] < $y[$sortby]) {
         return -1;
     } else {
         return 1;
@@ -101,7 +101,7 @@ function revcompare($x, $y)
 
     if ($x[$sortby] == $y[$sortby]) {
         return 0;
-    } else if ($x[$sortby] < $y[$sortby]) {
+    } elseif ($x[$sortby] < $y[$sortby]) {
         return 1;
     } else {
         return -1;
@@ -174,9 +174,9 @@ function create_script_table($list)
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($script['file'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($script['mtime'],'dayhour').'</td>';
-        print '<td align="right" class="nowrap">'.number_format($script['size'] / 1024, 2).'KB</td>';
-        print '<td align="right" class="nowrap">'.$script['reloads'].' ('.$script['usecount'].')</td>';
-        print '<td align="right" class="nowrap">'.$script['hits'].'</td>';
+        print '<td class="right" class="nowrap">'.number_format($script['size'] / 1024, 2).'KB</td>';
+        print '<td class="right" class="nowrap">'.$script['reloads'].' ('.$script['usecount'].')</td>';
+        print '<td class="right" class="nowrap">'.$script['hits'].'</td>';
         print '</tr>';
     }
     print '</table>';
@@ -204,8 +204,8 @@ function create_key_table($list)
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($key['name'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($key['created'],'dayhour').'</td>';
-        print '<td align="right" class="nowrap">'.number_format($key['size']/1024, 3).'KB</td>';
-        print '<td align="right" class="nowrap">';
+        print '<td class="right" class="nowrap">'.number_format($key['size']/1024, 3).'KB</td>';
+        print '<td class="right" class="nowrap">';
         if ($key['ttl'] == -1) {
             print 'expired';
         } elseif ($key['ttl'] == 0) {
@@ -232,37 +232,37 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Caching enabled</td>';
-print '<td align="right">'.($info['cache']?'yes':'no').'</td>';
+print '<td class="right">'.($info['cache']?'yes':'no').'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Optimizer enabled</td>';
-print '<td align="right">'.$info['optimizer']?'yes':'no'.'</td>';
+print '<td class="right">'.$info['optimizer']?'yes':'no'.'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Memory usage</td>';
-print '<td align="right">'.number_format(100 * $info['memoryAllocated']/$info['memorySize'], 2).'%('.number_format($info['memoryAllocated'] / (1024*1024), 2).'MB / '.number_format($info['memorySize']/(1024*1024), 2).'MB)</td>';
+print '<td class="right">'.number_format(100 * $info['memoryAllocated']/$info['memorySize'], 2).'%('.number_format($info['memoryAllocated'] / (1024*1024), 2).'MB / '.number_format($info['memorySize']/(1024*1024), 2).'MB)</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Free memory in reserved cache</td>';
-print '<td align="right">'.number_format($info['memoryAvailable']/(1024*1024), 2).'MB</td>';
+print '<td class="right">'.number_format($info['memoryAvailable']/(1024*1024), 2).'MB</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Cached scripts</td>';
-print '<td align="right">'.$info['cachedScripts'].'</td>';
+print '<td class="right">'.$info['cachedScripts'].'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Removed scripts</td>';
-print '<td align="right">'.$info['removedScripts'].'</td>';
+print '<td class="right">'.$info['removedScripts'].'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Cached keys</td>';
-print '<td align="right">'.(isset($info['cachedKeys'])?$info['cachedKeys']:'').'</td>';
+print '<td class="right">'.(isset($info['cachedKeys'])?$info['cachedKeys']:'').'</td>';
 print '</tr>';
 print '</table>';
 
@@ -279,29 +279,29 @@ if (is_array($resCached) || is_array($resRemoved)) {
     if (is_array($resCached)) {
         print '<tr class="oddeven">';
         print "<td>Caching</td>";
-        print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
+        print '<td class="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Optimizer</td>";
-        print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
+        print '<td class="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
         print "</tr>";
     }
 
     if (is_array($resRemoved)) {
         print '<tr class="oddeven">';
         print "<td>Clear cache</td>";
-        print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
+        print '<td class="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Clean cache</td>";
-        print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
+        print '<td class="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Purge cache</td>";
-        print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
+        print '<td class="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
         print "</tr></table></form>";
     }
 

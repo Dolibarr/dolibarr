@@ -71,7 +71,7 @@ if ($action == 'activate_delivery')
 	header("Location: confexped.php");
 	exit;
 }
-else if ($action == 'disable_delivery')
+elseif ($action == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
     header("Location: confexped.php");

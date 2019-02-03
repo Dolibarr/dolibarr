@@ -252,7 +252,7 @@ class Entrepot extends CommonObject
 	 *  @param      int     $notrigger     1=No trigger
 	 *	@return		int					   <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -323,7 +323,7 @@ class Entrepot extends CommonObject
 	 *	@param		string	$ref	Warehouse label
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	function fetch($id, $ref='')
+	function fetch($id, $ref = '')
 	{
 		global $conf;
 
@@ -434,7 +434,7 @@ class Entrepot extends CommonObject
 	 *	@param	int		$status		Status
 	 * 	@return array				Array list of warehouses
 	 */
-	function list_array($status=1)
+	function list_array($status = 1)
 	{
         // phpcs:enable
 		$liste = array();
@@ -535,7 +535,7 @@ class Entrepot extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -548,7 +548,7 @@ class Entrepot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -599,7 +599,7 @@ class Entrepot extends CommonObject
      *  @param	    int   	$notooltip		1=Disable tooltip
 	 *	@return		string					String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='',$showfullpath=0, $notooltip=0)
+	function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
 	{
 		global $conf, $langs;
 		$langs->load("stocks");
@@ -747,7 +747,7 @@ class Entrepot extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf,$user,$langs;
 

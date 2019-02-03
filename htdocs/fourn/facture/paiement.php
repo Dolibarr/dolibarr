@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -774,12 +774,12 @@ if (empty($action))
     {
         if ($year > 0 && empty($day))
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-        else if ($year > 0 && ! empty($day))
+        elseif ($year > 0 && ! empty($day))
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
         else
         $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
     }
-    else if ($year > 0)
+    elseif ($year > 0)
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
     }

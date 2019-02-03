@@ -434,9 +434,9 @@ if ($socid > 0)
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountHT").'</td>';
+			print '<td width="80" class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
@@ -487,9 +487,9 @@ if ($socid > 0)
 	    				print '</td>';
 	    			}
 	    			print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-	    			print '<td align="right">'.price($obj->amount_ht).'</td>';
-	    			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-	    			print '<td align="right">'.price($obj->amount_ttc).'</td>';
+	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
+	    			print '<td class="right">'.price2num($obj->tva_tx,'MU').'%</td>';
+	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
 	    			print '<td align="center">';
 	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 	    			print '</td>';
@@ -573,9 +573,9 @@ if ($socid > 0)
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountHT").'</td>';
+			print '<td width="80" class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
@@ -626,9 +626,9 @@ if ($socid > 0)
 						print '</td>';
 					}
 					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td align="right">'.price($obj->amount_ht).'</td>';
-					print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-					print '<td align="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="right">'.price2num($obj->tva_tx,'MU').'%</td>';
+					print '<td class="right">'.price($obj->amount_ttc).'</td>';
 					print '<td align="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 					print '</td>';
@@ -746,9 +746,9 @@ if ($socid > 0)
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountHT").'</td>';
+			print '<td width="80" class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
@@ -820,9 +820,9 @@ if ($socid > 0)
 	    				print '</td>';
 	    			}
 	    			print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
-	    			print '<td align="right">'.price($obj->amount_ht).'</td>';
-	    			print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-	    			print '<td align="right">'.price($obj->amount_ttc).'</td>';
+	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
+	    			print '<td class="right">'.price2num($obj->tva_tx,'MU').'%</td>';
+	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
 	    			print '<td align="center">';
 	    			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 	    			print '</td>';
@@ -900,9 +900,9 @@ if ($socid > 0)
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td width="150" class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
-			print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
-			print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountHT").'</td>';
+			print '<td width="80" class="right">'.$langs->trans("VATRate").'</td>';
+			print '<td width="120" class="right">'.$langs->trans("AmountTTC").'</td>';
 			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
@@ -974,9 +974,9 @@ if ($socid > 0)
 						print '</td>';
 					}
 					print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
-					print '<td align="right">'.price($obj->amount_ht).'</td>';
-					print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
-					print '<td align="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="right">'.price2num($obj->tva_tx,'MU').'%</td>';
+					print '<td class="right">'.price($obj->amount_ttc).'</td>';
 					print '<td align="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 					print '</td>';

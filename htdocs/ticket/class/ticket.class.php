@@ -902,11 +902,6 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
-        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_logs";
-        	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
-        	$resql = $this->db->query($sql);
-        }
-        if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_msg";
         	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
         	$resql = $this->db->query($sql);
@@ -1334,7 +1329,7 @@ class Ticket extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string								String with URL
      */
-    function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+    function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
     	global $db, $conf, $langs;
     	global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1671,7 +1666,7 @@ class Ticket extends CommonObject
             dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
             return -1;
         }*/
-        
+
         return 0;
     }
 

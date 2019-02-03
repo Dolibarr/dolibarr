@@ -779,7 +779,7 @@ if (count($listofextcals))
                         $datecurstart=dol_stringtotime($icalevent['DTSTART;VALUE=DATE'],1);
                         $datecurend=dol_stringtotime($icalevent['DTEND;VALUE=DATE'],1)-1;  // We remove one second to get last second of day
                     }
-                    else if (is_array($icalevent['DTSTART']) && ! empty($icalevent['DTSTART']['unixtime']))
+                    elseif (is_array($icalevent['DTSTART']) && ! empty($icalevent['DTSTART']['unixtime']))
                     {
                         $datecurstart=$icalevent['DTSTART']['unixtime'];
                         $datecurend=$icalevent['DTEND']['unixtime'];
@@ -1277,7 +1277,7 @@ $db->close();
  * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $nonew=0)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0)
 {
     global $user, $conf, $langs;
     global $action, $filter, $filtert, $status, $actioncode, $usergroup;	// Filters used into search form
@@ -1365,7 +1365,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	                    // We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
 	                    if (! empty($cacheusers[$event->userownerid]->color)) $color=$cacheusers[$event->userownerid]->color;
                     }
-                    else if ($event->type_code == 'ICALEVENT')      // Event come from external ical file
+                    elseif ($event->type_code == 'ICALEVENT')      // Event come from external ical file
                     {
                     	$numical++;
                     	if (! empty($event->icalname)) {
@@ -1378,7 +1378,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$color=($event->icalcolor?$event->icalcolor:-1);
                     	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other');
                     }
-                    else if ($event->type_code == 'BIRTHDAY')
+                    elseif ($event->type_code == 'BIRTHDAY')
                     {
                     	$numbirthday++; $colorindex=2; $cssclass='family_birthday unmovable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
                     }
@@ -1425,11 +1425,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     {
                         $cssclass.= " unmovable";
                     }
-                    else if ($event->type_code == 'ICALEVENT')
+                    elseif ($event->type_code == 'ICALEVENT')
                     {
                         $cssclass.= " unmovable";
                     }
-                    else if ($event->date_end_in_calendar && date('Ymd',$event->date_start_in_calendar) != date('Ymd',$event->date_end_in_calendar))
+                    elseif ($event->date_end_in_calendar && date('Ymd',$event->date_start_in_calendar) != date('Ymd',$event->date_end_in_calendar))
                     {
                         $tmpyearend    = date('Y',$event->date_end_in_calendar);
                         $tmpmonthend   = date('m',$event->date_end_in_calendar);

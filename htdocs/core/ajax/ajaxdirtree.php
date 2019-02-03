@@ -337,7 +337,7 @@ if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();
  * @param	int		$depth					Depth
  * @return	void
  */
-function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth=0)
+function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth = 0)
 {
 	global $conf, $db, $langs, $form;
 	global $dolibarr_main_data_root;
@@ -491,4 +491,3 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 		else print "PermissionDenied";
 	}
 }
-

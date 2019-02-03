@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ class modHRM extends DolibarrModules
 	 * @param string $options Enabling module ('', 'noboxes')
 	 * @return int if OK, 0 if KO
 	 */
-	function init($options='')
+	function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);

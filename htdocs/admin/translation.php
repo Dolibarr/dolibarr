@@ -500,7 +500,7 @@ if ($mode == 'searchkey')
     //}
     print '</td>';
     // Action column
-    print '<td class="nowrap" align="right">';
+    print '<td class="nowrap right">';
     $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpicto;
     print '</td>';
@@ -520,7 +520,7 @@ if ($mode == 'searchkey')
         if ($i > ($offset + $limit)) break;
         print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
-        print '</td><td align="right">';
+        print '</td><td class="right">';
         if (! empty($newlangfileonly->tab_translate[$key]))
         {
             if ($val != $newlangfileonly->tab_translate[$key])
@@ -543,7 +543,7 @@ if ($mode == 'searchkey')
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
             }
-            else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
             {
             	//print $key.'-'.$val;
                 print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit_add($langs->trans("Overwrite")) . '</a>';

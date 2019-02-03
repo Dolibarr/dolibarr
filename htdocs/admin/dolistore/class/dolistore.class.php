@@ -54,7 +54,7 @@ class Dolistore
 	 *
 	 * @param	boolean		$debug		Enable debug of request on screen
 	 */
-	function __construct($debug=false)
+	function __construct($debug = false)
 	{
 		global $conf, $langs;
 
@@ -154,7 +154,7 @@ class Dolistore
 			// Here we are dealing with errors
 			$trace = $e->getTrace();
 			if ($trace[0]['args'][0] == 404) die('Bad ID');
-			else if ($trace[0]['args'][0] == 401) die('Bad auth key');
+			elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
 			else
 			{
 				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';

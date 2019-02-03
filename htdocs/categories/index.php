@@ -169,7 +169,7 @@ foreach($fulltree as $key => $val)
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
 	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
+	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
 }
@@ -178,7 +178,7 @@ foreach($fulltree as $key => $val)
 //print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';

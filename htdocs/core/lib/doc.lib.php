@@ -38,7 +38,7 @@
  *  @param  int			$issupplierline      Is it a line for a supplier object ?
  *  @return string       				     String with line
  */
-function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 {
 	global $db, $conf, $langs;
 
@@ -165,4 +165,3 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 
 	return $libelleproduitservice;
 }
-

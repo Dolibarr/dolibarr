@@ -58,10 +58,9 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->user->self_advance->readperms))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
+if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms)))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
 {
-	$feature2='';
-	$canreaduser=1;
+	accessforbidden();
 }
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -351,7 +350,7 @@ if ($result)
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
-        else if (in_array($obj->id, $permsuser))					// Permission granted by user
+        elseif (in_array($obj->id, $permsuser))					// Permission granted by user
         {
         	if ($caneditperms)
         	{
@@ -362,7 +361,7 @@ if ($result)
         	print '</td>';
         }
 
-        else if (is_array($permsgroupbyentity[$entity]))
+        elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
 	        {

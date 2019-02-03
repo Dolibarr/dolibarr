@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 					}
 					else dol_syslog("ErrorImageFormatNotSupported",LOG_WARNING);
 				}
-				else if (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
+				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/',$result))
 				{
 					$error++;
 					$langs->load("errors");
@@ -417,7 +417,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
-	print '</td><td class="nocellnopadd" valign="middle" align="right">';
+	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
@@ -602,7 +602,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -635,7 +635,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="140">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 		// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
@@ -678,7 +678,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -821,7 +821,7 @@ else
 	{
 		print '<a class="img_logo" href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
 	}
-	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+	elseif ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
 		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
@@ -1040,7 +1040,7 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">&nbsp;</td>';
+	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
@@ -1077,7 +1077,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1097,11 +1097,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}
 
@@ -1131,7 +1131,7 @@ else
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-		print '<td align="right">&nbsp;</td>';
+		print '<td class="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
@@ -1151,11 +1151,11 @@ else
 		{
 			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
 		{
 			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
-		else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
+		elseif($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
 		{
 			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}

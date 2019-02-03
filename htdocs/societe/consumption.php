@@ -313,7 +313,7 @@ if (!empty($sql_select))
 		} else {
 			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
 		}
-	} else if ($year > 0) {
+	} elseif ($year > 0) {
 		$start = dol_mktime(0, 0, 0, 1, 1, $year);
 		$end = dol_time_plus_duree($start,1,'y') - 1;
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
@@ -594,7 +594,7 @@ if ($sql_select)
 		*/
 		print '</td>';
 
-		//print '<td align="left">'.$prodreftxt.'</td>';
+		//print '<td class="left">'.$prodreftxt.'</td>';
 
 		print '<td align="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
@@ -622,7 +622,7 @@ if ($sql_select)
 	}
 	$db->free($resql);
 }
-else if (empty($type_element) || $type_element == -1)
+elseif (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
 

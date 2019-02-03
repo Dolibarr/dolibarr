@@ -482,4 +482,3 @@ function llxFooterVierge()
     print "</div></body>\n";
     print "</html>\n";
 }
-

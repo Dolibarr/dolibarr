@@ -259,7 +259,7 @@ if ($resql)
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
-        print '<td align="right">';
+        print '<td class="right">';
         print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 		print " &nbsp; ";
 		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
