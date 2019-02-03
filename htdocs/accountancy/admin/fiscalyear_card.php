@@ -151,7 +151,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($action == 'create')
 {

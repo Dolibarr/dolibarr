@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 
 $langs->loadLangs(array("install","cashdesk","admin","banks"));
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
@@ -44,10 +44,10 @@ $syear = (GETPOSTISSET('closeyear')?GETPOST('closeyear', 'int'):dol_print_date($
 $smonth = (GETPOSTISSET('closemonth')?GETPOST('closemonth', 'int'):dol_print_date($now, "%m"));
 $sday = (GETPOSTISSET('closeday')?GETPOST('closeday', 'int'):dol_print_date($now, "%d"));
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -84,8 +84,8 @@ $hookmanager->initHooks(array('cashcontrolcard','globalcard'));
 
 $permissiontoadd = ($user->rights->cashdesk->use || $user->rights->takepos->use);
 $permissiontodelete = ($user->rights->cashdesk->use || $user->rights->takepos->use) || ($permissiontoadd && $object->status == 0);
-if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
-$backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php',1);
+if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+$backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY';	// Name of trigger action code to execute when we modify record
 
 if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
@@ -94,7 +94,7 @@ if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
 }
 
 
-if (GETPOST('cancel','alpha'))
+if (GETPOST('cancel', 'alpha'))
 {
 	$action = 'create';
 }
@@ -102,19 +102,19 @@ if (GETPOST('cancel','alpha'))
 if ($action=="start")
 {
 	$error=0;
-	if (! GETPOST('posmodule','alpha') || GETPOST('posmodule','alpha') == '-1')
+	if (! GETPOST('posmodule', 'alpha') || GETPOST('posmodule', 'alpha') == '-1')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Module")), null, 'errors');
 		$action='create';
 		$error++;
 	}
-	if (GETPOST('posnumber','alpha') == '')
+	if (GETPOST('posnumber', 'alpha') == '')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CashDesk")), null, 'errors');
 		$action='create';
 		$error++;
 	}
-	if (! GETPOST('closeyear','alpha') || GETPOST('closeyear','alpha') == '-1')
+	if (! GETPOST('closeyear', 'alpha') || GETPOST('closeyear', 'alpha') == '-1')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, 'errors');
 		$action='create';
@@ -123,7 +123,7 @@ if ($action=="start")
 }
 elseif ($action=="add")
 {
-	if (GETPOST('opening','alpha') == '')
+	if (GETPOST('opening', 'alpha') == '')
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InitialBankBalance")), null, 'errors');
 		$action='start';
@@ -132,7 +132,7 @@ elseif ($action=="add")
 	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
-		if (GETPOST($key.'_amount','alpha') == '')
+		if (GETPOST($key.'_amount', 'alpha') == '')
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
 			$action='start';
@@ -140,7 +140,7 @@ elseif ($action=="add")
 		}
 		else
 		{
-			$object->$key = price2num(GETPOST($key.'_amount','alpha'));
+			$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
 		}
 	}
 
@@ -150,9 +150,9 @@ elseif ($action=="add")
 		$object->month_close = GETPOST('closemonth', 'int');
 		$object->year_close = GETPOST('closeyear', 'int');
 
-	    $object->opening=price2num(GETPOST('opening','alpha'));
-	    $object->posmodule=GETPOST('posmodule','alpha');
-		$object->posnumber=GETPOST('posnumber','alpha');
+	    $object->opening=price2num(GETPOST('opening', 'alpha'));
+	    $object->posmodule=GETPOST('posmodule', 'alpha');
+		$object->posnumber=GETPOST('posnumber', 'alpha');
 
 		$db->begin();
 
@@ -230,10 +230,10 @@ if ($action=="create" || $action=="start")
 	$theoricalamountforterminal=array();
 	$theoricalnbofinvoiceforterminal=array();
 
-	if (GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '' && GETPOST('posnumber','alpha') != '-1')
+	if (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1')
 	{
-		$posmodule = GETPOST('posmodule','alpha');
-		$terminalid = GETPOST('posnumber','alpha');
+		$posmodule = GETPOST('posmodule', 'alpha');
+		$terminalid = GETPOST('posnumber', 'alpha');
 
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach($arrayofpaymentmode as $key => $val)
@@ -309,7 +309,7 @@ if ($action=="create" || $action=="start")
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($action == 'start' && GETPOST('posnumber','int') != '' && GETPOST('posnumber','int') != '' && GETPOST('posnumber','int') != '-1')
+    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
     {
 	    print '<input type="hidden" name="action" value="add">';
     }
@@ -331,8 +331,8 @@ if ($action=="create" || $action=="start")
 	$prefix='close';
 
     print '<tr class="oddeven">';
-    print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule','alpha'), (count($arrayofposavailable)>1?1:0)).'</td>';
-    print '<td><input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber','alpha'):'0').'"></td>';
+    print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable)>1?1:0)).'</td>';
+    print '<td><input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'"></td>';
 	// Year
 	print '<td>';
 	$retstring='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
@@ -350,7 +350,7 @@ if ($action=="create" || $action=="start")
 	for ($month = 1 ; $month <= 12 ; $month++)
 	{
 		$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
-		$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
+		$retstring.=dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
 		$retstring.="</option>";
 	}
 	$retstring.="</select>";
@@ -382,8 +382,8 @@ if ($action=="create" || $action=="start")
 
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
 	{
-		$posmodule = GETPOST('posmodule','alpha');
-		$terminalid = GETPOST('posnumber','alpha');
+		$posmodule = GETPOST('posmodule', 'alpha');
+		$terminalid = GETPOST('posnumber', 'alpha');
 
 		print '<br>';
 
@@ -457,14 +457,14 @@ if ($action=="create" || $action=="start")
 		print '<td>'.$langs->trans("RealAmount").'</td>';
 		// Initial amount
 		print '<td align="center">';
-		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening')?price2num(GETPOST('opening','alpha')):price($initialbalanceforterminal[$terminalid]['cash'])).'">';
+		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening')?price2num(GETPOST('opening', 'alpha')):price($initialbalanceforterminal[$terminalid]['cash'])).'">';
 		print '</td>';
 		// Amount per payment type
 		$i=0;
 		foreach($arrayofpaymentmode as $key => $val)
 		{
 			print '<td align="center"'.($i == 0 ? ' class="hide0"':'').'>';
-			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key.'_amount','alpha').'">';
+			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash'?' autofocus':'').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
 			print '</td>';
 			$i++;
 		}

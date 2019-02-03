@@ -50,7 +50,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td class="linkedcol-element"><?php echo $langs->trans("CustomerInvoice"); ?></td>
         <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
-    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="linkedcol-amount" align="right"><?php
     		if ($user->rights->facture->lire) {
     			$sign = 1;

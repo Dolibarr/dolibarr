@@ -36,15 +36,15 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-$search_ref = GETPOST('search_ref','int');
-$search_label = GETPOST('search_label','alpha');
-$search_amount = GETPOST('search_amount','alpha');
-$search_status = GETPOST('search_status','int');
+$search_ref = GETPOST('search_ref', 'int');
+$search_label = GETPOST('search_label', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_status = GETPOST('search_status', 'int');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -52,25 +52,25 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
-$year=GETPOST("year",'int');
-$filtre=GETPOST("filtre",'int');
+$year=GETPOST("year", 'int');
+$filtre=GETPOST("filtre", 'int');
 
 if (! GETPOSTISSET('search_typeid'))
 {
-	$newfiltre=str_replace('filtre=','',$filtre);
-	$filterarray=explode('-',$newfiltre);
+	$newfiltre=str_replace('filtre=', '', $filtre);
+	$filterarray=explode('-', $newfiltre);
 	foreach($filterarray as $val)
 	{
-		$part=explode(':',$val);
+		$part=explode(':', $val);
 		if ($part[0] == 'cs.fk_type') $search_typeid=$part[1];
 	}
 }
 else
 {
-	$search_typeid=GETPOST('search_typeid','int');
+	$search_typeid=GETPOST('search_typeid', 'int');
 }
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -116,14 +116,14 @@ if ($year > 0)
     $sql .= ")";
 }
 if ($filtre) {
-    $filtre=str_replace(":","=",$filtre);
+    $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
 $sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -131,7 +131,7 @@ if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -198,7 +198,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($search_typeid,'search_typeid',1,0,0,'maxwidth100onsmartphone');
+	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -220,19 +220,19 @@ if ($resql)
 		print "</tr>\n";
 
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre("DateDue",$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "id", "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, 'align="left"', $sortfield, $sortorder);
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cs.paye", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print "</tr>\n";
 
 		$i=0;
 		$totalarray=array();
-		while ($i < min($num,$limit))
+		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
 
@@ -245,11 +245,11 @@ if ($resql)
 
 			// Ref
 			print '<td width="60">';
-			print $chargesociale_static->getNomUrl(1,'20');
+			print $chargesociale_static->getNomUrl(1, '20');
 			print '</td>';
 
 			// Label
-			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
+			print '<td>'.dol_trunc($obj->libelle, 42).'</td>';
 
 			// Type
 			print '<td>'.$obj->type_lib.'</td>';
@@ -258,7 +258,7 @@ if ($resql)
 			print '<td align="center">';
 			if ($obj->periode)
 			{
-				print '<a href="index.php?year='.strftime("%Y",$db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode),'day').'</a>';
+				print '<a href="index.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
 			}
 			else
 			{
@@ -275,7 +275,7 @@ if ($resql)
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
-			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5,$obj->alreadypayed).'</td>';
+			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
 
 			print '<td></td>';
 

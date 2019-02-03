@@ -108,7 +108,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
     $langs->loadLangs(array("bills", "main", "products"));
 
 	if (isset($_GET['orders_to_invoice'])) {
-		$orders_id = GETPOST('orders_to_invoice','',1);
+		$orders_id = GETPOST('orders_to_invoice', '', 1);
 		$n = count($orders_id);
 		$i = 0;
 
@@ -116,7 +116,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 		$_GET['originid'] = $orders_id[0];
 	}
 	if (isset($_POST['orders_to_invoice'])) {
-		$orders_id = GETPOST('orders_to_invoice','',2);
+		$orders_id = GETPOST('orders_to_invoice', '', 2);
 		$nn = count($orders_id);
 		$ii = 0;
 
@@ -151,12 +151,12 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 		if (! $error) {
 			$object->ref = GETPOST('ref');
 			$object->ref_supplier = GETPOST('ref_supplier');
-			$object->socid = GETPOST('socid','int');
+			$object->socid = GETPOST('socid', 'int');
 			$object->libelle = GETPOST('libelle');
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public','none');
-			$object->note_private = GETPOST('note_private','none');
+			$object->note_public = GETPOST('note_public', 'none');
+			$object->note_private = GETPOST('note_private', 'none');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid');
@@ -167,7 +167,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			if (empty($object->date_echeance))
 				$object->date_echeance = $object->calculate_date_lim_reglement();
 
-			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
@@ -318,7 +318,7 @@ if ($action == 'create' && !$error) {
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
 	// Ref supplier
-	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier','alpha', 2) : '') . '" type="text"></td>';
+	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier', 'alpha', 2) : '') . '" type="text"></td>';
 	print '</tr>';
 
 	// Third party
@@ -372,7 +372,7 @@ if ($action == 'create' && !$error) {
 	if (empty($reshook))
 	{
 		$object=new FactureFournisseur($db);
-		print $object->showOptionals($extrafields,'edit');
+		print $object->showOptionals($extrafields, 'edit');
 	}
 
 	// Modele PDF

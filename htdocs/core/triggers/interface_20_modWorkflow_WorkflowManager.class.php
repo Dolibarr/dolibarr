@@ -105,7 +105,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
         	if (! empty($conf->propal->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
         	{
-        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
 				if (! empty($object->linkedObjects))
 				{
 				    $totalonlinkedelements=0;
@@ -134,7 +134,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			// First classify billed the order to allow the proposal classify process
 			if (! empty($conf->commande->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
         	{
-        		$object->fetchObjectLinked('','commande',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
         		if (! empty($object->linkedObjects))
         		{
         		    $totalonlinkedelements=0;
@@ -157,7 +157,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			// Second classify billed the proposal.
         	if (! empty($conf->propal->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
         	{
-        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
         		if (! empty($object->linkedObjects))
         		{
         		    $totalonlinkedelements=0;
@@ -186,7 +186,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	// First classify billed the order to allow the proposal classify process
         	if (! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER))
         	{
-        		$object->fetchObjectLinked('','order_supplier',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'order_supplier', $object->id, $object->element);
         		if (! empty($object->linkedObjects))
         		{
         			$totalonlinkedelements=0;
@@ -209,7 +209,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	// Second classify billed the proposal.
         	if (! empty($conf->supplier_proposal->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL))
         	{
-        		$object->fetchObjectLinked('','supplier_proposal',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
         		if (! empty($object->linkedObjects))
         		{
         			$totalonlinkedelements=0;
@@ -237,7 +237,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
             if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
             {
-                $object->fetchObjectLinked('','commande',$object->id,$object->element);
+                $object->fetchObjectLinked('', 'commande', $object->id, $object->element);
                 if (! empty($object->linkedObjects))
                 {
                     $totalonlinkedelements=0;
@@ -275,7 +275,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         			$this->error=$order->error; $this->errors=$order->errors;
         			return $ret;
         		}
-        		$ret=$order->fetchObjectLinked($order->id,'commande',null,'shipping');
+        		$ret=$order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
         		if ($ret<0) {
         			$this->error=$order->error; $this->errors=$order->errors;
         			return $ret;
@@ -304,7 +304,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
         		//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
         		//Compare array
-        		$diff_array=array_diff_assoc($qtyordred,$qtyshipped);
+        		$diff_array=array_diff_assoc($qtyordred, $qtyshipped);
         		if (count($diff_array)==0) {
         			//No diff => mean everythings is shipped
         			$ret=$object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin);
@@ -322,7 +322,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         	if (! empty($conf->reception->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
         	{
-        		$object->fetchObjectLinked('','reception',$object->id,$object->element);
+        		$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
         		if (! empty($object->linkedObjects))
         		{
         		    $totalonlinkedelements=0;

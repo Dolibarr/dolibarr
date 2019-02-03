@@ -81,7 +81,7 @@ class ActionsCardProduct
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
-   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
+   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id, $ref);
         $this->object = $tmpobject;
 
 		//parent::assign_values($action);
@@ -91,7 +91,7 @@ class ActionsCardProduct
             $this->tpl[$key] = $value;
         }
 
-        $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
+        $this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
 
         // canvas
 		$this->tpl['canvas'] = $this->canvas;
@@ -122,14 +122,14 @@ class ActionsCardProduct
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
 		}
 
 		if ($action == 'view')
 		{
             $head = product_prepare_head($this->object);
 
-            $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
@@ -137,12 +137,12 @@ class ActionsCardProduct
             $this->tpl['showend']=dol_get_fiche_end();
 
             // Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -168,33 +168,33 @@ class ActionsCardProduct
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->object->status);
+    		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$this->object->status_buy);
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
     		$this->tpl['description'] = $this->description;
     		$this->tpl['note'] = $this->note;
 
 		    // Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $form->selectarray('finished',$statutarray,$this->object->finished);
+			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, $this->object->finished);
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units","weight",$this->object->weight_units);
+			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units", "weight", $this->object->weight_units);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units","size",$this->object->length_units);
+			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units", "size", $this->object->length_units);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units","surface",$this->object->surface_units);
+			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units", "surface", $this->object->surface_units);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->object->volume_units);
+			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units", "volume", $this->object->volume_units);
 		}
 
 		if ($action == 'view')
@@ -203,7 +203,7 @@ class ActionsCardProduct
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Nature
@@ -212,25 +212,25 @@ class ActionsCardProduct
 			// Weight
 			if ($this->object->weight != '')
 			{
-				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units,"weight");
+				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units, "weight");
 			}
 
 			// Length
 			if ($this->object->length != '')
 			{
-				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units,"size");
+				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units, "size");
 			}
 
 			// Surface
 			if ($this->object->surface != '')
 			{
-				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units,"surface");
+				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units, "surface");
 			}
 
 			// Volume
 			if ($this->object->volume != '')
 			{
-				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units,"volume");
+				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units, "volume");
 			}
 
     		$this->tpl['fiche_end']=dol_get_fiche_end();
@@ -283,7 +283,7 @@ class ActionsCardProduct
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 
-				array_push($this->field_list,$fieldlist);
+				array_push($this->field_list, $fieldlist);
 
 				$i++;
 			}
@@ -291,7 +291,7 @@ class ActionsCardProduct
 		}
 		else
 		{
-			dol_print_error($this->db,$sql);
+			dol_print_error($this->db, $sql);
 		}
 	}
 
@@ -377,7 +377,7 @@ class ActionsCardProduct
 		{
 			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
-		$sql.= $this->db->order($sortfield,$sortorder);
+		$sql.= $this->db->order($sortfield, $sortorder);
 		$sql.= $this->db->plimit($limit+1, $offset);
 		//print $sql;
 
@@ -387,7 +387,7 @@ class ActionsCardProduct
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while ($i < min($num,$limit))
+			while ($i < min($num, $limit))
 			{
 				$datas = array();
 
@@ -407,7 +407,7 @@ class ActionsCardProduct
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
 							$this->entity	= $obj->entity;
-							$datas[$alias] 	= $this->getNomUrl(1,'',24);
+							$datas[$alias] 	= $this->getNomUrl(1, '', 24);
 						}
 						elseif ($alias == 'stock')
 						{
@@ -415,15 +415,15 @@ class ActionsCardProduct
 							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
 							else $datas[$alias] = $this->stock_reel;
 						}
-						elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias,40);
-						elseif (preg_match('/price/i',$alias))	$datas[$alias] = price($obj->$alias);
-						elseif ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias),'day');
-						elseif ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias,5);
+						elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
+						elseif (preg_match('/price/i', $alias))	$datas[$alias] = price($obj->$alias);
+						elseif ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
+						elseif ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias, 5);
 						else $datas[$alias] = $obj->$alias;
 					}
 				}
 
-				array_push($this->list_datas,$datas);
+				array_push($this->list_datas, $datas);
 
 				$i++;
 			}

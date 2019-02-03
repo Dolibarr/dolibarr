@@ -26,7 +26,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 /*
@@ -35,7 +35,7 @@ $action=GETPOST('action','aZ09');
 
 llxHeader();
 
-print load_fiche_titre("XCache",'','title_setup');
+print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 

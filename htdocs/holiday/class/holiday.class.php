@@ -180,7 +180,7 @@ class Holiday extends CommonObject
 			$classname = $conf->global->HOLIDAY_ADDON;
 
 			// Include file with class
-			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir)
 			{
 				$dir = dol_buildpath($reldir."core/modules/holiday/");
@@ -191,12 +191,12 @@ class Holiday extends CommonObject
 
 			if ($mybool === false)
 			{
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
-			$numref = $obj->getNextValue($objsoc,$this);
+			$numref = $obj->getNextValue($objsoc, $this);
 
 			if ($numref != "")
 			{
@@ -304,7 +304,7 @@ class Holiday extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('HOLIDAY_CREATE',$user);
+				$result=$this->call_trigger('HOLIDAY_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -383,8 +383,8 @@ class Holiday extends CommonObject
 				$this->description = $obj->description;
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
-				$this->date_debut_gmt = $this->db->jdate($obj->date_debut,1);
-				$this->date_fin_gmt = $this->db->jdate($obj->date_fin,1);
+				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
+				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
 				$this->halfday = $obj->halfday;
 				$this->statut = $obj->statut;
 				$this->fk_validator = $obj->fk_validator;
@@ -501,8 +501,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['description'] = $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
-				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut,1);
-				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin,1);
+				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
+				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
 				$tab_result[$i]['statut'] = $obj->statut;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
@@ -627,8 +627,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['description'] = $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
-				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut,1);
-				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin,1);
+				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
+				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
 				$tab_result[$i]['halfday'] = $obj->halfday;
 				$tab_result[$i]['statut'] = $obj->statut;
 				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
@@ -713,7 +713,7 @@ class Holiday extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('HOLIDAY_VALIDATE',$user);
+				$result=$this->call_trigger('HOLIDAY_VALIDATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -827,7 +827,7 @@ class Holiday extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('HOLIDAY_APPROVE',$user);
+				$result=$this->call_trigger('HOLIDAY_APPROVE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -940,7 +940,7 @@ class Holiday extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('HOLIDAY_MODIFY',$user);
+				$result=$this->call_trigger('HOLIDAY_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -993,7 +993,7 @@ class Holiday extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('HOLIDAY_DELETE',$user);
+				$result=$this->call_trigger('HOLIDAY_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -1032,7 +1032,7 @@ class Holiday extends CommonObject
 	 */
 	function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday = 0)
 	{
-		$this->fetchByUser($fk_user,'','');
+		$this->fetchByUser($fk_user, '', '');
 
 		foreach($this->holiday as $infos_CP)
 		{
@@ -1189,7 +1189,7 @@ class Holiday extends CommonObject
 		//{
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		//}
 
@@ -1242,41 +1242,41 @@ class Holiday extends CommonObject
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0').' '.$langs->trans('DraftCP');				// Draft
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved).' '.$langs->trans('ApprovedCP');
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5').' '.$langs->trans('CancelCP');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5').' '.$langs->trans('RefuseCP');
 		}
 		elseif ($mode == 3)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1');
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved);
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5');
 		}
 		elseif ($mode == 5)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
 		}
 		elseif ($mode == 6)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
 		}
 
 		else return $statut;
@@ -1416,7 +1416,7 @@ class Holiday extends CommonObject
 			// Si mise à jour pour tout le monde en début de mois
 			$now=dol_now();
 
-			$month = date('m',$now);
+			$month = date('m', $now);
 			$newdateforlastupdate = dol_print_date($now, '%Y%m%d%H%M%S');
 
 			// Get month of last update
@@ -1429,7 +1429,7 @@ class Holiday extends CommonObject
 			{
 				$this->db->begin();
 
-				$users = $this->fetchUsers(false,false);
+				$users = $this->fetchUsers(false, false);
 				$nbUser = count($users);
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
@@ -1437,7 +1437,7 @@ class Holiday extends CommonObject
 				$sql.= " WHERE name = 'lastUpdate'";
 				$result = $this->db->query($sql);
 
-				$typeleaves=$this->getTypes(1,1);
+				$typeleaves=$this->getTypes(1, 1);
 				foreach($typeleaves as $key => $val)
 				{
 					// On ajoute x jours à chaque utilisateurs
@@ -1493,7 +1493,7 @@ class Holiday extends CommonObject
 		else
 		{
 			// Mise à jour pour un utilisateur
-			$nbHoliday = price2num($nbHoliday,5);
+			$nbHoliday = price2num($nbHoliday, 5);
 
 			$sql = "SELECT nb_holiday FROM ".MAIN_DB_PREFIX."holiday_users";
 			$sql.= " WHERE fk_user = '".$userID."' AND fk_type = ".$fk_type;
@@ -1585,7 +1585,7 @@ class Holiday extends CommonObject
 		if (! $single)
 		{
 			dol_syslog(get_class($this).'::createCPusers');
-			$arrayofusers = $this->fetchUsers(false,true);
+			$arrayofusers = $this->fetchUsers(false, true);
 
 			foreach($arrayofusers as $users)
 			{
@@ -1903,7 +1903,7 @@ class Holiday extends CommonObject
 			while ($i < $num_lignes)
 			{
 				$objp = $this->db->fetch_object($result);
-				array_push($users_validator,$objp->fk_user);
+				array_push($users_validator, $objp->fk_user);
 				$i++;
 			}
 			return $users_validator;

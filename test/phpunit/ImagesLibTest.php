@@ -128,14 +128,14 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
 		$file=dirname(__FILE__).'/img250x50.jpg';
 		$tmp=dol_getImageSize($file);
     	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
-		$this->assertEquals($tmp['width'],250);
-		$this->assertEquals($tmp['height'],50);
+		$this->assertEquals($tmp['width'], 250);
+		$this->assertEquals($tmp['height'], 50);
 
 		$file=dirname(__FILE__).'/img250x20.png';
 		$tmp=dol_getImageSize($file);
     	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
-		$this->assertEquals($tmp['width'],250);
-		$this->assertEquals($tmp['height'],20);
+		$this->assertEquals($tmp['width'], 250);
+		$this->assertEquals($tmp['height'], 20);
 
 		/*$file=dirname(__FILE__).'/filenotfound.png';
 		$tmp=dol_getImageSize($file);

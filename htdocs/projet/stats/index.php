@@ -35,8 +35,8 @@ if (! $user->rights->projet->lire)
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Projects'));
 $title=$langs->trans("ProjectsStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title,'','title_project.png');
+print load_fiche_titre($title, '', 'title_project.png');
 
 dol_mkdir($dir);
 
@@ -142,7 +142,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
-$data = $stats_project->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats_project->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $conf->project->dir_output . "/stats/projectnbprevyear-".$year.".png";
@@ -171,14 +171,14 @@ if (! $mesg)
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("ProjectNbProjectByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	// Build graphic amount of object
-	$data = $stats_project->getAmountByMonthWithPrevYear($endyear,$startyear);
+	$data = $stats_project->getAmountByMonthWithPrevYear($endyear, $startyear);
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
@@ -198,7 +198,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		}
 		$px2->SetLegend($legend);
 		$px2->SetMaxValue($px2->GetCeilMaxValue());
-		$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+		$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
 		$px2->SetWidth($WIDTH);
 		$px2->SetHeight($HEIGHT);
 		$px2->SetYLabel($langs->trans("ProjectOppAmountOfProjectsByMonth"));
@@ -208,14 +208,14 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px2->mode='depth';
 		$px2->SetTitle($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 
-		$px2->draw($filenamenb,$fileurlnb);
+		$px2->draw($filenamenb, $fileurlnb);
 	}
 }
 
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	// Build graphic with transformation rate
-	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear, 0, 0);
+	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear, $startyear, 0, 0);
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
@@ -235,7 +235,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		}
 		$px3->SetLegend($legend);
 		$px3->SetMaxValue($px3->GetCeilMaxValue());
-		$px3->SetMinValue(min(0,$px3->GetFloorMinValue()));
+		$px3->SetMinValue(min(0, $px3->GetFloorMinValue()));
 		$px3->SetWidth($WIDTH);
 		$px3->SetHeight($HEIGHT);
 		$px3->SetYLabel($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
@@ -245,7 +245,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px3->mode='depth';
 		$px3->SetTitle($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
 
-		$px3->draw($filenamenb,$fileurlnb);
+		$px3->draw($filenamenb, $fileurlnb);
 	}
 }
 
@@ -269,9 +269,9 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"), -1, '');
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -284,7 +284,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 if ($mode == 'customer') $filter='s.client in (1,2,3)';
 if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
@@ -292,10 +292,10 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 arsort($arrayyears);
-print $form->selectarray('year',$arrayyears,$year,0);
+print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -340,9 +340,9 @@ foreach ($data_all_year as $val)
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		print '<td align="right">'.($val['total']?price(price2num($val['total'],'MT'),1):'0').'</td>';
-		print '<td align="right">'.($val['avg']?price(price2num($val['avg'],'MT'),1):'0').'</td>';
-		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'],'MT'),1):'0').'</td>';
+		print '<td align="right">'.($val['total']?price(price2num($val['total'], 'MT'), 1):'0').'</td>';
+		print '<td align="right">'.($val['avg']?price(price2num($val['avg'], 'MT'), 1):'0').'</td>';
+		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'], 'MT'), 1):'0').'</td>';
 	}
 	print '</tr>';
 	$oldyear=$year;

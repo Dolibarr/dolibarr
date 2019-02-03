@@ -74,7 +74,7 @@ class ExportCsv extends ModeleExports
 
 		$this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
 		$this->label = 'CSV';             // Label of driver
-		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
+		$this->desc=$langs->trans("CSVFormatDesc", $this->separator, $this->enclosure, $this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto
 		$this->version='1.32';         // Driver version
@@ -177,7 +177,7 @@ class ExportCsv extends ModeleExports
 		if (! $this->handle)
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
+			$this->error=$langs->trans("ErrorFailToCreateFile", $file);
 			$ret=-1;
 		}
 
@@ -225,11 +225,11 @@ class ExportCsv extends ModeleExports
 		foreach($array_selected_sorted as $code => $value)
 		{
 			$newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
-			$newvalue=$this->csvClean($newvalue,$outputlangs->charset_output);
+			$newvalue=$this->csvClean($newvalue, $outputlangs->charset_output);
 
-			fwrite($this->handle,$newvalue.$this->separator);
+			fwrite($this->handle, $newvalue.$this->separator);
 		}
-		fwrite($this->handle,"\n");
+		fwrite($this->handle, "\n");
 		return 0;
 	}
 
@@ -261,17 +261,17 @@ class ExportCsv extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
+			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
-			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
+			if (empty($alias)) dol_print_error('', 'Bad value for field with key='.$code.'. Try to redefine export.');
 
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);		// objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
 
 			// Translation newvalue
-			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
 
-			$newvalue=$this->csvClean($newvalue,$outputlangs->charset_output);
+			$newvalue=$this->csvClean($newvalue, $outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
@@ -280,11 +280,11 @@ class ExportCsv extends ModeleExports
 				$newvalue = $array[$newvalue];
 			}
 
-			fwrite($this->handle,$newvalue.$this->separator);
+			fwrite($this->handle, $newvalue.$this->separator);
 			$this->col++;
 		}
 
-		fwrite($this->handle,"\n");
+		fwrite($this->handle, "\n");
 		return 0;
 	}
 
@@ -338,8 +338,8 @@ class ExportCsv extends ModeleExports
 
 		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
 		$oldvalue=$newvalue;
-		$newvalue=str_replace("\r",'',$newvalue);
-		$newvalue=str_replace("\n",'\n',$newvalue);
+		$newvalue=str_replace("\r", '', $newvalue);
+		$newvalue=str_replace("\n", '\n', $newvalue);
 		if (! empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue)
 		{
 			// If strict use of CSV rules, we just add quote
@@ -348,14 +348,14 @@ class ExportCsv extends ModeleExports
 		}
 
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
-		if (preg_match('/"/',$newvalue))
+		if (preg_match('/"/', $newvalue))
 		{
 			$addquote=1;
-			$newvalue=str_replace('"','""',$newvalue);
+			$newvalue=str_replace('"', '""', $newvalue);
 		}
 
 		// Rule 3 CSV: If value contains separator, we must add "
-		if (preg_match('/'.$this->separator.'/',$newvalue))
+		if (preg_match('/'.$this->separator.'/', $newvalue))
 		{
 			$addquote=1;
 		}

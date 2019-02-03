@@ -53,14 +53,14 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$texte.= '<input type="hidden" name="maskconstreception" value="RECEPTION_MOONSTONE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Reception"),$langs->transnoentities("Reception"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Reception"),$langs->transnoentities("Reception"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">', $tooltip, 1, 1).'</td>';
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte.= '</tr>';
 		$texte.= '</table>';
@@ -82,7 +82,7 @@ class mod_reception_moonstone extends ModelNumRefReception
     	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
     	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 		$mysoc->typent_code=$old_code_type;
 
@@ -116,7 +116,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 
 		$date = $reception->date_reception;
 
-		$numFinal=get_next_value($db,$mask,'reception','ref','',$objsoc,$date);
+		$numFinal=get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}
@@ -132,6 +132,6 @@ class mod_reception_moonstone extends ModelNumRefReception
 	function reception_get_num($objsoc, $objforref)
 	{
 		// phpcs:enable
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc, $objforref);
 	}
 }

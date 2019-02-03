@@ -136,7 +136,7 @@ class CdavLib
 		// contact address
 		if(empty($location) && !empty($obj->address))
 		{
-			$location = trim(str_replace(array("\r","\t","\n"),' ', $obj->address));
+			$location = trim(str_replace(array("\r","\t","\n"), ' ', $obj->address));
 			$location = trim($location.', '.$obj->zip);
 			$location = trim($location.' '.$obj->town);
 			$location = trim($location.', '.$obj->country_label);
@@ -145,16 +145,16 @@ class CdavLib
 		// contact address
 		if(empty($location) && !empty($obj->soc_address))
 		{
-			$location = trim(str_replace(array("\r","\t","\n"),' ', $obj->soc_address));
+			$location = trim(str_replace(array("\r","\t","\n"), ' ', $obj->soc_address));
 			$location = trim($location.', '.$obj->soc_zip);
 			$location = trim($location.' '.$obj->soc_town);
 			$location = trim($location.', '.$obj->soc_country_label);
 		}
 
-		$address=explode("\n",$obj->address,2);
+		$address=explode("\n", $obj->address, 2);
 		foreach($address as $kAddr => $vAddr)
 		{
-			$address[$kAddr] = trim(str_replace(array("\r","\t"),' ', str_replace("\n",' | ', trim($vAddr))));
+			$address[$kAddr] = trim(str_replace(array("\r","\t"), ' ', str_replace("\n", ' | ', trim($vAddr))));
 		}
 		$address[]='';
 		$address[]='';
@@ -196,16 +196,16 @@ class CdavLib
 		}
 		else
 		{
-			$caldata.="DTSTART;TZID=".$timezone.":".strtr($obj->datep,array(" "=>"T", ":"=>"", "-"=>""))."\n";
+			$caldata.="DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 			if($type=='VEVENT')
 			{
 				if(trim($obj->datep2)!='')
-					$caldata.="DTEND;TZID=".$timezone.":".strtr($obj->datep2,array(" "=>"T", ":"=>"", "-"=>""))."\n";
+					$caldata.="DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 				else
-					$caldata.="DTEND;TZID=".$timezone.":".strtr($obj->datep,array(" "=>"T", ":"=>"", "-"=>""))."\n";
+					$caldata.="DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 			}
 			elseif(trim($obj->datep2)!='')
-				$caldata.="DUE;TZID=".$timezone.":".strtr($obj->datep2,array(" "=>"T", ":"=>"", "-"=>""))."\n";
+				$caldata.="DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 		}
 		$caldata.="CLASS:PUBLIC\n";
 		if($obj->transparency==1)
@@ -235,7 +235,7 @@ class CdavLib
 			$caldata.="\\n*DOLIBARR-CTC: ".trim($obj->firstname.' '.$obj->lastname);
 		if(!empty($obj->phone) || !empty($obj->phone_perso) || !empty($obj->phone_mobile))
 			$caldata.="\\n*DOLIBARR-CTC-TEL: ".trim($obj->phone.' '.$obj->phone_perso.' '.$obj->phone_mobile);
-		if(strpos($obj->other_users,',')) // several
+		if(strpos($obj->other_users, ',')) // several
 			$caldata.="\\n*DOLIBARR-USR: ".$obj->other_users;
 		$caldata.="\n";
 

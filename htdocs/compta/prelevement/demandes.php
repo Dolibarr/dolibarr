@@ -34,19 +34,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','','bons');
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page =  GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
+$page =  GETPOST('page', 'int');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,7 +81,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (dol_strlen(trim(GETPOST('search_societe','alpha'))))
+if (dol_strlen(trim(GETPOST('search_societe', 'alpha'))))
 {
 	$sql.= natural_search("s.nom", 'search_societe');
 }
@@ -116,8 +116,8 @@ if ($resql)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture','alpha')).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe','alpha')).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag(GETPOST('search_facture', 'alpha')).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag(GETPOST('search_societe', 'alpha')).'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	// Action column
@@ -129,7 +129,7 @@ if ($resql)
 
 	$users = array();
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -139,18 +139,18 @@ if ($resql)
 		print '<td>';
 		$invoicestatic->id=$obj->rowid;
 		$invoicestatic->ref=$obj->ref;
-		print $invoicestatic->getNomUrl(1,'withdraw');
+		print $invoicestatic->getNomUrl(1, 'withdraw');
 		print '</td>';
 
 		print '<td>';
 		$thirdpartystatic->id=$obj->socid;
 		$thirdpartystatic->name=$obj->name;
-		print $thirdpartystatic->getNomUrl(1,'customer');
+		print $thirdpartystatic->getNomUrl(1, 'customer');
 		print '</td>';
 
         print '<td align="right">'.price($obj->total_ttc).'</td>';
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande),'day').'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
         print '<td align="right"></td>';
 

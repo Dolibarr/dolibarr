@@ -134,35 +134,35 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
 
 		$result=getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result,'Test 1');
+		$this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
 
 		$result=getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result,'Test 2');
+		$this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
 
 		$result=getRootURLFromURL('http://www.dolimed.com/screenshots');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+		$this->assertEquals('http://www.dolimed.com', $result);
 
 		$result=getRootURLFromURL('https://www.dolimed.com/screenshots');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+		$this->assertEquals('https://www.dolimed.com', $result);
 
 		$result=getRootURLFromURL('http://www.dolimed.com/');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+		$this->assertEquals('http://www.dolimed.com', $result);
 
 		$result=getRootURLFromURL('https://www.dolimed.com/');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+		$this->assertEquals('https://www.dolimed.com', $result);
 
 		$result=getRootURLFromURL('http://www.dolimed.com');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('http://www.dolimed.com',$result);
+		$this->assertEquals('http://www.dolimed.com', $result);
 
 		$result=getRootURLFromURL('https://www.dolimed.com');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('https://www.dolimed.com',$result);
+		$this->assertEquals('https://www.dolimed.com', $result);
 
 		return 1;
     }
@@ -183,11 +183,11 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
 
     	$result=removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('abcdef',$result,'Test 1');
+    	$this->assertEquals('abcdef', $result, 'Test 1');
 
     	$result=removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('abcbbdef',$result,'Test 1');
+    	$this->assertEquals('abcbbdef', $result, 'Test 1');
 
     	return 1;
     }

@@ -159,7 +159,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_projet();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 
@@ -182,7 +182,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_thirdparty();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 }

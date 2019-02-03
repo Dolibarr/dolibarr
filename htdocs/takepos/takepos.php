@@ -20,11 +20,11 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
 
@@ -34,9 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = GETPOST('place','int');
+$place = GETPOST('place', 'int');
 if ($place=="") $place="0";
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
@@ -149,8 +149,8 @@ function LoadProducts(position, issubcat=false){
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -188,8 +188,8 @@ function MoreProducts(moreorless){
 		ishow=0; //product to show counter
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodesc"+ishow).text(""); 
-				$("#proimg"+ishow).attr("src",""); 
+				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("src","");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
@@ -373,11 +373,11 @@ function MoreActions(totalactions){
 	}
 	else if (pageactions==1){
 		pageactions=0;
-		for (i = 0; i <= totalactions; i++){ 
+		for (i = 0; i <= totalactions; i++){
 			if (i<9) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
-	}		
+	}
 }
 
 $( document ).ready(function() {
@@ -454,16 +454,17 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 }
 
 if ($conf->global->TAKEPOSCONNECTOR){
-	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
-					'action'=>'OpenDrawer();');
+    $menus[$r++]=array(
+        'title'=>$langs->trans("DOL_OPEN_DRAWER"),
+        'action'=>'OpenDrawer();'
+    );
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook=$hookmanager->executeHooks('ActionButtons');
-if (!empty($reshook))
-	{
-		$menus[$r++]=$reshook;
-	}
+if (!empty($reshook)) {
+    $menus[$r++]=$reshook;
+}
 
 ?>
 		<div class="div3">

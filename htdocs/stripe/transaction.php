@@ -32,15 +32,15 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$rowid = GETPOST("rowid",'alpha');
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$rowid = GETPOST("rowid", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -60,7 +60,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
 	$service = 'StripeTest';
 	$servicestatus = '0';
@@ -217,11 +217,11 @@ if (! $rowid) {
 		// Status
 		print "<td align='right'>";
 		if ($txn->status=='available')
- 		{print img_picto($langs->trans("".$txn->status.""),'statut4');}
+ 		{print img_picto($langs->trans("".$txn->status.""), 'statut4');}
 		elseif ($txn->status=='pending')
-		{print img_picto($langs->trans("".$txn->status.""),'statut7');}
+		{print img_picto($langs->trans("".$txn->status.""), 'statut7');}
 		elseif ($txn->status=='failed')
-		{print img_picto($langs->trans("".$txn->status.""),'statut8');}
+		{print img_picto($langs->trans("".$txn->status.""), 'statut8');}
 		print '</td>';
 		print "</tr>\n";
 	}

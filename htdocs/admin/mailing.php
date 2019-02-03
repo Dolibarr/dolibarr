@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "mails"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 
@@ -44,21 +44,21 @@ if ($action == 'setvalue')
 {
 	$db->begin();
 
-	$mailfrom = GETPOST('MAILING_EMAIL_FROM','alpha');
-	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
-	$checkread = GETPOST('value','alpha');
-	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY','alpha');
+	$mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
+	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
+	$checkread = GETPOST('value', 'alpha');
+	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
     $mailingdelay = GETPOST('MAILING_DELAY', 'int');
 
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_DELAY",$mailingdelay,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
 	// Create temporary encryption key if nedded
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
     if (! $error)
@@ -78,10 +78,10 @@ if ($action == 'setvalue')
  *	View
  */
 
-llxHeader('',$langs->trans("MailingSetup"));
+llxHeader('', $langs->trans("MailingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("MailingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
 if (! empty($conf->use_javascript_ajax))
 {

@@ -539,7 +539,7 @@ class CommandeFournisseur extends CommonOrder
             if (! $error && ! $notrigger)
             {
 				// Call trigger
-				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
+				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
             }
@@ -565,11 +565,11 @@ class CommandeFournisseur extends CommonOrder
                         {
                             dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
-	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
 	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
 	                        	@rename($dirsource, $dirdest);
@@ -613,7 +613,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut,$mode,$this->billed);
+        return $this->LibStatut($this->statut, $mode, $this->billed);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -676,36 +676,36 @@ class CommandeFournisseur extends CommonOrder
         }
         elseif ($mode == 3)
         {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
         }
         elseif ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
         }
         elseif ($mode == 5)
         {
-        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
+        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
+        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
+        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
         }
     }
 
@@ -743,7 +743,7 @@ class CommandeFournisseur extends CommonOrder
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -803,12 +803,12 @@ class CommandeFournisseur extends CommonOrder
             }
 
             if ($mybool === false) {
-                dol_print_error('',"Failed to include file ".$file);
+                dol_print_error('', "Failed to include file ".$file);
                 return '';
             }
 
             $obj = new $classname();
-            $numref = $obj->getNextValue($soc,$this);
+            $numref = $obj->getNextValue($soc, $this);
 
             if ( $numref != "")
             {
@@ -844,7 +844,7 @@ class CommandeFournisseur extends CommonOrder
         	if (! $error)
         	{
         	    // Call trigger
-        	    $result=$this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED',$user);
+        	    $result=$this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
         	    if ($result < 0) $error++;
         	    // End call triggers
         	}
@@ -970,7 +970,7 @@ class CommandeFournisseur extends CommonOrder
                             // We decrement stock of product (and sub-products)
 	                        $up_ht_disc=$this->lines[$i]->subprice;
     	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr",$this->ref));
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr", $this->ref));
                             if ($result < 0) { $error++; }
                             unset($this->line);
                         }
@@ -980,7 +980,7 @@ class CommandeFournisseur extends CommonOrder
                 if (! $error)
                 {
 					// Call trigger
-					$result=$this->call_trigger('ORDER_SUPPLIER_APPROVE',$user);
+					$result=$this->call_trigger('ORDER_SUPPLIER_APPROVE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
                 }
@@ -1053,7 +1053,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($error == 0)
                 {
 					// Call trigger
-					$result=$this->call_trigger('ORDER_SUPPLIER_REFUSE',$user);
+					$result=$this->call_trigger('ORDER_SUPPLIER_REFUSE', $user);
 					if ($result < 0)
                     {
                         $error++;
@@ -1111,7 +1111,7 @@ class CommandeFournisseur extends CommonOrder
                 $result = 0;
 
 				// Call trigger
-				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL',$user);
+				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 
@@ -1170,7 +1170,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->date_commande = $date;
 
                 // Call trigger
-                $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT',$user);
+                $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1378,7 +1378,7 @@ class CommandeFournisseur extends CommonOrder
 					if (! $error && ! $notrigger)
 	                {
 						// Call trigger
-						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE',$user);
+						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE', $user);
 						if ($result < 0)
 	                    {
 	                        $this->db->rollback();
@@ -1448,7 +1448,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $parameters=array('objFrom'=>$objFrom);
                 $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
         }
@@ -1539,7 +1539,7 @@ class CommandeFournisseur extends CommonOrder
 			// Check parameters
 			if ($qty < 1 && ! $fk_product)
 			{
-				$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
+				$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Product"));
 				return -1;
 			}
 			if ($type < 0) return -1;
@@ -1614,7 +1614,7 @@ class CommandeFournisseur extends CommonOrder
             	$pu = 0;
             }
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
+            $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
             // Clean vat code
             $vat_src_code='';
@@ -1629,7 +1629,7 @@ class CommandeFournisseur extends CommonOrder
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1647,7 +1647,7 @@ class CommandeFournisseur extends CommonOrder
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
-            $subprice = price2num($pu,'MU');
+            $subprice = price2num($pu, 'MU');
 
             $rangmax = $this->line_max();
             $rang = $rangmax + 1;
@@ -1711,10 +1711,10 @@ class CommandeFournisseur extends CommonOrder
             if ($result > 0)
             {
                 // Reorder if child line
-                if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+                if (! empty($fk_parent_line)) $this->line_order(true, 'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la commande meme
-                $result=$this->update_price(1,'auto',0,$this->thirdparty);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1, 'auto', 0, $this->thirdparty);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -1796,7 +1796,7 @@ class CommandeFournisseur extends CommonOrder
                 {
                     global $conf, $langs, $user;
 					// Call trigger
-					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
+					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH', $user);
 					if ($result < 0)
                     {
                         $error++;
@@ -1825,7 +1825,7 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $this->error=$mouv->error;
                         $this->errors=$mouv->errors;
-                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',',$this->errors), LOG_ERR);
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
                         $error++;
                     }
                 }
@@ -1904,7 +1904,7 @@ class CommandeFournisseur extends CommonOrder
         if (empty($notrigger))
         {
             // Call trigger
-            $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
+            $result=$this->call_trigger('ORDER_SUPPLIER_DELETE', $user);
             if ($result < 0)
             {
             	$this->errors[]='ErrorWhenRunningTrigger';
@@ -1972,7 +1972,7 @@ class CommandeFournisseur extends CommonOrder
         		$file = $dir . "/" . $ref . ".pdf";
         		if (file_exists($file))
         		{
-        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			if (! dol_delete_file($file, 0, 0, 0, $this)) // For triggers
         			{
         				$this->error='ErrorFailToDeleteFile';
         				$this->errors[]='ErrorFailToDeleteFile';
@@ -2176,7 +2176,7 @@ class CommandeFournisseur extends CommonOrder
 					$this->actionmsg2 = $comment;
 
                     // Call trigger
-                    $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
+                    $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
                     if ($result < 0) $error++;
                     // End call triggers
 
@@ -2249,7 +2249,7 @@ class CommandeFournisseur extends CommonOrder
         	if (! $notrigger && empty($error))
         	{
         		// Call trigger
-        		$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY',$user);
+        		$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY', $user);
         		if ($result < 0) $error++;
         		// End call triggers
         	}
@@ -2315,7 +2315,7 @@ class CommandeFournisseur extends CommonOrder
             if (! $notrigger && empty($error))
             {
             	// Call trigger
-            	$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY',$user);
+            	$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY', $user);
             	if ($result < 0) $error++;
             	// End call triggers
             }
@@ -2420,7 +2420,7 @@ class CommandeFournisseur extends CommonOrder
             $trigger_name[9] = 'REFUSED';
 
             // Call trigger
-            $result=$this->call_trigger("ORDER_SUPPLIER_STATUS_".$trigger_name[$status],$user);
+            $result=$this->call_trigger("ORDER_SUPPLIER_STATUS_".$trigger_name[$status], $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -2505,7 +2505,7 @@ class CommandeFournisseur extends CommonOrder
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
+            $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
             // Clean vat code
             $vat_src_code='';
@@ -2534,7 +2534,7 @@ class CommandeFournisseur extends CommonOrder
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
-            $subprice = price2num($pu_ht,'MU');
+            $subprice = price2num($pu_ht, 'MU');
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $this->line=new CommandeFournisseurLigne($this->db);
@@ -2596,7 +2596,7 @@ class CommandeFournisseur extends CommonOrder
             // Mise a jour info denormalisees au niveau facture
             if ($result >= 0)
             {
-                $this->update_price('','auto');
+                $this->update_price('', 'auto');
 				$this->db->commit();
 				return $result;
             }
@@ -2637,7 +2637,7 @@ class CommandeFournisseur extends CommonOrder
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         $sql.= " WHERE entity IN (".getEntity('product').")";
-        $sql.=$this->db->order("rowid","ASC");
+        $sql.=$this->db->order("rowid", "ASC");
         $sql.=$this->db->plimit(1);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2817,7 +2817,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
-	        $response->img=img_object('',"order");
+	        $response->img=img_object('', "order");
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -3000,7 +3000,7 @@ class CommandeFournisseur extends CommonOrder
 
         if (empty($this->date_delivery)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
         else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_delivery, 'day');
-        $text.=' '.($conf->commande->fournisseur->warning_delay>0?'+':'-').' '.round(abs($conf->commande->fournisseur->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+        $text.=' '.($conf->commande->fournisseur->warning_delay>0?'+':'-').' '.round(abs($conf->commande->fournisseur->warning_delay)/3600/24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 
         return $text;
     }
@@ -3031,7 +3031,7 @@ class CommandeFournisseur extends CommonOrder
     			$filter['t.status']=1;	// Restrict to lines with status validated
     		}
 
-    		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
+    		$ret=$supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
     		if ($ret<0)
     		{
     			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
@@ -3051,9 +3051,9 @@ class CommandeFournisseur extends CommonOrder
     					$qtywished[$line->fk_product]+=$line->qty;
     				}
     				//Compare array
-    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);		// Warning: $diff_array is done only on common keys.
-    				$keysinwishednotindelivered=array_diff(array_keys($qtywished),array_keys($qtydelivered));		// To check we also have same number of keys
-    				$keysindeliverednotinwished=array_diff(array_keys($qtydelivered),array_keys($qtywished));		// To check we also have same number of keys
+    				$diff_array=array_diff_assoc($qtydelivered, $qtywished);		// Warning: $diff_array is done only on common keys.
+    				$keysinwishednotindelivered=array_diff(array_keys($qtywished), array_keys($qtydelivered));		// To check we also have same number of keys
+    				$keysindeliverednotinwished=array_diff(array_keys($qtydelivered), array_keys($qtywished));		// To check we also have same number of keys
     				/*var_dump(array_keys($qtydelivered));
     				var_dump(array_keys($qtywished));
     				var_dump($diff_array);
@@ -3420,7 +3420,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= " ".$this->localtax2_tx.",";
         $sql.= " '".$this->db->escape($this->localtax1_type)."',";
         $sql.= " '".$this->db->escape($this->localtax2_type)."',";
-        $sql.= " ".$this->remise_percent.", ".price2num($this->subprice,'MU').", '".$this->db->escape($this->ref_supplier)."',";
+        $sql.= " ".$this->remise_percent.", ".price2num($this->subprice, 'MU').", '".$this->db->escape($this->ref_supplier)."',";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
         $sql.= " ".price2num($this->total_localtax1).",";
@@ -3454,7 +3454,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -3543,7 +3543,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             {
                 global $user;
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_SUPPLIER_UPDATE',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_UPDATE', $user);
                 if ($result < 0)
                 {
                     $this->db->rollback();
@@ -3595,7 +3595,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (!$notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }

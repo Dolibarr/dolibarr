@@ -65,8 +65,8 @@ class CSMSFile
 
 		// On definit fin de ligne
 		$this->eol="\n";
-		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
-		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
+		if (preg_match('/^win/i', PHP_OS)) $this->eol="\r\n";
+		if (preg_match('/^mac/i', PHP_OS)) $this->eol="\r";
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_SMS_SENDMODE))
@@ -141,7 +141,7 @@ class CSMSFile
 			}
 		    elseif (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 		    {
-		        $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
+		        $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
 		        $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
 		        dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
 		        try
@@ -172,7 +172,7 @@ class CSMSFile
 		        }
 		        catch(Exception $e)
 		        {
-		            dol_print_error('','Error to get list of senders: '.$e->getMessage());
+		            dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
 		        }
 		    }
 			else
@@ -210,7 +210,7 @@ class CSMSFile
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
 			$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
-			$fp = fopen($outputfile,"w");
+			$fp = fopen($outputfile, "w");
 
 			fputs($fp, "From: ".$this->addr_from."\n");
 			fputs($fp, "To: ".$this->addr_to."\n");
@@ -242,7 +242,7 @@ class CSMSFile
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
         {
         	$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
-            $fp = fopen($outputfile,"a+");
+            $fp = fopen($outputfile, "a+");
 
             fputs($fp, "\nResult id=".$result);
 

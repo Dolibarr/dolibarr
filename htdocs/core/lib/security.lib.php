@@ -42,9 +42,9 @@ function dol_encode($chain, $key = '1')
 		$strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength; $i++)
 		{
-			$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+			$output_tab[$i] = chr(ord(substr($chain, $i, 1))+17);
 		}
-		$chain = implode("",$output_tab);
+		$chain = implode("", $output_tab);
 	}
 	elseif ($key)
 	{
@@ -53,7 +53,7 @@ function dol_encode($chain, $key = '1')
 		for ($i=0; $i < $strlength; $i++)
 		{
 			$keychar = substr($key, ($i % strlen($key))-1, 1);
-			$result.= chr(ord(substr($chain,$i,1))+(ord($keychar)-65));
+			$result.= chr(ord(substr($chain, $i, 1))+(ord($keychar)-65));
 		}
 		$chain=$result;
 	}
@@ -80,10 +80,10 @@ function dol_decode($chain, $key = '1')
 		$strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength;$i++)
 		{
-			$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+			$output_tab[$i] = chr(ord(substr($chain, $i, 1))-17);
 		}
 
-		$chain = implode("",$output_tab);
+		$chain = implode("", $output_tab);
 	}
 	elseif ($key)
 	{
@@ -127,8 +127,8 @@ function dol_hash($chain, $type = '0')
 	if ($type == '1' || $type == 'sha1') return sha1($chain);
 	elseif ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
 	elseif ($type == '3' || $type == 'md5') return md5($chain);
-	elseif ($type == '4' || $type == 'md5openldap') return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
-	elseif ($type == '5') return hash('sha256',$chain);
+	elseif ($type == '4' || $type == 'md5openldap') return '{md5}'.base64_encode(mhash(MHASH_MD5, $chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
+	elseif ($type == '5') return hash('sha256', $chain);
 	elseif (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	elseif (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
@@ -190,7 +190,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	// Get more permissions checks from hooks
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
-	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
+	$reshook=$hookmanager->executeHooks('restrictedArea', $parameters);
 	if (! empty($hookmanager->resArray['result'])) return true;
 	if ($reshook > 0) return false;
 
@@ -209,7 +209,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	$dbtablename=(! empty($params[0]) ? $params[0] : '');
 	$sharedelement=(! empty($params[1]) ? $params[1] : $dbtablename);
 
-	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	// Check read permission from module
 	$readok=1; $nbko=0;
@@ -217,7 +217,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	{
 		$featureforlistofmodule=$feature;
 		if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
-		if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+		if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule, $listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
 		{
 			$readok=0; $nbko++;
 			continue;
@@ -279,7 +279,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record)
 	$createok=1; $nbko=0;
-	if (GETPOST('action','aZ09')  == 'create' || ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete'))
+	if (GETPOST('action', 'aZ09')  == 'create' || ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete'))
 	{
 		foreach ($featuresarray as $feature)
 		{
@@ -329,13 +329,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		// If a or and at least one ok
 		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $createok=1;
 
-		if (GETPOST('action','aZ09') == 'create' && ! $createok) accessforbidden();
+		if (GETPOST('action', 'aZ09') == 'create' && ! $createok) accessforbidden();
 		//print "Write access is ok";
 	}
 
 	// Check create user permission
 	$createuserok=1;
-	if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
+	if (GETPOST('action', 'aZ09') == 'confirm_create_user' && GETPOST("confirm", 'aZ09') == 'yes')
 	{
 		if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -345,7 +345,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	// Check delete permission from module
 	$deleteok=1; $nbko=0;
-	if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
+	if ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete')
 	{
 		foreach ($featuresarray as $feature)
 		{
@@ -467,7 +467,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		}
 
 		// Check permission for object with entity
-		if (in_array($feature,$check))
+		if (in_array($feature, $check))
 		{
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -500,7 +500,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		elseif (in_array($feature,$checksoc))	// We check feature = checksoc
+		elseif (in_array($feature, $checksoc))	// We check feature = checksoc
 		{
 			// If external user: Check permission for external users
 			if ($user->socid > 0)
@@ -527,7 +527,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		elseif (in_array($feature,$checkother))	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
+		elseif (in_array($feature, $checkother))	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
 		{
 			// If external user: Check permission for external users
 			if ($user->socid > 0)
@@ -556,15 +556,15 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		elseif (in_array($feature,$checkproject))
+		elseif (in_array($feature, $checkproject))
 		{
 			if (! empty($conf->projet->enabled) && empty($user->rights->projet->all->lire))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic=new Project($db);
-				$tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
-				$tmparray=explode(',',$tmps);
-				if (! in_array($objectid,$tmparray)) return false;
+				$tmps=$projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+				$tmparray=explode(',', $tmps);
+				if (! in_array($objectid, $tmparray)) return false;
 			}
 			else
 			{
@@ -574,7 +574,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		elseif (in_array($feature,$checktask))
+		elseif (in_array($feature, $checktask))
 		{
 			if (! empty($conf->projet->enabled) && empty($user->rights->projet->all->lire))
 			{
@@ -583,9 +583,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic=new Project($db);
-				$tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
-				$tmparray=explode(',',$tmps);
-				if (! in_array($task->fk_project,$tmparray)) return false;
+				$tmps=$projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+				$tmparray=explode(',', $tmps);
+				if (! in_array($task->fk_project, $tmparray)) return false;
 			}
 			else
 			{
@@ -595,12 +595,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		elseif (! in_array($feature,$nocheck))		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
+		elseif (! in_array($feature, $nocheck))		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 		{
 			// If external user: Check permission for external users
 			if ($user->socid > 0)
 			{
-				if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
+				if (empty($dbt_keyfield)) dol_print_error('', 'Param dbt_keyfield is required but not defined');
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.rowid IN (".$objectid.")";
@@ -609,7 +609,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			// If internal user: Check permission for internal users that are restricted on their objects
 			elseif (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
 			{
-				if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
+				if (empty($dbt_keyfield)) dol_print_error('', 'Param dbt_keyfield is required but not defined');
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -663,7 +663,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
     if (! is_object($langs))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-        $langs=new Translate('',$conf);
+        $langs=new Translate('', $conf);
         $langs->setDefaultLang();
     }
 
@@ -684,7 +684,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if ($user->login)
 		{
 			print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-			print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+			print $langs->trans("ErrorForbidden2", $langs->trans("Home"), $langs->trans("Users"));
 		}
 		else
 		{

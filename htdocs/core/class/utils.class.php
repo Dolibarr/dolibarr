@@ -103,7 +103,7 @@ class Utils
 			if (! empty($conf->syslog->enabled))
 			{
 				$filelog=$conf->global->SYSLOG_FILE;
-				$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+				$filelog=preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 
 				$alreadyincluded=false;
 				foreach ($filesarray as $tmpcursor)
@@ -240,7 +240,7 @@ class Utils
 
 			// Parameteres execution
 			$command=$cmddump;
-			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+			if (preg_match("/\s/", $command)) $command=escapeshellarg($command);	// Use quotes on command
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 			$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
@@ -248,7 +248,7 @@ class Utils
 			if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
 			if (! GETPOST("use_transaction"))    $param.=" -l --single-transaction";
 			if (GETPOST("disable_fk") || $usedefault) $param.=" -K";
-			if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat","alpha"));
+			if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat", "alpha"));
 			if (GETPOST("drop_database"))        $param.=" --add-drop-database";
 			if (GETPOST("sql_structure") || $usedefault)
 			{
@@ -279,8 +279,8 @@ class Utils
 			$paramclear=$param;
 			if (! empty($dolibarr_main_db_pass))
 			{
-				$paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
-				$paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
+				$paramcrypted.=' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
+				$paramclear.=' -p"'.str_replace(array('"','`'), array('\"','\`'), $dolibarr_main_db_pass).'"';
 			}
 
 			$errormsg='';
@@ -323,8 +323,8 @@ class Utils
 							$i++;   // output line number
 							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
 							fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
-							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
+							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
+							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
 						}
 					}
 				}
@@ -338,9 +338,9 @@ class Utils
 						$read = fgets($handlein);
 						// Exclude warning line we don't want
 						if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-						fwrite($handle,$read);
-						if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
-						elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
+						fwrite($handle, $read);
+						if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
+						elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
 					}
 					pclose($handlein);
 				}
@@ -356,7 +356,7 @@ class Utils
 			else
 			{
 				$langs->load("errors");
-				dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
+				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 				$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 			}
 
@@ -367,18 +367,18 @@ class Utils
 			if ($handle)
 			{
 				// Get 2048 first chars of error message.
-				$errormsg = fgets($handle,2048);
+				$errormsg = fgets($handle, 2048);
 				// Close file
 				if ($compression == 'none') fclose($handle);
 				if ($compression == 'gz')   gzclose($handle);
 				if ($compression == 'bz')   bzclose($handle);
-				if ($ok && preg_match('/^-- MySql/i',$errormsg)) $errormsg='';	// Pas erreur
+				if ($ok && preg_match('/^-- MySql/i', $errormsg)) $errormsg='';	// Pas erreur
 				else
 				{
 					// Renommer fichier sortie en fichier erreur
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
-					@rename($outputfile,$outputerror);
+					@rename($outputfile, $outputerror);
 					// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
 					if (! $errormsg)
 					{
@@ -437,7 +437,7 @@ class Utils
 
 			// Parameteres execution
 			$command=$cmddump;
-			if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+			if (preg_match("/\s/", $command)) $command=escapeshellarg($command);	// Use quotes on command
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 			//$param="-F c";
@@ -541,7 +541,7 @@ class Utils
 				while (!feof($handlein))
 				{
 					$read = fgets($handlein);
-					fwrite($handle,$read);
+					fwrite($handle, $read);
 					$output_arr[]=$read;
 				}
 				pclose($handlein);
@@ -607,7 +607,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion=explode('.',$moduleobj->version,3);
+		$arrayversion=explode('.', $moduleobj->version, 3);
 		if (count($arrayversion))
 		{
 			$FILENAMEASCII=strtolower($module).'.asciidoc';
@@ -862,7 +862,7 @@ class Utils
 		}
 		else
 		{
-			$tables = is_array($tables) ? $tables : explode(',',$tables);
+			$tables = is_array($tables) ? $tables : explode(',', $tables);
 		}
 
 		//cycle through
@@ -870,7 +870,7 @@ class Utils
 		if (fwrite($handle, '') === false)
 		{
 			$langs->load("errors");
-			dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
+			dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 			$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 			return -1;
 		}
@@ -913,9 +913,9 @@ class Utils
 			// Saving the table structure
 			fwrite($handle, "\n--\n-- Table structure for table `".$table."`\n--\n");
 
-			if (GETPOST("nobin_drop")) fwrite($handle,"DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
-			fwrite($handle,"/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-			fwrite($handle,"/*!40101 SET character_set_client = utf8 */;\n");
+			if (GETPOST("nobin_drop")) fwrite($handle, "DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
+			fwrite($handle, "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
+			fwrite($handle, "/*!40101 SET character_set_client = utf8 */;\n");
 			$resqldrop=$db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1]))
@@ -924,7 +924,7 @@ class Utils
 			}
 			else
 			{
-				fwrite($handle,$row2[1].";\n");
+				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 
 				// Dumping the data (locking the table and disabling the keys check while doing the process)
@@ -938,7 +938,7 @@ class Utils
 				while($row = $db->fetch_row($result))
 				{
 					// For each row of data we print a line of INSERT
-					fwrite($handle,'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
+					fwrite($handle, 'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
 					$columns = count($row);
 					for($j=0; $j<$columns; $j++) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
@@ -957,11 +957,11 @@ class Utils
 							$row[$j] = "'".$row[$j]."'";
 						}
 					}
-					fwrite($handle,implode(',', $row).");\n");
+					fwrite($handle, implode(',', $row).");\n");
 				}
 				if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` ENABLE KEYS;\n"); // Enabling back the keys/index checking
 				if (!GETPOST("nobin_nolocks")) fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the table
-				fwrite($handle,"\n\n\n");
+				fwrite($handle, "\n\n\n");
 			}
 		}
 

@@ -175,7 +175,7 @@ class PaiementFourn extends Paiement
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
-			$newvalue = price2num($value,'MT');
+			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
@@ -233,8 +233,8 @@ class PaiementFourn extends Paiement
 								$creditnotes=0;
 								//$deposits=$invoice->getSumDepositsUsed();
 								$deposits=0;
-								$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-								$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+								$alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+								$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0)
 								{
 									$result=$invoice->set_paid($user, '', '');
@@ -274,7 +274,7 @@ class PaiementFourn extends Paiement
 				if (! $error)
 				{
 					// Call trigger
-					$result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
+					$result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
 				}
@@ -503,7 +503,7 @@ class PaiementFourn extends Paiement
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -575,7 +575,7 @@ class PaiementFourn extends Paiement
 		$result='';
 
 		$text=$this->ref;   // Sometimes ref contains label
-		if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
+		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
 			if ($reg[1]=='paiement') $reg[1]='Payment';
 			$text=$langs->trans($reg[1]);
@@ -664,7 +664,7 @@ class PaiementFourn extends Paiement
 			if ($mybool === false) {
 				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
 				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
-				$classname = preg_replace('/\-.*$/','',$classname);
+				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
 					$dir = $dirroot."/core/modules/supplier_payment/";
@@ -677,20 +677,20 @@ class PaiementFourn extends Paiement
 			}
 
 			if ($mybool === false) {
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db,"SupplierPayment::getNextNumRef ".$obj->error);
+				dol_print_error($db, "SupplierPayment::getNextNumRef ".$obj->error);
 				return "";
 			}
 

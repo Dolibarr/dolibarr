@@ -64,7 +64,7 @@ class FormAdmin
 		// phpcs:enable
 		global $langs;
 
-		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
 		$out='';
 
@@ -158,16 +158,16 @@ class FormAdmin
     	                {
     	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
     	                    {
-    	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
-    	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i',$file)) continue;		// We exclude all menu manager files
-    	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
-    	                        if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
+    	                        if (preg_match('/lib\.php$/i', $file)) continue;	// We exclude library files
+    	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i', $file)) continue;		// We exclude all menu manager files
+    	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i', $file)) continue;	// We exclude all menu manager files
+    	                        if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i', $file)) continue;	// We exclude all menu manager files
 
-    	                        $filelib=preg_replace('/\.php$/i','',$file);
+    	                        $filelib=preg_replace('/\.php$/i', '', $file);
     	        				$prefix='';
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
-    	        				if (preg_match('/^eldy/i',$file)) $prefix='0';
-                                elseif (preg_match('/^smartphone/i',$file)) $prefix='2';
+    	        				if (preg_match('/^eldy/i', $file)) $prefix='0';
+                                elseif (preg_match('/^smartphone/i', $file)) $prefix='2';
     	        				else $prefix='3';
 
     	                        if ($file == $selected)
@@ -192,7 +192,7 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
-			$tab=explode('_',$key);
+			$tab=explode('_', $key);
 			$newprefix=$tab[0];
 			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
 			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
@@ -245,12 +245,12 @@ class FormAdmin
 	        			{
 	        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 	        				{
-	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
-	        					if (preg_match('/^index/i',$filelib)) continue;
-	        					if (preg_match('/^default/i',$filelib)) continue;
-	        					if (preg_match('/^empty/i',$filelib)) continue;
-	        					if (preg_match('/\.lib/i',$filelib)) continue;
-	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
+	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
+	        					if (preg_match('/^index/i', $filelib)) continue;
+	        					if (preg_match('/^default/i', $filelib)) continue;
+	        					if (preg_match('/^empty/i', $filelib)) continue;
+	        					if (preg_match('/\.lib/i', $filelib)) continue;
+	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) continue;
 
 	        					$menuarray[$filelib]=1;
 	        				}
@@ -269,7 +269,7 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
-			$tab=explode('_',$key);
+			$tab=explode('_', $key);
 			$newprefix=$tab[0];
 			print '<option value="'.$key.'"';
             if ($key == $selected)

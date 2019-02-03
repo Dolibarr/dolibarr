@@ -82,10 +82,10 @@ $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page','int');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -100,7 +100,7 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
+if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && ! GETPOST('noreset', 'int'))
 {
 	if (empty($search_date_start) && empty($search_date_end) && ! GETPOSTISSET('restore_lastsearch_values'))
 	{
@@ -152,12 +152,12 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.let
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_mvt_num = '';
 	$search_doc_type = '';
@@ -302,14 +302,14 @@ if ($action == 'delbookkeepingyearconfirm') {
 	if ($delyear==-1) {
 		$delyear=0;
 	}
-	$deljournal = GETPOST('deljournal','alpha');
+	$deljournal = GETPOST('deljournal', 'alpha');
 	if ($deljournal==-1) {
 		$deljournal=0;
 	}
 
 	if (! empty($delyear) || ! empty($deljournal))
 	{
-		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
+		$result = $object->deleteByYearAndJournal($delyear, $deljournal);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -617,7 +617,7 @@ if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_tit
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -640,7 +640,7 @@ if ($num > 0)
 			print '<td>';
 			$object->id = $line->id;
 			$object->piece_num = $line->piece_num;
-			print $object->getNomUrl(1,'',0,'',1);
+			print $object->getNomUrl(1, '', 0, '', 1);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -709,8 +709,8 @@ if ($num > 0)
 		if (! empty($arrayfields['t.code_journal']['checked']))
 		{
 			$accountingjournal = new AccountingJournal($db);
-			$result = $accountingjournal->fetch('',$line->code_journal);
-			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0,0,0,'',0) : $line->code_journal);
+			$result = $accountingjournal->fetch('', $line->code_journal);
+			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 			print '<td align="center">' . $journaltoshow . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

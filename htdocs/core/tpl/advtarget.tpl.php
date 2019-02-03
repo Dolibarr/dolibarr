@@ -69,7 +69,7 @@ print '<script type="text/javascript" language="javascript">
 		} else {
 			$default_template = $advTarget->id;
 		}
-		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template,0,$advTarget->type_element);
+		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template, 0, $advTarget->type_element);
 		print '<input type="button" name="loadfilter" id="loadfilter" value="' . $langs->trans('AdvTgtLoadFilter') . '" class="butAction"/>';
 		print '<input type="button" name="deletefilter" id="deletefilter" value="' . $langs->trans('AdvTgtDeleteFilter') . '" class="butAction"/>';
 		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';

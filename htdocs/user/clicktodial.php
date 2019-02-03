@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$action=GETPOST('action','alpha');
-$id=GETPOST('id','int');
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
 
 // Security check
 $socid=0;
@@ -46,11 +46,11 @@ $hookmanager->initHooks(array('usercard','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    if ($action == 'update' && !GETPOST('cancel','alpha')) {
+    if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
         $edituser = new User($db);
         $edituser->fetch($id);
 
@@ -74,7 +74,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader("","ClickToDial");
+llxHeader("", "ClickToDial");
 
 
 if ($id > 0)
@@ -102,7 +102,7 @@ if ($id > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -124,7 +124,7 @@ if ($id > 0)
             }
             else
            {
-            	print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+            	print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
            }
             print '</td>';
         	print '</tr>';
@@ -165,7 +165,7 @@ if ($id > 0)
         	}
         	else
         	{
-        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url,$langs->trans("ClickToDialUrlDesc"));
+        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url, $langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';
         	print '</tr>';
@@ -180,7 +180,7 @@ if ($id > 0)
         print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">'.preg_replace('/./','*',(! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
+        print '<td class="valeur">'.preg_replace('/./', '*', (! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
         print "</tr>\n";
 
         print "</table>\n";

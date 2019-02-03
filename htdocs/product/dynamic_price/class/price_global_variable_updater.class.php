@@ -534,7 +534,7 @@ class PriceGlobalVariableUpdater
                 $soap_client = new nusoap_client($url);
                 $soap_client->soap_defencoding='UTF-8';
                 $soap_client->decodeUTF8(false);
-                $result = $soap_client->call($method, $data, $ns,'');
+                $result = $soap_client->call($method, $data, $ns, '');
 
                 //Check if result is a error
                 if ($result === false) {

@@ -33,18 +33,18 @@ $langs->loadLangs(array('admin', 'members', 'errors'));
 
 // Choice of print year or current year.
 $now = dol_now();
-$year=dol_print_date($now,'%Y');
-$month=dol_print_date($now,'%m');
-$day=dol_print_date($now,'%d');
+$year=dol_print_date($now, '%Y');
+$month=dol_print_date($now, '%m');
+$day=dol_print_date($now, '%d');
 $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $mode=GETPOST('mode');
 $modellabel=GETPOST("modellabel");	// Doc template to use
-$numberofsticker=GETPOST('numberofsticker','int');
+$numberofsticker=GETPOST('numberofsticker', 'int');
 
 $mesg='';
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
@@ -67,7 +67,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), null, 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -84,7 +84,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
+			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete", $thirdpartytmp->getNomUrl()), null, 'warnings');
 		}
 	}
 }
@@ -127,11 +127,11 @@ if ($action == 'builddoc')
 		dol_mkdir($diroutput);
 
 		// Generate barcode
-		$dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
+		$dirbarcode=array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
 
 		foreach($dirbarcode as $reldir)
 		{
-			$dir=dol_buildpath($reldir,0);
+			$dir=dol_buildpath($reldir, 0);
 			$newdir=dol_osencode($dir);
 
 			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
@@ -154,7 +154,7 @@ if ($action == 'builddoc')
 				$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 				dol_delete_file($barcodeimage);
 				// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-				$result=$module->writeBarCode($code,$encoding,'Y',4,1);
+				$result=$module->writeBarCode($code, $encoding, 'Y', 4, 1);
 				if ($result <= 0 || ! dol_is_file($barcodeimage))
 				{
 					$error++;
@@ -233,17 +233,17 @@ if ($action == 'builddoc')
 			}
 			if (empty($modellabel) || $modellabel == '-1')
 			{
-				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+				$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
 
-			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(),'dayhourlog').'.pdf';
+			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
 
 			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
 		}
 
 		if ($result <= 0)
 		{
-			dol_print_error('',$result);
+			dol_print_error('', $result);
 		}
 
 		if (! $mesg)
@@ -263,12 +263,12 @@ if (empty($conf->barcode->enabled)) accessforbidden();
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("BarCodePrintsheet"));
+llxHeader('', $langs->trans("BarCodePrintsheet"));
 
 print load_fiche_titre($langs->trans("BarCodePrintsheet"));
 print '<br>';
 
-print $langs->trans("PageToGenerateBarCodeSheets",$langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
+print $langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
 print '<br>';
 
 dol_htmloutput_errors($mesg);
@@ -304,7 +304,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker','int'):10).'">';
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker', 'int'):10).'">';
 print '</div></div>';
 
 print '</div>';
@@ -400,11 +400,11 @@ print '<br>';
 
 if ($producttmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForProduct",'').' '.$producttmp->getNomUrl(1).'<br>';
+	print $langs->trans("BarCodeDataForProduct", '').' '.$producttmp->getNomUrl(1).'<br>';
 }
 if ($thirdpartytmp->id > 0)
 {
-	print $langs->trans("BarCodeDataForThirdparty",'').' '.$thirdpartytmp->getNomUrl(1).'<br>';
+	print $langs->trans("BarCodeDataForThirdparty", '').' '.$thirdpartytmp->getNomUrl(1).'<br>';
 }
 
 print '<div class="tagtable">';

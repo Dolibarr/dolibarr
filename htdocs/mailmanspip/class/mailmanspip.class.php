@@ -198,8 +198,8 @@ class MailmanSpip
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                     $mdpass=dol_hash($object->pass);
-                    $htpass=crypt($object->pass,makesalt());
-                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname,$object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+                    $htpass=crypt($object->pass, makesalt());
+                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
 
                     $result = $mydb->query($query);
 
@@ -334,7 +334,7 @@ class MailmanSpip
         if (! function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
@@ -342,15 +342,15 @@ class MailmanSpip
         {
 	        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
 	        {
-	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',', $listes);
 
 	            $categstatic=new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	                $tmp=explode(':',$list);
+	                $tmp=explode(':', $list);
 	                if (! empty($tmp[2]))
 	                {
 	                    $list=$tmp[2];
@@ -408,7 +408,7 @@ class MailmanSpip
         if (! function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
@@ -416,15 +416,15 @@ class MailmanSpip
         {
 	        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
 	        {
-	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',', $listes);
 
 	            $categstatic=new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	            	$tmp=explode(':',$list);
+	            	$tmp=explode(':', $list);
 	            	if (! empty($tmp[2]))
 	            	{
 	            		$list=$tmp[2];

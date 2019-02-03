@@ -129,7 +129,7 @@ class modPhpbarcode extends ModeleBarCode
 		if (! $this->encodingIsSupported($encoding)) return -1;
 
 		if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
-		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding,1);
+		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding, 1);
 
 		$mode='png';
 
@@ -139,7 +139,7 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["mode"]=$mode;
 
 		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
-		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
+		if ($code) $result=barcode_print($code, $encoding, $scale, $mode);
 
 		if (! is_array($result))
 		{
@@ -171,7 +171,7 @@ class modPhpbarcode extends ModeleBarCode
 
 		$filebarcode=$file;	// global var to be used in barcode_outimage called by barcode_print in buildBarCode
 
-		$result=$this->buildBarCode($code,$encoding,$readable,$scale,$nooutputiferror);
+		$result=$this->buildBarCode($code, $encoding, $readable, $scale, $nooutputiferror);
 
 		return $result;
 	}

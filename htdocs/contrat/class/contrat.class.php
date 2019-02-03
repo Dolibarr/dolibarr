@@ -224,12 +224,12 @@ class Contrat extends CommonObject
 
 			if (! $mybool)
 			{
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			if ( $numref != "")
 			{
@@ -238,7 +238,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->error = $obj->error;
-				dol_print_error($db,get_class($this)."::getNextValue ".$obj->error);
+				dol_print_error($db, get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
 		}
@@ -474,7 +474,7 @@ class Contrat extends CommonObject
 			if (! $error && ! $notrigger)
 			{
                 // Call trigger
-                $result=$this->call_trigger('CONTRACT_VALIDATE',$user);
+                $result=$this->call_trigger('CONTRACT_VALIDATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
@@ -500,11 +500,11 @@ class Contrat extends CommonObject
 						{
 							dol_syslog("Rename ok");
 						    // Rename docs starting with $oldref with $newref
-            				$listoffiles=dol_dir_list($conf->contract->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+            				$listoffiles=dol_dir_list($conf->contract->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
             				foreach($listoffiles as $fileentry)
             				{
             					$dirsource=$fileentry['name'];
-            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+            					$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
             					$dirsource=$fileentry['path'].'/'.$dirsource;
             					$dirdest=$fileentry['path'].'/'.$dirdest;
             					@rename($dirsource, $dirdest);
@@ -578,7 +578,7 @@ class Contrat extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('CONTRACT_REOPEN',$user);
+			$result=$this->call_trigger('CONTRACT_REOPEN', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -735,7 +735,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline=new ExtraFields($this->db);
 		$line = new ContratLigne($this->db);
-		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element, true);
 
 		$this->lines=array();
         $pos = 0;
@@ -878,14 +878,14 @@ class Contrat extends CommonObject
 		if ($this->commercial_signature_id <= 0)
 		{
 			$langs->load("commercial");
-			$this->error.=$langs->trans("ErrorFieldRequired",$langs->trans("SalesRepresentativeSignature"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeSignature"));
 			$paramsok=0;
 		}
 		if ($this->commercial_suivi_id <= 0)
 		{
 			$langs->load("commercial");
 			$this->error.=($this->error?"<br>":'');
-			$this->error.=$langs->trans("ErrorFieldRequired",$langs->trans("SalesRepresentativeFollowUp"));
+			$this->error.=$langs->trans("ErrorFieldRequired", $langs->trans("SalesRepresentativeFollowUp"));
 			$paramsok=0;
 		}
 		if (! $paramsok) return -1;
@@ -958,14 +958,14 @@ class Contrat extends CommonObject
 			// Insert business contacts ('SALESREPSIGN','contrat')
 			if (! $error)
 			{
-    			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
+    			$result=$this->add_contact($this->commercial_signature_id, 'SALESREPSIGN', 'internal');
     			if ($result < 0) $error++;
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
 			if (! $error)
 			{
-                $result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
+                $result=$this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 			    if ($result < 0) $error++;
 			}
 
@@ -1048,7 +1048,7 @@ class Contrat extends CommonObject
 			if (! $error)
 			{
                 // Call trigger
-                $result=$this->call_trigger('CONTRACT_CREATE',$user);
+                $result=$this->call_trigger('CONTRACT_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 
@@ -1098,7 +1098,7 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 	    // Call trigger
-	    $result=$this->call_trigger('CONTRACT_DELETE',$user);
+	    $result=$this->call_trigger('CONTRACT_DELETE', $user);
 	    if ($result < 0) { $error++; }
 	    // End call triggers
 
@@ -1151,7 +1151,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
+				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",", $tab_resql).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql=$this->db->query($sql);
@@ -1313,7 +1313,7 @@ class Contrat extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+			$result=$this->call_trigger('CONTRACT_MODIFY', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -1424,7 +1424,7 @@ class Contrat extends CommonObject
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,$mysoc, $localtaxes_type);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1514,7 +1514,7 @@ class Contrat extends CommonObject
 
 				if (empty($error)) {
 				    // Call trigger
-				    $result=$this->call_trigger('LINECONTRACT_INSERT',$user);
+				    $result=$this->call_trigger('LINECONTRACT_INSERT', $user);
 				    if ($result < 0)
 				    {
 				    	$error++;
@@ -1609,7 +1609,7 @@ class Contrat extends CommonObject
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
-		$tvatx = preg_replace('/\s*\(.*\)/','',$tvatx);  // Remove code into vatrate.
+		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx);  // Remove code into vatrate.
 
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
@@ -1698,7 +1698,7 @@ class Contrat extends CommonObject
 
 				if (empty($error)) {
 			        // Call trigger
-			        $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
+			        $result=$this->call_trigger('LINECONTRACT_UPDATE', $user);
 			        if ($result < 0)
 			        {
 			            $this->db->rollback();
@@ -1743,7 +1743,7 @@ class Contrat extends CommonObject
 		{
 
 		    // Call trigger
-		    $result=$this->call_trigger('LINECONTRACT_DELETE',$user);
+		    $result=$this->call_trigger('LINECONTRACT_DELETE', $user);
 		    if ($result < 0) return -1;
 		    // End call triggers
 
@@ -1829,7 +1829,7 @@ class Contrat extends CommonObject
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1859,15 +1859,15 @@ class Contrat extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
-			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
-			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
+			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'), 'statut0').' '.$langs->trans("ContractStatusDraft"); }
+			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'), 'statut4').' '.$langs->trans("ContractStatusValidated"); }
+			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'), 'statut6').' '.$langs->trans("ContractStatusClosed"); }
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0'); }
-			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
-			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
+			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'), 'statut0'); }
+			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'), 'statut4'); }
+			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'), 'statut6'); }
 		}
 		elseif ($mode == 4 || $mode == 6 || $mode == 7)
 		{
@@ -1881,21 +1881,21 @@ class Contrat extends CommonObject
 				$text.='</span>';
 			}
 			$text.=($mode == 7?'<div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.ContratLigne::LibStatut(0,3,-1,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.ContratLigne::LibStatut(0, 3, -1, 'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.ContratLigne::LibStatut(4,3,0,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.ContratLigne::LibStatut(4, 3, 0, 'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.ContratLigne::LibStatut(4,3,1,'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
+			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.ContratLigne::LibStatut(4, 3, 1, 'class="paddingleft2 inline-block valigntextbottom"')).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
 			$text.=($mode == 7?'</div><div class="inline-block">':'');
-			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5,3,-1,'class="paddingleft2 inline-block valigntextbottom"')) : '';
+			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="paddingleft2 inline-block valigntextbottom"')) : '';
 			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == 0) { return $langs->trans("ContractStatusDraft").' '.img_picto($langs->trans('ContractStatusDraft'),'statut0'); }
-			elseif ($statut == 1) { return $langs->trans("ContractStatusValidated").' '.img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
-			elseif ($statut == 2) { return $langs->trans("ContractStatusClosed").' '.img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
+			if ($statut == 0) { return $langs->trans("ContractStatusDraft").' '.img_picto($langs->trans('ContractStatusDraft'), 'statut0'); }
+			elseif ($statut == 1) { return $langs->trans("ContractStatusValidated").' '.img_picto($langs->trans('ContractStatusValidated'), 'statut4'); }
+			elseif ($statut == 2) { return $langs->trans("ContractStatusClosed").' '.img_picto($langs->trans('ContractStatusClosed'), 'statut6'); }
 		}
 	}
 
@@ -1921,7 +1921,7 @@ class Contrat extends CommonObject
 		//{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		//}
 
@@ -2151,7 +2151,7 @@ class Contrat extends CommonObject
 			$response->warning_delay = $warning_delay/60/60/24;
 			$response->label = $label;
 			$response->url = $url;
-			$response->img = img_object('',"contract");
+			$response->img = img_object('', "contract");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{
@@ -2225,7 +2225,7 @@ class Contrat extends CommonObject
 	 */
 	function getIdBillingContact()
 	{
-		return $this->getIdContact('external','BILLING');
+		return $this->getIdContact('external', 'BILLING');
 	}
 
 	/**
@@ -2235,7 +2235,7 @@ class Contrat extends CommonObject
 	 */
 	function getIdServiceContact()
 	{
-		return $this->getIdContact('external','SERVICE');
+		return $this->getIdContact('external', 'SERVICE');
 	}
 
 
@@ -2645,7 +2645,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode,((! empty($this->date_fin_validite))?($this->date_fin_validite < dol_now()?1:0):-1));
+		return $this->LibStatut($this->statut, $mode, ((! empty($this->date_fin_validite))?($this->date_fin_validite < dol_now()?1:0):-1));
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -2681,35 +2681,35 @@ class ContratLigne extends CommonObjectLine
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLateShort"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLateShort"); }
-			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
+			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'), 'statut0').' '.$langs->trans("ServiceStatusInitial"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'), 'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'), 'statut4').' '.$langs->trans("ServiceStatusNotLateShort"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'), 'statut3').' '.$langs->trans("ServiceStatusLateShort"); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'), 'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0',$moreatt); }
-			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4',$moreatt); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4',$moreatt); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3',$moreatt); }
-			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6',$moreatt); }
+			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'), 'statut0', $moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'), 'statut4', $moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'), 'statut4', $moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'), 'statut3', $moreatt); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'), 'statut6', $moreatt); }
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLate"); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLate"); }
-			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
+			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'), 'statut0').' '.$langs->trans("ServiceStatusInitial"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'), 'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'), 'statut4').' '.$langs->trans("ServiceStatusNotLate"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'), 'statut3').' '.$langs->trans("ServiceStatusLate"); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'), 'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == self::STATUS_INITIAL) { return $langs->trans("ServiceStatusInitial").' '.img_picto($langs->trans('ServiceStatusInitial'),'statut0'); }
-			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort").' '.img_picto($langs->trans('ServiceStatusNotLateShort'),'statut4'); }
-			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort").' '.img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
-			elseif ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
+			if ($statut == self::STATUS_INITIAL) { return $langs->trans("ServiceStatusInitial").' '.img_picto($langs->trans('ServiceStatusInitial'), 'statut0'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'), 'statut4'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort").' '.img_picto($langs->trans('ServiceStatusNotLateShort'), 'statut4'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort").' '.img_picto($langs->trans('ServiceStatusLate'), 'statut3'); }
+			elseif ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'), 'statut6'); }
 		}
 	}
 
@@ -3084,11 +3084,11 @@ class ContratLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql.= " total_ht=".price2num($this->total_ht,'MT')."";
-		$sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
-		$sql.= ",total_localtax1=".price2num($this->total_localtax1,'MT')."";
-		$sql.= ",total_localtax2=".price2num($this->total_localtax2,'MT')."";
-		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
+		$sql.= " total_ht=".price2num($this->total_ht, 'MT')."";
+		$sql.= ",total_tva=".price2num($this->total_tva, 'MT')."";
+		$sql.= ",total_localtax1=".price2num($this->total_localtax1, 'MT')."";
+		$sql.= ",total_localtax2=".price2num($this->total_localtax2, 'MT')."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
