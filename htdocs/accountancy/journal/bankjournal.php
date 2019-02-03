@@ -1223,7 +1223,7 @@ function getSourceDocRef($val, $typerecord)
 	$sqlmid = '';
 	if ($typerecord == 'payment')
 	{
-		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
+		$sqlmid = 'SELECT payfac.fk_facture as id, f.ref as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=" . $val["paymentid"];
 		$ref = $langs->transnoentitiesnoconv("Invoice");
