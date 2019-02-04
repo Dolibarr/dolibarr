@@ -127,7 +127,7 @@ if ($resql)
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.dated", "", "&socid=$socid", 'align="center"', $sortfield, $sortorder);
     print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "u.lastname", "", "&socid=$socid", '', $sortfield, $sortorder);
     print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&socid=$socid", '', $sortfield, $sortorder);
-    print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -150,10 +150,10 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
