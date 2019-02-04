@@ -442,8 +442,8 @@ if ($search_status != '-1' && $search_status != '')
 	{
 		if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
 		if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
-		if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
-		if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+		if ($search_status == '2') $sql.=" AND ((f.fk_statut = 2 AND f.paye=1) OR (f.fk_statut = 1 AND f.paye=1))";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+		if ($search_status == '3') $sql.=" AND (f.fk_statut = 3 OR (f.fk_statut = 2 AND f.paye=0))";  // abandonned
 	}
 	else
 	{
