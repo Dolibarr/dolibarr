@@ -422,14 +422,14 @@ if (! empty($_SESSION["disablemodules"]))
 }
 
 // Set current modulepart
-$modulepart = explode("/",$_SERVER["PHP_SELF"]);
+$modulepart = explode("/", $_SERVER["PHP_SELF"]);
 if(is_array($modulepart) && count($modulepart)>0)
 {
 	foreach($conf->modules as $module)
 	{
 		if(in_array($module, $modulepart))
 		{
-			$conf->modulepart=$module;
+			$conf->modulepart = $module;
 		}
 	}
 }
