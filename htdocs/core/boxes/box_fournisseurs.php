@@ -80,7 +80,7 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
         if ($user->rights->societe->lire)
         {
@@ -125,7 +125,7 @@ class box_fournisseurs extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
@@ -165,4 +165,3 @@ class box_fournisseurs extends ModeleBoxes
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

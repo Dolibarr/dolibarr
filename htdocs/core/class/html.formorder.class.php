@@ -96,9 +96,8 @@ class FormOrder extends Form
 			$listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
 		}
 
-		print Form::selectarray($htmlname,$listofmethods,$selected,$addempty);
+		print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
 
 		return 1;
 	}
 }
-

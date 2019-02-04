@@ -122,7 +122,7 @@ class mailing_xinputuser extends MailingTargets
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$tmparray=explode(';',GETPOST('xinputuser'));
+		$tmparray=explode(';', GETPOST('xinputuser'));
 		$email=$tmparray[0];
 		$lastname=$tmparray[1];
 		$firstname=$tmparray[2];
@@ -148,14 +148,14 @@ class mailing_xinputuser extends MailingTargets
 			else
 			{
 				$langs->load("errors");
-				$this->error = $langs->trans("ErrorBadEMail",$email);
+				$this->error = $langs->trans("ErrorBadEMail", $email);
 				return -1;
 			}
 		}
 		else
 		{
             $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEmail",$email);
+            $this->error = $langs->trans("ErrorBadEmail", $email);
 			return -1;
 		}
 	}

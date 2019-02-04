@@ -20,15 +20,15 @@
  *       \brief      File to build ecm database
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
-$action	= GETPOST('action','alpha');
+$action	= GETPOST('action', 'alpha');
 $element = GETPOST('element', 'alpha');
 
 /*
@@ -58,7 +58,7 @@ if (isset($action) && ! empty($action))
 		$diroutputslash.='/';
 
 		// Scan directory tree on disk
-		$disktree=dol_dir_list($conf->$element->dir_output,'directories',1,'',array('^temp$'),'','',0);
+		$disktree=dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', '', 0);
 
 		// Scan directory tree in database
 		$sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -89,13 +89,13 @@ if (isset($action) && ! empty($action))
 
 				// We must first find the fk_parent of directory to create $dirdesc['fullname']
 				$fk_parent=-1;
-				$relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
+				$relativepathmissing=str_replace($diroutputslash, '', $dirdesc['fullname']);
 				$relativepathtosearchparent=$relativepathmissing;
 				//dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
-				if (preg_match('/\//',$relativepathtosearchparent))
+				if (preg_match('/\//', $relativepathtosearchparent))
 					//while (preg_match('/\//',$relativepathtosearchparent))
 				{
-					$relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
+					$relativepathtosearchparent=preg_replace('/\/[^\/]*$/', '', $relativepathtosearchparent);
 					$txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
 					dol_syslog($txt);
 					//print $txt." -> ";
@@ -170,7 +170,7 @@ if (isset($action) && ! empty($action))
 			{
 				$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
 				$ecmdirtmp->id=$dirdesc['id'];
-				$ecmdirtmp->delete($user,'databaseonly');
+				$ecmdirtmp->delete($user, 'databaseonly');
 				//exit;
 			}
 	    }
@@ -180,4 +180,3 @@ if (isset($action) && ! empty($action))
 		$db->query($sql);
 	}
 }
-

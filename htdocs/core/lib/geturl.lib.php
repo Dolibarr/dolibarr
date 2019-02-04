@@ -72,7 +72,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
     //curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);		// We want response
     if ($postorget == 'POST')
     {
     	curl_setopt($ch, CURLOPT_POST, 1);	// POST
@@ -136,7 +136,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',',$rep));
+		dol_syslog("getURLContent response array is ".join(',', $rep));
     }
     else
     {
@@ -208,4 +208,3 @@ function removeHtmlComment($content)
 	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
 	return $content;
 }
-

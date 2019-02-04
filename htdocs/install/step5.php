@@ -33,11 +33,11 @@ require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for
 
 global $langs;
 
-$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
-$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
+$versionfrom=GETPOST("versionfrom", 'alpha', 3)?GETPOST("versionfrom", 'alpha', 3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto", 'alpha', 3)?GETPOST("versionto", 'alpha', 3):(empty($argv[2])?'':$argv[2]);
+$setuplang=GETPOST('selectlang', 'aZ09', 3)?GETPOST('selectlang', 'aZ09', 3):(empty($argv[3])?'auto':$argv[3]);
 $langs->setDefaultLang($setuplang);
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
+$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):(empty($argv[4])?'':$argv[4]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -57,7 +57,7 @@ $langs->loadLangs(array("admin", "install"));
 $login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
 $pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
 $pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
-$force_install_lockinstall = (int) (! empty($force_install_lockinstall)?$force_install_lockinstall:(GETPOST('installlock','aZ09')?GETPOST('installlock','aZ09'):(empty($argv[8])?'':$argv[8])));
+$force_install_lockinstall = (int) (! empty($force_install_lockinstall)?$force_install_lockinstall:(GETPOST('installlock', 'aZ09')?GETPOST('installlock', 'aZ09'):(empty($argv[8])?'':$argv[8])));
 
 $success=0;
 
@@ -106,26 +106,26 @@ if ($action == "set") {
  *	View
  */
 
-pHeader($langs->trans("SetupEnd"),"step5");
+pHeader($langs->trans("SetupEnd"), "step5");
 print '<br>';
 
 // Test if we can run a first install process
 if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
-    pFooter(1,$setuplang,'jscheckparam');
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+    pFooter(1, $setuplang, 'jscheckparam');
     exit;
 }
 
-if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
+if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 {
     $error=0;
 
     // If password is encoded, we decode it
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+    if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
         require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-        if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+        if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
@@ -143,7 +143,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption)?$dolibarr_main_db_encryption:'';
     $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey)?$dolibarr_main_db_cryptkey:'';
 
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -209,7 +209,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
             $newuser->entity=0;
 
             $conf->global->USER_MAIL_REQUIRED=0;     // Force global option to be sure to create a new user with no email
-            $result=$newuser->create($createuser,1);
+            $result=$newuser->create($createuser, 1);
             if ($result > 0)
             {
                 print $langs->trans("AdminLoginCreatedSuccessfuly", $login) . "<br>";
@@ -235,7 +235,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                 // Insert MAIN_VERSION_FIRST_INSTALL in a dedicated transaction. So if it fails (when first install was already done), we can do other following requests.
                 $db->begin();
                 dolibarr_install_syslog('step5: set MAIN_VERSION_FIRST_INSTALL const to ' . $targetversion, LOG_DEBUG);
-                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_FIRST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when first install',0)");
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_FIRST_INSTALL', 1).",".$db->encrypt($targetversion, 1).",'chaine',0,'Dolibarr version when first install',0)");
                 if ($resql)
                 {
                     $conf->global->MAIN_VERSION_FIRST_INSTALL=$targetversion;
@@ -251,44 +251,44 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
                 dolibarr_install_syslog('step5: set MAIN_VERSION_LAST_INSTALL const to ' . $targetversion, LOG_DEBUG);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_INSTALL'");
-                if (! $resql) dol_print_error($db,'Error in setup program');
-                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when last install',0)");
-                if (! $resql) dol_print_error($db,'Error in setup program');
+                if (! $resql) dol_print_error($db, 'Error in setup program');
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL', 1).",".$db->encrypt($targetversion, 1).",'chaine',0,'Dolibarr version when last install',0)");
+                if (! $resql) dol_print_error($db, 'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
                 if ($useforcedwizard)
                 {
                     dolibarr_install_syslog('step5: set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
                     $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
-                    if (! $resql) dol_print_error($db,'Error in setup program');
-                    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',1).",".$db->encrypt(1,1).",'chaine',1,'Disable install warnings',0)");
-                    if (! $resql) dol_print_error($db,'Error in setup program');
+                    if (! $resql) dol_print_error($db, 'Error in setup program');
+                    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING', 1).",".$db->encrypt(1, 1).",'chaine',1,'Disable install warnings',0)");
+                    if (! $resql) dol_print_error($db, 'Error in setup program');
                     $conf->global->MAIN_REMOVE_INSTALL_WARNING=1;
                 }
 
                 // If we ask to force some modules to be enabled
                 if (! empty($force_install_module))
                 {
-                    if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);
+                    if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 
-                    $tmparray=explode(',',$force_install_module);
+                    $tmparray=explode(',', $force_install_module);
                     foreach ($tmparray as $modtoactivate)
                     {
-                        $modtoactivatenew=preg_replace('/\.class\.php$/i','',$modtoactivate);
-                        print $langs->trans("ActivateModule",$modtoactivatenew).'<br>';
+                        $modtoactivatenew=preg_replace('/\.class\.php$/i', '', $modtoactivate);
+                        print $langs->trans("ActivateModule", $modtoactivatenew).'<br>';
 
                         $file=$modtoactivatenew.'.class.php';
                         dolibarr_install_syslog('step5: activate module file=' . $file);
                         $res=dol_include_once("/core/modules/".$file);
 
-                        $res=activateModule($modtoactivatenew,1);
+                        $res=activateModule($modtoactivatenew, 1);
                         if (! empty($res['errors'])) print 'ERROR in activating module file='.$file;
                     }
                 }
 
                 dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
-                if (! $resql) dol_print_error($db,'Error in setup program');
+                if (! $resql) dol_print_error($db, 'Error in setup program');
 
                 $db->commit();
             }
@@ -299,7 +299,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         }
     }
     // If upgrade
-    elseif (empty($action) || preg_match('/upgrade/i',$action))
+    elseif (empty($action) || preg_match('/upgrade/i', $action))
     {
         if ($db->connected)
         {
@@ -313,18 +313,18 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
             if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;	// We don't know what it was before, so now we consider we are version choosed.
             else
             {
-                $mainversionlastupgradearray=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
-                $targetversionarray=preg_split('/[.-]/',$targetversion);
-                if (versioncompare($targetversionarray,$mainversionlastupgradearray) > 0) $tagdatabase=true;
+                $mainversionlastupgradearray=preg_split('/[.-]/', $conf->global->MAIN_VERSION_LAST_UPGRADE);
+                $targetversionarray=preg_split('/[.-]/', $targetversion);
+                if (versioncompare($targetversionarray, $mainversionlastupgradearray) > 0) $tagdatabase=true;
             }
 
             if ($tagdatabase)
             {
                 dolibarr_install_syslog('step5: set MAIN_VERSION_LAST_UPGRADE const to value ' . $targetversion);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_UPGRADE'");
-                if (! $resql) dol_print_error($db,'Error in setup program');
-                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version for last upgrade',0)");
-                if (! $resql) dol_print_error($db,'Error in setup program');
+                if (! $resql) dol_print_error($db, 'Error in setup program');
+                $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE', 1).",".$db->encrypt($targetversion, 1).",'chaine',0,'Dolibarr version for last upgrade',0)");
+                if (! $resql) dol_print_error($db, 'Error in setup program');
                 $conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
             }
             else
@@ -339,11 +339,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     }
     else
     {
-        dol_print_error('','step5.php: unknown choice of action');
+        dol_print_error('', 'step5.php: unknown choice of action');
     }
 
     // May fail if parameter already defined
-    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT',1).",".$db->encrypt($setuplang,1).",'chaine',0,'Default language',1)");
+    $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT', 1).",".$db->encrypt($setuplang, 1).",'chaine',0,'Default language',1)");
     //if (! $resql) dol_print_error($db,'Error in setup program');
 
     $db->close();
@@ -404,7 +404,7 @@ if ($action == "set" && $success)
     }
 }
 // If upgrade
-elseif (empty($action) || preg_match('/upgrade/i',$action))
+elseif (empty($action) || preg_match('/upgrade/i', $action))
 {
     if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
     {
@@ -453,7 +453,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 }
 else
 {
-    dol_print_error('','step5.php: unknown choice of action');
+    dol_print_error('', 'step5.php: unknown choice of action');
 }
 
 // Clear cache files
@@ -465,8 +465,7 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step5: Dolibarr setup finished");
 
-pFooter(1,$setuplang);
+pFooter(1, $setuplang);
 
 // Return code if ran from command line
 if ($ret) exit($ret);
-

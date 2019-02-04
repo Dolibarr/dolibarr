@@ -80,7 +80,7 @@ class box_actions extends ModeleBoxes
         $societestatic = new Societe($db);
         $actionstatic = new ActionComm($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
         if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -89,8 +89,7 @@ class box_actions extends ModeleBoxes
             $sql.= ", s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
-			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
-			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
@@ -153,7 +152,7 @@ class box_actions extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $actionstatic->LibStatut($objp->percentage,3),
+                        'text' => $actionstatic->LibStatut($objp->percentage, 3),
                     );
 
                     $line++;
@@ -222,10 +221,10 @@ class box_actions extends ModeleBoxes
 						$percentage=$contents[$line][5]['text'];
 						$out.= '<tr class="oddeven">';
 						$out.= '<td align=center>';
-						$out.= img_object("",$logo);
+						$out.= img_object("", $logo);
 						$out.= '</td>';
 						$out.= '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
-						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("",$logosoc)." ".$nomsoc.'</a></td>';
+						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
 						$out.= '<td align=center>'.$dateligne.'</td>';
 						$out.= '<td align=center>'.$percentage.'</td>';
 						$out.= '</tr>';
@@ -260,4 +259,3 @@ class box_actions extends ModeleBoxes
 		return '';
 	}
 }
-

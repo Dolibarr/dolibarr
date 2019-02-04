@@ -37,7 +37,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
         {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
-            $content = preg_replace('/'.preg_quote($keytoreplace,'/').'/m', $valafter, $content);
+            $content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
         }
     }
     if ($parser == 'parsedown')
@@ -53,4 +53,3 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 
     return $content;
 }
-

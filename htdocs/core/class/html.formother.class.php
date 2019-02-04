@@ -363,7 +363,7 @@ class FormOther
             {
                 $moreforfilter.='<option value="'.$categ['id'].'"';
                 if ($categ['id'] == $selected) $moreforfilter.=' selected';
-                $moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
+                $moreforfilter.='>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
             }
         }
         if ($nocateg)
@@ -440,7 +440,7 @@ class FormOther
                 if ($obj_usr->rowid == $selected) $out.=' selected';
 
                 $out.='>';
-                $out.=dolGetFirstLastname($obj_usr->firstname,$obj_usr->lastname);
+                $out.=dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
                 // Complete name with more info
                 $moreinfo=0;
                 if (! empty($conf->global->MAIN_SHOW_LOGIN))
@@ -627,7 +627,7 @@ class FormOther
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
     	if(colorIsLight($color)) $textcolor='000';
 
-    	$color = colorArrayToHex(colorStringToArray($color,array()),'');
+    	$color = colorArrayToHex(colorStringToArray($color, array()), '');
 
 		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
@@ -777,19 +777,19 @@ class FormOther
         }
 
         // On cree l'image en vraies couleurs
-        $image = imagecreatetruecolor($x,$y);
+        $image = imagecreatetruecolor($x, $y);
 
-        $color = substr($color,1,6);
+        $color = substr($color, 1, 6);
 
-        $rouge = hexdec(substr($color,0,2)); //conversion du canal rouge
-        $vert  = hexdec(substr($color,2,2)); //conversion du canal vert
-        $bleu  = hexdec(substr($color,4,2)); //conversion du canal bleu
+        $rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
+        $vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
+        $bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
 
-        $couleur = imagecolorallocate($image,$rouge,$vert,$bleu);
+        $couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
         //print $rouge.$vert.$bleu;
-        imagefill($image,0,0,$couleur); //on remplit l'image
+        imagefill($image, 0, 0, $couleur); //on remplit l'image
         // On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-        ImagePng($image,$file); //renvoie une image sous format png
+        ImagePng($image, $file); //renvoie une image sous format png
         ImageDestroy($image);
     }
 
@@ -900,7 +900,7 @@ class FormOther
     function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle widthauto')
     {
         // phpcs:enable
-        print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
+        print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
     }
 
     /**
@@ -1042,7 +1042,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/',$box->class) && $conf->browser->layout != 'phone')
+        		if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
         		{
         			$label=$label.' <span class="fa fa-bar-chart"></span>';
         		}
@@ -1090,7 +1090,7 @@ class FormOther
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
 	        	}
 	        	else
 	        	{
@@ -1112,7 +1112,7 @@ class FormOther
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
 	    			        async: false
 	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=addbox&boxid=\'+boxid;
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
 	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
@@ -1164,8 +1164,8 @@ class FormOther
             foreach ($boxactivated as $key => $box)
             {
             	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^A/i',$box->box_order)) // column A
+				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d", ($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
+            	if (preg_match('/^A/i', $box->box_order)) // column A
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
@@ -1181,7 +1181,7 @@ class FormOther
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$boxlista.= $emptybox->outputBox(array(),array());
+            	$boxlista.= $emptybox->outputBox(array(), array());
             }
             $boxlista.= "<!-- End box left container -->\n";
 
@@ -1191,8 +1191,8 @@ class FormOther
             foreach ($boxactivated as $key => $box)
             {
             	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-            	if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^B/i',$box->box_order)) // colonne B
+            	if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d", ($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
+            	if (preg_match('/^B/i', $box->box_order)) // colonne B
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
@@ -1208,7 +1208,7 @@ class FormOther
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
-            	$boxlistb.= $emptybox->outputBox(array(),array());
+            	$boxlistb.= $emptybox->outputBox(array(), array());
             }
 
             $boxlistb.= "<!-- End box right container -->\n";

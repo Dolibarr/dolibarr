@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 
 $loanid = GETPOST('loanid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $object = new Loan($db);
 $object->fetch($loanid);
@@ -42,7 +42,7 @@ if ($action == 'createecheancier') {
 	$i=1;
 	while($i <$object->nbterm+1){
 
-		$date =  GETPOST('hi_date'.$i,'int');
+		$date =  GETPOST('hi_date'.$i, 'int');
 		$mens = GETPOST('mens'.$i);
 		$int = GETPOST('hi_interets'.$i);
 		$insurance = GETPOST('hi_insurance'.$i);
@@ -62,7 +62,7 @@ if ($action == 'createecheancier') {
 		$echeance->fk_user_modif = $user->id;
 		$result=$echeance->create($user);
 		if ($result<0) {
-			setEventMessages($echeance->error, $echeance->errors,'errors');
+			setEventMessages($echeance->error, $echeance->errors, 'errors');
 		}
 		$i++;
 	}
@@ -85,9 +85,9 @@ if ($action == 'updateecheancier') {
 		$echeance->amount_insurance = $insurance;
 		$echeance->amount_interest = $int;
 		$echeance->fk_user_modif = $user->id;
-		$result= $echeance->update($user,0);
+		$result= $echeance->update($user, 0);
 		if ($result<0) {
-			setEventMessages(null, $echeance->errors,'errors');
+			setEventMessages(null, $echeance->errors, 'errors');
 		}
 		$i++;
 	}
@@ -181,9 +181,9 @@ if ($object->nbterm > 0 && count($echeance->lines)==0)
 		$cap_rest = price2num($capital - ($mens-$int), 'MT');
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'">' . $i .'</td>';
-		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . dol_time_plus_duree($object->datestart, $i-1, 'm') . '">' . dol_print_date(dol_time_plus_duree($object->datestart, $i-1, 'm'),'day') . '</td>';
-		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0),0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
-		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
+		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . dol_time_plus_duree($object->datestart, $i-1, 'm') . '">' . dol_print_date(dol_time_plus_duree($object->datestart, $i-1, 'm'), 'day') . '</td>';
+		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0), 0, '', 1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
+		print '<td align="center" id="interets'.$i.'">'.price($int, 0, '', 1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
 		print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
 		print '<td align="center" id="capital'.$i.'">'.price($cap_rest).' €</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
 		print '</tr>'."\n";
@@ -204,9 +204,9 @@ elseif(count($echeance->lines)>0)
 		$cap_rest = price2num($capital - ($mens-$int), 'MT');
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'"><input type="hidden" name="hi_rowid' .$i .'" id ="hi_rowid' .$i .'" value="' . $line->id . '">' . $i .'</td>';
-		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . $line->datep . '">' . dol_print_date($line->datep,'day') . '</td>';
-		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0),0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
-		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
+		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . $line->datep . '">' . dol_print_date($line->datep, 'day') . '</td>';
+		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0), 0, '', 1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
+		print '<td align="center" id="interets'.$i.'">'.price($int, 0, '', 1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
 		if($line->datep > dol_now()){
 			print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
 		}else{

@@ -56,7 +56,7 @@ $confirmed=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -79,9 +79,9 @@ if (! isset($argv[1])) {
 foreach($argv as $key => $val)
 {
 	if ($val == 'commitiferror') $forcecommit=1;
-	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
-	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) $excludeuser=explode(',', $reg[1]);
+	if (preg_match('/-y$/', $val, $reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -91,7 +91,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
 print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_MEMBER_TYPE_DN."\n";
 print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS_TYPES.'=*)'."\n";
 print "----- To Dolibarr database:\n";
@@ -102,7 +102,7 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "Mapped LDAP fields=".join(',',$required_fields)."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
 if (! $confirmed)
@@ -128,7 +128,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
@@ -185,20 +185,20 @@ if ($result >= 0)
 		}
 		else
 		{
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone",$error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	}
 	else
 	{
-		dol_print_error('',$ldap->error);
+		dol_print_error('', $ldap->error);
 		$error++;
 	}
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	dol_print_error('', $ldap->error);
 	$error++;
 }
 
@@ -216,4 +216,3 @@ function dolValidElementType($element)
 {
 	return (trim($element) != '');
 }
-

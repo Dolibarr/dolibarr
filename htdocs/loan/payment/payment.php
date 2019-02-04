@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->loadLangs(array("bills","loan"));
 
-$chid=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel','alpha');
+$chid=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
 $line_id = GETPOST('line_id', 'int');
 $last=GETPOST('last');
 
@@ -135,8 +135,8 @@ if ($action == 'add_payment')
 			$payment->amount_interest	= GETPOST('amount_interest');
 			$payment->paymenttype = GETPOST('paymenttype', 'int');
 			$payment->num_payment		= GETPOST('num_payment');
-			$payment->note_private      = GETPOST('note_private','none');
-			$payment->note_public       = GETPOST('note_public','none');
+			$payment->note_private      = GETPOST('note_private', 'none');
+			$payment->note_public       = GETPOST('note_public', 'none');
 
 			if (! $error)
 			{
@@ -211,9 +211,9 @@ if ($action == 'create')
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart,'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	$sql = "SELECT SUM(amount_capital) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
@@ -253,7 +253,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, '',1);  // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, '', 1);  // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -289,7 +289,7 @@ if ($action == 'create')
 
 	if ($loan->datestart > 0)
 	{
-		print '<td align="left" valign="center">'.dol_print_date($loan->datestart,'day').'</td>';
+		print '<td align="left" valign="center">'.dol_print_date($loan->datestart, 'day').'</td>';
 	}
 	else
 	{

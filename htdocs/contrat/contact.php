@@ -36,15 +36,15 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$socid = GETPOST('socid','int');
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$socid = GETPOST('socid', 'int');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'contrat',$id);
+$result=restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
 
@@ -93,7 +93,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer)
 	}
 	else
 	{
-		dol_print_error($db,$object->error);
+		dol_print_error($db, $object->error);
 	}
 }
 
@@ -115,7 +115,7 @@ if ($action == 'deletecontact' && $user->rights->contrat->creer)
  * View
  */
 
-llxHeader('',$langs->trans("Contract"),"");
+llxHeader('', $langs->trans("Contract"), "");
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
@@ -210,13 +210,13 @@ if ($id > 0 || ! empty($ref))
         // Ligne info remises tiers
         print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
         if ($object->thirdparty->remise_percent) {
-            print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
+            print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
         } else {
             print $langs->trans("CompanyHasNoRelativeDiscount");
         }
         $absolute_discount = $object->thirdparty->getAvailableDiscounts();
         print '. ';
-        if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+        if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
         else print $langs->trans("CompanyHasNoAbsoluteDiscount");
         print '.';
         print '</td></tr>';
@@ -224,9 +224,9 @@ if ($id > 0 || ! empty($ref))
         // Date
         print '<tr>';
 		print '<td class="titlefield">';
-		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,0);
+		print $form->editfieldkey("Date", 'date_contrat', $object->date_contrat, $object, 0);
 		print '</td><td>';
-		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,0,'datehourpicker');
+		print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, 0, 'datehourpicker');
 		print '</td>';
 		print '</tr>';
 

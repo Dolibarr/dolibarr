@@ -267,10 +267,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $result=$localobject->update($user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        $result=$localobject->update_note($localobject->note,'_private');
+        $result=$localobject->update_note($localobject->note, '_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note,'_public');
+		$result=$localobject->update_note($localobject->note, '_public');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
@@ -328,7 +328,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
         // If option to store clear password has been set, we get 'dolibspec' into PASSWORD field.
         $expected = ',New firstname,New name,New firstname New name,'.
-                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth,'day').',,'.
+                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
                     'newlogin';
 
         $result = $localobject->makeSubstitution($template);
@@ -423,7 +423,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertNull($localobject->fk_soc);
 
         //Now we remove the third party
-        $result = $thirdparty->delete($thirdparty->id,$user);
+        $result = $thirdparty->delete($thirdparty->id, $user);
         $this->assertEquals($result, 1);
 
         return $localobject;

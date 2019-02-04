@@ -68,7 +68,7 @@ class DeplacementStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-		if (is_array($this->userid) && count($this->userid) > 0) $this->where.=' AND fk_user IN ('.join(',',$this->userid).')';
+		if (is_array($this->userid) && count($this->userid) > 0) $this->where.=' AND fk_user IN ('.join(',', $this->userid).')';
         elseif ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
 	}
 
@@ -103,7 +103,7 @@ class DeplacementStats extends Stats
 		$sql.= " WHERE YEAR(dated) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -125,7 +125,7 @@ class DeplacementStats extends Stats
 		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-		$sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -145,7 +145,7 @@ class DeplacementStats extends Stats
 		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -161,9 +161,8 @@ class DeplacementStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
 }
-

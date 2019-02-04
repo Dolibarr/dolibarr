@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ class PaymentExpenseReport extends CommonObject
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
-            $newvalue = price2num($value,'MT');
+            $newvalue = price2num($value, 'MT');
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -679,7 +679,7 @@ class PaymentExpenseReport extends CommonObject
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

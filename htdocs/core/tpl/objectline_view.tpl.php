@@ -48,7 +48,7 @@ if (empty($object) || ! is_object($object))
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
 
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -77,7 +77,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
 		$txt='';
-		print img_object($langs->trans("ShowReduc"),'reduc').' ';
+		print img_object($langs->trans("ShowReduc"), 'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
 		elseif ($line->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
@@ -92,13 +92,13 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 			}
 			elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 				// Add date of deposit
 				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
 				    echo ' ('.dol_print_date($discount->datec).')';
@@ -107,13 +107,13 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 			}
 			elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 			}
 			else
 			{
@@ -127,16 +127,16 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	    if ($line->fk_product > 0)
 		{
-			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+			echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 		}
 		else
 		{
-			if ($type==1) $text = img_object($langs->trans('Service'),'service');
-			else $text = img_object($langs->trans('Product'),'product');
+			if ($type==1) $text = img_object($langs->trans('Service'), 'service');
+			else $text = img_object($langs->trans('Product'), 'product');
 
 			if (! empty($line->label)) {
 				$text.= ' <strong>'.$line->label.'</strong>';
-				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+				echo $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			} else {
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
@@ -167,7 +167,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	{
 		$accountingaccount=new AccountingAccount($this->db);
 		$accountingaccount->fetch($line->fk_accounting_account);
-		echo '<div class="clearboth"></div><br><span class="opacitymedium">' . $langs->trans('AccountingAffectation') . ' : </span>' . $accountingaccount->getNomUrl(0,1,1);
+		echo '<div class="clearboth"></div><br><span class="opacitymedium">' . $langs->trans('AccountingAffectation') . ' : </span>' . $accountingaccount->getNomUrl(0, 1, 1);
 	}
 
 	?>
@@ -209,7 +209,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 			// must also not be output for most entities (proposal, intervention, ...)
 			//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-			echo $line->qty;
+			echo price($line->qty, 0, '', 0, 0);  // Yes, it is a quantity, not a price, but we just want the formating role of function price
 		} else echo '&nbsp;';	?>
 	</td>
 
@@ -229,7 +229,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecoldiscount right"><?php
 		$coldisplay++;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		echo dol_print_reduction($line->remise_percent,$langs);
+		echo dol_print_reduction($line->remise_percent, $langs);
 	?></td>
 	<?php } else { ?>
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
@@ -242,7 +242,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
 
   	<?php if (!empty($user->rights->margins->creer)) { ?>
@@ -283,7 +283,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	<td class="linecoldelete center"><?php $coldisplay++; ?>
 		<?php
-		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
+		if (($line->fk_prev_id == null ) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
@@ -296,12 +296,12 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecolmove tdlineupdown center"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php echo img_up('default',0,'imgupforline'); ?>
+		<?php echo img_up('default', 0, 'imgupforline'); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php echo img_down('default',0,'imgdownforline'); ?>
+		<?php echo img_down('default', 0, 'imgdownforline'); ?>
 		</a>
 		<?php } ?>
 	</td>

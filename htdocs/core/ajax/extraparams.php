@@ -20,17 +20,17 @@
  *	\brief      File to return Ajax response on set extra parameters of elements
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 include '../../main.inc.php';
 
-$id = GETPOST('id','int');
-$element = GETPOST('element','alpha');
-$htmlelement = GETPOST('htmlelement','alpha');
+$id = GETPOST('id', 'int');
+$element = GETPOST('element', 'alpha');
+$htmlelement = GETPOST('htmlelement', 'alpha');
 $type = GETPOST('type', 'alpha');
 
 /*
@@ -43,7 +43,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 {
-	$value = GETPOST('value','alpha');
+	$value = GETPOST('value', 'alpha');
 	$params=array();
 
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
@@ -74,4 +74,3 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 
 	$result=$object->setExtraParameters();
 }
-

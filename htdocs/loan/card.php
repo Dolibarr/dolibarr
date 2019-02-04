@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -35,17 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","loan"));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel','alpha');
+$cancel=GETPOST('cancel', 'alpha');
 
-$projectid = GETPOST('projectid','int');
+$projectid = GETPOST('projectid', 'int');
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'loan', $id, '','');
+$result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
 
@@ -97,8 +97,8 @@ if (empty($reshook))
 	{
 		if (! $cancel)
 		{
-			$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+			$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
+			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital 	= price2num(GETPOST('capital'));
 			$rate	   = GETPOST('rate');
 
@@ -132,9 +132,9 @@ if (empty($reshook))
 				$object->dateend				= $dateend;
 				$object->nbterm					= GETPOST('nbterm');
 				$object->rate					= $rate;
-				$object->note_private 			= GETPOST('note_private','none');
-				$object->note_public 			= GETPOST('note_public','none');
-				$object->fk_project 			= GETPOST('projectid','int');
+				$object->note_private 			= GETPOST('note_private', 'none');
+				$object->note_public 			= GETPOST('note_public', 'none');
+				$object->fk_project 			= GETPOST('projectid', 'int');
 				$object->insurance_amount       = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
@@ -168,8 +168,8 @@ if (empty($reshook))
 		{
 			$result = $object->fetch($id);
 
-			$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+			$datestart	= dol_mktime(12, 0, 0, GETPOST('startmonth', 'int'), GETPOST('startday', 'int'), GETPOST('startyear', 'int'));
+			$dateend	= dol_mktime(12, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
 			$capital	= price2num(GETPOST('capital'));
 
 			if (! $capital)
@@ -182,8 +182,8 @@ if (empty($reshook))
 				$object->datestart	= $datestart;
 				$object->dateend	= $dateend;
 				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm",'int');
-				$object->rate		= price2num(GETPOST("rate",'alpha'));
+				$object->nbterm		= GETPOST("nbterm", 'int');
+				$object->rate		= price2num(GETPOST("rate", 'alpha'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -243,7 +243,7 @@ if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($d
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 
 // Create mode
@@ -254,7 +254,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewLoan"), '', 'title_accountancy.png');
 
-	$datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	print '<form name="loan" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -271,7 +271,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes(GETPOST("accountid"),"accountid",0,"courant=1",1);  // Show list of bank account with courant
+		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1);  // Show list of bank account with courant
 		print '</td></tr>';
 	}
 	else
@@ -287,13 +287,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate($datestart?$datestart:-1,'start','','','','add',1,1);
+	print $form->selectDate($datestart?$datestart:-1, 'start', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate($dateend?$dateend:-1,'end','','','','add',1,1);
+	print $form->selectDate($dateend?$dateend:-1, 'end', '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -405,13 +405,13 @@ if ($id > 0)
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPayLoan');
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PayLoan'),$text,"confirm_paid",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PayLoan'), $text, "confirm_paid", '', '', 2);
 		}
 
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteLoan');
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteLoan'),$text,'confirm_delete','','',2);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteLoan'), $text, 'confirm_delete', '', '', 2);
 		}
 
 		if ($action == 'edit')
@@ -497,7 +497,7 @@ if ($id > 0)
 		}
 		else
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 		
 		// Insurance
@@ -509,7 +509,7 @@ if ($id > 0)
 		}
 		else
 		{
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Date start
@@ -521,7 +521,7 @@ if ($id > 0)
 		}
 		else
 		{
-			print dol_print_date($object->datestart,"day");
+			print dol_print_date($object->datestart, "day");
 		}
 		print "</td></tr>";
 
@@ -534,7 +534,7 @@ if ($id > 0)
 		}
 		else
 		{
-			print dol_print_date($object->dateend,"day");
+			print dol_print_date($object->dateend, "day");
 		}
 		print "</td></tr>";
 
@@ -591,9 +591,9 @@ if ($id > 0)
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->account_capital, 1);
+				$accountingaccount->fetch('', $object->account_capital, 1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
 				print $object->account_capital;
 			}
@@ -629,9 +629,9 @@ if ($id > 0)
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->account_insurance, 1);
+				$accountingaccount->fetch('', $object->account_insurance, 1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
 				print $object->account_insurance;
 			}
@@ -667,9 +667,9 @@ if ($id > 0)
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->account_interest, 1);
+				$accountingaccount->fetch('', $object->account_interest, 1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 			} else {
 				print $object->account_interest;
 			}
@@ -722,8 +722,8 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
-				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
 				print '<td align="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print '<td align="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
@@ -738,7 +738,7 @@ if ($id > 0)
 			if ($object->paid == 0)
 			{
 				print '<tr><td colspan="5" align="right">'.$langs->trans("AlreadyPaid").' :</td><td align="right">'.price($totalpaid, 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>';
-				print '<tr><td colspan="5" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right">'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
@@ -817,7 +817,7 @@ if ($id > 0)
 	else
 	{
 		// Loan not found
-		dol_print_error('',$object->error);
+		dol_print_error('', $object->error);
 	}
 }
 

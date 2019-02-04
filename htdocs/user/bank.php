@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/s
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
-$id = GETPOST('id','int');
-$bankid = GETPOST('bankid','int');
-$action = GETPOST("action",'alpha');
-$cancel = GETPOST('cancel','alpha');
+$id = GETPOST('id', 'int');
+$bankid = GETPOST('bankid', 'int');
+$action = GETPOST("action", 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $socid=0;
@@ -173,7 +173,7 @@ if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.GETPOST("id",'int').'">';
+    print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
     print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 if ($id && $action == 'create' && $user->rights->user->user->creer)
@@ -197,7 +197,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -245,9 +245,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	print '<td>'.$account->iban . '&nbsp;';
     if (! empty($account->iban)) {
         if (! checkIbanForAccount($account)) {
-            print img_picto($langs->trans("IbanNotValid"),'warning');
+            print img_picto($langs->trans("IbanNotValid"), 'warning');
         } else {
-            print img_picto($langs->trans("IbanValid"),'info');
+            print img_picto($langs->trans("IbanValid"), 'info');
         }
     }
     print '</td></tr>';
@@ -256,9 +256,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	print '<td>'.$account->bic.'&nbsp;';
     if (! empty($account->bic)) {
         if (! checkSwiftForAccount($account)) {
-            print img_picto($langs->trans("SwiftNotValid"),'warning');
+            print img_picto($langs->trans("SwiftNotValid"), 'warning');
         } else {
-            print img_picto($langs->trans("SwiftValid"),'info');
+            print img_picto($langs->trans("SwiftValid"), 'info');
         }
     }
     print '</td></tr>';
@@ -311,7 +311,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -326,8 +326,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$salary->ref = $objp->rowid;
 
                 print $salary->getNomUrl(1);
-				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->datesp),'day')."</td>\n";
-				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dateep),'day')."</td>\n";
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->amount).'</td></tr>';
 				$i++;
 			}
@@ -365,7 +365,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-  			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
+  			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -382,9 +382,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$nbopenedday=num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
 
                 print $holiday->getNomUrl(1);
-				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td align="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -421,7 +421,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -437,9 +437,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
                 $exp->fk_type = $objp->fk_type;
 
                 print $exp->getNomUrl(1);
-				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
-				print '<td align="right" style="min-width: 60px" class="nowrap">'.$exp->LibStatut($objp->fk_statut,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$exp->LibStatut($objp->fk_statut, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);

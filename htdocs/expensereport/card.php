@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -48,22 +48,22 @@ if (! empty($conf->accounting->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("trips","bills","mails"));
 
-$action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel','alpha');
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth','int'), GETPOST('date_debutday','int'), GETPOST('date_debutyear','int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth','int'), GETPOST('date_finday','int'), GETPOST('date_finyear','int'));
-$date = dol_mktime(0, 0, 0, GETPOST('datemonth','int'), GETPOST('dateday','int'), GETPOST('dateyear','int'));
-$fk_projet=GETPOST('fk_projet','int');
-$vatrate=GETPOST('vatrate','alpha');
-$ref=GETPOST("ref",'alpha');
-$comments=GETPOST('comments','none');
-$fk_c_type_fees=GETPOST('fk_c_type_fees','int');
-$socid = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('socid_id','int');
+$date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
+$date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth', 'int'), GETPOST('date_finday', 'int'), GETPOST('date_finyear', 'int'));
+$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
+$fk_projet=GETPOST('fk_projet', 'int');
+$vatrate=GETPOST('vatrate', 'alpha');
+$ref=GETPOST("ref", 'alpha');
+$comments=GETPOST('comments', 'none');
+$fk_c_type_fees=GETPOST('fk_c_type_fees', 'int');
+$socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'int');
 
 // Security check
-$id=GETPOST("id",'int');
+$id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', 0, 'expensereport');
 
@@ -79,7 +79,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->entity) && $conf->en
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -147,7 +147,7 @@ if (empty($reshook))
     // Action clone object
     if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->expensereport->creer)
     {
-        if (1==0 && ! GETPOST('clone_content','alpha') && ! GETPOST('clone_receivers','alpha'))
+        if (1==0 && ! GETPOST('clone_content', 'alpha') && ! GETPOST('clone_receivers', 'alpha'))
         {
             setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
@@ -158,7 +158,7 @@ if (empty($reshook))
                 // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
                 $orig = clone $object;
 
-                $result=$object->createFromClone(GETPOST('fk_user_author','int'));
+                $result=$object->createFromClone(GETPOST('fk_user_author', 'int'));
                 if ($result > 0)
                 {
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -174,7 +174,7 @@ if (empty($reshook))
         }
     }
 
-    if ($action == 'confirm_delete' && GETPOST("confirm",'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+    if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
     {
     	$object = new ExpenseReport($db);
     	$result = $object->fetch($id);
@@ -197,17 +197,17 @@ if (empty($reshook))
     	$object->date_debut = $date_start;
     	$object->date_fin = $date_end;
 
-    	$object->fk_user_author             = GETPOST('fk_user_author','int');
+    	$object->fk_user_author             = GETPOST('fk_user_author', 'int');
     	if (! ($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
 
     	$fuser=new User($db);
     	$fuser->fetch($object->fk_user_author);
 
     	$object->fk_statut = 1;
-    	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
-    	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-    	$object->note_public				= GETPOST('note_public','none');
-    	$object->note_private				= GETPOST('note_private','none');
+    	$object->fk_c_paiement				= GETPOST('fk_c_paiement', 'int');
+    	$object->fk_user_validator			= GETPOST('fk_user_validator', 'int');
+    	$object->note_public				= GETPOST('note_public', 'none');
+    	$object->note_private				= GETPOST('note_private', 'none');
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -215,7 +215,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
-    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser,$object->date_debut,$object->date_fin))
+    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -257,12 +257,12 @@ if (empty($reshook))
 
     	if($object->fk_statut < 3)
     	{
-    		$object->fk_user_validator = GETPOST('fk_user_validator','int');
+    		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
     	}
 
-    	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-    	$object->note_public = GETPOST('note_public','none');
-    	$object->note_private = GETPOST('note_private','none');
+    	$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
+    	$object->note_public = GETPOST('note_public', 'none');
+    	$object->note_private = GETPOST('note_private', 'none');
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);
@@ -319,7 +319,7 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -363,7 +363,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+    			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
     			// Rebuild pdf
     			/*
@@ -386,7 +386,7 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
     				if ($result)
     				{
-    					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
     					setEventMessages($mesg, null, 'mesgs');
     				}
     				else
@@ -407,7 +407,7 @@ if (empty($reshook))
     			}
     			else
     			{
-    				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
     				$action='';
     			}
     		}
@@ -443,7 +443,7 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -482,7 +482,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$dateRefusEx = explode(" ",$object->date_refuse);
+				$dateRefusEx = explode(" ", $object->date_refuse);
     			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
    				// Rebuild pdf
@@ -510,7 +510,7 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
     				if ($result)
     				{
-    					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+    					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
     					setEventMessages($mesg, null, 'mesgs');
     					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     					exit;
@@ -533,7 +533,7 @@ if (empty($reshook))
     			}
     			else
     			{
-    				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+    				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
     				$action='';
     			}
     		}
@@ -564,7 +564,7 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -632,7 +632,7 @@ if (empty($reshook))
        				$result=$mailfile->sendfile();
        				if ($result)
        				{
-       					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+       					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
        					setEventMessages($mesg, null, 'mesgs');
        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
        					exit;
@@ -655,7 +655,7 @@ if (empty($reshook))
        			}
        			else
        			{
-       				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+       				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
        				$action='';
        			}
    			}
@@ -690,7 +690,7 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -755,7 +755,7 @@ if (empty($reshook))
         			$result=$mailfile->sendfile();
         			if ($result)
         			{
-        				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+        				$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
         				setEventMessages($mesg, null, 'mesgs');
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
@@ -778,7 +778,7 @@ if (empty($reshook))
         		}
         		else
         		{
-        			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+        			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
         			$action='';
         		}
         	}
@@ -822,7 +822,7 @@ if (empty($reshook))
 	    			{
 	    				$outputlangs = $langs;
 	    				$newlang = '';
-	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 	    				if (! empty($newlang)) {
 	    					$outputlangs = new Translate("", $conf);
@@ -861,7 +861,7 @@ if (empty($reshook))
 
 	    				// CONTENT
 	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel','alpha'), $link);
+	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel', 'alpha'), $link);
 
 	    				// Rebuilt pdf
 	    				/*
@@ -887,7 +887,7 @@ if (empty($reshook))
 	        				$result=$mailfile->sendfile();
 	        				if ($result)
 	        				{
-	        					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+	        					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
 	        					setEventMessages($mesg, null, 'mesgs');
 	        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 	        					exit;
@@ -910,7 +910,7 @@ if (empty($reshook))
 	        			}
 	        			else
 	        			{
-	        				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+	        				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 	        				$action='';
 	        			}
 	    			}
@@ -948,7 +948,7 @@ if (empty($reshook))
     			{
     				$outputlangs = $langs;
     				$newlang = '';
-    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     				if (! empty($newlang)) {
     					$outputlangs = new Translate("", $conf);
@@ -991,7 +991,7 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -1033,8 +1033,8 @@ if (empty($reshook))
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
         		// Generate pdf before attachment
-        		$object->setDocModel($user,"");
-        		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+        		$object->setDocModel($user, "");
+        		$resultPDF = expensereport_pdf_create($db, $object, '', "", $langs);
 
         		// PREPARE SEND
         		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
@@ -1045,7 +1045,7 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
         			if ($result)
         			{
-        				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+        				$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
         				setEventMessages($mesg, null, 'mesgs');
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
@@ -1068,7 +1068,7 @@ if (empty($reshook))
         		}
         		else
         		{
-        			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+        			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
         			$action='';
         		}
     		}
@@ -1097,10 +1097,10 @@ if (empty($reshook))
     	if (empty($vatrate)) $vatrate = "0.000";
     	$vatrate = price2num($vatrate);
 
-		$value_unit=price2num(GETPOST('value_unit', 'alpha'),'MU');
+		$value_unit=price2num(GETPOST('value_unit', 'alpha'), 'MU');
     	$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 
-    	$qty = GETPOST('qty','int');
+    	$qty = GETPOST('qty', 'int');
     	if (empty($qty)) $qty=1;
 
     	if (! $fk_c_type_fees > 0)
@@ -1152,7 +1152,7 @@ if (empty($reshook))
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-			$result = $object->addline($qty,$value_unit,$fk_c_type_fees,$vatrate,$date,$comments,$fk_projet,$fk_c_exp_tax_cat,$type);
+			$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type);
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
@@ -1206,7 +1206,7 @@ if (empty($reshook))
     			{
     				$outputlangs = $langs;
     				$newlang = '';
-    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     				if (! empty($newlang)) {
     					$outputlangs = new Translate("", $conf);
@@ -1219,7 +1219,7 @@ if (empty($reshook))
     			}
     		}
 
-    		$object->update_totaux_del($object_ligne->total_ht,$object_ligne->total_tva);
+    		$object->update_totaux_del($object_ligne->total_ht, $object_ligne->total_tva);
     		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
     		exit;
     	}
@@ -1279,7 +1279,7 @@ if (empty($reshook))
     				{
     					$outputlangs = $langs;
     					$newlang = '';
-    					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+    					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
     					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     					if (! empty($newlang)) {
     						$outputlangs = new Translate("", $conf);
@@ -1326,7 +1326,7 @@ if (empty($reshook))
 
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Card");
 $helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1402,7 +1402,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
-		$form->select_types_paiements(2,'fk_c_paiement');
+		$form->select_types_paiements(2, 'fk_c_paiement');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1533,7 +1533,7 @@ else
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
 					print '<td>';
-					$form->select_types_paiements($object->fk_c_paiement,'fk_c_paiement');
+					$form->select_types_paiements($object->fk_c_paiement, 'fk_c_paiement');
 					print '</td>';
 					print '</tr>';
 				}
@@ -1544,7 +1544,7 @@ else
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';	// Approbator
 					print '<td>';
 					$include_users = $object->fetch_users_approver_expensereport();
-					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",1,"",0,$include_users);
+					$s=$form->select_dolusers($object->fk_user_validator, "fk_user_validator", 1, "", 0, $include_users);
 					print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 					print '</td>';
 					print '</tr>';
@@ -1605,49 +1605,49 @@ else
 
 				if ($action == 'save')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("SaveTrip"), $langs->trans("ConfirmSaveTrip"), "confirm_validate", "", "", 1);
 				}
 
 				if ($action == 'save_from_refuse')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("SaveTrip"), $langs->trans("ConfirmSaveTrip"), "confirm_save_from_refuse", "", "", 1);
 				}
 
 				if ($action == 'delete')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete", "", "", 1);
 				}
 
 				if ($action == 'validate')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("ValideTrip"), $langs->trans("ConfirmValideTrip"), "confirm_approve", "", "", 1);
 				}
 
 				if ($action == 'paid')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("PaidTrip"), $langs->trans("ConfirmPaidTrip"), "confirm_paid", "", "", 1);
 				}
 
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>'<strong>'.$langs->trans("Comment").'</strong>','name'=>"detail_cancel",'size'=>"50",'value'=>""));
-					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
 				if ($action == 'brouillonner')
 				{
-				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_brouillonner", "", "", 1);
 				}
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
 				}
 
 				if ($action == 'delete_line')
 				{
-					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid','int'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid', 'int'), $langs->trans("DeleteLine"), $langs->trans("ConfirmDeleteLine"), "confirm_delete_line", '', 'yes', 1);
 				}
 
 				// Print form confirm
@@ -1713,7 +1713,7 @@ else
 				{
 				    $userauthor=new User($db);
 				    $result=$userauthor->fetch($object->fk_user_author);
-				    if ($result < 0) dol_print_error('',$userauthor->error);
+				    if ($result < 0) dol_print_error('', $userauthor->error);
 				    elseif ($result > 0) print $userauthor->getNomUrl(-1);
 				}
 				print '</td></tr>';
@@ -1721,7 +1721,7 @@ else
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
-				print get_date_range($object->date_debut,$object->date_fin,'day',$langs,0);
+				print get_date_range($object->date_debut, $object->date_fin, 'day', $langs, 0);
 				print '</td>';
 				print '</tr>';
 				if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1735,7 +1735,7 @@ else
 				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_valid,'dayhour');
+				print '<td>'.dol_print_date($object->date_valid, 'dayhour');
 				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
 				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
 				print '</td></tr>';
@@ -1779,7 +1779,7 @@ else
 					print '</tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
-					print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td></tr>';
+					print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 				else
@@ -1797,7 +1797,7 @@ else
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DateApprove").'</td>';
-					print '<td>'.dol_print_date($object->date_approve,'dayhour').'</td></tr>';
+					print '<td>'.dol_print_date($object->date_approve, 'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 
@@ -1813,7 +1813,7 @@ else
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
-					print '<td>'.dol_print_date($object->date_refuse,'dayhour');
+					print '<td>'.dol_print_date($object->date_refuse, 'dayhour');
 					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
 					print '</td>';
 					print '</tr>';
@@ -1924,7 +1924,7 @@ else
 				        print '<td>';
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
-				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				        print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->payment_type;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 						if (! empty($conf->banque->enabled))
@@ -1939,7 +1939,7 @@ else
 
 								$accountingjournal = new AccountingJournal($db);
 								$accountingjournal->fetch($objp->fk_accountancy_journal);
-								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 							}
 
 							print '<td align="right">';
@@ -2070,7 +2070,7 @@ else
 							print $labeltype;
 							print '</td>';
 							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
-							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
+							print '<td style="text-align:right;">'.vatrate($line->vatrate, true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
 							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
 
@@ -2106,14 +2106,14 @@ else
 
 								// Select date
 								print '<td class="center">';
-								print $form->selectDate($line->date,'date');
+								print $form->selectDate($line->date, 'date');
 								print '</td>';
 
 								// Select project
 								if (! empty($conf->projet->enabled))
 								{
 									print '<td>';
-									$formproject->select_projects(-1, $line->fk_projet,'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+									$formproject->select_projects(-1, $line->fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 									print '</td>';
 								}
 
@@ -2127,7 +2127,7 @@ else
 
 								// Select type
 								print '<td class="center">';
-								select_type_fees_id($line->fk_c_type_fees,'fk_c_type_fees');
+								select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
 								print '</td>';
 
 								// Add comments
@@ -2210,7 +2210,7 @@ else
 
 					// Select type
 					print '<td align="center">';
-					select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
+					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
 					// Add comments

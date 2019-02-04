@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userldap';   // To manage different context of search
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userldap';   // To manage different context of search
 
 // Security check
 $socid=0;
@@ -54,7 +54,7 @@ $hookmanager->initHooks(array('usercard','userldap','globalcard'));
 
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -101,7 +101,7 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -185,9 +185,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//print_r($records);
 
@@ -200,7 +200,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else

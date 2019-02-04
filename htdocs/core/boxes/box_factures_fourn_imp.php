@@ -78,7 +78,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $max));
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
@@ -132,7 +132,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
-                        $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+                        $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
@@ -157,7 +157,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datelimite,'day'),
+                        'text' => dol_print_date($datelimite, 'day'),
                     );
 
 					$fac = new FactureFournisseur($db);
@@ -165,7 +165,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
                     );
 
                     $line++;
@@ -206,4 +206,3 @@ class box_factures_fourn_imp extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

@@ -38,7 +38,7 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userperms';   // To manage different context of search
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userperms';   // To manage different context of search
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -81,7 +81,7 @@ $hookmanager->initHooks(array('usercard','userperms','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -117,7 +117,7 @@ if (empty($reshook)) {
  *	View
  */
 
-llxHeader('',$langs->trans("Permissions"));
+llxHeader('', $langs->trans("Permissions"));
 
 $form=new Form($db);
 
@@ -189,7 +189,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		array_push($permsuser,$obj->fk_id);
+		array_push($permsuser, $obj->fk_id);
 		$i++;
 	}
 	$db->free($result);
@@ -241,7 +241,7 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 
 print '<div class="underbanner clearboth"></div>';
@@ -251,7 +251,7 @@ if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivat
 if (empty($user->societe_id)) print info_admin(showModulesExludedForExternal($modules))."\n";
 
 $parameters=array('permsgroupbyentity'=>$permsgroupbyentity);
-$reshook=$hookmanager->executeHooks('insertExtraHeader',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -310,7 +310,7 @@ if ($result)
 
     		// Show break line
     		print '<tr class="oddeven trforbreak">';
-    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
+    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
     		print '<a name="'.$objMod->getName().'"></a></td>';
     		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
     		{
@@ -337,17 +337,17 @@ if ($result)
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
 
         // Permission and tick
         if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission granted because admin
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
+        		print '<td align="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
         	}
         	print '<td align="center" class="nowrap">';
-        	print img_picto($langs->trans("Active"),'tick');
+        	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
         elseif (in_array($obj->id, $permsuser))					// Permission granted by user
@@ -357,7 +357,7 @@ if ($result)
         		print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
         	print '<td align="center" class="nowrap">';
-        	print img_picto($langs->trans("Active"),'tick');
+        	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
 
@@ -368,11 +368,11 @@ if ($result)
 	        	if ($caneditperms)
 	        	{
 	        		print '<td align="center">';
-	        		print $form->textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
+	        		print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
 	        		print '</td>';
 	        	}
 	        	print '<td align="center" class="nowrap">';
-	        	print img_picto($langs->trans("Active"),'tick');
+	        	print img_picto($langs->trans("Active"), 'tick');
 	        	print '</td>';
 	        }
 	        else
@@ -409,7 +409,7 @@ print '</table>';
 print '</div>';
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('insertExtraFooter',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 

@@ -78,7 +78,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->max=$max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
@@ -190,4 +190,3 @@ class box_contacts extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

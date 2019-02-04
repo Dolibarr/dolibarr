@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ class FormAccounting extends Form
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries))
         {
-            dol_print_error('','Call to select_accounting_account with mysoc country not yet defined');
+            dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
             exit;
         }
 
@@ -198,7 +198,7 @@ class FormAccounting extends Form
                     $obj = $db->fetch_object($resql);
                     $out .= '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) $out .= ' selected';
-                    $out .= '>'.($maxlen ? dol_trunc($obj->type,$maxlen) : $obj->type);
+                    $out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
 					$out .= ' ('.$obj->range_account.')';
                     $i++;
                 }
@@ -207,12 +207,12 @@ class FormAccounting extends Form
             }
             else
             {
-                $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
+                $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
             }
         }
         else
         {
-            dol_print_error($db,$db->lasterror());
+            dol_print_error($db, $db->lasterror());
         }
 
         $out .= ajax_combobox($htmlname, array());

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
@@ -38,7 +38,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 if ($action == 'setvalue' && $user->admin)
@@ -120,7 +120,7 @@ if ($action == 'setvalue' && $user->admin)
 
 if ($action=="setlive")
 {
-	$liveenable = GETPOST('value','int');
+	$liveenable = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable, 'yesno', 0, '', $conf->entity);
 	if ($res > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -140,10 +140,10 @@ if ($action=="setlive")
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 
-llxHeader('',$langs->trans("StripeSetup"));
+llxHeader('', $langs->trans("StripeSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ModuleSetup").' Stripe',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 
 $head=stripeadmin_prepare_head();
 
@@ -169,13 +169,13 @@ print $langs->trans("StripeLiveEnabled").'</td><td>';
 if (!empty($conf->global->STRIPE_LIVE))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a>';
 }
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
+	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a>';
 }
 print '</td></tr>';
@@ -285,7 +285,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
-	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
+	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE, 'ONLINE_PAYMENT_WAREHOUSE', '', 1, $disabled);
 	print '</td></tr>';
 }
 
@@ -297,19 +297,19 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -329,7 +329,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';

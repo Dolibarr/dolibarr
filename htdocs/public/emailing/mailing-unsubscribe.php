@@ -27,9 +27,9 @@
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
-if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);			// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');		// Do not check anti CSRF attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
 
 /**
  * Header empty
@@ -140,7 +140,7 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	print "</head>\n";
 	print '<body style="margin: 20px;">'."\n";
 	print '<table><tr><td style="text_align:center;">';
-	print $langs->trans("YourMailUnsubcribeOK",$obj->email)."<br>\n";
+	print $langs->trans("YourMailUnsubcribeOK", $obj->email)."<br>\n";
 	print '</td></tr></table>';
 	print "</body>\n";
 	print "</html>\n";

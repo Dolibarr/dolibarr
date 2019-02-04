@@ -112,9 +112,6 @@
     <rule ref="Generic.Functions.CallTimePassByReference" />
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterComma">
-		<severity>0</severity>
-	</rule>
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
@@ -189,6 +186,9 @@
         <severity>0</severity>
     </rule>
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
@@ -429,4 +429,8 @@
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
     <rule ref="Zend.Files.ClosingTag"/>
 
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
+    <rule ref="PSR2.Files.EndFileNewline.TooMany" />
+    <rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 </ruleset>

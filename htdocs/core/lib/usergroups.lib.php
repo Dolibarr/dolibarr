@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -141,7 +141,7 @@ function user_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user');
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read))
@@ -172,7 +172,7 @@ function user_prepare_head($object)
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$upload_dir = $conf->user->dir_output . "/" . $object->id;
-		$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks=Link::count($db, $object->element, $object->id);
 		$head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
@@ -186,7 +186,7 @@ function user_prepare_head($object)
 		$h++;
 	}
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'user','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user', 'remove');
 
 	return $head;
 }
@@ -237,9 +237,9 @@ function group_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'group');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'group');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'group','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'group', 'remove');
 
 	return $head;
 }
@@ -280,9 +280,9 @@ function user_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'useradmin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'useradmin');
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'useradmin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'useradmin', 'remove');
 
 	return $head;
 }
@@ -309,7 +309,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	{
 		foreach($conf->modules_parts['theme'] as $reldir)
 		{
-			$dirthemes=array_merge($dirthemes,(array) ($reldir.'theme'));
+			$dirthemes=array_merge($dirthemes, (array) ($reldir.'theme'));
 		}
 	}
 	$dirthemes=array_unique($dirthemes);
@@ -352,7 +352,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
 		print '<th align="right">';
 		$url='https://www.dolistore.com/lang-en/4-skins';
-		if (preg_match('/fr/i',$langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
+		if (preg_match('/fr/i', $langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
 		//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
 		print '<a href="'.$url.'" target="_blank">';
 		print $langs->trans('DownloadMoreSkins');
@@ -378,8 +378,8 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	foreach($dirthemes as $dir)
 	{
 		//print $dirroot.$dir;exit;
-		$dirtheme=dol_buildpath($dir,0);	// This include loop on $conf->file->dol_document_root
-		$urltheme=dol_buildpath($dir,1);
+		$dirtheme=dol_buildpath($dir, 0);	// This include loop on $conf->file->dol_document_root
+		$urltheme=dol_buildpath($dir, 1);
 
 		if (is_dir($dirtheme))
 		{
@@ -389,17 +389,17 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 				while (($subdir = readdir($handle))!==false)
 				{
 					if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-							&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i',$subdir))
+							&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common|phones/i', $subdir))
 					{
 						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i',$subdir)) continue;
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i',$subdir)) continue;
+						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
 						print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 						$file=$dirtheme."/".$subdir."/thumb.png";
 						$url=$urltheme."/".$subdir."/thumb.png";
 						if (! file_exists($file)) $url=DOL_URL_ROOT.'/public/theme/common/nophoto.png';
-						print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss','alpha',1)?'&optioncss='.GETPOST('optioncss','alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1)?'&optioncss='.GETPOST('optioncss', 'alpha', 1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 						if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 						else $title=$langs->trans("ShowPreview");
 						print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
@@ -502,11 +502,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		//var_dump($conf->global->THEME_ELDY_BACKBODY);
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY,array()),''),'THEME_ELDY_BACKBODY','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY, array()), ''), 'THEME_ELDY_BACKBODY', 'formcolor', 1).' ';
 		}
 	   	else
 	   	{
-	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY,array()),'');
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKBODY, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
@@ -551,11 +551,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1, array()), ''), 'THEME_ELDY_TOPMENU_BACK1', 'formcolor', 1).' ';
 		}
 	   	else
 	   	{
-	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+	   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
@@ -600,11 +600,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_VERMENU_BACK1,array()),''),'THEME_ELDY_VERMENU_BACK1','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_VERMENU_BACK1, array()), ''), 'THEME_ELDY_VERMENU_BACK1', 'formcolor', 1).' ';
 		}
 		else
 		{
-			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_VERMENU_BACK1,array()),'');
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_VERMENU_BACK1, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
@@ -628,7 +628,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB, array()), ''), 'THEME_ELDY_TEXTTITLENOTAB', 'formcolor', 1).' ';
 		}
 		else
 		{
@@ -655,7 +655,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKTITLE1,array()),''),'THEME_ELDY_BACKTITLE1','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKTITLE1, array()), ''), 'THEME_ELDY_BACKTITLE1', 'formcolor', 1).' ';
 		}
 	   	else
 	   	{
@@ -682,7 +682,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLE,array()),''),'THEME_ELDY_TEXTTITLE','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLE, array()), ''), 'THEME_ELDY_TEXTTITLE', 'formcolor', 1).' ';
 		}
 		else
 		{
@@ -711,11 +711,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),''),'THEME_ELDY_LINEIMPAIR1','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1, array()), ''), 'THEME_ELDY_LINEIMPAIR1', 'formcolor', 1).' ';
 		}
 		else
 		{
-			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1,array()),'');
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
@@ -741,11 +741,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),''),'THEME_ELDY_LINEPAIR1','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1, array()), ''), 'THEME_ELDY_LINEPAIR1', 'formcolor', 1).' ';
 		}
 		else
 		{
-			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1,array()),'');
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
@@ -787,11 +787,11 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan-1).'">';
 		if ($edit)
 		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),''),'THEME_ELDY_TEXTLINK','formcolor',1).' ';
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK, array()), ''), 'THEME_ELDY_TEXTLINK', 'formcolor', 1).' ';
 		}
 		else
 		{
-			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK,array()),'');
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTLINK, array()), '');
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else
 			{
@@ -830,13 +830,13 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		if ($edit)
 		{
 			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
-			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
-			print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
+			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER, array()), '');
+			print $formother->selectColor($color, 'THEME_ELDY_USE_HOVER', 'formcolor', 1).' ';
 		}
 		else
 		{
 			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
-			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
+			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER, array()), '');
 			if ($color)
 			{
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
@@ -874,13 +874,13 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		if ($edit)
 		{
 			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
-			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
-			print $formother->selectColor($color,'THEME_ELDY_USE_CHECKED','formcolor',1).' ';
+			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED, array()), '');
+			print $formother->selectColor($color, 'THEME_ELDY_USE_CHECKED', 'formcolor', 1).' ';
 		}
 		else
 		{
 			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
-			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
+			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED, array()), '');
 			if ($color)
 			{
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';

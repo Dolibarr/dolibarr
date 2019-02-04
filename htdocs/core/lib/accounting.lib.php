@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ function accounting_prepare_head(AccountingAccount $object)
  */
 function clean_account($account)
 {
-	$account = rtrim($account,"0");
+	$account = rtrim($account, "0");
 
 	return $account;
 }
@@ -226,4 +226,3 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }
-

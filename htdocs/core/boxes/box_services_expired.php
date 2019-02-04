@@ -77,7 +77,7 @@ class box_services_expired extends ModeleBoxes
 
     	$now=dol_now();
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 
     	if ($user->rights->contrat->lire)
     	{
@@ -143,7 +143,7 @@ class box_services_expired extends ModeleBoxes
     				);
 
     				$this->info_box_contents[$i][] = array('td' => 'align="center"',
-    				'text' => dol_print_date($dateline,'day'),
+    				'text' => dol_print_date($dateline, 'day'),
     				'text2'=> $late);
 
     				$this->info_box_contents[$i][] = array('td' => 'class="right"',
@@ -190,4 +190,3 @@ class box_services_expired extends ModeleBoxes
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

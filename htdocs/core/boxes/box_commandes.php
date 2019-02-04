@@ -82,7 +82,7 @@ class box_commandes extends ModeleBoxes
         $societestatic = new Societe($db);
         $userstatic = new User($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
         if ($user->rights->commande->lire)
         {
@@ -161,12 +161,12 @@ class box_commandes extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                        'text' => $commandestatic->LibStatut($objp->fk_statut, $objp->facture, 3),
                     );
 
                     $line++;
@@ -203,4 +203,3 @@ class box_commandes extends ModeleBoxes
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

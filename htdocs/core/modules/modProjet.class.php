@@ -51,7 +51,7 @@ class modProjet extends DolibarrModules
 		$this->family = "projects";
 		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des projets";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -231,7 +231,7 @@ class modProjet extends DolibarrModules
 	    // Add multicompany field
         if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
         {
-            $nbofallowedentities=count(explode(',',getEntity('project')));    // If project are shared, nb will be > 1
+            $nbofallowedentities=count(explode(',', getEntity('project')));    // If project are shared, nb will be > 1
             if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('p.entity'=>'Entity');
         }
 		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -326,11 +326,11 @@ class modProjet extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -344,11 +344,11 @@ class modProjet extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
@@ -362,6 +362,6 @@ class modProjet extends DolibarrModules
 		$sql[] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('baleine','project',".$conf->entity.")";
 
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

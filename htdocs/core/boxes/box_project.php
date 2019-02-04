@@ -93,7 +93,7 @@ class box_project extends ModeleBoxes
 
     		// Get list of project id allowed to user (in a string list separated by coma)
 		    $projectsListId='';
-    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
+    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		    $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -200,4 +200,3 @@ class box_project extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

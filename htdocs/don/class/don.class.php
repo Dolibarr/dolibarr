@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  *
@@ -112,7 +112,7 @@ class Don extends CommonObject
      */
     function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -150,38 +150,38 @@ class Don extends CommonObject
         }
         elseif ($mode == 2)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatutshort[$statut];
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatutshort[$statut];
         }
         elseif ($mode == 3)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5');
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0');
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1');
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6');
         }
         elseif ($mode == 4)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatut[$statut];
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatut[$statut];
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatut[$statut];
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
         }
         elseif ($mode == 5)
         {
-            if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
-            elseif ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
-            elseif ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-            elseif ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
         }
         elseif ($mode == 6)
         {
-            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
-            elseif ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
-            elseif ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-            elseif ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
         }
     }
 
@@ -265,44 +265,44 @@ class Don extends CommonObject
         {
             if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
                 $err++;
             }
         }
 
         if (dol_strlen(trim($this->address)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Address'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Address'));
             $err++;
         }
 
         if (dol_strlen(trim($this->zip)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Zip'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Zip'));
             $err++;
         }
 
         if (dol_strlen(trim($this->town)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Town'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Town'));
             $err++;
         }
 
         if (dol_strlen(trim($this->email)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('EMail'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('EMail'));
             $err++;
         }
 
         $this->amount = trim($this->amount);
 
-        $map = range(0,9);
+        $map = range(0, 9);
         $len=dol_strlen($this->amount);
         for ($i = 0; $i < $len; $i++)
         {
             if (!isset($map[substr($this->amount, $i, 1)] ))
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Amount'));
                 $err++;
                 $amount_invalid = 1;
                 break;
@@ -313,14 +313,14 @@ class Don extends CommonObject
         {
             if ($this->amount == 0)
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Amount'));
                 $err++;
             }
             else
             {
                 if ($this->amount < $minimum && $minimum > 0)
                 {
-                    $error_string[] = $langs->trans('MinimumAmount',$langs->trans('$minimum'));
+                    $error_string[] = $langs->trans('MinimumAmount', $langs->trans('$minimum'));
                     $err++;
                 }
             }
@@ -419,7 +419,7 @@ class Don extends CommonObject
             if (!$notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('DON_CREATE',$user);
+                $result=$this->call_trigger('DON_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -512,7 +512,7 @@ class Don extends CommonObject
             if (!$notrigger)
             {
 				// Call trigger
-                $result=$this->call_trigger('DON_MODIFY',$user);
+                $result=$this->call_trigger('DON_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -573,7 +573,7 @@ class Don extends CommonObject
             if (!$notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('DON_DELETE',$user);
+                $result=$this->call_trigger('DON_DELETE', $user);
 
                 if ($result < 0) {
                     $error++;
@@ -755,7 +755,7 @@ class Don extends CommonObject
             	if (!$notrigger)
             	{
             		// Call trigger
-            		$result=$this->call_trigger('DON_VALIDATE',$user);
+            		$result=$this->call_trigger('DON_VALIDATE', $user);
             		if ($result < 0) { $error++; }
             		// End call triggers
             	}
@@ -1024,7 +1024,7 @@ class Don extends CommonObject
 		$srctemplatepath='';
 
 		// If selected modele is a filename template (then $modele="modelname:filename")
-		$tmp=explode(':',$modele,2);
+		$tmp=explode(':', $modele, 2);
 		if (! empty($tmp[1]))
 		{
 			$modele=$tmp[0];
@@ -1034,15 +1034,15 @@ class Don extends CommonObject
 		// Search template files
 		$file=''; $classname=''; $filefound=0;
 		$dirmodels=array('/');
-		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 		foreach($dirmodels as $reldir)
 		{
 			foreach(array('html','doc','pdf') as $prefix)
 			{
-				$file = $prefix."_".preg_replace('/^html_/','',$modele).".modules.php";
+				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
 
 				// On verifie l'emplacement du modele
-				$file=dol_buildpath($reldir."core/modules/dons/".$file,0);
+				$file=dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file))
 				{
 					$filefound=1;
@@ -1066,7 +1066,7 @@ class Don extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($object,$outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 
@@ -1079,13 +1079,13 @@ class Don extends CommonObject
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Erreur dans don_create");
-				dol_print_error($this->db,$obj->error);
+				dol_print_error($this->db, $obj->error);
 				return 0;
 			}
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 			return 0;
 		}
 	}

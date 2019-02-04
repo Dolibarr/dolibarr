@@ -65,15 +65,15 @@ print '<div class="tabBar">';
 
 print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 
-$search_month = GETPOST("remonth",'int')?GETPOST("remonth",'int'):date("m", time());
-$search_year = GETPOST("reyear",'int')?GETPOST("reyear",'int'):date("Y", time());
+$search_month = GETPOST("remonth", 'int')?GETPOST("remonth", 'int'):date("m", time());
+$search_year = GETPOST("reyear", 'int')?GETPOST("reyear", 'int'):date("Y", time());
 
-$month_year = sprintf("%02d",$search_month).'-'.sprintf("%04d",$search_year);
-$year_month = sprintf("%04d",$search_year).'-'.sprintf("%02d",$search_month);
+$month_year = sprintf("%02d", $search_month).'-'.sprintf("%04d", $search_year);
+$year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
-print $formother->select_month($search_month,'remonth');
+print $formother->select_month($search_month, 'remonth');
 
-print $formother->select_year($search_year,'reyear');
+print $formother->select_year($search_year, 'reyear');
 
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 

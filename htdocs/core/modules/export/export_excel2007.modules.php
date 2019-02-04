@@ -82,7 +82,7 @@ class ExportExcel2007 extends ExportExcel
         $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version
 
-		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 
 		if (empty($this->disabled))
 		{

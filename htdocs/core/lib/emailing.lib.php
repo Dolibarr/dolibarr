@@ -61,10 +61,9 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing', 'remove');
 
 	return $head;
 }
-

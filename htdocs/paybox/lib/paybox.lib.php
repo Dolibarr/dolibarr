@@ -59,22 +59,22 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	if (empty($IBS_DEVISE))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_DEVISE not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_DEVISE not defined");
 		return -1;
 	}
 	if (empty($URLPAYBOX))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
+		dol_print_error('', "Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
 		return -1;
 	}
 	if (empty($IBS_SITE))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_SITE not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_SITE not defined");
 		return -1;
 	}
 	if (empty($IBS_RANG))
 	{
-		dol_print_error('',"Paybox setup param PAYBOX_IBS_RANG not defined");
+		dol_print_error('', "Paybox setup param PAYBOX_IBS_RANG not defined");
 		return -1;
 	}
 
@@ -93,12 +93,12 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
     $IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-    if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
-    if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
-    if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
-    if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
-    if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
-    if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
+    if (preg_match('/^FR/i', $langs->defaultlang)) $IBS_LANG="FRA";
+    if (preg_match('/^ES/i', $langs->defaultlang)) $IBS_LANG="ESP";
+    if (preg_match('/^IT/i', $langs->defaultlang)) $IBS_LANG="ITA";
+    if (preg_match('/^DE/i', $langs->defaultlang)) $IBS_LANG="DEU";
+    if (preg_match('/^NL/i', $langs->defaultlang)) $IBS_LANG="NLD";
+    if (preg_match('/^SE/i', $langs->defaultlang)) $IBS_LANG="SWE";
     $IBS_OUTPUT='E';
     $PBX_SOURCE='HTML';
     $PBX_TYPEPAIEMENT='CARTE';
@@ -196,4 +196,3 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	return;
 }
-

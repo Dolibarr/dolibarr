@@ -77,13 +77,13 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
 		{
     		if ($atleastoneofthislevelafter)
     		{
-    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
-    			else print img_picto_common('','treemenu/line.gif');
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branch.gif');
+    			else print img_picto_common('', 'treemenu/line.gif');
     		}
     		else
     		{
-    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
-    			else print img_picto_common('','treemenu/linebottom.gif');
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branchbottom.gif');
+    			else print img_picto_common('', 'treemenu/linebottom.gif');
     		}
 		}
 		$pos++;
@@ -227,4 +227,3 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 
     if ($rang == 0) print '</ul>';
 }
-

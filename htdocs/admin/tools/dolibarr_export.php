@@ -29,15 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if (empty($page) || $page == -1) { $page = 0; }
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin)
@@ -70,7 +70,7 @@ $type=$db->type;
 //var_dump($db);
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('','',$help_url);
+llxHeader('', '', $help_url);
 
 ?>
 <script type="text/javascript">
@@ -110,11 +110,11 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print load_fiche_titre($langs->trans("Backup"),'','title_setup');
+print load_fiche_titre($langs->trans("Backup"), '', 'title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("BackupDesc",DOL_DATA_ROOT);
+print $langs->trans("BackupDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';
 
@@ -128,7 +128,7 @@ print '<br>';
 <fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>
 
 <?php
-print $langs->trans("BackupDesc3",$dolibarr_main_db_name).'<br>';
+print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
 //print $langs->trans("BackupDescY").'<br>';
 print '<br>';
 ?>
@@ -469,7 +469,7 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 }
 if (! empty($_SESSION["commandbackuptorun"]))
 {
-	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user).':</font><br>'."\n";
+	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</font><br>'."\n";
 	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
 	print ajax_autoselect("commandbackuptoruntext", 0);
 	print '<br>';
@@ -498,8 +498,8 @@ print '</table>';
 <div class="ficheaddleft">
 
 <?php
-$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
-$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+$filearray=dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC), 1);
+$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 ?>
 
@@ -519,7 +519,7 @@ print '<br>';
 <fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>
 
 <?php
-print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
+print $langs->trans("BackupDesc2", DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
 
 ?>
@@ -586,8 +586,8 @@ print "\n";
 <div class="ficheaddleft">
 
 <?php
-$filearray=dol_dir_list($conf->admin->dir_output.'/documents','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
-$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'documents/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+$filearray=dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC), 1);
+$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
 print '<br>';
 ?>
 

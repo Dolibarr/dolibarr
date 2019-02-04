@@ -82,7 +82,7 @@ class box_clients extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
 
 		if ($user->rights->societe->lire)
 		{
@@ -141,7 +141,7 @@ class box_clients extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3)
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3)
                     );
 
 					$line++;
@@ -178,4 +178,3 @@ class box_clients extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

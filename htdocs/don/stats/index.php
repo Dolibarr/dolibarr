@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -67,7 +67,7 @@ dol_mkdir($dir);
 $stats = new DonationStats($db, $socid, $mode, ($userid>0?$userid:0));
 
 // Build graphic number of object
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);exit;
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -99,7 +99,7 @@ if (! $mesg)
     }
     $px1->SetLegend($legend);
     $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
+    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
     $px1->SetWidth($WIDTH);
     $px1->SetHeight($HEIGHT);
     $px1->SetYLabel($langs->trans("NbOfSendings"));
@@ -109,7 +109,7 @@ if (! $mesg)
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
-    $px1->draw($filenamenb,$fileurlnb);
+    $px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -221,7 +221,7 @@ $h++;
 
 $type='donation_stats';
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -240,7 +240,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
@@ -248,10 +248,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';

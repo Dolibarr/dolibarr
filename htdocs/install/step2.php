@@ -42,8 +42,8 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
-$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
+$action=GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang', 'aZ09', 3)?GETPOST('selectlang', 'aZ09', 3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -73,13 +73,13 @@ dolibarr_install_syslog("- step2: entering step2.php page");
  *	View
  */
 
-pHeader($langs->trans("CreateDatabaseObjects"),"step4");
+pHeader($langs->trans("CreateDatabaseObjects"), "step4");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
-    pFooter(1,$setuplang,'jscheckparam');
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+    pFooter(1, $setuplang, 'jscheckparam');
     exit;
 }
 
@@ -90,7 +90,7 @@ if ($action == "set")
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
     $error=0;
 
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
     if ($db->connected)
     {
@@ -166,7 +166,7 @@ if ($action == "set")
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && ! preg_match('/\.key\.sql$/i',$file))
+                if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && ! preg_match('/\.key\.sql$/i', $file))
                 {
                     $tablefound++;
                     $tabledata[]=$file;
@@ -181,7 +181,7 @@ if ($action == "set")
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
             $buffer = '';
-            $fp = fopen($dir.$file,"r");
+            $fp = fopen($dir.$file, "r");
             if ($fp)
             {
                 while (!feof($fp))
@@ -189,7 +189,7 @@ if ($action == "set")
                     $buf = fgets($fp, 4096);
                     if (substr($buf, 0, 2) <> '--')
                     {
-                        $buf=preg_replace('/--(.+)*/','',$buf);
+                        $buf=preg_replace('/--(.+)*/', '', $buf);
                         $buffer .= $buf;
                     }
                 }
@@ -198,27 +198,27 @@ if ($action == "set")
                 $buffer=trim($buffer);
                 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
                 {
-                    $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
+                    $buffer=preg_replace('/type=innodb/i', 'ENGINE=innodb', $buffer);
                 }
                 else
                 {
                     // Keyword ENGINE is MySQL-specific, so scrub it for
                     // other database types (mssql, pgsql)
-                    $buffer=preg_replace('/type=innodb/i','',$buffer);
-                    $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
+                    $buffer=preg_replace('/type=innodb/i', '', $buffer);
+                    $buffer=preg_replace('/ENGINE=innodb/i', '', $buffer);
                 }
 
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
                 {
-                	$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                	$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                 }
 
                 //print "<tr><td>Creation de la table $name/td>";
                 $requestnb++;
 
                 dolibarr_install_syslog("step2: request: " . $buffer);
-                $resql=$db->query($buffer,0,'dml');
+                $resql=$db->query($buffer, 0, 'dml');
                 if ($resql)
                 {
                     // print "<td>OK requete ==== $buffer</td></tr>";
@@ -233,7 +233,7 @@ if ($action == "set")
                     }
                     else
                     {
-                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
+                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey", $name);
                         print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer.' <br>Executed query : '.$db->lastquery;
                         print "\n</td>";
                         print '<td><span class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</span></td></tr>';
@@ -243,7 +243,7 @@ if ($action == "set")
             }
             else
             {
-                print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
+                print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey", $name);
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</span></td></tr>';
                 $error++;
@@ -262,7 +262,7 @@ if ($action == "set")
         }
         else
         {
-            print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles",$dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
+            print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles", $dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
             dolibarr_install_syslog("step2: failed to find files to create database in directory " . $dir, LOG_ERR);
         }
     }
@@ -288,7 +288,7 @@ if ($action == "set")
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
+                if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file))
                 {
                     $tablefound++;
                     $tabledata[]=$file;
@@ -304,7 +304,7 @@ if ($action == "set")
             $name = substr($file, 0, dol_strlen($file) - 4);
             //print "<tr><td>Creation de la table $name</td>";
             $buffer = '';
-            $fp = fopen($dir.$file,"r");
+            $fp = fopen($dir.$file, "r");
             if ($fp)
             {
                 while (!feof($fp))
@@ -312,40 +312,40 @@ if ($action == "set")
                     $buf = fgets($fp, 4096);
 
                     // Cas special de lignes autorisees pour certaines versions uniquement
-                    if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
+                    if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg))
                     {
-                        $versioncommande=explode('.',$reg[1]);
+                        $versioncommande=explode('.', $reg[1]);
                         //print var_dump($versioncommande);
                         //print var_dump($versionarray);
                         if (count($versioncommande) && count($versionarray)
-                        && versioncompare($versioncommande,$versionarray) <= 0)
+                        && versioncompare($versioncommande, $versionarray) <= 0)
                         {
                             // Version qualified, delete SQL comments
-                            $buf=preg_replace('/^--\sV([0-9\.]+)/i','',$buf);
+                            $buf=preg_replace('/^--\sV([0-9\.]+)/i', '', $buf);
                             //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                         }
                     }
-                    if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i',$buf,$reg))
+                    if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg))
                     {
-                        $versioncommande=explode('.',$reg[1]);
+                        $versioncommande=explode('.', $reg[1]);
                         //print var_dump($versioncommande);
                         //print var_dump($versionarray);
                         if (count($versioncommande) && count($versionarray)
-                        && versioncompare($versioncommande,$versionarray) <= 0)
+                        && versioncompare($versioncommande, $versionarray) <= 0)
                         {
                             // Version qualified, delete SQL comments
-                            $buf=preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i','',$buf);
+                            $buf=preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', '', $buf);
                             //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                         }
                     }
 
                     // Ajout ligne si non commentaire
-                    if (! preg_match('/^--/i',$buf)) $buffer .= $buf;
+                    if (! preg_match('/^--/i', $buf)) $buffer .= $buf;
                 }
                 fclose($fp);
 
                 // Si plusieurs requetes, on boucle sur chaque
-                $listesql=explode(';',$buffer);
+                $listesql=explode(';', $buffer);
                 foreach ($listesql as $req)
                 {
                     $buffer=trim($req);
@@ -354,14 +354,14 @@ if ($action == "set")
                     	// Replace the prefix tables
                     	if ($dolibarr_main_db_prefix != 'llx_')
                     	{
-                    		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                    		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                     	}
 
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
 
                         dolibarr_install_syslog("step2: request: " . $buffer);
-                        $resql=$db->query($buffer,0,'dml');
+                        $resql=$db->query($buffer, 0, 'dml');
                         if ($resql)
                         {
                             //print "<td>OK requete ==== $buffer</td></tr>";
@@ -373,14 +373,14 @@ if ($action == "set")
                             $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
                             $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
                             $db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS' ||
-                            preg_match('/duplicate key name/i',$db->error()))
+                            preg_match('/duplicate key name/i', $db->error()))
                             {
                                 //print "<td>Deja existante</td></tr>";
                                 $key_exists = 1;
                             }
                             else
                             {
-                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
+                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable", $name);
                                 print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
                                 print "\n</td>";
                                 print '<td><span class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</span></td></tr>';
@@ -392,7 +392,7 @@ if ($action == "set")
             }
             else
             {
-                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
+                print "<tr><td>".$langs->trans("CreateOtherKeysForTable", $name);
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</span></td></tr>";
                 $error++;
@@ -426,7 +426,7 @@ if ($action == "set")
         $file = "functions.sql";
         if (file_exists($dir.$file))
         {
-            $fp = fopen($dir.$file,"r");
+            $fp = fopen($dir.$file, "r");
             dolibarr_install_syslog("step2: open function file " . $dir . $file . " handle=" . $fp);
             if ($fp)
             {
@@ -444,7 +444,7 @@ if ($action == "set")
             //$buffer=preg_replace('/;\';/',";'§",$buffer);
 
             // If several requests, we loop on each of them
-            $listesql=explode('§',$buffer);
+            $listesql=explode('§', $buffer);
             foreach ($listesql as $buffer)
             {
                 $buffer=trim($buffer);
@@ -452,7 +452,7 @@ if ($action == "set")
                 {
                     dolibarr_install_syslog("step2: request: " . $buffer);
                     print "<!-- Insert line : ".$buffer."<br>-->\n";
-                    $resql=$db->query($buffer,0,'dml');
+                    $resql=$db->query($buffer, 0, 'dml');
                     if ($resql)
                     {
                         $ok = 1;
@@ -512,12 +512,12 @@ if ($action == "set")
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
+                if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file))
                 {
-                	if (preg_match('/^llx_accounting_account_/',$file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+                	if (preg_match('/^llx_accounting_account_/', $file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
 
                     //print 'x'.$file.'-'.$createdata.'<br>';
-                    if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))
+                    if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file))
                     {
                         $tablefound++;
                         $tabledata[]=$file;
@@ -532,7 +532,7 @@ if ($action == "set")
         foreach($tabledata as $file)
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
-            $fp = fopen($dir.$file,"r");
+            $fp = fopen($dir.$file, "r");
             dolibarr_install_syslog("step2: open data file " . $dir . $file . " handle=" . $fp);
             if ($fp)
             {
@@ -573,11 +573,11 @@ if ($action == "set")
                 	// Replace the prefix tables
                 	if ($dolibarr_main_db_prefix != 'llx_')
                 	{
-                		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
+                		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                 	}
 
                     //dolibarr_install_syslog("step2: request: " . $buffer);
-                    $resql=$db->query($buffer,1);
+                    $resql=$db->query($buffer, 1);
                     if ($resql)
                     {
                         //$db->free($resql);     // Not required as request we launch here does not return memory needs.
@@ -627,7 +627,7 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
 
-pFooter($ok?0:1,$setuplang);
+pFooter($ok?0:1, $setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
 

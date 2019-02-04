@@ -34,7 +34,7 @@ if ($action == 'update' && is_array($arrayofparameters))
 	$ok=true;
 	foreach($arrayofparameters as $key => $val)
 	{
-		$result=dolibarr_set_const($db,$key,GETPOST($key, 'alpha'),'chaine',0,'',$conf->entity);
+		$result=dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
 		if ($result < 0)
 		{
 			$ok=false;
@@ -66,11 +66,11 @@ if ($action == 'setModuleOptions')
         {
             if (preg_match('/^param(\d*)$/', $key, $reg))    // Works for POST['param'], POST['param1'], POST['param2'], ...
             {
-                $param=GETPOST("param".$reg[1],'alpha');
-                $value=GETPOST("value".$reg[1],'alpha');
+                $param=GETPOST("param".$reg[1], 'alpha');
+                $value=GETPOST("value".$reg[1], 'alpha');
                 if ($param)
                 {
-                    $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+                    $res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
                     if (! $res > 0) $error++;
                 }
             }
@@ -78,19 +78,19 @@ if ($action == 'setModuleOptions')
     }
 
     // Process upload fields
-    if (GETPOST('upload','alpha') && GETPOST('keyforuploaddir','aZ09'))
+    if (GETPOST('upload', 'alpha') && GETPOST('keyforuploaddir', 'aZ09'))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $keyforuploaddir=GETPOST('keyforuploaddir','aZ09');
-        $listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->$keyforuploaddir)));
+        $keyforuploaddir=GETPOST('keyforuploaddir', 'aZ09');
+        $listofdir=explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->$keyforuploaddir)));
         foreach($listofdir as $key=>$tmpdir)
         {
             $tmpdir=trim($tmpdir);
-            $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+            $tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
             if (! $tmpdir) {
                 unset($listofdir[$key]); continue;
             }
-            if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+            if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
             else
             {
                 $upload_dir=$tmpdir;
@@ -114,4 +114,3 @@ if ($action == 'setModuleOptions')
         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
     }
 }
-

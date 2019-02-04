@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,14 +42,14 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'aZ09');
-if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
+if (GETPOST("exportcsv", 'alpha')) $action = 'export_csv';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
-if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -131,7 +131,7 @@ if (! empty($search_accountancy_code_end)) {
  * Action
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_accountancy_code_start = '';
 	$search_accountancy_code_end = '';
@@ -235,7 +235,7 @@ if ($action != 'export_csv')
 	print $langs->trans('to');
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
 	print '</td>';
-	print '<td align="right" class="liste_titre">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
@@ -245,9 +245,9 @@ if ($action != 'export_csv')
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 
@@ -274,7 +274,7 @@ if ($action != 'export_csv')
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+				print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
@@ -305,11 +305,11 @@ if ($action != 'export_csv')
 		$sous_total_credit += $line->credit;
 	}
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($total_credit - $total_debit)) . '</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap right">' . price($total_debit) . '</td><td class="nowrap right">' . price($total_credit) . '</td><td class="nowrap right">' . price(price2num($total_credit - $total_debit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 

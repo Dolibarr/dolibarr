@@ -35,9 +35,9 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -58,7 +58,7 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $object->fetch_thirdparty();
 

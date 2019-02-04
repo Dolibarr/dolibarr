@@ -356,6 +356,7 @@ class Productbatch extends CommonObject
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
@@ -436,12 +437,12 @@ class Productbatch extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 
-		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");            // deprecated
-		if (! empty($sellby)) array_push($where," sellby = '".$this->db->idate($sellby)."'");         // deprecated
+		if (! empty($eatby)) array_push($where, " eatby = '".$this->db->idate($eatby)."'");            // deprecated
+		if (! empty($sellby)) array_push($where, " sellby = '".$this->db->idate($sellby)."'");         // deprecated
 
 		if (! empty($batch_number)) $sql.= " AND batch = '".$this->db->escape($batch_number)."'";
 
-		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
+		if (! empty($where)) $sql.= " AND (".implode(" OR ", $where).")";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ class AccountingJournal extends CommonObject
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
 					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
 				} elseif ($key == 't.rowid' || $key == 't.active') {
@@ -272,7 +272,7 @@ class AccountingJournal extends CommonObject
 	 */
 	function getLibType($mode = 0)
 	{
-		return $this->LibType($this->nature,$mode);
+		return $this->LibType($this->nature, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

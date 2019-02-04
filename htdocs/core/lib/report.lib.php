@@ -122,4 +122,3 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print "\n<!-- end banner of report -->\n\n";
 }
-

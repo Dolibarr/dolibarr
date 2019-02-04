@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -36,10 +36,10 @@ $langs->loadLangs(array("compta","bills","accountancy"));
 if (! $user->admin)
 	accessforbidden();
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'import') {
 			$obj = $db->fetch_object($result);
 
 			$cpt = 0;
-			foreach ( $to_import as $maLigneCochee ) {
+			foreach ($to_import as $maLigneCochee) {
 
 				$accounting = new AccountingAccount($db);
 
@@ -156,11 +156,11 @@ if ($result) {
 		print '</td>';
 
 		print '<td>';
-		print '<input type="text" name="pcgType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$accounting->pcg_type).'">';
+		print '<input type="text" name="pcgType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype', 'alpha'):$accounting->pcg_type).'">';
 		print '</td>';
 
 		print '<td>';
-		print '<input type="text" name="pcgSubType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$accounting->pcg_subtype).'">';
+		print '<input type="text" name="pcgSubType" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype', 'alpha'):$accounting->pcg_subtype).'">';
 		print '</td>';
 
 		// Colonne choix ligne a ventiler

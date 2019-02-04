@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -432,7 +432,7 @@ class BookKeeping extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -777,7 +777,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -909,7 +909,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -1021,7 +1021,7 @@ class BookKeeping extends CommonObject
 		// Manage filter
 		$sqlwhere = array ();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
@@ -1360,7 +1360,7 @@ class BookKeeping extends CommonObject
 
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -1394,7 +1394,7 @@ class BookKeeping extends CommonObject
 
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}

@@ -42,7 +42,7 @@ $langs->loadLangs(array("suppliers", "orders"));
  * 	View
  */
 
-llxHeader('',$langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"));
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
@@ -113,12 +113,12 @@ if ($resql)
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $statut)
 	{
-		$dataseries[]=array($commandestatic->LibStatut($statut,1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
 
 			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
+			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
 			print "</tr>\n";
 		}
@@ -185,7 +185,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
-		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
+		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1], 3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -232,8 +232,8 @@ if (! empty($conf->fournisseur->enabled))
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
+				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
 				$i++;
 			}
 		}
@@ -316,7 +316,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -350,9 +350,9 @@ if ($resql)
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
-			print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
-			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			print '<td>'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}

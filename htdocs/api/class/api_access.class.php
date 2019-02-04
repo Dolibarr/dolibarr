@@ -162,7 +162,7 @@ class DolibarrApiAccess implements iAuthenticate
 	    $userClass::setCacheIdentifier(static::$role);
 	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 	    $requirefortest = static::$requires;
-	    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+	    if (! is_array($requirefortest)) $requirefortest=explode(',', $requirefortest);
 	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 

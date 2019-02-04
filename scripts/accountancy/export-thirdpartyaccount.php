@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -128,7 +128,7 @@ $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
 if (! empty($date_start) && ! empty($date_end))
 	$sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
-$sql .= " AND f.entity IN (".getEntity('invoice',0).")";
+$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
 if ($socid)
 	$sql .= " AND f.fk_soc = " . $socid;
 $sql .= " GROUP BY name";
@@ -157,7 +157,7 @@ if ($resql) {
 	$i = 0;
 
 	// export csv
-	if (GETPOST('action','aZ09') == 'export_csv') {
+	if (GETPOST('action', 'aZ09') == 'export_csv') {
 
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');

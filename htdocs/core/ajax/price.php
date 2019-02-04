@@ -20,16 +20,16 @@
  *       \brief      File to get ht and ttc
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 
-$output		= GETPOST('output','alpha');
-$amount		= price2num(GETPOST('amount','alpha'));
-$tva_tx		= str_replace('*','',GETPOST('tva_tx','alpha'));
+$output		= GETPOST('output', 'alpha');
+$amount		= price2num(GETPOST('amount', 'alpha'));
+$tva_tx		= str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 
 /*
  * View
@@ -63,4 +63,3 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 
 	echo json_encode($return);
 }
-

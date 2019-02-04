@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,16 +45,16 @@ $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'aZ09');
 $backtopage	= GETPOST('backtopage', 'alpha');
 
-$accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
-$label=GETPOST("label","alpha");
-$sens=GETPOST("sens","int");
+$accountid=GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+$label=GETPOST("label", "alpha");
+$sens=GETPOST("sens", "int");
 $amount=GETPOST("amount");
 $paymenttype=GETPOST("paymenttype");
-$accountancy_code=GETPOST("accountancy_code","int");
-$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
+$accountancy_code=GETPOST("accountancy_code", "int");
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
 
@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('variouscard','globalcard'));
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -86,11 +86,11 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/list.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id, $ref);
 		$action='';
 	}
 
@@ -98,23 +98,23 @@ if (empty($reshook))
 	{
 		$error=0;
 
-		$datep=dol_mktime(12,0,0, GETPOST("datepmonth",'int'), GETPOST("datepday",'int'), GETPOST("datepyear",'int'));
-		$datev=dol_mktime(12,0,0, GETPOST("datevmonth",'int'), GETPOST("datevday",'int'), GETPOST("datevyear",'int'));
+		$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+		$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
 		if (empty($datev)) $datev=$datep;
 
 		$object->ref='';	// TODO
-		$object->accountid=GETPOST("accountid",'int') > 0 ? GETPOST("accountid","int") : 0;
+		$object->accountid=GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
 		$object->datev=$datev;
 		$object->datep=$datep;
-		$object->amount=price2num(GETPOST("amount",'alpha'));
-		$object->label=GETPOST("label",'none');
-		$object->note=GETPOST("note",'none');
-		$object->type_payment=GETPOST("paymenttype",'int') > 0 ? GETPOST("paymenttype", "int") : 0;
-		$object->num_payment=GETPOST("num_payment",'alpha');
+		$object->amount=price2num(GETPOST("amount", 'alpha'));
+		$object->label=GETPOST("label", 'none');
+		$object->note=GETPOST("note", 'none');
+		$object->type_payment=GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->num_payment=GETPOST("num_payment", 'alpha');
 		$object->fk_user_author=$user->id;
-		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
+		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "int") : "";
 		$object->sens=GETPOST('sens');
-		$object->fk_project= GETPOST('fk_project','int');
+		$object->fk_project= GETPOST('fk_project', 'int');
 
 		if (empty($datep) || empty($datev))
 		{
@@ -219,7 +219,7 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader("",$langs->trans("VariousPayment"));
+llxHeader("", $langs->trans("VariousPayment"));
 
 $form = new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
@@ -248,7 +248,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
 
@@ -257,13 +257,13 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
@@ -276,7 +276,7 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $form->editfieldkey('Sens', 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
     $sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
-    print $form->selectarray('sens',$sensarray,$sens);
+    print $form->selectarray('sens', $sensarray, $sens);
 	print '</td></tr>';
 
 	// Amount
@@ -290,7 +290,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid,"accountid",0,'',1);  // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -335,14 +335,14 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
+		$numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
 
 		print '</td></tr>';
 	}
 
 	// Other attributes
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -418,19 +418,19 @@ if ($id)
 	// Payment date
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td>';
-	print dol_print_date($object->datep,'day');
+	print dol_print_date($object->datep, 'day');
 	print '</td></tr>';
 
 	// Value date
 	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-	print dol_print_date($object->datev,'day');
+	print dol_print_date($object->datev, 'day');
 	print '</td></tr>';
 
 	// Debit / Credit
 	if ($object->sens == '1') $sens = $langs->trans("Credit"); else $sens = $langs->trans("Debit");
 	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	// Accountancy code
 	print '<tr><td class="nowrap">';
@@ -439,9 +439,9 @@ if ($id)
 	if (! empty($conf->accounting->enabled))
 	{
 		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$object->accountancy_code, 1);
+		$accountingaccount->fetch('', $object->accountancy_code, 1);
 
-		print $accountingaccount->getNomUrl(0,1,1,'',1);
+		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 	} else {
 		print $object->accountancy_code;
 	}
@@ -457,7 +457,7 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showall');
+			print $bankline->getNomUrl(1, 0, 'showall');
 			print '</td>';
 			print '</tr>';
 		}

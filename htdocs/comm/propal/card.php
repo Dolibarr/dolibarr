@@ -74,8 +74,8 @@ $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
-$contactid = GETPOST('contactid','int');
-$projectid = GETPOST('projectid','int');
+$contactid = GETPOST('contactid', 'int');
+$projectid = GETPOST('projectid', 'int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -230,7 +230,7 @@ if (empty($reshook))
 			$outputlangs = $langs;
 			if (! empty($conf->global->MAIN_MULTILANGS)) {
 				$outputlangs = new Translate("", $conf);
-				$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
@@ -251,7 +251,7 @@ if (empty($reshook))
 			{
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -348,13 +348,13 @@ if (empty($reshook))
 			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
-				if ($object->fetch(GETPOST('copie_propal','int')) > 0) {
+				if ($object->fetch(GETPOST('copie_propal', 'int')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date_livraison = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address','int');
+					$object->fk_delivery_address = GETPOST('fk_address', 'int');
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
@@ -362,13 +362,13 @@ if (empty($reshook))
 					$object->fk_account = GETPOST('fk_account', 'int');
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
-					$object->socid = GETPOST('socid','int');
-					$object->contactid = GETPOST('contactid','int');
-					$object->fk_project = GETPOST('projectid','int');
+					$object->socid = GETPOST('socid', 'int');
+					$object->contactid = GETPOST('contactid', 'int');
+					$object->fk_project = GETPOST('projectid', 'int');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note_private = GETPOST('note_private','none');
-					$object->note_public = GETPOST('note_public','none');
+					$object->note_private = GETPOST('note_private', 'none');
+					$object->note_public = GETPOST('note_public', 'none');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
@@ -392,12 +392,12 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contactid = GETPOST('contactid','int');
-				$object->fk_project = GETPOST('projectid','int');
+				$object->contactid = GETPOST('contactid', 'int');
+				$object->fk_project = GETPOST('projectid', 'int');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note_private = GETPOST('note_private','none');
-				$object->note_public = GETPOST('note_public','none');
+				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'none');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -586,7 +586,7 @@ if (empty($reshook))
 						{
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 							if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 							if (! empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
@@ -596,7 +596,7 @@ if (empty($reshook))
 
 							$ret = $object->fetch($id); // Reload to get new records
 							$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-							if ($result < 0) dol_print_error($db,$result);
+							if ($result < 0) dol_print_error($db, $result);
 						}
 
 						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
@@ -641,9 +641,8 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	elseif ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel','alpha'))
-	{
-		if (! (GETPOST('statut','int') > 0)) {
+	elseif ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel', 'alpha')) {
+		if (! (GETPOST('statut', 'int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
@@ -652,7 +651,7 @@ if (empty($reshook))
 			{
 				$db->begin();
 
-				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','none'));
+				$result=$object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'none'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -672,8 +671,7 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
-	elseif ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel','alpha'))
-	{
+	elseif ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel', 'alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
 		{
@@ -759,7 +757,7 @@ if (empty($reshook))
 	                $fk_unit = $originLine->fk_unit;
 	                $pu_ht_devise = $originLine->multicurrency_subprice;
 
-	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label,$date_start, $date_end,$array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
 
 	                if($res > 0){
 	                    $importCount++;
@@ -774,7 +772,7 @@ if (empty($reshook))
 
 	        if($error)
 	        {
-	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
+	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
 	        }
 	    }
 	}
@@ -800,7 +798,7 @@ if (empty($reshook))
 			$outputlangs = $langs;
 			if (! empty($conf->global->MAIN_MULTILANGS)) {
 				$outputlangs = new Translate("", $conf);
-				$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
@@ -956,7 +954,7 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
+						$pqp = GETPOST('pbq', 'int');
 
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
@@ -982,7 +980,7 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
+						$pqp = GETPOST('pbq', 'int');
 
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
@@ -1027,8 +1025,8 @@ if (empty($reshook))
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id','aZ09'))
-						$newlang = GETPOST('lang_id','aZ09');
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
 					if (empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -1063,8 +1061,8 @@ if (empty($reshook))
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (empty($newlang) && GETPOST('lang_id','alpha'))
-							$newlang = GETPOST('lang_id','alpha');
+						if (empty($newlang) && GETPOST('lang_id', 'alpha'))
+							$newlang = GETPOST('lang_id', 'alpha');
 						if (empty($newlang))
 							$newlang = $object->thirdparty->default_lang;
 						if (! empty($newlang)) {
@@ -1135,7 +1133,7 @@ if (empty($reshook))
 						$outputlangs = $langs;
 						if (! empty($conf->global->MAIN_MULTILANGS)) {
 							$outputlangs = new Translate("", $conf);
-							$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+							$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 							$outputlangs->setDefaultLang($newlang);
 						}
 						$ret = $object->fetch($id); // Reload to get new records
@@ -1192,7 +1190,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 			// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc','none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1279,7 +1277,7 @@ if (empty($reshook))
 					$outputlangs = $langs;
 					if (! empty($conf->global->MAIN_MULTILANGS)) {
 						$outputlangs = new Translate("", $conf);
-						$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+						$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret = $object->fetch($id); // Reload to get new records
@@ -1318,27 +1316,24 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel','alpha'))
-	{
+	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
-	// Set project
 	elseif ($action == 'classin' && $usercancreate) {
-		$object->setProject(GETPOST('projectid','int'));
+        // Set project
+        $object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	// Delai de livraison
 	elseif ($action == 'setavailability' && $usercancreate) {
-		$result = $object->set_availability($user, GETPOST('availability_id','int'));
+		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
 	}
 
 	// Origine de la propale
 	elseif ($action == 'setdemandreason' && $usercancreate) {
-		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id','int'));
+		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
 	}
 
 	// Conditions de reglement
@@ -1384,7 +1379,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 		if (! $error)
 		{
@@ -1970,7 +1965,7 @@ if ($action == 'create')
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -2147,7 +2142,7 @@ if ($action == 'create')
 		print $langs->trans('SendingMethod');
 		print '</td>';
 		if ($action != 'editshippingmethod' && $usercancreate)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editshippingmethod' && $usercancreate) {
@@ -2259,7 +2254,7 @@ if ($action == 'create')
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {

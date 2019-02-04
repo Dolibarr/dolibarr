@@ -45,7 +45,7 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
-else dol_print_error($db,'');
+else dol_print_error($db, '');
 
 
 
@@ -63,7 +63,7 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
-else dol_print_error($db,'');
+else dol_print_error($db, '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';

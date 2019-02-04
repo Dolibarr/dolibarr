@@ -81,7 +81,7 @@ class box_factures_fourn extends ModeleBoxes
         $thirdpartytmp = new Fournisseur($db);
 
 		$this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills",$max)
+				'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills", $max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
@@ -140,7 +140,7 @@ class box_factures_fourn extends ModeleBoxes
 					$late = '';
 
 					if ($facturestatic->hasDelay()) {
-                        $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                        $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $this->info_box_contents[$line][] = array(
@@ -170,7 +170,7 @@ class box_factures_fourn extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $fac = new FactureFournisseur($db);
@@ -178,7 +178,7 @@ class box_factures_fourn extends ModeleBoxes
                     $alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
                     );
 
                     $line++;
@@ -219,4 +219,3 @@ class box_factures_fourn extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

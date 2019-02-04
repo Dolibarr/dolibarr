@@ -50,12 +50,12 @@ function tax_prepare_head(ChargeSociales $object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'tax');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'tax');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -68,7 +68,7 @@ function tax_prepare_head(ChargeSociales $object)
     $head[$h][2] = 'info';
     $h++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'tax','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'tax', 'remove');
 
     return $head;
 }
@@ -160,13 +160,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql.= " AND s.rowid = f.fk_soc";
     	if ($y && $m)
     	{
-    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -201,13 +201,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql.= " AND pa.rowid = pf.".$fk_payment;
     	if ($y && $m)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -308,13 +308,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql.= " AND s.rowid = f.fk_soc";
     	if ($y && $m)
     	{
-    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -349,13 +349,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql.= " AND pa.rowid = pf.".$fk_payment;
     	if ($y && $m)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -367,7 +367,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
     if (! $sql)
     {
-    	dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql,LOG_ERR);
+    	dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
     	return -1;  // -1 = Not accountancy module enabled
     }
     if ($sql == 'TODO') return -2; // -2 = Feature not yet available
@@ -453,13 +453,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql.= " AND e.fk_statut in (6)";
     	if ($y && $m)
     	{
-    		$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(p.datep,'%m') > ".(($q-1)*3)." AND date_format(p.datep,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
@@ -470,7 +470,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
     	if (! $sql)
     	{
-    		dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql,LOG_ERR);
+    		dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
     		return -1;  // -1 = Not accountancy module enabled
     	}
     	if ($sql == 'TODO') return -2; // -2 = Feature not yet available
@@ -629,13 +629,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql.= " AND s.rowid = f.fk_soc";
         if ($y && $m)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
         }
         elseif ($y)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
         }
         if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
         if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -670,13 +670,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
     	$sql.= " AND pa.rowid = pf.".$fk_payment;
     	if ($y && $m)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
     	}
     	elseif ($y)
     	{
-    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+    		$sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+    		$sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
     	}
     	if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -777,13 +777,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql.= " AND s.rowid = f.fk_soc";
         if ($y && $m)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
         }
         elseif ($y)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
         }
         if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
         if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -818,13 +818,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql.= " AND pa.rowid = pf.".$fk_payment;
         if ($y && $m)
         {
-            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
         }
         elseif ($y)
         {
-            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            $sql.= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+            $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
         }
         if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
         if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -836,7 +836,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
     if (! $sql)
     {
-        dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql,LOG_ERR);
+        dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
         return -1;  // -1 = Not accountancy module enabled
     }
     if ($sql == 'TODO') return -2; // -2 = Feature not yet available
@@ -922,13 +922,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql.= " AND e.fk_statut in (6)";
 		if ($y && $m)
 		{
-			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
 		}
 		elseif ($y)
 		{
-			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql.= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) $sql.= " AND (date_format(p.datep,'%m') > ".(($q-1)*3)." AND date_format(p.datep,'%m') <= ".($q*3).")";
 		if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
@@ -939,7 +939,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 		if (! $sql)
 		{
-			dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql,LOG_ERR);
+			dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
 			return -1;  // -1 = Not accountancy module enabled
 		}
 		if ($sql == 'TODO') return -2; // -2 = Feature not yet available
@@ -1008,4 +1008,3 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	return $list;
 }
-

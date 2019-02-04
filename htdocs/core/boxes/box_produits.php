@@ -61,7 +61,7 @@ class box_produits extends ModeleBoxes
 
 	    $this->db=$db;
 
-	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
 	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden=($showmode != 1);
@@ -82,7 +82,7 @@ class box_produits extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic=new Product($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
@@ -95,7 +95,7 @@ class box_produits extends ModeleBoxes
 			if (is_object($hookmanager))
 			{
 			    $parameters=array('boxproductlist'=>1);
-			    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+			    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 			    $sql.=$hookmanager->resPrint;
 			}
 			$sql.= $db->order('p.datec', 'DESC');
@@ -179,18 +179,18 @@ class box_produits extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datem,'day'),
+                        'text' => dol_print_date($datem, 'day'),
                     );
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,1).'</span>',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 					    'asis' => 1
                     );
 
@@ -231,4 +231,3 @@ class box_produits extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

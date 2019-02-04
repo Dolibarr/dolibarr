@@ -64,11 +64,11 @@ $textobject = $langs->trans("Batch");
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 $help_url='';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title,$linkback,'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 
 $head = product_lot_admin_prepare_head();

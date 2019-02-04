@@ -126,7 +126,7 @@ class AntiVir
 		}
 		*/
 
-		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',',$output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
 
 		$returncodevirus=1;
 		if ($return_var == $returncodevirus)	// Virus found
@@ -166,17 +166,17 @@ class AntiVir
 		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
 		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
 
-		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
-		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
-		$param=preg_replace('/%maxratio/',$maxratio,$param);
-		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
-		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
-		$param=preg_replace('/%file/',trim($file),$param);
+		$param=preg_replace('/%maxreclevel/', $maxreclevel, $param);
+		$param=preg_replace('/%maxfiles/', $maxfiles, $param);
+		$param=preg_replace('/%maxratio/', $maxratio, $param);
+		$param=preg_replace('/%bz2archivememlim/', $bz2archivememlim, $param);
+		$param=preg_replace('/%maxfilesize/', $maxfilesize, $param);
+		$param=preg_replace('/%file/', trim($file), $param);
 
-		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
+		if (! preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM))
 			$param=$param." ".escapeshellarg(trim($file));
 
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/", $command)) $command=escapeshellarg($command);	// Use quotes on command. Using escapeshellcmd fails.
 
 		$ret=$command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';

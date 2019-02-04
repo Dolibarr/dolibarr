@@ -97,7 +97,7 @@ elseif ($action == 'swapstatut' && $permissiontoedit)
 elseif ($action == 'deletecontact' && $permissiontoedit)
 {
 	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid",'int'));
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0)
 	{
@@ -116,7 +116,7 @@ elseif ($action == 'deletecontact' && $permissiontoedit)
  */
 
 $help_url='';
-llxHeader('',$langs->trans("SupplierProposals"),$help_url);
+llxHeader('', $langs->trans("SupplierProposals"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

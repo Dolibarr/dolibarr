@@ -32,7 +32,7 @@ $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+$result=restrictedArea($user, 'banque');
 
 
 /*
@@ -78,7 +78,7 @@ if ($result)
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td class="right">'.$objp->nombre.'</td>';
 		print '<td class="right">'.price(abs($objp->somme))."</td>";
-		print '<td class="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";
+		print '<td class="right">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</td>";
 		print "</tr>";
 		$i++;
 		$total += abs($objp->somme);

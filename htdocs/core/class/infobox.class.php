@@ -87,15 +87,15 @@ class InfoBox
                 if (! in_array($obj->box_id, $excludelist))
                 {
 
-                    if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
+                    if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
                     {
-                        $boxname = preg_replace('/\.php$/i','',$regs[1]);
+                        $boxname = preg_replace('/\.php$/i', '', $regs[1]);
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
                     }
                     else
                     {
-                        $boxname=preg_replace('/\.php$/i','',$obj->file);
+                        $boxname=preg_replace('/\.php$/i', '', $obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
 					}
 
@@ -107,7 +107,7 @@ class InfoBox
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
-                    	$box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+                    	$box=new $boxname($db, $obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
                         //$box=new stdClass();
 
                         // box properties
@@ -138,11 +138,11 @@ class InfoBox
                         {
                             foreach($box->depends as $moduleelem)
                             {
-                            	$arrayelem=explode('|',$moduleelem);
+                            	$arrayelem=explode('|', $moduleelem);
                             	$tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
                             	foreach($arrayelem as $module)
                             	{
-    	                        	$tmpmodule=preg_replace('/@[^@]+/','',$module);
+    	                        	$tmpmodule=preg_replace('/@[^@]+/', '', $module);
     	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                             		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                             	}
@@ -169,7 +169,7 @@ class InfoBox
         }
         else
 		{
-			dol_syslog($db->lasterror(),LOG_ERR);
+			dol_syslog($db->lasterror(), LOG_ERR);
             return array('error'=>$db->lasterror());
         }
 
@@ -224,23 +224,23 @@ class InfoBox
         $result = $db->query($sql);
         if ($result)
         {
-            $colonnes=explode('-',$boxorder);
+            $colonnes=explode('-', $boxorder);
             foreach ($colonnes as $collist)
             {
-                $part=explode(':',$collist);
+                $part=explode(':', $collist);
                 $colonne=$part[0];
                 $list=$part[1];
                 dol_syslog(get_class()."::saveboxorder column=".$colonne.' list='.$list);
 
                 $i=0;
-                $listarray=explode(',',$list);
+                $listarray=explode(',', $list);
                 foreach ($listarray as $id)
                 {
                     if (is_numeric($id))
                     {
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
-                        $ii=sprintf('%02d',$i);
+                        $ii=sprintf('%02d', $i);
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
                         $sql.= "(box_id, position, box_order, fk_user, entity)";
                         $sql.= " values (";
@@ -282,4 +282,3 @@ class InfoBox
         }
     }
 }
-

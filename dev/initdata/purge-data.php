@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/purge-data.php/i','',$_SERVER["PHP_SELF"]);
+$path=preg_replace('/purge-data.php/i', '', $_SERVER["PHP_SELF"]);
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -150,22 +150,22 @@ $sqls=array(
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".implode(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $mode = $argv[1];
 $option = $argv[2];
 
-if (empty($mode) || ! in_array($mode,array('test','confirm'))) {
+if (empty($mode) || ! in_array($mode, array('test','confirm'))) {
     print "Usage:  $script_file (test|confirm) (all|option) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
-    print "option can be ".implode(',',array_keys($sqls))."\n";
+    print "option can be ".implode(',', array_keys($sqls))."\n";
     exit(-1);
 }
 
-if (empty($option) || ! in_array($option, array_merge(array('all'),array_keys($sqls))) ) {
+if (empty($option) || ! in_array($option, array_merge(array('all'), array_keys($sqls))) ) {
     print "Usage:  $script_file (test|confirm) (all|option) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
-    print "option can be ".implode(',',array_keys($sqls))."\n";
+    print "option can be ".implode(',', array_keys($sqls))."\n";
     exit(-1);
 }
 
@@ -179,7 +179,7 @@ if (! empty($argv[3]))
 }
 
 //var_dump($user->db->database_name);
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'An admin user with login "admin" must exists to use this script.'."\n";
@@ -215,9 +215,9 @@ function processfamily($family)
     $error=0;
     foreach($sqls[$family] as $sql)
     {
-        if (preg_match('/^@/',$sql))
+        if (preg_match('/^@/', $sql))
         {
-            $newfamily=preg_replace('/@/','',$sql);
+            $newfamily=preg_replace('/@/', '', $sql);
             processfamily($newfamily);
             continue;
         }
@@ -275,4 +275,3 @@ else
 }
 
 $db->close();
-

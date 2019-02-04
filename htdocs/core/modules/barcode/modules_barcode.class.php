@@ -142,24 +142,24 @@ abstract class ModeleNumRefBarCode
         {
             $s.=$langs->trans("RequiredIfProduct").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == 1)
         {
             $s.=$langs->trans("RequiredIfService").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         /*$s.=$langs->trans("CanBeModifiedIfOk").': ';
@@ -167,14 +167,13 @@ abstract class ModeleNumRefBarCode
         $s.='<br>';
         $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
         */
-        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
         $s.='<br>';
 
-        $nextval=$this->getNextValue($soc,'');
+        $nextval=$this->getNextValue($soc, '');
         if (empty($nextval)) $nextval=$langs->trans("Undefined");
         $s.=$langs->trans("NextValue").': <b>'.$nextval.'</b><br>';
 
         return $s;
     }
 }
-

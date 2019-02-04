@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -58,7 +58,7 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
-foreach ( $tmpstatut2label as $key => $val )
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
 
 $errors = array ();
@@ -87,7 +87,7 @@ llxHeader('', $title, $helpurl);
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
 $sql .= " WHERE f.entity = " . $conf->entity;
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';

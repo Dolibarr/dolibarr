@@ -82,7 +82,7 @@ class box_prospect extends ModeleBoxes
 
 		$thirdpartystatic=new Client($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
 		if ($user->rights->societe->lire)
 		{
@@ -135,12 +135,12 @@ class box_prospect extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspCommStatut($objp->fk_stcomm,3)),
+                        'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
@@ -181,4 +181,3 @@ class box_prospect extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

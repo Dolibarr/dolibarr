@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016-2017  Jamal Elbaz             <jamelbaz@gmail.com>
- * Copyright (C) 2016       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -37,26 +37,26 @@ $langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 $error = 0;
 
 $mesg = '';
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel','alpha');
-$showaccountdetail = GETPOST('showaccountdetail','aZ09')?GETPOST('showaccountdetail','aZ09'):'no';
+$cancel = GETPOST('cancel', 'alpha');
+$showaccountdetail = GETPOST('showaccountdetail', 'aZ09')?GETPOST('showaccountdetail', 'aZ09'):'no';
 
 
-$date_startmonth=GETPOST('date_startmonth','int');
-$date_startday=GETPOST('date_startday','int');
-$date_startyear=GETPOST('date_startyear','int');
-$date_endmonth=GETPOST('date_endmonth','int');
-$date_endday=GETPOST('date_endday','int');
-$date_endyear=GETPOST('date_endyear','int');
+$date_startmonth=GETPOST('date_startmonth', 'int');
+$date_startday=GETPOST('date_startday', 'int');
+$date_startyear=GETPOST('date_startyear', 'int');
+$date_endmonth=GETPOST('date_endmonth', 'int');
+$date_endday=GETPOST('date_endday', 'int');
+$date_endyear=GETPOST('date_endyear', 'int');
 
 $nbofyear=1;
 
 // Date range
-$year=GETPOST('year','int');
+$year=GETPOST('year', 'int');
 if (empty($year))
 {
 	$year_current = strftime("%Y", dol_now());
@@ -78,7 +78,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	{
 		// We define date_start and date_end
 		$year_end=$year_start + ($nbofyear - 1);
-		$month_start=GETPOST("month",'int')?GETPOST("month",'int'):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$month_start=GETPOST("month", 'int')?GETPOST("month", 'int'):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
 		$date_startmonth = $month_start;
 		if (! GETPOST('month'))
 		{
@@ -92,12 +92,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			else $year_end++;
 		}
 		else $month_end=$month_start;
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 
 if (($date_start < dol_time_plus_duree($date_end, -1, 'y')) || ($date_start > $date_end))
@@ -127,7 +127,7 @@ if($cat_id == 0){
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
-if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta",'alpha');
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -172,8 +172,8 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$name=$langs->trans("AnnualByAccountDueDebtMode");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">', '</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultDue");
@@ -185,8 +185,8 @@ if ($modecompta=="CREANCES-DETTES")
 elseif ($modecompta=="RECETTES-DEPENSES") {
 	$name=$langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
-	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">', '</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultInOut");
@@ -233,13 +233,13 @@ print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'
 foreach($months as $k => $v){
 	if (($k+1) >= $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
 	}
 }
 foreach($months as $k => $v){
 	if (($k+1) < $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
 	}
 }
 print	'</tr>';

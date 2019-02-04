@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013       Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -45,7 +45,7 @@ if (! $user->rights->accounting->bind->write)
 
 
 $month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-if (GETPOST("year",'int')) $year_start = GETPOST("year",'int');
+if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
 else
 {
 	$year_start = dol_print_date(dol_now(), '%Y');
@@ -63,7 +63,7 @@ $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
 
 // Validate History
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

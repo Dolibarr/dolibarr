@@ -93,7 +93,7 @@ class CompanyBankAccount extends Account
 				if (! $notrigger)
 				{
 				   	// Call trigger
-					$result=$this->call_trigger('COMPANY_RIB_CREATE',$user);
+					$result=$this->call_trigger('COMPANY_RIB_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
 
@@ -168,7 +168,7 @@ class CompanyBankAccount extends Account
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_MODIFY',$user);
+			$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 			if(! $error )
@@ -276,7 +276,7 @@ class CompanyBankAccount extends Account
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_DELETE',$user);
+			$result=$this->call_trigger('COMPANY_RIB_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -415,4 +415,3 @@ class CompanyBankAccount extends Account
 		$this->socid = 0;
 	}
 }
-

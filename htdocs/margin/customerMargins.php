@@ -32,22 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe','','');
-$result = restrictedArea($user,'margins');
+$result = restrictedArea($user, 'societe', '', '');
+$result = restrictedArea($user, 'margins');
 
 
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -72,7 +72,7 @@ $invoicestatic=new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Clients"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Clients"));
 
 $text=$langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -116,8 +116,8 @@ else {
 	print '</td></tr>';
 }
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield)
 {
@@ -134,7 +134,7 @@ if (! $sortfield)
 }
 
 // Products
-$TRes = $form->select_produits_list('','','',20,0,'',1,2,1,0,'', 1);
+$TRes = $form->select_produits_list('', '', '', 20, 0, '', 1, 2, 1, 0, '', 1);
 
 $TProducts = array();
 foreach($TRes as $prod) {
@@ -205,8 +205,8 @@ $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) $sql.= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1', 'd.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))', 'd.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -237,7 +237,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 $sql .= " AND d.buy_price_ht <> 0";
 if ($client) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut";
 else $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -260,24 +260,24 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	if (! empty($client)) {
-  		print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.ref","","&amp;socid=".$socid,'',$sortfield,$sortorder);
-  		print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
+  		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+  		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$socid, 'align="center"', $sortfield, $sortorder);
 	}
 	else
-  		print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'',$sortfield,$sortorder);
-	print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+  		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$cumul_achat = 0;
 	$cumul_vente = 0;
 
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
 	{
@@ -308,13 +308,13 @@ if ($result)
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
 				print "<td align=\"center\">";
-				print dol_print_date($db->jdate($objp->datef),'day')."</td>";
+				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
 		  	}
 		  	else {
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-		   		print "<td>".$companystatic->getNomUrl(1,'margin')."</td>\n";
+		   		print "<td>".$companystatic->getNomUrl(1, 'margin')."</td>\n";
 		  	}
 
 			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
@@ -64,7 +64,7 @@ switch($action)
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);
-					foreach ( $tab as $key => $value )
+					foreach ($tab as $key => $value)
 					{
 						$ret[$key] = $value;
 					}
@@ -197,7 +197,7 @@ switch($action)
 		break;
 
 	case 'change_thirdparty':	// We have clicked on button "Modify" a thirdparty
-		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY','int');
+		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY', 'int');
 		if ($newthirdpartyid > 0)
 		{
 		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
@@ -233,4 +233,3 @@ $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 //var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
-

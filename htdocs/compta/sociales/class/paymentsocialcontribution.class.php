@@ -134,7 +134,7 @@ class PaymentSocialContribution extends CommonObject
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
-            $newvalue = price2num($value,'MT');
+            $newvalue = price2num($value, 'MT');
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -180,8 +180,8 @@ class PaymentSocialContribution extends CommonObject
 							$creditnotes=0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits=0;
-							$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits,'MT');
+							$alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
 								$result=$contrib->set_paid($user, '', '');
@@ -197,7 +197,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);
+		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
 		if($result < 0) $error++;
 
 		if ($totalamount != 0 && ! $error)
@@ -601,7 +601,7 @@ class PaymentSocialContribution extends CommonObject
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''), 'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -658,7 +658,7 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -736,7 +736,7 @@ class PaymentSocialContribution extends CommonObject
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

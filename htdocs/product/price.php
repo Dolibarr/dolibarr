@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2019 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -85,12 +85,12 @@ $hookmanager->initHooks(array('productpricecard','globalcard'));
 if ($cancel) $action='';
 
 $parameters=array('id'=>$id, 'ref'=>$ref);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_soc = '';
     }
@@ -99,7 +99,7 @@ if (empty($reshook))
     {
         require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
         $keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.GETPOST('pricelevel');
-        dolibarr_set_const($db, $keyforlabel, GETPOST('labelsellingprice','alpha'), 'chaine', 0, '', $conf->entity);
+        dolibarr_set_const($db, $keyforlabel, GETPOST('labelsellingprice', 'alpha'), 'chaine', 0, '', $conf->entity);
         $action = '';
     }
 
@@ -316,8 +316,8 @@ if (empty($reshook))
 		            // If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule
 		            if (in_array($mysoc->country_code, array('ES')))
 		            {
-    		            $localtax1 = get_localtax($tva_tx,1);
-	   	                $localtax2 = get_localtax($tva_tx,2);
+    		            $localtax1 = get_localtax($tva_tx, 1);
+	   	                $localtax2 = get_localtax($tva_tx, 2);
 		            }
 		        }
 		    }
@@ -383,7 +383,7 @@ if (empty($reshook))
 
 	if ($action == 'delete' && $user->rights->produit->supprimer)
 	{
-		$result = $object->log_price_delete($user, GETPOST('lineid','int'));
+		$result = $object->log_price_delete($user, GETPOST('lineid', 'int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -393,32 +393,32 @@ if (empty($reshook))
 	if ($action == 'activate_price_by_qty')
 	{
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
-		$level = GETPOST('level','int');
+		$level = GETPOST('level', 'int');
 		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
 	}
 	// Unset Price by quantity
 	if ($action == 'disable_price_by_qty')
 	{
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
-		$level = GETPOST('level','int');
+		$level = GETPOST('level', 'int');
 		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
 	}
 
 	if ($action == 'edit_price_by_qty')
 	{ // Edition d'un prix par quantité
-		$rowid = GETPOST('rowid','int');
+		$rowid = GETPOST('rowid', 'int');
 	}
 
 	// Add or update price by quantity
 	if ($action == 'update_price_by_qty')
 	{
 		// Récupération des variables
-		$rowid = GETPOST('rowid','int');
-		$priceid = GETPOST('priceid','int');
-		$newprice = price2num(GETPOST("price",'alpha'), 'MU');
+		$rowid = GETPOST('rowid', 'int');
+		$priceid = GETPOST('priceid', 'int');
+		$newprice = price2num(GETPOST("price", 'alpha'), 'MU');
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-		$quantity = GETPOST('quantity','int');
-		$remise_percent = price2num(GETPOST('remise_percent','alpha'));
+		$quantity = GETPOST('quantity', 'int');
+		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
@@ -462,27 +462,27 @@ if (empty($reshook))
 
 	if ($action == 'delete_price_by_qty')
 	{
-		$rowid = GETPOST('rowid','int');
+		$rowid = GETPOST('rowid', 'int');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
 			$sql .= " WHERE rowid = " . $rowid;
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
 		}
 	}
 
 	if ($action == 'delete_all_price_by_qty')
 	{
-		$priceid = GETPOST('priceid','int');
+		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
 		$sql .= " WHERE fk_product_price = " . $priceid;
 
 		$result = $db->query($sql);
 		} else {
-			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
 		}
 	}
 
@@ -495,7 +495,7 @@ if (empty($reshook))
 
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice','int');
+		$update_child_soc = GETPOST('updatechildprice', 'int');
 
 		// add price by customer
 		$prodcustprice->fk_soc = GETPOST('socid', 'int');
@@ -504,7 +504,7 @@ if (empty($reshook))
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
 
-		$tva_tx_txt = GETPOST("tva_tx",'alpha');
+		$tva_tx_txt = GETPOST("tva_tx", 'alpha');
 
 		$tva_tx = $tva_tx_txt;
 		$vatratecode = '';
@@ -551,14 +551,14 @@ if (empty($reshook))
 		if (! ($prodcustprice->fk_soc > 0))
 		{
 		    $langs->load("errors");
-		    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+		    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 		    $error++;
 		    $action='add_customer_price';
 		}
 		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min < $maxpricesupplier)
 		{
 		    $langs->load("errors");
-			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
+			setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')), null, 'errors');
 			$error++;
 			$action='add_customer_price';
 		}
@@ -595,7 +595,7 @@ if (empty($reshook))
 	{
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice','int');
+		$update_child_soc = GETPOST('updatechildprice', 'int');
 
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
@@ -650,7 +650,7 @@ if (empty($reshook))
 
 		if ($prodcustprice->price_min < $maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			setEventMessages($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')), null, 'errors');
+			setEventMessages($langs->trans("MinimumPriceLimit", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')), null, 'errors');
 			$error++;
 			$action='update_customer_price';
 		}
@@ -685,7 +685,7 @@ if (! empty($id) || ! empty($ref))
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
-$shortlabel = dol_trunc($object->label,16);
+$shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('SellingPrices');
@@ -709,7 +709,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $object->next_prev_filter=" fk_product_type = ".$object->type;
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -825,7 +825,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	    print '<table class="noborder tableforfield" width="100%">';
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("PriceLevel");
-		if ($user->admin) print ' <a href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'),0).'</a>';
+		if ($user->admin) print ' <a href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
 		print '</td>';
 		print '<td style="text-align: right">'.$langs->trans("SellingPrice").'</td>';
 		print '<td style="text-align: right">'.$langs->trans("MinPrice").'</td>';
@@ -1272,16 +1272,16 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		}
 		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-		    print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+		    print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</td>';
 		print '</tr>';
 
 		$parameters=array('colspan' => 2);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 
 		$parameters=array('colspan' => 2);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
 
@@ -1395,7 +1395,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			}
 			if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 			{
-				print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+				print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 			}
 			print '</td>';
 
@@ -1634,7 +1634,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-	$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+	$page = (GETPOST("page", 'int')?GETPOST("page", 'int'):0);
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $conf->liste_limit * $page;
 	$pageprev = $page - 1;
@@ -1710,7 +1710,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</td></tr>';
 
@@ -1801,7 +1801,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
 		{
-			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</tr>';
 

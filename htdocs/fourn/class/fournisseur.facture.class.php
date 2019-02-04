@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -500,7 +500,7 @@ class FactureFournisseur extends CommonInvoice
 				if (! $error)
 				{
                     // Call trigger
-                    $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
+                    $result=$this->call_trigger('BILL_SUPPLIER_CREATE', $user);
                     if ($result < 0) $error++;
                     // End call triggers
 				}
@@ -910,7 +910,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('BILL_SUPPLIER_UPDATE',$user);
+                $result=$this->call_trigger('BILL_SUPPLIER_UPDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1005,7 +1005,7 @@ class FactureFournisseur extends CommonInvoice
     			if ($result > 0)
     			{
     				// Create link between discount and invoice line
-    				$result=$remise->link_to_invoice($lineid,0,'supplier');
+    				$result=$remise->link_to_invoice($lineid, 0, 'supplier');
     				if ($result < 0)
     				{
     					$this->error=$remise->error;
@@ -1061,7 +1061,7 @@ class FactureFournisseur extends CommonInvoice
         if (! $error && ! $notrigger)
         {
             // Call trigger
-            $result=$this->call_trigger('BILL_SUPPLIER_DELETE',$user);
+            $result=$this->call_trigger('BILL_SUPPLIER_DELETE', $user);
             if ($result < 0)
             {
                 $this->db->rollback();
@@ -1142,7 +1142,7 @@ class FactureFournisseur extends CommonInvoice
         		$file = $dir . "/" . $ref . ".pdf";
         		if (file_exists($file))
         		{
-        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			if (! dol_delete_file($file, 0, 0, 0, $this)) // For triggers
         			{
         				$this->error='ErrorFailToDeleteFile';
         				$error++;
@@ -1213,7 +1213,7 @@ class FactureFournisseur extends CommonInvoice
         if ($resql)
         {
             // Call trigger
-            $result=$this->call_trigger('BILL_SUPPLIER_PAYED',$user);
+            $result=$this->call_trigger('BILL_SUPPLIER_PAYED', $user);
             if ($result < 0) $error++;
             // End call triggers
         }
@@ -1263,7 +1263,7 @@ class FactureFournisseur extends CommonInvoice
         if ($resql)
         {
             // Call trigger
-            $result=$this->call_trigger('BILL_SUPPLIER_UNPAYED',$user);
+            $result=$this->call_trigger('BILL_SUPPLIER_UNPAYED', $user);
             if ($result < 0) $error++;
             // End call triggers
         }
@@ -1318,7 +1318,7 @@ class FactureFournisseur extends CommonInvoice
         if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->ref_supplier))
         {
         	$langs->load("errors");
-        	$this->error=$langs->trans("ErrorFieldFormat",$langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString',$langs->transnoentitiesnoconv("CopyOf"));
+        	$this->error=$langs->trans("ErrorFieldFormat", $langs->transnoentities("RefSupplier")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
             return -1;
         }
         if (count($this->lines) <= 0)
@@ -1370,7 +1370,7 @@ class FactureFournisseur extends CommonInvoice
                         // We increase stock for product
                         $up_ht_disc=$this->lines[$i]->pu_ht;
                         if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr",$num));
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("InvoiceValidatedInDolibarr", $num));
                         if ($result < 0) { $error++; }
                         unset($this->line);
                     }
@@ -1381,7 +1381,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $error && empty($notrigger))
             {
                 // Call trigger
-                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
+                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1398,8 +1398,8 @@ class FactureFournisseur extends CommonInvoice
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
 
-            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$oldref;
-            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref;
+            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$oldref;
+            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$newref;
             		if (file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -1408,11 +1408,11 @@ class FactureFournisseur extends CommonInvoice
             			{
             				dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
-	                        	$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+	                        	$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 	                        	$dirsource=$fileentry['path'].'/'.$dirsource;
 	                        	$dirdest=$fileentry['path'].'/'.$dirdest;
 	                        	@rename($dirsource, $dirdest);
@@ -1503,7 +1503,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $error && empty($notrigger))
             {
                 // Call trigger
-                $result=$this->call_trigger('BILL_SUPPLIER_UNVALIDATE',$user);
+                $result=$this->call_trigger('BILL_SUPPLIER_UNVALIDATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1745,10 +1745,10 @@ class FactureFournisseur extends CommonInvoice
 			if ($result > 0)
 			{
 				// Reorder if child line
-				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				if (! empty($fk_parent_line)) $this->line_order(true, 'DESC');
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result=$this->update_price(1,'auto',0,$this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				$result=$this->update_price(1, 'auto', 0, $this->thirdparty);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -1829,7 +1829,7 @@ class FactureFournisseur extends CommonInvoice
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-        $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc, $this->thirdparty);
+        $localtaxes_type=getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
         // Clean vat code
         $vat_src_code='';
@@ -1914,7 +1914,7 @@ class FactureFournisseur extends CommonInvoice
 		    $this->errors[] = $line->error;
 	    } else {
 		    // Update total price into invoice record
-		    $res = $this->update_price('','auto');
+		    $res = $this->update_price('', 'auto');
 	    }
 
 	    return $res;
@@ -2165,7 +2165,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response->label=$langs->trans("SupplierBillsToPay");
 
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
-	        $response->img=img_object($langs->trans("Bills"),"bill");
+	        $response->img=img_object($langs->trans("Bills"), "bill");
 
             $facturestatic = new FactureFournisseur($this->db);
 
@@ -2219,7 +2219,7 @@ class FactureFournisseur extends CommonInvoice
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -2267,7 +2267,7 @@ class FactureFournisseur extends CommonInvoice
 
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= ($max?dol_trunc($ref,$max):$ref);
+        if ($withpicto != 2) $result.= ($max?dol_trunc($ref, $max):$ref);
         $result .= $linkend;
 
         return $result;
@@ -2312,7 +2312,7 @@ class FactureFournisseur extends CommonInvoice
 
         $obj = new $classname();
         $numref = "";
-        $numref = $obj->getNumRef($soc,$this,$mode);
+        $numref = $obj->getNumRef($soc, $this, $mode);
 
         if ($numref != "")
         {
@@ -3025,7 +3025,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 			global $langs, $user;
 
 			// Call trigger
-			if ($this->call_trigger('LINEBILL_SUPPLIER_UPDATE',$user) < 0) {
+			if ($this->call_trigger('LINEBILL_SUPPLIER_UPDATE', $user) < 0) {
 				$this->db->rollback();
 				return -1;
 			}
@@ -3163,7 +3163,7 @@ class SupplierInvoiceLine extends CommonObjectLine
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEBILL_SUPPLIER_CREATE',$user);
+                $result=$this->call_trigger('LINEBILL_SUPPLIER_CREATE', $user);
                 if ($result < 0)
                 {
                     $this->db->rollback();

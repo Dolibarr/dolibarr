@@ -40,7 +40,7 @@ $error=0;
 
 // -------------------- START OF YOUR CODE HERE --------------------
 @set_time_limit(0);							// No timeout for this script
-define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
+define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Load Dolibarr environment
 $res=0;
@@ -61,8 +61,8 @@ if (! $res) die("Include of master fails");
 $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
-$result=$user->fetch('','admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('',$user->error); exit; }
+$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (! $result > 0) { dol_print_error('', $user->error); exit; }
 $user->getrights();
 
 

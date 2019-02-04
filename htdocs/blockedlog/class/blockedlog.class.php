@@ -385,7 +385,7 @@ class BlockedLog
 		$this->object_data=new stdClass();
 		// Add fields to exclude
 		$arrayoffieldstoexclude = array(
-			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','civility_id','contact','contact_id',
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','last_main_doc','civility_id','contact','contact_id',
 			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
 			'linkedObjectsIds','linkedObjects','fk_delivery_address',
 			'context',
@@ -1053,9 +1053,9 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc,true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine',0,'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT=$fingerprint;
 		}

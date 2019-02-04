@@ -32,16 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'prelevement','','','bons');
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawStatistics"));
+llxHeader('', $langs->trans("WithdrawStatistics"));
 
 print load_fiche_titre($langs->trans("Statistics"));
 
@@ -73,7 +73,7 @@ if ($resql)
 print '<br>';
 print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
 
-$ligne=new LignePrelevement($db,$user);
+$ligne=new LignePrelevement($db, $user);
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -100,20 +100,20 @@ if ($resql)
 
 		print '<tr class="oddeven"><td>';
 
-		print $ligne->LibStatut($row[2],1);
+		print $ligne->LibStatut($row[2], 1);
 		//print $st[$row[2]];
 		print '</td><td align="center">';
 		print $row[1];
 
 		print '</td><td align="right">';
-		print round($row[1]/$nbtotal*100,2)." %";
+		print round($row[1]/$nbtotal*100, 2)." %";
 
 		print '</td><td align="right">';
 
 		print price($row[0]);
 
 		print '</td><td align="right">';
-		print round($row[0]/$total*100,2)." %";
+		print round($row[0]/$total*100, 2)." %";
 		print '</td></tr>';
 		
 		$i++;
@@ -200,13 +200,13 @@ if ($resql)
 		print '</td><td align="center">'.$row[1];
 
 		print '</td><td align="right">';
-		print round($row[1]/$nbtotal*100,2)." %";
+		print round($row[1]/$nbtotal*100, 2)." %";
 
 		print '</td><td align="right">';
 		print price($row[0]);
 
 		print '</td><td align="right">';
-		print round($row[0]/$total*100,2)." %";
+		print round($row[0]/$total*100, 2)." %";
 
 		print '</td></tr>';
 		
@@ -228,4 +228,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-

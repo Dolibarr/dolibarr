@@ -54,7 +54,7 @@ $confirmed=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -90,9 +90,9 @@ if (! isset($argv[1])) {
 foreach($argv as $key => $val)
 {
 	if ($val == 'commitiferror') $forcecommit=1;
-	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
-	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) $excludeuser=explode(',', $reg[1]);
+	if (preg_match('/-y$/', $val, $reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -102,7 +102,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
 print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
 if (! empty($conf->global->LDAP_FILTER_CONNECTION)) print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n";	// Note: filter is defined into function getRecords
 else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
@@ -114,8 +114,8 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "excludeuser=".join(',',$excludeuser)."\n";
-print "Mapped LDAP fields=".join(',',$required_fields)."\n";
+print "excludeuser=".join(',', $excludeuser)."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
 if (! $confirmed)
@@ -176,7 +176,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'user');	// Fiter on 'user' filter param
+	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'user');	// Fiter on 'user' filter param
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
@@ -185,7 +185,7 @@ if ($result >= 0)
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			// If login into exclude list, we discard record
-			if (in_array($ldapuser[$conf->global->LDAP_FIELD_LOGIN],$excludeuser))
+			if (in_array($ldapuser[$conf->global->LDAP_FIELD_LOGIN], $excludeuser))
 			{
 				print $langs->transnoentities("UserDiscarded").' # '.$key.': login='.$ldapuser[$conf->global->LDAP_FIELD_LOGIN].' --> Discarded'."\n";
 				continue;
@@ -194,9 +194,9 @@ if ($result >= 0)
 			$fuser = new User($db);
 
 			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
-				$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
-			} elseif($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
-				$fuser->fetch('',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le login
+				$fuser->fetch('', '', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
+			} elseif ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
+				$fuser->fetch('', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le login
 			}
 
 			// Propriete membre
@@ -288,20 +288,20 @@ if ($result >= 0)
 		}
 		else
 		{
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone",$error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	}
 	else
 	{
-		dol_print_error('',$ldap->error);
+		dol_print_error('', $ldap->error);
 		$error++;
 	}
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	dol_print_error('', $ldap->error);
 	$error++;
 }
 
@@ -319,4 +319,3 @@ function dolValidElement($element)
 {
 	return (trim($element) != '');
 }
-
