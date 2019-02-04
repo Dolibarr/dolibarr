@@ -64,13 +64,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
-    	<td class="linkedcol-amount" align="right"><?php
+    	<td class="linkedcol-amount right"><?php
     		if ($user->rights->propale->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td class="linkedcol-statut" align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td class="linkedcol-action" align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }
