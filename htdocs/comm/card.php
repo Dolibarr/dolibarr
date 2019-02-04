@@ -876,7 +876,7 @@ if ($object->id > 0)
                     print '<td class="right"><b>!!!</b></td>';
                 }
 
-                print '<td align="right" class="nowrap" width="100" >' . $sendingstatic->LibStatut($objp->statut, 5) . '</td>';
+                print '<td class="nowrap right" width="100" >' . $sendingstatic->LibStatut($objp->statut, 5) . '</td>';
                 print "</tr>\n";
                 $i++;
             }
@@ -942,7 +942,7 @@ if ($object->id > 0)
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dcon), 'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
-				print '<td align="right" class="nowraponall">';
+				print '<td class="nowraponall right">';
 				print $contrat->getLibStatut(4);
 				print "</td>\n";
 				print '</tr>';
@@ -1004,7 +1004,7 @@ if ($object->id > 0)
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"), "propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
-				print '<td align="right" class="nowrap" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
+				print '<td class="nowrap right" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
 
 				$i++;
@@ -1110,7 +1110,7 @@ if ($object->id > 0)
 					print '</td>';
 				}
 
-				print '<td align="right" class="nowrap" style="min-width: 60px">';
+				print '<td class="nowrap right" style="min-width: 60px">';
 				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
 				print ($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
 				print '</td>';
@@ -1205,7 +1205,7 @@ if ($object->id > 0)
     				print '</td>';
 				}
 
-				print '<td align="right" class="nowrap" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->statut, 5, $objp->am)).'</td>';
+				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->statut, 5, $objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
 			}

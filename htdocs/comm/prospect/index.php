@@ -220,7 +220,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			if ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
 		}
