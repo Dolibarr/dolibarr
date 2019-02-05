@@ -195,4 +195,4 @@ NoEmailSentToMember=Aucun e-mail envoyé à l'adhérent
 EmailSentToMember=Email envoyé à l'adhérent à %s
 SendReminderForExpiredSubscriptionTitle=Envoyer une relance par mail pour les cotisations expirées
 SendReminderForExpiredSubscription=Envoyer un rappel par e-mail aux membres lorsque l'adhésion est sur le point d'expirer (le paramètre est le nombre de jours avant la fin de l'adhésion pour envoyer le rappel. Il peut s'agir d'une liste de jours séparé par un point-virgule, par exemple '10;5;0;-5')
-YouMayFindYourInvoceInThisEmail=You pourrez trouver votre facture en pièce jointe à cet email
+YouMayFindYourInvoiceInThisEmail=You pourrez trouver votre facture en pièce jointe à cet email

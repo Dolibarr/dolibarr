@@ -196,4 +196,4 @@ EmailSentToMember=Email sent to member at %s
 SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired subscription
 SendReminderForExpiredSubscription=Send reminder by email to members when subscription is about to expire (parameter is number of days before end of subscription to send the remind. It can be a list of days separated by a semicolon, for example '10;5;0;-5')
 MembershipPaid=Membership paid for current period (until %s)
-YouMayFindYourInvoceInThisEmail=You may find your invoice attached to this email
+YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
