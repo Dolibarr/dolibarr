@@ -194,7 +194,7 @@ class WebsitePage extends CommonObject
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
 			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-			    if ($aliasalt)	$sql .= " AND t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%'";
+			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
 			}
 		}
         $sql .= $this->db->plimit(1);
