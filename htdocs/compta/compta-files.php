@@ -145,7 +145,8 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 case "InvoiceSupplier":
                     $tmpinvoicesupplier->fetch($objd->id);
                     $ref=dol_sanitizeFileName($tmpinvoicesupplier->ref);
-                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($tmpinvoicesupplier->id,2,0,0,$tmpinvoicesupplier,'invoice_supplier').$ref;
+                    $subdir=get_exdir($tmpinvoicesupplier->id,2,0,0,$tmpinvoicesupplier,'invoice_supplier').$ref;
+                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
                      $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "ExpenseReport":
