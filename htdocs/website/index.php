@@ -116,6 +116,10 @@ if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+    if ($res == 0)
+    {
+        $res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), null, $pageref);
+    }
 
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($res >= 0 && $object->id > 0)
