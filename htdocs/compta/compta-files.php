@@ -227,35 +227,39 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 /*
 *ZIP creation
 */
-if ($result && $action == "dl")
+if ($result && $action == "dl" &&  )
 {
-    dol_delete_file($zip);
+    if(extension_loaded('zip')){
+        dol_delete_file($zip);
 
-    $log='date,type,ref,total,paid,filename,item_id'."\n";
-    $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.($date_start)."-".($date_stop).'_export.zip';
+        $log='date,type,ref,total,paid,filename,item_id'."\n";
+        $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.str_replace('/','.',dol_print_date($startDate,'day')).'-'.str_replace('/','.',dol_print_date($stopDate,'day')).'_export.zip';
 
-    $zip = new ZipArchive;
-    $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
-    if ($res)
-    {
-        foreach ($filesarray as $key=> $file)
+        $zip = new ZipArchive;
+        $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
+        if ($res)
         {
-                if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
-                $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
+            foreach ($filesarray as $key=> $file)
+            {
+                    if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
+                    $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
+            }
+            $zip->addFromString('transactions.csv', $log);
+            $zip->close();
+            //empty output buffer to avoid corrupted files
+            ob_clean();
+            ///Then download the zipped file.
+            header('Content-Type: application/zip');
+            header('Content-disposition: attachment; filename='.basename($zipname));
+            header('Content-Length: ' . filesize($zipname));
+            readfile($zipname);
+
+            dol_delete_file($zipname);
+
+            exit();
         }
-        $zip->addFromString('transactions.csv', $log);
-        $zip->close();
-        //empty output buffer to avoid corrupted files
-        ob_clean();
-        ///Then download the zipped file.
-        header('Content-Type: application/zip');
-        header('Content-disposition: attachment; filename='.basename($zipname));
-        header('Content-Length: ' . filesize($zipname));
-        readfile($zipname);
-
-        dol_delete_file($zipname);
-
-        exit();
+    }else{
+        setEventMessage('PHPZIPExtentionNotLoaded','errors')
     }
 }
 
