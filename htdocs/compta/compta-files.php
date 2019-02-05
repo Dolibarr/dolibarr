@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2019      Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2019      Patrick Delcroix   <pmpdelcroix@gmail.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- *  \file       htdocs/compta/recap-compta.php
- *      \ingroup    compta
- *  \brief      Page de fiche recap customer
+ *  \file       htdocs/compta/compta-files.php
+ *  \ingroup    compta
+ *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 
 require '../main.inc.php';
@@ -59,7 +59,7 @@ $action =GETPOST('action','alpha');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('comptafilescard','globalcard'));
+$hookmanager->initHooks(array('comptafileslist','globallist'));
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
