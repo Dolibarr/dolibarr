@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
- *
+ * Copyright (C) 2019      Patrick Delcroix   <pmpdelcroix@gmail.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,45 +16,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
- *  \file       htdocs/compta/compta-files.php
- *  \ingroup    compta
- *  \brief      Page to show portoflio and files of a thirdparty and download it
+ *  \file       htdocs/compta/recap-compta.php
+ *      \ingroup    compta
+ *  \brief      Page de fiche recap customer
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+$langs->load("companies");
+if (! empty($conf->facture->enabled)) $langs->load("bills");
 
-$langs->loadLangs(array("accountancy","bills"));
-
-$date_start =GETPOST('date_start', 'alpha');
-$date_startDay= GETPOST('date_startday', 'int');
-$date_startMonth= GETPOST('date_startmonth', 'int');
-$date_startYear= GETPOST('date_startyear', 'int');
-$date_start=($date_startDay)?dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear):strtotime($date_start);
-$date_stop =GETPOST('date_stop', 'alpha');
-$date_stopDay= GETPOST('date_stopday', 'int');
-$date_stopMonth= GETPOST('date_stopmonth', 'int');
-$date_stopYear= GETPOST('date_stopyear', 'int');
+$date_start =GETPOST('date_start','alpha');
+$date_startDay= GETPOST('date_startday','int');
+$date_startMonth= GETPOST('date_startmonth','int');
+$date_startYear= GETPOST('date_startyear','int');
+$date_start=($date_startDay)?dol_mktime(0,0,0,$date_startMonth,$date_startDay,$date_startYear):strtotime($date_start);
+$date_stop =GETPOST('date_stop','alpha');
+$date_stopDay= GETPOST('date_stopday','int');
+$date_stopMonth= GETPOST('date_stopmonth','int');
+$date_stopYear= GETPOST('date_stopyear','int');
 //FIXME doldate
-$date_stop=($date_stopDay)?dol_mktime(0, 0, 0, $date_stopMonth, $date_stopDay, $date_stopYear):strtotime($date_stop);
-$action =GETPOST('action', 'alpha');
+$date_stop=($date_stopDay)?dol_mktime(0,0,0,$date_stopMonth,$date_stopDay,$date_stopYear):strtotime($date_stop);
+$action =GETPOST('action','alpha');
+// Security check
+//if ($user->societe_id) $id=$user->societe_id;
+//$result = restrictedArea($user, 'societe', $id, '&societe');
+
+//$object = new Societe($db);
+//if ($id > 0) $object->fetch($id);
+
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('comptafileslist','globallist'));
+$hookmanager->initHooks(array('comptafilescard','globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -75,24 +86,24 @@ if (empty($conf->compta->enabled) && empty($conf->accounting->enabled)) {
 if ($user->societe_id > 0)
     accessforbidden();
 
-
-
 /*
  * Actions
  */
-
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+/*
+ * Fetch the lines/files from db /
+ */
 $filesarray=array();
 $result=false;
 if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
-    $sql="SELECT rowid as id, ref as ref,paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
+    $sql="SELECT rowid as id, facnumber as ref,paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
     $sql.=" UNION ALL";
-    $sql.=" SELECT rowid as id, ref, paye as paid, total_ttc, fk_soc, datef as date, 'InvoiceSupplier' as item  FROM ".MAIN_DB_PREFIX."facture_fourn";
+    $sql.=" SELECT rowid as id, ref as ref, paye as paid, total_ttc, fk_soc, datef as date, 'InvoiceSupplier' as item  FROM ".MAIN_DB_PREFIX."facture_fourn";
     $sql.=" WHERE datef between ".$wheretail;
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, ref, paid, total_ttc, fk_user_author as fk_soc, date_fin as date,'ExpenseReport' as item  FROM ".MAIN_DB_PREFIX."expensereport";
@@ -133,14 +144,15 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                     break;
                 case "InvoiceSupplier":
                     $tmpinvoicesupplier->fetch($objd->id);
-                    $subdir=get_exdir(0, 0, 0, 1, $tmpinvoicesupplier, 'invoice_supplier').'/'.dol_sanitizeFileName($objd->ref);
-                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
+                    $ref=dol_sanitizeFileName($tmpinvoicesupplier->ref);
+                    $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($tmpinvoicesupplier->id,2,0,0,$tmpinvoicesupplier,'invoice_supplier').$ref;
+                     $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
-                case "Expense":
+                case "ExpenseReport":
                     $subdir=dol_sanitizeFileName($objd->ref);
+
                     $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
+                                        $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "Salary":
                     $subdir=dol_sanitizeFileName($objd->id);
@@ -176,7 +188,7 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                     $nofile['ref']=$objd->ref;
                     $nofile['fk']=$objd->fk_soc;
                     $nofile['item']=$objd->item;
-
+                    $nofile['id']=$objd->id;
                     $filesarray[]=$nofile;
                 }
                 else
@@ -189,9 +201,9 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                         $file['ref']=$objd->ref;
                         $file['fk']=$objd->fk_soc;
                         $file['item']=$objd->item;
+                        $file['id']=$objd->id;
                         $file['link']=$link.$file['name'];
                         $file['relpathnamelang'] = $langs->trans($file['item']).'/'.$file['name'];
-
                         $filesarray[]=$file;
                     }
                 }
@@ -206,15 +218,15 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 
      $db->free($resd);
 }
-
 /*
  * cleanup of old ZIP
  */
 //FIXME
+
+
 /*
 *ZIP creation
 */
-
 if ($result && $action == "dl")
 {
     dol_delete_file($zip);
@@ -247,10 +259,12 @@ if ($result && $action == "dl")
 }
 
 
-/*
- * View
- */
+// None
 
+
+/*
+ *      View
+ */
 llxHeader('', $title, $help_url);
 
 $h=0;
@@ -300,7 +314,7 @@ if (!empty($date_start) && !empty($date_stop))
 
     print '<br>';
 
-    print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+    print '<div class="div-table-responsive">';         // You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
@@ -344,7 +358,8 @@ if (!empty($date_start) && !empty($date_stop))
                             print dol_print_date($data['date'], 'day');
                             print "</td>\n";
                             print '<td aling="left">'.$data['item'].'</td>';
-                            print '<td aling="left">'.$data['ref'].'</td>';
+                            print '<td>'.getNomUrl($data['item'],1,$data['id'])."</td>";
+//                            print '<td aling="left">'.$data['ref'].'</td>';
 
                             // File link
                             print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
@@ -373,3 +388,78 @@ if (!empty($date_start) && !empty($date_stop))
 
 llxFooter();
 $db->close();
+
+function getNomUrl($type, $htmlcontent='1', $id=0,$ref=''){
+    global $db;
+    $object=null;
+    $link='';
+    switch (strtolower(str_replace('_', '', $type))){
+        case "supplier":
+        case "fournisseur":
+            $type="Fournisseur";
+            if (!class_exists($type)) break;
+        case "customer":
+        case "societe":
+           $type="Societe";
+            break;
+        case "invoice":
+        case "facture":
+        case "invoicecustomer":
+        case "customerinvoice":
+           $type="Facture";
+            break;
+        case "invoicesupplier":
+        case "supplierinvoice":
+        case "facturefourn":
+            $type="FactureFournisseur";
+            break;
+        case "expense":
+
+            break;
+        case "bankaccount":
+            $type="Account";
+            break;
+        case "salary":
+            $type="PaymentSalary";
+            break;
+        case "order":
+        case "customerorder":
+        case "ordercustomer":
+            $type="Commande";
+            break;
+        case "supplierorder":
+        case "ordersupplier":
+            $type="FactureFournisseur";
+            break;
+        case "subscriber":
+            $type="Adherent";
+            break;
+        case "donation":
+            $type="Don";
+            break;
+        case "charge":
+        case "healthcareexpense":
+        case "socialcontributions":
+            $type="Chargesociales";
+           break;
+        case "payment":
+            $type= "Paiement";
+            break;
+        case "vat":
+            $type="TVA";
+        case "expense":
+            $type="ExpenseReport";
+        default:
+            break;
+
+    }
+    if (class_exists($type)){
+        $object = new $type($db);
+        $object->fetch($id);
+        $link = $object->getNomUrl();
+    }else{
+        $link="ERROR: type:${$type} not supported or class not loaded";
+    }
+
+    return $link;
+}
