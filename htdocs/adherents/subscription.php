@@ -673,7 +673,7 @@ if ($rowid > 0)
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
-        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
+        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number, ba.currency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -726,8 +726,9 @@ if ($rowid > 0)
 						$accountstatic->id=$objp->baid;
 						$accountstatic->number=$objp->number;
 						$accountstatic->account_number=$objp->account_number;
+						$accountstatic->country_code=$obj->currency_code;
 
-						if (! empty($conf->accounting->enabled))
+						if (! empty($conf->accounting->enabled) && $objp->fk_accountancy_journal > 0)
 						{
 							$accountingjournal = new AccountingJournal($db);
 							$accountingjournal->fetch($objp->fk_accountancy_journal);
