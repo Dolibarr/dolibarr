@@ -107,7 +107,7 @@ class FormContract
 					}
 					else
 					{
-						$labeltoshow=dol_trunc($obj->ref,18);
+						$labeltoshow=dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)

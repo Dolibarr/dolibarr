@@ -111,7 +111,7 @@ class Link extends CommonObject
 
             if ($this->id > 0) {
                 // Call trigger
-                $result=$this->call_trigger('LINK_CREATE',$user);
+                $result=$this->call_trigger('LINK_CREATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             } else {
@@ -136,7 +136,7 @@ class Link extends CommonObject
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
 
-                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result=-1;
             }
             else
@@ -174,7 +174,7 @@ class Link extends CommonObject
         }
 
         // Clean parameters
-        $this->url       = clean_url($this->url,1);
+        $this->url       = clean_url($this->url, 1);
         if (empty($this->label)) $this->label = basename($this->url);
         $this->label     = trim($this->label);
 
@@ -197,7 +197,7 @@ class Link extends CommonObject
             if ($call_trigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINK_MODIFY',$user);
+                $result=$this->call_trigger('LINK_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -365,7 +365,7 @@ class Link extends CommonObject
         $error = 0;
 
         // Call trigger
-        $result=$this->call_trigger('LINK_DELETE',$user);
+        $result=$this->call_trigger('LINK_DELETE', $user);
         if ($result < 0) return -1;
         // End call triggers
 

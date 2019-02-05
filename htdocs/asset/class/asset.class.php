@@ -327,13 +327,13 @@ class Asset extends CommonObject
 		$label.= '<br>';
 		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-		$url = dol_buildpath('/assets/card.php',1).'?id='.$this->id;
+		$url = dol_buildpath('/assets/card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -371,7 +371,7 @@ class Asset extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -394,28 +394,28 @@ class Asset extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 

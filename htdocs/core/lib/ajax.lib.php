@@ -332,7 +332,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
 	global $langs;
 
-	$newtitle=dol_textishtml($title)?dol_string_nohtmltag($title,1):$title;
+	$newtitle=dol_textishtml($title)?dol_string_nohtmltag($title, 1):$title;
 	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg.= $message;
 	$msg.= '</div>'."\n";
@@ -390,7 +390,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
     $msg="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script>
         	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		$(\''.(preg_match('/^\./', $htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
@@ -489,8 +489,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax))
 	{
-		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 	else
 	{
@@ -530,8 +530,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 		</script>'."\n";
 
 		$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
-		$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
+		$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"), 'switch_on'):img_picto($langs->trans("Disabled"), 'switch_off')).'</span>';
+		$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"), 'switch_off'):img_picto($langs->trans("Enabled"), 'switch_on')).'</span>';
 		$out.="\n";
 	}
 
@@ -618,8 +618,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
-    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
     return $out;
 }

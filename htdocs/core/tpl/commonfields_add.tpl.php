@@ -51,7 +51,7 @@ foreach($object->fields as $key => $val)
 	print '>';
 	print $langs->trans($val['label']);
     if(!empty($val['help'])){
-        print $form->textwithpicto('',$langs->trans($val['help']));
+        print $form->textwithpicto('', $langs->trans($val['help']));
     }
 	print '</td>';
 	print '<td>';

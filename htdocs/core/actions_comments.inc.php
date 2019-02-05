@@ -40,8 +40,8 @@ if ($action == 'addcomment')
 	{
 		$comment->description = $description;
 		$comment->datec = time();
-		$comment->fk_element = GETPOST('id','int');
-		$comment->element_type = GETPOST('comment_element_type','alpha');
+		$comment->fk_element = GETPOST('id', 'int');
+		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;
 		if ($comment->create($user) > 0)
@@ -52,7 +52,7 @@ if ($action == 'addcomment')
 		}
 		else
 		{
-			setEventMessages($comment->error, $comment->errors,'errors');
+			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action='';
 		}
 	}
@@ -69,7 +69,7 @@ if ($action == 'deletecomment')
 		}
 		else
 		{
-			setEventMessages($comment->error, $comment->errors,'errors');
+			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action='';
 		}
 	}

@@ -32,17 +32,17 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry'];
 ?>
 
 <br>
 
-<form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'); ?>">
+<form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int'); ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="id" value="<?php echo GETPOST('id','int'); ?>">
+<input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">

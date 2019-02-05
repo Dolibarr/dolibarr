@@ -64,15 +64,15 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		$texte.= '<input type="hidden" name="maskconstchequereceipts" value="CHEQUERECEIPTS_THYME_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CheckReceiptShort"),$langs->transnoentities("CheckReceiptShort"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CheckReceiptShort"),$langs->transnoentities("CheckReceiptShort"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskchequereceipts" value="'.$conf->global->CHEQUERECEIPTS_THYME_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskchequereceipts" value="'.$conf->global->CHEQUERECEIPTS_THYME_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -95,7 +95,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -127,7 +127,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'bordereau_cheque','ref','',$objsoc,$object->date_bordereau);
+		$numFinal=get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $object->date_bordereau);
 
 		return  $numFinal;
 	}
@@ -144,6 +144,6 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
     function chequereceipt_get_num($objsoc, $objforref)
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$objforref);
+        return $this->getNextValue($objsoc, $objforref);
     }
 }

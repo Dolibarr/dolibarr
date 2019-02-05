@@ -40,14 +40,14 @@ $langs->loadLangs(array("companies","website"));
 $search_status=GETPOST('search_status');
 
 // Security check
-$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
+$id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -63,16 +63,16 @@ $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
-$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount','','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount', '', 'search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($objectwebsiteaccount->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
@@ -110,13 +110,13 @@ if ($id > 0)
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel','alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -126,7 +126,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
     	foreach($objectwebsiteaccount->fields as $key => $val)
     	{
@@ -135,8 +135,8 @@ if (empty($reshook))
     	$toselect='';
     	$search_array_options=array();
     }
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
-    	|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+    	|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
     {
     	$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
@@ -251,7 +251,7 @@ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->att
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
+$sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."societe_account as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_account_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('societeaccount').")";
@@ -284,7 +284,7 @@ $sql.=$hookmanager->resPrint;
  $sql.=$hookmanager->resPrint;
  */
 
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -343,7 +343,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
 }
 
 /*$moreforfilter = '';
@@ -414,7 +414,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
 
@@ -422,7 +422,7 @@ print '</tr>'."\n";
 $needToFetchEachLine=0;
 foreach ($extrafields->attribute_computed as $key => $val)
 {
-	if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 }
 
 
@@ -530,7 +530,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
+if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
@@ -540,13 +540,13 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 
 	// Show list of available documents
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=str_replace('&amp;','&',$param);
+	$urlsource.=str_replace('&amp;', '&', $param);
 
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->mymodule->read;
 	$delallowed=$user->rights->mymodule->create;
 
-	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

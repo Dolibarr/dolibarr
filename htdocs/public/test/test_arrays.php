@@ -1,6 +1,6 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
@@ -69,7 +69,7 @@ else
 	);
     */
 
-	llxHeader('','','','',0,0,$arrayjs,$arraycss);
+	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 
@@ -211,7 +211,7 @@ if (! empty($moreforfilter))
     print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print $moreforfilter;
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print '</div>';
 }
@@ -221,9 +221,9 @@ if (! empty($moreforfilter))
 <table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
 <thead>
 <tr class="liste_titre">
-<?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title3'),0,$_SERVER["PHP_SELF"],'ccc','','','align="center"',$sortfield,$sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title1'), 0, $_SERVER["PHP_SELF"], 'aaa', '', '', 'align="left"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title2'), 0, $_SERVER["PHP_SELF"], 'bbb', '', '', 'align="right"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title3'), 0, $_SERVER["PHP_SELF"], 'ccc', '', '', 'align="center"', $sortfield, $sortorder); ?>
 </tr>
 </thead>
 <tbody>

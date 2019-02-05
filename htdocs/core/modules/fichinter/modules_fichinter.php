@@ -57,7 +57,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -186,7 +186,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
+	$tmp=explode(':', $modele, 2);
     if (! empty($tmp[1]))
     {
         $modele=$tmp[0];
@@ -196,7 +196,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
     	foreach(array('doc','pdf') as $prefix)
@@ -204,7 +204,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
     		if (file_exists($file))
     		{
     			$filefound=1;
@@ -238,13 +238,13 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"fichinter_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "fichinter_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}
 }

@@ -60,7 +60,7 @@ function accounting_prepare_head(AccountingAccount $object)
  */
 function clean_account($account)
 {
-	$account = rtrim($account,"0");
+	$account = rtrim($account, "0");
 
 	return $account;
 }

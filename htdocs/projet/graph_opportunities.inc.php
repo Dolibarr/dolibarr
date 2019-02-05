@@ -97,7 +97,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
 	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
 	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
-	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 	    print "</table>";
 	    print "</div>";
 

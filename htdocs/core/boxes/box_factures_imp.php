@@ -82,7 +82,7 @@ class box_factures_imp extends ModeleBoxes
         $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
 
 		if ($user->rights->facture->lire)
 		{
@@ -144,7 +144,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
 					}
 
                     $this->info_box_contents[$line][] = array(
@@ -167,12 +167,12 @@ class box_factures_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datelimite,'day'),
+                        'text' => dol_print_date($datelimite, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
                     );
 
 					$line++;

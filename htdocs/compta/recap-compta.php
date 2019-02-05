@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
-$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
+$id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 
 // Security check
 if ($user->societe_id) $id=$user->societe_id;
@@ -45,10 +45,10 @@ if ($id > 0) $object->fetch($id);
 $hookmanager->initHooks(array('recapcomptacard','globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -83,10 +83,10 @@ $form = new Form($db);
 $userstatic=new User($db);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0)
 {
@@ -106,7 +106,7 @@ if ($id > 0)
 
 		print '<table class="noborder tagtable liste" width="100%">';
 		print '<tr class="liste_titre">';
-        if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+        if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
 		print '<td align="right">'.$langs->trans("Debit").'</td>';
@@ -153,7 +153,7 @@ if ($id > 0)
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2,$totalpaye),
+					'status' => $fac->getLibStatut(2, $totalpaye),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -253,8 +253,8 @@ if ($id > 0)
 				print '<tr class="oddeven '.$html_class.'">';
 
 				print "<td align=\"center\">";
-				if (!empty($data['fk_facture'])) print dol_print_date($data['date'],'day');
-				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'],'dayhour');
+				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
+				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";

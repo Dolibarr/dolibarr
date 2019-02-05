@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
-$actiontest=GETPOST('test','alpha');
-$actionsave=GETPOST('save','alpha');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useragenda';   // To manage different context of search
+$actiontest=GETPOST('test', 'alpha');
+$actionsave=GETPOST('save', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'useragenda';   // To manage different context of search
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
@@ -48,7 +48,7 @@ $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->getrights();
@@ -72,7 +72,7 @@ $hookmanager->initHooks(array('usercard','useragenda','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -141,7 +141,7 @@ $formother=new FormOther($db);
 $arrayofjs=array();
 $arrayofcss=array();
 
-llxHeader('',$langs->trans("UserSetup"),'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -157,7 +157,7 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 
 print '<div class="underbanner clearboth"></div>';
@@ -193,7 +193,7 @@ while ($i <= $MAXAGENDA)
 
 	print '<tr class="oddeven">';
 	// Nb
-	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb",$key)."</td>";
+	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
 	// Name
 	print '<td class="maxwidth50onsmartphone"><input type="text" class="flat hideifnotset minwidth100" name="AGENDA_EXT_NAME_'.$id.'_'.$key.'" value="'. (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key)?GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key):$object->conf->$name) . '"></td>';
 	// URL

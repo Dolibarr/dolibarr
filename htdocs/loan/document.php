@@ -35,18 +35,18 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("other","companies","compta","bills","loan"));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'loan', $id, '','');
+$result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if ($page == -1) {
     $page = 0;
 }
@@ -78,7 +78,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Documents");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
@@ -135,7 +135,7 @@ if ($object->id)
 
 
     // Build file list
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -145,7 +145,7 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print "</table>\n";
 
     print "</div>\n";

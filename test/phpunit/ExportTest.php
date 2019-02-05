@@ -30,16 +30,16 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 
 
 /**
@@ -237,21 +237,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult,$result);
+        $this->assertEquals($expectedresult, $result);
 
         $model='tsv';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult,$result);
+        $this->assertEquals($expectedresult, $result);
 
         $model='excel';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult,$result);
+        $this->assertEquals($expectedresult, $result);
 
         return true;
     }
@@ -325,7 +325,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
         // Load properties of arrays to make export
         $objexport=new Export($db);
-        $result=$objexport->load_arrays($user,$filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
+        $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
 
         // Loop on each dataset
         foreach($objexport->array_export_code as $key => $datatoexport)

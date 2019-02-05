@@ -31,29 +31,29 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->loadLangs(array("members","companies"));
 
-$action=GETPOST('action','aZ09');
-$massaction=GETPOST('massaction','alpha');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'aZ09');
+$massaction=GETPOST('massaction', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$filter=GETPOST("filter","alpha");
-$statut=(GETPOSTISSET("statut")?GETPOST("statut","alpha"):1);
-$search_ref=GETPOST('search_ref','alpha');
-$search_type=GETPOST('search_type','alpha');
-$search_lastname=GETPOST('search_lastname','alpha');
-$search_firstname=GETPOST('search_firstname','alpha');
-$search_login=GETPOST('search_login','alpha');
-$search_note=GETPOST('search_note','alpha');
-$search_account=GETPOST('search_account','int');
-$search_amount=GETPOST('search_amount','alpha');
-$optioncss = GETPOST('optioncss','alpha');
+$filter=GETPOST("filter", "alpha");
+$statut=(GETPOSTISSET("statut")?GETPOST("statut", "alpha"):1);
+$search_ref=GETPOST('search_ref', 'alpha');
+$search_type=GETPOST('search_type', 'alpha');
+$search_lastname=GETPOST('search_lastname', 'alpha');
+$search_firstname=GETPOST('search_firstname', 'alpha');
+$search_login=GETPOST('search_login', 'alpha');
+$search_note=GETPOST('search_note', 'alpha');
+$search_account=GETPOST('search_account', 'int');
+$search_amount=GETPOST('search_amount', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$date_select=GETPOST("date_select",'alpha');
+$date_select=GETPOST("date_select", 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
@@ -69,7 +69,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('subscription');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -93,18 +93,18 @@ $arrayfields=array(
 );
 
 // Security check
-$result=restrictedArea($user,'adherent','','','cotisation');
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -113,7 +113,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
 	    $search="";
 	    $search_type="";
@@ -174,10 +174,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
@@ -214,7 +214,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 	exit;
 }
 
-llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("ListOfSubscriptions"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $i = 0;
 
@@ -274,7 +274,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -364,7 +364,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (! empty($arrayfields['d.datec']['checked']))
@@ -391,54 +391,54 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['d.ref']['checked']))
 {
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.fk_type']['checked']))
 {
-	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.fk_type",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.fk_type", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.lastname']['checked']))
 {
-	print_liste_field_titre("LastName",$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("LastName", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.firstname']['checked']))
 {
-	print_liste_field_titre("FirstName",$_SERVER["PHP_SELF"],"d.firstname",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("FirstName", $_SERVER["PHP_SELF"], "d.firstname", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.login']['checked']))
 {
-	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['t.libelle']['checked']))
 {
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"c.note",$param,"",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", 'align="left"', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.bank']['checked']))
 {
-	print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $pram, "", "", $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.date_debut']['checked']))
 {
-	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.date_fin']['checked']))
 {
-	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", 'align="center"', $sortfield, $sortorder);
 }
 if (! empty($arrayfields['d.amount']['checked']))
 {
-	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'class="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", 'class="right"', $sortfield, $sortorder);
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -459,7 +459,7 @@ while ($i < min($num, $limit))
 	$adherent->statut=$obj->statut;
 	$adherent->login=$obj->login;
 	$adherent->photo=$obj->photo;
-  
+
   $adht = new AdherentType($db);
 	$adht->fetch($obj->fk_type);
 
@@ -506,7 +506,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['t.libelle']['checked']))
 	{
 		print '<td>';
-		print dol_trunc($obj->note,128);
+		print dol_trunc($obj->note, 128);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -529,13 +529,13 @@ while ($i < min($num, $limit))
 	// Date start
 	if (! empty($arrayfields['d.date_start']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date end
 	if (! empty($arrayfields['d.date_end']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->datef),'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Price
@@ -550,7 +550,7 @@ while ($i < min($num, $limit))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['d.datec']['checked']))
@@ -616,7 +616,7 @@ if ($num == 0)
 $db->free($resql);
 
 $parameters=array('sql' => $sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>";

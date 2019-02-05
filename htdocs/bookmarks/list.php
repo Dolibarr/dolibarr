@@ -27,22 +27,22 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
-$action=GETPOST('action','alpha');
-$massaction=GETPOST('massaction','alpha');
-$show_files=GETPOST('show_files','int');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 // Security check
 if (! $user->rights->bookmark->lire) {
 	restrictedArea($user, 'bookmarks');
 }
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -50,7 +50,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='position';
 if (! $sortorder) $sortorder='ASC';
 
-$id = GETPOST("id",'int');
+$id = GETPOST("id", 'int');
 
 
 /*
@@ -97,7 +97,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user a
 $sql.= " WHERE 1=1";
 $sql.= " AND b.entity = ".$conf->entity;
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
-$sql.= $db->order($sortfield.", position",$sortorder);
+$sql.= $db->order($sortfield.", position", $sortorder);
 $sql.= $db->plimit($limit, $offset);
 
 $resql=$db->query($sql);
@@ -115,13 +115,13 @@ if ($resql)
 
 	print "<tr class=\"liste_titre\">";
 	//print "<td>&nbsp;</td>";
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"b.rowid","", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"b.title","", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Link",$_SERVER["PHP_SELF"],"b.url","", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Target",'','','','','align="center"');
-	print_liste_field_titre("Owner",$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'class="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Target", '', '', '', '', 'align="center"');
+	print_liste_field_titre("Owner", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -133,7 +133,7 @@ if ($resql)
 
 		// Id
 		print '<td class="left">';
-		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->rowid."</a>";
+		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"), "bookmark").' '.$obj->rowid."</a>";
 		print '</td>';
 
 		$linkintern=0;
@@ -176,7 +176,7 @@ if ($resql)
 		print "</td>\n";
 
 		// Date creation
-		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day')."</td>";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
 
 		// Position
 		print '<td class="right">'.$obj->position."</td>";

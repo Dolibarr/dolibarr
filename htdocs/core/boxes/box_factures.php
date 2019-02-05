@@ -81,7 +81,7 @@ class box_factures extends ModeleBoxes
 
         $langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
+		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text)
@@ -145,7 +145,7 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $this->info_box_contents[$line][] = array(
@@ -168,12 +168,12 @@ class box_factures extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
                     );
 
                     $line++;

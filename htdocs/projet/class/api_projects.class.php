@@ -75,7 +75,7 @@ class Projects extends DolibarrApi
             throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -226,7 +226,7 @@ class Projects extends DolibarrApi
          throw new RestException(404, 'Project not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
       $this->project->getLinesArray(DolibarrApiAccess::$user);
@@ -242,7 +242,7 @@ class Projects extends DolibarrApi
                 // TODO
                 // Add class for timespent records and loop and fill $line->lines with records of timespent
           }
-          array_push($result,$this->_cleanObjectDatas($line));
+          array_push($result, $this->_cleanObjectDatas($line));
       }
       return $result;
     }
@@ -271,7 +271,7 @@ class Projects extends DolibarrApi
             throw new RestException(404, 'Project not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -286,7 +286,7 @@ class Projects extends DolibarrApi
         $this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, 0, $id, 0);
         $result = array();
         foreach ($this->project->roles as $line) {
-            array_push($result,$this->_cleanObjectDatas($line));
+            array_push($result, $this->_cleanObjectDatas($line));
         }
         return $result;
     }
@@ -434,7 +434,7 @@ class Projects extends DolibarrApi
             throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
@@ -469,7 +469,7 @@ class Projects extends DolibarrApi
             throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -513,7 +513,7 @@ class Projects extends DolibarrApi
             throw new RestException(404, 'Project not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

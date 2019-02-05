@@ -44,7 +44,7 @@ $langs->loadLangs(array("main","bills"));
 		window.open('validation_ticket.php?facid='+id,name, opt);
 	}
 
-	popupTicket(<?php echo GETPOST('facid','int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
+	popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
 
 </script>
 

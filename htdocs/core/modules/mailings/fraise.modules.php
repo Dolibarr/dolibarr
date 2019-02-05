@@ -146,7 +146,7 @@ class mailing_fraise extends MailingTargets
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle,38,'middle');
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle, 38, 'middle');
                 $s.='</option>';
                 $i++;
             }
@@ -185,7 +185,7 @@ class mailing_fraise extends MailingTargets
         	{
         		$obj = $this->db->fetch_object($resql);
 
-        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
         		$s.='</option>';
         		$i++;
         	}
@@ -200,9 +200,9 @@ class mailing_fraise extends MailingTargets
 
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.$form->selectDate(-1,'subscriptionafter',0,0,1,'fraise',1,0,0);
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.$form->selectDate(-1,'subscriptionbefore',0,0,1,'fraise',1,0,0);
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
 
         return $s;
     }
@@ -216,7 +216,7 @@ class mailing_fraise extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
     }
 
 
@@ -238,8 +238,8 @@ class mailing_fraise extends MailingTargets
         $cibles = array();
         $now=dol_now();
 
-        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'],$_POST['subscriptionaftermin'],$_POST['subscriptionaftersec'],$_POST['subscriptionaftermonth'],$_POST['subscriptionafterday'],$_POST['subscriptionafteryear']);
-        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'],$_POST['subscriptionbeforemin'],$_POST['subscriptionbeforesec'],$_POST['subscriptionbeforemonth'],$_POST['subscriptionbeforeday'],$_POST['subscriptionbeforeyear']);
+        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'], $_POST['subscriptionaftermin'], $_POST['subscriptionaftersec'], $_POST['subscriptionaftermonth'], $_POST['subscriptionafterday'], $_POST['subscriptionafteryear']);
+        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'], $_POST['subscriptionbeforemin'], $_POST['subscriptionbeforesec'], $_POST['subscriptionbeforemonth'], $_POST['subscriptionbeforeday'], $_POST['subscriptionbeforeyear']);
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
@@ -295,7 +295,7 @@ class mailing_fraise extends MailingTargets
                                 'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
                                 ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')).';'.
-                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
+                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
                                 ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,

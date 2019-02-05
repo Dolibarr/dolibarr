@@ -129,7 +129,7 @@ class PaymentDonation extends CommonObject
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
-            $newvalue = price2num($value,'MT');
+            $newvalue = price2num($value, 'MT');
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -167,7 +167,7 @@ class PaymentDonation extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger('DONATION_PAYMENT_CREATE',$user);
+			$result=$this->call_trigger('DONATION_PAYMENT_CREATE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -311,7 +311,7 @@ class PaymentDonation extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY',$user);
+					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -378,7 +378,7 @@ class PaymentDonation extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_DELETE',$user);
+					$result=$this->call_trigger('DONATION_PAYMENT_DELETE', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -645,7 +645,7 @@ class PaymentDonation extends CommonObject
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

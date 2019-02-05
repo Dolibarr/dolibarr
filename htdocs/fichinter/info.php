@@ -36,8 +36,8 @@ if (! empty($conf->projet->enabled)) {
 $langs->loadLangs(array('companies', 'interventions'));
 
 $socid=0;
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,7 +58,7 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"));
 
 $object->fetch_thirdparty();
 $object->info($object->id);

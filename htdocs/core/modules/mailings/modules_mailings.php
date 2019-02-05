@@ -189,7 +189,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         		$sql.= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
        			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
-        		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+        		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
         		$result=$this->db->query($sql);
         		if ($result)
         		{

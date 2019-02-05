@@ -50,7 +50,7 @@ class FileUpload
 		$this->element=$element;
 
 		$pathname=$filename=$element;
-		if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
 		{
 			$pathname = $regs[1];
 			$filename = $regs[2];
@@ -135,7 +135,7 @@ class FileUpload
 
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
-			$object_ref = get_exdir($object->id,2,0,0,$object,'invoice_supplier') . $object_ref;
+			$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier') . $object_ref;
 		} elseif ($element == 'project_task') {
 			$object_ref = $object->project->ref . '/' . $object_ref;
 		}
@@ -202,7 +202,7 @@ class FileUpload
 		(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ($_SERVER['SERVER_NAME'].
 				($https && $_SERVER['SERVER_PORT'] === 443 ||
 						$_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
-						substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+						substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
 	}
 
 	/**
@@ -234,12 +234,12 @@ class FileUpload
 		{
 			$file = new stdClass();
 			$file->name = $file_name;
-			$file->mime = dol_mimetype($file_name,'',2);
+			$file->mime = dol_mimetype($file_name, '', 2);
 			$file->size = filesize($file_path);
 			$file->url = $this->options['upload_url'].rawurlencode($file->name);
 			foreach($this->options['image_versions'] as $version => $options) {
 				if (is_file($options['upload_dir'].$file_name)) {
-					$tmp=explode('.',$file->name);
+					$tmp=explode('.', $file->name);
 					$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 				}
 			}
@@ -280,9 +280,9 @@ class FileUpload
 				return false;
 			}
 
-			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
+			$res=vignette($file_path, $maxwidthmini, $maxheightmini, '_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
-			if (preg_match('/error/i',$res)) return false;
+			if (preg_match('/error/i', $res)) return false;
 			return true;
 		}
 		else
@@ -421,7 +421,7 @@ class FileUpload
 	{
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
-		$file->mime = dol_mimetype($file->name,'',2);
+		$file->mime = dol_mimetype($file->name, '', 2);
 		$file->size = intval($size);
 		$file->type = $type;
 		if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0)
@@ -451,7 +451,7 @@ class FileUpload
 				{
 					if ($this->createScaledImage($file->name, $options))
 					{
-						$tmp=explode('.',$file->name);
+						$tmp=explode('.', $file->name);
 						$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 					}
 				}

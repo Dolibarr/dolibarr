@@ -35,9 +35,9 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';

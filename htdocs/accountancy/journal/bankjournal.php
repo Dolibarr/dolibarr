@@ -66,18 +66,18 @@ $langs->loadLangs(array("companies","other","compta","banks","bills","donations"
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
 
-$date_startmonth = GETPOST('date_startmonth','int');
-$date_startday = GETPOST('date_startday','int');
-$date_startyear = GETPOST('date_startyear','int');
-$date_endmonth = GETPOST('date_endmonth','int');
-$date_endday = GETPOST('date_endday','int');
-$date_endyear = GETPOST('date_endyear','int');
-$in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
+$date_startmonth = GETPOST('date_startmonth', 'int');
+$date_startday = GETPOST('date_startday', 'int');
+$date_startyear = GETPOST('date_startyear', 'int');
+$date_endmonth = GETPOST('date_endmonth', 'int');
+$date_endday = GETPOST('date_endday', 'int');
+$date_endyear = GETPOST('date_endyear', 'int');
+$in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 
 $now = dol_now();
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->societe_id > 0 && empty($id_journal))
@@ -452,7 +452,7 @@ if (! $error && $action == 'writebookkeeping') {
 	$now = dol_now();
 
 	$error = 0;
-	foreach ( $tabpay as $key => $val )		// $key is rowid into llx_bank
+	foreach ($tabpay as $key => $val)		// $key is rowid into llx_bank
 	{
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
@@ -474,7 +474,7 @@ if (! $error && $action == 'writebookkeeping') {
 		if (! $errorforline && is_array($tabbq[$key]))
 		{
 			// Line into bank account
-			foreach ( $tabbq[$key] as $k => $mt )
+			foreach ($tabbq[$key] as $k => $mt)
 			{
 				if ($mt)
 				{
@@ -537,7 +537,7 @@ if (! $error && $action == 'writebookkeeping') {
 			if (is_array($tabtp[$key]))
 			{
 				// Line into thirdparty account
-				foreach ( $tabtp[$key] as $k => $mt ) {
+				foreach ($tabtp[$key] as $k => $mt) {
 					if ($mt)
 					{
 						$reflabel = '';
@@ -672,7 +672,7 @@ if (! $error && $action == 'writebookkeeping') {
 				}
 			}
 			else {	// If thirdparty unkown, output the waiting account
-				foreach ( $tabbq[$key] as $k => $mt ) {
+				foreach ($tabbq[$key] as $k => $mt) {
 					if ($mt)
 					{
 						$reflabel = '';
@@ -800,14 +800,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print "\n";
 
 
-	foreach ( $tabpay as $key => $val )
+	foreach ($tabpay as $key => $val)
 	{
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt ) {
+		foreach ($tabbq[$key] as $k => $mt) {
 			if ($mt)
 			{
 				$reflabel = '';
@@ -832,7 +832,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 		// Third party
 		if (is_array($tabtp[$key])) {
-			foreach ( $tabtp[$key] as $k => $mt ) {
+			foreach ($tabtp[$key] as $k => $mt) {
 				if ($mt)
 				{
 					$reflabel = '';
@@ -864,7 +864,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				}
 			}
 		} else {	// If thirdparty unkown, output the waiting account
-			foreach ( $tabbq[$key] as $k => $mt ) {
+			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt)
 				{
 					$reflabel = '';
@@ -908,7 +908,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
+	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
@@ -1000,14 +1000,14 @@ if (empty($action) || $action == 'view') {
 
 	$r = '';
 
-	foreach ( $tabpay as $key => $val )			  // $key is rowid in llx_bank
+	foreach ($tabpay as $key => $val)			  // $key is rowid in llx_bank
 	{
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
 		// Bank
-		foreach ( $tabbq[$key] as $k => $mt )
+		foreach ($tabbq[$key] as $k => $mt)
 		{
 			if ($mt)
 			{
@@ -1052,7 +1052,7 @@ if (empty($action) || $action == 'view') {
 
 		// Third party
 		if (is_array($tabtp[$key])) {
-			foreach ( $tabtp[$key] as $k => $mt ) {
+			foreach ($tabtp[$key] as $k => $mt) {
 				if ($mt)
 				{
 					$reflabel = '';
@@ -1132,7 +1132,7 @@ if (empty($action) || $action == 'view') {
 				}
 			}
 		} else {	// Waiting account
-			foreach ( $tabbq[$key] as $k => $mt ) {
+			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt)
 				{
 					$reflabel = '';

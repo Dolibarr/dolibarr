@@ -45,7 +45,7 @@ $code = GETPOST('key', 'alpha');
 
 $acc = "DATAPOLICIESACCEPT_" . $lang;
 $ref = "DATAPOLICIESREFUSE_" . $lang;
-$langs->load('datapolicy@datapolicy',0,0,$lang);
+$langs->load('datapolicy@datapolicy', 0, 0, $lang);
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     return 0;

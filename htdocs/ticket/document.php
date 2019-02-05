@@ -39,8 +39,8 @@ $langs->loadLangs(array("companies","other","ticket","mails"));
 $id       = GETPOST('id', 'int');
 $ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha');
-$action   = GETPOST('action','alpha');
-$confirm  = GETPOST('confirm','alpha');
+$action   = GETPOST('action', 'alpha');
+$confirm  = GETPOST('confirm', 'alpha');
 
 // Security check
 if (!$user->rights->ticket->read) {

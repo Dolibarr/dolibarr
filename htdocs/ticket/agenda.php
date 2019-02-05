@@ -40,8 +40,8 @@ $track_id = GETPOST('track_id', 'alpha', 3);
 $socid    = GETPOST('socid', 'int');
 $action   = GETPOST('action', 'aZ09');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield","alpha");
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
@@ -52,14 +52,14 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (GETPOST('actioncode','array'))
+if (GETPOST('actioncode', 'array'))
 {
-	$actioncode=GETPOST('actioncode','array',3);
+	$actioncode=GETPOST('actioncode', 'array', 3);
 	if (! count($actioncode)) $actioncode='0';
 }
 else
 {
-	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -75,10 +75,10 @@ if (!$action) {
 
 
 // Security check
-$id = GETPOST("id",'int');
+$id = GETPOST("id", 'int');
 $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result=restrictedArea($user,'ticket',$id,'');
+$result=restrictedArea($user, 'ticket', $id, '');
 
 if (!$user->rights->ticket->read) {
 	accessforbidden();
@@ -100,11 +100,11 @@ if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $ob
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
 	$actioncode='';
 	$search_agenda_label='';
@@ -121,7 +121,7 @@ $userstat = new User($db);
 $formticket = new FormTicket($db);
 
 $title=$langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $title, $help_url);
 
@@ -231,7 +231,7 @@ if (!empty($object->id))
 	// List of all actions
 	$filters=array();
 	$filters['search_agenda_label']=$search_agenda_label;
-	show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

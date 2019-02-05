@@ -63,7 +63,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
 	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden=($showmode != 1);
@@ -84,12 +84,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic=new Product($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
-			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
+			$sql.= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
@@ -100,11 +100,11 @@ class box_produits_alerte_stock extends ModeleBoxes
     		if (is_object($hookmanager))
     		{
 			    $parameters=array('boxproductalertstocklist'=>1);
-    		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+    		    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
     		    $sql.=$hookmanager->resPrint;
     		}
 		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") < p.seuil_stock_alerte";
+			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
 			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
 			$sql.= $db->plimit($max, 0);
 
@@ -193,13 +193,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 					    'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
 					);
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,0).'<span>',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
                         'asis' => 1
                     );
 

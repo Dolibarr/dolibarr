@@ -185,7 +185,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_CREATE',$user);
+				$result=$this->call_trigger('TASK_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -388,7 +388,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_MODIFY',$user);
+				$result=$this->call_trigger('TASK_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -411,7 +411,7 @@ class Task extends CommonObject
 					if (! $res)
 					{
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
+						$this->error=$langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 						$error++;
 					}
 				}
@@ -516,7 +516,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_DELETE',$user);
+				$result=$this->call_trigger('TASK_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -657,13 +657,13 @@ class Task extends CommonObject
 			$label .= '<br><b>' . $langs->trans('LabelTask') . ':</b> ' . $this->label;
 		if ($this->date_start || $this->date_end)
 		{
-			$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
+			$label .= "<br>".get_date_range($this->date_start, $this->date_end, '', $langs, 0);
 		}
 
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 
 		$linkclose = '';
@@ -970,7 +970,7 @@ class Task extends CommonObject
 	function getListContactId($source = 'internal')
 	{
 		$contactAlreadySelected = array();
-		$tab = $this->liste_contact(-1,$source);
+		$tab = $this->liste_contact(-1, $source);
 		//var_dump($tab);
 		$num=count($tab);
 		$i = 0;
@@ -1002,7 +1002,7 @@ class Task extends CommonObject
 		// Check parameters
 		if (! is_object($user))
 		{
-			dol_print_error('',"Method addTimeSpent was called with wrong parameter user");
+			dol_print_error('', "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
 
@@ -1040,7 +1040,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_TIMESPENT_CREATE',$user);
+				$result=$this->call_trigger('TASK_TIMESPENT_CREATE', $user);
 				if ($result < 0) { $ret=-1; }
 				// End call triggers
 			}
@@ -1226,6 +1226,7 @@ class Task extends CommonObject
 		$sql.= " t.task_date_withhour,";
 		$sql.= " t.task_duration,";
 		$sql.= " t.fk_user,";
+		$sql.= " t.thm,";
 		$sql.= " t.note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql.= " WHERE t.rowid = ".$id;
@@ -1245,6 +1246,7 @@ class Task extends CommonObject
 				$this->timespent_withhour   = $obj->task_date_withhour;
 				$this->timespent_duration	= $obj->task_duration;
 				$this->timespent_fk_user	= $obj->fk_user;
+				$this->timespent_thm    	= $obj->thm;       // hourly rate
 				$this->timespent_note		= $obj->note;
 			}
 
@@ -1395,7 +1397,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_TIMESPENT_MODIFY',$user);
+				$result=$this->call_trigger('TASK_TIMESPENT_MODIFY', $user);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -1461,7 +1463,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_TIMESPENT_DELETE',$user);
+				$result=$this->call_trigger('TASK_TIMESPENT_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -1523,7 +1525,7 @@ class Task extends CommonObject
 		$error=0;
 
 		//Use 00:00 of today if time is use on task.
-		$now=dol_mktime(0,0,0,dol_print_date(dol_now(),'%m'),dol_print_date(dol_now(),'%d'),dol_print_date(dol_now(),'%Y'));
+		$now=dol_mktime(0, 0, 0, dol_print_date(dol_now(), '%m'), dol_print_date(dol_now(), '%d'), dol_print_date(dol_now(), '%Y'));
 
 		$datec = $now;
 
@@ -1547,7 +1549,7 @@ class Task extends CommonObject
 		{
 			require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
 			$modTask = new $obj;
-			$defaultref = $modTask->getNextValue(0,$clone_task);
+			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
 		$ori_project_id					= $clone_task->fk_project;
@@ -1612,7 +1614,7 @@ class Task extends CommonObject
 			else
 			{
 				$this->db->begin();
-				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES),'_public');
+				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES), '_public');
 				if ($res < 0)
 				{
 					$this->error.=$clone_task->error;
@@ -1661,7 +1663,7 @@ class Task extends CommonObject
 				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_ref);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
 
-				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
+				$filearray=dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach($filearray as $key => $file)
 				{
 					if (!file_exists($clone_task_dir))
@@ -1673,10 +1675,10 @@ class Task extends CommonObject
 						}
 					}
 
-					$rescopy = dol_copy($ori_task_dir . '/' . $file['name'], $clone_task_dir . '/' . $file['name'],0,1);
+					$rescopy = dol_copy($ori_task_dir . '/' . $file['name'], $clone_task_dir . '/' . $file['name'], 0, 1);
 					if (is_numeric($rescopy) && $rescopy < 0)
 					{
-						$this->error.=$langs->trans("ErrorFailToCopyFile",$ori_task_dir . '/' . $file['name'],$clone_task_dir . '/' . $file['name']);
+						$this->error.=$langs->trans("ErrorFailToCopyFile", $ori_task_dir . '/' . $file['name'], $clone_task_dir . '/' . $file['name']);
 						$error++;
 					}
 				}
@@ -1690,7 +1692,7 @@ class Task extends CommonObject
 
 				foreach(array('internal','external') as $source)
 				{
-					$tab = $origin_task->liste_contact(-1,$source);
+					$tab = $origin_task->liste_contact(-1, $source);
 					$num=count($tab);
 					$i = 0;
 					while ($i < $num)
@@ -1783,30 +1785,30 @@ class Task extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1');
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3');
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6');
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6');
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 5)
 		{
@@ -1883,7 +1885,7 @@ class Task extends CommonObject
 		//$socid=$user->societe_id;
 
 		$projectstatic = new Project($this->db);
-		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
@@ -1915,7 +1917,7 @@ class Task extends CommonObject
 			$response->label = $langs->trans("OpenedTasks");
 			if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
-			$response->img = img_object('',"task");
+			$response->img = img_object('', "task");
 
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
@@ -1956,7 +1958,7 @@ class Task extends CommonObject
 		$mine=0; $socid=$user->societe_id;
 
 		$projectstatic = new Project($this->db);
-		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$socid);
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $mine, 1, $socid);
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT count(p.rowid) as nb";
