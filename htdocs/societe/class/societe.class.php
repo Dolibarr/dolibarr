@@ -3439,6 +3439,7 @@ class Societe extends CommonObject
 		$this->capital=empty($conf->global->MAIN_INFO_CAPITAL)?'':$conf->global->MAIN_INFO_CAPITAL;
 		$this->forme_juridique_code=empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)?'':$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 		$this->email=empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?'':$conf->global->MAIN_INFO_SOCIETE_MAIL;
+		$this->default_lang = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
 		$this->logo=empty($conf->global->MAIN_INFO_SOCIETE_LOGO)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO;
 		$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 		$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
