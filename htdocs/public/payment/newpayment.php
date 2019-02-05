@@ -1596,17 +1596,19 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
-		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
-		{
-		    $langs->load("members");
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
-		}
 		elseif ($source == 'donation' && $object->paid)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
 		else
 		{
+		    // Membership can be paid and we still allow to make renewal
+		    if ($source == 'membersubscription' && $object->datefin > dol_now())
+		    {
+		        $langs->load("members");
+		        print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
+		    }
+
 			// Buttons for all payments registration methods
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
