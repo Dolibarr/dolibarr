@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1],array('test','confirm')) || ! in_array($argv[2],array('thirdparties','contacts')))
+if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1], array('test','confirm')) || ! in_array($argv[2], array('thirdparties','contacts')))
 {
 	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
 	print "\n";
@@ -67,7 +67,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[3])?$argv[3]:'none';
@@ -125,7 +125,7 @@ if ($resql)
                 // Break onto sales representative (new email or cid)
                 if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
                 {
-                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+                   	envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
                    	$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
                 }
                 else
@@ -149,7 +149,7 @@ if ($resql)
             }
 
             // Define line content
-            $outputlangs=new Translate('',$conf);
+            $outputlangs=new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
 
             // Load translation files required by the page
@@ -157,11 +157,11 @@ if ($resql)
 
             if (dol_strlen($newemail))
             {
-            	$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)."\n";
+            	$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."\n";
             	dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
+            print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
             print "\n";
@@ -178,7 +178,7 @@ if ($resql)
         {
             if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))	// Break onto email (new email)
             {
-       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+       			envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
        			$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
             }
             else
@@ -224,7 +224,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 
     if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
 
-    $newlangs=new Translate('',$conf);
+    $newlangs=new Translate('', $conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("bills");
@@ -254,7 +254,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
     	$allmessage.= "Note: This list contains only unpaid invoices.".($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;

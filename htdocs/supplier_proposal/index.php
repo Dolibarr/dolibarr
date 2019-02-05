@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.clas
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if (isset($user->societe_id) && $user->societe_id  > 0)
 {
 	$action = '';
@@ -50,7 +50,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
-llxHeader("",$langs->trans("SupplierProposalArea"),$help_url);
+llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
 print load_fiche_titre($langs->trans("SupplierProposalArea"));
 
@@ -120,11 +120,11 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
             print '<tr class="oddeven">';
-            print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
+            print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
@@ -194,7 +194,7 @@ if (! empty($conf->supplier_proposal->enabled))
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
+				print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -231,7 +231,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -269,10 +269,10 @@ if ($resql)
 			$companystatic->name=$obj->socname;
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
-			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
-			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
-			print '<td align="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+			print '<td align="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -346,12 +346,12 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
-				print '<td class="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
+				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
 				print '<td align="right">';
-				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '<td align="center" width="14">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;

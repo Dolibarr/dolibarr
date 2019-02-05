@@ -32,37 +32,37 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 $langs->loadLangs(array("compta","salaries","bills","hrm"));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$search_ref = GETPOST('search_ref','int');
-$search_user = GETPOST('search_user','alpha');
-$search_label = GETPOST('search_label','alpha');
-$search_amount = GETPOST('search_amount','alpha');
-$search_account = GETPOST('search_account','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$search_ref = GETPOST('search_ref', 'int');
+$search_user = GETPOST('search_user', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_account = GETPOST('search_account', 'int');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.datep,s.rowid";
 if (! $sortorder) $sortorder="DESC,DESC";
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $filtre=$_GET["filtre"];
 
 if (empty($_REQUEST['typeid']))
 {
-	$newfiltre=str_replace('filtre=','',$filtre);
-	$filterarray=explode('-',$newfiltre);
+	$newfiltre=str_replace('filtre=', '', $filtre);
+	$filterarray=explode('-', $newfiltre);
 	foreach($filterarray as $val)
 	{
-		$part=explode(':',$val);
+		$part=explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') $typeid=$part[1];
 	}
 }
@@ -77,7 +77,7 @@ else
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -117,13 +117,13 @@ if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
 if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
-    $filtre=str_replace(":","=",$filtre);
+    $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 //$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev, s.fk_typepayment, s.num_payment, pst.code";
 $totalnboflines=0;
@@ -132,7 +132,7 @@ if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -164,7 +164,7 @@ if ($result)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -184,13 +184,13 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($typeid,'typeid','',0,1,1,16);
+	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
 	if (! empty($conf->banque->enabled))
     {
 	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
 	// Amount
@@ -202,19 +202,19 @@ if ($result)
     print '</td>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep,s.rowid","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
+    if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+    print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
 	print "</tr>\n";
 
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($result);
 
@@ -237,9 +237,9 @@ if ($result)
 		// Employee
 		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
 		// Label payment
-        print "<td>".dol_trunc($obj->label,40)."</td>\n";
+        print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Account
@@ -260,7 +260,7 @@ if ($result)
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($obj->fk_accountancy_journal);
 
-					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
 	            $accountstatic->label=$obj->blabel;
 	        	print $accountstatic->getNomUrl(1);

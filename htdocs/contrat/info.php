@@ -33,10 +33,10 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->load("contracts");
 
-$action		= GETPOST('action','alpha');
-$confirm	= GETPOST('confirm','alpha');
-$id			= GETPOST('id','int');
-$ref		= GETPOST('ref','alpha');
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$id			= GETPOST('id', 'int');
+$ref		= GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -60,7 +60,7 @@ $hookmanager->initHooks(array('contractcard','globalcard'));
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Contract"),"");
+llxHeader('', $langs->trans("Contract"), "");
 
 $object = new Contrat($db);
 $object->fetch($id, $ref);

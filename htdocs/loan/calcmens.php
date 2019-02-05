@@ -42,9 +42,9 @@ $output=array();
 $object = new LoanSchedule($db);
 
 $int = ($capital*($rate/12));
-$int = round($int,2,PHP_ROUND_HALF_UP);
-$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
-$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+$int = round($int, 2, PHP_ROUND_HALF_UP);
+$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
+$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
 
 $echance++;
 $capital=$cap_rest;
@@ -53,10 +53,10 @@ while ($echance<=$nbterm) {
 	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
 
 	$int = ($capital*($rate/12));
-	$int = round($int,2,PHP_ROUND_HALF_UP);
-	$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
+	$int = round($int, 2, PHP_ROUND_HALF_UP);
+	$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
 
-	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
 
 	$capital=$cap_rest;
 	$echance++;

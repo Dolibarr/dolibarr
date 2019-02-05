@@ -73,12 +73,12 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Add external contacts ids
-		$this->propal->contacts_ids = $this->propal->liste_contact(-1,'external',1);
+		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', 1);
 
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
@@ -161,7 +161,7 @@ class Proposals extends DolibarrApi
 				$proposal_static = new Propal($db);
 				if($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1,'external',1);
+					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
@@ -227,13 +227,13 @@ class Proposals extends DolibarrApi
 		 throw new RestException(404, 'Commercial Proposal not found');
 	  }
 
-		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 	  $this->propal->getLinesArray();
 	  $result = array();
 	  foreach ($this->propal->lines as $line) {
-		array_push($result,$this->_cleanObjectDatas($line));
+		array_push($result, $this->_cleanObjectDatas($line));
 	  }
 	  return $result;
 	}
@@ -259,7 +259,7 @@ class Proposals extends DolibarrApi
 		   throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if (! DolibarrApi::_checkAccessToResource('propal',$this->propal->id))
+		if (! DolibarrApi::_checkAccessToResource('propal', $this->propal->id))
 		{
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -325,7 +325,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  	}
 
@@ -394,7 +394,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -429,7 +429,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach($request_data as $field => $value) {
@@ -477,7 +477,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -512,7 +512,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -529,7 +529,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -569,7 +569,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -586,7 +586,7 @@ class Proposals extends DolibarrApi
             throw new RestException(404, 'Commercial Proposal not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -617,7 +617,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -634,7 +634,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -662,7 +662,7 @@ class Proposals extends DolibarrApi
                     throw new RestException(404, 'Commercial Proposal not found');
             }
 
-            if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+            if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
                     throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
             }
 
@@ -676,7 +676,7 @@ class Proposals extends DolibarrApi
             	throw new RestException(404, 'Proposal not found');
             }
 
-            if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+            if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
             	throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
             }
 

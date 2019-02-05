@@ -73,7 +73,7 @@ class Supplierproposals extends DolibarrApi
 			throw new RestException(404, 'Supplier Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('supplier_proposal',$this->propal->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('supplier_proposal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

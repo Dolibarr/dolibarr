@@ -272,7 +272,7 @@ class AccountancyExport
 	 */
 	public function exportCegid($objectLines)
 	{
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
 			$end_line = "\n";
@@ -298,7 +298,7 @@ class AccountancyExport
 	 */
 	public function exportCogilog($objectLines)
 	{
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
 			$end_line = "\n";
@@ -336,7 +336,7 @@ class AccountancyExport
 		$separator = ";";
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $separator;
 			print $line->code_journal . $separator;
@@ -365,7 +365,7 @@ class AccountancyExport
 		$separator = ";";
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			print $line->piece_num . $separator;
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $separator;
@@ -405,7 +405,7 @@ class AccountancyExport
 
 		$i = 1;
 		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
-		foreach ( $TData as $data ) {
+		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
 			if (! empty($data->subledger_account))
 				$code_compta = $data->subledger_account;
@@ -447,7 +447,7 @@ class AccountancyExport
 		//We should use dol_now function not time however this is wrong date to transfert in accounting
 		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		foreach ( $TData as $data ) {
+		foreach ($TData as $data) {
 			$code_compta = $data->numero_compte;
 			if (! empty($data->subledger_account))
 				$code_compta = $data->subledger_account;
@@ -528,7 +528,7 @@ class AccountancyExport
 		$separator = ',';
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
@@ -536,9 +536,9 @@ class AccountancyExport
 			print $date . $separator;
 			print $line->code_journal . $separator;
 			print length_accountg($line->numero_compte) . $separator;
-			print substr(length_accountg($line->numero_compte),0,2) . $separator;
-			print '"'.dol_trunc($line->label_operation,40,'right','UTF-8',1).'"' . $separator;
-			print '"'.dol_trunc($line->piece_num,15,'right','UTF-8',1).'"'.$separator;
+			print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
+			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"' . $separator;
+			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
 			print price2num($line->montant).$separator;
 			print $line->sens.$separator;
 			print $date . $separator;
@@ -561,7 +561,7 @@ class AccountancyExport
 		$separator = ';';
 		$end_line = "\n";
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
@@ -652,7 +652,7 @@ class AccountancyExport
 		print "Idevise";
 		print $end_line;
 
-		foreach ( $objectLines as $line ) {
+		foreach ($objectLines as $line) {
 			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
 			$date_doc = dol_print_date($line->doc_date, '%d%m%Y');
 			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');

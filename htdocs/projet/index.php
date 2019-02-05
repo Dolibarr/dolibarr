@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$search_project_user = GETPOST('search_project_user','int');
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user', 'int');
+$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
@@ -42,8 +42,8 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 
 $max=3;
 
@@ -64,7 +64,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset
 //var_dump($projectsListId);
 
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $title=$langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -181,7 +181,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -233,11 +233,11 @@ if ($resql)
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0)
 			{
-				print $companystatic->getNomUrl(1,'company',16);
+				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$projectstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td align="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -251,8 +251,8 @@ else dol_print_error($db);
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", "", "", "", "", 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";

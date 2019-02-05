@@ -39,7 +39,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 
 $socstatic=new Societe($db);
 
-llxHeader("",$langs->trans("Tools"),"");
+llxHeader("", $langs->trans("Tools"), "");
 
 $text=$langs->trans("Tools");
 

@@ -41,7 +41,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 

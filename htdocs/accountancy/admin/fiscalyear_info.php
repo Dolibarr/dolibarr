@@ -40,7 +40,7 @@ $id = GETPOST('id', 'int');
 // View
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Info");
 $helpurl = "";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($id) {
 	$object = new Fiscalyear($db);

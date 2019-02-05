@@ -44,9 +44,9 @@ function stripeadmin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin', 'remove');
 
     return $head;
 }
@@ -70,8 +70,8 @@ function showStripePaymentUrl($type, $ref)
 
     $servicename='Stripe';
     $out='<br><br>';
-    $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
-    $url=getStripePaymentUrl(0,$type,$ref);
+    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $url=getStripePaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     $out.=ajax_autoselect("stripeurl", 0);
     return $out;
@@ -91,7 +91,7 @@ function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 {
 	global $conf;
 
-	$ref=str_replace(' ','',$ref);
+	$ref=str_replace(' ', '', $ref);
 	
     if ($type == 'free')
     {
@@ -153,20 +153,20 @@ function html_print_stripe_footer($fromcompany, $langs)
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
 	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$field=$langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$field=$langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
 	}
 
@@ -175,15 +175,15 @@ function html_print_stripe_footer($fromcompany, $langs)
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$field=$langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+		$field=$langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
 	}
 	// IntraCommunautary VAT

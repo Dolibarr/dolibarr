@@ -63,7 +63,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if (DOL_VERSION < '7' && $action == 'update') {
     foreach ($arrayofparameters as $k => $v) {
-        $res = dolibarr_set_const($db,$k,GETPOST($k),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, $k, GETPOST($k), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
     if (! $error)
@@ -148,7 +148,7 @@ if ($action == 'edit')
         foreach($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
-            print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+            print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
             print '</td><td>';
             print '<select name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'">';
             foreach ($valTab as $key1 => $val1) {
@@ -181,7 +181,7 @@ else
         foreach($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
-            print $form->textwithpicto($langs->trans($key),$langs->trans('DATAPOLICY_Tooltip_SETUP'));
+            print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
             print '</td><td>' . ($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]) . '</td></tr>';
         }
     }
