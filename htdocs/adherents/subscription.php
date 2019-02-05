@@ -726,7 +726,7 @@ if ($rowid > 0)
 						$accountstatic->id=$objp->baid;
 						$accountstatic->number=$objp->number;
 						$accountstatic->account_number=$objp->account_number;
-						$accountstatic->currency_code=$obj->currency_code;
+						$accountstatic->currency_code=$objp->currency_code;
 
 						if (! empty($conf->accounting->enabled) && $objp->fk_accountancy_journal > 0)
 						{
