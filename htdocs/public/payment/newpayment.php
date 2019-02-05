@@ -1606,7 +1606,7 @@ if ($action != 'dopayment')
 		    if ($source == 'membersubscription' && $object->datefin > dol_now())
 		    {
 		        $langs->load("members");
-		        print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
+		        print '<br><span class="amountpaymentcompletemembership">'.$langs->trans("MembershipPaid").'</span><br>';
 		    }
 
 			// Buttons for all payments registration methods
