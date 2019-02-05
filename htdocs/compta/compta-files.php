@@ -245,7 +245,8 @@ if ($result && $action == "dl")
         }
         $zip->addFromString('transactions.csv', $log);
         $zip->close();
-
+        //empty output buffer to avoid corrupted files
+        ob_clean();
         ///Then download the zipped file.
         header('Content-Type: application/zip');
         header('Content-disposition: attachment; filename='.basename($zipname));
