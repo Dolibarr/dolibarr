@@ -1319,6 +1319,13 @@ if ($source == 'membersubscription')
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
+	if ($object->datefin > 0)
+	{
+	    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("DateEndSubscription");
+	    print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->datefin,'day');
+	    print '</td></tr>'."\n";
+	}
+
 	if ($member->last_subscription_date || $member->last_subscription_amount)
 	{
 		// Last subscription date
@@ -1591,6 +1598,7 @@ if ($action != 'dopayment')
 		}
 		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
 		{
+		    $langs->load("members");
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
 		}
 		elseif ($source == 'donation' && $object->paid)
