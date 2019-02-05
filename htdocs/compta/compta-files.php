@@ -227,13 +227,13 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 /*
 *ZIP creation
 */
-if ($result && $action == "dl" &&  )
+if ($result && $action == "dl" )
 {
     if(extension_loaded('zip')){
         dol_delete_file($zip);
 
         $log='date,type,ref,total,paid,filename,item_id'."\n";
-        $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.str_replace('/','.',dol_print_date($startDate,'day')).'-'.str_replace('/','.',dol_print_date($stopDate,'day')).'_export.zip';
+        $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.str_replace('/','.',dol_print_date($date_start,'day')).'-'.str_replace('/','.',dol_print_date($date_stop,'day')).'_export.zip';
 
         $zip = new ZipArchive;
         $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
@@ -259,7 +259,7 @@ if ($result && $action == "dl" &&  )
             exit();
         }
     }else{
-        setEventMessage('PHPZIPExtentionNotLoaded','errors')
+        setEventMessage('PHPZIPExtentionNotLoaded','errors');
     }
 }
 
