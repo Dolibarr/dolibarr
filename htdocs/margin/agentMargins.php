@@ -238,16 +238,8 @@ if ($result)
             $pv = $objp->selling_price / $seller_nb;
             $marge = $objp->marge / $seller_nb;
 
-			if ($marge < 0)
-			{
-				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
-			}
-			else
-			{
-				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
-			}
+            $marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+            $markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {
