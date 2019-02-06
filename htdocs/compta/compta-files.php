@@ -394,8 +394,16 @@ if (!empty($date_start) && !empty($date_stop))
 
 llxFooter();
 $db->close();
-
-function getNomUrl($type, $htmlcontent='1', $id=0, $ref=''){
+/**
+ * 
+ * @global object $db database object
+ * @param string $type type of object (can be class name)
+ * @param int $id  id of the object
+ * @param type $ref ref of the object
+ * @return string   html string to display the name with embeded url
+ */
+function getNomUrl($type, $id = 0, $ref = '')
+{
     global $db;
     $object=null;
     $link='';
