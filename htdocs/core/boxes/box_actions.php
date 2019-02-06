@@ -85,8 +85,7 @@ class box_actions extends ModeleBoxes
             $sql.= ", s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
-			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
-			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";

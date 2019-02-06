@@ -1020,8 +1020,7 @@ class ActionComm extends CommonObject
     		$this->nb=array();
     		$sql = "SELECT count(a.id) as nb";
     	}
-    	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
-    	$sql.= ")";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
     	$sql.= " WHERE 1 = 1";
