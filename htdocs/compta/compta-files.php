@@ -38,18 +38,18 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
-$date_start =GETPOST('date_start','alpha');
-$date_startDay= GETPOST('date_startday','int');
-$date_startMonth= GETPOST('date_startmonth','int');
-$date_startYear= GETPOST('date_startyear','int');
-$date_start=($date_startDay)?dol_mktime(0,0,0,$date_startMonth,$date_startDay,$date_startYear):strtotime($date_start);
-$date_stop =GETPOST('date_stop','alpha');
-$date_stopDay= GETPOST('date_stopday','int');
-$date_stopMonth= GETPOST('date_stopmonth','int');
-$date_stopYear= GETPOST('date_stopyear','int');
+$date_start =GETPOST('date_start', 'alpha');
+$date_startDay= GETPOST('date_startday', 'int');
+$date_startMonth= GETPOST('date_startmonth', 'int');
+$date_startYear= GETPOST('date_startyear', 'int');
+$date_start=($date_startDay)?dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear):strtotime($date_start);
+$date_stop =GETPOST('date_stop', 'alpha');
+$date_stopDay= GETPOST('date_stopday', 'int');
+$date_stopMonth= GETPOST('date_stopmonth', 'int');
+$date_stopYear= GETPOST('date_stopyear', 'int');
 //FIXME doldate
-$date_stop=($date_stopDay)?dol_mktime(0,0,0,$date_stopMonth,$date_stopDay,$date_stopYear):strtotime($date_stop);
-$action =GETPOST('action','alpha');
+$date_stop=($date_stopDay)?dol_mktime(0, 0, 0, $date_stopMonth, $date_stopDay, $date_stopYear):strtotime($date_stop);
+$action =GETPOST('action', 'alpha');
 // Security check
 //if ($user->societe_id) $id=$user->societe_id;
 //$result = restrictedArea($user, 'societe', $id, '&societe');
@@ -59,13 +59,13 @@ $action =GETPOST('action','alpha');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('comptafileslist','globallist'));
+$hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -145,7 +145,7 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 case "InvoiceSupplier":
                     $tmpinvoicesupplier->fetch($objd->id);
                     $ref=dol_sanitizeFileName($tmpinvoicesupplier->ref);
-                    $subdir=get_exdir($tmpinvoicesupplier->id,2,0,0,$tmpinvoicesupplier,'invoice_supplier').$ref;
+                    $subdir=get_exdir($tmpinvoicesupplier->id, 2, 0, 0, $tmpinvoicesupplier, 'invoice_supplier').$ref;
                     $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
                      $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
@@ -234,7 +234,7 @@ if ($result && $action == "dl" )
         dol_delete_file($zip);
 
         $log='date,type,ref,total,paid,filename,item_id'."\n";
-        $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.str_replace('/','.',dol_print_date($date_start,'day')).'-'.str_replace('/','.',dol_print_date($date_stop,'day')).'_export.zip';
+        $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.str_replace('/', '.', dol_print_date($date_start, 'day')).'-'.str_replace('/', '.', dol_print_date($date_stop, 'day')).'_export.zip';
 
         $zip = new ZipArchive;
         $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
@@ -260,7 +260,7 @@ if ($result && $action == "dl" )
             exit();
         }
     }else{
-        setEventMessage('PHPZIPExtentionNotLoaded','errors');
+        setEventMessage('PHPZIPExtentionNotLoaded', 'errors');
     }
 }
 
@@ -364,7 +364,7 @@ if (!empty($date_start) && !empty($date_stop))
                             print dol_print_date($data['date'], 'day');
                             print "</td>\n";
                             print '<td aling="left">'.$data['item'].'</td>';
-                            print '<td>'.getNomUrl($data['item'],1,$data['id'])."</td>";
+                            print '<td>'.getNomUrl($data['item'], 1, $data['id'])."</td>";
 //                            print '<td aling="left">'.$data['ref'].'</td>';
 
                             // File link
@@ -395,11 +395,11 @@ if (!empty($date_start) && !empty($date_stop))
 llxFooter();
 $db->close();
 
-function getNomUrl($type, $htmlcontent='1', $id=0,$ref=''){
+function getNomUrl($type, $htmlcontent='1', $id=0, $ref=''){
     global $db;
     $object=null;
     $link='';
-    switch (strtolower(str_replace('_', '', $type))){
+    switch (strtolower(str_replace('_',	'', $type))){
         case "supplier":
         case "fournisseur":
             $type="Fournisseur";
