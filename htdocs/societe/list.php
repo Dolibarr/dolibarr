@@ -941,7 +941,7 @@ if (! empty($arrayfields['s.tva_intra']['checked']))      print_liste_field_titr
 if (! empty($arrayfields['customerorsupplier']['checked']))        print_liste_field_titre('');   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))        print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['s.fk_parent']['checked']))               print_liste_field_titre($arrayfields['s.fk_parent']['label'], $_SERVER["PHP_SELF"], "s.parent", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['s.fk_parent']['checked']))               print_liste_field_titre($arrayfields['s.fk_parent']['label'], $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
