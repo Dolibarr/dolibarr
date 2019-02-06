@@ -831,13 +831,14 @@ if (! empty($arrayfields['customerorsupplier']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
 	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-	print '<select class="flat" name="search_type">';
+	print $formcompany->selectProspectCustomerType($search_type,'search_type', 'search_type', 'list');
+	/*print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
 	//if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
 	print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
-	print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
+	print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';*/
 	print '</select></td>';
 }
 // Prospect level

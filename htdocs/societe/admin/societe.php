@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->loadLangs(array("admin", "companies", "other"));
 
@@ -35,6 +36,8 @@ $action=GETPOST('action', 'alpha');
 $value=GETPOST('value', 'alpha');
 
 if (!$user->admin) accessforbidden();
+
+$formcompany = new FormCompany($db);
 
 
 
@@ -91,6 +94,21 @@ if ($action == 'updateoptions')
 	{
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+		if (! $error)
+		{
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		}
+		else
+		{
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
+	if (GETPOST('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'))
+	{
+		$customertypedefault = GETPOST('defaultcustomertype', 'int');
+		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
@@ -305,7 +323,6 @@ if($action=='setonsearchandlistgooncustomerorsuppliercard'){
                setEventMessages($langs->trans("Error"), null, 'errors');
        }
 }
-
 
 /*
  * 	View
@@ -861,44 +878,16 @@ else
 print '</a></td>';
 print '</tr>';
 
-/*print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("OnSearchAndListGoOnCustomerOrSupplierCard").'</td>';
-print '<td>&nbsp</td>';
-print '<td align="center">';
-if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD))
-{
-       print '<a href="'.$_SERVER['PHP_SELF'].'?action=setonsearchandlistgooncustomerorsuppliercard&value=0">';
-       print img_picto($langs->trans("Activated"),'switch_on');
-
-}
-else
-{
-       print '<a href="'.$_SERVER['PHP_SELF'].'?action=setonsearchandlistgooncustomerorsuppliercard&value=1">';
-       print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a></td>';
-print '</tr>';
-*/
-
-/*
-// COMPANY_USE_SEARCH_TO_SELECT
-
+// Default Prospect/Customer thirdparty type on customer création
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("HideClosedThirdpartyComboBox").'</td>';
-if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX))
-{
-	print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=sethideinactivethirdparty&status=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a></td>';
-}
-else
-{
-	print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=sethideinactivethirdparty&status=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a></td>';
-}
+print '<td width="80%">'.$langs->trans("DefaultCustomerType").'</td>';
+print '<td>';
+print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT,'defaultcustomertype','defaultcustomertype','admin');
+print '</td>';
+print '<td align="center">';
+print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+print '</td>';
 print '</tr>';
-*/
 
 print '</table>';
 print '</div>';
