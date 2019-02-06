@@ -340,6 +340,8 @@ abstract class CommonDocGenerator
 		global $conf;
 
 		$sumpayed=$sumdeposit=$sumcreditnote='';
+		$already_payed_all=0;
+		$remain_to_pay=0;
 		if ($object->element == 'facture')
 		{
 			$invoice_source=new Facture($this->db);
@@ -350,6 +352,8 @@ abstract class CommonDocGenerator
 			$sumpayed = $object->getSommePaiement();
 			$sumdeposit = $object->getSumDepositsUsed();
 			$sumcreditnote = $object->getSumCreditNotesUsed();
+			$already_payed_all=$sumpayed + $sumdeposit + $sumcreditnote;
+			$remain_to_pay=$sumpayed - $sumdeposit - $sumcreditnote;
 		}
 
 		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
@@ -411,12 +415,12 @@ abstract class CommonDocGenerator
 		$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
 		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
 
-		$array_key.'_already_payed_all_locale'=>price(price2num($sumpayed + $sumdeposit + $sumcreditnote, 'MT'), 0, $outputlangs),
-		$array_key.'_already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
+		$array_key.'_already_payed_all_locale'=>price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
+		$array_key.'_already_payed_all'=> price2num($already_payed_all, 'MT'),
 
 		// Remain to pay with all know infrmation (except open direct debit requests)
-		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
+		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $remain_to_pay, 'MT'), 0, $outputlangs),
+		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
 
 		if (method_exists($object, 'getTotalDiscount')) {
