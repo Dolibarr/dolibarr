@@ -1185,7 +1185,7 @@ else
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
 	    $selected=GETPOST('client', 'int')!=''?GETPOST('client', 'int'):$object->client;
-	    print $formcompany->selectProspectCustomerType($selected,'client');
+	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
         print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
@@ -1772,7 +1772,7 @@ else
             // Prospect/Customer
             print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	        print '<td class="maxwidthonsmartphone">';
-	        print $formcompany->selectProspectCustomerType($object->client,'client');
+	        print $formcompany->selectProspectCustomerType($object->client);
             print '</td>';
             print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 
