@@ -937,6 +937,7 @@ else
             $object->client=-1;
             if (! empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
         }
+        // Prospect / Customer
         if (GETPOST("type")=='c')  {
         	if (! empty($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT)) {
         		$object->client=$conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT;
