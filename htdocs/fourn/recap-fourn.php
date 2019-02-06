@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
-$socid = GETPOST("socid",'int');
+$socid = GETPOST("socid", 'int');
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -120,9 +120,9 @@ if ($socid > 0)
                 print '<tr class="oddeven">';
 
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
-                print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
+                print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
 
-                print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
+                print '<td aling="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
                 print '<td align="right">'.price($fac->total_ttc)."</td>\n";
                 $solde = $solde + $fac->total_ttc;
 
@@ -130,7 +130,7 @@ if ($socid > 0)
                 print '<td align="right">'.price($solde)."</td>\n";
 
                 // Author
-                print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
+                print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objf->login.'</a></td>';
 
                 print "</tr>\n";
 
@@ -157,7 +157,7 @@ if ($socid > 0)
                         print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
                         print '<td>';
                         print '&nbsp; &nbsp; &nbsp; '; // Decalage
-                        print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
+                        print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
                         print "<td>&nbsp;</td>\n";
                         print "<td>&nbsp;</td>\n";
                         print '<td align="right">'.price($objp->amount).'</td>';
@@ -165,7 +165,7 @@ if ($socid > 0)
                         print '<td align="right">'.price($solde)."</td>\n";
 
                         // Auteur
-                        print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+                        print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objp->login.'</a></td>';
 
                         print '</tr>';
 

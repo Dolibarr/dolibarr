@@ -33,7 +33,7 @@ $langs->loadLangs(array("suppliers", "orders", "companies"));
 // Security check
 $socid = GETPOST("socid", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'');
+$result = restrictedArea($user, 'societe', $socid, '');
 
 
 /*
@@ -44,7 +44,7 @@ $commandestatic=new CommandeFournisseur($db);
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
 
-llxHeader("",$langs->trans("SuppliersArea"));
+llxHeader("", $langs->trans("SuppliersArea"));
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 
@@ -81,7 +81,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1], 3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -131,13 +131,13 @@ if (! empty($conf->fournisseur->enabled))
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
-				print $commandestatic->getNomUrl(1,'',16);
+				print $commandestatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
@@ -189,13 +189,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
-				print $facturestatic->getNomUrl(1,'');
+				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -249,17 +249,17 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
+	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers", min($max, $num))."</td>\n";
 	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
 	while ($obj = $db->fetch_object($resql) )
 	{
 		print '<tr class="oddeven">';
-		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td class="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+		print '<td align="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 		print "</tr>\n";
 	}
 	print "</table>\n";

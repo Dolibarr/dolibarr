@@ -37,7 +37,7 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (! $user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $error = 0;
 
 
@@ -49,10 +49,10 @@ if ($action == 'add')
 {
 	$langs->load("errors");
 
-	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
-	$label = GETPOST('label','alpha');
-	$amount= GETPOST('amount','alpha');
-	$amountto= GETPOST('amountto','alpha');
+	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$label = GETPOST('label', 'alpha');
+	$amount= GETPOST('amount', 'alpha');
+	$amountto= GETPOST('amountto', 'alpha');
 
 	if (! $label)
 	{
@@ -64,12 +64,12 @@ if ($action == 'add')
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
-	if (! GETPOST('account_from','int'))
+	if (! GETPOST('account_from', 'int'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
-	if (! GETPOST('account_to','int'))
+	if (! GETPOST('account_to', 'int'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
@@ -79,10 +79,10 @@ if ($action == 'add')
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom=new Account($db);
-		$accountfrom->fetch(GETPOST('account_from','int'));
+		$accountfrom->fetch(GETPOST('account_from', 'int'));
 
 		$accountto=new Account($db);
-		$accountto->fetch(GETPOST('account_to','int'));
+		$accountto->fetch(GETPOST('account_to', 'int'));
 
 		if ($accountto->currency_code == $accountfrom->currency_code)
 		{
@@ -222,10 +222,10 @@ $amount='';
 
 if ($error)
 {
-	$account_from =	GETPOST('account_from','int');
-	$account_to	= GETPOST('account_to','int');
-	$label = GETPOST('label','alpha');
-	$amount = GETPOST('amount','alpha');
+	$account_from =	GETPOST('account_from', 'int');
+	$account_to	= GETPOST('account_to', 'int');
+	$label = GETPOST('label', 'alpha');
+	$amount = GETPOST('amount', 'alpha');
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');

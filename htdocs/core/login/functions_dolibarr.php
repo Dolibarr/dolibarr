@@ -45,7 +45,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 	if (! empty($usertotest))
 	{
-		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
 		// If test username/password asked, we define $test=false if ko and $login var to login if ok, set also $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
@@ -56,7 +56,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		$sql ='SELECT rowid, login, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
-		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+		if (preg_match('/@/', $usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
 		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 		$sql.=' AND statut = 1';
 		// Required to first found the user into entity, then the superadmin.
@@ -80,7 +80,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
 
 				// By default, we used MD5
-				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
+				if (! in_array($cryptType, array('md5'))) $cryptType='md5';
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'md5')
 				{

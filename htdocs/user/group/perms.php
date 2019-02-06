@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupperms';   // To manage different context of search
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupperms';   // To manage different context of search
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('groupperms','globalcard'));
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -101,7 +101,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Permissions"));
+llxHeader('', $langs->trans("Permissions"));
 
 if ($object->id > 0)
 {
@@ -192,7 +192,7 @@ if ($object->id > 0)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -210,7 +210,7 @@ if ($object->id > 0)
         print '<td colspan="2">'.$object->name.'';
         if (! $object->entity)
         {
-            print img_picto($langs->trans("GlobalGroup"),'redstar');
+            print img_picto($langs->trans("GlobalGroup"), 'redstar');
         }
         print "</td></tr>\n";
     }
@@ -225,7 +225,7 @@ if ($object->id > 0)
     if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('insertExtraHeader',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     print '<table width="100%" class="noborder">';
@@ -307,7 +307,7 @@ if ($object->id > 0)
             			print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
             		}
             		print '<td align="center">';
-            		print img_picto($langs->trans("Active"),'tick');
+            		print img_picto($langs->trans("Active"), 'tick');
             		print '</td>';
             	}
             	else
@@ -343,7 +343,7 @@ if ($object->id > 0)
     print '</div>';
 
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('insertExtraFooter',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     dol_fiche_end();

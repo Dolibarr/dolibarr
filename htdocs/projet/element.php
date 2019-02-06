@@ -66,9 +66,9 @@ if (! empty($conf->don->enabled))			$langs->load("donations");
 if (! empty($conf->loan->enabled))			$langs->load("loan");
 if (! empty($conf->salaries->enabled))		$langs->load("salaries");
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 $datesrfc=GETPOST('datesrfc');
 $dateerfc=GETPOST('dateerfc');
 $dates=dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
@@ -81,11 +81,11 @@ if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf-
 	$tmp=dol_getdate($new);
 	//$datee=$now
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
-	$dates=dol_get_first_day($tmp['year'],1);
+	$dates=dol_get_first_day($tmp['year'], 1);
 }
 if ($id == '' && $projectid == '' && $ref == '')
 {
-	dol_print_error('','Bad parameter');
+	dol_print_error('', 'Bad parameter');
 	exit;
 }
 
@@ -112,9 +112,9 @@ $hookmanager->initHooks(array('projectOverview'));
  */
 
 $title=$langs->trans("ProjectReferers").' - '.$object->ref.' '.$object->name;
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Referers"),$help_url);
+llxHeader("", $langs->trans("Referers"), $help_url);
 
 $form = new Form($db);
 $formproject=new FormProjets($db);
@@ -146,8 +146,8 @@ $morehtmlref.='</div>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
-    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-    $object->next_prev_filter=" te.rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+    $object->next_prev_filter=" te.rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -175,20 +175,20 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
     // Opportunity percent
     print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-    if (strcmp($object->opp_percent,'')) print price($object->opp_percent,'',$langs,1,0).' %';
+    if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
     print '</td></tr>';
 
     // Opportunity Amount
     print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-    if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,1,0,0,$conf->currency);
+    if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency);
     print '</td></tr>';
 }
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-$start = dol_print_date($object->date_start,'day');
+$start = dol_print_date($object->date_start, 'day');
 print ($start?$start:'?');
-$end = dol_print_date($object->date_end,'day');
+$end = dol_print_date($object->date_end, 'day');
 print ' - ';
 print ($end?$end:'?');
 if ($object->hasDelay()) print img_warning("Late");
@@ -196,7 +196,7 @@ print '</td></tr>';
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,1,0,0,$conf->currency);
+if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 print '</td></tr>';
 
 // Other attributes
@@ -228,7 +228,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_B
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-    print $form->showCategories($object->id,'project',1);
+    print $form->showCategories($object->id, 'project', 1);
     print "</td></tr>";
 }
 
@@ -593,7 +593,7 @@ foreach ($listofreferent as $key => $value)
 			$num=count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
-				$tmp=explode('_',$elementarray[$i]);
+				$tmp=explode('_', $elementarray[$i]);
 				$idofelement=$tmp[0];
 				$idofelementuser=$tmp[1];
 
@@ -610,12 +610,12 @@ foreach ($listofreferent as $key => $value)
 					if ($idofelementuser)
 					{
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'],'MT');
+						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
 					else
 					{
 						$tmp = $element->getSumOfAmount('', $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'],'MT');
+						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
 				}
 				else $total_ht_by_line=$element->total_ht;
@@ -638,7 +638,7 @@ foreach ($listofreferent as $key => $value)
 				elseif ($tablename == 'projet_task')
 				{
 					$defaultvat = get_default_tva($mysoc, $mysoc);
-					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
+					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				}
 				else $total_ttc_by_line=$element->total_ttc;
 
@@ -742,12 +742,12 @@ foreach ($listofreferent as $key => $value)
 		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename,$exclude_select_element))
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
-			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300',-2,!empty($project_field)?$project_field:'fk_projet');
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field)?$project_field:'fk_projet');
 			if (! $selectList || ($selectList<0))
 			{
-				setEventMessages($formproject->error,$formproject->errors,'errors');
+				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			}
 			elseif($selectList)
 			{
@@ -756,8 +756,8 @@ foreach ($listofreferent as $key => $value)
 			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
-				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
-				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
+				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
+				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
 				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
 				$addform.='<td>'.$selectList.'</td>';
 				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
@@ -812,7 +812,7 @@ foreach ($listofreferent as $key => $value)
 		else print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee,!empty($project_field)?$project_field:'fk_projet');
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$total_ht = 0;
@@ -833,7 +833,7 @@ foreach ($listofreferent as $key => $value)
 			$num=count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
-				$tmp=explode('_',$elementarray[$i]);
+				$tmp=explode('_', $elementarray[$i]);
 				$idofelement=$tmp[0];
 				$idofelementuser=$tmp[1];
 
@@ -898,7 +898,7 @@ foreach ($listofreferent as $key => $value)
 					// Show ref with link
 					if ($element instanceof Task)
 					{
-						print $element->getNomUrl(1,'withproject','time');
+						print $element->getNomUrl(1, 'withproject', 'time');
 						print ' - '.dol_trunc($element->label, 48);
 					}
 					else print $element->getNomUrl(1);
@@ -913,8 +913,8 @@ foreach ($listofreferent as $key => $value)
 					}
 					elseif ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
-						$filename = get_exdir($element->id,2,0,0,$element,'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filename = get_exdir($element->id, 2, 0, 0, $element, 'product').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
 					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
@@ -953,8 +953,8 @@ foreach ($listofreferent as $key => $value)
 				print '<td align="center">';
 				if ($tablename == 'actioncomm')
 				{
-				    print dol_print_date($element->datep,'dayhour');
-				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef,'dayhour');
+				    print dol_print_date($element->datep, 'dayhour');
+				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef, 'dayhour');
 				}
 				elseif (in_array($tablename, array('projet_task')))
 				{
@@ -964,23 +964,23 @@ foreach ($listofreferent as $key => $value)
                 	print '</a>';
 				    $total_time_by_line = $tmpprojtime['nbseconds'];
 				}
-				else print dol_print_date($date,'day');
+				else print dol_print_date($date, 'day');
 				print '</td>';
 
 				// Third party or user
                 print '<td class="left">';
-                if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
-                elseif ($tablename == 'expensereport_det')
-                {
+                if (is_object($element->thirdparty)) {
+                    print $element->thirdparty->getNomUrl(1, '', 48);
+                } elseif ($tablename == 'expensereport_det') {
                 	$tmpuser=new User($db);
                 	$tmpuser->fetch($expensereport->fk_user_author);
-                	print $tmpuser->getNomUrl(1,'',48);
+                	print $tmpuser->getNomUrl(1, '', 48);
                 }
 				elseif ($tablename == 'payment_salary')
 				{
 					$tmpuser=new User($db);
 					$tmpuser->fetch($element->fk_user);
-					print $tmpuser->getNomUrl(1,'',48);
+					print $tmpuser->getNomUrl(1, '', 48);
 				}
 				elseif ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
@@ -988,7 +988,7 @@ foreach ($listofreferent as $key => $value)
                 	{
 	                	$tmpuser2=new User($db);
 	                	$tmpuser2->fetch($element->fk_user_author);
-	                	print $tmpuser2->getNomUrl(1,'',48);
+	                	print $tmpuser2->getNomUrl(1, '', 48);
                 	}
                 }
                 elseif ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
@@ -1011,7 +1011,7 @@ foreach ($listofreferent as $key => $value)
 					    if (! empty($conf->salaries->enabled))
 					    {
         				    // TODO Permission to read daily rate to show value
-					        $total_ht_by_line = price2num($tmpprojtime['amount'],'MT');
+					        $total_ht_by_line = price2num($tmpprojtime['amount'], 'MT');
     						if ($tmpprojtime['nblinesnull'] > 0)
     						{
     							$langs->load("errors");
@@ -1053,7 +1053,7 @@ foreach ($listofreferent as $key => $value)
 					    {
 					        // TODO Permission to read daily rate
     						$defaultvat = get_default_tva($mysoc, $mysoc);
-    						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
+    						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 					    }
 					    else
 					    {
@@ -1127,7 +1127,7 @@ foreach ($listofreferent as $key => $value)
 					$breakline.='</td>';
 					$breakline.='<td class="right">';
 					$breakline.=$langs->trans('SubTotal').' : ';
-					if (is_object($element->thirdparty)) $breakline.=$element->thirdparty->getNomUrl(0,'',48);
+					if (is_object($element->thirdparty)) $breakline.=$element->thirdparty->getNomUrl(0, '', 48);
 					$breakline.='</td>';
 					$breakline.='<td align="right">'.price($total_ht_by_third).'</td>';
 					$breakline.='<td align="right">'.price($total_ttc_by_third).'</td>';

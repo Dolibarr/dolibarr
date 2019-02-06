@@ -55,7 +55,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
@@ -96,8 +96,8 @@ if ($resql)
 	    $info=$fuser->_load_ldap_info();
 		$dn=$fuser->_load_ldap_dn($info);
 
-		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
-		$result=$ldap->update($dn,$info,$user,$olddn);
+		$result=$ldap->add($dn, $info, $user);	// Wil fail if already exists
+		$result=$ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");

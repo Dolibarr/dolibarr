@@ -31,13 +31,13 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
 
 <?php
-print load_fiche_titre($langs->trans("NewService"),'','title_products.png');
+print load_fiche_titre($langs->trans("NewService"), '', 'title_products.png');
 dol_fiche_head('');
 ?>
 
-<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
+<?php dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']); ?>
 
-<?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
+<?php dol_htmloutput_errors($GLOBALS['mesg'], $GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -60,12 +60,12 @@ dol_fiche_head('');
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_buy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>

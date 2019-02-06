@@ -128,7 +128,7 @@ class AdherentType extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
 
-			$result = $this->update($user,1);
+			$result = $this->update($user, 1);
 			if ($result < 0)
 			{
 				$this->db->rollback();
@@ -138,7 +138,7 @@ class AdherentType extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('MEMBER_TYPE_CREATE',$user);
+				$result=$this->call_trigger('MEMBER_TYPE_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -164,7 +164,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Met a jour en base donnees du type
+	 *  Updating the type in the database
 	 *
 	 *  @param	User	$user			Object user making change
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
@@ -208,7 +208,7 @@ class AdherentType extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('MEMBER_TYPE_MODIFY',$user);
+				$result=$this->call_trigger('MEMBER_TYPE_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -234,9 +234,9 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *	Fonction qui permet de supprimer le status de l'adherent
+	 *	Function to delete the member's status
 	 *
-	 *  @return		int					>0 if OK, 0 if not found, < 0 if KO
+	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
 	 */
 	function delete()
 	{
@@ -251,7 +251,7 @@ class AdherentType extends CommonObject
 		if ($resql)
 		{
 			// Call trigger
-			$result=$this->call_trigger('MEMBER_TYPE_DELETE',$user);
+			$result=$this->call_trigger('MEMBER_TYPE_DELETE', $user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
 			// End call triggers
 
@@ -267,7 +267,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Fonction qui permet de recuperer le status de l'adherent
+	 *  Function that retrieves the status of the member
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK
@@ -380,7 +380,7 @@ class AdherentType extends CommonObject
 					{
 						$memberstatic=new Adherent($this->db);
 						if ($mode == 1) {
-							$memberstatic->fetch($obj->rowid,'','','',false, false);
+							$memberstatic->fetch($obj->rowid, '', '', '', false, false);
 						} else {
 							$memberstatic->fetch($obj->rowid);
 						}
@@ -416,14 +416,14 @@ class AdherentType extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowTypeCard",$this->label);
+        $label=$langs->trans("ShowTypeCard", $this->label);
 
         $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label,$maxlen):$this->label);
+        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label, $maxlen):$this->label);
         $result .= $linkend;
 
         return $result;
@@ -475,7 +475,7 @@ class AdherentType extends CommonObject
 		$info=array();
 
 		// Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
 
 		// Champs
 		if ($this->label && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
@@ -486,7 +486,7 @@ class AdherentType extends CommonObject
 			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
 			{
 				$member=new Adherent($this->db);
-				$member->fetch($val->id,'','','',false,false);
+				$member->fetch($val->id, '', '', '', false, false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}

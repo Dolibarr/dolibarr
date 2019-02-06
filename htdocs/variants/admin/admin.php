@@ -47,7 +47,7 @@ $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
 llxHeader('', $title);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title,$linkback,'title_setup');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 dol_fiche_head(array(), 'general', $tab, 0, 'product');
 
@@ -58,7 +58,7 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
-print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
     $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;

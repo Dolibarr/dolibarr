@@ -364,7 +364,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
             $aKeys=array_keys($oVarsA);
             foreach($aKeys as $sKey)
             {
-                if (in_array($sKey,$fieldstoignorearray)) continue;
+                if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
                 {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);

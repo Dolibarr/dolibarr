@@ -34,14 +34,14 @@ $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bil
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ecm','');
+$result = restrictedArea($user, 'ecm', '');
 
 // Load permissions
 $user->getrights('ecm');
 
 // Get parameters
-$socid = GETPOST('socid','int');
-$action = GETPOST('action','alpha');
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
 $section=GETPOST('section');
 if (! $section) $section=0;
 
@@ -52,9 +52,9 @@ if (empty($module)) $module='ecm';
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -68,7 +68,7 @@ if (! empty($section))
 	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
-		dol_print_error($db,$ecmdir->error);
+		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
 }
@@ -184,12 +184,12 @@ print '</td><td class="tdtop">';
 // Right area
 $relativepath=$ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
 $textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
-$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty);
+$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
 
 //	print '<table width="100%" class="border">';
 

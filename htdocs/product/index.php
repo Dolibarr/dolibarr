@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Pierre Ardoin	    <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$type=GETPOST("type",'int');
+$type=GETPOST("type", 'int');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
 if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
 
 // Security check
-if ($type=='0') $result=restrictedArea($user,'produit');
-elseif ($type=='1') $result=restrictedArea($user,'service');
-else $result=restrictedArea($user,'produit|service');
+if ($type=='0') $result=restrictedArea($user, 'produit');
+elseif ($type=='1') $result=restrictedArea($user, 'service');
+else $result=restrictedArea($user, 'produit|service');
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
@@ -74,7 +75,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
-print load_fiche_titre($transAreaType,$linkback,'title_products.png');
+print load_fiche_titre($transAreaType, $linkback, 'title_products.png');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -121,7 +122,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
@@ -172,12 +173,12 @@ $total=0;
 if ($type == '0')
 {
 	print $statProducts;
-	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
+	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3]);
 }
 elseif ($type == '1')
 {
 	print $statServices;
-	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2]);
+	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]);
 }
 else
 {
@@ -278,10 +279,10 @@ $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= $db->order("p.tms","DESC");
-$sql.= $db->plimit($max,0);
+$sql.= $db->order("p.tms", "DESC");
+$sql.= $db->plimit($max, 0);
 
 //print $sql;
 $result = $db->query($sql);
@@ -293,9 +294,9 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$transRecordedType = $langs->trans("LastModifiedProductsAndServices",$max);
-		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
-		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
+		$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
+		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
+		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
@@ -336,11 +337,11 @@ if ($result)
 			$product_static->type=$objp->fk_product_type;
 			$product_static->entity = $objp->entity;
 			$product_static->status_batch = $objp->tobatch;
-			print $product_static->getNomUrl(1,'',16);
+			print $product_static->getNomUrl(1, '', 16);
 			print "</td>\n";
-			print '<td>'.dol_trunc($objp->label,32).'</td>';
+			print '<td>'.dol_trunc($objp->label, 32).'</td>';
 			print "<td>";
-			print dol_print_date($db->jdate($objp->datem),'day');
+			print dol_print_date($db->jdate($objp->datem), 'day');
 			print "</td>";
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -361,10 +362,10 @@ if ($result)
     			print '</td>';
 			}
 			print '<td align="right" class="nowrap"><span class="statusrefsell">';
-			print $product_static->LibStatut($objp->tosell,3,0);
+			print $product_static->LibStatut($objp->tosell, 3, 0);
 			print "</span></td>";
             print '<td align="right" class="nowrap"><span class="statusrefbuy">';
-            print $product_static->LibStatut($objp->tobuy,3,1);
+            print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
 			print "</tr>\n";
 			$i++;
@@ -412,7 +413,7 @@ function activitytrim($product_type)
 	global $bc;
 
 	// We display the last 3 years
-	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate=date('Y', dol_time_plus_duree(time(), -3, "y"));
 
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
@@ -423,7 +424,7 @@ function activitytrim($product_type)
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND pf.fk_paiement= p.rowid";
 	$sql.= " AND fd.product_type=".$product_type;
-	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate),1)."'";
+	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
 	$sql.= " GROUP BY annee, mois ";
 	$sql.= " ORDER BY annee, mois ";
 

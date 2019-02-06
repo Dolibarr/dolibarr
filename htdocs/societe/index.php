@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $langs->load("companies");
 
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 // Security check
-$result=restrictedArea($user,'societe',0,'','','','');
+$result=restrictedArea($user, 'societe', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
 
@@ -47,9 +47,9 @@ $thirdparty_static = new Societe($db);
 $transAreaType = $langs->trans("ThirdPartiesArea");
 $helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
-llxHeader("",$langs->trans("ThirdParties"),$helpurl);
+llxHeader("", $langs->trans("ThirdParties"), $helpurl);
 $linkback='';
-print load_fiche_titre($transAreaType,$linkback,'title_companies.png');
+print load_fiche_titre($transAreaType, $linkback, 'title_companies.png');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -275,8 +275,8 @@ $sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur != 1 OR s.client != 0)";
-$sql.= $db->order("s.tms","DESC");
-$sql.= $db->plimit($max,0);
+$sql.= $db->order("s.tms", "DESC");
+$sql.= $db->plimit($max, 0);
 
 //print $sql;
 $result = $db->query($sql);
@@ -288,7 +288,7 @@ if ($result)
 
     if ($num > 0)
     {
-        $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
+        $transRecordedType = $langs->trans("LastModifiedThirdParties", $max);
 
         print "\n<!-- last thirdparties modified -->\n";
         print '<div class="div-table-responsive-no-min">';
@@ -325,24 +325,24 @@ if ($result)
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
             	$thirdparty_static->name=$langs->trans("Customer");
-            	print $thirdparty_static->getNomUrl(0,'customer',0,1);
+            	print $thirdparty_static->getNomUrl(0, 'customer', 0, 1);
             }
             if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
             if (($thirdparty_static->client==2 || $thirdparty_static->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
             	$thirdparty_static->name=$langs->trans("Prospect");
-            	print $thirdparty_static->getNomUrl(0,'prospect',0,1);
+            	print $thirdparty_static->getNomUrl(0, 'prospect', 0, 1);
             }
             if (! empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
             {
                 if ($thirdparty_static->client) print " / ";
             	$thirdparty_static->name=$langs->trans("Supplier");
-            	print $thirdparty_static->getNomUrl(0,'supplier',0,1);
+            	print $thirdparty_static->getNomUrl(0, 'supplier', 0, 1);
             }
             print '</td>';
             // Last modified date
             print '<td align="right">';
-            print dol_print_date($thirdparty_static->datem,'day');
+            print dol_print_date($thirdparty_static->datem, 'day');
             print "</td>";
             print '<td align="right" class="nowrap">';
             print $thirdparty_static->getLibStatut(3);

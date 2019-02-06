@@ -122,7 +122,7 @@ $formaccounting = new FormAccounting($db);
 
 $title=$object->name." - ".$langs->trans('TabLetteringCustomer');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -249,7 +249,7 @@ if ($resql) {
 	}
 
 	print '<tr class="oddeven">';
-	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
+	print '<td class="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
 	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
 	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';

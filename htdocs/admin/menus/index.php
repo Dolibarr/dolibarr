@@ -34,29 +34,29 @@ if (! $user->admin) accessforbidden();
 
 $dirstandard = array();
 $dirsmartphone = array();
-$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach($dirmenus as $dirmenu)
 {
     $dirstandard[]=$dirmenu.'standard';
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
-$menu_handler_top=preg_replace('/(_backoffice\.php|_menu\.php)/i','',$menu_handler_top);
-$menu_handler_top=preg_replace('/(_frontoffice\.php|_menu\.php)/i','',$menu_handler_top);
-$menu_handler_smartphone=preg_replace('/(_backoffice\.php|_menu\.php)/i','',$menu_handler_smartphone);
-$menu_handler_smartphone=preg_replace('/(_frontoffice\.php|_menu\.php)/i','',$menu_handler_smartphone);
+$menu_handler_top=preg_replace('/(_backoffice\.php|_menu\.php)/i', '', $menu_handler_top);
+$menu_handler_top=preg_replace('/(_frontoffice\.php|_menu\.php)/i', '', $menu_handler_top);
+$menu_handler_smartphone=preg_replace('/(_backoffice\.php|_menu\.php)/i', '', $menu_handler_smartphone);
+$menu_handler_smartphone=preg_replace('/(_frontoffice\.php|_menu\.php)/i', '', $menu_handler_smartphone);
 
 $menu_handler=$menu_handler_top;
 
 if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
 if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
-$menu_handler_to_search=preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i','',$menu_handler);
+$menu_handler_to_search=preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i', '', $menu_handler);
 
 
 /*
@@ -71,7 +71,7 @@ if ($action == 'up')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId", "int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -89,7 +89,7 @@ if ($action == 'up')
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId","int")."))";
+	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId", "int")."))";
 	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
 	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
@@ -127,7 +127,7 @@ elseif ($action == 'down')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId", "int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -145,7 +145,7 @@ elseif ($action == 'down')
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId","int")."))";
+	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId", "int")."))";
 	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
 	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
@@ -180,7 +180,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql.= " WHERE rowid = ".GETPOST('menuId','int');
+	$sql.= " WHERE rowid = ".GETPOST('menuId', 'int');
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -211,10 +211,10 @@ $formadmin=new FormAdmin($db);
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
-print load_fiche_titre($langs->trans("Menus"),'','title_setup');
+print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
 
 $h = 0;
@@ -245,18 +245,18 @@ if ($action == 'delete')
 {
 	$sql = "SELECT m.titre";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".GETPOST('menuId','int');
+	$sql.= " WHERE m.rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId','int'),$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->titre), "confirm_delete");
 }
 
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
+print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler)?'':'_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 
@@ -266,8 +266,8 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+print ' | <a href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
 print '</tr>';
 
 print '<tr>';
@@ -327,17 +327,17 @@ if ($conf->use_javascript_ajax)
 				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
 						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
 						'</td><td class="right">'.
-						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
 						'&nbsp; &nbsp; &nbsp;'.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>'.
 						'</td></tr></table>',
-			    'buttons'=>'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+			    'buttons'=>'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
 						'&nbsp; &nbsp; &nbsp;'.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>'
 			);
 			$i++;
 		}

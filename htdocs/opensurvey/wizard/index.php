@@ -18,7 +18,7 @@
  */
 
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

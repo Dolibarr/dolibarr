@@ -36,8 +36,8 @@ if (! empty($conf->projet->enabled)) {
 
 $langs->loadLangs(array("companies", "bills"));
 
-$id = GETPOST("facid",'int')?GETPOST("facid",'int'):GETPOST("id",'int');
-$ref = GETPOST("ref",'alpha');
+$id = GETPOST("facid", 'int')?GETPOST("facid", 'int'):GETPOST("id", 'int');
+$ref = GETPOST("ref", 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

@@ -33,7 +33,7 @@ $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','');
+$result = restrictedArea($user, 'banque', '', '');
 
 
 $checkdepositstatic=new RemiseCheque($db);
@@ -44,7 +44,7 @@ $accountstatic=new Account($db);
  * View
  */
 
-llxHeader('',$langs->trans("ChequesArea"));
+llxHeader('', $langs->trans("ChequesArea"));
 
 print load_fiche_titre($langs->trans("ChequesArea"));
 
@@ -105,7 +105,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LastCheckReceiptShort",$max).'</th>';
+	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";
 	print '<th>'.$langs->trans("Account").'</th>';
 	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
@@ -131,11 +131,11 @@ if ($resql)
 		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
+		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
+		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
 
 		print '</tr>';
 	}

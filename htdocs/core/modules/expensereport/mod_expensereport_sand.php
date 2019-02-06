@@ -74,15 +74,15 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte.= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -151,7 +151,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal=get_next_value($db,$mask,'expensereport','ref','',null, $date, 'next', true, $fuser);
+		$numFinal=get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}

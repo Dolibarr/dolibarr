@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->load("accountancy");
 
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -59,16 +59,16 @@ $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0, 0, 0, $_REQUEST["date_startmonth"], $_REQUEST["date_startday"], $_REQUEST["date_startyear"]);
+$date_end=dol_mktime(23, 59, 59, $_REQUEST["date_endmonth"], $_REQUEST["date_endday"], $_REQUEST["date_endyear"]);
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
@@ -90,12 +90,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 else
 {
@@ -185,7 +185,7 @@ else $periodlink = '';
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -329,7 +329,7 @@ print_liste_field_titre(
 	);
 print_liste_field_titre(
 	$langs->trans("Percentage"),
-	$_SERVER["PHP_SELF"],"amount_ttc",
+	$_SERVER["PHP_SELF"], "amount_ttc",
 	"",
 	$paramslink,
 	'align="right"',
@@ -384,7 +384,7 @@ if (count($amount)) {
         // Third party
         $fullname=$name[$key];
         if ($key >= 0) {
-            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
+            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$fullname.'</a>';
         } else {
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
@@ -428,18 +428,18 @@ if (count($amount)) {
         print '</td>';
 
         // Percent
-        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
+        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
         print '<td align="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 	}
         if (! empty($conf->commande->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 	}
         if (! empty($conf->facture->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 	}
         print '</td>';
         print "</tr>\n";

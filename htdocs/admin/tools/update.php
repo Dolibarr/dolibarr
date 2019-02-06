@@ -30,19 +30,19 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/geturl.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","other"));
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 if (! $user->admin) accessforbidden();
 
-if (GETPOST('msg','alpha')) {
-	setEventMessages(GETPOST('msg','alpha'), null, 'errors');
+if (GETPOST('msg', 'alpha')) {
+	setEventMessages(GETPOST('msg', 'alpha'), null, 'errors');
 }
 
 
 $urldolibarr='https://www.dolibarr.org/downloads/';
-$dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
-$dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
-$dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
+$dolibarrroot=preg_replace('/([\\/]+)$/i', '', DOL_DOCUMENT_ROOT);
+$dolibarrroot=preg_replace('/([^\\/]+)$/i', '', $dolibarrroot);
+$dolibarrdataroot=preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 
 $sfurl = '';
 $version='0.0';
@@ -65,9 +65,9 @@ if ($action == 'getlastversion')
  */
 
 $wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
-llxHeader('',$langs->trans("Upgrade"),$wikihelp);
+llxHeader('', $langs->trans("Upgrade"), $wikihelp);
 
-print load_fiche_titre($langs->trans("Upgrade"),'','title_setup');
+print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 
 print '<br>';
 
@@ -88,8 +88,8 @@ if (function_exists('curl_init'))
                 if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
                 {
                     $newversion=$reg[1];
-                    $newversionarray=explode('.',$newversion);
-                    $versionarray=explode('.',$version);
+                    $newversionarray=explode('.', $newversion);
+                    $versionarray=explode('.', $version);
                     //var_dump($newversionarray);var_dump($versionarray);
                     if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
                 }
@@ -117,18 +117,18 @@ print '<br>';
 print $langs->trans("Upgrade").'<br>';
 print '<hr>';
 print $langs->trans("ThisIsProcessToFollow").'<br>';
-print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
 $fullurl='<a href="'.$urldolibarr.'" target="_blank">'.$urldolibarr.'</a>';
-print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
-print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
-print '<b>'.$langs->trans("StepNb",3).'</b>: ';
-print $langs->trans("RemoveLock",$dolibarrdataroot.'/install.lock').'<br>';
-print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
+print $langs->trans("UnpackPackageInDolibarrRoot", $dolibarrroot).'<br>';
+print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
+print $langs->trans("RemoveLock", $dolibarrdataroot.'/install.lock').'<br>';
+print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 $fullurl='<a href="'.DOL_URL_ROOT.'/install/" target="_blank">'.DOL_URL_ROOT.'/install/</a>';
-print $langs->trans("CallUpdatePage",$fullurl).'<br>';
-print '<b>'.$langs->trans("StepNb",5).'</b>: ';
-print $langs->trans("RestoreLock",$dolibarrdataroot.'/install.lock').'<br>';
+print $langs->trans("CallUpdatePage", $fullurl).'<br>';
+print '<b>'.$langs->trans("StepNb", 5).'</b>: ';
+print $langs->trans("RestoreLock", $dolibarrdataroot.'/install.lock').'<br>';
 
 print '<br>';
 print '<br>';

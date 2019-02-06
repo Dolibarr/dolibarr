@@ -57,7 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // Check parameters
 if (! isset($argv[1]))
@@ -78,24 +78,24 @@ foreach ($argv as $key => $value)
 	$found=false;
 
 	// Define options
-	if (preg_match('/^lang=/i',$value))
+	if (preg_match('/^lang=/i', $value))
 	{
 		$found=true;
-		$valarray=explode('=',$value);
+		$valarray=explode('=', $value);
 		$newlangid=$valarray[1];
 		print 'Use language '.$newlangid.".\n";
 	}
-	if (preg_match('/^prefix=/i',$value))
+	if (preg_match('/^prefix=/i', $value))
 	{
 		$found=true;
-		$valarray=explode('=',$value);
+		$valarray=explode('=', $value);
 		$fileprefix=$valarray[1];
 		print 'Use prefix for filename '.$fileprefix.".\n";
 	}
 
-	if (preg_match('/^regenerate=(.*)/i',$value,$reg))
+	if (preg_match('/^regenerate=(.*)/i', $value, $reg))
 	{
-	    if (! in_array($reg[1],array('','0','no')))
+	    if (! in_array($reg[1], array('','0','no')))
 	    {
 		    $found=true;
 		    $regenerate=$reg[1];
@@ -120,7 +120,7 @@ foreach ($argv as $key => $value)
 
 		$dateafterdate=dol_stringtotime($argv[$key+1]);
 		$datebeforedate=dol_stringtotime($argv[$key+2]);
-		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate,'day','gmt')." and ".dol_print_date($datebeforedate,'day','gmt').".\n";
+		print 'Rebuild PDF for invoices validated between '.dol_print_date($dateafterdate, 'day', 'gmt')." and ".dol_print_date($datebeforedate, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=payments')
@@ -136,7 +136,7 @@ foreach ($argv as $key => $value)
 			print 'Error: Bad date format or value'."\n";
 			exit(-1);
 		}
-		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day','gmt')." and ".dol_print_date($paymentdatebefore,'day','gmt').".\n";
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment')
@@ -156,7 +156,7 @@ foreach ($argv as $key => $value)
 
 		$paymentonbankref=$argv[$key+1];
 		$bankaccount=new Account($db);
-		$result=$bankaccount->fetch(0,$paymentonbankref);
+		$result=$bankaccount->fetch(0, $paymentonbankref);
 		if ($result <= 0)
 		{
 			print 'Error: Bank account with ref "'.$paymentonbankref.'" not found'."\n";
@@ -196,23 +196,23 @@ foreach ($argv as $key => $value)
     	$found=true;
     	$filter[]='excludethirdparties';
 
-    	$thirdpartiesid=explode(',',$argv[$key+1]);
-    	print 'Exclude thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+    	$thirdpartiesid=explode(',', $argv[$key+1]);
+    	print 'Exclude thirdparties with id in list ('.join(',', $thirdpartiesid).").\n";
 
-    	$option.=(empty($option)?'':'_').'excludethirdparties'.join('-',$thirdpartiesid);
+    	$option.=(empty($option)?'':'_').'excludethirdparties'.join('-', $thirdpartiesid);
     }
     if ($value == 'filter=onlythirdparties')
     {
     	$found=true;
     	$filter[]='onlythirdparties';
 
-    	$thirdpartiesid=explode(',',$argv[$key+1]);
-    	print 'Only thirdparties with id in list ('.join(',',$thirdpartiesid).").\n";
+    	$thirdpartiesid=explode(',', $argv[$key+1]);
+    	print 'Only thirdparties with id in list ('.join(',', $thirdpartiesid).").\n";
 
-    	$option.=(empty($option)?'':'_').'onlythirdparty'.join('-',$thirdpartiesid);
+    	$option.=(empty($option)?'':'_').'onlythirdparty'.join('-', $thirdpartiesid);
     }
 
-	if (! $found && preg_match('/filter=/i',$value))
+	if (! $found && preg_match('/filter=/i', $value))
 	{
 		usage();
 		exit(-1);
@@ -226,12 +226,12 @@ if (empty($option) && count($filter) <= 0)
 	exit(-1);
 }
 // Check if there is no uncompatible choice
-if (in_array('payments',$filter) && in_array('nopayment',$filter))
+if (in_array('payments', $filter) && in_array('nopayment', $filter))
 {
 	usage();
 	exit(-1);
 }
-if (in_array('bank',$filter) && in_array('nopayment',$filter))
+if (in_array('bank', $filter) && in_array('nopayment', $filter))
 {
 	usage();
 	exit(-1);

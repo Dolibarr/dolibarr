@@ -34,21 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("members");
 
-$rowid  = GETPOST('rowid','int');
-$action = GETPOST('action','alpha');
-$cancel = GETPOST('cancel','alpha');
-$backtopage = GETPOST('backtopage','alpha');
+$rowid  = GETPOST('rowid', 'int');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$search_lastname	= GETPOST('search_lastname','alpha');
-$search_login		= GETPOST('search_login','alpha');
-$search_email		= GETPOST('search_email','alpha');
-$type				= GETPOST('type','intcomma');
-$status				= GETPOST('status','alpha');
+$search_lastname	= GETPOST('search_lastname', 'alpha');
+$search_login		= GETPOST('search_login', 'alpha');
+$search_email		= GETPOST('search_email', 'alpha');
+$type				= GETPOST('type', 'intcomma');
+$status				= GETPOST('status', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
@@ -56,15 +56,15 @@ $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
-$label=GETPOST("label","alpha");
-$statut=GETPOST("statut","int");
-$subscription=GETPOST("subscription","int");
-$vote=GETPOST("vote","int");
-$comment=GETPOST("comment",'alphanohtml');
-$mail_valid=GETPOST("mail_valid",'none');
+$label=GETPOST("label", "alpha");
+$statut=GETPOST("statut", "int");
+$subscription=GETPOST("subscription", "int");
+$vote=GETPOST("vote", "int");
+$comment=GETPOST("comment", 'alphanohtml');
+$mail_valid=GETPOST("mail_valid", 'none');
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid,'adherent_type');
+$result=restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 
 $object = new AdherentType($db);
 
@@ -73,7 +73,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
     $search_lastname="";
     $search_login="";
@@ -95,15 +95,13 @@ if ($cancel) {
 
 	$action='';
 
-	if (! empty($backtopage))
-	{
+	if (! empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 }
 
-if ($action == 'add' && $user->rights->adherent->configurer)
-{
+if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
@@ -112,12 +110,12 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	else {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
@@ -128,7 +126,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists",$login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
 		}
 	}
 
@@ -166,7 +164,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	if ($ret < 0) $error++;
 
 	$ret=$object->update($user);
@@ -209,7 +207,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 // List of members type
@@ -266,8 +264,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$membertype = new AdherentType($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$objp = $db->fetch_object($result);
 
 			$membertype->id = $objp->rowid;
@@ -284,9 +281,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td align="center">'.yn($objp->vote).'</td>';
 			print '<td align="center">';
             if ( !empty($objp->statut) ) {
-                print img_picto($langs->trans("InActivity"),'statut4');
+                print img_picto($langs->trans("InActivity"), 'statut4');
             } else {
-                print img_picto($langs->trans("ActivityCeased"),'statut5');
+                print img_picto($langs->trans("ActivityCeased"), 'statut5');
             }
       		print '</td>';
 			if ($user->rights->adherent->configurer)
@@ -331,15 +328,15 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
+  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), 1);
   	print '</td></tr>';
-  
+
   	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $form->selectyesno("subscription",1,1);
+	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $form->selectyesno("vote",0,1);
+	print $form->selectyesno("vote", 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -347,17 +344,17 @@ if ($action == 'create')
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
+	$doleditor=new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
 	// Other attributes
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields,'edit');
+		print $object->showOptionals($extrafields, 'edit');
 	}
 	print '<tbody>';
 	print "</table>\n";
@@ -391,7 +388,7 @@ if ($rowid > 0)
 		 */
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAMemberType"),$langs->trans("ConfirmDeleteMemberType",$object->label),"confirm_delete", '',0,1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id, $langs->trans("DeleteAMemberType"), $langs->trans("ConfirmDeleteMemberType", $object->label), "confirm_delete", '', 0, 1);
 		}
 
 		$head = member_type_prepare_head($object);
@@ -409,9 +406,9 @@ if ($rowid > 0)
 
    		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
         if ( !empty($object->statut) ) {
-            print img_picto($langs->trans('TypeStatusActive'),'statut4').' '.$langs->trans("InActivity");
+            print img_picto($langs->trans('TypeStatusActive'), 'statut4').' '.$langs->trans("InActivity");
         } else {
-            print img_picto($langs->trans('TypeStatusInactive'),'statut5').' '.$langs->trans("ActivityCeased");
+            print img_picto($langs->trans('TypeStatusInactive'), 'statut5').' '.$langs->trans("ActivityCeased");
         }
 		print '</tr>';
 
@@ -490,9 +487,9 @@ if ($rowid > 0)
 		}
 		if ($action == 'search')
 		{
-			if (GETPOST('search','alpha'))
+			if (GETPOST('search', 'alpha'))
 			{
-		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
+		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search', 'alpha'));
 		  	}
 		}
 		if (! empty($search_lastname))
@@ -516,7 +513,7 @@ if ($rowid > 0)
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 
-		$sql.= " ".$db->order($sortfield,$sortorder);
+		$sql.= " ".$db->order($sortfield, $sortorder);
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
@@ -579,7 +576,7 @@ if ($rowid > 0)
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
-            print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+            print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
             $moreforfilter = '';
 
@@ -602,7 +599,7 @@ if ($rowid > 0)
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			print '<td align="right" colspan="2" class="liste_titre">';
+			print '<td class="liste_titre right" colspan="2">';
 			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		    print '&nbsp; ';
 		    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -611,13 +608,13 @@ if ($rowid > 0)
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
-		    print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Nature",$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-		    print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-		    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+		    print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("Nature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
+		    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 		    print "</tr>\n";
 
 		    while ($i < $num && $i < $conf->liste_limit)
@@ -634,11 +631,11 @@ if ($rowid > 0)
 		        print '<tr class="oddeven">';
 		        if ($objp->societe != '')
 		        {
-		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
 		        }
 		        else
 		        {
-		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
+		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
 		        }
 
 		        // Login
@@ -656,11 +653,11 @@ if ($rowid > 0)
 		        print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
 		        // EMail
-		        print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
+		        print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
 
 		        // Statut
 		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
+		        print $adh->LibStatut($objp->statut, $objp->subscription, $datefin, 2);
 		        print "</td>";
 
 		        // Date end subscription
@@ -669,11 +666,11 @@ if ($rowid > 0)
 			        print '<td align="center" class="nowrap">';
 		            if ($datefin < dol_now() && $objp->statut > 0)
 		            {
-		                print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
+		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
 		            }
 		            else
 		            {
-		                print dol_print_date($datefin,'day');
+		                print dol_print_date($datefin, 'day');
 		            }
 		            print '</td>';
 		        }
@@ -701,7 +698,7 @@ if ($rowid > 0)
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 		        }
 				print "</td>";
 
@@ -715,7 +712,7 @@ if ($rowid > 0)
 
 			if ($num > $conf->liste_limit)
 			{
-			    print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
+			    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 			}
 		}
 		else
@@ -754,13 +751,13 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
     	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $object->statut);
     	print '</td></tr>';
-    
+
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("subscription",$object->subscription,1);
+		print $form->selectyesno("subscription", $object->subscription, 1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print $form->selectyesno("vote",$object->vote,1);
+		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -768,17 +765,17 @@ if ($rowid > 0)
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
+		$doleditor=new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 
 		// Other attributes
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
         	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-		    print $object->showOptionals($extrafields,'edit');
+		    print $object->showOptionals($extrafields, 'edit');
 		}
 
 		print '</table>';
@@ -800,7 +797,7 @@ if ($rowid > 0)
 					$value = $adht->array_options["options_" . $key];
 				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
+				print $extrafields->showInputField($key, $value);
 				print "</td></tr>\n";
 			}
 			print '</table><br><br>';

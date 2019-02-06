@@ -53,7 +53,7 @@ function GetFolders($resourceType, $currentFolder)
 	echo "<Folders>" ;
 
 	natcasesort($aFolders);
-	foreach ( $aFolders as $sFolder )
+	foreach ($aFolders as $sFolder)
 		echo $sFolder ;
 
 	// Close the "Folders" node.
@@ -110,7 +110,7 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
 	natcasesort($aFolders);
 	echo '<Folders>' ;
 
-	foreach ( $aFolders as $sFolder )
+	foreach ($aFolders as $sFolder)
 		echo $sFolder ;
 
 	echo '</Folders>' ;
@@ -119,7 +119,7 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
 	natcasesort($aFiles);
 	echo '<Files>' ;
 
-	foreach ( $aFiles as $sFiles )
+	foreach ($aFiles as $sFiles)
 		echo $sFiles ;
 
 	echo '</Files>' ;

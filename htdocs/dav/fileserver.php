@@ -22,12 +22,12 @@
  *      \brief      Server DAV
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))  		 define("NOLOGIN",1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))  		 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 {
-	$user->fetch('',$_SERVER['PHP_AUTH_USER']);
+	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
 	$user->getrights();
 }
 
@@ -52,7 +52,7 @@ if (empty($conf->dav->enabled))
 	accessforbidden();
 
 
-$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
+$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
@@ -77,10 +77,10 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Authentication mode
 	if (empty($dolibarr_main_authentication))
 		$dolibarr_main_authentication='http,dolibarr';
-	$authmode = explode(',',$dolibarr_main_authentication);
-	$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
+	$authmode = explode(',', $dolibarr_main_authentication);
+	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-	if (checkLoginPassEntity($username,$password,$entity,$authmode) != $username)
+	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
 		return false;
 
 	return true;
@@ -139,7 +139,7 @@ if (isset($baseUri)) $server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
-	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public','/').'/', $_SERVER["PHP_SELF"]))
+	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
 	&& ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 	)
 {

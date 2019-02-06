@@ -101,7 +101,7 @@ class Canvas
         $this->card = $card;
         $this->dirmodule = $module;
         // Correct values if canvas is into an external module
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs))
 		{
             $this->canvas = $regs[1];
 		    $this->dirmodule = $regs[2];
@@ -145,7 +145,7 @@ class Canvas
 	function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
         // phpcs:enable
-		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
+		if (method_exists($this->control, 'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
     /**
@@ -206,7 +206,7 @@ class Canvas
 	 */
 	function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control,'doActions'))
+		if (method_exists($this->control, 'doActions'))
 		{
 			$ret = $this->control->doActions($action, $id);
 			return $ret;
