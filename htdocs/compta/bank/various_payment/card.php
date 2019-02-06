@@ -332,7 +332,14 @@ if ($action == 'create')
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
         print '<td>';
-        print $formaccounting->select_subledger_account($subledger_account, 'subledger_account', 1, null, 1, 1, '');
+        if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+        {
+            print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
+        }
+        else
+        {
+            print '<input type="text" name="subledger_account" value="'.$subledger_account.'">';
+        }
         print '</td></tr>';
     }
     else // For external software
@@ -468,15 +475,7 @@ if ($id)
     print '<tr><td class="nowrap">';
     print $langs->trans("SubledgerAccount");
     print '</td><td>';
-    if (! empty($conf->accounting->enabled))
-    {
-        $subledgeraccount = new AccountingAccount($db);
-        $subledgeraccount->fetch('',$object->subledger_account, 1);
-
-        print $subledgeraccount->getNomUrl(0,1,1,'',1);
-    } else {
-        print $object->subledger_account;
-    }
+    print $object->subledger_account;
     print '</td></tr>';
 
 	if (! empty($conf->banque->enabled))
