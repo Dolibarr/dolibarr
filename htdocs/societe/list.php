@@ -1204,7 +1204,7 @@ while ($i < min($num, $limit))
 	    if ($companystatic->fk_parent > 0)
 	    {
 	       $companyparent->fetch($companystatic->fk_parent);
-	       print $companyparent->getNomUrl();
+	       print $companyparent->getNomUrl(1);
 	    }
 	    print "</td>";
 	    if (! $i) $totalarray['nbfield']++;
