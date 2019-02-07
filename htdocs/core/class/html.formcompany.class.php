@@ -889,7 +889,18 @@ class FormCompany
     	}
     }
 
-    function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname='customerprospect', $typeinput='form',$morecss = '') {
+    /**
+     * Return a HTML select for thirdparty type
+     *
+     * @param int $selected selected value
+     * @param string $htmlname HTML select name
+     * @param string $htmlidname HTML select id
+     * @param string $typeinput HTML output
+     * @param string $morecss More css
+     * @return string HTML string
+     */
+    function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
+    {
 
     	global $conf,$langs;
 
