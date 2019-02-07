@@ -56,29 +56,29 @@ $search_all=trim(GETPOST('search_all', 'alphanohtml')?GETPOST('search_all', 'alp
 $search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
 
 $search_id=trim(GETPOST("search_id", "int"));
-$search_nom=trim(GETPOST("search_nom"));
-$search_alias=trim(GETPOST("search_alias"));
-$search_nom_only=trim(GETPOST("search_nom_only"));
-$search_barcode=trim(GETPOST("search_barcode"));
-$search_customer_code=trim(GETPOST('search_customer_code'));
-$search_supplier_code=trim(GETPOST('search_supplier_code'));
-$search_account_customer_code=trim(GETPOST('search_account_customer_code'));
-$search_account_supplier_code=trim(GETPOST('search_account_supplier_code'));
-$search_town=trim(GETPOST("search_town"));
-$search_zip=trim(GETPOST("search_zip"));
-$search_state=trim(GETPOST("search_state"));
-$search_region=trim(GETPOST("search_region"));
-$search_email=trim(GETPOST('search_email'));
-$search_phone=trim(GETPOST('search_phone'));
-$search_fax=trim(GETPOST('search_fax'));
-$search_url=trim(GETPOST('search_url'));
-$search_idprof1=trim(GETPOST('search_idprof1'));
-$search_idprof2=trim(GETPOST('search_idprof2'));
-$search_idprof3=trim(GETPOST('search_idprof3'));
-$search_idprof4=trim(GETPOST('search_idprof4'));
-$search_idprof5=trim(GETPOST('search_idprof5'));
-$search_idprof6=trim(GETPOST('search_idprof6'));
-$search_vat=trim(GETPOST('search_vat'));
+$search_nom=trim(GETPOST("search_nom", 'none'));
+$search_alias=trim(GETPOST("search_alias", 'none'));
+$search_nom_only=trim(GETPOST("search_nom_only", 'none'));
+$search_barcode=trim(GETPOST("search_barcode", 'alpha'));
+$search_customer_code=trim(GETPOST('search_customer_code', 'alpha'));
+$search_supplier_code=trim(GETPOST('search_supplier_code', 'alpha'));
+$search_account_customer_code=trim(GETPOST('search_account_customer_code', 'alpha'));
+$search_account_supplier_code=trim(GETPOST('search_account_supplier_code', 'alpha'));
+$search_town=trim(GETPOST("search_town", 'alpha'));
+$search_zip=trim(GETPOST("search_zip", 'alpha'));
+$search_state=trim(GETPOST("search_state", 'alpha'));
+$search_region=trim(GETPOST("search_region", 'alpha'));
+$search_email=trim(GETPOST('search_email', 'alpha'));
+$search_phone=trim(GETPOST('search_phone', 'alpha'));
+$search_fax=trim(GETPOST('search_fax', 'alpha'));
+$search_url=trim(GETPOST('search_url', 'alpha'));
+$search_idprof1=trim(GETPOST('search_idprof1', 'alpha'));
+$search_idprof2=trim(GETPOST('search_idprof2', 'alpha'));
+$search_idprof3=trim(GETPOST('search_idprof3', 'alpha'));
+$search_idprof4=trim(GETPOST('search_idprof4', 'alpha'));
+$search_idprof5=trim(GETPOST('search_idprof5', 'alpha'));
+$search_idprof6=trim(GETPOST('search_idprof6', 'alpha'));
+$search_vat=trim(GETPOST('search_vat', 'alpha'));
 $search_sale=trim(GETPOST("search_sale", 'int'));
 $search_categ_cus=trim(GETPOST("search_categ_cus", 'int'));
 $search_categ_sup=trim(GETPOST("search_categ_sup", 'int'));
@@ -92,10 +92,11 @@ $search_stcomm=GETPOST('search_stcomm', 'int');
 $search_import_key  = GETPOST("search_import_key", "alpha");
 $search_btn=GETPOST('button_search', 'alpha');
 $search_remove_btn=GETPOST('button_removefilter', 'alpha');
+$search_fk_parent = GETPOST('search_fk_parent', 'alpha');
 
 $type=GETPOST('type', 'alpha');
 $optioncss=GETPOST('optioncss', 'alpha');
-$mode=GETPOST("mode", '');
+$mode=GETPOST("mode", 'alpha');
 
 $diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -195,6 +196,7 @@ $arrayfields=array(
 	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
+    's.fk_parent'=>array('label'=>'ParentCompany', 'checked'=>0),
 	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -263,6 +265,7 @@ if (empty($reshook))
 		$search_status=-1;
 		$search_stcomm='';
 	 	$search_level='';
+	 	$search_fk_parent=-1;
 	 	$search_import_key='';
 	 	$toselect='';
 		$search_array_options=array();
@@ -308,6 +311,7 @@ if ($search_status=='') $search_status=1; // always display active thirdparty fi
 $form=new Form($db);
 $formother=new FormOther($db);
 $companystatic=new Societe($db);
+$companyparent=new Societe($db);
 $formcompany=new FormCompany($db);
 $prospectstatic=new Client($db);
 $prospectstatic->client=2;
@@ -342,7 +346,7 @@ $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
-$sql.= " s.code_compta,s.code_compta_fournisseur,";
+$sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
 $sql.= " country.code as country_code,";
@@ -419,6 +423,7 @@ if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= natural_search("s
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql.= natural_search("s.fk_typent", $search_type_thirdparty, 2);
 if (! empty($search_staff) && $search_staff != '-1')            $sql.= natural_search("s.fk_effectif", $search_staff, 2);
 if ($search_level)  $sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
+if ($search_fk_parent && $search_fk_parent != '-1')   $sql.= "s.fk_parent IN (".$search_fk_parent.")";
 if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm", $search_stcomm, 2);
 if ($search_import_key)    $sql.= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
@@ -515,6 +520,7 @@ if ($search_type != '')    $param.='&search_type='.urlencode($search_type);
 if (is_array($search_level) && count($search_level)) foreach($search_level as $slevel) $param.='&search_level[]='.urlencode($slevel);
 if ($search_status != '')  $param.='&search_status='.urlencode($search_status);
 if ($search_stcomm != '')  $param.='&search_stcomm='.urlencode($search_stcomm);
+if ($search_fk_parent != '' && $search_fk_parent != '-1') $param.='&search_fk_parent='.urlencode($search_fk_parent);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($type != '') $param.='&type='.urlencode($type);
 if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
@@ -853,6 +859,12 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))
 	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
 	print '</td>';
 }
+if (! empty($arrayfields['s.fk_parent']['checked']))
+{
+    print '<td class="liste_titre" align="center">';
+
+    print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -923,6 +935,7 @@ if (! empty($arrayfields['s.tva_intra']['checked']))      print_liste_field_titr
 if (! empty($arrayfields['customerorsupplier']['checked']))        print_liste_field_titre('');   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))        print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['s.fk_parent']['checked']))               print_liste_field_titre($arrayfields['s.fk_parent']['label'], $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -959,6 +972,7 @@ while ($i < min($num, $limit))
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
 
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+   	$companystatic->fk_parent = $obj->fk_parent;
 
 	print '<tr class="oddeven">';
 	if (! empty($arrayfields['s.rowid']['checked']))
@@ -1174,6 +1188,18 @@ while ($i < min($num, $limit))
 		}
 		print '</div></div></td>';
 		if (! $i) $totalarray['nbfield']++;
+	}
+	// Parent company
+	if (! empty($arrayfields['s.fk_parent']['checked']))
+	{
+	    print '<td align="center">';
+	    if ($companystatic->fk_parent > 0)
+	    {
+	       $companyparent->fetch($companystatic->fk_parent);
+	       print $companyparent->getNomUrl();
+	    }
+	    print "</td>";
+	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
