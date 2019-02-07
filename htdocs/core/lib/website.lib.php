@@ -669,7 +669,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= "// END PHP ?>\n";
 	if (! empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5))
 	{
-	   $tplcontent.= "<!DOCTYPE html>";
+	   $tplcontent.= "<!DOCTYPE html>\n";
 	}
 	$tplcontent.= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"':'').'>'."\n";
 	$tplcontent.= '<head>'."\n";
