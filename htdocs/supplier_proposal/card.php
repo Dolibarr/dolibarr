@@ -661,7 +661,7 @@ if (empty($reshook))
 						$label,
 						$array_options,
 						$ref_supplier,
-						$fk_unit,
+						$productsupplier->fk_unit,
 						'',
 						0,
 						$productsupplier->fourn_multicurrency_unitprice
