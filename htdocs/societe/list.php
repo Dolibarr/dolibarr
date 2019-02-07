@@ -92,7 +92,7 @@ $search_stcomm=GETPOST('search_stcomm', 'int');
 $search_import_key  = GETPOST("search_import_key", "alpha");
 $search_btn=GETPOST('button_search', 'alpha');
 $search_remove_btn=GETPOST('button_removefilter', 'alpha');
-$search_fk_parent = GETPOST('search_fk_parent', 'alpha');
+$search_parent_name = GETPOST('search_parent_name', 'alpha');
 
 $type=GETPOST('type', 'alpha');
 $optioncss=GETPOST('optioncss', 'alpha');
@@ -196,7 +196,7 @@ $arrayfields=array(
 	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
-    's.fk_parent'=>array('label'=>'ParentCompany', 'checked'=>0),
+    's2.nom'=>array('label'=>'ParentCompany', 'checked'=>0),
 	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -265,7 +265,7 @@ if (empty($reshook))
 		$search_status=-1;
 		$search_stcomm='';
 	 	$search_level='';
-	 	$search_fk_parent=-1;
+	 	$search_parent_name=-1;
 	 	$search_import_key='';
 	 	$toselect='';
 		$search_array_options=array();
@@ -347,6 +347,7 @@ $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.p
 $sql.= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
+$sql.= " s2.nom as name,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
 $sql.= " country.code as country_code,";
@@ -364,6 +365,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
@@ -423,7 +425,7 @@ if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= natural_search("s
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql.= natural_search("s.fk_typent", $search_type_thirdparty, 2);
 if (! empty($search_staff) && $search_staff != '-1')            $sql.= natural_search("s.fk_effectif", $search_staff, 2);
 if ($search_level)  $sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
-if ($search_fk_parent && $search_fk_parent != '-1')   $sql.= "s.fk_parent IN (".$search_fk_parent.")";
+if ($search_parent_name)   $sql.= natural_search("s2.nom", $search_parent_name);
 if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm", $search_stcomm, 2);
 if ($search_import_key)    $sql.= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
@@ -520,7 +522,7 @@ if ($search_type != '')    $param.='&search_type='.urlencode($search_type);
 if (is_array($search_level) && count($search_level)) foreach($search_level as $slevel) $param.='&search_level[]='.urlencode($slevel);
 if ($search_status != '')  $param.='&search_status='.urlencode($search_status);
 if ($search_stcomm != '')  $param.='&search_stcomm='.urlencode($search_stcomm);
-if ($search_fk_parent != '' && $search_fk_parent != '-1') $param.='&search_fk_parent='.urlencode($search_fk_parent);
+if ($search_parent_name != '') $param.='&search_parent_name='.urlencode($search_parent_name);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($type != '') $param.='&type='.urlencode($type);
 if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
@@ -865,10 +867,10 @@ if (! empty($arrayfields['s.fk_stcomm']['checked']))
 	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
 	print '</td>';
 }
-if (! empty($arrayfields['s.fk_parent']['checked']))
+if (! empty($arrayfields['s2.nom']['checked']))
 {
     print '<td class="liste_titre" align="center">';
-
+    print '<input class="flat searchstring maxwidth50" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
     print '</td>';
 }
 // Extra fields
@@ -941,7 +943,7 @@ if (! empty($arrayfields['s.tva_intra']['checked']))      print_liste_field_titr
 if (! empty($arrayfields['customerorsupplier']['checked']))        print_liste_field_titre('');   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))        print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))               print_liste_field_titre($arrayfields['s.fk_stcomm']['label'], $_SERVER["PHP_SELF"], "s.fk_stcomm", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['s.fk_parent']['checked']))               print_liste_field_titre($arrayfields['s.fk_parent']['label'], $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['s2.nom']['checked']))           print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, 'align="center"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1196,7 +1198,7 @@ while ($i < min($num, $limit))
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Parent company
-	if (! empty($arrayfields['s.fk_parent']['checked']))
+	if (! empty($arrayfields['s2.nom']['checked']))
 	{
 	    print '<td align="center">';
 	    if ($companystatic->fk_parent > 0)
