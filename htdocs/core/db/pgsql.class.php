@@ -317,7 +317,7 @@ class DoliDBPgsql extends DoliDB
 			if (!empty($conf->global->PSQL_USE_UNACCENT) && $count_like > 0)
 			{
 				// @see https://docs.postgresql.fr/11/unaccent.html : 'unaccent()' function must be installed before
-				$line=preg_replace('/\s+(\(?\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
+				$line=preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
             $line=str_replace(' LIKE BINARY \'',' LIKE \'',$line);
