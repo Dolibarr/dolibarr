@@ -171,8 +171,8 @@ Class DataPolicy
      	$deliveryreceipt = 0;
 
      	$substitutionarray = array(
-     	'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&c='.$contact->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-     	'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&c='.$contact->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+     	'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+     	'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&c='.$contact->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
      	'__FIRSTNAME__' => $contact->firstname,
      	'__NAME__' => $contact->lastname,
      	'__CIVILITY__' => $contact->civility,
@@ -247,8 +247,8 @@ Class DataPolicy
      	$deliveryreceipt = 0;
 
      	$substitutionarray = array(
-            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&s='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&s='.$societe->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
      	);
      	$subject = make_substitutions($subject, $substitutionarray);
      	$message = make_substitutions($message, $substitutionarray);
@@ -258,7 +258,7 @@ Class DataPolicy
      	if ($message) {
      		if ($sendtocc) {
                  $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-             }
+            }
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
             $actionmsg .= dol_concatdesc($actionmsg, $message);
@@ -317,8 +317,8 @@ Class DataPolicy
     	$deliveryreceipt = 0;
 
     	$substitutionarray = array(
-            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&a='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicy/public/index.php?action=2&a='.$adherent->id.'&l='.$l.'&key='.$code, 3).'" target="_blank">'.$linkr.'</a>',
     	);
     	$subject = make_substitutions($subject, $substitutionarray);
     	$message = make_substitutions($message, $substitutionarray);

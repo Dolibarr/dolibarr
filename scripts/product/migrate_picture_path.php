@@ -34,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 @set_time_limit(0);							// No timeout for this script
-define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
+define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
@@ -54,7 +54,7 @@ $forcecommit=0;
 
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (! isset($argv[1]) || $argv[1] != 'product') {
     print "Usage:  $script_file product\n";
@@ -105,7 +105,7 @@ function migrate_product_photospath($product)
 
 	$dir = $conf->product->multidir_output[$product->entity];
 	$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 1;
-	$origin = $dir .'/'. get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos";
+	$origin = $dir .'/'. get_exdir($product->id, 2, 0, 0, $product, 'product') . $product->id ."/photos";
 	$destin = $dir.'/'.dol_sanitizeFileName($product->ref);
 
 	$error = 0;

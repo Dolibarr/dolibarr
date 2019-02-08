@@ -37,8 +37,8 @@ $langs->loadLangs(array('admin', 'exports', 'other'));
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
-$value=GETPOST('value','alpha');
+$action=GETPOST('action', 'alpha');
+$value=GETPOST('value', 'alpha');
 
 /*
  * Actions

@@ -282,13 +282,13 @@ class Propal extends CommonObject
 
 			$productdesc = $prod->description;
 
-			$tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
-			$tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
+			$tva_tx = get_default_tva($mysoc, $this->thirdparty, $prod->id);
+			$tva_npr = get_default_npr($mysoc, $this->thirdparty, $prod->id);
 			if (empty($tva_tx)) $tva_npr=0;
 			$vat_src_code = '';     // May be defined into tva_tx
 
-			$localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
-			$localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
+			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $this->thirdparty, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $this->thirdparty, $tva_npr);
 
 			// multiprices
 			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
@@ -495,7 +495,7 @@ class Propal extends CommonObject
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
+			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
 			$vat_src_code='';
@@ -604,10 +604,10 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				// Reorder if child line
-				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				if (! empty($fk_parent_line)) $this->line_order(true, 'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la propale meme
-                $result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1, 'auto', 0, $mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -693,7 +693,7 @@ class Propal extends CommonObject
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
+			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 			// Clean vat code
 			$vat_src_code='';
@@ -795,7 +795,7 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				// Reorder if child line
-				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
+				if (! empty($fk_parent_line)) $this->line_order(true, 'DESC');
 
 				$this->update_price(1);
 
@@ -911,7 +911,7 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1063,13 +1063,13 @@ class Propal extends CommonObject
 					for ($i=0;$i<$num;$i++)
 					{
                         if (! is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
-                            {   // Convert into object this->lines[$i].
-                                $line = (object) $this->lines[$i];
-                            }
-                            else
-                            {
-                                    $line = $this->lines[$i];
-                            }
+                        {   // Convert into object this->lines[$i].
+                            $line = (object) $this->lines[$i];
+                        }
+                        else
+                        {
+                            $line = $this->lines[$i];
+                        }
 						// Reset fk_parent_line for line that are not child lines or special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
@@ -1154,7 +1154,7 @@ class Propal extends CommonObject
 						if (! $error && ! $notrigger)
 						{
 							// Call trigger
-							$result=$this->call_trigger('PROPAL_CREATE',$user);
+							$result=$this->call_trigger('PROPAL_CREATE', $user);
 							if ($result < 0) { $error++; }
 							// End call triggers
 						}
@@ -1285,7 +1285,12 @@ class Propal extends CommonObject
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
-		if ($result < 0) $error++;
+		if ($result < 0)
+		{
+		    $this->error = $object->error;
+		    $this->errors = array_merge($this->errors, $object->errors);
+		    $error++;
+		}
 
 		if (! $error)
 		{
@@ -1313,7 +1318,7 @@ class Propal extends CommonObject
 			{
 				$parameters=array('objFrom'=>$this,'clonedObj'=>$clonedObj);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$clonedObj,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
@@ -1777,7 +1782,7 @@ class Propal extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('PROPAL_VALIDATE',$user);
+			$result=$this->call_trigger('PROPAL_VALIDATE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -1803,11 +1808,11 @@ class Propal extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref,'/'));
+						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
-							$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+							$dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 							$dirsource=$fileentry['path'].'/'.$dirsource;
 							$dirdest=$fileentry['path'].'/'.$dirdest;
 							@rename($dirsource, $dirdest);
@@ -1879,7 +1884,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -1941,7 +1946,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2003,7 +2008,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2066,7 +2071,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2139,7 +2144,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2208,7 +2213,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2278,7 +2283,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2346,7 +2351,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -2404,7 +2409,7 @@ class Propal extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_REOPEN',$user);
+				$result=$this->call_trigger('PROPAL_REOPEN', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -2490,8 +2495,8 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
-					$outputlangs = new Translate("",$conf);
-					$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
+					$outputlangs = new Translate("", $conf);
+					$newlang=(GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
 				//$ret=$object->fetch($id);    // Reload to get new records
@@ -2509,7 +2514,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger($trigger_name,$user);
+				$result=$this->call_trigger($trigger_name, $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -2570,7 +2575,7 @@ class Propal extends CommonObject
 		if (! $notrigger && empty($error))
 		{
 			// Call trigger
-			$result=$this->call_trigger('PROPAL_MODIFY',$user);
+			$result=$this->call_trigger('PROPAL_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -2628,7 +2633,7 @@ class Propal extends CommonObject
 		if (! $notrigger && empty($error))
 		{
 			// Call trigger
-			$result=$this->call_trigger('PROPAL_MODIFY',$user);
+			$result=$this->call_trigger('PROPAL_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -2688,8 +2693,8 @@ class Propal extends CommonObject
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
 		if ($draft)	$sql.= " AND p.fk_statut = ".self::STATUS_DRAFT;
 		if ($notcurrentuser > 0) $sql.= " AND p.fk_user_author <> ".$user->id;
-		$sql.= $this->db->order($sortfield,$sortorder);
-		$sql.= $this->db->plimit($limit,$offset);
+		$sql.= $this->db->order($sortfield, $sortorder);
+		$sql.= $this->db->plimit($limit, $offset);
 
 		$result=$this->db->query($sql);
 		if ($result)
@@ -2752,7 +2757,7 @@ class Propal extends CommonObject
 		$ga = array();
 		$linkedInvoices = array();
 
-		$this->fetchObjectLinked($id,$this->element);
+		$this->fetchObjectLinked($id, $this->element);
 		foreach($this->linkedObjectsIds as $objecttype => $objectid)
 		{
 			// Nouveau système du comon object renvoi des rowid et non un id linéaire de 1 à n
@@ -2767,7 +2772,7 @@ class Propal extends CommonObject
 				// Cas des factures liees par un autre objet (ex: commande)
 				else
 				{
-					$this->fetchObjectLinked($object,$objecttype);
+					$this->fetchObjectLinked($object, $objecttype);
 					foreach($this->linkedObjectsIds as $subobjecttype => $subobjectid)
 					{
 						foreach($subobjectid as $subkey => $subobject)
@@ -2786,7 +2791,7 @@ class Propal extends CommonObject
 		{
 			$sql= "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
+			$sql.= " WHERE rowid IN (".implode(',', $linkedInvoices).")";
 
 			dol_syslog(get_class($this)."::InvoiceArrayList", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -2845,7 +2850,7 @@ class Propal extends CommonObject
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('PROPAL_DELETE',$user);
+			$result=$this->call_trigger('PROPAL_DELETE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -2878,7 +2883,7 @@ class Propal extends CommonObject
 							{
 								dol_delete_preview($this);
 
-								if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+								if (! dol_delete_file($file, 0, 0, 0, $this)) // For triggers
 								{
 									$this->error='ErrorFailToDeleteFile';
 									$this->errors=array('ErrorFailToDeleteFile');
@@ -2988,7 +2993,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -3060,7 +3065,7 @@ class Propal extends CommonObject
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY',$user);
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -3199,9 +3204,9 @@ class Propal extends CommonObject
 		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
 		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
 		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
-		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
+		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
 	}
 
 
@@ -3258,7 +3263,7 @@ class Propal extends CommonObject
 			$response->label = $label;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
 			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
-			$response->img = img_object('',"propal");
+			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
@@ -3458,13 +3463,13 @@ class Propal extends CommonObject
 
 			if (! $mybool)
 			{
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "")
 			{
@@ -3535,7 +3540,7 @@ class Propal extends CommonObject
 			{
 				// Add param to save lastsearch_values or not
 				$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-				if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+				if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 				if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 			}
 		}
@@ -3604,7 +3609,7 @@ class Propal extends CommonObject
 
 		$modelpath = "core/modules/propale/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -3970,7 +3975,7 @@ class PropaleLigne extends CommonObjectLine
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('LINEPROPAL_INSERT',$user);
+				$result=$this->call_trigger('LINEPROPAL_INSERT', $user);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -4024,7 +4029,7 @@ class PropaleLigne extends CommonObjectLine
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('LINEPROPAL_DELETE',$user);
+				$result=$this->call_trigger('LINEPROPAL_DELETE', $user);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -4153,7 +4158,7 @@ class PropaleLigne extends CommonObjectLine
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('LINEPROPAL_UPDATE',$user);
+				$result=$this->call_trigger('LINEPROPAL_UPDATE', $user);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -4187,9 +4192,9 @@ class PropaleLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql.= " total_ht=".price2num($this->total_ht,'MT')."";
-		$sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
-		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
+		$sql.= " total_ht=".price2num($this->total_ht, 'MT')."";
+		$sql.= ",total_tva=".price2num($this->total_tva, 'MT')."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("PropaleLigne::update_total", LOG_DEBUG);

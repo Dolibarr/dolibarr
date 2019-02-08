@@ -29,11 +29,11 @@ if (empty($conf) || ! is_object($conf))
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
+dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']),$GLOBALS['errors']);
+dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
 

@@ -42,7 +42,7 @@ if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
 $month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-if (GETPOST("year",'int')) $year_start = GETPOST("year",'int');
+if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
 else
 {
 	$year_start = dol_print_date(dol_now(), '%Y');
@@ -60,7 +60,7 @@ $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
 
 // Validate History
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 
@@ -326,11 +326,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     dol_syslog('htdocs/accountancy/expensereport/index.php');
     $resql = $db->query($sql);
     if ($resql) {
-    	$num = $db->num_rows($resql);
+        $num = $db->num_rows($resql);
 
     	while ($row = $db->fetch_row($resql)) {
     		print '<tr><td>' . $row[0] . '</td>';
-    			for($i = 1; $i <= 12; $i ++) {
+            for($i = 1; $i <= 12; $i ++) {
     			print '<td class="right">' . price($row[$i]) . '</td>';
     		}
     		print '<td class="right"><b>' . price($row[13]) . '</b></td>';

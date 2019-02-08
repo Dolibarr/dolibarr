@@ -695,11 +695,11 @@ class DolGraph
         // phpcs:enable
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
+		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',', $this->type));
 
-		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
-		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);
-		if (! defined('LEGEND_LINE'))       define('LEGEND_LINE',1);
+		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP', 3);
+		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND', 2);
+		if (! defined('LEGEND_LINE'))       define('LEGEND_LINE', 1);
 
 		// Create graph
 		$classname='';
@@ -709,12 +709,12 @@ class DolGraph
 		include_once ARTICHOW_PATH.$classname.'.class.php';
 
 		// Definition de couleurs
-		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
-		$bgcolorgrid=new Color($this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-		$colortrans=new Color(0,0,0,100);
-		$colorsemitrans=new Color(255,255,255,60);
-		$colorgradient= new LinearGradient(new Color(235, 235, 235),new Color(255, 255, 255),0);
-		$colorwhite=new Color(255,255,255);
+		$bgcolor=new Color($this->bgcolor[0], $this->bgcolor[1], $this->bgcolor[2]);
+		$bgcolorgrid=new Color($this->bgcolorgrid[0], $this->bgcolorgrid[1], $this->bgcolorgrid[2]);
+		$colortrans=new Color(0, 0, 0, 100);
+		$colorsemitrans=new Color(255, 255, 255, 60);
+		$colorgradient= new LinearGradient(new Color(235, 235, 235), new Color(255, 255, 255), 0);
+		$colorwhite=new Color(255, 255, 255);
 
 		// Graph
 		$graph = new Graph($this->width, $this->height);
@@ -735,11 +735,11 @@ class DolGraph
 
 		$paddleft=50;
 		$paddright=10;
-		$strl=dol_strlen(max(abs($this->MaxValue),abs($this->MinValue)));
+		$strl=dol_strlen(max(abs($this->MaxValue), abs($this->MinValue)));
 		if ($strl > 6) $paddleft += ($strl * 4);
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);
-		$group->legend->setPadding(2,2,2,2);
+		$group->legend->setPadding(2, 2, 2, 2);
 		$group->legend->setPosition(null, 0.1);
 		$group->legend->setBackgroundColor($colorsemitrans);
 
@@ -779,11 +779,11 @@ class DolGraph
 				//print_r($values);
 				//print '<br>';
 
-				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
-				$colorbis=new Color(min($this->datacolor[$i][0]+50,255),min($this->datacolor[$i][1]+50,255),min($this->datacolor[$i][2]+50,255),50);
+				$color=new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2], 20);
+				$colorbis=new Color(min($this->datacolor[$i][0]+50, 255), min($this->datacolor[$i][1]+50, 255), min($this->datacolor[$i][2]+50, 255), 50);
 
-				$colorgrey=new Color(100,100,100);
-				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
+				$colorgrey=new Color(100, 100, 100);
+				$colorborder=new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
 
 				if ($this->mode == 'side')  $plot = new BarPlot($newvalues, $i+1, $nblot);
 				if ($this->mode == 'depth') $plot = new BarPlot($newvalues, 1, 1, ($nblot-$i-1)*5);
@@ -811,9 +811,9 @@ class DolGraph
 
 			if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')
 			{
-				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
-				$colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
-				$colorter=new Color(min($this->datacolor[$i][0]+50,255),min($this->datacolor[$i][1]+50,255),min($this->datacolor[$i][2]+50,255),90);
+				$color=new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2], 20);
+				$colorbis=new Color(min($this->datacolor[$i][0]+20, 255), min($this->datacolor[$i][1]+20, 255), min($this->datacolor[$i][2]+20, 255), 60);
+				$colorter=new Color(min($this->datacolor[$i][0]+50, 255), min($this->datacolor[$i][1]+50, 255), min($this->datacolor[$i][2]+50, 255), 90);
 
 				$plot = new LinePlot($newvalues);
 				//$plot->setSize(1, 0.96);
@@ -885,7 +885,7 @@ class DolGraph
         // phpcs:enable
 		global $artichow_defaultfont;
 
-		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',',$this->type)." this->MaxValue=".$this->MaxValue);
+		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 
 		if (empty($this->width) && empty($this->height))
 		{
@@ -933,7 +933,7 @@ class DolGraph
 			unset($values);
 			$i++;
 		}
-		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file),'_',array('-','.'))));
+		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-','.'))));
 
 		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
 		if (! empty($this->title)) $this->stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
@@ -966,7 +966,7 @@ class DolGraph
 		if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
 		{
 			$datacolor=array();
-			foreach($this->datacolor as $val) $datacolor[]="#".sprintf("%02x%02x%02x",$val[0],$val[1],$val[2]);
+			foreach($this->datacolor as $val) $datacolor[]="#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);
 
 			$urltemp='';	// TODO Add support for url link into labels
 			$showlegend=$this->showlegend;
@@ -1081,7 +1081,7 @@ class DolGraph
 			while ($i < $nblot)
 			{
 				if ($i > $firstlot) $this->stringtoshow.=', '."\n";
-				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
+				$color=sprintf("%02x%02x%02x", $this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
 				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
@@ -1106,8 +1106,8 @@ class DolGraph
 			$this->stringtoshow.=', yaxis: { min: '.$this->MinValue.', max: '.($this->MaxValue).' }'."\n";
 
 			// Background color
-			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
-			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
+			$color1=sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[0], $this->bgcolorgrid[2]);
+			$color2=sprintf("%02x%02x%02x", $this->bgcolorgrid[0], $this->bgcolorgrid[1], $this->bgcolorgrid[2]);
 			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#e6e6e6\', tickColor  : \'#e6e6e6\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
@@ -1133,7 +1133,7 @@ class DolGraph
 
 		if ($shownographyet)
 		{
-			$s= '<div class="nographyet" style="width:'.(preg_match('/%/',$this->width)?$this->width:$this->width.'px').'; height:'.(preg_match('/%/',$this->height)?$this->height:$this->height.'px').';"></div>';
+			$s= '<div class="nographyet" style="width:'.(preg_match('/%/', $this->width)?$this->width:$this->width.'px').'; height:'.(preg_match('/%/', $this->height)?$this->height:$this->height.'px').';"></div>';
 			$s.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
 			return $s;
 		}

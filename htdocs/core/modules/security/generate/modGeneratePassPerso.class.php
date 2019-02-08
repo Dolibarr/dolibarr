@@ -82,7 +82,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
 			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
-			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1','chaine',0,'',$conf->entity);
+			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1', 'chaine', 0, '', $conf->entity);
 		}
 
 		$this->Maj = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -91,7 +91,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
 		$this->Ambi = array("1","I","l","|","O","0");
 
-		$tabConf = explode(";",$conf->global->USER_PASSWORD_PATTERN);
+		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 		$this->length2 = $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
@@ -101,10 +101,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 		if ($this->WithoutAmbi)
 		{
-			$this->Maj = str_replace($this->Ambi,"",$this->Maj);
-			$this->Min = str_replace($this->Ambi,"",$this->Min);
-			$this->Nb  = str_replace($this->Ambi,"",$this->Nb);
-			$this->Spe = str_replace($this->Ambi,"",$this->Spe);
+			$this->Maj = str_replace($this->Ambi, "", $this->Maj);
+			$this->Min = str_replace($this->Ambi, "", $this->Min);
+			$this->Nb  = str_replace($this->Ambi, "", $this->Nb);
+			$this->Spe = str_replace($this->Ambi, "", $this->Spe);
 		}
 
 		$pattern = $this->Min . (! empty($this->NbMaj)?$this->Maj:'') . (! empty($this->NbNum)?$this->Nb:'') . (! empty($this->NbSpe)?$this->Spe:'');
@@ -145,19 +145,19 @@ class modGeneratePassPerso extends ModeleGenPassword
 	{
 		$pass = "";
 		for($i=0; $i<$this->NbMaj; $i++){ // Y
-			$pass .= $this->Maj[mt_rand(0,strlen($this->Maj) - 1)];
+			$pass .= $this->Maj[mt_rand(0, strlen($this->Maj) - 1)];
 		}
 
 		for($i=0; $i<$this->NbNum; $i++){ // X
-			$pass .= $this->Nb[mt_rand(0,strlen($this->Nb) - 1)];
+			$pass .= $this->Nb[mt_rand(0, strlen($this->Nb) - 1)];
 		}
 
 		for($i=0; $i<$this->NbSpe; $i++){ // @
-			$pass .= $this->Spe[mt_rand(0,strlen($this->Spe) - 1)];
+			$pass .= $this->Spe[mt_rand(0, strlen($this->Spe) - 1)];
 		}
 
 		for($i=strlen($pass);$i<$this->length2; $i++){ // y
-			$pass .= $this->All[mt_rand(0,strlen($this->All) -1)];
+			$pass .= $this->All[mt_rand(0, strlen($this->All) -1)];
 		}
 
 		$pass = str_shuffle($pass);

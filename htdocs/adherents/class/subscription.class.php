@@ -105,14 +105,14 @@ class Subscription extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
-		if ($this->fk_type == null) {
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-$member=new Adherent($this->db);
-$result=$member->fetch($this->fk_adherent);
-$type=$member->typeid;
-} else {
-$type=$this->fk_type;
-}
+        if ($this->fk_type == null) {
+            require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+            $member=new Adherent($this->db);
+            $result=$member->fetch($this->fk_adherent);
+            $type=$member->typeid;
+        } else {
+            $type=$this->fk_type;
+        }
 		$sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
@@ -133,7 +133,7 @@ $type=$this->fk_type;
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE',$user);
+			$result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -235,7 +235,7 @@ $type=$this->fk_type;
 
 			if (! $error && ! $notrigger) {
 				// Call triggers
-				$result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY',$user);
+				$result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
 				if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 				// End call triggers
 			}
@@ -371,7 +371,7 @@ $type=$this->fk_type;
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 

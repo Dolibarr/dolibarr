@@ -34,27 +34,27 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 $langs->loadLangs(array("accountancy","bills"));
 
-$date_start =GETPOST('date_start','alpha');
-$date_startDay= GETPOST('date_startday','int');
-$date_startMonth= GETPOST('date_startmonth','int');
-$date_startYear= GETPOST('date_startyear','int');
-$date_start=($date_startDay)?dol_mktime(0,0,0,$date_startMonth,$date_startDay,$date_startYear):strtotime($date_start);
-$date_stop =GETPOST('date_stop','alpha');
-$date_stopDay= GETPOST('date_stopday','int');
-$date_stopMonth= GETPOST('date_stopmonth','int');
-$date_stopYear= GETPOST('date_stopyear','int');
+$date_start =GETPOST('date_start', 'alpha');
+$date_startDay= GETPOST('date_startday', 'int');
+$date_startMonth= GETPOST('date_startmonth', 'int');
+$date_startYear= GETPOST('date_startyear', 'int');
+$date_start=($date_startDay)?dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear):strtotime($date_start);
+$date_stop =GETPOST('date_stop', 'alpha');
+$date_stopDay= GETPOST('date_stopday', 'int');
+$date_stopMonth= GETPOST('date_stopmonth', 'int');
+$date_stopYear= GETPOST('date_stopyear', 'int');
 //FIXME doldate
-$date_stop=($date_stopDay)?dol_mktime(0,0,0,$date_stopMonth,$date_stopDay,$date_stopYear):strtotime($date_stop);
-$action =GETPOST('action','alpha');
+$date_stop=($date_stopDay)?dol_mktime(0, 0, 0, $date_stopMonth, $date_stopDay, $date_stopYear):strtotime($date_stop);
+$action =GETPOST('action', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('comptafileslist','globallist'));
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -112,16 +112,16 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 
     if ($resd)
     {
-         $numd = $db->num_rows($resd);
+        $numd = $db->num_rows($resd);
 
-         $tmpinvoice=new Facture($db);
-         $tmpinvoicesupplier=new FactureFournisseur($db);
-         $tmpdonation=new Don($db);
+        $tmpinvoice=new Facture($db);
+        $tmpinvoicesupplier=new FactureFournisseur($db);
+        $tmpdonation=new Don($db);
 
-         $upload_dir ='';
-         $i=0;
-         while($i<$numd)
-         {
+        $upload_dir ='';
+        $i=0;
+        while($i<$numd)
+        {
             $objd = $db->fetch_object($resd);
 
             switch($objd->item)
@@ -129,34 +129,34 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 case "Invoice":
                     $subdir=dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->facture->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=facture&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "InvoiceSupplier":
                     $tmpinvoicesupplier->fetch($objd->id);
-                    $subdir=get_exdir(0,0,0,1,$tmpinvoicesupplier,'invoice_supplier').'/'.dol_sanitizeFileName($objd->ref);
+                    $subdir=get_exdir(0, 0, 0, 1, $tmpinvoicesupplier, 'invoice_supplier').'/'.dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "Expense":
                     $subdir=dol_sanitizeFileName($objd->ref);
                     $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=expensereport&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "Salary":
                     $subdir=dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
-                    $link="document.php?modulepart=salaries&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "Donation":
                     $tmpdonation->fetch($objp->id);
-                    $subdir=get_exdir(0,0,0,1,$tmpdonation,'donation'). '/'. dol_sanitizeFileName($objd->id);
+                    $subdir=get_exdir(0, 0, 0, 1, $tmpdonation, 'donation'). '/'. dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->don->dir_output . '/' . $subdir;
-                    $link="document.php?modulepart=don&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 case "SocialContributions":
                     $subdir=dol_sanitizeFileName($objd->id);
                     $upload_dir = $conf->tax->dir_output . '/' . $subdir;
-                    $link="document.php?modulepart=tax&file=".str_replace('/','%2F',$subdir).'%2F';
+                    $link="document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
                     break;
                 default:
                     $subdir='';
@@ -197,14 +197,14 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
                 }
             }
             $i++;
-         }
-     }
-     else
-     {
-         dol_print_error($db);
-     }
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
 
-     $db->free($resd);
+    $db->free($resd);
 }
 
 /*
@@ -251,7 +251,7 @@ if ($result && $action == "dl")
  * View
  */
 
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $h=0;
 $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
@@ -264,8 +264,8 @@ $form = new Form($db);
 $userstatic=new User($db);
 $title=$langs->trans("ComptaFiles").' - '.$langs->trans("List");
 print '<form name="searchfiles" action="?action=searchfiles'.$tail.'" method="POST" >'."\n";
-print $langs->trans("ReportPeriod").': '.$form->select_date($date_start,'date_start',0,0,0,"",1,1,1);
-print ' - '.$form->select_date($date_stop,'date_stop',0,0,0,"",1,1,1)."\n</a>";
+print $langs->trans("ReportPeriod").': '.$form->select_date($date_start, 'date_start', 0, 0, 0, "", 1, 1, 1);
+print ' - '.$form->select_date($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 1)."\n</a>";
 print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
 
 dol_fiche_end();
@@ -273,18 +273,18 @@ dol_fiche_end();
 if (!empty($date_start) && !empty($date_stop))
 {
     $param='action=searchfiles';
-    $param.='&date_startday='.GETPOST('date_startday','int');
-    $param.='&date_startmonth='.GETPOST('date_startmonth','int');
-    $param.='&date_startyear='.GETPOST('date_startyear','int');
-    $param.='&date_stopday='.GETPOST('date_stopday','int');
-    $param.='&date_stopmonth='.GETPOST('date_stopmonth','int');
-    $param.='&date_stopyear='.GETPOST('date_stopyear','int');
+    $param.='&date_startday='.GETPOST('date_startday', 'int');
+    $param.='&date_startmonth='.GETPOST('date_startmonth', 'int');
+    $param.='&date_startyear='.GETPOST('date_startyear', 'int');
+    $param.='&date_stopday='.GETPOST('date_stopday', 'int');
+    $param.='&date_stopmonth='.GETPOST('date_stopmonth', 'int');
+    $param.='&date_stopyear='.GETPOST('date_stopyear', 'int');
 
     print '<form name="dl" action="?action=dl" method="POST" >'."\n";
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 
-    print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'dayxcard').'" />';
+    print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start, 'dayxcard').'" />';
     print '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
 
     //print   '<input type="hidden" name="date_stopDay"  value="'.dol_print_date($date_stop, '%d').'" />';
@@ -303,7 +303,7 @@ if (!empty($date_start) && !empty($date_stop))
     print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($arrayfields['date']['label'],$_SERVER["PHP_SELF"],"date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+    print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Ref").'</td>';
     print '<td>'.$langs->trans("Link").'</td>';
@@ -315,57 +315,57 @@ if (!empty($date_start) && !empty($date_stop))
     if ($result)
     {
         $TData = dol_sort_array($filesarray, 'date', 'ASC');
-            if(empty($TData)) {
-                            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-            } else {
-                            // Sort array by date ASC to calucalte balance
+        if(empty($TData)) {
+            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
+        } else {
+            // Sort array by date ASC to calucalte balance
 
-                            $totalDebit = 0;
-                            $totalCredit = 0;
-                            // Balance calculation
-                            $balance = 0;
-                            foreach($TData as &$data1) {
-                                    if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
-                                         $data1['amount']=-$data1['amount'];
-                                    }
-                                    if ($data1['amount']>0){
-                                   }else{
-                                   }
-                                   $balance += $data1['amount'];
-                                    $data1['balance'] = $balance;
-                            }
-                    // Display array
-                    foreach($TData as $data) {
-                            $html_class = '';
-                            //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-                            //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
-                            print '<tr class="oddeven '.$html_class.'">';
-                            print "<td align=\"center\">";
-                            print dol_print_date($data['date'],'day');
-                            print "</td>\n";
-                            print '<td aling="left">'.$data['item'].'</td>';
-                            print '<td aling="left">'.$data['ref'].'</td>';
-
-                            // File link
-                            print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
-
-                            print '<td aling="left">'.$data['paid'].'</td>';
-                            print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
-                            $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-                            print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
-                            $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
-                            // Balance
-                            print '<td align="right">'.price($data['balance'])."</td>\n";
-                            print "</tr>\n";
-                    }
-                    print '<tr class="liste_total">';
-                    print '<td colspan="5">&nbsp;</td>';
-                    print '<td align="right">'.price($totalDebit).'</td>';
-                    print '<td align="right">'.price($totalCredit).'</td>';
-                    print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-                    print "</tr>\n";
-                    }
+            $totalDebit = 0;
+            $totalCredit = 0;
+            // Balance calculation
+            $balance = 0;
+            foreach($TData as &$data1) {
+                if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
+                    $data1['amount']=-$data1['amount'];
+                }
+                if ($data1['amount']>0){
+                }else{
+                }
+                $balance += $data1['amount'];
+                $data1['balance'] = $balance;
             }
+            // Display array
+            foreach($TData as $data) {
+                $html_class = '';
+                //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+                //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+                print '<tr class="oddeven '.$html_class.'">';
+                print "<td align=\"center\">";
+                print dol_print_date($data['date'], 'day');
+                print "</td>\n";
+                print '<td aling="left">'.$data['item'].'</td>';
+                print '<td aling="left">'.$data['ref'].'</td>';
+
+                // File link
+                print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
+
+                print '<td aling="left">'.$data['paid'].'</td>';
+                print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+                $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+                print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+                $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+                // Balance
+                print '<td align="right">'.price($data['balance'])."</td>\n";
+                print "</tr>\n";
+            }
+            print '<tr class="liste_total">';
+            print '<td colspan="5">&nbsp;</td>';
+            print '<td align="right">'.price($totalDebit).'</td>';
+            print '<td align="right">'.price($totalCredit).'</td>';
+            print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+            print "</tr>\n";
+        }
+    }
     print "</table>";
     print '</div>';
 }

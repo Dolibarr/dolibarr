@@ -921,8 +921,8 @@ class BlockedLog
 	 *	@param int	$beforeid		ID of a record
 	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
-	 public function getPreviousHash($withlock = 0, $beforeid = 0)
-	 {
+	public function getPreviousHash($withlock = 0, $beforeid = 0)
+	{
 		global $conf;
 
 		$previoussignature='';
@@ -1053,9 +1053,9 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc,true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine',0,'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT=$fingerprint;
 		}

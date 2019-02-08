@@ -254,7 +254,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 	{
 		$relativepathstring = $_SERVER["PHP_SELF"];
 		// Clean $relativepathstring
-		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 		$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 		//var_dump($relativepathstring);
@@ -474,7 +474,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				}
 				else $newout = '';     // Key not found, we replace with empty string
 				//var_dump('__'.$reg[1].'__ -> '.$newout);
-				$out = preg_replace('/__'.preg_quote($reg[1],'/').'__/', $newout, $out);
+				$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
 		}
 	}
 
@@ -487,7 +487,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 			if (! is_numeric($out)) { $out=''; }
 			break;
 		case 'intcomma':
-			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
+			if (preg_match('/[^0-9,-]+/i', $out)) $out='';
 			break;
 		case 'alpha':
 			if (! is_array($out))
@@ -495,32 +495,32 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out=trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/',$out)) $out='';
-				elseif (preg_match('/\.\.\//',$out)) $out='';
+				if (preg_match('/"/', $out)) $out='';
+				elseif (preg_match('/\.\.\//', $out)) $out='';
 			}
 			break;
 		case 'san_alpha':
-			$out=filter_var($out,FILTER_SANITIZE_STRING);
+			$out=filter_var($out, FILTER_SANITIZE_STRING);
 			break;
 		case 'aZ':
 			if (! is_array($out))
 			{
 				$out=trim($out);
-				if (preg_match('/[^a-z]+/i',$out)) $out='';
+				if (preg_match('/[^a-z]+/i', $out)) $out='';
 			}
 			break;
 		case 'aZ09':
 			if (! is_array($out))
 			{
 				$out=trim($out);
-				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+				if (preg_match('/[^a-z0-9_\-\.]+/i', $out)) $out='';
 			}
 			break;
 		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
 			if (! is_array($out))
 			{
 				$out=trim($out);
-				if (preg_match('/[^a-z0-9_\-\.,]+/i',$out)) $out='';
+				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out='';
 			}
 			break;
 		case 'array':
@@ -535,8 +535,8 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out=trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/',$out)) $out='';
-				elseif (preg_match('/\.\.\//',$out)) $out='';
+				if (preg_match('/"/', $out)) $out='';
+				elseif (preg_match('/\.\.\//', $out)) $out='';
 				$out=dol_string_nohtmltag($out);
 			}
 			break;
@@ -648,7 +648,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
 	global $conf;
 
-	$path=preg_replace('/^\//','',$path);
+	$path=preg_replace('/^\//', '', $path);
 
 	if (empty($type))	// For a filesystem path
 	{
@@ -690,15 +690,15 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 					global $dolibarr_main_url_root;
 
 					// Define $urlwithroot
-					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-					$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).'/'.$path;     // Test on start with http is for old conf syntax
+					$res=(preg_match('/^http/i', $conf->file->dol_url_root[$key])?'':$urlwithroot).'/'.$path;     // Test on start with http is for old conf syntax
 				}
 				continue;
 			}
-			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i',$path,$regs);    // Take part before '?'
+			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs);    // Take part before '?'
 			if (! empty($regs[1]))
 			{
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
@@ -706,22 +706,22 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				{
 					if ($type == 1)
 					{
-						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+						$res=(preg_match('/^http/i', $conf->file->dol_url_root[$key])?'':DOL_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					if ($type == 2)
 					{
-						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+						$res=(preg_match('/^http/i', $conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					if ($type == 3)
 					{
 						global $dolibarr_main_url_root;
 
 						// Define $urlwithroot
-						$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+						$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;     // Test on start with http is for old conf syntax
+						$res=(preg_match('/^http/i', $conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;     // Test on start with http is for old conf syntax
 					}
 					break;
 				}
@@ -881,7 +881,7 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
 
-	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
+	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
 }
 
 
@@ -1010,7 +1010,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If adding log inside HTML page is required
 		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
 		{
-			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
+			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1024,7 +1024,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		$data = array(
 			'message' => $message,
-			'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
+			'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'], '.php') : false),
 			'level' => $level,
 			'user' => ((is_object($user) && $user->id) ? $user->login : false),
 			'ip' => false
@@ -1044,7 +1044,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
 			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
-			$loghandlerinstance->export($data,$suffixinfilename);
+			$loghandlerinstance->export($data, $suffixinfilename);
 		}
 		unset($data);
 	}
@@ -1105,8 +1105,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
-		if ($picto) $out.=img_picto($title,($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
-		$out.='<span class="tabTitleText">'.dol_trunc($title,$limittitle).'</span>';
+		if ($picto) $out.=img_picto($title, ($pictoisfullpath?'':'object_').$picto, '', $pictoisfullpath).' ';
+		$out.='<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out.='</a>';
 	}
 
@@ -1235,7 +1235,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (! $notab || $notab == -1) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ' tabBarWithBottom').'">'."\n";
 
 	$parameters=array('tabname' => $active, 'out' => $out);
-	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
+	$reshook=$hookmanager->executeHooks('printTabsHead', $parameters);	// This hook usage is called just before output the head of tabs. Take also a look at "completeTabsHead"
 	if ($reshook > 0)
 	{
 		$out = $hookmanager->resPrint;
@@ -1324,7 +1324,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$showimage=$object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
 		else
 		{
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
@@ -1343,7 +1343,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->track_id);
 		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
 		else
 		{
 			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
@@ -1371,7 +1371,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
 						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
-						$subdir.= ((! empty($subdir) && ! preg_match('/\/$/',$subdir))?'/':'').$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it at end
+						$subdir.= ((! empty($subdir) && ! preg_match('/\/$/', $subdir))?'/':'').$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it at end
 					}
 					else
 					{
@@ -1418,7 +1418,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						// Si fichier png PDF de plus d'1 page trouve
 						elseif (file_exists($fileimagebis))
 						{
-							$preview = preg_replace('/\.png/','',$relativepathimage) . "-0.png";
+							$preview = preg_replace('/\.png/', '', $relativepathimage) . "-0.png";
 							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
 							$phototoshow.= '</div></div>';
@@ -1427,7 +1427,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1480,14 +1480,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
-			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(5,0).'</span>';
+			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(5, 0).'</span>';
 		}
 		$morehtmlstatus.=' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
-			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(5,1).'</span>';
+			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(5, 1).'</span>';
 		}
 	}
 	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
@@ -1543,7 +1543,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
 	{
 		$morehtmlref.='<div class="refidno">';
-		$morehtmlref.=$object->getBannerAddress('refaddress',$object);
+		$morehtmlref.=$object->getBannerAddress('refaddress', $object);
 		$morehtmlref.='</div>';
 	}
 	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
@@ -1591,7 +1591,7 @@ function dol_bc($var, $moreclass = '')
 {
 	global $bc;
 	$ret=' '.$bc[$var];
-	if ($moreclass) $ret=preg_replace('/class=\"/','class="'.$moreclass.' ',$ret);
+	if ($moreclass) $ret=preg_replace('/class=\"/', 'class="'.$moreclass.' ', $ret);
 	return $ret;
 }
 
@@ -1618,7 +1618,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= $object->address;
 	}
 	// Zip/Town/State
-	if (in_array($object->country_code,array('AU', 'CA', 'US')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (in_array($object->country_code, array('AU', 'CA', 'US')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state)
@@ -1627,7 +1627,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		}
 		if ($object->zip) $ret .= ($ret?", ":'').$object->zip;
 	}
-	elseif (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	elseif (in_array($object->country_code, array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state)
@@ -1636,7 +1636,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	elseif (in_array($object->country_code,array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
+	elseif (in_array($object->country_code, array('ES','TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
@@ -1645,7 +1645,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 			$ret.="\n".$object->state;
 		}
 	}
-	elseif (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+	elseif (in_array($object->country_code, array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
@@ -1655,7 +1655,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
 		$ret .= ($object->town?(($object->zip?' ':($ret ? $sep : '' )).$object->town):'');
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state && in_array($object->country_code, $countriesusingstate))
 		{
 			$ret.=($ret?", ":'').$object->state;
 		}
@@ -1683,7 +1683,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 function dol_strftime($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt)? @gmstrftime($fmt,$ts): @strftime($fmt,$ts);
+		return ($is_gmt)? @gmstrftime($fmt, $ts): @strftime($fmt, $ts);
 	}
 	else return 'Error date into a not supported range';
 }
@@ -1739,8 +1739,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 	if (! $format) $format='daytextshort';
-	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','dayhour')))?1:0;
-	$formatwithoutreduce = preg_replace('/reduceformat/','',$format);
+	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format, array('day','dayhour')))?1:0;
+	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat=1; }  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
@@ -1765,30 +1765,30 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 
 	if ($reduceformat)
 	{
-		$format=str_replace('%Y','%y',$format);
-		$format=str_replace('yyyy','yy',$format);
+		$format=str_replace('%Y', '%y', $format);
+		$format=str_replace('yyyy', 'yy', $format);
 	}
 
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
 	// Clean format
-	if (preg_match('/%b/i',$format))		// There is some text to translate
+	if (preg_match('/%b/i', $format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
-		$format=str_replace('%b','__b__',$format);
-		$format=str_replace('%B','__B__',$format);
+		$format=str_replace('%b', '__b__', $format);
+		$format=str_replace('%B', '__B__', $format);
 	}
-	if (preg_match('/%a/i',$format))		// There is some text to translate
+	if (preg_match('/%a/i', $format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
-		$format=str_replace('%a','__a__',$format);
-		$format=str_replace('%A','__A__',$format);
+		$format=str_replace('%a', '__a__', $format);
+		$format=str_replace('%A', '__A__', $format);
 	}
 
 	// Analyze date
-	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
-	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
+	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
+	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
 		// TODO Remove this.
 		// This part of code should not be used.
@@ -1801,7 +1801,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$smin	= (! empty($reg[5]) ? $reg[5] : '');
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
-		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
+		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
 		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
@@ -1816,7 +1816,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		else $ret='Bad value '.$time.' for date';
 	}
 
-	if (preg_match('/__b__/i',$format))
+	if (preg_match('/__b__/i', $format))
 	{
 		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
@@ -1834,19 +1834,19 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 			$monthtextshort=$outputlangs->transnoentitiesnoconv('MonthShort'.$month);
 		}
 		//print 'monthtext='.$monthtext.' monthtextshort='.$monthtextshort;
-		$ret=str_replace('__b__',$monthtextshort,$ret);
-		$ret=str_replace('__B__',$monthtext,$ret);
+		$ret=str_replace('__b__', $monthtextshort, $ret);
+		$ret=str_replace('__B__', $monthtext, $ret);
 		//print 'x'.$outputlangs->charset_output.'-'.$ret.'x';
 		//return $ret;
 	}
-	if (preg_match('/__a__/i',$format))
+	if (preg_match('/__a__/i', $format))
 	{
 		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
 		$w=adodb_strftime('%w', $timetouse);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
-		$ret=str_replace('__A__',$dayweek,$ret);
-		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
+		$ret=str_replace('__A__', $dayweek, $ret);
+		$ret=str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
 	}
 
 	return $ret;
@@ -1896,7 +1896,7 @@ function dol_getdate($timestamp, $fast = false)
 
 	if ($usealternatemethod)
 	{
-		$arrayinfo=adodb_getdate($timestamp,$fast);
+		$arrayinfo=adodb_getdate($timestamp, $fast);
 	}
 	else
 	{
@@ -1946,7 +1946,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second< 0 || $second > 60) return '';
 	}
 
-	if (method_exists('DateTime','getTimestamp'))
+	if (method_exists('DateTime', 'getTimestamp'))
 	{
 		if (empty($gm) || $gm === 'server')
 		{
@@ -1984,8 +1984,8 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		}
 		//var_dump($localtz);
 		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-		$dt = new DateTime(null,$localtz);
-		$dt->setDate($year,$month,$day);
+		$dt = new DateTime(null, $localtz);
+		$dt->setDate($year, $month, $day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
 		//var_dump($date);
@@ -1993,7 +1993,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 	}
 	else
 	{
-		dol_print_error('','PHP version must be 5.4+');
+		dol_print_error('', 'PHP version must be 5.4+');
 		return '';
 	}
 }
@@ -2063,7 +2063,7 @@ function dol_print_size($size, $shortvalue = 0, $shortunit = 0)
 	}
 	else
 	{
-		$ret=round($size/$level,0);
+		$ret=round($size/$level, 0);
 		$textunitshort=$langs->trans("Kb");
 		$textunitlong=$langs->trans("KiloBytes");
 	}
@@ -2090,13 +2090,13 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 	if (empty($url)) return '';
 
 	$link='<a href="';
-	if (! preg_match('/^http/i',$url)) $link.='http://';
+	if (! preg_match('/^http/i', $url)) $link.='http://';
 	$link.=$url;
 	$link.='"';
 	if ($target) $link.=' target="'.$target.'"';
 	$link.='>';
-	if (! preg_match('/^http/i',$url)) $link.='http://';
-	$link.=dol_trunc($url,$max);
+	if (! preg_match('/^http/i', $url)) $link.='http://';
+	$link.=dol_trunc($url, $max);
 	$link.='</a>';
 	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
 }
@@ -2124,21 +2124,21 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	if (! empty($addlink))
 	{
 		$newemail='<a style="text-overflow: ellipsis;" href="';
-		if (! preg_match('/^mailto:/i',$email)) $newemail.='mailto:';
+		if (! preg_match('/^mailto:/i', $email)) $newemail.='mailto:';
 		$newemail.=$email;
 		$newemail.='">';
-		$newemail.=dol_trunc($email,$max);
+		$newemail.=dol_trunc($email, $max);
 		$newemail.='</a>';
 		if ($showinvalid && ! isValidEmail($email))
 		{
 			$langs->load("errors");
-			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
+			$newemail.=img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_EMAIL'; $link='';
-			if (! empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			if (! empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			if ($link) $newemail='<div>'.$newemail.' '.$link.'</div>';
 		}
 	}
@@ -2147,7 +2147,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		if ($showinvalid && ! isValidEmail($email))
 		{
 			$langs->load("errors");
-			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
+			$newemail.=img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 	}
 
@@ -2199,7 +2199,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
 		{
 			$addlink='AC_SKYPE'; $link='';
-			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			$newskype.=($link?' '.$link:'');
 		}
 		$newskype.='</div>';
@@ -2207,7 +2207,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 	else
 	{
 		$langs->load("errors");
-		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue",$value));
+		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
 	return $newskype;
 }
@@ -2231,7 +2231,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
-	$phone = preg_replace("/[\s.-]/","",trim($phone));
+	$phone = preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) { return ''; }
 	if (empty($countrycode)) $countrycode=$mysoc->country_code;
 
@@ -2243,281 +2243,284 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	{
 		// France
 		if (dol_strlen($phone) == 10) {
-			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
+			$newphone=substr($newphone, 0, 2).$separ.substr($newphone, 2, 2).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2);
 		}
 		elseif (dol_strlen($phone) == 7)
 		{
-			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
+			$newphone=substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2);
 		}
 		elseif (dol_strlen($phone) == 9)
 		{
-			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
+			$newphone=substr($newphone, 0, 2).$separ.substr($newphone, 2, 3).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2);
 		}
 		elseif (dol_strlen($phone) == 11)
 		{
-			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+			$newphone=substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 		elseif (dol_strlen($phone) == 12)
 		{
-			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone=substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 
 	elseif (strtoupper($countrycode) == "CA")
 	{
 		if (dol_strlen($phone) == 10) {
-			$newphone=($separ!=''?'(':'').substr($newphone,0,3).($separ!=''?')':'').$separ.substr($newphone,3,3).($separ!=''?'-':'').substr($newphone,6,4);
+			$newphone=($separ!=''?'(':'').substr($newphone, 0, 3).($separ!=''?')':'').$separ.substr($newphone, 3, 3).($separ!=''?'-':'').substr($newphone, 6, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "PT" )
 	{//Portugal
 		if (dol_strlen($phone) == 13)
 		{//ex: +351_ABC_DEF_GHI
-			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+			$newphone= substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "SR" )
 	{//Suriname
 		if (dol_strlen($phone) == 10)
 		{//ex: +597_ABC_DEF
-			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3);
+			$newphone= substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3);
 		}
 		elseif (dol_strlen($phone) == 11)
 		{//ex: +597_ABC_DEFG
-			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,4);
+			$newphone= substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "DE" )
 	{//Allemagne
 		if (dol_strlen($phone) == 14)
 		{//ex:  +49_ABCD_EFGH_IJK
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,4).$separ.substr($newphone,11,3);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 4).$separ.substr($newphone, 7, 4).$separ.substr($newphone, 11, 3);
 		}
 		elseif (dol_strlen($phone) == 13)
 		{//ex: +49_ABC_DEFG_HIJ
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,4).$separ.substr($newphone,10,3);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 4).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "ES")
 	{//Espagne
 		if (dol_strlen($phone) == 12)
 		{//ex:  +34_ABC_DEF_GHI
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "BF")
 	{// Burkina Faso
 		if (dol_strlen($phone) == 12)
 		{//ex :  +22 A BC_DE_FG_HI
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "RO")
 	{// Roumanie
 		if (dol_strlen($phone) == 12)
 		{//ex :  +40 AB_CDE_FG_HI
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "TR")
 	{//Turquie
 		if (dol_strlen($phone) == 13)
 		{//ex :  +90 ABC_DEF_GHIJ
-			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
+			$newphone= substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "US")
 	{//Etat-Unis
 		if (dol_strlen($phone) == 12)
 		{//ex: +1 ABC_DEF_GHIJ
-			$newphone= substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,3).$separ.substr($newphone,8,4);
+			$newphone= substr($newphone, 0, 2).$separ.substr($newphone, 2, 3).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "MX")
 	{//Mexique
 		if (dol_strlen($phone) == 12)
 		{//ex: +52 ABCD_EFG_HI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,3).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 2);
 		}
 		elseif (dol_strlen($phone) == 11)
 		{//ex: +52 AB_CD_EF_GH
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 		elseif (dol_strlen($phone) == 13)
 		{//ex: +52 ABC_DEF_GHIJ
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "ML")
 	{//Mali
 		if(dol_strlen($phone) == 12)
 		{//ex: +223 AB_CD_EF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "TH")
 	{//Thaïlande
 		if(dol_strlen($phone) == 11)
 		{//ex: +66_ABC_DE_FGH
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,2).$separ.substr($newphone,8,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3);
 		}
 		elseif(dol_strlen($phone) == 12)
 		{//ex: +66_A_BCD_EF_GHI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 3);
 		}
-		}
+	}
 	elseif (strtoupper($countrycode) == "MU")
-	{//Maurice
+	{
+        //Maurice
 		if(dol_strlen($phone) == 11)
 		{//ex: +230_ABC_DE_FG
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 		elseif(dol_strlen($phone) == 12)
 		{//ex: +230_ABCD_EF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,4).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "ZA")
 	{//Afrique du sud
 		if(dol_strlen($phone) == 12)
 		{//ex: +27_AB_CDE_FG_HI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "SY")
 	{//Syrie
 		if(dol_strlen($phone) == 12)
 		{//ex: +963_AB_CD_EF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 		elseif(dol_strlen($phone) == 13)
 		{//ex: +963_AB_CD_EF_GHI
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "AE")
 	{//Emirats Arabes Unis
 		if(dol_strlen($phone) == 12)
 		{//ex: +971_ABC_DEF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 2);
 		}
 		elseif(dol_strlen($phone) == 13)
 		{//ex: +971_ABC_DEF_GHI
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 3);
 		}
 		elseif(dol_strlen($phone) == 14)
 		{//ex: +971_ABC_DEF_GHIK
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,4);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "DZ")
 	{//Algérie
 		if(dol_strlen($phone) == 13)
 		{//ex: +213_ABC_DEF_GHI
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "BE")
 	{//Belgique
 		if(dol_strlen($phone) == 11)
 		{//ex: +32_ABC_DE_FGH
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,2).$separ.substr($newphone,8,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3);
 		}
 		elseif(dol_strlen($phone) == 12)
 		{//ex: +32_ABC_DEF_GHI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "PF")
 	{//Polynésie française
 		if(dol_strlen($phone) == 12)
 		{//ex: +689_AB_CD_EF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "CO")
 	{//Colombie
 		if(dol_strlen($phone) == 13)
 		{//ex: +57_ABC_DEF_GH_IJ
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "JO")
 	{//Jordanie
 		if(dol_strlen($phone) == 12)
 		{//ex: +962_A_BCD_EF_GH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,1).$separ.substr($newphone,5,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 1).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "MG")
 	{//Madagascar
 		if(dol_strlen($phone) == 13)
 		{//ex: +261_AB_CD_EF_GHI
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "GB")
 	{//Royaume uni
 		if(dol_strlen($phone) == 13)
 		{//ex: +44_ABCD_EFG_HIJ
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 4).$separ.substr($newphone, 7, 3).$separ.substr($newphone, 10, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "CH")
 	{//Suisse
 		if(dol_strlen($phone) == 12)
 		{//ex: +41_AB_CDE_FG_HI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		}
 		elseif(dol_strlen($phone) == 15)
 		{// +41_AB_CDE_FGH_IJKL
-			$newphone =$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,3).$separ.substr($newphone,11,4);
+			$newphone =$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "TN")
 	{//Tunisie
 		if(dol_strlen($phone) == 12)
 		{//ex: +216_AB_CDE_FGH
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "GF")
 	{//Guyane francaise
 		if(dol_strlen($phone) == 13)
 		{//ex: +594_ABC_DE_FG_HI  (ABC=594 de nouveau)
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "GP")
 	{//Guadeloupe
 		if(dol_strlen($phone) == 13)
 		{//ex: +590_ABC_DE_FG_HI  (ABC=590 de nouveau)
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "MQ")
 	{//Martinique
 		if(dol_strlen($phone) == 13)
 		{//ex: +596_ABC_DE_FG_HI  (ABC=596 de nouveau)
-			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
 	elseif (strtoupper($countrycode) == "IT")
 	{//Italie
 		if(dol_strlen($phone) == 12)
 		{//ex: +39_ABC_DEF_GHI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 3);
 		}
 		elseif(dol_strlen($phone) == 13)
 		{//ex: +39_ABC_DEF_GH_IJ
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 3).$separ.substr($newphone, 6, 3).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
 		}
 	}
 	elseif(strtoupper($countrycode) == "AU")
-	{//Australie
-		 if(dol_strlen($phone) == 12)
-		{//ex: +61_A_BCDE_FGHI
-			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,4).$separ.substr($newphone,8,4);
+	{
+        //Australie
+		if(dol_strlen($phone) == 12)
+		{
+            //ex: +61_A_BCDE_FGHI
+			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
 	}
 	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
@@ -2558,7 +2561,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		{
 			$type='AC_TEL'; $link='';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
-			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			if ($link) $newphone='<div>'.$newphone.' '.$link.'</div>';
 		}
 	}
@@ -2593,7 +2596,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
-	  }
+	}
 
 	return $rep;
 }
@@ -2620,7 +2623,7 @@ function dol_print_ip($ip, $mode = 0)
 		{
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
 			{
-				$ret.=' '.img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"),DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png','',1);
+				$ret.=' '.img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
 			}
 			else $ret.=' ('.$countrycode.')';
 		}
@@ -2662,7 +2665,7 @@ function dolGetCountryCodeFromIp($ip)
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
-		$geoip=new DolGeoIP('country',$datafile);
+		$geoip=new DolGeoIP('country', $datafile);
 		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
 		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
 		$countrycode=$geoip->getCountryCodeFromIP($ip);
@@ -2691,7 +2694,7 @@ function dol_user_country()
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
-		$geoip=new DolGeoIP('country',$datafile);
+		$geoip=new DolGeoIP('country', $datafile);
 		$countrycode=$geoip->getCountryCodeFromIP($ip);
 		$ret=$countrycode;
 	}
@@ -2740,12 +2743,12 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfor
 
 			if ($showgmap)
 			{
-				$url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
+				$url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id, 1);
 				$out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 			if ($showomap)
 			{
-				$url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
+				$url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id, 1);
 				$out.=' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 		}
@@ -2821,7 +2824,7 @@ function isValidPhone($phone)
  */
 function dol_strlen($string, $stringencoding = 'UTF-8')
 {
-	if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
+	if (function_exists('mb_strlen')) return mb_strlen($string, $stringencoding);
 	else return strlen($string);
 }
 
@@ -2894,38 +2897,38 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 	// We go always here
 	if ($trunc == 'right')
 	{
-		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return dol_substr($newstring,0,$size,$stringencoding).($nodot?'':'...');
+		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string, 1):$string;
+		if (dol_strlen($newstring, $stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
+		return dol_substr($newstring, 0, $size, $stringencoding).($nodot?'':'...');
 		else
 		//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
 		return $string;
 	}
 	elseif ($trunc == 'middle')
 	{
-		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
+		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string, 1):$string;
+		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size+1))
 		{
 			$size1=round($size/2);
 			$size2=round($size/2);
-			return dol_substr($newstring,0,$size1,$stringencoding).'...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size2,$size2,$stringencoding);
+			return dol_substr($newstring, 0, $size1, $stringencoding).'...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
 		}
 		else
 		return $string;
 	}
 	elseif ($trunc == 'left')
 	{
-		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
+		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string, 1):$string;
+		if (dol_strlen($newstring, $stringencoding) > ($size+($nodot?0:3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
+		return '...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
 		else
 		return $string;
 	}
 	elseif ($trunc == 'wrap')
 	{
-		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-		if (dol_strlen($newstring,$stringencoding) > ($size+1))
-		return dol_substr($newstring,0,$size,$stringencoding)."\n".dol_trunc(dol_substr($newstring,$size,dol_strlen($newstring,$stringencoding)-$size,$stringencoding),$size,$trunc);
+		$newstring=dol_textishtml($string)?dol_string_nohtmltag($string, 1):$string;
+		if (dol_strlen($newstring, $stringencoding) > ($size+1))
+		return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding)-$size, $stringencoding), $size, $trunc);
 		else
 		return $string;
 	}
@@ -2962,7 +2965,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath) {
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i', $picto)) {
 			$picto .= '.png';
 		}
 		$fullpathpicto = $picto;
@@ -3079,17 +3082,18 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             $reg=array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
                 $morecss .= ($morecss ? ' ' : '') . $reg[1];
-                $moreatt = str_replace('class="'.$reg[1].'"','', $moreatt);
+                $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
             }
             if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
                 $morestyle = ' '. $reg[1];
-                $moreatt = str_replace('style="'.$reg[1].'"','', $moreatt);
+                $moreatt = str_replace('style="'.$reg[1].'"', '', $moreatt);
             }
             $moreatt=trim($moreatt);
 
 			$fa='fa';
 			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
-            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '') . ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '');
+            $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3115,7 +3119,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i', $picto)) {
 			$picto .= '.png';
 		}
 		// If alt path are defined, define url where img file is, according to physical path
@@ -3349,7 +3353,7 @@ function img_printer($titlealt = "default", $other = '')
 {
 	global $conf,$langs;
 	if ($titlealt=="default") $titlealt=$langs->trans("Print");
-	return img_picto($titlealt,'printer.png',$other);
+	return img_picto($titlealt, 'printer.png', $other);
 }
 
 /**
@@ -3722,7 +3726,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental or develop level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
-		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";
+		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(), 'dayhourlog')."<br>\n";
 		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";
 		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";
 		if (function_exists("phpversion"))
@@ -3736,8 +3740,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		}
 		$out.="<b>".$langs->trans("UserAgent").":</b> ".$_SERVER["HTTP_USER_AGENT"]."<br>\n";
 		$out.="<br>\n";
-		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"],ENT_COMPAT,'UTF-8')."<br>\n";
-		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"],ENT_COMPAT,'UTF-8'):'')."<br>\n";
+		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8')."<br>\n";
+		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8'):'')."<br>\n";
 		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
@@ -3776,9 +3780,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$langs->load("errors");
 
 		// Merge all into $errors array
-		if (is_array($error) && is_array($errors)) $errors=array_merge($error,$errors);
+		if (is_array($error) && is_array($errors)) $errors=array_merge($error, $errors);
 		elseif (is_array($error)) $errors=$error;
-		elseif (is_array($errors)) $errors=array_merge(array($error),$errors);
+		elseif (is_array($errors)) $errors=array_merge(array($error), $errors);
 		else $errors=array_merge(array($error));
 
 		foreach($errors as $msg)
@@ -3836,7 +3840,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	$now=dol_now();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -3897,45 +3901,45 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tag='th';
 	if ($thead==2) $tag='div';
 
-	$tmpsortfield=explode(',',$sortfield);
+	$tmpsortfield=explode(',', $sortfield);
 	$sortfield1=trim($tmpsortfield[0]);    // If $sortfield is 'd.datep,d.id', it becomes 'd.datep'
-	$tmpfield=explode(',',$field);
+	$tmpfield=explode(',', $field);
 	$field1=trim($tmpfield[0]);            // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./","",$field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
+	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) $out.= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '. $moreattrib.'>';
 	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
-		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
-		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
-		$options=preg_replace('/&+/i','&',$options);
-		if (! preg_match('/^&/',$options)) $options='&'.$options;
+		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', $moreparam);
+		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i', '', $options);
+		$options=preg_replace('/&+/i', '&', $options);
+		if (! preg_match('/^&/', $options)) $options='&'.$options;
 
 		$sortordertouseinlink='';
 		if ($field1 != $sortfield1) // We are on another field than current sorted field
 		{
 			if (preg_match('/^DESC/i', $sortorder))
 			{
-				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',', $field)));
 			}
 			else		// We reverse the var $sortordertouseinlink
 			{
-				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',', $field)));
 			}
 		}
 		else                        // We are on field that is the first current sorting criteria
 		{
 			if (preg_match('/^ASC/i', $sortorder))	// We reverse the var $sortordertouseinlink
 			{
-				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',', $field)));
 			}
 			else
 			{
-				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',', $field)));
 			}
 		}
 		$sortordertouseinlink=preg_replace('/,$/', '', $sortordertouseinlink);
@@ -3952,10 +3956,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	if (empty($thead) && $field)    // If this is a sort field
 	{
-		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
-		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
-		$options=preg_replace('/&+/i','&',$options);
-		if (! preg_match('/^&/',$options)) $options='&'.$options;
+		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', $moreparam);
+		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i', '', $options);
+		$options=preg_replace('/&+/i', '&', $options);
+		if (! preg_match('/^&/', $options)) $options='&'.$options;
 
 		if (! $sortorder || $field1 != $sortfield1)
 		{
@@ -3967,12 +3971,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg.= '<span class="nowrap">'.img_up("Z-A",0).'</span>';
+				$sortimg.= '<span class="nowrap">'.img_up("Z-A", 0).'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
+				$sortimg.= '<span class="nowrap">'.img_down("A-Z", 0).'</span>';
 			}
 		}
 	}
@@ -4038,7 +4042,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding valignmiddle">';
 	$return.= '<div class="titre inline-block">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4203,7 +4207,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 
 		print '<li class="pagination">';
 		print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
-		$tmpchoice=explode(',',$pagesizechoices);
+		$tmpchoice=explode(',', $pagesizechoices);
 		$tmpkey=$limit.':'.$limit;
 		if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
 		$tmpkey=$conf->liste_limit.':'.$conf->liste_limit;
@@ -4213,7 +4217,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 		foreach($tmpchoice as $val)
 		{
 			$selected='';
-			$tmp=explode(':',$val);
+			$tmp=explode(':', $val);
 			$key=$tmp[0];
 			$val=$tmp[1];
 			if ($key != '' && $val != '')
@@ -4278,24 +4282,24 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
 {
 	$morelabel='';
 
-	if (preg_match('/%/',$rate))
+	if (preg_match('/%/', $rate))
 	{
-		$rate=str_replace('%','',$rate);
+		$rate=str_replace('%', '', $rate);
 		$addpercent=true;
 	}
-	if (preg_match('/\((.*)\)/',$rate,$reg))
+	if (preg_match('/\((.*)\)/', $rate, $reg))
 	{
 		$morelabel=' ('.$reg[1].')';
-		$rate=preg_replace('/\s*'.preg_quote($morelabel,'/').'/','',$rate);
+		$rate=preg_replace('/\s*'.preg_quote($morelabel, '/').'/', '', $rate);
 	}
-	if (preg_match('/\*/',$rate))
+	if (preg_match('/\*/', $rate))
 	{
-		$rate=str_replace('*','',$rate);
+		$rate=str_replace('*', '', $rate);
 		$info_bits |= 1;
 	}
 
 	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
-	if (! preg_match('/\//', $rate)) $ret=price($rate,0,'',0,0).($addpercent?'%':'');
+	if (! preg_match('/\//', $rate)) $ret=price($rate, 0, '', 0, 0).($addpercent?'%':'');
 	else
 	{
 		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
@@ -4329,7 +4333,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	// Clean parameters
 	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
 	$amount = (is_numeric($amount)?$amount:0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
-	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 	$nbdecimal=$rounding;
 
 	// Output separators by default (french)
@@ -4345,11 +4349,11 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	//print "amount=".$amount."-";
-	$amount = str_replace(',','.',$amount);	// should be useless
+	$amount = str_replace(',', '.', $amount);	// should be useless
 	//print $amount."-";
-	$datas = explode('.',$amount);
+	$datas = explode('.', $amount);
 	$decpart = isset($datas[1])?$datas[1]:'';
-	$decpart = preg_replace('/0+$/i','',$decpart);	// Supprime les 0 de fin de partie decimale
+	$decpart = preg_replace('/0+$/i', '', $decpart);	// Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
 	$end='';
 
@@ -4359,7 +4363,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
 	{
 		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
-		if (preg_match('/\.\.\./i',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
+		if (preg_match('/\.\.\./i', $conf->global->MAIN_MAX_DECIMALS_SHOWN))
 		{
 			// Si un affichage est tronque, on montre des ...
 			$end='...';
@@ -4373,8 +4377,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	$output=number_format($amount, $nbdecimal, $dec, $thousand);
 	if ($form)
 	{
-		$output=preg_replace('/\s/','&nbsp;',$output);
-		$output=preg_replace('/\'/','&#039;',$output);
+		$output=preg_replace('/\s/', '&nbsp;', $output);
+		$output=preg_replace('/\'/', '&#039;', $output);
 	}
 	// Add symbol of currency if requested
 	$cursymbolbefore=$cursymbolafter='';
@@ -4438,18 +4442,18 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
-			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
-			$nbofdec=max(0,dol_strlen($temps)-2);	// -2 to remove "0."
-			$amount=number_format($amount,$nbofdec,$dec,$thousand);
+			$temps=sprintf("%0.10F", $amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps=preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
+			$nbofdec=max(0, dol_strlen($temps)-2);	// -2 to remove "0."
+			$amount=number_format($amount, $nbofdec, $dec, $thousand);
 		}
 		//print "QQ".$amount.'<br>';
 
 		// Now make replace (the main goal of function)
-		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
-		$amount=str_replace(' ','',$amount);		// To avoid spaces
-		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
-		$amount=str_replace($dec,'.',$amount);
+		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',', '.', $amount);	// To accept 2 notations for french users
+		$amount=str_replace(' ', '', $amount);		// To avoid spaces
+		$amount=str_replace($thousand, '', $amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
+		$amount=str_replace($dec, '.', $amount);
 	}
 
 	// Now, make a rounding if required
@@ -4461,7 +4465,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 		elseif ($rounding == 'MS') $nbofdectoround=empty($conf->global->MAIN_MAX_DECIMALS_STOCK)?5:$conf->global->MAIN_MAX_DECIMALS_STOCK;
 		elseif (is_numeric($rounding))  $nbofdectoround=$rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
-		if (dol_strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
+		if (dol_strlen($nbofdectoround)) $amount = round($amount, $nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
 		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
@@ -4470,19 +4474,19 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 		if (is_numeric($amount))
 		{
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
-			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
-			$nbofdec=max(0,dol_strlen($temps)-2);	// -2 to remove "0."
-			$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
+			$temps=sprintf("%0.10F", $amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps=preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
+			$nbofdec=max(0, dol_strlen($temps)-2);	// -2 to remove "0."
+			$amount=number_format($amount, min($nbofdec, $nbofdectoround), $dec, $thousand);		// Convert amount to format with dolibarr dec and thousand
 		}
 		//print "TT".$amount.'<br>';
 
 		// Always make replace because each math function (like round) replace
 		// with local values and we want a number that has a SQL string format x.y
-		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
-		$amount=str_replace(' ','',$amount);		// To avoid spaces
-		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
-		$amount=str_replace($dec,'.',$amount);
+		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',', '.', $amount);	// To accept 2 notations for french users
+		$amount=str_replace(' ', '', $amount);		// To avoid spaces
+		$amount=str_replace($thousand, '', $amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
+		$amount=str_replace($dec, '.', $amount);
 	}
 
 	return $amount;
@@ -4878,7 +4882,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		{
 			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" object
 			{
-				$product->get_buyprice($idprodfournprice,0,0,0);
+				$product->get_buyprice($idprodfournprice, 0, 0, 0);
 				$ret=$product->vatrate_supplier;
 				if ($product->default_vat_code) $ret.=' ('.$product->default_vat_code.')';
 			}
@@ -5033,7 +5037,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		if ($seller_in_cee && $buyer_in_cee && ! $thirdparty_buyer->isACompany())
 		{
 			//print 'VATRULE 0';
-			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
+			return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
 		}
 	}
 
@@ -5048,10 +5052,10 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	if (($seller_country_code == $buyer_country_code)
-	|| (in_array($seller_country_code,array('FR,MC')) && in_array($buyer_country_code,array('FR','MC')))) // Warning ->country_code not always defined
+	|| (in_array($seller_country_code, array('FR,MC')) && in_array($buyer_country_code, array('FR','MC')))) // Warning ->country_code not always defined
 	{
 		//print 'VATRULE 2';
-		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
+		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -5070,13 +5074,13 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		else
 		{
 			//print 'VATRULE 4';
-			return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
+			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 		}
 	}
 
 	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (! empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
-		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
+		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
@@ -5230,12 +5234,12 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
-		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
-		else $num = preg_replace('/^.*\-/i','',$num);
+		if (empty($alpha)) $num = preg_replace('/([^0-9])/i', '', $num);
+		else $num = preg_replace('/^.*\-/i', '', $num);
 		$num = substr("000".$num, -$level);
-		if ($level == 1) $path = substr($num,0,1);
-		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
-		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
+		if ($level == 1) $path = substr($num, 0, 1);
+		if ($level == 2) $path = substr($num, 1, 1).'/'.substr($num, 0, 1);
+		if ($level == 3) $path = substr($num, 2, 1).'/'.substr($num, 1, 1).'/'.substr($num, 0, 1);
 	}
 	else
 	{
@@ -5267,7 +5271,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 {
 	global $conf;
 
-	dol_syslog("functions.lib::dol_mkdir: dir=".$dir,LOG_INFO);
+	dol_syslog("functions.lib::dol_mkdir: dir=".$dir, LOG_INFO);
 
 	$dir_osencoded=dol_osencode($dir);
 	if (@is_dir($dir_osencoded)) return 0;
@@ -5288,7 +5292,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 	{
 		if ($i > 0) $ccdir .= '/'.$cdir[$i];
 		else $ccdir .= $cdir[$i];
-		if (preg_match("/^.:$/",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
+		if (preg_match("/^.:$/", $ccdir, $regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
 		// Attention, le is_dir() peut echouer bien que le rep existe.
 		// (ex selon config de open_basedir)
@@ -5297,7 +5301,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 			$ccdir_osencoded=dol_osencode($ccdir);
 			if (! @is_dir($ccdir_osencoded))
 			{
-				dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
+				dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.", LOG_DEBUG);
 
 				umask(0);
 				$dirmaskdec=octdec($newmask);
@@ -5308,12 +5312,12 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 				if (! @mkdir($ccdir_osencoded, $dirmaskdec))
 				{
 					// Si le is_dir a renvoye une fausse info, alors on passe ici.
-					dol_syslog("functions.lib::dol_mkdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
+					dol_syslog("functions.lib::dol_mkdir: Fails to create directory '".$ccdir."' or directory already exists.", LOG_WARNING);
 					$nberr++;
 				}
 				else
 				{
-					dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' created",LOG_DEBUG);
+					dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' created", LOG_DEBUG);
 					$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignore
 					$nbcreated++;
 				}
@@ -5364,21 +5368,21 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	} else {
 		$pattern = "/<[^<>]+>/";
 		// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-		$temp = preg_replace($pattern,"",$temp);    // pass 1
+		$temp = preg_replace($pattern, "", $temp);    // pass 1
 		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
-		$temp = preg_replace($pattern,"",$temp);    // pass 2
+		$temp = preg_replace($pattern, "", $temp);    // pass 2
 		// $temp after pass 2: 0000-021
 	}
 
-	$temp = dol_html_entity_decode($temp,ENT_COMPAT,$pagecodeto);
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
 
 	// Supprime aussi les retours
-	if ($removelinefeed == 1) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
+	if ($removelinefeed == 1) $temp=str_replace(array("\r\n","\r","\n"), " ", $temp);
 
 	// et les espaces doubles
-	while (strpos($temp,"  "))
+	while (strpos($temp, "  "))
 	{
-		$temp = str_replace("  "," ",$temp);
+		$temp = str_replace("  ", " ", $temp);
 	}
 
 	return trim($temp);
@@ -5401,8 +5405,8 @@ function dol_string_onlythesehtmltags($stringtoclean)
 	);
 
 	$allowed_tags_string = join("><", $allowed_tags);
-	$allowed_tags_string = preg_replace('/^>/','',$allowed_tags_string);
-	$allowed_tags_string = preg_replace('/<$/','',$allowed_tags_string);
+	$allowed_tags_string = preg_replace('/^>/', '', $allowed_tags_string);
+	$allowed_tags_string = preg_replace('/<$/', '', $allowed_tags_string);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
 
@@ -5444,12 +5448,12 @@ function dolGetFirstLineOfText($text, $nboflines = 1)
 	{
 		if (dol_textishtml($text))
 		{
-			$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
-			$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
+			$firstline=preg_replace('/<br[^>]*>.*$/s', '', $text);		// The s pattern modifier means the . can match newline characters
+			$firstline=preg_replace('/<div[^>]*>.*$/s', '', $firstline);	// The s pattern modifier means the . can match newline characters
 		}
 		else
 		{
-			$firstline=preg_replace('/[\n\r].*/','',$text);
+			$firstline=preg_replace('/[\n\r].*/', '', $text);
 		}
 		return $firstline.((strlen($firstline) != strlen($text))?'...':'');
 	}
@@ -5458,7 +5462,7 @@ function dolGetFirstLineOfText($text, $nboflines = 1)
 		$ishtml=0;
 		if (dol_textishtml($text))
 		{
-			$text=preg_replace('/\n/','',$text);
+			$text=preg_replace('/\n/', '', $text);
 			$ishtml=1;
 			$repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
 		}
@@ -5529,16 +5533,16 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 	$newstring=$stringtoencode;
 	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
 	{
-		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br> (remove only last one)
-		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
-		$newstring=dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
-		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
+		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i', '', $newstring);	// Remove last <br> (remove only last one)
+		$newstring=strtr($newstring, array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
+		$newstring=dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom);	// Make entity encoding
+		$newstring=strtr($newstring, array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
 	}
 	else
 	{
-		if ($removelasteolbr) $newstring=preg_replace('/(\r\n|\r|\n)$/i','',$newstring);	// Remove last \n (may remove several)
-		$newstring=dol_nl2br(dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom),$nl2brmode);
+		if ($removelasteolbr) $newstring=preg_replace('/(\r\n|\r|\n)$/i', '', $newstring);	// Remove last \n (may remove several)
+		$newstring=dol_nl2br(dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom), $nl2brmode);
 	}
 	// Other substitutions that htmlentities does not do
 	//$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80. Not in html entity table.     // Seems useles with TCPDF. Make bug with UTF8 languages
@@ -5554,11 +5558,11 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
  */
 function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
 {
-	$ret=dol_html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
-	$ret=preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i',"<br>",$ret);
-	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i',"\r\n",$ret);
-	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i',"\n",$ret);
-	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i',"\n",$ret);
+	$ret=dol_html_entity_decode($stringtodecode, ENT_COMPAT, $pagecodeto);
+	$ret=preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i', "<br>", $ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i', "\r\n", $ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i', "\n", $ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', "\n", $ret);
 	return $ret;
 }
 
@@ -5570,7 +5574,7 @@ function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret=preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i',"",$stringtodecode);
+	$ret=preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i', "", $stringtodecode);
 	return $ret;
 }
 
@@ -5584,7 +5588,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8')
 {
-	return html_entity_decode($a,$b,$c);
+	return html_entity_decode($a, $b, $c);
 }
 
 /**
@@ -5636,7 +5640,7 @@ function dol_string_is_good_iso($s)
 function dol_nboflines($s, $maxchar = 0)
 {
 	if ($s == '') return 0;
-	$arraystring=explode("\n",$s);
+	$arraystring=explode("\n", $s);
 	$nb=count($arraystring);
 
 	return $nb;
@@ -5674,8 +5678,8 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 				$line_dec = html_entity_decode($line);
 				if(dol_strlen($line_dec)>$maxlinesize)
 				{
-					$line_dec=wordwrap($line_dec,$maxlinesize,'\n',true);
-					$nblines+=substr_count($line_dec,'\n');
+					$line_dec=wordwrap($line_dec, $maxlinesize, '\n', true);
+					$nblines+=substr_count($line_dec, '\n');
 				}
 			}
 		}
@@ -5711,25 +5715,25 @@ function dol_textishtml($msg, $option = 0)
 {
 	if ($option == 1)
 	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<br/i',$msg))				return true;
+		if (preg_match('/<html/i', $msg))				return true;
+		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<br/i', $msg))				return true;
 		return false;
 	}
 	else
 	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<(b|em|i|u)>/i',$msg))		return true;
-		elseif (preg_match('/<br\/>/i',$msg))	  return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i',$msg)) 	  return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
-		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
-		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i',$msg)) return true;	// must accept <img src="http://example.com/aaa.png" />
-		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i',$msg)) return true;	// must accept <a href="http://example.com/aaa.png" />
-		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
-		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
-		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+		if (preg_match('/<html/i', $msg))				return true;
+		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<(b|em|i|u)>/i', $msg))		return true;
+		elseif (preg_match('/<br\/>/i', $msg))	  return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) 	  return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i', $msg)) return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i', $msg)) return true;
+		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) return true;	// must accept <img src="http://example.com/aaa.png" />
+		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i', $msg)) return true;	// must accept <a href="http://example.com/aaa.png" />
+		elseif (preg_match('/<h[0-9]>/i', $msg))			return true;
+		elseif (preg_match('/&[A-Z0-9]{1,6};/i', $msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
+		elseif (preg_match('/&#[0-9]{2,3};/i', $msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
 
 		return false;
 	}
@@ -5894,7 +5898,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// TODO Remove this
 			$msgishtml = 0;
 
-			$birthday = dol_print_date($object->birth,'day');
+			$birthday = dol_print_date($object->birth, 'day');
 
 			if ($object->id > 0)
 			{
@@ -6129,10 +6133,10 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
 			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
+			if (dol_textishtml($text, 1)) $msgishtml = 1;
 
 			// If key is __(TranslationKey|langfile)__, then force load of langfile.lang
-			$tmp=explode('|',$reg[1]);
+			$tmp=explode('|', $reg[1]);
 			if (! empty($tmp[1])) $outputlangs->load($tmp[1]);
 
 			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
@@ -6144,7 +6148,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
-		if (dol_textishtml($text,1)) $msgishtml = 1;
+		if (dol_textishtml($text, 1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
 		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
@@ -6198,19 +6202,19 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 	}*/
 
 	// Check if there is external substitution to do, requested by plugins
-	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
+	$dirsubstitutions=array_merge(array(), (array) $conf->modules_parts['substitutions']);
 
 	foreach($dirsubstitutions as $reldir)
 	{
-		$dir=dol_buildpath($reldir,0);
+		$dir=dol_buildpath($reldir, 0);
 
 		// Check if directory exists
 		if (! dol_is_dir($dir)) continue;
 
-		$substitfiles=dol_dir_list($dir,'files',0,'functions_');
+		$substitfiles=dol_dir_list($dir, 'files', 0, 'functions_');
 		foreach($substitfiles as $substitfile)
 		{
-			if (preg_match('/functions_(.*)\.lib\.php/i',$substitfile['name'],$reg))
+			if (preg_match('/functions_(.*)\.lib\.php/i', $substitfile['name'], $reg))
 			{
 				$module=$reg[1];
 
@@ -6219,7 +6223,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
 				$function_name=$module."_".$callfunc;
-				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
+				if (function_exists($function_name)) $function_name($substitutionarray, $outputlangs, $object, $parameters);
 			}
 		}
 	}
@@ -6236,7 +6240,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
  */
 function print_date_range($date_start, $date_end, $format = '', $outputlangs = '')
 {
-	print get_date_range($date_start,$date_end,$format,$outputlangs);
+	print get_date_range($date_start, $date_end, $format, $outputlangs);
 }
 
 /**
@@ -6259,15 +6263,15 @@ function get_date_range($date_start, $date_end, $format = '', $outputlangs = '',
 
 	if ($date_start && $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFromTo',dol_print_date($date_start, $format, false, $outputlangs),dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($date_start, $format, false, $outputlangs), dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if ($date_start && ! $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFrom',dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateFrom', dol_print_date($date_start, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 	if (! $date_start && $date_end)
 	{
-		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
+		$out.= ($withparenthesis?' (':'').$outputlangs->transnoentitiesnoconv('DateUntil', dol_print_date($date_end, $format, false, $outputlangs)).($withparenthesis?')':'');
 	}
 
 	return $out;
@@ -6356,7 +6360,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs')
 	}
 	else
 	{
-		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
+		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 		if (empty($mesgs)) setEventMessage($mesg, $style);
 		else
 		{
@@ -6419,7 +6423,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 	$divstart=$divend='';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
+	if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i', $out))
 	{
 		$divstart='<div class="'.$style.' clearboth">';
 		$divend='</div>';
@@ -6488,7 +6492,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
  */
 function get_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembedded = 0)
 {
-	return get_htmloutput_mesg($mesgstring, $mesgarray,'error',$keepembedded);
+	return get_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
 
 /**
@@ -6514,37 +6518,37 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 	{
 		foreach($mesgarray as $val)
 		{
-			if ($val && preg_match('/class="error"/i',$val)) { $iserror++; break; }
-			if ($val && preg_match('/class="warning"/i',$val)) { $iswarning++; break; }
+			if ($val && preg_match('/class="error"/i', $val)) { $iserror++; break; }
+			if ($val && preg_match('/class="warning"/i', $val)) { $iswarning++; break; }
 		}
 	}
-	elseif ($mesgstring && preg_match('/class="error"/i',$mesgstring)) $iserror++;
-	elseif ($mesgstring && preg_match('/class="warning"/i',$mesgstring)) $iswarning++;
+	elseif ($mesgstring && preg_match('/class="error"/i', $mesgstring)) $iserror++;
+	elseif ($mesgstring && preg_match('/class="warning"/i', $mesgstring)) $iswarning++;
 	if ($style=='error') $iserror++;
 	if ($style=='warning') $iswarning++;
 
 	if ($iserror || $iswarning)
 	{
 		// Remove div from texts
-		$mesgstring=preg_replace('/<\/div><div class="(error|warning)">/','<br>',$mesgstring);
-		$mesgstring=preg_replace('/<div class="(error|warning)">/','',$mesgstring);
-		$mesgstring=preg_replace('/<\/div>/','',$mesgstring);
+		$mesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $mesgstring);
+		$mesgstring=preg_replace('/<div class="(error|warning)">/', '', $mesgstring);
+		$mesgstring=preg_replace('/<\/div>/', '', $mesgstring);
 		// Remove div from texts array
 		if (is_array($mesgarray))
 		{
 			$newmesgarray=array();
 			foreach($mesgarray as $val)
 			{
-				$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/','<br>',$val);
-				$tmpmesgstring=preg_replace('/<div class="(error|warning)">/','',$tmpmesgstring);
-				$tmpmesgstring=preg_replace('/<\/div>/','',$tmpmesgstring);
+				$tmpmesgstring=preg_replace('/<\/div><div class="(error|warning)">/', '<br>', $val);
+				$tmpmesgstring=preg_replace('/<div class="(error|warning)">/', '', $tmpmesgstring);
+				$tmpmesgstring=preg_replace('/<\/div>/', '', $tmpmesgstring);
 				$newmesgarray[]=$tmpmesgstring;
 			}
 			$mesgarray=$newmesgarray;
 		}
-		print get_htmloutput_mesg($mesgstring,$mesgarray,($iserror?'error':'warning'),$keepembedded);
+		print get_htmloutput_mesg($mesgstring, $mesgarray, ($iserror?'error':'warning'), $keepembedded);
 	}
-	else print get_htmloutput_mesg($mesgstring,$mesgarray,'ok',$keepembedded);
+	else print get_htmloutput_mesg($mesgstring, $mesgarray, 'ok', $keepembedded);
 }
 
 /**
@@ -7057,9 +7061,9 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	{
 		foreach ($conf->modules_parts['tabs'][$type] as $value)
 		{
-			$values=explode(':',$value);
+			$values=explode(':', $value);
 
-			if ($mode == 'add' && ! preg_match('/^\-/',$values[1]))
+			if ($mode == 'add' && ! preg_match('/^\-/', $values[1]))
 			{
 				if (count($values) == 6)       // new declaration with permissions:  $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
 				{
@@ -7068,44 +7072,44 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
-						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg))
 						{
 							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
+							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label=make_substitutions($reg[1], $substitutionarray);
 						}
 						else $label=$langs->trans($values[2]);
 
 						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
 						$head[$h][1] = $label;
-						$head[$h][2] = str_replace('+','',$values[1]);
+						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
 				}
 				elseif (count($values) == 5)       // deprecated
 				{
-					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
+					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
-					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
+					if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg))
 					{
 						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
+						complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 						$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);
 
 					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[4]), 1);
 					$head[$h][1] = $label;
-					$head[$h][2] = str_replace('+','',$values[1]);
+					$head[$h][2] = str_replace('+', '', $values[1]);
 					$h++;
 				}
 			}
-			elseif ($mode == 'remove' && preg_match('/^\-/',$values[1]))
+			elseif ($mode == 'remove' && preg_match('/^\-/', $values[1]))
 			{
 				if ($values[0] != $type) continue;
-				$tabname=str_replace('-','',$values[1]);
+				$tabname=str_replace('-', '', $values[1]);
 				foreach($head as $key => $val)
 				{
 					$condition = (! empty($values[3]) ? verifCond($values[3]) : 1);
@@ -7158,7 +7162,7 @@ function printCommonFooter($zone = 'private')
 	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
 
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('printCommonFooter', $parameters);    // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook))
 	{
 		if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
@@ -7187,7 +7191,7 @@ function printCommonFooter($zone = 'private')
 				print '/* JS CODE TO ENABLE to manage focus and mandatory form fields */'."\n";
 				$relativepathstring = $_SERVER["PHP_SELF"];
 				// Clean $relativepathstring
-				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
@@ -7382,7 +7386,7 @@ function dol_set_focus($selector)
 function dol_getmypid()
 {
 	if (! function_exists('getmypid')) {
-		return mt_rand(1,32768);
+		return mt_rand(1, 32768);
 	} else {
 		return getmypid();
 	}
@@ -7413,14 +7417,14 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 	if ($mode == 0)
 	{
-		$value=preg_replace('/\*/','%',$value);	// Replace * with %
+		$value=preg_replace('/\*/', '%', $value);	// Replace * with %
 	}
 	if ($mode == 1)
 	{
-		$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+		$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
 	}
 
-	$value = preg_replace('/\s*\|\s*/','|', $value);
+	$value = preg_replace('/\s*\|\s*/', '|', $value);
 
 	$crits = explode(' ', $value);
 	$res = '';
@@ -7438,9 +7442,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			if ($mode == 1)
 			{
 				$operator='=';
-				$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
+				$newcrit = preg_replace('/([<>=]+)/', '', trim($crit));
 
-				preg_match('/([<>=]+)/',trim($crit), $reg);
+				preg_match('/([<>=]+)/', trim($crit), $reg);
 				if ($reg[1])
 				{
 					$operator = $reg[1];
@@ -7466,7 +7470,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			}
 			elseif ($mode == 3)
 			{
-				$tmparray=explode(',',trim($crit));
+				$tmparray=explode(',', trim($crit));
 				if (count($tmparray))
 				{
 					$listofcodes='';
@@ -7484,7 +7488,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			}
 			elseif ($mode == 4)
 			{
-			    $tmparray=explode(',',trim($crit));
+			    $tmparray=explode(',', trim($crit));
 			    if (count($tmparray))
 			    {
 			        $listofcodes='';
@@ -7505,7 +7509,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			else    // $mode=0
 			{
 				$textcrit = '';
-				$tmpcrits = explode('|',$crit);
+				$tmpcrits = explode('|', $crit);
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
@@ -7573,7 +7577,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out.= img_picto('','object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out.= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out.= ajax_autoselect("directdownloadlink", 0);
 	}
@@ -7593,14 +7597,14 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	$dirName = dirname($file);
 	if ($dirName == '.') $dirName='';
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// We remove extension, whatever is its case
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file);	// We remove extension, whatever is its case
 	$fileName = basename($fileName);
 
-	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i',$file)?'.jpg':'');
-	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'');
-	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i',$file)?'.gif':'');
-	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.png$/i',$file)?'.png':'');
-	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i',$file)?'.bmp':'');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i', $file)?'.jpg':'');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpeg$/i', $file)?'.jpeg':'');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i', $file)?'.gif':'');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.png$/i', $file)?'.png':'');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i', $file)?'.bmp':'');
 
 	if (! $extImgTarget) return $file;
 
@@ -7679,88 +7683,88 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	$famime='file-o';
 	$srclang='';
 
-	$tmpfile=preg_replace('/\.noexe$/','',$file);
+	$tmpfile=preg_replace('/\.noexe$/', '', $file);
 
 	// Text files
-	if (preg_match('/\.txt$/i',$tmpfile))         			   { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
-	if (preg_match('/\.rtx$/i',$tmpfile))                      { $mime='text/richtext'; $imgmime='text.png'; $famime='file-text-o'; }
-	if (preg_match('/\.csv$/i',$tmpfile))					   { $mime='text/csv';      $imgmime='text.png'; $famime='file-text-o'; }
-	if (preg_match('/\.tsv$/i',$tmpfile))					   { $mime='text/tab-separated-values'; $imgmime='text.png'; $famime='file-text-o'; }
-	if (preg_match('/\.(cf|conf|log)$/i',$tmpfile))            { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
-	if (preg_match('/\.ini$/i',$tmpfile))                      { $mime='text/plain';    $imgmime='text.png'; $srclang='ini'; $famime='file-text-o'; }
-	if (preg_match('/\.css$/i',$tmpfile))                      { $mime='text/css';      $imgmime='css.png'; $srclang='css'; $famime='file-text-o'; }
+	if (preg_match('/\.txt$/i', $tmpfile))         			   { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.rtx$/i', $tmpfile))                      { $mime='text/richtext'; $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.csv$/i', $tmpfile))					   { $mime='text/csv';      $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.tsv$/i', $tmpfile))					   { $mime='text/tab-separated-values'; $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.(cf|conf|log)$/i', $tmpfile))            { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.ini$/i', $tmpfile))                      { $mime='text/plain';    $imgmime='text.png'; $srclang='ini'; $famime='file-text-o'; }
+	if (preg_match('/\.css$/i', $tmpfile))                      { $mime='text/css';      $imgmime='css.png'; $srclang='css'; $famime='file-text-o'; }
 	// Certificate files
-	if (preg_match('/\.(crt|cer|key|pub)$/i',$tmpfile))        { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile))        { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
 	// HTML/XML
-	if (preg_match('/\.(html|htm|shtml)$/i',$tmpfile))         { $mime='text/html';     $imgmime='html.png'; $srclang='html'; $famime='file-text-o'; }
-	if (preg_match('/\.(xml|xhtml)$/i',$tmpfile))              { $mime='text/xml';      $imgmime='other.png'; $srclang='xml'; $famime='file-text-o'; }
+	if (preg_match('/\.(html|htm|shtml)$/i', $tmpfile))         { $mime='text/html';     $imgmime='html.png'; $srclang='html'; $famime='file-text-o'; }
+	if (preg_match('/\.(xml|xhtml)$/i', $tmpfile))              { $mime='text/xml';      $imgmime='other.png'; $srclang='xml'; $famime='file-text-o'; }
 	// Languages
-	if (preg_match('/\.bas$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='bas';  $famime='file-code-o'; }
-	if (preg_match('/\.(c)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='c';  $famime='file-code-o'; }
-	if (preg_match('/\.(cpp)$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp';  $famime='file-code-o'; }
-	if (preg_match('/\.(h)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h';  $famime='file-code-o'; }
-	if (preg_match('/\.(java|jsp)$/i',$tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java';  $famime='file-code-o'; }
-	if (preg_match('/\.php([0-9]{1})?$/i',$tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
-	if (preg_match('/\.phtml$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
-	if (preg_match('/\.(pl|pm)$/i',$tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl';  $famime='file-code-o'; }
-	if (preg_match('/\.sql$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql';  $famime='file-code-o'; }
-	if (preg_match('/\.js$/i',$tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js';  $famime='file-code-o'; }
+	if (preg_match('/\.bas$/i', $tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='bas';  $famime='file-code-o'; }
+	if (preg_match('/\.(c)$/i', $tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='c';  $famime='file-code-o'; }
+	if (preg_match('/\.(cpp)$/i', $tmpfile))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp';  $famime='file-code-o'; }
+	if (preg_match('/\.(h)$/i', $tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h';  $famime='file-code-o'; }
+	if (preg_match('/\.(java|jsp)$/i', $tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java';  $famime='file-code-o'; }
+	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
+	if (preg_match('/\.phtml$/i', $tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
+	if (preg_match('/\.(pl|pm)$/i', $tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl';  $famime='file-code-o'; }
+	if (preg_match('/\.sql$/i', $tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql';  $famime='file-code-o'; }
+	if (preg_match('/\.js$/i', $tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js';  $famime='file-code-o'; }
 	// Open office
-	if (preg_match('/\.odp$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; $famime='file-powerpoint-o'; }
-	if (preg_match('/\.ods$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.spreadsheet';  $imgmime='ooffice.png'; $famime='file-excel-o'; }
-	if (preg_match('/\.odt$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.text';         $imgmime='ooffice.png'; $famime='file-word-o'; }
+	if (preg_match('/\.odp$/i', $tmpfile))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; $famime='file-powerpoint-o'; }
+	if (preg_match('/\.ods$/i', $tmpfile))                      { $mime='application/vnd.oasis.opendocument.spreadsheet';  $imgmime='ooffice.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.odt$/i', $tmpfile))                      { $mime='application/vnd.oasis.opendocument.text';         $imgmime='ooffice.png'; $famime='file-word-o'; }
 	// MS Office
-	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; $famime='file-o'; }
-	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
-	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
-	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
-	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
-	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
-	if (preg_match('/\.xls(b|m|x)$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; $famime='file-excel-o'; }
-	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
-	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
+	if (preg_match('/\.mdb$/i', $tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; $famime='file-o'; }
+	if (preg_match('/\.doc(x|m)?$/i', $tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
+	if (preg_match('/\.dot(x|m)?$/i', $tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
+	if (preg_match('/\.xlt(x)?$/i', $tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xla(m)?$/i', $tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xls$/i', $tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.pps(m|x)?$/i', $tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
+	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
 	// Other
-	if (preg_match('/\.pdf$/i',$tmpfile))                      { $mime='application/pdf'; $imgmime='pdf.png'; $famime='file-pdf-o'; }
+	if (preg_match('/\.pdf$/i', $tmpfile))                      { $mime='application/pdf'; $imgmime='pdf.png'; $famime='file-pdf-o'; }
 	// Scripts
-	if (preg_match('/\.bat$/i',$tmpfile))                      { $mime='text/x-bat';  $imgmime='script.png'; $srclang='dos'; $famime='file-code-o'; }
-	if (preg_match('/\.sh$/i',$tmpfile))                       { $mime='text/x-sh';   $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
-	if (preg_match('/\.ksh$/i',$tmpfile))                      { $mime='text/x-ksh';  $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
-	if (preg_match('/\.bash$/i',$tmpfile))                     { $mime='text/x-bash'; $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
+	if (preg_match('/\.bat$/i', $tmpfile))                      { $mime='text/x-bat';  $imgmime='script.png'; $srclang='dos'; $famime='file-code-o'; }
+	if (preg_match('/\.sh$/i', $tmpfile))                       { $mime='text/x-sh';   $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
+	if (preg_match('/\.ksh$/i', $tmpfile))                      { $mime='text/x-ksh';  $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
+	if (preg_match('/\.bash$/i', $tmpfile))                     { $mime='text/x-bash'; $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
 	// Images
-	if (preg_match('/\.ico$/i',$tmpfile))                      { $mime='image/x-icon'; $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.(jpg|jpeg)$/i',$tmpfile))			   { $mime='image/jpeg';   $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.png$/i',$tmpfile))					   { $mime='image/png';    $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif';    $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp';    $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff';   $imgmime='image.png'; $famime='file-image-o'; }
-	if (preg_match('/\.svg$/i',$tmpfile))					   { $mime='image/svg+xml';$imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.ico$/i', $tmpfile))                      { $mime='image/x-icon'; $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.(jpg|jpeg)$/i', $tmpfile))			   { $mime='image/jpeg';   $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.png$/i', $tmpfile))					   { $mime='image/png';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.gif$/i', $tmpfile))					   { $mime='image/gif';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.bmp$/i', $tmpfile))					   { $mime='image/bmp';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.(tif|tiff)$/i', $tmpfile))			   { $mime='image/tiff';   $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.svg$/i', $tmpfile))					   { $mime='image/svg+xml';$imgmime='image.png'; $famime='file-image-o'; }
 	// Calendar
-	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
-	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
+	if (preg_match('/\.vcs$/i', $tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
+	if (preg_match('/\.ics$/i', $tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
 	// Other
-	if (preg_match('/\.torrent$/i',$tmpfile))				   { $mime='application/x-bittorrent'; $imgmime='other.png'; $famime='file-o'; }
+	if (preg_match('/\.torrent$/i', $tmpfile))				   { $mime='application/x-bittorrent'; $imgmime='other.png'; $famime='file-o'; }
 	// Audio
-	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; $famime='file-audio-o'; }
+	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) { $mime='audio'; $imgmime='audio.png'; $famime='file-audio-o'; }
 	// Video
-	if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg';       $imgmime='video.png'; $famime='file-video-o'; }
-	if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm';      $imgmime='video.png'; $famime='file-video-o'; }
-	if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; $famime='file-video-o'; }
-	if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx';      $imgmime='video.png'; $famime='file-video-o'; }
-	if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid';      $imgmime='video.png'; $famime='file-video-o'; }
-	if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video';           $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.ogv$/i', $tmpfile))                      { $mime='video/ogg';       $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.webm$/i', $tmpfile))                     { $mime='video/webm';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.avi$/i', $tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.divx$/i', $tmpfile))                     { $mime='video/divx';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.xvid$/i', $tmpfile))                     { $mime='video/xvid';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.(wmv|mpg|mpeg)$/i', $tmpfile))           { $mime='video';           $imgmime='video.png'; $famime='file-video-o'; }
 	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; $famime='file-archive-o'; }    // application/xxx where zzz is zip, ...
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i', $tmpfile))   { $mime='archive'; $imgmime='archive.png'; $famime='file-archive-o'; }    // application/xxx where zzz is zip, ...
 	// Exe
-	if (preg_match('/\.(exe|com)$/i',$tmpfile))                { $mime='application/octet-stream'; $imgmime='other.png'; $famime='file-o'; }
+	if (preg_match('/\.(exe|com)$/i', $tmpfile))                { $mime='application/octet-stream'; $imgmime='other.png'; $famime='file-o'; }
 	// Lib
-	if (preg_match('/\.(dll|lib|o|so|a)$/i',$tmpfile))         { $mime='library'; $imgmime='library.png'; $famime='file-o'; }
+	if (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile))         { $mime='library'; $imgmime='library.png'; $famime='file-o'; }
 	// Err
-	if (preg_match('/\.err$/i',$tmpfile))                      { $mime='error'; $imgmime='error.png'; $famime='file-text-o'; }
+	if (preg_match('/\.err$/i', $tmpfile))                      { $mime='error'; $imgmime='error.png'; $famime='file-text-o'; }
 
 	// Return string
 	if ($mode == 1)
 	{
-		$tmp=explode('/',$mime);
+		$tmp=explode('/', $mime);
 		return (! empty($tmp[1])?$tmp[1]:$tmp[0]);
 	}
 	if ($mode == 2)
@@ -7871,7 +7875,7 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
 	if ($type_user && $menuentry['module'])
 	{
-		$tmploops=explode('|',$menuentry['module']);
+		$tmploops=explode('|', $menuentry['module']);
 		$found=0;
 		foreach($tmploops as $tmploop)
 		{

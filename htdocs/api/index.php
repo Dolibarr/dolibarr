@@ -24,12 +24,12 @@
  *  \file       htdocs/api/index.php
  */
 
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');		// If there is no need to load and show top and left menu
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');		// If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not load ajax.lib.php library
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');		// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');		// If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');       // Do not load ajax.lib.php library
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
@@ -59,7 +59,7 @@ if (empty($conf->global->MAIN_MODULE_API))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
-    print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
+    print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -108,7 +108,7 @@ $api = new DolibarrApi($db, '', $refreshcache);
 $api->r->addAPIClass('Luracast\\Restler\\Explorer');
 
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');	// 'YamlFormat'
-$api->r->addAuthenticationClass('DolibarrApiAccess','');
+$api->r->addAuthenticationClass('DolibarrApiAccess', '');
 
 // Define accepted mime types
 UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
@@ -133,7 +133,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
         {
             while (($file = readdir($handle))!==false)
             {
-                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$regmod))
+                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod))
                 {
                     $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
@@ -162,7 +162,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                             {
                                 if ($file_searched == 'api_access.class.php') continue;
 
-                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$regapi))
+                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi))
                                 {
                                     $classname = ucwords($regapi[1]);
                                     $classname = str_replace('_', '', $classname);

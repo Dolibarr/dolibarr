@@ -46,9 +46,9 @@ foreach($linkedObjectBlock as $key => $objectlink)
     	<td align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td align="right"><?php
-    			$total = $total + $objectlink->total_ht;
-    			echo price($objectlink->total_ht);
-		} ?>
+    $total = $total + $objectlink->total_ht;
+    echo price($objectlink->total_ht);
+} ?>
 		</td>
     	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     </tr>

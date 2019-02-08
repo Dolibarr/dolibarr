@@ -44,11 +44,11 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
-$format = GETPOST('format','aZ09');
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):'real';
+$format = GETPOST('format', 'aZ09');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
@@ -61,7 +61,7 @@ if ($action == 'modify')
 {
 	for ($i = 1 ; $i < 9 ; $i++)
 	{
-		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
 	}
 }
 if ($action == 'create')
@@ -70,7 +70,7 @@ if ($action == 'create')
 	$bprev = new BonPrelevement($db);
         $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
 
-        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
+        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
 	if ($result < 0)
 	{
 		setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -125,7 +125,7 @@ dol_fiche_head();
 
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
-$nb11=$bprev->NbFactureAPrelever(1,1);
+$nb11=$bprev->NbFactureAPrelever(1, 1);
 $pricetowithdraw=$bprev->SommeAPrelever();
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
@@ -162,9 +162,9 @@ if ($nb) {
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
 		}
-		}
-		else
-		{
+	}
+	else
+	{
 		if ($mysoc->isInEEC())
 		{
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
@@ -178,7 +178,7 @@ if ($nb) {
 }
 else
 {
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
 print "</div>\n";
@@ -207,7 +207,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->plimit($limit+1,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -226,7 +226,7 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -251,12 +251,12 @@ if ($resql)
 			print '<td>';
 			$invoicestatic->id=$obj->rowid;
 			$invoicestatic->ref=$obj->ref;
-			print $invoicestatic->getNomUrl(1,'withdraw');
+			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
-			print $thirdpartystatic->getNomUrl(1,'ban');
+			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
 			// RIB
 			print '<td>';
@@ -272,11 +272,11 @@ if ($resql)
 			print '</td>';
 			// Amount
 			print '<td align="right">';
-			print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
+			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
 			print '<td align="right">';
-			print dol_print_date($db->jdate($obj->date_demande),'day');
+			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			print '</tr>';
 			$i++;

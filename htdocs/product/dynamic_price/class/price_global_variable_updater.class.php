@@ -225,19 +225,19 @@ class PriceGlobalVariableUpdater
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
-             }
-        }
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
         if ($error)
@@ -534,7 +534,7 @@ class PriceGlobalVariableUpdater
                 $soap_client = new nusoap_client($url);
                 $soap_client->soap_defencoding='UTF-8';
                 $soap_client->decodeUTF8(false);
-                $result = $soap_client->call($method, $data, $ns,'');
+                $result = $soap_client->call($method, $data, $ns, '');
 
                 //Check if result is a error
                 if ($result === false) {

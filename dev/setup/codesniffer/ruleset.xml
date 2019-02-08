@@ -112,9 +112,6 @@
     <rule ref="Generic.Functions.CallTimePassByReference" />
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterComma">
-		<severity>0</severity>
-	</rule>
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
@@ -173,6 +170,8 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
+
     <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
@@ -189,6 +188,9 @@
         <severity>0</severity>
     </rule>
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
@@ -432,5 +434,5 @@
     <rule ref="PSR2.Classes.ClassDeclaration" />
     <rule ref="PSR2.Methods.FunctionClosingBrace" />
     <rule ref="PSR2.Files.EndFileNewline.TooMany" />
-
+    <rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 </ruleset>

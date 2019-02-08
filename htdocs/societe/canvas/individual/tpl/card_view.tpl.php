@@ -32,7 +32,7 @@ $object = $GLOBALS['objcanvas']->control->object;
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 
@@ -211,7 +211,7 @@ $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed=$user->rights->societe->lire;
 $delallowed=$user->rights->societe->creer;
 
-print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>
 
 </td>
@@ -223,13 +223,13 @@ print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf,$langs,$db,$object);
+$result=show_subsidiaries($conf, $langs, $db, $object);
 
 // Contacts list
-$result=show_contacts($conf,$langs,$db,$object);
+$result=show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result=show_projects($conf,$langs,$db,$object);
+$result=show_projects($conf, $langs, $db, $object);
 ?>
 
 <!-- END PHP TEMPLATE -->

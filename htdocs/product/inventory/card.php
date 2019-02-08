@@ -53,14 +53,14 @@ $diroutputmassaction=$conf->stock->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('inventory');
-$search_array_options=$extrafields->getOptionalsFromPost('inventory','','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('inventory', '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -93,7 +93,7 @@ else
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -124,7 +124,7 @@ if (empty($reshook))
 
 $form=new Form($db);
 
-llxHeader('','Inventory','');
+llxHeader('', 'Inventory', '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -322,7 +322,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))

@@ -70,7 +70,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback='';
-print load_fiche_titre($langs->trans('TicketsIndex'),$linkback,'title_ticket.png');
+print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'title_ticket.png');
 
 
 $dir = '';

@@ -38,7 +38,7 @@ if (! $user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
+print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
@@ -122,12 +122,12 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
-       	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
-       	else print img_object($alt,$picto[$numero],'width="14px"');
+       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+       	else print img_object($alt, $picto[$numero], 'width="14px"');
     }
     else
     {
-      	print img_object($alt,$picto[$numero],'width="14px"');
+      	print img_object($alt, $picto[$numero], 'width="14px"');
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";

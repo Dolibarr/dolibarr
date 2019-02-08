@@ -15,7 +15,7 @@ if (! empty($extrafieldsobjectkey) && ! empty($search_array_options) && is_array
 	foreach ($search_array_options as $key => $val)
 	{
 		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
+		$tmpkey=preg_replace('/search_options_/', '', $key);
 		$typ=$extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey];
 
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp')))

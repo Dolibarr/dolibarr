@@ -83,7 +83,7 @@ class Interventions extends DolibarrApi
     		throw new RestException(404, 'Intervention report not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -191,9 +191,9 @@ class Interventions extends DolibarrApi
      */
     function post($request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
-			  throw new RestException(401, "Insuffisant rights");
-		  }
+        if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
         foreach($request_data as $field => $value) {
@@ -254,8 +254,8 @@ class Interventions extends DolibarrApi
     function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
-                          throw new RestException(401, "Insuffisant rights");
-                  }
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validateLine($request_data);
 
@@ -263,13 +263,13 @@ class Interventions extends DolibarrApi
             $this->fichinter->$field = $value;
         }
 
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Intervention not found');
         }
 
-                if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-                        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-                }
+        if ( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         $updateRes = $this->fichinter->addLine(
                 DolibarrApiAccess::$user,
@@ -280,10 +280,9 @@ class Interventions extends DolibarrApi
         );
 
         if ($updateRes > 0) {
-        	return $updateRes;
-        }
-        else {
-        	throw new RestException(400, $this->fichinter->error);
+            return $updateRes;
+        } else {
+            throw new RestException(400, $this->fichinter->error);
         }
     }
 
@@ -303,7 +302,7 @@ class Interventions extends DolibarrApi
     		throw new RestException(404, 'Intervention not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->fichinter->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('commande', $this->fichinter->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -337,23 +336,23 @@ class Interventions extends DolibarrApi
     function validate($id, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
-                          throw new RestException(401, "Insuffisant rights");
-                  }
+            throw new RestException(401, "Insuffisant rights");
+        }
         $result = $this->fichinter->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Intervention not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         $result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
         if ($result == 0) {
-        	throw new RestException(304, 'Error nothing done. May be object is already validated');
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
         }
         if ($result < 0) {
-        	throw new RestException(500, 'Error when validating Intervention: '.$this->commande->error);
+            throw new RestException(500, 'Error when validating Intervention: '.$this->commande->error);
         }
 
         $this->fichinter->fetchObjectLinked();
@@ -381,17 +380,17 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+        if (! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         $result = $this->fichinter->setStatut(3);
 
         if ($result == 0) {
-        	throw new RestException(304, 'Error nothing done. May be object is already closed');
+            throw new RestException(304, 'Error nothing done. May be object is already closed');
         }
         if ($result < 0) {
-        	throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
+            throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
         }
 
         $this->fichinter->fetchObjectLinked();

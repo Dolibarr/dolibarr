@@ -41,10 +41,10 @@ if (!$user->rights->facture->lire) accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
-$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
 
 $fieldid = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -134,7 +134,7 @@ if ($object->id > 0)
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	//$resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
 	if ($object->paye) $resteapayer=0;
 	$resteapayeraffiche=$resteapayer;
@@ -147,10 +147,10 @@ if ($object->id > 0)
 		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 	}
 
-	$absolute_discount=$object->thirdparty->getAvailableDiscounts('',$filterabsolutediscount);
-	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('',$filtercreditnote);
-	$absolute_discount=price2num($absolute_discount,'MT');
-	$absolute_creditnote=price2num($absolute_creditnote,'MT');
+	$absolute_discount=$object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount);
+	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('', $filtercreditnote);
+	$absolute_discount=price2num($absolute_discount, 'MT');
+	$absolute_creditnote=price2num($absolute_creditnote, 'MT');
 
 	$author = new User($db);
 	if ($object->user_author)
@@ -224,13 +224,13 @@ if ($object->id > 0)
 	{
 		$facreplaced=new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
 	$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -274,7 +274,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 
@@ -282,16 +282,16 @@ if ($object->id > 0)
 	{
 		if ($action == 'editinvoicedate')
 		{
-			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date, 'invoicedate');
 		}
 		else
 		{
-			print dol_print_date($object->date,'daytext');
+			print dol_print_date($object->date, 'daytext');
 		}
 	}
 	else
 	{
-		print dol_print_date($object->date,'daytext');
+		print dol_print_date($object->date, 'daytext');
 	}
 	print '</td>';
 	print '</tr>';
@@ -301,18 +301,18 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editconditions')
 		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		}
 		else
 		{
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		}
 	}
 	else
@@ -326,18 +326,18 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editpaymentterm')
 		{
-			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date_lim_reglement, 'paymentterm');
 		}
 		else
 		{
-			print dol_print_date($object->date_lim_reglement,'daytext');
+			print dol_print_date($object->date_lim_reglement, 'daytext');
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
@@ -354,7 +354,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
@@ -373,7 +373,7 @@ if ($object->id > 0)
 	print $langs->trans('BankAccount');
 	print '<td>';
 	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
-	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount')
@@ -458,7 +458,7 @@ if ($object->id > 0)
 	// Total with tax
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td class="nowrap">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
-    $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+    $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
     // TODO Replace this by an include with same code to show already done payment visible in invoice card
     print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
@@ -607,8 +607,8 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result_sql);
 
 			print '<tr class="oddeven">';
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
 			print '<td>&nbsp;</td>';
@@ -657,9 +657,9 @@ if ($object->id > 0)
 
 			print '<tr class="oddeven">';
 
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 
 			print '<td align="center">'.price($obj->amount).'</td>';
 
@@ -675,7 +675,7 @@ if ($object->id > 0)
 
 			print '<td>&nbsp;</td>';
 
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite),'day')."</td>\n";
+			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite), 'day')."</td>\n";
 
 			print '<td>&nbsp;</td>';
 

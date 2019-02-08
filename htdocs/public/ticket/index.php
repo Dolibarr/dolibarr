@@ -71,7 +71,7 @@ if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 }
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

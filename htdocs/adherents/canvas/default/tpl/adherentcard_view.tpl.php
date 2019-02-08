@@ -32,7 +32,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['showhead']; ?>
 
 <?php
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 ?>
 
 <?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>

@@ -116,7 +116,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -137,7 +137,7 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -159,7 +159,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
@@ -181,7 +181,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -200,7 +200,7 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -222,9 +222,9 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND p.rowid = tl.fk_propal AND tl.fk_product = product.rowid";
-    	$sql.= " AND ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+    	$sql.= " AND ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		$sql.= " GROUP BY product.ref";
-        $sql.= $this->db->order('nb','DESC');
+        $sql.= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);

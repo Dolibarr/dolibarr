@@ -40,10 +40,10 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -51,9 +51,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="email";
 if (! $sortorder) $sortorder="ASC";
 
-$id=GETPOST('id','int');
-$rowid=GETPOST('rowid','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$rowid=GETPOST('rowid', 'int');
+$action=GETPOST('action', 'aZ09');
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
@@ -72,7 +72,7 @@ $object = new Mailing($db);
 
 if ($action == 'add')
 {
-	$module=GETPOST("module",'alpha');
+	$module=GETPOST("module", 'alpha');
 	$result=-1;
 
 	foreach ($modulesdir as $dir)
@@ -97,7 +97,7 @@ if ($action == 'add')
 	}
 	if ($result > 0)
 	{
-		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
@@ -151,7 +151,7 @@ if ($action == 'delete')
 }
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_lastname='';
 	$search_firstname='';
@@ -166,7 +166,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  * View
  */
 
-llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
+llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
 $formmailing = new FormMailing($db);
@@ -200,10 +200,10 @@ if ($object->fetch($id) >= 0)
 
 	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 
 	// Errors to
-	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1);
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 	print '</td></tr>';
 
 	// Nb of distinct emails
@@ -218,7 +218,7 @@ if ($object->fetch($id) >= 0)
 		{
 			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 			{
-				$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+				$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 			}
 			else
 			{
@@ -228,7 +228,7 @@ if ($object->fetch($id) >= 0)
 		if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
 		if ($text)
 		{
-			print $form->textwithpicto($nbemail,$text,1,'warning');
+			print $form->textwithpicto($nbemail, $text, 1, 'warning');
 		}
 		else
 		{
@@ -251,7 +251,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1):''), 'title_generic');
 
 		//print '<table class="noborder" width="100%">';
 		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
@@ -285,7 +285,7 @@ if ($object->fetch($id) >= 0)
 				{
 					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 					{
-						if (preg_match("/(.*)\.modules\.php$/i",$file,$reg))
+						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg))
 						{
 							if ($reg[1] == 'example') continue;
 							$modulenames[]=$reg[1];
@@ -339,7 +339,7 @@ if ($object->fetch($id) >= 0)
 
 					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj),$obj->picto);
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto);
 					print ' ';
 					print $obj->getDesc();
 					print '</div>';
@@ -411,7 +411,7 @@ if ($object->fetch($id) >= 0)
 	if ($search_email)     $sql.= natural_search("mc.email", $search_email);
 	if ($search_other)     $sql.= natural_search("mc.other", $search_other);
 	if ($search_dest_status != '' && $search_dest_status >= -1) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
-	$sql .= $db->order($sortfield,$sortorder);
+	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
@@ -454,7 +454,7 @@ if ($object->fetch($id) >= 0)
 		if ($allowaddtarget) {
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','', $limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $cleartext, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
 		print '</form>';
 
@@ -502,7 +502,7 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		//Statut
 		print '<td class="liste_titre right">';
-		print $formmailing->selectDestinariesStatus($search_dest_status,'search_dest_status',1);
+		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1);
 		print '</td>';
 		// Action column
 		print '<td class="liste_titre right">';
@@ -512,29 +512,28 @@ if ($object->fetch($id) >= 0)
 		print '</tr>';
 
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"mc.email",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"mc.lastname",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"mc.firstname",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre("OtherInformations",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-		print_liste_field_titre("Source",$_SERVER["PHP_SELF"],"",$param,"",'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
 		// Date sending
-		if ($object->statut < 2)
-		{
+		if ($object->statut < 2) {
 			print_liste_field_titre('');
 		}
 		else
 		{
-			print_liste_field_titre("DateSending",$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
+			print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
 		}
-		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"mc.statut",$param,'','class="right"',$sortfield,$sortorder);
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print '</tr>';
 
 		$i = 0;
 
 		if ($num)
 		{
-			while ($i < min($num,$limit))
+			while ($i < min($num, $limit))
 			{
 				$obj = $db->fetch_object($resql);
 

@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
-$account_parent = GETPOST('account_parent','int');
+$account_parent = GETPOST('account_parent', 'int');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
@@ -45,12 +45,12 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
-$search_day=GETPOST("search_day","int");
-$search_month=GETPOST("search_month","int");
-$search_year=GETPOST("search_year","int");
+$search_day=GETPOST("search_day", "int");
+$search_month=GETPOST("search_month", "int");
+$search_year=GETPOST("search_year", "int");
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -80,7 +80,7 @@ $formaccounting = new FormAccounting($db);
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_expensereport = '';
 	$search_label = '';
@@ -96,7 +96,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
-	if (! (GETPOST('account_parent','int') >= 0))
+	if (! (GETPOST('account_parent', 'int') >= 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
@@ -107,7 +107,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		$db->begin();
 
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
 		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
 
 		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
@@ -189,7 +189,7 @@ if (strlen(trim($search_vat))) {
 if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
 		elseif ($search_year > 0 && ! empty($search_day))
 			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
@@ -197,7 +197,7 @@ if ($search_month > 0)
 }
 elseif ($search_year > 0)
 {
-	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
 }
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 
@@ -265,7 +265,7 @@ if ($result) {
 	print '<td class="liste_titre center">';
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-   	$formother->select_year($search_year,'search_year',1, 20, 5);
+   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
@@ -316,7 +316,7 @@ if ($result) {
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
-		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
+		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
 		print '<td class="right">' . price($objp->total_ht) . '</td>';

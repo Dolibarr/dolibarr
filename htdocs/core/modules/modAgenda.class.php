@@ -53,7 +53,7 @@ class modAgenda extends DolibarrModules
 		$this->family = "projects";
 		$this->module_position = '15';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -93,7 +93,7 @@ class modAgenda extends DolibarrModules
 		    while ($obj = $this->db->fetch_object($resql))
 		    {
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
-		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
+		        if (preg_match('/^TASK_/', $obj->code)) continue;      // We don't track such events by default.
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }

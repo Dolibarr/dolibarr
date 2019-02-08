@@ -31,15 +31,15 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$rowid = GETPOST("rowid",'alpha');
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$rowid = GETPOST("rowid", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -59,7 +59,7 @@ $stripe=new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
 	$service = 'StripeTest';
 	$servicestatus = '0';
@@ -91,20 +91,20 @@ if (!$rowid)
     $title=$langs->trans("StripeChargeList");
     $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    print_liste_field_titre("Origin",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"","","",'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre("Paid",$_SERVER["PHP_SELF"],"","","",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"","","",'align="right"');
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("StripeCustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"');
     print "</tr>\n";
 
 	print "</tr>\n";
@@ -125,7 +125,7 @@ if (!$rowid)
 		$FULLTAG=$charge->metadata->FULLTAG;
 
 		// Save into $tmparray all metadata
-		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
+		$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 		// Load origin object according to metadata
 		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
@@ -199,7 +199,7 @@ if (!$rowid)
 		} else print $FULLTAG;
 	    print "</td>\n";
 		// Date payment
-	    print '<td align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</td>\n";
+	    print '<td align="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
 	    // Type
 	    print '<td>';
 		if ($charge->source->object=='card')
@@ -217,15 +217,15 @@ if (!$rowid)
 	    // Status
 	    print '<td align="right">';
 	    if ($charge->refunded=='1'){
-	    	print img_picto($langs->trans("refunded"),'statut6');
+	    	print img_picto($langs->trans("refunded"), 'statut6');
 	    } elseif ($charge->paid=='1'){
 
-        print img_picto($langs->trans("".$charge->status.""),'statut4');
+        print img_picto($langs->trans("".$charge->status.""), 'statut4');
 	    } else {
 	    	$label="Message: ".$charge->failure_message."<br>";
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""),'statut8'),$label,1);
+	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
 	    }
 	    print "</td>\n";
 

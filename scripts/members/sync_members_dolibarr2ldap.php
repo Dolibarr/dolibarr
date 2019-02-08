@@ -52,7 +52,7 @@ $confirmed=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now [-y]\n";
@@ -61,7 +61,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 
 foreach($argv as $key => $val)
 {
-	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
+	if (preg_match('/-y$/', $val, $reg)) $confirmed=1;
 }
 
 $now=$argv[1];
@@ -81,7 +81,7 @@ print "----- To LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
 print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN target=".$conf->global->LDAP_MEMBER_DN."\n";
 print "\n";
 
@@ -125,13 +125,13 @@ if ($resql)
 		$result=$member->fetch($obj->rowid);
 		if ($result < 0)
 		{
-			dol_print_error($db,$member->error);
+			dol_print_error($db, $member->error);
 			exit(-1);
 		}
 		$result=$member->fetch_subscriptions();
 		if ($result < 0)
 		{
-			dol_print_error($db,$member->error);
+			dol_print_error($db, $member->error);
 			exit(-1);
 		}
 
@@ -145,8 +145,8 @@ if ($resql)
 	    $info=$member->_load_ldap_info();
 		$dn=$member->_load_ldap_dn($info);
 
-		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
-		$result=$ldap->update($dn,$info,$user,$olddn);
+		$result=$ldap->add($dn, $info, $user);	// Wil fail if already exists
+		$result=$ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0)
 		{
 			print " - ".$langs->transnoentities("OK");

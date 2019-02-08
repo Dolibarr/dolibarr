@@ -48,7 +48,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
+		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning', 'ChromePhp.class.php');
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		return array(
 			array(
-				'name' => $langs->trans('IncludePath','SYSLOG_CHROMEPHP_INCLUDEPATH'),
+				'name' => $langs->trans('IncludePath', 'SYSLOG_CHROMEPHP_INCLUDEPATH'),
 				'constant' => 'SYSLOG_CHROMEPHP_INCLUDEPATH',
 				'default' => DOL_DOCUMENT_ROOT . '/includes/ccampbell/chromephp/',
 				'attr' => 'size="60"',

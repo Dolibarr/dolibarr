@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin","withdrawals"));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $type = 'paymentorder';
 
 
@@ -48,11 +48,11 @@ if ($action == "set")
 {
     $db->begin();
 
-    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
+    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
     $account = new Account($db);
     if($account->fetch($id)>0)
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
         /*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
@@ -73,28 +73,28 @@ if ($action == "set")
     }
     else $error++;
 
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
     if (! $res > 0) $error++;
 
     if (GETPOST("PRELEVEMENT_USER") > 0)
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
     if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
     if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     }
 
     if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
     {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"),'chaine',0,'',$conf->entity);
+        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
         if (! $res > 0) $error++;
     } elseif (! $error)
 	{
@@ -111,7 +111,7 @@ if ($action == "set")
 if ($action == "addnotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->AddNotification($db,GETPOST('user','int'),$action);
+    $bon->AddNotification($db, GETPOST('user', 'int'), $action);
 
     header("Location: prelevement.php");
     exit;
@@ -120,7 +120,7 @@ if ($action == "addnotif")
 if ($action == "deletenotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->DeleteNotificationById(GETPOST('notif','int'));
+    $bon->DeleteNotificationById(GETPOST('notif', 'int'));
 
     header("Location: prelevement.php");
     exit;
@@ -198,13 +198,13 @@ else if ($action == 'setdoc')
 
 $form=new Form($db);
 
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('',$langs->trans("WithdrawalsSetup"));
+llxHeader('', $langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
@@ -220,7 +220,7 @@ print "</tr>";
 // Bank account (from Banks module)
 print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td class="left">';
-$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
+$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1);
 print '</td></tr>';
 
 // ICS

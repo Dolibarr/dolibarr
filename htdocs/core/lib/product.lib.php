@@ -132,7 +132,7 @@ function product_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
 
     // Notes
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
@@ -152,11 +152,11 @@ function product_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
-        if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id,2,0,0,$object,'product').$object->id.'/photos';
-        $nbFiles += count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     }
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
@@ -165,7 +165,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
 
     // Log
     $head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
@@ -206,7 +206,7 @@ function productlot_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -218,9 +218,9 @@ function productlot_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot');
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'productlot', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'productlot', 'remove');
 
     // Log
     /*
@@ -266,14 +266,14 @@ function product_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin', 'remove');
 
 	return $head;
 }
@@ -296,14 +296,14 @@ function product_lot_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
-    complete_head_from_modules($conf,$langs,null,$head,$h,'product_lot_admin','remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin', 'remove');
 
     return $head;
 }
@@ -338,7 +338,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="propal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("Proposals").'</a>';
+		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("Proposals").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td align="right">';
@@ -356,7 +356,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("SupplierProposals").'</a>';
+		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("SupplierProposals").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td align="right">';
@@ -374,7 +374,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("CustomersOrders").'</a>';
+		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("CustomersOrders").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td align="right">';
@@ -392,7 +392,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('','order').' '.$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td align="right">';
@@ -410,7 +410,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="facture.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td align="right">';
@@ -428,7 +428,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td align="right">';
@@ -447,7 +447,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
+		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract').' '.$langs->trans("Contracts").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td align="right">';

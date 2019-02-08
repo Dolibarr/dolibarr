@@ -35,10 +35,10 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -65,7 +65,7 @@ if ($user->rights->margins->read->all) {
 } else {
   $agentid = $user->id;
 }
-$result=restrictedArea($user,'margins');
+$result=restrictedArea($user, 'margins');
 
 
 /*
@@ -86,7 +86,7 @@ $invoicestatic=new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Agents"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"));
 
 $text=$langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -126,12 +126,13 @@ dol_fiche_end();
 print '</form>';
 
 $sql = "SELECT";
-if ($agentid > 0) $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
+$sql.= " s.rowid as socid,";
+if ($agentid > 0) $sql.= " s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge" ;
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1', 'd.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(".$db->ifsql('d.total_ht < 0', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))', 'd.total_ht - (d.buy_price_ht * d.qty)').") as marge" ;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE)?-1:$conf->global->AGENT_CONTACT_TYPE);
@@ -163,7 +164,7 @@ $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
 if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -191,20 +192,20 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	if ($agentid > 0)
-		print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$agentid,'',$sortfield,$sortorder);
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;agentid=".$agentid, '', $sortfield, $sortorder);
 	else
-		print_liste_field_titre("SalesRepresentative",$_SERVER["PHP_SELF"],"u.lastname","","&amp;agentid=".$agentid,'',$sortfield,$sortorder);
+		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", "&amp;agentid=".$agentid, '', $sortfield, $sortorder);
 
-	print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;agentid=".$agentid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;agentid=".$agentid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;agentid=".$agentid, 'align="right"', $sortfield, $sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;agentid=".$agentid, 'align="right"', $sortfield, $sortorder);
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;agentid=".$agentid, 'align="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
 	{
@@ -213,31 +214,42 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$pa = $objp->buying_price;
-			$pv = $objp->selling_price;
-			$marge = $objp->marge;
+                    $seller_nb = 1;
+                    if ($objp->socid > 0) {
+                        // sql nb sellers
+                        $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
+                        $sql_seller .= " FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+                        $sql_seller .= " WHERE sc.fk_soc = " . $objp->socid;
 
-			if ($marge < 0)
-			{
-				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
-			}
-			else
-			{
-				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
-			}
+                        $resql_seller = $db->query($sql_seller);
+                        if (!$resql_seller) {
+                            dol_print_error($db);
+                        } else {
+                            if ($obj_seller = $db->fetch_object($resql_seller)) {
+                                if ($obj_seller->nb > 0) {
+                                    $seller_nb = $obj_seller->nb;
+                                }
+                            }
+                        }
+                    }
+
+                    $pa = $objp->buying_price / $seller_nb;
+                    $pv = $objp->selling_price / $seller_nb;
+                    $marge = $objp->marge / $seller_nb;
+
+                    $marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+                    $markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-				print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
+				print "<td>".$companystatic->getNomUrl(1, 'customer')."</td>\n";
 			}
 			else {
 				$userstatic->fetch($objp->agent);
-				print "<td>".$userstatic->getFullName($langs,0,0,0)."</td>\n";
+				print "<td>".$userstatic->getFullName($langs, 0, 0, 0)."</td>\n";
 			}
 
 			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";

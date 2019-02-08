@@ -76,7 +76,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -186,9 +186,9 @@ class Contracts extends DolibarrApi
      */
     function post($request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->contrat->creer) {
-			  throw new RestException(401, "Insuffisant rights");
-		  }
+        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -220,16 +220,16 @@ class Contracts extends DolibarrApi
      */
     function getLines($id)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->lire) {
+        if (! DolibarrApiAccess::$user->rights->contrat->lire) {
             throw new RestException(401);
-		}
+        }
 
         $result = $this->contract->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 		    throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $this->contract->getLinesArray();
@@ -261,7 +261,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 		$request_data = (object) $request_data;
@@ -314,7 +314,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contrat not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -374,7 +374,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contrat not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -412,7 +412,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contrat not found');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
@@ -523,7 +523,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -565,7 +565,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contract not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+		if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -611,7 +611,7 @@ class Contracts extends DolibarrApi
     		throw new RestException(404, 'Contract not found');
     	}
 
-    	if (! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    	if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 

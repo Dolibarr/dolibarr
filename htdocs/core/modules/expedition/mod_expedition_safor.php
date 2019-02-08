@@ -62,7 +62,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
     function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -98,9 +98,9 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -141,10 +141,10 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		}
 
 		$date=time();
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
@@ -161,6 +161,6 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	function expedition_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc, $objforref);
 	}
 }

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018-2019       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,15 +32,15 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$rowid = GETPOST("rowid",'alpha');
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$rowid = GETPOST("rowid", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -59,8 +60,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
-{
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -80,8 +80,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 if (! $rowid) {
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	if ($optioncss != '')
-		print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+	if ($optioncss != '') {
+        print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+    }
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -103,7 +104,7 @@ if (! $rowid) {
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
-  print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
@@ -168,7 +169,7 @@ if (! $rowid) {
 			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-    print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
 
 
 		// Stripe customer
@@ -198,7 +199,7 @@ if (! $rowid) {
 		//print "</td>\n";
 		// Date payment
 		print '<td align="center">' . dol_print_date($payout->created, '%d/%m/%Y %H:%M') . "</td>\n";
-    		// Date payment
+        // Date payment
 		print '<td align="center">' . dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
 		print '<td>' . $payout->description . '</td>';
@@ -207,16 +208,17 @@ if (! $rowid) {
 		print "<td align=\"right\">" . price(($payout->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
 		// Status
 		print "<td align='right'>";
-		if ($payout->status=='paid')
- 		{print img_picto($langs->trans("".$payout->status.""),'statut4');}
-    elseif ($payout->status=='pending')
-		{print img_picto($langs->trans("".$payout->status.""),'statut7');}
-    elseif ($payout->status=='in_transit')
-		{print img_picto($langs->trans("".$payout->status.""),'statut7');}
-		elseif ($payout->status=='failed')
-		{print img_picto($langs->trans("".$payout->status.""),'statut7');}
-		elseif ($payout->status=='canceled')
-		{print img_picto($langs->trans("".$payout->status.""),'statut8');}
+		if ($payout->status=='paid') {
+            print img_picto($langs->trans("".$payout->status.""), 'statut4');
+        } elseif ($payout->status=='pending') {
+            print img_picto($langs->trans("".$payout->status.""), 'statut7');
+        } elseif ($payout->status=='in_transit') {
+            print img_picto($langs->trans("".$payout->status.""), 'statut7');
+        } elseif ($payout->status=='failed') {
+            print img_picto($langs->trans("".$payout->status.""), 'statut7');
+        } elseif ($payout->status=='canceled') {
+            print img_picto($langs->trans("".$payout->status.""), 'statut8');
+        }
 		print '</td>';
 		print "</tr>\n";
 	}

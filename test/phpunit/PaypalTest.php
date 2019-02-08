@@ -135,7 +135,7 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$urltotest=getPaypalPaymentUrl(1,'free');
+		$urltotest=getPaypalPaymentUrl(1, 'free');
 		print "urltotest=".$urltotest."\n";
 
 		$result=getURLContent($urltotest, 'GET');

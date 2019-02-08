@@ -35,11 +35,11 @@ $langs->loadLangs(array("bills","accountancy"));
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel','alpha');
-$action = GETPOST('action','aZ09');
-$cat_id = GETPOST('account_category','int');
+$cancel = GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cat_id = GETPOST('account_category', 'int');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid','int');
+$cpt_id = GETPOST('cptid', 'int');
 
 if ($cat_id == 0) {
 	$cat_id = null;
@@ -61,7 +61,7 @@ $accountingcategory = new AccountancyCategory($db);
 // si ajout de comptes
 if (! empty($selectcpt)) {
 	$cpts = array ();
-	foreach ( $selectcpt as $selectedoption ) {
+	foreach ($selectcpt as $selectedoption) {
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";
 	}
@@ -167,7 +167,7 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			foreach ( $accountingcategory->lines_display as $cpt ) {
+			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';

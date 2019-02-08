@@ -216,15 +216,16 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 *    Create payment of invoices into database.
-	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  Create payment of invoices into database.
+	 *  Use this->amounts to have list of invoices for the payment.
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
-	 *    @param	User	$user                	Object user
-	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
-	 *    @return   int                 			id of created payment, < 0 if error
+	 *  @param	User	  $user                	Object user
+	 *  @param  int		  $closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
+	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @return int                 			id of created payment, < 0 if error
 	 */
-	function create($user, $closepaidinvoices = 0)
+	function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
 		global $conf, $langs;
 
@@ -255,7 +256,7 @@ class Paiement extends CommonObject
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
-			$newvalue = price2num($value,'MT');
+			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 			if (! empty($newvalue)) $atleastonepaymentnotnull++;
@@ -274,7 +275,7 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$this->ref = $this->getNextNumRef('');
+		$this->ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
 
 		if ($way == 'dolibarr')
 		{
@@ -320,8 +321,8 @@ class Paiement extends CommonObject
                             $paiement = $invoice->getSommePaiement();
                             $creditnotes=$invoice->getSumCreditNotesUsed();
                             $deposits=$invoice->getSumDepositsUsed();
-                            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+                            $alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
 
@@ -368,7 +369,7 @@ class Paiement extends CommonObject
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('',$invoice->id);
+									$discount->fetch('', $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 
 
@@ -411,7 +412,7 @@ class Paiement extends CommonObject
                                 // Set invoice to paid
                                 if (! $error)
                                 {
-                                    $result=$invoice->set_paid($user,'','');
+                                    $result=$invoice->set_paid($user, '', '');
                                     if ($result<0)
                                     {
                                         $this->error=$invoice->error;
@@ -424,6 +425,7 @@ class Paiement extends CommonObject
 					    // Regenerate documents of invoices
                         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                         {
+                            $newlang='';
                             $outputlangs = $langs;
                             if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
                             if (! empty($newlang)) {
@@ -551,8 +553,8 @@ class Paiement extends CommonObject
 			{
 			    $this->db->rollback();
 			    return -1;
-			 }
-		    // End call triggers
+            }
+            // End call triggers
 		}
 
 		// Delete payment (into paiement_facture and paiement)
@@ -686,7 +688,7 @@ class Paiement extends CommonObject
                             $fac = new Facture($this->db);
                             $fac->fetch($key);
                             $fac->fetch_thirdparty();
-                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            if (! in_array($fac->thirdparty->id, $linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
@@ -704,7 +706,7 @@ class Paiement extends CommonObject
                             $fac = new FactureFournisseur($this->db);
                             $fac->fetch($key);
                             $fac->fetch_thirdparty();
-                            if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
+                            if (! in_array($fac->thirdparty->id, $linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
                                 $result=$acc->add_url_line(
                                     $bank_line_id,
@@ -1063,7 +1065,7 @@ class Paiement extends CommonObject
 			{
 				$file = $conf->global->PAYMENT_ADDON.".php";
 				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
-				$classname = preg_replace('/\-.*$/','',$classname);
+				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot)
 				{
@@ -1078,20 +1080,20 @@ class Paiement extends CommonObject
 
 			if (! $mybool)
 			{
-				dol_print_error('',"Failed to include file ".$file);
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db,"Payment::getNextNumRef ".$obj->error);
+				dol_print_error($db, "Payment::getNextNumRef ".$obj->error);
 				return "";
 			}
 
@@ -1184,7 +1186,7 @@ class Paiement extends CommonObject
             	foreach ($arraybill as $billid)
             	{
             		$facturestatic->fetch($billid);
-            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2, 1);
             	}
             }
         }
@@ -1224,7 +1226,7 @@ class Paiement extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
