@@ -510,6 +510,11 @@ class pdf_standard extends ModeleExpenseReport
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -1023,7 +1028,7 @@ class pdf_standard extends ModeleExpenseReport
 			if ($num > 0 && $object->paid == 0)
 			{
 				$y+=$tab3_height;
-				
+
 				$pdf->SetXY($tab3_posx+17, $tab3_top+$y);
 				$pdf->MultiCell(15, 3, price($totalpaid), 0, 'R', 0);
 				$pdf->SetXY($tab3_posx+35, $tab3_top+$y);
