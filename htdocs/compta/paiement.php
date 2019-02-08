@@ -236,6 +236,14 @@ if (empty($reshook))
 		    }
 	    }
 
+        foreach ($amounts as $key => $value)	// How payment is dispatch
+        {
+            $invoice = new Facture($db);
+            $invoice->fetch($key);
+            if($invoice->paye) unset($amounts[$key]);
+
+        }
+
 	    if (! empty($conf->banque->enabled))
 	    {
 	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
