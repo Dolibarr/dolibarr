@@ -1796,74 +1796,73 @@ a.tmenuimage {
         div.mainmenu.website {
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
         }
+    <?php } ?>
 
-        <?php
-        // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+    <?php
+    // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-        $moduletomainmenu=array(
-            'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-            'produit'=>'products','service'=>'products','stock'=>'products',
-            'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-            'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
-            'fournisseur'=>'companies',
-            'barcode'=>'','fckeditor'=>'','categorie'=>'',
-        );
-        $mainmenuused='home';
-        foreach($conf->modules as $val)
+    $moduletomainmenu=array(
+        'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
+        'produit'=>'products','service'=>'products','stock'=>'products',
+        'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+        'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
+        'fournisseur'=>'companies',
+        'barcode'=>'','fckeditor'=>'','categorie'=>'',
+    );
+    $mainmenuused='home';
+    foreach($conf->modules as $val)
+    {
+        $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+    }
+    $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
+
+    $generic=1;
+    // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+    $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+    // Put here list of menu entries we are sure we don't want
+    $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+    foreach($mainmenuusedarray as $val)
+    {
+        if (empty($val) || in_array($val,$divalreadydefined)) continue;
+        if (in_array($val,$divnotrequired)) continue;
+        //print "XXX".$val;
+
+        // Search img file in module dir
+        $found=0; $url='';
+        foreach($conf->file->dol_document_root as $dirroot)
         {
-            $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
-        }
-        $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
-
-        $generic=1;
-        // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-        $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
-        // Put here list of menu entries we are sure we don't want
-        $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
-        foreach($mainmenuusedarray as $val)
-        {
-            if (empty($val) || in_array($val,$divalreadydefined)) continue;
-            if (in_array($val,$divnotrequired)) continue;
-            //print "XXX".$val;
-
-            // Search img file in module dir
-            $found=0; $url='';
-            foreach($conf->file->dol_document_root as $dirroot)
+            if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
             {
-                if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-                {
-                    $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-                    $found=1;
-                    break;
-                }
-            }
-            // Img file not found
-            if (! $found)
-            {
-                $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png",1);
+                $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
                 $found=1;
-                if ($generic < 4) $generic++;
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-            }
-            if ($found)
-            {
-                print "div.mainmenu.".$val." {\n";
-                print "	background-image: url(".$url.");\n";
-                print "}\n";
+                break;
             }
         }
-        $j=0;
-        while ($j++ < 4)
+        // Img file not found
+        if (! $found)
         {
-            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
-            print "div.mainmenu.generic".$j." {\n";
+            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png",1);
+            $found=1;
+            if ($generic < 4) $generic++;
+            print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+        }
+        if ($found)
+        {
+            print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";
         }
-        // End of part to add more div class css
-        ?>
-
-    <?php } //legacy icons ?>
+    }
+    $j=0;
+    while ($j++ < 4)
+    {
+        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+        print "div.mainmenu.generic".$j." {\n";
+        print "	background-image: url(".$url.");\n";
+        print "}\n";
+    }
+    // End of part to add more div class css
+    ?>
 <?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {

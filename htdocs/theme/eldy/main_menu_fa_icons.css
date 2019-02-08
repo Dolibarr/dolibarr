@@ -49,7 +49,7 @@ div.mainmenu.cashdesk::before {
 div.mainmenu.takepos::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    content: "\f788";
+    content: "\f217";
     color: white;
     font-size: 1.5em;
 }
@@ -121,7 +121,7 @@ div.mainmenu.products::before {
 div.mainmenu.project::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    content: "\f542";
+    content: "\f0e8";
     color: white;
     font-size: 1.5em;
 }
@@ -145,7 +145,7 @@ div.mainmenu.tools::before {
 div.mainmenu.website::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    content: "\f0e8";
+    content: "\f542";
     color: white;
     font-size: 1.5em;
 }
