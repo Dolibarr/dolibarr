@@ -925,7 +925,9 @@ class pdf_crabe extends ModelePDFFactures
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 * @param PDF 			$pdf				Object PDF
+	 * Function _tableau_versements_header
+	 *
+	 * @param TCPDF 		$pdf				Object PDF
 	 * @param Facture		$object				Object invoice
 	 * @param Translate		$outputlangs		Object langs for output
 	 * @param int			$default_font_size	Font size
