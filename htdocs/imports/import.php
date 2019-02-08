@@ -1332,7 +1332,7 @@ if ($step == 5 && $datatoimport)
 		}
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	} else {
-		if (count($objimport->array_import_updatekeys[0]))
+		if (is_array($objimport->array_import_updatekeys[0]) && count($objimport->array_import_updatekeys[0]))
 		{
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
 			print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
