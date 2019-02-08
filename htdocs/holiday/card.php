@@ -334,7 +334,7 @@ if ($action == 'confirm_send')
     $object->fetch($id);
 
     // Si brouillon et créateur
-    if($object->statut == Holiday::STATUS_DRAFT && $cancreate)
+    if ($object->statut == Holiday::STATUS_DRAFT && $cancreate)
     {
     	$object->oldcopy = dol_clone($object);
 
@@ -379,7 +379,7 @@ if ($action == 'confirm_send')
             $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
             // Si l'option pour avertir le valideur en cas de délai trop court
-            if($object->getConfCP('AlertValidatorDelay'))
+            if ($object->getConfCP('AlertValidatorDelay'))
             {
                 if($object->date_debut < $nextMonth)
                 {
@@ -460,7 +460,7 @@ if ($action == 'confirm_valid')
         if (! $error)
         {
             // Calculcate number of days consummed
-            $nbopenedday=num_open_day($object->date_debut_gmt,$object->date_fin_gmt,0,1,$object->halfday);
+            $nbopenedday=num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
             $soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
             $newSolde = ($soldeActuel - $nbopenedday);
 
@@ -469,7 +469,7 @@ if ($action == 'confirm_valid')
             if ($result < 0)
             {
                 $error++;
-            	setEventMessages(null, $object->errors,'errors');
+            	setEventMessages(null, $object->errors, 'errors');
             }
 
             //Update balance
@@ -477,9 +477,12 @@ if ($action == 'confirm_valid')
             if ($result < 0)
             {
                 $error++;
-            	setEventMessages(null, $object->errors,'errors');
+            	setEventMessages(null, $object->errors, 'errors');
             }
+        }
 
+        if (! $error)
+        {
             // To
             $destinataire = new User($db);
             $destinataire->fetch($object->fk_user);
@@ -505,7 +508,7 @@ if ($action == 'confirm_valid')
                 // Content
                 $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
                 $message.= "\n";
-                $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut,'day'),dol_print_date($object->date_fin,'day'))."\n";
+                $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
 
                 $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 
@@ -594,7 +597,7 @@ if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
                     // Content
                 	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
     	            $message.= "\n";
-                    $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut,'day'), dol_print_date($object->date_fin,'day'))."\n";
+                    $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
                     $message.= GETPOST('detail_refuse','alpha')."\n\n";
 
     	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
