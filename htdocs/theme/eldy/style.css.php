@@ -1716,155 +1716,155 @@ a.tmenuimage {
 
 /* Do not load menu img for other if hidden to save bandwidth */
 
-<?php if (empty($dol_hide_topmenu)) { ?>
+<?php if (empty($dol_hide_topmenu)) : ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
+        <?php include echo dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 1); ?>
+    <?php } else { ?>
+        div.mainmenu.home{
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
+            background-position-x: center;
+        }
 
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
-	background-position-x: center;
-}
+        div.mainmenu.billing {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
+        }
 
-div.mainmenu.billing {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
-}
+        div.mainmenu.accountancy {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
+        }
 
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
-}
+        div.mainmenu.agenda {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda_over.png', 1) ?>);
+        }
 
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda_over.png', 1) ?>);
-}
+        div.mainmenu.bank {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank_over.png', 1) ?>);
+        }
 
-div.mainmenu.bank {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank_over.png', 1) ?>);
-}
+        div.mainmenu.cashdesk {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
+        }
 
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
-}
+        div.mainmenu.takepos {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
+        }
 
-div.mainmenu.takepos {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
-}
+        div.mainmenu.companies {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company_over.png', 1) ?>);
+        }
 
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company_over.png', 1) ?>);
-}
+        div.mainmenu.commercial {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial_over.png', 1) ?>);
+        }
 
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial_over.png', 1) ?>);
-}
+        div.mainmenu.ecm {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm_over.png', 1) ?>);
+        }
 
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm_over.png', 1) ?>);
-}
+        div.mainmenu.externalsite {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
+        }
 
-div.mainmenu.externalsite {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
-}
+        div.mainmenu.ftp {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
+        }
 
-div.mainmenu.ftp {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
-}
+        div.mainmenu.hrm {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday_over.png', 1) ?>);
+        }
 
-div.mainmenu.hrm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday_over.png', 1) ?>);
-}
+        div.mainmenu.members {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members_over.png', 1) ?>);
+        }
 
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members_over.png', 1) ?>);
-}
+        div.mainmenu.products {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
+        }
 
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
-}
+        div.mainmenu.project {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project_over.png', 1) ?>);
+        }
 
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project_over.png', 1) ?>);
-}
+        div.mainmenu.ticket {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket_over.png', 1) ?>);
+        }
 
-div.mainmenu.ticket {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket_over.png', 1) ?>);
-}
+        div.mainmenu.tools {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
+        }
 
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
-}
+        div.mainmenu.website {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
+        }
 
-div.mainmenu.website {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
-}
+        <?php
+        // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-<?php
-// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+        $moduletomainmenu=array(
+            'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
+            'produit'=>'products','service'=>'products','stock'=>'products',
+            'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+            'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
+            'fournisseur'=>'companies',
+            'barcode'=>'','fckeditor'=>'','categorie'=>'',
+        );
+        $mainmenuused='home';
+        foreach($conf->modules as $val)
+        {
+            $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+        }
+        $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
-$moduletomainmenu=array(
-	'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-	'produit'=>'products','service'=>'products','stock'=>'products',
-	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
-	'fournisseur'=>'companies',
-	'barcode'=>'','fckeditor'=>'','categorie'=>'',
-);
-$mainmenuused='home';
-foreach($conf->modules as $val)
-{
-	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
-}
-//var_dump($mainmenuused);
-$mainmenuusedarray=array_unique(explode(',', $mainmenuused));
+        $generic=1;
+        // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+        $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+        // Put here list of menu entries we are sure we don't want
+        $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+        foreach($mainmenuusedarray as $val)
+        {
+            if (empty($val) || in_array($val,$divalreadydefined)) continue;
+            if (in_array($val,$divnotrequired)) continue;
+            //print "XXX".$val;
 
-$generic=1;
-// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
-// Put here list of menu entries we are sure we don't want
-$divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
-foreach($mainmenuusedarray as $val)
-{
-	if (empty($val) || in_array($val, $divalreadydefined)) continue;
-	if (in_array($val, $divnotrequired)) continue;
-	//print "XXX".$val;
+            // Search img file in module dir
+            $found=0; $url='';
+            foreach($conf->file->dol_document_root as $dirroot)
+            {
+                if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
+                {
+                    $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+                    $found=1;
+                    break;
+                }
+            }
+            // Img file not found
+            if (! $found)
+            {
+                $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png",1);
+                $found=1;
+                if ($generic < 4) $generic++;
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+            }
+            if ($found)
+            {
+                print "div.mainmenu.".$val." {\n";
+                print "	background-image: url(".$url.");\n";
+                print "}\n";
+            }
+        }
+        $j=0;
+        while ($j++ < 4)
+        {
+            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+            print "div.mainmenu.generic".$j." {\n";
+            print "	background-image: url(".$url.");\n";
+            print "}\n";
+        }
+        // End of part to add more div class css
+        ?>
 
-	// Search img file in module dir
-	$found=0; $url='';
-	foreach($conf->file->dol_document_root as $dirroot)
-	{
-		if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-		{
-			$url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-			$found=1;
-			break;
-		}
-	}
-	// Img file not found
-	if (! $found)
-	{
-		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png", 1);
-		$found=1;
-		if ($generic < 4) $generic++;
-		print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-	}
-	if ($found)
-	{
-		print "div.mainmenu.".$val." {\n";
-		print "	background-image: url(".$url.");\n";
-		print "}\n";
-	}
-}
-$j=0;
-while ($j++ < 4)
-{
-	$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png", 1);
-	print "div.mainmenu.generic".$j." {\n";
-	print "	background-image: url(".$url.");\n";
-	print "}\n";
-}
-// End of part to add more div class css
-?>
-
-<?php
-}	// End test if $dol_hide_topmenu
-?>
+    <?php } //legacy icons ?>
+<?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
