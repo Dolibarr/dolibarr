@@ -84,5 +84,4 @@ class ActionsTakePos
 
         return 0;    // or return 1 to replace standard code
 	}
-
 }

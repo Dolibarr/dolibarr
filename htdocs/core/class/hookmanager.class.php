@@ -271,7 +271,7 @@ class HookManager
                     	{
                     	    $error++;
                     	    $this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-                    	    dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",",$this->errors)), LOG_ERR);
+                    	    dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",", $this->errors)), LOG_ERR);
                     	}
                     	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
                     	if (! is_array($resaction) && ! is_numeric($resaction))
