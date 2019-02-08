@@ -3,6 +3,27 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 9.0.1 compared to 9.0.0 *****
+FIX: #10381
+FIX: #10460 compatibility with MariaDB 10.4
+FIX: #10485
+FIX: add fk_unit on addline action
+FIX: better test on fetch
+FIX: Default language of company is not set
+FIX: error report not returned
+FIX: expedition: reset status on rollback + replace hardcoded status with const
+FIX: line edit template: keep fk_parent_line
+FIX: Missing province in export of invoice
+FIX: must fetch member in current entity
+FIX: Price in combo list of service does not use the correct price level
+FIX: supplier invoice payment total doesnt care about deposit or credit
+FIX: supplier invoice product stats total ht is line total not invoice total
+FIX: Translation not loaded by scheduled jobs
+FIX: [URGENT] broken feature, "$usercancreate" is for Dolibarr 9 - can't add lines on invoices
+FIX: wrong merged conflict
+FIX: wrong tests on fetch
+NEW: Add protection to avoid packaging if files non indexed exists into
+
 ***** ChangeLog for 9.0.0 compared to 8.0.0 *****
 For Users:
 NEW: Stable module: DAV (WebDAV only for the moment)
