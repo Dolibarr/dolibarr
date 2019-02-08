@@ -888,4 +888,55 @@ class FormCompany
     		}
     	}
     }
+
+    /**
+     * Return a HTML select for thirdparty type
+     *
+     * @param int $selected selected value
+     * @param string $htmlname HTML select name
+     * @param string $htmlidname HTML select id
+     * @param string $typeinput HTML output
+     * @param string $morecss More css
+     * @return string HTML string
+     */
+    function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
+    {
+
+    	global $conf,$langs;
+
+    	$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
+    	if ($typeinput=='form') {
+	    	if ($selected == '') $out .= '<option value="-1">&nbsp;</option>';
+	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+	    		$out .= '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+	    	}
+	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+	    		$out .= '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+	    	}
+	    	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+	    		$out .= '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+	    	}
+	    	$out .= '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+    	} elseif ($typeinput=='list') {
+    		$out .=  '<option value="-1"'.($selected==''?' selected':'').'>&nbsp;</option>';
+    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+    			$out .=  '<option value="1,3"'.($selected=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    		}
+    		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+    			$out .=  '<option value="2,3"'.($selected=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+    		}
+    		$out .=  '<option value="4"'.($selected=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
+    		$out .=  '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
+    	} elseif ($typeinput=='admin') {
+    		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+    			$out .= '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+    		}
+    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+    			$out .= '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    		}
+    	}
+    	$out .= '</select>';
+
+    	return $out;
+    }
 }

@@ -937,7 +937,14 @@ else
             $object->client=-1;
             if (! empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
         }
-        if (GETPOST("type")=='c')  { $object->client=3; }   // Prospect / Customer
+        // Prospect / Customer
+        if (GETPOST("type")=='c')  {
+        	if (! empty($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT)) {
+        		$object->client=$conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT;
+        	} else {
+        		$object->client=3;
+        	}
+        }
         if (GETPOST("type")=='p')  { $object->client=2; }
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || (GETPOST("type")=='' && ! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT))))  { $object->fournisseur=1; }
 
@@ -1179,13 +1186,8 @@ else
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
 	    $selected=GETPOST('client', 'int')!=''?GETPOST('client', 'int'):$object->client;
-        print '<select class="flat" name="client" id="customerprospect">';
-        if (GETPOST("type") == '') print '<option value="-1">&nbsp;</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) print '<option value="3"'.($selected==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($selected==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-        print '</select></td>';
+	    print $formcompany->selectProspectCustomerType($selected);
+	    print '</td>';
 
         print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
         print '<table class="nobordernopadding"><tr><td>';
@@ -1770,12 +1772,9 @@ else
 
             // Prospect/Customer
             print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
-	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
-            if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-            if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-            print '<option value="0"'.($object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-            print '</select></td>';
+	        print '<td class="maxwidthonsmartphone">';
+	        print $formcompany->selectProspectCustomerType($object->client);
+            print '</td>';
             print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 
             print '<table class="nobordernopadding"><tr><td>';
