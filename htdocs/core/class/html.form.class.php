@@ -4076,7 +4076,7 @@ class Form
 			$formconfirm.= '<td class="valid">';
 			$formconfirm.= $this->selectyesno("confirm", $newselectedchoice);
 			$formconfirm.= '</td>';
-			$formconfirm.= '<td class="valid center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
+			$formconfirm.= '<td class="valid center"><input class="button valignmiddle" type="submit" onclick="this.disabled=\'disabled\' value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm.= '</tr>'."\n";
 
 			$formconfirm.= '</table>'."\n";
