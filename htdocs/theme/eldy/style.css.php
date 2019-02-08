@@ -1718,7 +1718,7 @@ a.tmenuimage {
 
 <?php if (empty($dol_hide_topmenu)) : ?>
     <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
-        <?php include echo dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 1); ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 1); ?>
     <?php } else { ?>
         div.mainmenu.home{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
