@@ -214,32 +214,31 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-            $seller_nb = 1;
-            if ($objp->socid > 0) {
-                // sql nb sellers
-                $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
-                $sql_seller .= " FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
-                $sql_seller .= " WHERE sc.fk_soc = " . $objp->socid;
-                $sql_seller .= " LIMIT 1";
+                    $seller_nb = 1;
+                    if ($objp->socid > 0) {
+                        // sql nb sellers
+                        $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
+                        $sql_seller .= " FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+                        $sql_seller .= " WHERE sc.fk_soc = " . $objp->socid;
 
-                $resql_seller = $db->query($sql_seller);
-                if (!$resql_seller) {
-                    dol_print_error($db);
-                } else {
-                    if ($obj_seller = $db->fetch_object($resql_seller)) {
-                        if ($obj_seller->nb > 0) {
-                            $seller_nb = $obj_seller->nb;
+                        $resql_seller = $db->query($sql_seller);
+                        if (!$resql_seller) {
+                            dol_print_error($db);
+                        } else {
+                            if ($obj_seller = $db->fetch_object($resql_seller)) {
+                                if ($obj_seller->nb > 0) {
+                                    $seller_nb = $obj_seller->nb;
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            $pa = $objp->buying_price / $seller_nb;
-            $pv = $objp->selling_price / $seller_nb;
-            $marge = $objp->marge / $seller_nb;
+                    $pa = $objp->buying_price / $seller_nb;
+                    $pv = $objp->selling_price / $seller_nb;
+                    $marge = $objp->marge / $seller_nb;
 
-            $marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-            $markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
+                    $marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+                    $markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {
