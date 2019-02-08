@@ -924,7 +924,9 @@ class pdf_crabe extends ModelePDFFactures
 	}
 
 	/**
-	 * @param PDF 			$pdf				Object PDF
+	 * Function _tableau_versements_header
+	 *
+	 * @param TCPDF 		$pdf				Object PDF
 	 * @param Facture		$object				Object invoice
 	 * @param Translate		$outputlangs		Object langs for output
 	 * @param int			$default_font_size	Font size
@@ -932,6 +934,7 @@ class pdf_crabe extends ModelePDFFactures
 	 * @param int 			$tab3_top			pos y
 	 * @param int 			$tab3_width			width
 	 * @param int 			$tab3_height		height
+	 * @return void
 	 */
 	function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
 	{
