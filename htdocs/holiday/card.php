@@ -334,7 +334,7 @@ if ($action == 'confirm_send')
     $object->fetch($id);
 
     // Si brouillon et créateur
-    if($object->statut == Holiday::STATUS_DRAFT && $cancreate)
+    if ($object->statut == Holiday::STATUS_DRAFT && $cancreate)
     {
     	$object->oldcopy = dol_clone($object);
 
@@ -379,7 +379,7 @@ if ($action == 'confirm_send')
             $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
             // Si l'option pour avertir le valideur en cas de délai trop court
-            if($object->getConfCP('AlertValidatorDelay'))
+            if ($object->getConfCP('AlertValidatorDelay'))
             {
                 if($object->date_debut < $nextMonth)
                 {
@@ -479,7 +479,10 @@ if ($action == 'confirm_valid')
                 $error++;
             	setEventMessages(null, $object->errors, 'errors');
             }
+        }
 
+        if (! $error)
+        {
             // To
             $destinataire = new User($db);
             $destinataire->fetch($object->fk_user);
