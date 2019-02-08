@@ -923,6 +923,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Function _tableau_versements_header
 	 *
@@ -938,7 +939,8 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
 	{
-		$title=$outputlangs->transnoentities("PaymentsAlreadyDone");
+	    // phpcs:enable
+	    $title=$outputlangs->transnoentities("PaymentsAlreadyDone");
 		if ($object->type == 2) $title=$outputlangs->transnoentities("PaymentsBackAlreadyDone");
 
 		$pdf->SetFont('','', $default_font_size - 3);
