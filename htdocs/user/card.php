@@ -847,7 +847,6 @@ if ($action == 'create' || $action == 'adduserldap')
 		$generated_fake_api_key=getRandomPassword(false);
 		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
 	}
-
 	// Administrator
 	if (! empty($user->admin))
 	{
@@ -2033,9 +2032,10 @@ else
 								</script>';
 						}
 
-						$checked=(($object->admin && ! $object->entity) ? ' checked' : '');
-						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
+
 					}
+                    $checked=(($object->admin && ! $object->entity) ? ' checked' : '');
+                    print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
 				}
 				else
 				{
