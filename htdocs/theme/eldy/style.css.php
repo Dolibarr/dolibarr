@@ -1814,7 +1814,7 @@ a.tmenuimage {
     {
         $mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
     }
-    $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
+    $mainmenuusedarray=array_unique(explode(',', $mainmenuused));
 
     $generic=1;
     // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
@@ -1823,8 +1823,8 @@ a.tmenuimage {
     $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
     foreach($mainmenuusedarray as $val)
     {
-        if (empty($val) || in_array($val,$divalreadydefined)) continue;
-        if (in_array($val,$divnotrequired)) continue;
+        if (empty($val) || in_array($val, $divalreadydefined)) continue;
+        if (in_array($val, $divnotrequired)) continue;
         //print "XXX".$val;
 
         // Search img file in module dir
@@ -1841,7 +1841,7 @@ a.tmenuimage {
         // Img file not found
         if (! $found)
         {
-            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png",1);
+            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png", 1);
             $found=1;
             if ($generic < 4) $generic++;
             print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
@@ -1856,7 +1856,7 @@ a.tmenuimage {
     $j=0;
     while ($j++ < 4)
     {
-        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png",1);
+        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png", 1);
         print "div.mainmenu.generic".$j." {\n";
         print "	background-image: url(".$url.");\n";
         print "}\n";
