@@ -1319,10 +1319,9 @@ if ($source == 'membersubscription')
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
-	if ($object->datefin > 0)
-	{
+	if ($object->datefin > 0) {
 	    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("DateEndSubscription");
-	    print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->datefin,'day');
+	    print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->datefin, 'day');
 	    print '</td></tr>'."\n";
 	}
 
