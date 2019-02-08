@@ -1716,9 +1716,9 @@ a.tmenuimage {
 
 /* Do not load menu img for other if hidden to save bandwidth */
 
-<?php if (empty($dol_hide_topmenu)) : ?>
+<?php if (empty($dol_hide_topmenu)) { ?>
     <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 1); ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
