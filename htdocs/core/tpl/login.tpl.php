@@ -21,10 +21,9 @@
 
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -61,19 +60,24 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 
 $colorbackhmenu1='60,70,100';      // topmenu
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
-$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<?php if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
+<?php
+if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
-	?>
+?>
 	<body class="body bodylogin" style="background-image: url('<?php echo $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND; ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
-	<?php } else { ?>
+<?php
+} else {
+?>
 	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
-<?php } ?>
+<?php
+}
+?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">

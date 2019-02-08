@@ -34,8 +34,8 @@ class Shipments extends DolibarrApi
      */
     static $FIELDS = array(
         'socid',
-    	'origin_id',
-    	'origin_type',
+        'origin_id',
+        'origin_type',
     );
 
     /**
@@ -184,9 +184,9 @@ class Shipments extends DolibarrApi
      */
     function post($request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-			  throw new RestException(401, "Insuffisant rights");
-		  }
+        if (! DolibarrApiAccess::$user->rights->expedition->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -194,11 +194,11 @@ class Shipments extends DolibarrApi
             $this->shipment->$field = $value;
         }
         if (isset($request_data["lines"])) {
-          $lines = array();
-          foreach ($request_data["lines"] as $line) {
-            array_push($lines, (object) $line);
-          }
-          $this->shipment->lines = $lines;
+            $lines = array();
+            foreach ($request_data["lines"] as $line) {
+                array_push($lines, (object) $line);
+            }
+            $this->shipment->lines = $lines;
         }
 
         if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
@@ -220,26 +220,26 @@ class Shipments extends DolibarrApi
     /*
     function getLines($id)
     {
-      if(! DolibarrApiAccess::$user->rights->expedition->lire) {
-		  	throw new RestException(401);
-		  }
+        if(! DolibarrApiAccess::$user->rights->expedition->lire) {
+            throw new RestException(401);
+        }
 
-      $result = $this->shipment->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Shipment not found');
-      }
+        $result = $this->shipment->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Shipment not found');
+        }
 
-		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-      $this->shipment->getLinesArray();
-      $result = array();
-      foreach ($this->shipment->lines as $line) {
-        array_push($result,$this->_cleanObjectDatas($line));
-      }
-      return $result;
+        if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $this->shipment->getLinesArray();
+        $result = array();
+        foreach ($this->shipment->lines as $line) {
+            array_push($result,$this->_cleanObjectDatas($line));
+        }
+        return $result;
     }
-	*/
+    */
 
     /**
      * Add a line to given shipment
@@ -254,20 +254,20 @@ class Shipments extends DolibarrApi
     /*
     function postLine($id, $request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-		  	throw new RestException(401);
-		  }
+        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+            throw new RestException(401);
+        }
 
-      $result = $this->shipment->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Shipment not found');
-      }
+        $result = $this->shipment->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Shipment not found');
+        }
 
-		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-			$request_data = (object) $request_data;
-      $updateRes = $this->shipment->addline(
+        if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $request_data = (object) $request_data;
+        $updateRes = $this->shipment->addline(
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -294,13 +294,13 @@ class Shipments extends DolibarrApi
                         $request_data->origin,
                         $request_data->origin_id,
                         $request_data->multicurrency_subprice
-      );
+        );
 
-      if ($updateRes > 0) {
-        return $updateRes;
+        if ($updateRes > 0) {
+            return $updateRes;
 
-      }
-      return false;
+        }
+        return false;
     }*/
 
     /**
@@ -317,20 +317,20 @@ class Shipments extends DolibarrApi
     /*
     function putLine($id, $lineid, $request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-		  	throw new RestException(401);
-		  }
+        if (! DolibarrApiAccess::$user->rights->expedition->creer) {
+            throw new RestException(401);
+        }
 
-      $result = $this->shipment->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Shipment not found');
-      }
+        $result = $this->shipment->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Shipment not found');
+        }
 
-		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-			$request_data = (object) $request_data;
-      $updateRes = $this->shipment->updateline(
+        if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $request_data = (object) $request_data;
+        $updateRes = $this->shipment->updateline(
                         $lineid,
                         $request_data->desc,
                         $request_data->subprice,
@@ -352,15 +352,15 @@ class Shipments extends DolibarrApi
                         $request_data->special_code,
                         $request_data->array_options,
                         $request_data->fk_unit,
-      					$request_data->multicurrency_subprice
-      );
+                        $request_data->multicurrency_subprice
+        );
 
-      if ($updateRes > 0) {
-        $result = $this->get($id);
-        unset($result->line);
-        return $this->_cleanObjectDatas($result);
-      }
-      return false;
+        if ($updateRes > 0) {
+            $result = $this->get($id);
+            unset($result->line);
+            return $this->_cleanObjectDatas($result);
+        }
+        return false;
     }*/
 
     /**
@@ -414,9 +414,9 @@ class Shipments extends DolibarrApi
      */
     function put($id, $request_data = null)
     {
-      if (! DolibarrApiAccess::$user->rights->expedition->creer) {
-		  	throw new RestException(401);
-		  }
+        if (! DolibarrApiAccess::$user->rights->expedition->creer) {
+            throw new RestException(401);
+        }
 
         $result = $this->shipment->fetch($id);
         if (! $result) {
@@ -495,15 +495,15 @@ class Shipments extends DolibarrApi
      */
     function validate($id, $notrigger = 0)
     {
-        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+        if (! DolibarrApiAccess::$user->rights->expedition->creer) {
 			throw new RestException(401);
 		}
         $result = $this->shipment->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -513,15 +513,15 @@ class Shipments extends DolibarrApi
 		}
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
-		}
-	$result = $this->shipment->fetch($id);
-        if( ! $result ) {
+        }
+        $result = $this->shipment->fetch($id);
+        if ( ! $result ) {
             throw new RestException(404, 'Shipment not found');
         }
 
-	if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-       }
+        }
 
         $this->shipment->fetchObjectLinked();
         return $this->_cleanObjectDatas($this->shipment);
@@ -631,8 +631,8 @@ class Shipments extends DolibarrApi
 
         if (! empty($object->lines) && is_array($object->lines))
         {
-        	foreach ($object->lines as $line)
-        	{
+            foreach ($object->lines as $line)
+            {
         		unset($line->tva_tx);
         		unset($line->vat_src_code);
         		unset($line->total_ht);

@@ -386,8 +386,8 @@ class Tickets extends DolibarrApi
     {
         $ticketstatic = new Ticket($this->db);
         if (! DolibarrApiAccess::$user->rights->ticket->write) {
-      throw new RestException(401);
-    }
+            throw new RestException(401);
+        }
         // Check mandatory fields
         $result = $this->_validateMessage($request_data);
 

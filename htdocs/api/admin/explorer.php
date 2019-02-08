@@ -89,15 +89,14 @@ foreach ($modulesdir as $dir)
 					$obj = 'facture';
 				}
                 if ($module == 'ficheinter') {
-                                       $obj = 'fichinter';
-                                       $part = 'fichinter';
-                                       $module='fichinter';
-                               }
+                    $obj = 'fichinter';
+                    $part = 'fichinter';
+                    $module='fichinter';
+                }
 
-		if (empty($conf->$module->enabled)) $enabled=false;
+                if (empty($conf->$module->enabled)) $enabled=false;
 
-                if ($enabled)
-                {
+                if ($enabled) {
                     /*
                      * If exists, load the API class for enable module
                      *

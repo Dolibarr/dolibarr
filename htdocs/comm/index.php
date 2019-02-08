@@ -186,7 +186,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1, 'customer', 16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+				print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
 				$i++;
 				$total += $obj->total_ht;
 			}
@@ -266,7 +266,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'supplier', 16);
                 print '</td>';
-                print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+                print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
                 $i++;
                 $total += $obj->total_ht;
             }
@@ -345,10 +345,10 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				print $companystatic->getNomUrl(1, 'customer', 16);
 				print '</td>';
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
-					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
 				}
 				else {
-					print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
 				$i++;
 				$total += $obj->total_ttc;
@@ -432,10 +432,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 print $companystatic->getNomUrl(1, 'supplier', 16);
                 print '</td>';
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
-					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
 				}
 				else {
-					print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
                 $i++;
                 $total += $obj->total_ttc;

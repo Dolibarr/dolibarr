@@ -130,7 +130,7 @@ if ($resql)
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
 	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -149,7 +149,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_compta" value="'.dol_escape_htmltag(GETPOST("search_compta")).'">';
 	print '</td>';
 
-	print '<td align="right" colspan="2" class="liste_titre">';
+	print '<td colspan="2" class="liste_titre right">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 

@@ -98,17 +98,16 @@ print '<br>';
 
 $arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook');
 
-foreach($arrayofsocialnetworks as $snkey => $snlabel)
-{
-	$consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
-  if ($conf->use_javascript_ajax) {
-    $link = ajax_constantonoff($consttocheck);
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    $link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
-}
-  
-	print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
+foreach($arrayofsocialnetworks as $snkey => $snlabel) {
+    $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
+    if ($conf->use_javascript_ajax) {
+        $link = ajax_constantonoff($consttocheck);
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        $link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
+    }
+
+    print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
 }
 
 

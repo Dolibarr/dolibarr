@@ -766,15 +766,15 @@ else
 			if ($objp->amount < 0)
 			{
 				$totald = $totald + abs($objp->amount);
-				print '<td align="right" class="nowrap">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				print '<td class="nowrap right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			}
 			else
 			{
 				$totalc = $totalc + abs($objp->amount);
-				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
+				print '<td>&nbsp;</td><td class="nowrap right">'.price($objp->amount)."</td>\n";
 			}
 
-			print '<td align="right" class="nowrap">'.price(price2num($total, 'MT'))."</td>\n";
+			print '<td class="nowrap right">'.price(price2num($total, 'MT'))."</td>\n";
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
@@ -793,7 +793,7 @@ else
 	}
 
 	// Line Total
-	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
 	print "\n<tr>";

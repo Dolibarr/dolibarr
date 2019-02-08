@@ -235,7 +235,10 @@ if ($permission) {
 	</form>
 
 <?php $i++; ?>
-<?php } } ?>
+<?php
+        }
+    }
+?>
 
 </div>
 </div>

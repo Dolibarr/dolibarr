@@ -5434,8 +5434,7 @@ abstract class CommonObject
 			elseif (in_array($type, array('int','integer','price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
 			{
 				$morecss = 'maxwidth75';
-                        }elseif ($type == 'url')
-			{
+            } elseif ($type == 'url') {
 				$morecss='minwidth400';
 			}
 			elseif ($type == 'boolean')

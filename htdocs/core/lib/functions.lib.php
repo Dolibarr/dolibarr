@@ -2365,9 +2365,10 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		{//ex: +66_A_BCD_EF_GHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 3);
 		}
-		}
+	}
 	elseif (strtoupper($countrycode) == "MU")
-	{//Maurice
+	{
+        //Maurice
 		if(dol_strlen($phone) == 11)
 		{//ex: +230_ABC_DE_FG
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
@@ -2514,9 +2515,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	elseif(strtoupper($countrycode) == "AU")
-	{//Australie
-		 if(dol_strlen($phone) == 12)
-		{//ex: +61_A_BCDE_FGHI
+	{
+        //Australie
+		if(dol_strlen($phone) == 12)
+		{
+            //ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
 	}
@@ -2593,7 +2596,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
-	  }
+	}
 
 	return $rep;
 }
@@ -5887,10 +5890,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
 
 			// TODO Remove this
 			$msgishtml = 0;
@@ -7085,7 +7088,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 				}
 				elseif (count($values) == 5)       // deprecated
 				{
-					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
+					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);

@@ -126,7 +126,8 @@ dol_fiche_end();
 print '</form>';
 
 $sql = "SELECT";
-if ($agentid > 0) $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
+$sql.= " s.rowid as socid,";
+if ($agentid > 0) $sql.= " s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
@@ -213,20 +214,31 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$pa = $objp->buying_price;
-			$pv = $objp->selling_price;
-			$marge = $objp->marge;
+                    $seller_nb = 1;
+                    if ($objp->socid > 0) {
+                        // sql nb sellers
+                        $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
+                        $sql_seller .= " FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+                        $sql_seller .= " WHERE sc.fk_soc = " . $objp->socid;
 
-			if ($marge < 0)
-			{
-				$marginRate = ($pa != 0)?-1*(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?-1*(100 * $marge / $pv):'' ;
-			}
-			else
-			{
-				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
-				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
-			}
+                        $resql_seller = $db->query($sql_seller);
+                        if (!$resql_seller) {
+                            dol_print_error($db);
+                        } else {
+                            if ($obj_seller = $db->fetch_object($resql_seller)) {
+                                if ($obj_seller->nb > 0) {
+                                    $seller_nb = $obj_seller->nb;
+                                }
+                            }
+                        }
+                    }
+
+                    $pa = $objp->buying_price / $seller_nb;
+                    $pv = $objp->selling_price / $seller_nb;
+                    $marge = $objp->marge / $seller_nb;
+
+                    $marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
+                    $markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {

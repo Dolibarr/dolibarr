@@ -622,7 +622,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-	                        print '<td align="right">'.price($objp->am).'</td>';
+	                        print '<td align="right">'.price($objp->am);
+							if ($creditnotes) print '+'.price($creditnotes);
+							if ($deposits) print '+'.price($deposits);
+							print '</td>';
 
 	                        print '<td align="right">'.price($remaintopay).'</td>';
 
@@ -677,6 +680,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
+							$totalrecucreditnote+=$creditnotes;
+							$totalrecudeposits+=$deposits;
 	                        $i++;
 	                    }
 	                    if ($i > 1)
@@ -689,8 +694,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+							print '<td align="right"><b>'.price($totalrecu);
+							if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+							if ($totalrecudeposits) print '+'.price($totalrecudeposits);
+							print	'</b></td>';
+	                        print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
 	                        print '<td align="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
 							if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 	                        print "</tr>\n";

@@ -837,12 +837,12 @@ if (empty($reshook))
 			$type = GETPOST('type');
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 
-				// Check parameters
-				if (GETPOST('type') < 0) {
-					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-					$error ++;
-				}
+			// Check parameters
+			if (GETPOST('type') < 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+				$error ++;
 			}
+		}
 		if ($qty < 0) {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
@@ -1481,13 +1481,13 @@ else
 		}
 		else
 		{
-				if ($object->frequency > 0)
-				{
-					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
-				}
-				else
-				{
-					print $langs->trans("NotARecurringInvoiceTemplate");
+			if ($object->frequency > 0)
+			{
+				print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
+			}
+			else
+			{
+				print $langs->trans("NotARecurringInvoiceTemplate");
 			}
 		}
 		print '</td></tr>';
