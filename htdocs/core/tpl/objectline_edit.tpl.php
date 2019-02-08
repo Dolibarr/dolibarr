@@ -69,9 +69,13 @@ $coldisplay=-1; // We remove first td
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
+	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
 
+		<?php
+		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+		?>
 		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
 		if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
