@@ -652,21 +652,21 @@ if ($resql)
 	if (! empty($arrayfields['c.total_ht']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_total_ht" value="'.$search_total_ht.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['c.total_vat']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_total_vat" value="'.$search_total_vat.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['c.total_ttc']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
@@ -691,7 +691,7 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['c.fk_statut']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus=array(
 			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
 			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
@@ -731,9 +731,9 @@ if ($resql)
 	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['c.date_commande']['checked']))  print_liste_field_titre($arrayfields['c.date_commande']['label'], $_SERVER["PHP_SELF"], 'c.date_commande', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['c.date_delivery']['checked']))  print_liste_field_titre($arrayfields['c.date_delivery']['label'], $_SERVER["PHP_SELF"], 'c.date_livraison', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.tva', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -742,7 +742,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.date_creation", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, 'align="center"', $sortfield, $sortorder, '');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print '</tr>'."\n";
@@ -914,7 +914,7 @@ if ($resql)
 			}
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;

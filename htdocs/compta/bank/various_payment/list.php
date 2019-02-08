@@ -218,12 +218,12 @@ if ($result)
 	}
 
 	// Debit
-	print '<td class="liste_titre" align="right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
+	print '<td class="liste_titre right"><input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'"></td>';
 
 	// Credit
-	print '<td class="liste_titre" align="right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
+	print '<td class="liste_titre right"><input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'"></td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
@@ -238,8 +238,8 @@ if ($result)
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
 	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -328,8 +328,8 @@ if ($result)
 
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total" align="right">'.price($totalarray['totaldeb'])."</td>";
-	print '<td class="liste_total" align="right">'.price($totalarray['totalcred'])."</td>";
+	print '<td class="liste_total right">'.price($totalarray['totaldeb'])."</td>";
+	print '<td class="liste_total right">'.price($totalarray['totalcred'])."</td>";
 	print '<td></td>';
 	print '</tr>';
 

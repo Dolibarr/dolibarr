@@ -394,7 +394,7 @@ print $hookmanager->resPrint;
 if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'], $_SERVER["PHP_SELF"], "b.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['b.tms']['checked']))            print_liste_field_titre($arrayfields['b.tms']['label'], $_SERVER["PHP_SELF"], "b.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'], $_SERVER["PHP_SELF"], 'b.clos', '', $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
@@ -550,7 +550,7 @@ foreach ($accounts as $key=>$type)
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
-		print '<td align="right" class="nowraponall">';
+		print '<td class="nowraponall right">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

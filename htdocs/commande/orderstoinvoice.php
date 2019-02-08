@@ -610,7 +610,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print_liste_field_titre('RefCustomerOrder', $_SERVER["PHP_SELF"], 'c.ref_client', '', '&amp;socid='.$socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('OrderDate', $_SERVER["PHP_SELF"], 'c.date_commande', '', '&amp;socid='.$socid, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre('DeliveryDate', $_SERVER["PHP_SELF"], 'c.date_livraison', '', '&amp;socid='.$socid, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre('Status', '', '', '', '', 'align="right"');
+		print_liste_field_titre('Status', '', '', '', '', 'class="right"');
 		print_liste_field_titre('GenerateBill', '', '', '', '', 'align="center"');
 		print '</tr>';
 
@@ -638,7 +638,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</td>';
 
 		//SEARCH BUTTON
-		print '<td align="right" class="liste_titre">';
+		print '<td class="liste_titre right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '</td>';
 
@@ -678,7 +678,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			}
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
@@ -699,7 +699,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '</td>';
 
 			// Statut
-			print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5).'</td>';
+			print '<td class="nowrap right">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5).'</td>';
 
 			// Checkbox
 			print '<td align="center">';
@@ -718,7 +718,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		 * Boutons actions
 		*/
 		print '<br><div class="center"><input type="checkbox" '.(empty($conf->global->INVOICE_CLOSE_ORDERS_OFF_BY_DEFAULT_FORMASSINVOICE)?' checked="checked"':'').' name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
-		print '<div align="right">';
+		print '<div class="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';

@@ -193,7 +193,7 @@ if ($result)
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
@@ -206,8 +206,8 @@ if ($result)
 	if (! $filteremail) print_liste_field_titre("NbOfEMails", $_SERVER["PHP_SELF"], "m.nbemail", $param, "", 'align="center"', $sortfield, $sortorder);
 	if (! $filteremail) print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
 	else print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail?"mc.statut":"m.statut"), $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail?"mc.statut":"m.statut"), $param, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 
@@ -256,7 +256,7 @@ if ($result)
 		print '</td>';
 
 		// Status
-		print '<td align="right" class="nowrap">';
+		print '<td class="nowrap right">';
 		if ($filteremail)
 		{
 			print $email::libStatutDest($obj->sendstatut, 2);

@@ -619,21 +619,21 @@ if ($resql)
 	if (! empty($arrayfields['p.total_ht']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['p.total_vat']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['p.total_ttc']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
@@ -670,7 +670,7 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['p.fk_statut']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$formpropal->selectProposalStatus($viewstatut, 1, 0, 1, 'customer', 'search_statut');
 		print '</td>';
 	}
@@ -698,9 +698,9 @@ if ($resql)
 	if (! empty($arrayfields['p.fin_validite']['checked']))   print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.date_livraison']['checked'])) print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'ddelivery', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['ava.rowid']['checked']))        print_liste_field_titre($arrayfields['ava.rowid']['label'], $_SERVER["PHP_SELF"], 'availability', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.total_ht']['checked']))       print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_ht']['checked']))       print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	// Extra fields
@@ -711,7 +711,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['p.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['p.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print '</tr>'."\n";
 
@@ -753,7 +753,7 @@ if ($resql)
 				print '</td>';
 			}
 			// Other picto tool
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" class="nobordernopadding right">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;

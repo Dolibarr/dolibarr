@@ -123,12 +123,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
     if (! empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
@@ -226,12 +226,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$i++;
 		}
 	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-	    print '<td align="right" class="liste_total"></td>';     // A total here has no sense
+	    print '<td class="liste_total right"></td>';     // A total here has no sense
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
         if (! empty($conf->banque->enabled)) print '<td></td>';
-	    print '<td align="right" class="liste_total">'.price($totalpaye)."</td>";
+	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
 	else
@@ -283,7 +283,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'align="center"', $sortfield, $sortorder);
 			print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 			if (! empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		    print "</tr>\n";
 		    $var=1;
 		    while ($i < $num)
