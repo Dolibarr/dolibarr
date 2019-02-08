@@ -834,7 +834,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$y=0;
 					$current_page++;
-					$pdf->AddPage('','',true);
+					$pdf->AddPage('', '', true);
 					if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					$pdf->setPage($current_page);
@@ -891,7 +891,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$y=0;
 					$current_page++;
-					$pdf->AddPage('','',true);
+					$pdf->AddPage('', '', true);
 					if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					$pdf->setPage($current_page);
@@ -933,6 +933,7 @@ class pdf_crabe extends ModelePDFFactures
 	 * @param int 			$tab3_top			pos y
 	 * @param int 			$tab3_width			width
 	 * @param int 			$tab3_height		height
+	 * @return void
 	 */
 	function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
 	{
