@@ -621,7 +621,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	                        print '<td align="right">'.price($objp->am);
 							if ($creditnotes) print '+'.price($creditnotes);
-							if ($deposits) print '+'.price($deposits);	
+							if ($deposits) print '+'.price($deposits);
 							print '</td>';
 
 	                        print '<td align="right">'.price($remaintopay).'</td>';
