@@ -1978,6 +1978,21 @@ if (! function_exists("llxFooter"))
 
 		print "</body>\n";
 		print "</html>\n";
-	}
+
+        ?>
+
+        <script type="text/javascript">
+            //Prevent from multiple form sending
+            $(function() {
+                $('input[type=submit]').click(function(e) {
+                    e.preventDefault();
+                    $(this).prop('disabled', true);
+                    $(this).closest('form').submit();
+                });
+            });
+        </script>
+        <?php
+
+    }
 }
 
