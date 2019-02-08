@@ -204,13 +204,15 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<?php } ?>
 
 	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
-	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
-			// I comment this because it shows info even when not required
-			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
-			// must also not be output for most entities (proposal, intervention, ...)
-			//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-			echo price($line->qty, 0, '', 0, 0);  // Yes, it is a quantity, not a price, but we just want the formating role of function price
-		} else echo '&nbsp;';	?>
+    <?php
+    if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
+		// I comment this because it shows info even when not required
+		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
+		// must also not be output for most entities (proposal, intervention, ...)
+		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+		echo price($line->qty, 0, '', 0, 0);  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+    } else echo '&nbsp;';
+    ?>
 	</td>
 
 	<?php
@@ -308,9 +310,13 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
     <?php } else { ?>
     <td <?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
-<?php } else { ?>
+<?php
+    } else {
+?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
-<?php } ?>
+<?php
+    }
+?>
 	<?php  if($action == 'selectlines'){ ?>
 	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>

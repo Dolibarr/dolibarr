@@ -460,8 +460,8 @@ if ($id > 0 || ! empty($ref)) {
 		$listwarehouses = $entrepot->list_array(1);
 
 		if(empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
-        else print  '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
-		
+        else print '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
+
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		if(empty($conf->reception->enabled))print '<input type="hidden" name="action" value="dispatch">';
 		else print '<input type="hidden" name="action" value="create">';
@@ -726,19 +726,19 @@ if ($id > 0 || ! empty($ref)) {
 			// modified by hook
 			if (empty($reshook))
 			{
-				if(empty($conf->reception->enabled)){
-				print $langs->trans("Comment").' : ';
-				print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
-				print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
-				// print ' / '.$object->ref_supplier; // Not yet available
-				print '" class="flat"><br>';
+                if (empty($conf->reception->enabled)){
+                    print $langs->trans("Comment").' : ';
+                    print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
+                    print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+                    // print ' / '.$object->ref_supplier; // Not yet available
+                    print '" class="flat"><br>';
 
-				print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
-			}
-			empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
+                    print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+                }
+                empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
 
-			print '<br><input type="submit" class="button" value="' . $dispatchBt. '"';
-				if (count($listwarehouses) <= 0)
+                print '<br><input type="submit" class="button" value="' . $dispatchBt. '"';
+                if (count($listwarehouses) <= 0)
 					print ' disabled';
 				print '>';
 			}
@@ -787,7 +787,7 @@ if ($id > 0 || ! empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';
-			
+
 			print '<td>' . $langs->trans("Product") . '</td>';
 			print '<td>' . $langs->trans("DateCreation") . '</td>';
 			print '<td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
@@ -809,19 +809,19 @@ if ($id > 0 || ! empty($ref)) {
 				$objp = $db->fetch_object($resql);
 
 				print "<tr " . $bc[$var] . ">";
-				
+
 				if(!empty($conf->reception->enabled) ){
 					print '<td>';
 					if (!empty($objp->fk_reception)){
-						
+
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
 						print $reception->getNomUrl(1);
 					}
-				
+
 					print "</td>";
 				}
-				
+
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
@@ -895,7 +895,7 @@ if ($id > 0 || ! empty($ref)) {
 					print '</td>';
 					print '<td align="center">';
 					print '</td>';
-				
+
 
 
 				print "</tr>\n";

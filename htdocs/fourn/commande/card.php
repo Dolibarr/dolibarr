@@ -2222,227 +2222,227 @@ elseif (! empty($object->id))
 
 	dol_fiche_end();
 
-		/**
-		 * Boutons actions
-		 */
+	/**
+	 * Boutons actions
+	 */
 
-		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
+	if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
+	{
+		print '<div	class="tabsAction">';
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		// modified by hook
+		if (empty($reshook))
 		{
-			print '<div	class="tabsAction">';
+			$object->fetchObjectLinked();		// Links are used to show or not button, so we load them now.
 
-			$parameters = array();
-			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-			// modified by hook
-			if (empty($reshook))
+			// Validate
+			if ($object->statut == 0 && $num > 0)
 			{
-				$object->fetchObjectLinked();		// Links are used to show or not button, so we load them now.
-
-				// Validate
-				if ($object->statut == 0 && $num > 0)
+				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
+			   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 				{
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
-				   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
-					{
-						$tmpbuttonlabel=$langs->trans('Validate');
-						if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+					$tmpbuttonlabel=$langs->trans('Validate');
+					if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
 
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">';
-						print $tmpbuttonlabel;
-						print '</a>';
-					}
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">';
+					print $tmpbuttonlabel;
+					print '</a>';
 				}
-				// Create event
-				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
-				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
-				}*/
+			}
+			// Create event
+			/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
+			}*/
 
-				// Modify
-				if ($object->statut == 1)
+			// Modify
+			if ($object->statut == 1)
+			{
+				if ($user->rights->fournisseur->commande->commander)
 				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
-					}
-				}
-
-				// Approve
-				if ($object->statut == 1)
-				{
-					if ($user->rights->fournisseur->commande->approuver)
-					{
-						if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && ! empty($object->user_approve_id))
-						{
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
-						}
-						else
-						{
-							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-						}
-					}
-					else
-					{
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("ApproveOrder").'</a>';
-					}
-				}
-
-				// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-				if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
-				{
-					if ($object->statut == 1)
-					{
-						if ($user->rights->fournisseur->commande->approve2)
-						{
-							if (! empty($object->user_approve_id2))
-							{
-								print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SecondApprovalAlreadyDone")).'">'.$langs->trans("Approve2Order").'</a>';
-							}
-							else
-							{
-								print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve2">'.$langs->trans("Approve2Order").'</a>';
-							}
-						}
-						else
-						{
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Approve2Order").'</a>';
-						}
-					}
-				}
-
-				// Refuse
-				if ($object->statut == 1)
-				{
-					if ($user->rights->fournisseur->commande->approuver || $user->rights->fournisseur->commande->approve2)
-					{
-						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
-					}
-					else
-					{
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("RefuseOrder").'</a>';
-					}
-				}
-
-				// Send
-				if (in_array($object->statut, array(2, 3, 4, 5)))
-				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-					}
-				}
-
-				// Reopen
-				if (in_array($object->statut, array(2)))
-				{
-					$buttonshown=0;
-					if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
-					{
-						if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
-							|| (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id))
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
-							$buttonshown++;
-						}
-					}
-					if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
-					{
-						if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
-							|| (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
-						}
-					}
-				}
-				if (in_array($object->statut, array(3, 4, 5, 6, 7, 9)))
-				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-					}
-				}
-
-				// Ship
-
-				if (! empty($conf->stock->enabled) && (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
-				{
-					if (in_array($object->statut, array(3,4,5))) {
-						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
-						}
-					}
-				}
-
-				if ($object->statut == 2)
-				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=makeorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
-					}
-					else
-					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
-					}
-				}
-
-				// Create bill
-				if (! empty($conf->facture->enabled))
-				{
-					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
-					{
-						if ($user->rights->fournisseur->facture->creer)
-						{
-							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-						}
-					}
-				}
-
-				// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
-				if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1)  // statut 2 means approved
-				{
-					if (empty($conf->facture->enabled))
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-					}
-					elseif (!empty($object->linkedObjectsIds['invoice_supplier']))
-					{
-						if ($user->rights->fournisseur->facture->creer)
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-						}
-					}
-				}
-
-				// Create a remote order using WebService only if module is activated
-				if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
-				}
-
-				// Clone
-				if ($user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
-				}
-
-				// Cancel
-				if ($object->statut == 2)
-				{
-					if ($user->rights->fournisseur->commande->commander)
-					{
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-					}
-				}
-
-				// Delete
-				if ($user->rights->fournisseur->commande->supprimer)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
 				}
 			}
 
-			print "</div>";
+			// Approve
+			if ($object->statut == 1)
+			{
+				if ($user->rights->fournisseur->commande->approuver)
+				{
+					if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && ! empty($object->user_approve_id))
+					{
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
+					}
+					else
+					{
+						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+					}
+				}
+				else
+				{
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("ApproveOrder").'</a>';
+				}
+			}
+
+			// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
+			if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
+			{
+				if ($object->statut == 1)
+				{
+					if ($user->rights->fournisseur->commande->approve2)
+					{
+						if (! empty($object->user_approve_id2))
+						{
+							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SecondApprovalAlreadyDone")).'">'.$langs->trans("Approve2Order").'</a>';
+						}
+						else
+						{
+							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve2">'.$langs->trans("Approve2Order").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Approve2Order").'</a>';
+					}
+				}
+			}
+
+			// Refuse
+			if ($object->statut == 1)
+			{
+				if ($user->rights->fournisseur->commande->approuver || $user->rights->fournisseur->commande->approve2)
+				{
+					print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("RefuseOrder").'</a>';
+				}
+			}
+
+			// Send
+			if (in_array($object->statut, array(2, 3, 4, 5)))
+			{
+				if ($user->rights->fournisseur->commande->commander)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+				}
+			}
+
+			// Reopen
+			if (in_array($object->statut, array(2)))
+			{
+				$buttonshown=0;
+				if (! $buttonshown && $user->rights->fournisseur->commande->approuver)
+				{
+					if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
+						|| (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id))
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+						$buttonshown++;
+					}
+				}
+				if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
+				{
+					if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
+						|| (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+					}
+				}
+			}
+			if (in_array($object->statut, array(3, 4, 5, 6, 7, 9)))
+			{
+				if ($user->rights->fournisseur->commande->commander)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+				}
+			}
+
+			// Ship
+
+			if (! empty($conf->stock->enabled) && (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
+			{
+				if (in_array($object->statut, array(3,4,5))) {
+					if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
+					}
+				}
+			}
+
+			if ($object->statut == 2)
+			{
+				if ($user->rights->fournisseur->commande->commander)
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=makeorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
+				}
+				else
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
+				}
+			}
+
+			// Create bill
+			if (! empty($conf->facture->enabled))
+			{
+				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
+				{
+					if ($user->rights->fournisseur->facture->creer)
+					{
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					}
+				}
+			}
+
+			// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
+			if ($user->rights->fournisseur->commande->creer && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1)  // statut 2 means approved
+			{
+				if (empty($conf->facture->enabled))
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+				}
+				elseif (!empty($object->linkedObjectsIds['invoice_supplier']))
+				{
+					if ($user->rights->fournisseur->facture->creer)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+					}
+				}
+			}
+
+			// Create a remote order using WebService only if module is activated
+			if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
+			}
+
+			// Clone
+			if ($user->rights->fournisseur->commande->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
+			}
+
+			// Cancel
+			if ($object->statut == 2)
+			{
+				if ($user->rights->fournisseur->commande->commander)
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+				}
+			}
+
+			// Delete
+			if ($user->rights->fournisseur->commande->supprimer)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			}
+		}
+
+		print "</div>";
 
 
 

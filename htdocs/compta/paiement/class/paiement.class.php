@@ -553,8 +553,8 @@ class Paiement extends CommonObject
 			{
 			    $this->db->rollback();
 			    return -1;
-			 }
-		    // End call triggers
+            }
+            // End call triggers
 		}
 
 		// Delete payment (into paiement_facture and paiement)

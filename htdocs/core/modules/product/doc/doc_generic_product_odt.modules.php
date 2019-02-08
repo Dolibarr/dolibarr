@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@products.sourceforge.net>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2010-2012  Laurent Destailleur     <eldy@products.sourceforge.net>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -321,12 +321,13 @@ class doc_generic_product_odt extends ModelePDFProduct
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
-					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else {
-                        			$socobject = $object->thirdparty;
-                        			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-                        			$contactobject = $object->contact;
-                    			}
+					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+                        $socobject = $object->contact;
+                    } else {
+                        $socobject = $object->thirdparty;
+                        // if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+                        $contactobject = $object->contact;
+                    }
 				}
 				else
 				{
