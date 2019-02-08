@@ -639,6 +639,8 @@ if (empty($reshook))
 
 					$ref_supplier = $productsupplier->ref_supplier;
 
+                    $fk_unit = $productsupplier->fk_unit;
+
 					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					if (empty($tva_tx)) $tva_npr=0;
