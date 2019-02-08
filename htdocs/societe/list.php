@@ -838,7 +838,7 @@ if (! empty($arrayfields['customerorsupplier']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
 	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-	print $formcompany->selectProspectCustomerType($search_type,'search_type', 'search_type', 'list');
+	print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
 	print '</select></td>';
 }
 // Prospect level

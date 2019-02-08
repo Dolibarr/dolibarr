@@ -882,7 +882,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DefaultCustomerType").'</td>';
 print '<td>';
-print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT,'defaultcustomertype','defaultcustomertype','admin');
+print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
 print '</td>';
 print '<td align="center">';
 print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
