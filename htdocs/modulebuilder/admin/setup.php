@@ -35,10 +35,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if($action=="update"){
-   $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README'), 'chaine', 0, '', $conf->entity);
-   if ($res1 < 0)
-    {
+if ($action=="update"){
+    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README'), 'chaine', 0, '', $conf->entity);
+    if ($res1 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
     }

@@ -1291,7 +1291,7 @@ class ActionComm extends CommonObject
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
 		if (! empty($this->note))
-			$tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . (dol_textishtml($this->note) ? str_replace(array("\r","\n"), "", $this->note) : $this->note);
+		    $tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . (dol_textishtml($this->note) ? str_replace(array("\r","\n"), "", $this->note) : str_replace(array("\r","\n"), '<br>', $this->note));
 		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';

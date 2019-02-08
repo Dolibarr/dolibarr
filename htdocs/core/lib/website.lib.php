@@ -667,6 +667,10 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent.= "ob_start();\n";
 	$tplcontent.= "// END PHP ?>\n";
+	if (! empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5))
+	{
+	   $tplcontent.= "<!DOCTYPE html>\n";
+	}
 	$tplcontent.= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"':'').'>'."\n";
 	$tplcontent.= '<head>'."\n";
 	$tplcontent.= '<title>'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'</title>'."\n";

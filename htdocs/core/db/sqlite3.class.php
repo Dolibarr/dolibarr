@@ -1403,32 +1403,28 @@ class DoliDBSqlite3 extends DoliDB
         $weekday=self::calc_weekday($first_daynr, !$monday_first);
         $calc_year=$year;
 
-        if ($month == 1 && $day <= 7-$weekday)
-        {
+        if ($month == 1 && $day <= 7-$weekday) {
             if (!$week_year && (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)))
                 return 0;
             $week_year= 1;
             $calc_year--;
             $first_daynr-= ($days=self::calc_days_in_year($calc_year));
             $weekday= ($weekday + 53*7- $days) % 7;
-      }
-
-      if (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)) {
-        $days= $daynr - ($first_daynr+ (7-$weekday));
-      }
-      else {
-        $days= $daynr - ($first_daynr - $weekday);
-      }
-
-      if ($week_year && $days >= 52*7)
-      {
-        $weekday= ($weekday + self::calc_days_in_year($calc_year)) % 7;
-        if ((!$first_weekday && $weekday < 4) || ($first_weekday && $weekday == 0))
-        {
-          $calc_year++;
-          return 1;
         }
-      }
-      return floor($days/7+1);
+
+        if (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)) {
+            $days= $daynr - ($first_daynr+ (7-$weekday));
+        } else {
+            $days= $daynr - ($first_daynr - $weekday);
+        }
+
+        if ($week_year && $days >= 52*7) {
+            $weekday= ($weekday + self::calc_days_in_year($calc_year)) % 7;
+            if ((!$first_weekday && $weekday < 4) || ($first_weekday && $weekday == 0)) {
+                $calc_year++;
+                return 1;
+            }
+        }
+        return floor($days/7+1);
     }
 }

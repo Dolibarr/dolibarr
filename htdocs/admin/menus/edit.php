@@ -219,12 +219,12 @@ if ($action == 'add')
         	$menu->fk_menu=GETPOST('menuId', 'int');
         }
         else
-       {
-	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
-	       	else $menu->fk_menu=-1;
-        	$menu->fk_mainmenu=$mainmenu;
-        	$menu->fk_leftmenu=$leftmenu;
-       }
+        {
+            if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
+            else $menu->fk_menu=-1;
+            $menu->fk_mainmenu=$mainmenu;
+            $menu->fk_leftmenu=$leftmenu;
+        }
 
         $result=$menu->create($user);
         if ($result > 0)

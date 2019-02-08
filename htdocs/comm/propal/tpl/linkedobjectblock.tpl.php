@@ -24,10 +24,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -54,12 +53,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
     <tr class="<?php echo $trclass; ?>"  data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
         <td class="linkedcol-element" ><?php echo $langs->trans("Proposal"); ?>
-        <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
-            {
-                $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
-            }
-        ?>
+    <?php
+    if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
+    {
+        $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
+        print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+    }
+    ?>
         </td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
@@ -86,7 +86,7 @@ if (count($linkedObjectBlock) > 1)
     	<td class="right"></td>
     	<td class="right"></td>
     </tr>
-    <?php
+<?php
 }
 ?>
 

@@ -134,7 +134,7 @@ function LoadProducts(position, issubcat=false){
     if (currentcat=="") return;
 	pageproducts=0;
 	ishow=0; //product to show counter
-	
+
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent){
 			$("#prodesc"+ishow).text(val.label);
@@ -144,8 +144,8 @@ function LoadProducts(position, issubcat=false){
 			ishow++;
 		}
 	});
-	
-	idata=0; //product data counter	
+
+	idata=0; //product data counter
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
 		while (idata < 30) {
 			if (typeof (data[idata]) == "undefined") {
@@ -506,17 +506,17 @@ foreach($menus as $menu) {
 <?php
 $count=0;
 while ($count<32)
-	{
-	?>
+{
+?>
 			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
 				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
 				<div class='description'>
 					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
 				</div>
 			</div>
-	<?php
-	$count++;
-	}
+<?php
+    $count++;
+}
 ?>
 		</div>
 	</div>

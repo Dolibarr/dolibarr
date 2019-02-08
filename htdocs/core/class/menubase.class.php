@@ -713,5 +713,5 @@ class Menubase
                 $this->recur($tab, $tab[$x]['rowid'], ($level+1));
             }
         }
-   }
+    }
 }

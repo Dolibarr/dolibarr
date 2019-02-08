@@ -308,17 +308,17 @@ if ($rowid && $action != 'edit')
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
-    
+
     // Type
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
     print '<td class="valeur">';
-    if (  ! empty($object->fk_type) ) {
-      $adht->fetch($object->fk_type);
-    print $adht->getNomUrl(1);
-      } else {
-    print $langs->trans("NoType");
-      }
+    if (! empty($object->fk_type) ) {
+        $adht->fetch($object->fk_type);
+        print $adht->getNomUrl(1);
+    } else {
+        print $langs->trans("NoType");
+    }
     print '</td></tr>';
 
     // Member
