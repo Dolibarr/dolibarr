@@ -697,7 +697,7 @@ class Holiday extends CommonObject
 		} else {
 			$error++;
 		}
-		$sql.= " ref = '".$num."'";
+		$sql.= " ref = '".$this->db->escape($num)."'";
 		$sql.= " WHERE rowid= ".$this->id;
 
 		$this->db->begin();
@@ -1496,7 +1496,7 @@ class Holiday extends CommonObject
 			$nbHoliday = price2num($nbHoliday, 5);
 
 			$sql = "SELECT nb_holiday FROM ".MAIN_DB_PREFIX."holiday_users";
-			$sql.= " WHERE fk_user = '".$userID."' AND fk_type = ".$fk_type;
+			$sql.= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1507,7 +1507,7 @@ class Holiday extends CommonObject
 					// Update for user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
 					$sql.= " nb_holiday = ".$nbHoliday;
-					$sql.= " WHERE fk_user = '".$userID."' AND fk_type = ".$fk_type;
+					$sql.= " WHERE fk_user = ".(int) $userID." AND fk_type = ".(int) $fk_type;
 					$result = $this->db->query($sql);
 					if (! $result)
 					{
@@ -1520,7 +1520,7 @@ class Holiday extends CommonObject
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
 					$sql.= $nbHoliday;
-					$sql.= ", '".$userID."', ".$fk_type.")";
+					$sql.= ", ".(int) $userID.", ".(int) $fk_type.")";
 					$result = $this->db->query($sql);
 					if (! $result)
 					{
