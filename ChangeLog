@@ -19,7 +19,6 @@ FIX: Price in combo list of service does not use the correct price level
 FIX: supplier invoice payment total doesnt care about deposit or credit
 FIX: supplier invoice product stats total ht is line total not invoice total
 FIX: Translation not loaded by scheduled jobs
-FIX: [URGENT] broken feature, "$usercancreate" is for Dolibarr 9 - can't add lines on invoices
 FIX: wrong merged conflict
 FIX: wrong tests on fetch
 NEW: Add protection to avoid packaging if files non indexed exists into
