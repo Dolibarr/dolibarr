@@ -1717,9 +1717,9 @@ a.tmenuimage {
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) : ?>
-    <?php if(! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)): ?>
-        <?php include './main_menu_fa_icons.css' ; ?>
-    <?php else: ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
+        <?php include echo dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 1); ?>
+    <?php } else { ?>
         div.mainmenu.home{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
             background-position-x: center;
@@ -1863,8 +1863,8 @@ a.tmenuimage {
         // End of part to add more div class css
         ?>
 
-    <?php endif; //legacy icons ?>
-<?php endif; // End test if $dol_hide_topmenu ?>
+    <?php } //legacy icons ?>
+<?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
