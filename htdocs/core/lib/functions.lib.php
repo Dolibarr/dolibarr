@@ -3015,6 +3015,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
+				if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
 			}
 			elseif ($pictowithoutext == 'filter') {
 				$fakey = 'fa-'.$pictowithoutext;
