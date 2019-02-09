@@ -84,7 +84,7 @@ class box_task extends ModeleBoxes
 		$totalDuree=0;
 		$totalplannedtot=0;
 		$totaldurationtot=0;
-		
+
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		$taskstatic=new Task($db);
 
@@ -125,7 +125,7 @@ class box_task extends ModeleBoxes
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot, 'all', 25200, 5));
 					$totaldurationtot += $objp->durationtot;
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
+					$this->info_box_contents[$i][] = array('td' => 'class="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
 
 					$i++;
 				}
@@ -136,9 +136,9 @@ class box_task extends ModeleBoxes
 
 		// Add the sum at the bottom of the boxes
 		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
+		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
+		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
 		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
 	}
 

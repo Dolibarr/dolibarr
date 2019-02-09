@@ -249,18 +249,21 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"','td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"','td' => 'class="nohover center"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"',	'td' => 'align="left" class="nohover"',
-    	        										'maxlength'=>500,
-	            										'text' => $mesg);
+				$this->info_box_contents[0][0] = array(
+                    'tr'=>'class="oddeven nohover"',
+                    'td' => 'class="nohover left"',
+                    'maxlength'=>500,
+                    'text' => $mesg,
+                );
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
