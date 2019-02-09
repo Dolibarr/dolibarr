@@ -698,7 +698,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
 							if ($totalrecudeposits) print '+'.price($totalrecudeposits);
 							print	'</b></td>';
-	                        print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
+	                        print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 	                        print '<td align="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
 							if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 	                        print "</tr>\n";

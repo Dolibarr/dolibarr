@@ -507,7 +507,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat'))

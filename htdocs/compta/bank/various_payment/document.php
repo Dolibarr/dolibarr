@@ -82,7 +82,7 @@ if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, 'payment');
 
 	$morehtmlref='<div class="refidno">';
 	// Project

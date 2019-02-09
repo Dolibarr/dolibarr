@@ -78,7 +78,7 @@ if ($query=="cat")
 	$new_height = $h*0.3;
 	$icon_p = imagecreatetruecolor($new_width, $new_height);
 	imagecopyresampled($icon_p, $icon, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-	imagecopymerge($image_p, $icon_p,  0, 0, 0, 0, $new_width, $new_height, 100);
+	imagecopymerge($image_p, $icon_p, 0, 0, 0, 0, $new_width, $new_height, 100);
 
 	// Output
 	imagejpeg($image_p, null, 100);

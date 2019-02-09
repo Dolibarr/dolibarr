@@ -563,7 +563,7 @@ class pdf_stdmovement extends ModelePDFMovement
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 						// $objp = $db->fetch_object($resql);
 

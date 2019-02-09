@@ -304,7 +304,7 @@ class pdf_timespent extends ModelePDFProjects
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter+1);
-								$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+								$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 								$pdf->MultiCell(0, 3, '');		// Set interline to 3
 								$pdf->SetTextColor(0, 0, 0);
 
@@ -339,7 +339,7 @@ class pdf_timespent extends ModelePDFProjects
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
 					}
 
-					$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// Ref of task
 					$pdf->SetXY($this->posxref, $curY);

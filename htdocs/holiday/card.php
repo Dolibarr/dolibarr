@@ -598,7 +598,7 @@ if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes')
                 	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
     	            $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut, 'day'), dol_print_date($object->date_fin, 'day'))."\n";
-                    $message.= GETPOST('detail_refuse','alpha')."\n\n";
+                    $message.= GETPOST('detail_refuse', 'alpha')."\n\n";
 
     	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
 

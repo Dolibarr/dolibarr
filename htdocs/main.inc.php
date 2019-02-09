@@ -97,24 +97,24 @@ function testSqlAndScriptInject($val, $type)
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/delete\s+from/i',	 $val);
-		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select\s+from/i', 	 $val);
-		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
-		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
+		$inj += preg_match('/delete\s+from/i', $val);
+		$inj += preg_match('/create\s+table/i', $val);
+		$inj += preg_match('/insert\s+into/i', $val);
+		$inj += preg_match('/select\s+from/i', $val);
+		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
+		$inj += preg_match('/user\s*\(/i', $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i', $val);				// avoid to use request that read information_schema database
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
-		$inj += preg_match('/updatexml\(/i', 	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
-		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
+		$inj += preg_match('/updatexml\(/i', $val);
+		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/union.+select/i', $val);
+		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
