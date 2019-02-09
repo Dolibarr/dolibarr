@@ -1127,11 +1127,6 @@ elseif (! empty($module))
 		$head2[$h][2] = 'description';
 		$h++;
 
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread?'@'.$dirread:'');
-		$head2[$h][1] = $langs->trans("Specifications");
-		$head2[$h][2] = 'specifications';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Languages");
 		$head2[$h][2] = 'languages';
@@ -1170,6 +1165,11 @@ elseif (! empty($module))
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cron&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("CronList");
 		$head2[$h][2] = 'cron';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread?'@'.$dirread:'');
+		$head2[$h][1] = $langs->trans("Documentation");
+		$head2[$h][2] = 'specifications';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module.($forceddirread?'@'.$dirread:'');
