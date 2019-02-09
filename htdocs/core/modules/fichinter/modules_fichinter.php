@@ -65,7 +65,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 
 
 /**
- *  Mother class numbering models of intervention sheet references
+ *  Parent class numbering models of intervention sheet references
  */
 abstract class ModeleNumRefFicheinter
 {
