@@ -94,6 +94,8 @@ if (empty($newmask))	// This should no happen
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
+    $modulename = ucfirst($modulename);     // Force first letter in uppercase
+
 	if (preg_match('/[^a-z0-9_]/i', $modulename))
 	{
 		$error++;
@@ -150,6 +152,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
 		dol_delete_file($destdir.'/class/api_mymodule.class.php');
+		dol_delete_file($destdir.'/doc/*example*');
 	}
 
 	// Edit PHP files
