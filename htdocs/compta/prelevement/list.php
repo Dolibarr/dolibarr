@@ -146,7 +146,7 @@ if ($result)
     print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -159,7 +159,7 @@ if ($result)
     print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom");
     print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", '', '', 'align="center"');
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'align="center"');
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", "", 'align="right"');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", "", 'class="right"');
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -194,7 +194,7 @@ if ($result)
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount)."</td>\n";
+        print '<td class="right">'.price($obj->amount)."</td>\n";
 
         print '<td>&nbsp;</td>';
 
