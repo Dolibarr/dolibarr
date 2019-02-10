@@ -348,47 +348,47 @@ if ($resql)
 	// Ref
 	if (! empty($arrayfields['f.titre']['checked']))
 	{
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+		print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	}
 	if (! empty($arrayfields['f.total']['checked']))
 	{
 		// Amount net
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.tva']['checked']))
 	{
 		// Amount Vat
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ttc']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
 	{
 		// Payment term
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print $form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 		print "</td>";
 	}
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		// Payment mode
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
 		print '</td>';
 	}
@@ -479,12 +479,12 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['f.titre']['checked']))         print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.total']['checked']))         print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.tva']['checked']))           print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.total_ttc']['checked']))     print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))     print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER['PHP_SELF'], "f.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['recurring']['checked']))       print_liste_field_titre($arrayfields['recurring']['label'], $_SERVER['PHP_SELF'], "recurring", "", $param, 'class="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.frequency']['checked']))     print_liste_field_titre($arrayfields['f.frequency']['label'], $_SERVER['PHP_SELF'], "f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.unit_frequency']['checked'])) print_liste_field_titre($arrayfields['f.unit_frequency']['label'], $_SERVER['PHP_SELF'], "f.unit_frequency", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.nb_gen_done']['checked']))   print_liste_field_titre($arrayfields['f.nb_gen_done']['label'], $_SERVER['PHP_SELF'], "f.nb_gen_done", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -533,21 +533,21 @@ if ($resql)
 			}
 			if (! empty($arrayfields['f.total']['checked']))
 			{
-			   print '<td align="right">'.price($objp->total).'</td>'."\n";
+			   print '<td class="right">'.price($objp->total).'</td>'."\n";
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total';
 			   $totalarray['val']['f.total'] += $objp->total;
 			}
 			if (! empty($arrayfields['f.tva']['checked']))
 			{
-			   print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
+			   print '<td class="right">'.price($objp->total_vat).'</td>'."\n";
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.tva';
 			   $totalarray['val']['f.tva'] += $objp->total_vat;
 			}
 			if (! empty($arrayfields['f.total_ttc']['checked']))
 			{
-			   print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
+			   print '<td class="right">'.price($objp->total_ttc).'</td>'."\n";
 			   if (! $i) $totalarray['nbfield']++;
 			   if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ttc';
 			   $totalarray['val']['f.total_ttc'] += $objp->total_ttc;
@@ -555,7 +555,7 @@ if ($resql)
 			// Payment term
 			if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
 			{
-			   print '<td align="right">';
+			   print '<td class="right">';
 			   print $form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
 			   print '</td>'."\n";
 			   if (! $i) $totalarray['nbfield']++;
@@ -563,7 +563,7 @@ if ($resql)
 			// Payment mode
 			if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 			{
-			   print '<td align="right">';
+			   print '<td class="right">';
 			   print $form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
 			   print '</td>'."\n";
 			   if (! $i) $totalarray['nbfield']++;
@@ -683,7 +683,7 @@ if ($resql)
 		while ($i < $totalarray['nbfield'])
 		{
 			$i++;
-			if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+			if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 			else
 			{
 				if ($i == 1)
