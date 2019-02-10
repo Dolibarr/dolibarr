@@ -1024,8 +1024,8 @@ else
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATToPay")."</td>\n";
-		    print '<td class="right">'&nbsp;</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    print '<td class="right">&nbsp;</td>'."\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 
 		    // TVA a recuperer
