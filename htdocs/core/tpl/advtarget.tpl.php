@@ -146,7 +146,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('cust_status', array (
+print $formadvtargetemaling->advMultiselectarray('cust_status', array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
 		), $array_query['cust_status']);
@@ -289,7 +289,7 @@ print '<script type="text/javascript" language="javascript">
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-						print $form->selectarray('options_' . $key, array (
+    print $form->selectarray('options_' . $key, array (
 								'' => '',
 								'1' => $langs->trans('Yes'),
 								'0' => $langs->trans('No')
@@ -341,7 +341,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('contact_status', array (
+print $formadvtargetemaling->advMultiselectarray('contact_status', array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
 		), $array_query['contact_status']);
@@ -390,7 +390,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $form->selectarray('contact_no_email', array (
+print $form->selectarray('contact_no_email', array (
 				'' => '',
 				'1' => $langs->trans('Yes'),
 				'0' => $langs->trans('No')
@@ -478,7 +478,7 @@ print '<script type="text/javascript" language="javascript">
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-					print $form->selectarray('options_' . $key . '_cnct', array (
+    print $form->selectarray('options_' . $key . '_cnct', array (
 							'' => '',
 							'1' => $langs->trans('Yes'),
 							'0' => $langs->trans('No')

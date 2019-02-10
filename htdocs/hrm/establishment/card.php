@@ -202,7 +202,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(
+print $formcompany->select_ziptown(
 		GETPOST('zipcode', 'alpha'),
 		'zipcode',
 		array (
@@ -218,7 +218,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
+print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
 			'selectcountry_id'
 	));
@@ -292,12 +292,12 @@ if (($id || $ref) && $action == 'edit')
 
 			// Zipcode / Town
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
+print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
 					'selectcountry_id'
 			), 6) . '</tr>';
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->town, 'town', array (
+print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
 					'selectcountry_id'
 			)) . '</td></tr>';

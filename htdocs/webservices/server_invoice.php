@@ -660,7 +660,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	$now=dol_now();
 
-	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
+dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
 			", ref=".$ref_order.", ref_ext=".$ref_ext_order);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -744,7 +744,7 @@ function updateInvoice($authentication, $invoice)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
+dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
     		", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];

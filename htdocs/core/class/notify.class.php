@@ -530,7 +530,7 @@ class Notify
 							if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 						}
 
-						$mailfile = new CMailFile(
+    $mailfile = new CMailFile(
 							$subject,
 							$sendto,
 							$replyto,
@@ -758,7 +758,7 @@ class Notify
 						if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 						if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 					}
-					$mailfile = new CMailFile(
+    $mailfile = new CMailFile(
 						$subject,
 						$sendto,
 						$replyto,

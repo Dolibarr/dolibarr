@@ -452,7 +452,7 @@ class PaymentLoan extends CommonObject
 			if ($mode == 'payment_loan') $total=-$total;
 
 			// Insert payment into llx_bank
-			$bank_line_id = $acc->addline(
+$bank_line_id = $acc->addline(
 				$this->datep,
 				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
 				$label,

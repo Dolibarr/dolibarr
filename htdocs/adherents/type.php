@@ -608,7 +608,7 @@ if ($rowid > 0)
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
-		    print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("Nature", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 		    print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);

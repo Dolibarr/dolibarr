@@ -243,7 +243,7 @@ if ($id > 0 || ! empty($ref))
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
 					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+					print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);

@@ -376,7 +376,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Remove stock
-					$result1=$object->correct_stock_batch(
+    $result1=$object->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
 						GETPOST("nbpiece", 'int'),
@@ -391,7 +391,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Add stock
-					$result2=$object->correct_stock_batch(
+    $result2=$object->correct_stock_batch(
 						$user,
 						GETPOST("id_entrepot_destination", 'int'),
 						GETPOST("nbpiece", 'int'),

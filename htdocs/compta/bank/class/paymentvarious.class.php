@@ -406,7 +406,7 @@ class PaymentVarious extends CommonObject
 					$sign=1;
 					if ($this->sens == '0') $sign=-1;
 
-					$bank_line_id = $acc->addline(
+    $bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,

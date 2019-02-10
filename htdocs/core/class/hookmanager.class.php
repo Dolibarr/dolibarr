@@ -145,7 +145,7 @@ class HookManager
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
-		if (in_array(
+if (in_array(
 			$method,
 			array(
 				'addCalendarChoice',

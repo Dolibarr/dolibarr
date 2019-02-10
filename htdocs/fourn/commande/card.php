@@ -626,7 +626,7 @@ if (empty($reshook))
 				}
 			}
 
-			$result	= $object->updateline(
+$result	= $object->updateline(
 				$lineid,
 				$_POST['product_desc'],
 				$ht,

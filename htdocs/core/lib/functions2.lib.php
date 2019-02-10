@@ -2318,7 +2318,7 @@ function getModuleDirForApiClass($module)
  */
 function random_color_part($min = 0, $max = 255)
 {
-    return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+    return str_pad(dechex(mt_rand($min, $max)), 2, '0', STR_PAD_LEFT);
 }
 
 /*

@@ -855,7 +855,7 @@ if (empty($reshook))
 		// Update line
 		if (! $error)
 		{
-			$result = $object->updateline(
+$result = $object->updateline(
 				GETPOST('lineid'),
 				$description,
 				$pu_ht,

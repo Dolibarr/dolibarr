@@ -1526,7 +1526,7 @@ class Form
 				'showsoc'=>$showsoc,
 			);
 
-			$reshook = $hookmanager->executeHooks( 'afterSelectContactOptions', $parameters, $this, $action );    // Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('afterSelectContactOptions', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 			if ($htmlname != 'none' && ! $options_only)
 			{

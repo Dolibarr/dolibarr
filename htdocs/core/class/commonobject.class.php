@@ -7183,8 +7183,8 @@ abstract class CommonObject
 		if (! $error)
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= ' ('.implode( ", ", $keys ).')';
-			$sql.= ' VALUES ('.implode( ", ", $values ).')';
+			$sql.= ' ('.implode(", ", $keys).')';
+			$sql.= ' VALUES ('.implode(", ", $values).')';
 
 			$res = $this->db->query($sql);
 			if ($res===false) {
@@ -7312,7 +7312,7 @@ abstract class CommonObject
 			}*/
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(',', $tmp).' WHERE rowid='.$this->id ;
 
 		$this->db->begin();
 		if (! $error)

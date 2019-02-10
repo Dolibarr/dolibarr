@@ -143,7 +143,7 @@ class PriceParser
 		}
 
 		//Accessible product values by expressions
-		$values = array_merge($values, array(
+$values = array_merge($values, array(
 			"tva_tx" => $product->tva_tx,
 			"localtax1_tx" => $product->localtax1_tx,
 			"localtax2_tx" => $product->localtax2_tx,
@@ -264,7 +264,7 @@ class PriceParser
 		$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
 
 		//Accessible values by expressions
-		$extra_values = array_merge($extra_values, array(
+$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
 		));
 
@@ -300,7 +300,7 @@ class PriceParser
 		$product_supplier->fetch($product_supplier->id, '', '', 1);
 
 		//Accessible values by expressions
-		$extra_values = array_merge($extra_values, array(
+$extra_values = array_merge($extra_values, array(
 			"supplier_quantity" => $product_supplier->fourn_qty,
 			"supplier_tva_tx" => $product_supplier->fourn_tva_tx,
 		));
@@ -324,12 +324,12 @@ class PriceParser
 		$product->fetch($product_id, '', '', 1);
 
 		//Values for product expressions
-		$extra_values = array_merge($extra_values, array(
+$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => 1,
 		));
 
 		//Values for supplier product expressions
-		$extra_values = array_merge($extra_values, array(
+$extra_values = array_merge($extra_values, array(
 			"supplier_quantity" => 2,
 			"supplier_tva_tx" => 3,
 		));

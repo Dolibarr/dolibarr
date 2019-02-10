@@ -262,12 +262,12 @@ class Dolistore
 			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
 				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
 					//compatible
-					$version    = '<span class="compatible">'.$langs->trans('CompatibleUpTo', $product->dolibarr_max,
+    $version    = '<span class="compatible">'.$langs->trans('CompatibleUpTo', $product->dolibarr_max,
 						$product->dolibarr_min, $product->dolibarr_max).'</span>';
 						$compatible = '';
 				} else {
 					//never compatible, module expired
-					$version    = '<span class="notcompatible">'.$langs->trans('NotCompatible', DOL_VERSION,
+    $version    = '<span class="notcompatible">'.$langs->trans('NotCompatible', DOL_VERSION,
 						$product->dolibarr_min, $product->dolibarr_max).'</span>';
 						$compatible = 'NotCompatible';
 				}

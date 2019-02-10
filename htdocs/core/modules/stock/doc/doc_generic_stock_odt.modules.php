@@ -357,7 +357,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->produit->dir_temp,

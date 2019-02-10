@@ -1228,7 +1228,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		    if (empty($hidetop))
 		    {
-		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 		      $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);

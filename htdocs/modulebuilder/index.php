@@ -1551,7 +1551,7 @@ elseif (! empty($module))
 			{	// tabobj = module
 				if ($action == 'deleteproperty')
 				{
-					$formconfirm = $form->formconfirm(
+    $formconfirm = $form->formconfirm(
 						$_SERVER["PHP_SELF"].'?propertykey='.urlencode(GETPOST('propertykey', 'alpha')).'&objectname='.urlencode($objectname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
 						$langs->trans('Delete'), $langs->trans('ConfirmDeleteProperty', GETPOST('propertykey', 'alpha')), 'confirm_deleteproperty', '', 0, 1
 						);
