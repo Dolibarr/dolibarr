@@ -189,8 +189,8 @@ if ($resql)
   	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
   	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   	print '<tr class="liste_titre">';
-  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
-  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td align="center">'.$langs->trans("Invoice").'</td></tr>';
+  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
 
 	$total = 0;
 
@@ -209,7 +209,7 @@ if ($resql)
     		print '</a></td>';
     		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
 
-    		print '<td align="right">'.price($obj->amount)."</td>\n";
+    		print '<td class="right">'.price($obj->amount)."</td>\n";
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
     		print '<td align="center">'.yn($obj->afacturer).'</td>';
@@ -230,7 +230,7 @@ if ($resql)
     {
     	print '<tr class="liste_total"><td>&nbsp;</td>';
     	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-    	print '<td align="right">'.price($total)."</td>\n";
+    	print '<td class="right">'.price($total)."</td>\n";
     	print '<td colspan="3">&nbsp;</td>';
     	print "</tr>\n";
     }
