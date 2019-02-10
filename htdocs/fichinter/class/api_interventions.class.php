@@ -65,7 +65,7 @@ class Interventions extends DolibarrApi
     /**
      * Get properties of a Expense Report object
      *
-     * Return an array with Expense Report informations
+     * Return an array with Expense Report information
      *
      * @param       int         $id         ID of Expense Report
      * @return 	    array|mixed             Data without useless information

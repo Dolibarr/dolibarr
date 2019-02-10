@@ -188,7 +188,7 @@ if ($action == 'update') {
 
 $form = new FormAccounting($db);
 
-// Defaut AccountingAccount RowId Product / Service
+// Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
 // so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
@@ -465,15 +465,15 @@ if ($result)
         	{
 	            console.log("We check if at least one line is checked")
 
-    			atleastoneselected=0;
+    			at leastoneselected=0;
 	    		jQuery(".checkforselect").each(function( index ) {
 	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
+	  				if ($(this).is(\':checked\')) at leastoneselected++;
 	  			});
 
-	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
+	            if (at leastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
 	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
+	            if (at leastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
 	            else jQuery("#changeaccount").attr(\'class\',\'butActionRefused\');
         	}
         	jQuery(".checkforselect, #checkallactions").click(function() {

@@ -109,7 +109,7 @@ class ICal
 
         $this->file_text = preg_split("[\n]", $this->file_text);
 
-        // is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
+        // is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
         if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
