@@ -157,12 +157,12 @@ class FormTicket
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
-        print '<table class="border">';
+        print '<table class="border centpercent">';
 
         if ($this->withref) {
             // Ref
             $defaultref = $ticketstat->getDefaultRef();
-            print '<tr><td class="titlefield"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
+            print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
         }
 
         // FK_USER_CREATE
@@ -249,6 +249,7 @@ class FormTicket
                 // If no socid, set to -1 to avoid full contacts list
                 $selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
                 $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+                print ' ';
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {
@@ -338,7 +339,7 @@ class FormTicket
         }
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
         $uselocalbrowser = true;
-        $doleditor = new DolEditor('message', GETPOST('message', 'alpha'), '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser);
+        $doleditor = new DolEditor('message', GETPOST('message', 'alpha'), '100%', 230, 'dolibarr_details', 'In', true, $uselocalbrowser);
         $doleditor->Create();
         print '</td></tr>';
 
