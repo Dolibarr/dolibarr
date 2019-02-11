@@ -866,7 +866,7 @@ class Invoices extends DolibarrApi
                 throw new RestException(404, 'Invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
                 throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -944,7 +944,7 @@ class Invoices extends DolibarrApi
             throw new RestException(404, 'Invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
