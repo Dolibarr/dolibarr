@@ -3899,6 +3899,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
+	if ($moreattrib == 'class="right"') $prefix.='right '; // For backward compatibility
+
 	$sortorder=strtoupper($sortorder);
 	$out='';
 	$sortimg='';
