@@ -293,7 +293,6 @@ class modTicket extends DolibarrModules
             'target' => '',
             'user' => 0);
         $r++;
-
     }
 
     /**
