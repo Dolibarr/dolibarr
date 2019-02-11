@@ -617,6 +617,7 @@ while ($i < min($num, $limit))
 		$cssforfield='';
 		if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 		if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+		if ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowraponall';
 		if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 		if (! empty($arrayfields['t.'.$key]['checked']))
 		{
