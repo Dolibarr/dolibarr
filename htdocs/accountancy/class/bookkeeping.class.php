@@ -195,7 +195,7 @@ class BookKeeping extends CommonObject
 
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include doc_type - fk_doc - numero_compte - label to be sure to have unicity of line (we may have several lines
-		// with same doc_type, fk_odc, numero_compte for 1 invoice line when using localtaxes with same account)
+		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
 		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
 		// The page to make journalization make the test on couple doc_type - fk_doc only.
 		$sql = "SELECT count(*) as nb";
@@ -1618,11 +1618,11 @@ class BookKeeping extends CommonObject
 				$error++;
 			}
 			$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element.'(doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
+			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
 			$sql .= 'SELECT doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
+			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.$next_piecenum.'';
 			$sql .= ' FROM '.MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
