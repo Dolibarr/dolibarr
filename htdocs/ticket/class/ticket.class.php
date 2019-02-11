@@ -1031,6 +1031,8 @@ class Ticket extends CommonObject
     {
         print Form::selectarray('search_fk_statut', $this->statuts_short, $selected, $show_empty = 1, $key_in_label = 0, $value_as_key = 0, $option = '', $translate = 1, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '');
     }
+
+
     /**
      *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
      *

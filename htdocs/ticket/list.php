@@ -54,7 +54,7 @@ $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
-$search_fk_status = GETPOST('search_fk_status', 'alpha');
+$search_fk_status = GETPOST('search_fk_statut', 'array');
 $mode = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
@@ -213,8 +213,13 @@ if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity(
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
-	if ($key == 'fk_statut' && $search[$key] == -1) continue;
-    $mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	if ($key == 'fk_statut')
+	{
+	    if ($search_fk_status == 'non_closed') $sql.= " AND ".$key." IN (0, 1, 3, 4, 5, 6)";
+	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
+	    continue;
+	}
+	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
     if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -222,11 +227,6 @@ if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
 if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND t.fk_user_assign=".$user->id;
-}
-
-if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
-    //$search['fk_statut'] = '0,1'; //
-    $sql.= " AND t.fk_statut IN (0, 1, 3, 4, 5, 6)";
 }
 
 // Add where from extra fields
@@ -420,7 +420,8 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 foreach($search as $key => $val)
 {
-	$param.= '&search_'.$key.'='.urlencode($search[$key]);
+    if (is_array($search[$key]) && count($search[$key])) foreach($search[$key] as $skey) $param.='&search_'.$key.'[]='.urlencode($skey);
+    else $param.= '&search_'.$key.'='.urlencode($search[$key]);
 }
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -536,7 +537,7 @@ foreach($object->fields as $key => $val)
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$object->printSelectStatus(dol_escape_htmltag($search[$key]));
+			print Form::multiselectarray('search_fk_statut', $object->statuts_short, $search[$key], 0, 0, '', 1, 0, '', '', '');
 			print '</td>';
 		}
 		else {
@@ -567,10 +568,10 @@ foreach($object->fields as $key => $val)
 	$cssforfield='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
-		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
 	}
 }
 // Extra fields
@@ -618,7 +619,7 @@ while ($i < min($num, $limit))
 		if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 		if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 		if ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowraponall';
-		if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+		if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
 		if (! empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
@@ -628,7 +629,7 @@ while ($i < min($num, $limit))
 			print $val['css'];
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
-			print $object->showOutputField($val, $key, $obj->$key, '');
+            print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))
@@ -701,6 +702,8 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
+
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
