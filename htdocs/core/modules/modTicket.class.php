@@ -63,7 +63,7 @@ class modTicket extends DolibarrModules
         // (where XXX is value of numeric property 'numero' of module)
         $this->description = "Incident/support ticket management";
         // Possible values for version are: 'development', 'experimental' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);

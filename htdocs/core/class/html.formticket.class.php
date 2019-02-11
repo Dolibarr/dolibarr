@@ -294,14 +294,14 @@ class FormTicket
         print $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
         print '</td></tr>';
 
-        // Category
-        print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketCategory") . '</span></label></td><td>';
-        print $this->selectCategoriesTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
-        print '</td></tr>';
-
         // Severity
         print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">' . $langs->trans("TicketSeverity") . '</span></label></td><td>';
         print $this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
+        print '</td></tr>';
+
+        // Category
+        print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketCategory") . '</span></label></td><td>';
+        print $this->selectAnalyticCodesTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
         print '</td></tr>';
 
         // Notify thirdparty at creation
@@ -520,7 +520,7 @@ class FormTicket
     }
 
     /**
-     *      Return html list of ticket categories
+     *      Return html list of ticket anaytic codes
      *
      *      @param  string $selected    Id categorie pre-selectionnée
      *      @param  string $htmlname    Nom de la zone select
@@ -532,7 +532,7 @@ class FormTicket
      *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
+    public function selectAnalyticCodesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
     {
         global $langs, $user;
 

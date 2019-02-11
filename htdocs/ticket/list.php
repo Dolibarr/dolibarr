@@ -529,7 +529,7 @@ foreach($object->fields as $key => $val)
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectCategoriesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth200'));
+			$formTicket->selectAnalyticCodesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth200'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
