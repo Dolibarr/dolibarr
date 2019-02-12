@@ -90,7 +90,7 @@ if (empty($reshook))
     	$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
     	$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
     	$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
-    	// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+    	// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
     	if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
     	{
     	    // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -244,7 +244,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	if (! $sortfield)
 		$sortfield = "soc.nom";
 
-		// Build filter to diplay only concerned lines
+		// Build filter to display only concerned lines
 	$filter = array (
 		't.fk_soc' => $object->id
 	);

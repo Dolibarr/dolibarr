@@ -52,7 +52,7 @@ $resql = $db->query($sql);
 $row = $db->fetch_array($resql);
 $placeid = $row[0];
 
-if (!$placeid) { $placeid = 0; // not necesary
+if (!$placeid) { $placeid = 0; // not necessary
 } else
 {
     $invoice = new Facture($db);

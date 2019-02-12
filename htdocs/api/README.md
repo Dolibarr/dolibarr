@@ -43,7 +43,7 @@ Develop an API
 
 The API uses Lucarast Restler framework. Please check documentation https://www.luracast.com/products/restler and examples http://help.luracast.com/restler/examples/ 
 
-Github contains also usefull informations : https://github.com/Luracast/Restler
+Github contains also useful information : https://github.com/Luracast/Restler
 
 To implement it into Dolibarr, you need to create a specific class for object we want to use. A skeleton file is available into /modulebuilder/class directory : *api_mymodule_class.class.php* 
 The API class file must be put into object class directory, with specific file name. By example, API class file for '*myobject*' must be put as : /htdocs/*myobject*/class/api_*myobject*.class.php. Class must be named  **MyobjectApi**.
@@ -67,6 +67,6 @@ It is possible to specify url for API methods by simply use the PHPDoc tag **@ur
 **Other Annotations**
 Other annotations are used, you are encouraged to read them : https://github.com/Luracast/Restler/blob/master/ANNOTATIONS.md
 
-PHPDoc tags can also be used to specify variables informations for API. Again, rtfm : https://github.com/Luracast/Restler/blob/master/PARAM.md 
+PHPDoc tags can also be used to specify variables information for API. Again, rtfm : https://github.com/Luracast/Restler/blob/master/PARAM.md 
 
 

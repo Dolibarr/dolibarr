@@ -40,7 +40,7 @@ if ($place>0){
 $object=new Facture($db);
 $object->fetch($facid);
 
-// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolut path.
+// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
 <html>
 <body>
