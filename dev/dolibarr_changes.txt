@@ -109,6 +109,13 @@ JQUERYFILETREE:
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
 
+PHPEXCEL:
+---------
+* Replace in htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared/OLE.php
+    continue;
+with:
+    continue 2;
+
 
 RESTLER:
 --------
