@@ -468,12 +468,12 @@ if ($result)
     			atleastoneselected=0;
 	    		jQuery(".checkforselect").each(function( index ) {
 	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) at leastoneselected++;
+	  				if ($(this).is(\':checked\')) atleastoneselected++;
 	  			});
 
-	            if (at leastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
+	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
 	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (at leastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
+	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
 	            else jQuery("#changeaccount").attr(\'class\',\'butActionRefused\');
         	}
         	jQuery(".checkforselect, #checkallactions").click(function() {
