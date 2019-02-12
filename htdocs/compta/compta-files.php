@@ -236,10 +236,14 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 
 if ($result && $action == "dl")
 {
-    dol_delete_file($zip);
+    $dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp);
+
+    dol_mkdir($dirfortmpfile);
 
     $log='date,type,ref,total,paid,filename,item_id'."\n";
-    $zipname = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp).'/'.($date_start)."-".($date_stop).'_export.zip';
+    $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
+
+    dol_delete_file(name);
 
     $zip = new ZipArchive;
     $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
@@ -248,7 +252,7 @@ if ($result && $action == "dl")
         foreach ($filesarray as $key=> $file)
         {
             if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
-            $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
+            $log.=dol_print_date($file['date'], 'dayrfc').','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
         }
         $zip->addFromString('transactions.csv', $log);
         $zip->close();
@@ -290,34 +294,43 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
 // Multicompany
+/*if (! empty($conf->multicompany->enabled) && is_object($mc))
+ {
+ print '<br>';
+ // This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+ if (method_exists($mc, 'formObjectOptions'))
+ {
+ if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+ {
+ print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+ print "<td>".$mc->select_entities($entity);
+ print "</td></tr>\n";
+ }
+ else
+ {
+ print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+ }
+ }
+
+ $object = new stdClass();
+ // Other attributes
+ $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
+ $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+ print $hookmanager->resPrint;
+ if (empty($reshook))
+ {
+ print $object->showOptionals($extrafields, 'edit');
+ }
+ }*/
 if (! empty($conf->multicompany->enabled) && is_object($mc))
 {
-    print '<br>';
-    // This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
-    if (method_exists($mc, 'formObjectOptions'))
-    {
-        if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
-        {
-            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
-    /*$object = new stdClass();
-     // Other attributes
-     $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
-     $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-     print $hookmanager->resPrint;
-     if (empty($reshook))
-     {
-     print $object->showOptionals($extrafields, 'edit');
-     }*/
+    print ' &nbsp; - &nbsp; '.$langs->trans("Entity").' : ';
+    $mc->dao->getEntities();
+    $mc->dao->fetch($conf->entity);
+    print $mc->dao->label;
+    print "<br>\n";
 }
+
 print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
 
 dol_fiche_end();
