@@ -419,7 +419,7 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				// Retreive extrafields
+				// Retrieve extrafields
 				$this->fetch_optionals();
 
 				/*
