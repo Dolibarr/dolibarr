@@ -465,7 +465,7 @@ if ($result)
         	{
 	            console.log("We check if at least one line is checked")
 
-    			at leastoneselected=0;
+    			atleastoneselected=0;
 	    		jQuery(".checkforselect").each(function( index ) {
 	  				/* console.log( index + ": " + $( this ).text() ); */
 	  				if ($(this).is(\':checked\')) at leastoneselected++;
