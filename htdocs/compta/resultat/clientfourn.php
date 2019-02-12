@@ -222,15 +222,15 @@ print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'amount', '', $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'amount', '', $param, 'class="right"', $sortfield, $sortorder);
 }
 else
 {
 	if ($modecompta == 'CREANCES-DETTES')
 	{
-		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 }
 print "</tr>\n";
 
@@ -284,7 +284,7 @@ if ($modecompta == 'BOOKKEEPING')
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
 				print '<td>'.$objp->pcg_type.($objp->pcg_subtype != 'XXXXXX'?' - '.$objp->pcg_subtype:'').($objp->name?' ('.$objp->name.')':'')."</td>\n";
-				print '<td align="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right">'.price($objp->amount)."</td>\n";
 				print "</tr>\n";
 
 				$total_ht += (isset($objp->amount)?$objp->amount:0);
@@ -317,7 +317,7 @@ if ($modecompta == 'BOOKKEEPING')
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; ' . length_accountg($cpt['account_number']) . ' - ' . $cpt['account_label'] . '</td>';
-							print '<td align="right">' . price($resultN) . '</td>';
+							print '<td class="right">' . price($resultN) . '</td>';
 							print "</tr>\n";
 						}
 					}
@@ -389,8 +389,8 @@ else
 	        print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
 
 	        if ($modecompta == 'CREANCES-DETTES')
-	        	print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-	        print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+	        	print '<td class="right">'.price($objp->amount_ht)."</td>\n";
+	        print '<td class="right">'.price($objp->amount_ttc)."</td>\n";
 
 	        $total_ht += (isset($objp->amount_ht)?$objp->amount_ht:0);
 	        $total_ttc += $objp->amount_ttc;
@@ -434,8 +434,8 @@ else
 	                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
 	                if ($modecompta == 'CREANCES-DETTES')
-	                	print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-	                print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+	                	print '<td class="right">'.price($objp->amount_ht)."</td>\n";
+	                print '<td class="right">'.price($objp->amount_ttc)."</td>\n";
 
 	                $total_ht += (isset($objp->amount_ht)?$objp->amount_ht:0);
 	                $total_ttc += $objp->amount_ttc;
@@ -459,8 +459,8 @@ else
 
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price($total_ht).'</td>';
-	print '<td colspan="3" align="right">'.price($total_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price($total_ht).'</td>';
+	print '<td colspan="3" class="right">'.price($total_ttc).'</td>';
 	print '</tr>';
 
 
@@ -519,8 +519,8 @@ else
 	            print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
 
 	            if ($modecompta == 'CREANCES-DETTES')
-	            	print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
-	            print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";
+	            	print '<td class="right">'.price(-$objp->amount_ht)."</td>\n";
+	            print '<td class="right">'.price(-$objp->amount_ttc)."</td>\n";
 
 	            $total_ht -= (isset($objp->amount_ht)?$objp->amount_ht:0);
 	            $total_ttc -= $objp->amount_ttc;
@@ -544,8 +544,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 
@@ -605,8 +605,8 @@ else
 
 	            print '<tr class="oddeven"><td>&nbsp;</td>';
 	            print '<td>'.$obj->label.'</td>';
-	            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-	            print '<td align="right">'.price(-$obj->amount).'</td>';
+	            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+	            print '<td class="right">'.price(-$obj->amount).'</td>';
 	            print '</tr>';
 	            $i++;
 	        }
@@ -621,8 +621,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 
@@ -682,8 +682,8 @@ else
 	            print '<tr class="oddeven"><td>&nbsp;</td>';
 	            print '<td>'.$obj->label.'</td>';
 	            if ($modecompta == 'CREANCES-DETTES')
-	            	print '<td align="right">'.price(-$obj->amount).'</td>';
-	            print '<td align="right">'.price(-$obj->amount).'</td>';
+	            	print '<td class="right">'.price(-$obj->amount).'</td>';
+	            print '<td class="right">'.price(-$obj->amount).'</td>';
 	            print '</tr>';
 	            $i++;
 	        }
@@ -698,8 +698,8 @@ else
 	}
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
-		print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-	print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+	print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 	print '</tr>';
 
 	if ($mysoc->tva_assuj == 'franchise')	// Non assujetti
@@ -709,10 +709,10 @@ else
 	    print '<td colspan="4">&nbsp;</td>';
 	    print '</tr>';
 
-	    print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
+	    print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 	    if ($modecompta == 'CREANCES-DETTES')
-	    	print '<td class="border" align="right">'.price($total_ht).'</td>';
-	    print '<td align="right">'.price($total_ttc).'</td>';
+	    	print '<td class="border right">'.price($total_ht).'</td>';
+	    print '<td class="right">'.price($total_ttc).'</td>';
 	    print '</tr>';
 
 	    print '<tr>';
@@ -775,8 +775,8 @@ else
 
 		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-		            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-		            print '<td align="right">'.price(-$obj->amount).'</td>';
+		            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+		            print '<td class="right">'.price(-$obj->amount).'</td>';
 		            print '</tr>';
 		            $i++;
 		        }
@@ -794,8 +794,8 @@ else
 		}
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
-			print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+			print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -862,8 +862,8 @@ else
 
 					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
-					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
+					if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount_ht).'</td>';
+					print '<td class="right">'.price(-$obj->amount_ttc).'</td>';
 					print '</tr>';
 				}
 			}
@@ -879,8 +879,8 @@ else
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
-		if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+		if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -943,8 +943,8 @@ else
 
 					print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
-					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
-					print '<td align="right">'.price($obj->amount).'</td>';
+					if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
+					print '<td class="right">'.price($obj->amount).'</td>';
 					print '</tr>';
 					$i++;
 				}
@@ -962,8 +962,8 @@ else
 		}
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
-			print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
-		print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+			print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+		print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
 		print '</tr>';
 	}
 
@@ -1024,8 +1024,8 @@ else
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATToPay")."</td>\n";
-		    print "<td align=\"right\">&nbsp;</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    print '<td class="right">&nbsp;</td>'."\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 
 		    // TVA a recuperer
@@ -1072,9 +1072,9 @@ else
 		        dol_print_error($db);
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
-		    print "<td>".$langs->trans("VATToCollect")."</td>\n";
-		    print "<td align=\"right\">&nbsp;</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    print '<td>'.$langs->trans("VATToCollect")."</td>\n";
+		    print '<td class="right">&nbsp;</td>'."\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 		}
 		else
@@ -1119,8 +1119,8 @@ else
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATPaid")."</td>\n";
 		    if ($modecompta == 'CREANCES-DETTES')
-		    	print "<td align=\"right\">".price($amount)."</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    	print '<td <class="right">'.price($amount)."</td>\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 
 		    // VAT really received
@@ -1165,8 +1165,8 @@ else
 		    print '<tr class="oddeven"><td>&nbsp;</td>';
 		    print "<td>".$langs->trans("VATCollected")."</td>\n";
 		    if ($modecompta == 'CREANCES-DETTES')
-		    	print "<td align=\"right\">".price($amount)."</td>\n";
-		    print "<td align=\"right\">".price($amount)."</td>\n";
+		    	print '<td class="right">'.price($amount)."</td>\n";
+		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 		}
 	}
@@ -1175,8 +1175,8 @@ else
 	{
 	    print '<tr class="liste_total">';
 	    if ($modecompta == 'CREANCES-DETTES')
-	    	print '<td colspan="3" align="right">&nbsp;</td>';
-	    print '<td colspan="3" align="right">'.price(price2num($subtotal_ttc, 'MT')).'</td>';
+	    	print '<td colspan="3" class="right">&nbsp;</td>';
+	    print '<td colspan="3" class="right">'.price(price2num($subtotal_ttc, 'MT')).'</td>';
 	    print '</tr>';
 	}
 }
@@ -1199,10 +1199,10 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujetti
     print '<td colspan="4">&nbsp;</td>';
     print '</tr>';
 
-    print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Profit").'</td>';
+    print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
     if ($modecompta == 'CREANCES-DETTES')
-    	print '<td class="liste_total" align="right">'.price(price2num($total_ht, 'MT')).'</td>';
-    print '<td class="liste_total" align="right">'.price(price2num($total_ttc, 'MT')).'</td>';
+    	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
+    print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
     print '</tr>';
 }
 

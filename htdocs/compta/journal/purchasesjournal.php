@@ -182,7 +182,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Date")."</td>";
 print "<td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
 print "<td>".$langs->trans("Account")."</td>";
-print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
+print "<td>".$langs->trans("Type")."</td><td class='right'>".$langs->trans("Debit")."</td><td class='right'>".$langs->trans("Credit")."</td>";
 print "</tr>\n";
 
 
@@ -236,13 +236,13 @@ foreach ($tabfac as $key => $val)
 
 				if (isset($line['inv']))
 				{
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
+	    			print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
 				}
 				else
 				{
-					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+					print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
 				}
 
 				print "</tr>";

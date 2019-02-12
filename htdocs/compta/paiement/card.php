@@ -343,10 +343,10 @@ if ($resql)
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
 	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans('Entity').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-    print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-    print '<td align="right">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+    print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+    print '<td class="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -386,16 +386,16 @@ if ($resql)
 				print '</td>';
 			}
 			// Expected to pay
-			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td class="right">'.price($objp->total_ttc).'</td>';
 
             // Amount payed
-            print '<td align="right">'.price($objp->amount).'</td>';
+            print '<td class="right">'.price($objp->amount).'</td>';
 
             // Remain to pay
-            print '<td align="right">'.price($remaintopay).'</td>';
+            print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
-			print '<td align="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
+			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete

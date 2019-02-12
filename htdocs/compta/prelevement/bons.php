@@ -136,7 +136,7 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -145,8 +145,8 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'class="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'class="right"', $sortfield, $sortorder);
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
     print "</tr>\n";
 
@@ -160,13 +160,13 @@ if ($result)
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount)."</td>\n";
+        print '<td class="right">'.price($obj->amount)."</td>\n";
 
-        print '<td align="right">';
+        print '<td class="right">';
         print $bon->LibStatut($obj->statut, 3);
         print '</td>';
 
-        print '<td align="right"></td>'."\n";
+        print '<td class="right"></td>'."\n";
 
         print "</tr>\n";
         $i++;
