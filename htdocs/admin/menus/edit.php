@@ -144,9 +144,9 @@ if ($action == 'add')
     }
 
     $leftmenu=''; $mainmenu='';
-    if (GETPOST('menuId', 'int') && ! is_numeric(GETPOST('menuId', 'int')))
+    if (GETPOST('menuId', 'alpha') && ! is_numeric(GETPOST('menuId', 'alpha')))
     {
-	    $tmp=explode('&', GETPOST('menuId', 'int'));
+	    $tmp=explode('&', GETPOST('menuId', 'alpha'));
 	    foreach($tmp as $s)
 	    {
 	    	if (preg_match('/fk_mainmenu=/', $s))
