@@ -42,7 +42,7 @@ class box_comptes extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 	var $enabled = 1;
 
@@ -145,16 +145,16 @@ class box_comptes extends ModeleBoxes
                 foreach ($solde_total as $key=>$solde) {
                     $this->info_box_contents[$line][] = array(
                         'tr' => 'class="liste_total"',
-                        'td' => 'align="left" class="liste_total"',
+                        'td' => 'class="liste_total left"',
                         'text' => $langs->trans('Total').' '.$key,
                     );
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right"',
                         'text' => '&nbsp;'
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;
@@ -170,7 +170,7 @@ class box_comptes extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

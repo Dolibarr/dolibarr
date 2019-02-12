@@ -190,44 +190,52 @@ class box_services_contracts extends ModeleBoxes
 					}
 
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
-                    'text' => $s,
-					'asis' => 1
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'text' => $s,
+                        'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => '',
-                    'text' => $contractstatic->getNomUrl(1),
-					'asis' => 1
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $contractstatic->getNomUrl(1),
+                        'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
-                    'text' => $thirdpartytmp->getNomUrl(1),
-					'asis' => 1
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'text' => $thirdpartytmp->getNomUrl(1),
+                        'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => '',
-                    'text' => dol_print_date($datem, 'day'));
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => dol_print_date($datem, 'day'),
+                    );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
-                    'text' => $contratlignestatic->LibStatut($objp->statut, 3)
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $contratlignestatic->LibStatut($objp->statut, 3)
 					);
 
 					$i++;
 				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoContractedProducts"));
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("NoContractedProducts"));
 
 				$db->free($result);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => '',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => '',
+                    'maxlength' => 500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}

@@ -40,7 +40,7 @@ class box_factures_fourn extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -81,7 +81,7 @@ class box_factures_fourn extends ModeleBoxes
         $thirdpartytmp = new Fournisseur($db);
 
 		$this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills", $max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
@@ -177,7 +177,7 @@ class box_factures_fourn extends ModeleBoxes
                     $fac->fetch($objp->facid);
                     $alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
                     );
 
@@ -186,7 +186,7 @@ class box_factures_fourn extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoModifiedSupplierBills"),
                     );
 
@@ -200,7 +200,7 @@ class box_factures_fourn extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->transnoentities("ReadPermissionNotAllowed")
             );
         }

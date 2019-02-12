@@ -38,7 +38,7 @@ class box_graph_product_distribution extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -392,12 +392,16 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
 			}
-			$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+			$this->info_box_contents[0][0] = array(
+                'tr'=>'class="oddeven nohover"',
+                'td' => 'class="nohover center"',
+                'textnoformat'=>$stringtoshow,
+            );
 		}
 		else
 		{
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
 				'maxlength'=>500,
 				'text' => $mesg
 			);

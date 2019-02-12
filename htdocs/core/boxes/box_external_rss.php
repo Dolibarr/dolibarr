@@ -43,7 +43,7 @@ class box_external_rss extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
@@ -111,7 +111,7 @@ class box_external_rss extends ModeleBoxes
                 'sublink' => $link,
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext"):$langs->trans("Unknown")),
                 'subpicto'=>'help',
-		'target'=>'_blank',
+                'target'=>'_blank',
             );
 		}
 
@@ -163,7 +163,7 @@ class box_external_rss extends ModeleBoxes
             $tooltip.= '<br>'.$description;
 
             $this->info_box_contents[$line][0] = array(
-                'td' => 'align="left" width="16"',
+                'td' => 'class="left" width="16"',
                 'logo' => $this->boximg,
                 'url' => $href,
                 'tooltip' => $tooltip,
@@ -180,7 +180,7 @@ class box_external_rss extends ModeleBoxes
             );
 
             $this->info_box_contents[$line][2] = array(
-                'td' => 'align="right" nowrap="1"',
+                'td' => 'class="right nowrap"',
                 'text' => $date,
             );
         }
