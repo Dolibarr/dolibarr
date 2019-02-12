@@ -8,7 +8,7 @@
 This document describe specifications of module MyModule
 
 
-*Log of versions*
+*Log of versions of document*
 
 [options="header",format="csv"]
 |=== 
@@ -24,3 +24,6 @@ This document was generated using Dolibarr ERP CRM process
 
 <<<
 
+///include::README.md[]
+
+///include::ChangeLog.md[]

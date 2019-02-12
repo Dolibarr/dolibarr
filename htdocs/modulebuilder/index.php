@@ -94,6 +94,8 @@ if (empty($newmask))	// This should no happen
 
 if ($dirins && $action == 'initmodule' && $modulename)
 {
+    $modulename = ucfirst($modulename);     // Force first letter in uppercase
+
 	if (preg_match('/[^a-z0-9_]/i', $modulename))
 	{
 		$error++;
@@ -150,6 +152,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
 		dol_delete_file($destdir.'/class/api_mymodule.class.php');
+		dol_delete_file($destdir.'/doc/*example*');
 	}
 
 	// Edit PHP files
@@ -1124,11 +1127,6 @@ elseif (! empty($module))
 		$head2[$h][2] = 'description';
 		$h++;
 
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread?'@'.$dirread:'');
-		$head2[$h][1] = $langs->trans("Specifications");
-		$head2[$h][2] = 'specifications';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=languages&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Languages");
 		$head2[$h][2] = 'languages';
@@ -1167,6 +1165,11 @@ elseif (! empty($module))
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=cron&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("CronList");
 		$head2[$h][2] = 'cron';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread?'@'.$dirread:'');
+		$head2[$h][1] = $langs->trans("Documentation");
+		$head2[$h][2] = 'specifications';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=buildpackage&module='.$module.($forceddirread?'@'.$dirread:'');
