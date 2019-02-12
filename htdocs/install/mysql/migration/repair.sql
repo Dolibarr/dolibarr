@@ -445,6 +445,7 @@ update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_
  
 UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
 
+ALTER TABLE `llx_accounting_bookkeeping` CHANGE `numero_compte` `numero_compte` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
