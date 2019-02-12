@@ -8,7 +8,7 @@
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -763,7 +763,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 {
                     // Print total
                     print '<tr class="liste_total">';
-                    print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
+                    print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').'</td>';
                     if (!empty($conf->multicurrency->enabled)) {
                     	print '<td></td>';
                     	print '<td></td>';

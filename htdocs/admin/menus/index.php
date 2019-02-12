@@ -2,6 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,7 +257,7 @@ if ($action == 'delete')
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler)?'':'_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
+$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler)?'':'_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 

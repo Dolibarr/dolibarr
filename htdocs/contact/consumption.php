@@ -322,18 +322,15 @@ if (!empty($sql_select))
 	    $sql.=")";
 	}
 	$sql.= $db->order($sortfield, $sortorder);
-//print ($sql);exit;
 	$resql=$db->query($sql);
 	$totalnboflines = $db->num_rows($resql);
 
 	$sql.= $db->plimit($limit + 1, $offset);
-	//print $sql;
 }
 
 $disabled=0;
 $showempty=2;
-if (empty($elementTypeArray) && ! $object->client && ! $object->fournisseur)
-{
+if (empty($elementTypeArray) && ! $object->thirdparty->client && ! $object->thirdparty->fournisseur) {
     $showempty=$langs->trans("ThirdpartyNotCustomerNotSupplierSoNoRef");
     $disabled=1;
 }
@@ -491,9 +488,8 @@ if ($sql_select)
 			$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
 		}
 
-		if (($objp->info_bits & 2) == 2) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$object->id; ?>">
-			<?php
+		if (($objp->info_bits & 2) == 2) { 
+			print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'">';
 			$txt='';
 			print img_object($langs->trans("ShowReduc"), 'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
@@ -501,9 +497,7 @@ if ($sql_select)
 			elseif ($objp->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 			//else $txt=$langs->trans("Discount");
 			print $txt;
-			?>
-			</a>
-			<?php
+            print '</a>';
 			if ($objp->description)
 			{
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
