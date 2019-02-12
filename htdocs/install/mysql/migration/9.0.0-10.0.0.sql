@@ -94,3 +94,4 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
+ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
