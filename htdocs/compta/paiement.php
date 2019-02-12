@@ -240,7 +240,7 @@ if (empty($reshook))
         {
             $invoice = new Facture($db);
             $invoice->fetch($key);
-            if($invoice->paye) unset($amounts[$key]);
+            if ($invoice->paye) unset($amounts[$key]);
 
         }
 
