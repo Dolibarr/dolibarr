@@ -214,9 +214,9 @@ if ($action == 'add')
         $menu->target=GETPOST('target','alpha');
         $menu->user=GETPOST('user','alpha');
         $menu->mainmenu=GETPOST('propertymainmenu','alpha');
-        if (is_numeric(GETPOST('menuId','int')))
+        if (is_numeric(GETPOST('menuId','alpha')))
         {
-        	$menu->fk_menu=GETPOST('menuId','int');
+        	$menu->fk_menu=GETPOST('menuId','alpha');
         }
         else
        {
