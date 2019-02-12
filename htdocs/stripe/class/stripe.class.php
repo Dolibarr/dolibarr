@@ -239,17 +239,17 @@ class Stripe extends CommonObject
 	}
     
     /**
-	 * Get the Stripe payment intent 
+	 * Get the Stripe payment intent
 	 *
 	 * @param	Societe	$object							Object tp pay on Stripe
 	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail		1=use thirdparty email fpr receipt
-	 * @param	int		$mode		automatic=automatic payment, manual=need confirmation 
+	 * @param	int		$mode		automatic=automatic payment, manual=need confirmation
 	 * @return 	\Stripe\PaymentIntent|null 			Stripe PaymentIntent or null if not found
 	 */
-	public function getPaymentIntent($object, $customer, $key=null, $status=0, $usethirdpartyemailforreceiptemail=0, $mode='automatic') 
+	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
 	{
 		global $conf, $user;
 
@@ -269,7 +269,7 @@ class Stripe extends CommonObject
 		$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";			// key_account is cus_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
 		$sql.= " WHERE pi.fk_facture = " . $object->id;
-		$sql.= " AND pi.sourcetype = '" . $object->element . "'";    
+		$sql.= " AND pi.sourcetype = '" . $object->element . "'";
 		$sql.= " AND pi.entity IN (".getEntity('societe').")";
 		$sql.= " AND pi.ext_payment_site = '" . $service . "'";
 
@@ -311,7 +311,7 @@ class Stripe extends CommonObject
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
         
-        $description=$object->element.$object->ref; 
+        $description=$object->element.$object->ref;
              
 				$dataforintent = array(
 					"amount" => $stripeamount,
@@ -329,7 +329,7 @@ class Stripe extends CommonObject
 					if ($societe->email && $usethirdpartyemailforreceiptemail)
 					{
 						$dataforintent["receipt_email"] = $societe->email;
-					}       
+					}
 
 				try {
 					// Force to use the correct API key
