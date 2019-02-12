@@ -430,6 +430,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 		if(in_array($module, $modulepart))
 		{
 			$conf->modulepart = $module;
+                        break;
 		}
 	}
 }
