@@ -67,7 +67,7 @@ CloseService=Finalitzar servei
 BoardRunningServices=Serveis actius expirats
 ServiceStatus=Estat del servei
 DraftContracts=Contractes esborrany
-CloseRefusedBecauseOneServiceActive=El contracte no pot ser tancat ja que conté almenys un servei obert.
+CloseRefusedBecauseOneServiceActive=El contracte no es pot tancar ja que almenys hi ha un servei obert
 ActivateAllContracts=Activar totes les línies de contracte
 CloseAllContracts=Tancar tots els serveis
 DeleteContractLine=Eliminar línia de contracte
@@ -89,6 +89,7 @@ CloneContract=Clona el contracte
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius 
 SendContractRef=Informació del contracte __REF__
+OtherContracts=Altres contractes
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Agent comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL=Agent comercial del seguiment del contracte

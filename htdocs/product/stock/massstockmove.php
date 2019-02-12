@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2018 Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
 	}
 
 	$db->begin();
@@ -334,8 +334,6 @@ $buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
 print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
 
-$var=true;
-
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
@@ -402,8 +400,6 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-
-
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
@@ -455,7 +451,7 @@ print '<table class="noborder" width="100%">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("LabelMovement").'</td>';
+	print '<td>'.$langs->trans("MovementLabel").'</td>';
 	print '<td>';
 	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
@@ -466,7 +462,6 @@ print '<div class="center"><input class="button" type="submit" name="valid" valu
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

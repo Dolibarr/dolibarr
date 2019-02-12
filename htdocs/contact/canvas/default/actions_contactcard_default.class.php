@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,8 @@ include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
-	/**
-     *	Constructor
+    /**
+     *  Constructor
      *
      *	@param	DoliDB	$db				Handler acces base de donnees
      *	@param	string	$dirmodule		Name of directory of module
@@ -66,6 +66,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -75,6 +76,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 */
 	function assign_values(&$action, $id)
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
@@ -116,10 +118,10 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -131,6 +133,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
         //$this->getFieldList();
@@ -138,4 +141,3 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         $this->list_datas = array();
 	}
 }
-

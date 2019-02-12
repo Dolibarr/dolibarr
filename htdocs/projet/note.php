@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,6 +119,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

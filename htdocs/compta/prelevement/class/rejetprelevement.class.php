@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,15 @@
  */
 class RejetPrelevement
 {
-	var $id;
-	var $db;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -62,7 +69,6 @@ class RejetPrelevement
 
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
-
 	}
 
 	/**
@@ -169,7 +175,6 @@ class RejetPrelevement
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
-
 			}
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
@@ -191,9 +196,9 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
@@ -202,6 +207,7 @@ class RejetPrelevement
 	 */
 	function _send_email($fac)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$userid = 0;
@@ -320,7 +326,6 @@ class RejetPrelevement
 		}
 
 		return $arr;
-
 	}
 
 	/**
@@ -364,6 +369,4 @@ class RejetPrelevement
 			return -2;
 		}
 	}
-
 }
-

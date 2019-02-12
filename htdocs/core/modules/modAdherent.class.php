@@ -49,7 +49,7 @@ class modAdherent extends DolibarrModules
         $this->numero = 310;
 
         $this->family = "hr";
-        $this->module_position = 20;
+        $this->module_position = '55';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Management of members of a foundation or association";
@@ -62,17 +62,17 @@ class modAdherent extends DolibarrModules
         $this->dirs = array("/adherent/temp");
 
         // Config pages
-        //-------------
         $this->config_page_url = array("adherent.php@adherents");
 
         // Dependencies
-        //------------
-        $this->depends = array();
-        $this->requiredby = array('modMailmanSpip');
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array('modMailmanSpip');	// List of module class names as string this module is in conflict with
         $this->langfiles = array("members","companies");
+        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
         // Constants
-        //-----------
         $this->const = array();
         $r=0;
 
@@ -347,22 +347,24 @@ class modAdherent extends DolibarrModules
 		);
 
         // Cronjobs
+        $arraydate=dol_getdate(dol_now());
+        $datestart=dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
         $this->cronjobs = array(
 			0=>array(
 				'label'=>'SendReminderForExpiredSubscriptionTitle',
 				'jobtype'=>'method', 'class'=>'adherents/class/adherent.class.php',
 				'objectname'=>'Adherent',
 				'method'=>'sendReminderForExpiredSubscription',
-				'parameters'=>'10',
+				'parameters'=>'10;0',
 				'comment'=>'SendReminderForExpiredSubscription',
 				'frequency'=>1,
 				'unitfrequency'=> 3600 * 24,
 				'priority'=>50,
-				'status'=>0,
-				'test'=>true,
+				'status'=>1,
+				'test'=>'$conf->adherent->enabled',
+				'datestart'=>$datestart
 			),
         );
-
     }
 
 

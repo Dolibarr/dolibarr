@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +229,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 			$newlocalobject,
 			true,
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem',
+				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
 				'ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
 				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'

@@ -35,7 +35,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $id = GETPOST('id', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 
 if ($user->societe_id) {
     $socid = $user->societe_id;

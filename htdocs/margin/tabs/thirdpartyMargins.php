@@ -26,10 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+$langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -287,5 +284,6 @@ print '
     </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();

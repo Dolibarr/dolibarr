@@ -45,7 +45,7 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setpricelevel')
 {
-	$soc = New Societe($db);
+	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->set_price_level($_POST["price_level"],$user);
 
@@ -174,8 +174,8 @@ if ($_socid > 0)
 	{
 		dol_print_error($db);
 	}
-
 }
 
+// End of page
 llxFooter();
 $db->close();

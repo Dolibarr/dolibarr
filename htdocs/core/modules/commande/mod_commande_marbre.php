@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='CO';
-	var $error='';
-	var $nom='Marbre';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='CO';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Marbre';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Marbre';
 
 
     /**
@@ -128,13 +148,14 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s",$max+1);
+    	else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -144,7 +165,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	function commande_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

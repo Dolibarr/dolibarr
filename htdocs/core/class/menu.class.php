@@ -73,7 +73,7 @@ class Menu
     /**
      * Insert a menu entry into this->liste
      *
-     * @param	int		$idafter	Array key after which inserting new entry
+     * @param   int		$idafter	Array key after which inserting new entry
      * @param	string	$url        Url to follow on click
      * @param   string	$titre      Label of menu to add
      * @param   integer	$level      Level of menu to add
@@ -96,6 +96,7 @@ class Menu
         $this->liste=array_merge($array_start,$array_new,$array_end);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Remove a menu entry from this->liste
      *
@@ -103,7 +104,10 @@ class Menu
      */
     function remove_last()
     {
-    	if (count($this->liste) > 1) array_pop($this->liste);
+        // phpcs:enable
+        if (count($this->liste) > 1) {
+            array_pop($this->liste);
+        }
     }
 
     /**

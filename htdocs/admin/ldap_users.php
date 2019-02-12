@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -443,7 +443,6 @@ if (function_exists("ldap_connect"))
 					}
 					$liste[$key] = $label;
 				}
-
 			}
 			else
 		   {
@@ -470,5 +469,6 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

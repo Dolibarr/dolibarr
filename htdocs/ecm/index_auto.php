@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -344,7 +344,6 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-
 }
 
 // Start container of all panels

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +30,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
+if (! empty($conf->projet->enabled))	$langs->load("projects");
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action','aZ09');
+$cancel= GETPOST('cancel', 'aZ09');
+$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -52,20 +61,27 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel"))
+if ($cancel)
 {
-	header("Location: index.php");
+	header("Location: list.php");
 	exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+// Link to a project
+if ($action == 'classin' && $user->rights->banque->modifier)
+{
+	$object->fetch($id);
+	$object->setProject(GETPOST('projectid'));
+}
+
+if ($action == 'add' && empty($cancel))
 {
 	$error=0;
 
-	$datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
-	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
-	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
+	$datep=dol_mktime(12,0,0, GETPOST("datepmonth",'int'), GETPOST("datepday",'int'), GETPOST("datepyear",'int'));
+	$datev=dol_mktime(12,0,0, GETPOST("datevmonth",'int'), GETPOST("datevday",'int'), GETPOST("datevyear",'int'));
+	$datesp=dol_mktime(12,0,0, GETPOST("datespmonth",'int'), GETPOST("datespday",'int'), GETPOST("datespyear",'int'));
+	$dateep=dol_mktime(12,0,0, GETPOST("dateepmonth",'int'), GETPOST("dateepday",'int'), GETPOST("dateepyear",'int'));
 	if (empty($datev)) $datev=$datep;
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
@@ -82,6 +98,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
+	$object->fk_project= GETPOST('fk_project','int');
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -122,7 +139,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -157,7 +174,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/salaries/list.php');
 				exit;
 			}
 			else
@@ -187,6 +204,7 @@ if ($action == 'delete')
 llxHeader("",$langs->trans("SalaryPayment"));
 
 $form = new Form($db);
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
 {
@@ -238,13 +256,13 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Employee
@@ -263,13 +281,13 @@ if ($action == 'create')
 	// Date start period
 	print '<tr><td>';
 	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
-	print $form->select_date($datesp,"datesp",'','','','add');
+	print $form->selectDate($datesp, "datesp", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
 	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
-	print $form->select_date($dateep,"dateep",'','','','add');
+	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Amount
@@ -277,6 +295,18 @@ if ($action == 'create')
 	print fieldLabel('Amount','amount',1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
+
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject=new FormProjets($db);
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
+
+		print '</td></tr>';
+	}
 
 	// Bank
 	if (! empty($conf->banque->enabled))
@@ -335,14 +365,46 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 
+	// Employee
 	$userstatic=new User($db);
 	$userstatic->fetch($object->fk_user);
-
 	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		if ($user->rights->salaries->write)
+		{
+			if ($action != 'classify')
+				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				$morehtmlref.=$proj->ref;
+				$morehtmlref.='</a>';
+			} else {
+				$morehtmlref.='';
+			}
+		}
+	}
 	$morehtmlref.='</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -425,8 +487,6 @@ if ($id)
 	print "</div>";
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

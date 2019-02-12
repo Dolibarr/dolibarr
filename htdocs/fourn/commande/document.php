@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -38,14 +38,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('orders');
-$langs->load('other');
-$langs->load('sendings');
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('deliveries');
-$langs->load('products');
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks","other"));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -107,7 +101,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -181,7 +175,6 @@ if ($object->id > 0)
 	$permtoedit = $user->rights->fournisseur->commande->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {
@@ -189,6 +182,6 @@ else
 	exit;
 }
 
-
+// End of page
 llxFooter();
 $db->close();

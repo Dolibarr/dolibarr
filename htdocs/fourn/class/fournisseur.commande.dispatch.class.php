@@ -24,9 +24,9 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -34,24 +34,72 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class CommandeFournisseurDispatch extends CommonObject
 {
-	public $db;							//!< To store db handler
-	public $error;							//!< To return error code (or message)
-	public $errors=array();				//!< To return several error codes (or messages)
-	public $element='commandefournisseurdispatch';			//!< Id that identify managed objects
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commandefournisseurdispatch';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
 	public $lines=array();
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
+	/**
+     * @var int ID
+     */
 	public $fk_commande;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
+	/**
+     * @var int ID
+     */
 	public $fk_commandefourndet;
+
 	public $qty;
+
+	/**
+     * @var int ID
+     */
 	public $fk_entrepot;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datec='';
 	public $comment;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $tms='';
 	public $batch;
 	public $eatby='';
@@ -76,8 +124,6 @@ class CommandeFournisseurDispatch extends CommonObject
         $this->statutshort[0] = 'Received';
         $this->statutshort[1] = 'Verified';
         $this->statutshort[2] = 'Denied';
-
-        return 1;
     }
 
 
@@ -233,8 +279,6 @@ class CommandeFournisseurDispatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
-
-
             }
             $this->db->free($resql);
 
@@ -460,6 +504,7 @@ class CommandeFournisseurDispatch extends CommonObject
         return $this->LibStatut($this->status,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return label of a status
      *
@@ -469,6 +514,7 @@ class CommandeFournisseurDispatch extends CommonObject
      */
     function LibStatut($statut,$mode=0)
     {
+        // phpcs:enable
         global $langs;
         $langs->load('orders');
 
@@ -476,27 +522,27 @@ class CommandeFournisseurDispatch extends CommonObject
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             return $langs->trans($this->statutshort[$statut]);
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
             if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
             if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');
@@ -528,8 +574,6 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->batch='';
 		$this->eatby='';
 		$this->sellby='';
-
-
 	}
 
 	/**
@@ -627,5 +671,4 @@ class CommandeFournisseurDispatch extends CommonObject
 			return - 1;
 		}
 	}
-
 }

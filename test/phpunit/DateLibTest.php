@@ -464,5 +464,4 @@ class DateLibTest extends PHPUnit_Framework_TestCase
    		$prev = dol_get_first_day_week($day, $month, $year);
 		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st
     }
-
 }

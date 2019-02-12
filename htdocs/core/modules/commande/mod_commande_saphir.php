@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string nom
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -45,7 +64,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -132,17 +151,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
     function commande_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

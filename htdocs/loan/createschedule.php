@@ -51,7 +51,7 @@ if ($action == 'createecheancier') {
 		$echeance->fk_loan = $object->id;
 		$echeance->datec = dol_now();
 		$echeance->tms = dol_now();
-		$echeance->datepaid = $date;
+		$echeance->datep = $date;
 		$echeance->amount_capital = $mens-$int;
 		$echeance->amount_insurance = 0;
 		$echeance->amount_interest = $int;
@@ -61,7 +61,7 @@ if ($action == 'createecheancier') {
 		$echeance->fk_user_modif = $user->id;
 		$result=$echeance->create($user);
 		if ($result<0) {
-			setEventMessages(null, $echeance->errors,'errors');
+			setEventMessages($echeance->error, $echeance->errors,'errors');
 		}
 		$i++;
 	}
@@ -165,7 +165,7 @@ if ($object->nbterm > 0 && count($echeance->lines)==0)
 	$capital = $object->capital;
 	while($i <$object->nbterm+1)
 	{
-		$mens = price2num($echeance->calc_mens($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
+		$mens = price2num($echeance->calcMonthlyPayments($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
 		$int = ($capital*($object->rate/12))/100;
 		$int = price2num($int, 'MT');
 		$cap_rest = price2num($capital - ($mens-$int), 'MT');
@@ -210,8 +210,6 @@ print '</br>';
 print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
-
-
-

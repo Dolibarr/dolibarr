@@ -178,19 +178,19 @@ if ($action == 'builddoc')
 	{
 		// List of values to scan for a replacement
 		$substitutionarray = array (
-		'%LOGIN%'=>$user->login,
-		'%COMPANY%'=>$mysoc->name,
-		'%ADDRESS%'=>$mysoc->address,
-		'%ZIP%'=>$mysoc->zip,
-		'%TOWN%'=>$mysoc->town,
-		'%COUNTRY%'=>$mysoc->country,
-		'%COUNTRY_CODE%'=>$mysoc->country_code,
-		'%EMAIL%'=>$mysoc->email,
-		'%YEAR%'=>$year,
-		'%MONTH%'=>$month,
-		'%DAY%'=>$day,
-		'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-		'%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
+		    '%LOGIN%' => $user->login,
+		    '%COMPANY%' => $mysoc->name,
+		    '%ADDRESS%' => $mysoc->address,
+		    '%ZIP%' => $mysoc->zip,
+		    '%TOWN%' => $mysoc->town,
+		    '%COUNTRY%' => $mysoc->country,
+		    '%COUNTRY_CODE%' => $mysoc->country_code,
+		    '%EMAIL%' => $mysoc->email,
+		    '%YEAR%' => $year,
+		    '%MONTH%' => $month,
+		    '%DAY%' => $day,
+		    '%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
+		    '%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
 		);
 		complete_substitutions_array($substitutionarray, $langs);
 
@@ -416,7 +416,7 @@ print $langs->trans("BarcodeType").' &nbsp; ';
 print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 $formbarcode = new FormBarCode($db);
-$formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 print '</div></div>';
 
 // Barcode value
@@ -441,6 +441,6 @@ print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GET
 print '</form>';
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -253,7 +254,7 @@ $form->select_comptes($account_to, 'account_to', 0, '', 1, '', empty($conf->mult
 print "</td>\n";
 
 print "<td>";
-$form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
+print $form->selectDate((! empty($dateo)?$dateo:''), '', '', '', '', 'add');
 print "</td>\n";
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
@@ -265,5 +266,6 @@ print '<br><div class="center"><input type="submit" class="button" value="'.$lan
 
 print "</form>";
 
+// End of page
 llxFooter();
 $db->close();

@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user inte
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox. 
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
-YourPaymentHasNotBeenRecorded=You payment has NOT been recorded and transaction has been canceled. Thank you.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Account parameters
 UsageParameter=Usage parameters
 InformationToFindParameters=Help to find your %s account information

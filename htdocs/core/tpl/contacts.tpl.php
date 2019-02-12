@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
@@ -157,6 +157,8 @@ if ($permission) {
 	</form>
 
 	<?php
+	$var = false;
+
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
 
@@ -168,9 +170,10 @@ if ($permission) {
 
 		$i = 0;
 		while ($i < $num) {
+		    $var = ! $var;
 	?>
 
-	<form class="tagtr oddeven">
+	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
 		<div class="tagtd" align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
@@ -199,12 +202,12 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
-				echo $userstatic->getNomUrl(-1);
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1);
+				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>

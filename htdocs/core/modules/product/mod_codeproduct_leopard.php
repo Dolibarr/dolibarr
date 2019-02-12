@@ -39,14 +39,33 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
-	var $nom='Leopard';					// Nom du modele
-	var $name='Leopard';					// Nom du modele
-	var $code_modifiable;				// Code modifiable
-	var $code_modifiable_invalide;		// Code modifiable si il est invalide
-	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; 	                // Numerotation automatique
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Leopard';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Leopard';
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto; 	                // Numerotation automatique
 
 
 	/**

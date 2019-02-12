@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
@@ -82,9 +82,16 @@ else    // For no ajax call
             dol_print_error($db,$ecmdir->error);
             exit;
         }
+
+        $relativepath=$ecmdir->getRelativePath();	// Example   'mydir/'
     }
-    $relativepath=$ecmdir->getRelativePath();
-    $upload_dir = $rootdirfordoc.'/'.$relativepath;
+	elseif (GETPOST('section_dir'))
+	{
+		$relativepath=GETPOST('section_dir');
+	}
+	//var_dump($section.'-'.GETPOST('section_dir').'-'.$relativepath);
+
+	$upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
 if (empty($url))
@@ -158,8 +165,8 @@ print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-if (! empty($website)) $param.='&website='.$website;
-if (! empty($pageid))  $param.='&pageid='.$pageid;
+if (! empty($websitekey)) $param.='&website='.$websitekey;
+if (! empty($pageid))     $param.='&pageid='.$pageid;
 
 
 // Dir scan
@@ -228,7 +235,18 @@ if ($type == 'directory')
     {
     	if ($module == 'medias')
     	{
-    		$relativepath=GETPOST('file','alpha');
+    		/*
+    		   $_POST is array like
+    		  'token' => string '062380e11b7dcd009d07318b57b71750' (length=32)
+			  'action' => string 'file_manager' (length=12)
+			  'website' => string 'template' (length=8)
+			  'pageid' => string '124' (length=3)
+			  'section_dir' => string 'mydir/' (length=3)
+			  'section_id' => string '0' (length=1)
+			  'max_file_size' => string '2097152' (length=7)
+			  'sendit' => string 'Envoyer fichier' (length=15)
+    		 */
+    		$relativepath=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
     		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
@@ -236,7 +254,7 @@ if ($type == 'directory')
 	    		$param.='&file_manager=1';
 	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
 	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
-	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid);
+	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 	    	}
     	}
     	else
@@ -317,7 +335,7 @@ if ($useajax || $action == 'delete')
 	$formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');		// We must always put field, even if empty because it is fille by javascript later
 	$formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');	// We must always put field, even if empty because it is fille by javascript later
 	if (! empty($action) && $action == 'file_manager')	$formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
-	if (! empty($website))								$formquestion['website']=array('type'=>'hidden','value'=>$website,'name'=>'website');
+	if (! empty($websitekey))							$formquestion['website']=array('type'=>'hidden','value'=>$websitekey,'name'=>'website');
 	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']=array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
 
 	print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));

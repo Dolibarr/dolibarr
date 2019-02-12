@@ -39,9 +39,16 @@ if (!class_exists('FormCompany')) {
  */
 class FormTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     public $track_id;
+
+    /**
+     * @var int ID
+     */
     public $fk_user_create;
 
     public $message;
@@ -80,7 +87,10 @@ class FormTicket
     public $substit = array();
     public $param = array();
 
-    public $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**
@@ -106,8 +116,6 @@ class FormTicket
         $this->withref = 0;
         $this->withextrafields = 0;         // Show extrafields or not
         //$this->withtopicreadonly=0;
-
-        return 1;
     }
 
     /**
@@ -120,9 +128,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $hookmanager;
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("ticket");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'ticket'));
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);
@@ -722,8 +729,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $mysoc;
 
-        $langs->load("other");
-        $langs->load("mails");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails'));
 
         $addfileaction = 'addfile';
 

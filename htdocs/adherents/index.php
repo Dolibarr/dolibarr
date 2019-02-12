@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-$langs->load("companies");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
 
 // Security check
 $result=restrictedArea($user,'adherent');
@@ -55,7 +55,7 @@ $AdherentsResilies=array();
 
 $AdherentType=array();
 
-// Liste les adherents
+// Members list
 $sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
@@ -92,7 +92,7 @@ if ($result)
 
 $now=dol_now();
 
-// List members up to date
+// Members up to date list
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
@@ -140,7 +140,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     	foreach($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
+    		print '<tr class="oddeven">';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
     		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
     		print '</tr>';
@@ -435,6 +435,6 @@ print "</div>";
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
  * Copyright (C) 2014      Cedric Gross			<c.gross@kreiz-it.fr>
@@ -50,7 +50,7 @@ class modProduct extends DolibarrModules
 		$this->numero = 50;
 
 		$this->family = "products";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Product management";
@@ -65,8 +65,11 @@ class modProduct extends DolibarrModules
 		$this->dirs = array("/product/temp");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array("modStock","modBarcode","modProductBatch");
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array("modStock","modBarcode","modProductBatch");	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
@@ -128,6 +131,13 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+        $r++;
+
+		$this->rights[$r][0] = 39;
+		$this->rights[$r][1] = 'Ignore minimum price';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'ignore_price_min_advance';
         $r++;
 
         // Menus

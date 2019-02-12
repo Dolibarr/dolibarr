@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +161,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 			$object->timespent_note = $_POST["timespent_note"];
 			if (GETPOST('progress', 'int') > 0) $object->progress = GETPOST('progress', 'int');		// If progress is -1 (not defined), we do not change value
 			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
-			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
+			$object->timespent_duration+= ($_POST["timespent_durationmin"]?$_POST["timespent_durationmin"]:0)*60;   // We store duration in seconds
 	        if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
 	        {
 				$object->timespent_date = dol_mktime(GETPOST("timehour"),GETPOST("timemin"),0,GETPOST("timemonth"),GETPOST("timeday"),GETPOST("timeyear"));
@@ -398,8 +399,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             print nl2br($projectstatic->description);
             print '</td></tr>';
 
+            // Bill time
+            if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	            print yn($projectstatic->bill_time);
+	            print '</td></tr>';
+            }
+
             // Categories
-            if($conf->categorie->enabled) {
+            if ($conf->categorie->enabled) {
                 print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id,'project',1);
                 print "</td></tr>";
@@ -506,7 +515,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		// Planned workload
 		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-		print convertSecondToTime($object->planned_workload,'allhourmin');
+		if ($object->planned_workload)
+		{
+			print convertSecondToTime($object->planned_workload,'allhourmin');
+		}
 		print '</td></tr>';
 
 		print '</table>';
@@ -519,7 +531,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		// Progress declared
 		print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td>';
-		print $object->progress.' %';
+		print $object->progress != '' ? $object->progress.' %' : '';
 		print '</td></tr>';
 
 		// Progress calculated
@@ -580,7 +592,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="maxwidthonsmartphone">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
+			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';
 
 			// Contributor
@@ -652,7 +664,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>(empty($conf->global->PROJECT_BILL_TIME_SPENT)?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -669,7 +681,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " pt.ref, pt.label,";
-		$sql .= " u.lastname, u.firstname, u.login, u.photo,";
+		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, il.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
@@ -759,7 +771,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="maxwidthonsmartphone">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
+			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';
 
 			// Task
@@ -951,7 +963,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$totalarray=array();
 		foreach ($tasks as $task_time)
 		{
-
 			print '<tr class="oddeven">';
 
 			$date1=$db->jdate($task_time->task_date);
@@ -965,9 +976,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				if (empty($task_time->task_date_withhour))
     				{
-    					print $form->select_date(($date2?$date2:$date1),'timeline',3,3,2,"timespent_date",1,0,1);
+    					print $form->selectDate(($date2?$date2:$date1), 'timeline', 3, 3, 2, "timespent_date", 1, 0);
     				}
-    				else print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+    				else print $form->selectDate(($date2?$date2:$date1), 'timeline', 1, 1, 2, "timespent_date", 1, 0);
     			}
     			else
     			{
@@ -1028,6 +1039,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				$userstatic->lastname	= $task_time->lastname;
     				$userstatic->firstname 	= $task_time->firstname;
     				$userstatic->photo      = $task_time->photo;
+    				$userstatic->statut     = $task_time->user_status;
     				print $userstatic->getNomUrl(-1);
     			}
     			print '</td>';
@@ -1089,7 +1101,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             	if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
             	print '</td>';
             	if (! $i) $totalarray['nbfield']++;
-            	if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
+            	if (! $i) $totalarray['totalvaluebilledfield']=$totalarray['nbfield'];
             	$totalarray['totalvaluebilled'] += $valuebilled;
             }
 
@@ -1151,6 +1163,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		        }
 		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';
 		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';
+		        elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td align="right">'.price($totalarray['totalvaluebilled']).'</td>';
 		        else print '<td></td>';
 		    }
 		    print '</tr>';
@@ -1164,6 +1177,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

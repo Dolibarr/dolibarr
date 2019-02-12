@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,16 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 {
 	public $family = 'ldap';
 	public $description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -804,5 +813,4 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 		return $result;
 	}
-
 }

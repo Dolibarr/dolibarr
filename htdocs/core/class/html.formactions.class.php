@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,15 @@
  */
 class FormActions
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -41,10 +48,10 @@ class FormActions
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show list of action status
      *
@@ -59,6 +66,7 @@ class FormActions
      */
     function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
+        // phpcs:enable
         global $langs,$conf;
 
         $listofstatus = array(
@@ -235,7 +243,7 @@ class FormActions
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
-					print '<td>'.$ref.'</td>';
+					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
@@ -306,6 +314,7 @@ class FormActions
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html select list of type of event
      *
@@ -320,6 +329,7 @@ class FormActions
      */
     function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
+        // phpcs:enable
         global $langs,$user,$form,$conf;
 
         if (! is_object($form)) $form=new Form($this->db);
@@ -359,5 +369,4 @@ class FormActions
         else print $out;
         return '';
     }
-
 }

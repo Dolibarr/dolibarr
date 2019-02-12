@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -256,7 +256,7 @@ if ($object->id > 0)
 	print '</td><td>';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'mode_reglement_supplier_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'mode_reglement_supplier_id', 'DBIT', 1, 1);
 	}
 	else
 	{
@@ -374,7 +374,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -392,7 +392,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -410,7 +410,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -421,7 +421,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 	    $boxstat.='</div>';
@@ -884,6 +884,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

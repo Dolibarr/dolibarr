@@ -65,10 +65,11 @@ class modStripe extends DolibarrModules
         // Data directories to create when module is enabled.
         $this->dirs = array();
 
-        // Config pages. Put here list of php page names stored in admmin directory used to setup module.
+        // Config pages. Put here list of php page names stored in admin directory used to setup module.
         $this->config_page_url = array("stripe.php@stripe");
 
         // Dependencies
+        $this->hidden = false;			// A condition to hide module
         $this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
         $this->phpmin = array(5,4);					// Minimum version of PHP required by module
@@ -91,7 +92,7 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(
+       /* $this->menu[$r]=array(
         	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
@@ -105,7 +106,7 @@ class modStripe extends DolibarrModules
 	        'target'=>'',
 	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
+        $r++;*/
 
         $this->menu[$r] = array(
         	'fk_menu'=>'fk_mainmenu=bank',
@@ -130,7 +131,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/charge.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -144,7 +145,7 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/transaction.php',
 			'langs' => 'stripe',
 			'position' => 102,
-			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0

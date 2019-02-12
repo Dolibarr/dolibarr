@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=ilość dokumentów w katalogu
+ECMNbOfDocs=No. of documents in directory
 ECMSection=Katalog
 ECMSectionManual=Katalog manualny
 ECMSectionAuto=Katalog automatyczny
@@ -34,6 +34,8 @@ ECMDocsByProjects=Dokumenty powiązane z projektami
 ECMDocsByUsers=Dokumenty powiązane z użytkownikami
 ECMDocsByInterventions=Dokumenty powiązane z interwencjami
 ECMDocsByExpenseReports=Dokumenty dołączone do raportów kosztowych
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
 ECMNoDirectoryYet=Brak utworzonego katalogu
 ShowECMSection=Pokaż katalog
 DeleteSection=Usuń katalog
@@ -46,6 +48,5 @@ ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
-FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
-FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)

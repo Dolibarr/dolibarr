@@ -29,7 +29,7 @@ $mesg=array();
 
 $extrasize=GETPOST('size','int');
 $type=GETPOST('type','alpha');
-$param=GETPOST('param','alpha');;
+$param=GETPOST('param','alpha');
 
 if ($type=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
 if ($type=='date')     $extrasize='';
@@ -178,10 +178,12 @@ if ($action == 'add')
                 	(GETPOST('alwayseditable', 'alpha')?1:0),
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
-					0,
+					GETPOST('help','alpha'),
                     GETPOST('computed_value','alpha'),
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
-                	GETPOST('langfile', 'alpha')
+                    GETPOST('langfile', 'alpha'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -331,7 +333,7 @@ if ($action == 'update')
     			$visibility = GETPOST('list', 'alpha');
     			if ($type == 'separate') $visibility=3;
 
-    			$result=$extrafields->update(
+                $result=$extrafields->update(
     				GETPOST('attrname', 'alpha'),
     				GETPOST('label', 'alpha'),
     				$type,
@@ -344,11 +346,13 @@ if ($action == 'update')
     				(GETPOST('alwayseditable', 'alpha')?1:0),
     				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
-					0,
+					GETPOST('help','alpha'),
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
-    				GETPOST('langfile')
+                    GETPOST('langfile'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
     			);
     			if ($result > 0)
     			{

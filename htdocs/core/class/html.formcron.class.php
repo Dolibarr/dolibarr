@@ -28,8 +28,15 @@
  */
 class FormCron extends Form
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Constructor
@@ -39,10 +46,10 @@ class FormCron extends Form
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Display On Off selector
 	 *
@@ -53,6 +60,7 @@ class FormCron extends Form
 	 */
 	function select_typejob($htmlname,$selected=0,$readonly=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('cron@cron');

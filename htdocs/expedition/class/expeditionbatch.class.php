@@ -28,7 +28,11 @@
  */
 class ExpeditionLineBatch extends CommonObject
 {
-	var $element='expeditionlignebatch';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expeditionlignebatch';
+
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
 	var $sellby;
@@ -48,7 +52,6 @@ class ExpeditionLineBatch extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 	/**
@@ -234,5 +237,4 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
-
 }

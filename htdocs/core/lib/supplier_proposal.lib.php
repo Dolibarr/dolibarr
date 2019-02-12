@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,9 @@
 function supplier_proposal_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("supplier_proposal");
-	$langs->load("compta");
+
+	// Load translation files required by the page
+    $langs->loadLangs(array("supplier_proposal","compta"));
 
 	$h = 0;
 	$head = array();

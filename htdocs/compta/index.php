@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -162,7 +162,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	if ( $resql )
 	{
-		$var = false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
@@ -205,7 +204,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
-
 			}
 
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
@@ -350,7 +348,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -473,7 +470,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
@@ -520,7 +516,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$total_ttc +=  $obj->total_ttc;
 				$totalam +=  $obj->am;
 				$i++;
-				$var = !$var;
 			}
 		}
 		else
@@ -600,7 +595,6 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -642,7 +636,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/index.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
+			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
 			print '<th align="center">'.$langs->trans("DateDue").'</th>';
 			print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th align="right">'.$langs->trans("Paid").'</th>';
@@ -793,7 +787,6 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				//print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
 				$i++;
-
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
@@ -1069,7 +1062,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 
-		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
+		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da),"day").'</td>';
 		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
 		$i++;
 	}
@@ -1080,7 +1073,6 @@ if ($resql)
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

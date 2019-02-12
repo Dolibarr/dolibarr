@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -108,27 +108,36 @@ function versiondolibarrarray()
 
 
 /**
- *	Launch a sql file. Function used by:
+ *	Launch a sql file. Function is used by:
  *  - Migrate process (dolibarr-xyz-abc.sql)
  *  - Loading sql menus (auguria)
  *  - Running specific Sql by a module init
+ *  - Loading sql file of website import package
  *  Install process however does not use it.
- *  Note that Sql files must have all comments at start of line.
+ *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
- *	@param		string	$sqlfile					Full path to sql file
- * 	@param		int		$silent						1=Do not output anything, 0=Output line for update page
- * 	@param		int		$entity						Entity targeted for multicompany module
- *	@param		int		$usesavepoint				1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string	$handler					Handler targeted for menu
- *	@param 		string	$okerror					Family of errors we accept ('default', 'none')
+ *	@param		string	$sqlfile			Full path to sql file
+ * 	@param		int		$silent				1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity				Entity targeted for multicompany module
+ *	@param		int		$usesavepoint		1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler			Handler targeted for menu (replace __HANDLER__ with this value)
+ *	@param 		string	$okerror			Family of errors we accept ('default', 'none')
+ *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
+ *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
- * 	@return		int									<=0 if KO, >0 if OK
+ * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $offsetforchartofaccount=0)
+function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0, $offsetforchartofaccount=0)
 {
     global $db, $conf, $langs, $user;
 
     dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
+
+    if (! is_numeric($linelengthlimit))
+    {
+    	dol_syslog("Admin.lib::run_sql param linelengthlimit is not a numeric", LOG_ERR);
+    	return -1;
+    }
 
     $ok=0;
     $error=0;
@@ -144,7 +153,9 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 32768);
+        	// Warning fgets with second parameter that is null or 0 hang.
+        	if ($linelengthlimit > 0) $buf = fgets($fp, $linelengthlimit);
+        	else $buf = fgets($fp);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
@@ -192,13 +203,13 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^\s*--/',$buf))
+            if ($nocommentremoval || ! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
+            	if (empty($nocommentremoval)) $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
-            //          print $buf.'<br>';
+            //print $buf.'<br>';exit;
 
             if (preg_match('/;/',$buffer))	// If string contains ';', it's end of a request string, we save it in arraysql.
             {
@@ -230,7 +241,7 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
             if (! isset($listofmaxrowid[$table]))
             {
                 //var_dump($db);
-                $sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
+                $sqlgetrowid='SELECT MAX(rowid) as max from '.preg_replace('/^llx_/', MAIN_DB_PREFIX, $table);
                 $resql=$db->query($sqlgetrowid);
                 if ($resql)
                 {
@@ -247,9 +258,10 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
                     break;
                 }
             }
+            // Replace __+MAX_llx_table__ with +999
             $from='__+MAX_'.$table.'__';
             $to='+'.$listofmaxrowid[$table];
-            $newsql=str_replace($from,$to,$newsql);
+            $newsql=str_replace($from, $to, $newsql);
             dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
@@ -712,10 +724,18 @@ function defaultvalues_prepare_head()
     $head[$h][2] = 'sortorder';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
-    $head[$h][1] = $langs->trans("DefaultFocus");
-    $head[$h][2] = 'focus';
-    $h++;
+    if (! empty($conf->use_javascript_ajax))
+    {
+    	$head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
+	    $head[$h][1] = $langs->trans("DefaultFocus");
+	    $head[$h][2] = 'focus';
+	    $h++;
+
+	    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=mandatory";
+	    $head[$h][1] = $langs->trans("DefaultMandatory");
+	    $head[$h][2] = 'mandatory';
+	    $h++;
+    }
 
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
@@ -915,10 +935,11 @@ function activateModule($value,$withdeps=1)
             if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
                 // Activation of modules this module depends on
-                // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
+                // this->depends may be array('modModule1', 'mmodModule2') or array('always1'=>"modModule1", 'FR'=>'modModule2')
                 foreach ($objMod->depends as $key => $modulestring)
                 {
-                    if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
+                	//var_dump((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key));exit;
+                	if ((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key))
                     {
                         dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
                         continue;
@@ -1214,9 +1235,8 @@ function activateModulesRequiredByCountry($country_code)
 							{
 								activateModule($modName);
 
-								setEventMessage($objMod->automatic_activation[$country_code],'warnings');
+								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
-
 						}
 						else dol_syslog("Module ".get_class($objMod)." not qualified");
 					}
@@ -1336,7 +1356,8 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array	$tableau		Array of constants array('key'=>type, ) where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
+ *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
  *  @param  string  $helptext       Help
  *	@return	void
@@ -1360,17 +1381,28 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
+    $label='';
     $listofparam=array();
     foreach($tableau as $key => $const)	// Loop on each param
     {
+    	$label='';
     	// $const is a const key like 'MYMODULE_ABC'
-    	if (is_numeric($key)) {
+    	if (is_numeric($key)) {		// Very old behaviour
     		$type = 'string';
     	}
     	else
     	{
-    		$type = $const;
-    		$const = $key;
+    		if (is_array($const))
+    		{
+    			$type = $const['type'];
+				$label = $const['label'];
+    			$const = $key;
+    		}
+    		else
+    		{
+    			$type = $const;
+    			$const = $key;
+    		}
     	}
 
         $sql = "SELECT ";
@@ -1411,7 +1443,7 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
             print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
             print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type?$obj->type:'string').'">';
 
-            print $langs->trans('Desc'.$const);
+            print ($label ? $label : $langs->trans('Desc'.$const));
 
             if ($const == 'ADHERENT_MAILMAN_URL')
             {
@@ -1702,7 +1734,7 @@ function email_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	if (! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
 		$head[$h][1] = $langs->trans("OutGoingEmailSetup");
@@ -1723,7 +1755,7 @@ function email_admin_prepare_head()
 	$head[$h][2] = 'templates';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && ! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");

@@ -22,18 +22,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
-	 */
+     */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='supplier_payment';
@@ -44,7 +49,6 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
 /**
@@ -54,7 +58,10 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 
 abstract class ModeleNumRefSupplierPayments
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not

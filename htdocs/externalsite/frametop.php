@@ -22,7 +22,7 @@
  *		\brief      Top frame to show external web application
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 
 // Load translation files required by the page
 $langs->load("externalsite");

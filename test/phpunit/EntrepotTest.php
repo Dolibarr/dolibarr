@@ -257,7 +257,6 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 
         $localobject=new Entrepot($db);
 
-
         return;
     }
 }

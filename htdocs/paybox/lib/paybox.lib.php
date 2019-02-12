@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,16 +92,41 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_REFUSE=$urlko;
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
-	$IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-	if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
-	if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
-	if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
-	if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
-	if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
-	if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
-	$IBS_OUTPUT='E';
-	$PBX_SOURCE='HTML';
-	$PBX_TYPEPAIEMENT='CARTE';
+    $IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
+    if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
+    if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
+    if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
+    if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
+    if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
+    if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
+    $IBS_OUTPUT='E';
+    $PBX_SOURCE='HTML';
+    $PBX_TYPEPAIEMENT='CARTE';
+    
+    $msg = "PBX_IDENTIFIANT=".$PBX_IDENTIFIANT.
+           "&PBX_MODE=".$IBS_MODE.
+           "&PBX_SITE=".$IBS_SITE.
+           "&PBX_RANG=".$IBS_RANG.
+           "&PBX_TOTAL=".$IBS_TOTAL.
+           "&PBX_DEVISE=".$IBS_DEVISE.
+           "&PBX_CMD=".$IBS_CMD.
+           "&PBX_PORTEUR=".$IBS_PORTEUR.
+           "&PBX_RETOUR=".$IBS_RETOUR.
+           "&PBX_EFFECTUE=".$IBS_EFFECTUE.
+           "&PBX_ANNULE=".$IBS_ANNULE.
+           "&PBX_REFUSE=".$IBS_REFUSE.
+           "&PBX_TXT=".$IBS_TXT.
+           "&PBX_BKGD=".$IBS_BKGD.
+           "&PBX_WAIT=".$IBS_WAIT.
+           "&PBX_LANGUE=".$IBS_LANG.
+           "&PBX_OUTPUT=".$IBS_OUTPUT.
+           "&PBX_SOURCE=".$PBX_SOURCE.
+           "&PBX_TYPEPAIEMENT=".$PBX_TYPEPAIEMENT;
+    
+    $binKey = pack("H*", dol_decode($conf->global->PAYBOX_HMAC_KEY));
+            
+    $hmac = strtoupper(hash_hmac('sha512', $msg, $binKey));
+           
 
     dol_syslog("Soumission Paybox", LOG_DEBUG);
     dol_syslog("IBS_MODE: $IBS_MODE", LOG_DEBUG);
@@ -157,7 +182,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="PBX_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
     print '<input type="hidden" name="PBX_SOURCE" value="'.$PBX_SOURCE.'">'."\n";
     print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
-
+    print '<input type="hidden" name="PBX_HMAC" value="'.$hmac.'">'."\n";
     print '</form>'."\n";
 
 

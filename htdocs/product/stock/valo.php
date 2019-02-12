@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,6 @@ if ($result)
         print '<td align="right">'.price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
-
     }
 
     $db->free($result);
@@ -150,14 +149,12 @@ if ($result)
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<br><img src="'.$url.'">';
     }
-
 }
 else
 {
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

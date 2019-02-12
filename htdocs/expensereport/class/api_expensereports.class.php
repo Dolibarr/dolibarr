@@ -94,7 +94,8 @@ class ExpenseReports extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array               Array of Expense Report objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -195,7 +196,8 @@ class ExpenseReports extends DolibarrApi
      * @return int
      */
 /*
-    function getLines($id) {
+    function getLines($id)
+    {
       if(! DolibarrApiAccess::$user->rights->expensereport->lire) {
 		  	throw new RestException(401);
 		  }
@@ -228,7 +230,8 @@ class ExpenseReports extends DolibarrApi
      * @return int
      */
 /*
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -290,7 +293,8 @@ class ExpenseReports extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -348,7 +352,8 @@ class ExpenseReports extends DolibarrApi
      * @return int
      */
     /*
-    function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -380,7 +385,8 @@ class ExpenseReports extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -439,7 +445,6 @@ class ExpenseReports extends DolibarrApi
                 'message' => 'Expense Report deleted'
             )
         );
-
     }
 
     /**
@@ -490,7 +495,8 @@ class ExpenseReports extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
@@ -516,7 +522,6 @@ class ExpenseReports extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $expensereport[$field] = $data[$field];
-
         }
         return $expensereport;
     }

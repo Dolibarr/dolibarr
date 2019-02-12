@@ -30,9 +30,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/payment/modules_payment.php';
  */
 class mod_payment_ant extends ModeleNumRefPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Ant';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Ant';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Ant';
 
 
     /**
@@ -42,7 +61,7 @@ class mod_payment_ant extends ModeleNumRefPayments
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -124,6 +143,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -133,8 +153,7 @@ class mod_payment_ant extends ModeleNumRefPayments
      */
     function commande_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

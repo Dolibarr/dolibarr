@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = "Jade";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-    var $prefix='BL';
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
+
+    public $prefix='BL';
 
 
 	/**
@@ -142,16 +161,17 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free ref
 	 *
-     *  @param	Societe		$objsoc      	Object thirdparty
+     *  @param  Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Object livraison
-     *  @return string      				Texte descripif
+     *  @return string      				Texte descriptif
      */
     function livraison_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
-
 }

@@ -22,9 +22,15 @@
  */
 
 // This file is a wrapper, so empty header
-function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
+function llxHeader()
+{
+    print '<html><title>Build an import example file</title><body>';
+}
 // This file is a wrapper, so empty footer
-function llxFooter() { print '</body></html>'; }
+function llxFooter()
+{
+    print '</body></html>';
+}
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -86,4 +92,3 @@ foreach($fieldstarget as $code=>$label)
 //var_dump($contentlinevalues);
 
 print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
-

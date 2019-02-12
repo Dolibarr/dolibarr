@@ -35,7 +35,7 @@ class Shipments extends DolibarrApi
     static $FIELDS = array(
         'socid',
     	'origin_id',
-    	'origin_type'
+    	'origin_type',
     );
 
     /**
@@ -99,7 +99,8 @@ class Shipments extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -192,13 +193,13 @@ class Shipments extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->shipment->$field = $value;
         }
-        /*if (isset($request_data["lines"])) {
+        if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
           $this->shipment->lines = $lines;
-        }*/
+        }
 
         if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
@@ -217,7 +218,8 @@ class Shipments extends DolibarrApi
      * @return int
      */
     /*
-    function getLines($id) {
+    function getLines($id)
+    {
       if(! DolibarrApiAccess::$user->rights->expedition->lire) {
 		  	throw new RestException(401);
 		  }
@@ -250,7 +252,8 @@ class Shipments extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
@@ -312,7 +315,8 @@ class Shipments extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
@@ -372,7 +376,8 @@ class Shipments extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
     	if(! DolibarrApiAccess::$user->rights->expedition->creer) {
     		throw new RestException(401);
     	}
@@ -407,7 +412,8 @@ class Shipments extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
       if (! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
@@ -466,7 +472,6 @@ class Shipments extends DolibarrApi
                 'message' => 'Shipment deleted'
             )
         );
-
     }
 
     /**
@@ -537,7 +542,8 @@ class Shipments extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-/*    function setinvoiced($id) {
+/*    function setinvoiced($id)
+    {
 
         if(! DolibarrApiAccess::$user->rights->expedition->creer) {
                 throw new RestException(401);
@@ -573,7 +579,8 @@ class Shipments extends DolibarrApi
      * @throws 405
      */
     /*
-    function createShipmentFromOrder($orderid) {
+    function createShipmentFromOrder($orderid)
+    {
 
         require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
@@ -608,7 +615,8 @@ class Shipments extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 
@@ -653,7 +661,6 @@ class Shipments extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $shipment[$field] = $data[$field];
-
         }
         return $shipment;
     }

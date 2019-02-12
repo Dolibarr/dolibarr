@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -407,7 +407,6 @@ if ($id > 0 || ! empty($ref))
 						{
 							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
-
 						}
 						else{
 							print '<td>'.$nb_of_subproduct.'</td>';
@@ -551,7 +550,6 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 				$i=0;
-				$var=true;
 
 				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
@@ -635,7 +633,6 @@ if ($id > 0 || ! empty($ref))
 					}
 					$i++;
 				}
-
 			}
 			else
 			{
@@ -655,11 +652,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		}
-
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

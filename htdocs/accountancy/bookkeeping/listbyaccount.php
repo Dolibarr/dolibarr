@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -287,10 +288,10 @@ print '</td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="center">';
 print $langs->trans('From') . ': ';
-print $form->select_date($search_date_start, 'search_date_start', 0, 0, 1);
+print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1);
 print '<br>';
 print $langs->trans('to') . ': ';
-print $form->select_date($search_date_end, 'search_date_end', 0, 0, 1);
+print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
 print '</td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="' . dol_escape_htmltag($search_doc_ref) . '"/></td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
@@ -421,5 +422,6 @@ print '</tr>';
 print "</table>";
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
