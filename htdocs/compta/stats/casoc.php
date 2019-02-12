@@ -378,22 +378,22 @@ if ($subcat) {
     print ' checked';
 }
 print'></td>';
-print '<td colspan="7" align="right">';
+print '<td colspan="7" class="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre" align="left">';
+print '<td class="liste_titre left">';
 print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
 print '</td>';
-print '<td class="liste_titre" align="left">';
+print '<td class="liste_titre left">';
 print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
 print '</td>';
-print '<td class="liste_titre" align="left">';
+print '<td class="liste_titre left">';
 print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
 print '</td>';
-print '<td class="liste_titre" align="left">';
+print '<td class="liste_titre left">';
 print $form->select_country($search_country, 'search_country');
 //print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
 print '</td>';
@@ -448,7 +448,7 @@ if ($modecompta == 'CREANCES-DETTES') {
            "amount_ht",
            "",
            $paramslink,
-           'align="right"',
+           'class="right"',
            $sortfield,
            $sortorder
     );
@@ -461,7 +461,7 @@ print_liste_field_titre(
 	"amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
 );
@@ -471,7 +471,7 @@ print_liste_field_titre(
 	"amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
 );
@@ -567,7 +567,7 @@ if (count($amount)) {
 		print '</td>';
 
 		// Amount w/o VAT
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
@@ -585,7 +585,7 @@ if (count($amount)) {
 		print '</td>';
 
 		// Amount with VAT
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
@@ -604,7 +604,7 @@ if (count($amount)) {
 		print '</td>';
 
 		// Percent;
-		print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+		print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
         print '<td align="center">';
@@ -631,9 +631,9 @@ if (count($amount)) {
 	if ($modecompta != 'CREANCES-DETTES') {
 	    print '<td colspan="1"></td>';
 	} else {
-	    print '<td align="right">'.price($catotal_ht).'</td>';
+	    print '<td class="right">'.price($catotal_ht).'</td>';
 	}
-	print '<td align="right">'.price($catotal).'</td>';
+	print '<td class="right">'.price($catotal).'</td>';
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
