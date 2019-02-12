@@ -3056,6 +3056,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithoutext == 'sign-out')     {
+                $fakey = 'fa-sign-out';
 			    $marginleftonlyshort=0;
 			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
