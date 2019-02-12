@@ -364,7 +364,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return sorted eventlist as array or false if calenar is empty
+     * Return sorted eventlist as array or false if calendar is empty
      *
      * @return array|false
      */
@@ -399,7 +399,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return eventlist array (not sort eventlist array)
+     * Return eventlist array (not sorted eventlist array)
      *
      * @return array
      */
@@ -423,7 +423,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return to do array (not sort to do array)
+     * Return to do array (not sorted todo array)
      *
      * @return array
      */
