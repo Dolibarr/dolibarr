@@ -472,50 +472,19 @@ function show_stats_for_company($product, $socid)
  */
 function measuring_units_string($unit, $measuring_style = '')
 {
-	global $langs;
-
-	$measuring_units=array();
-	if ($measuring_style == 'weight')
-	{
-		$measuring_units[3] = $langs->transnoentitiesnoconv("WeightUnitton");
-		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
-		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
+	global $langs, $db;
+	require_once DOL_DOCUMENT_ROOT.'/core/class/cmeasuringunits.class.php';
+	$measuringUnits= new CMeasuringUnits($db);
+	$result=$measuringUnits->fetchAll('','', 0, 0, array('t.code'=> $unit,'t.unit_type'=>$measuring_style,'t.active'=>1));
+	if ($result<0) {
+		return -1;
+	} else {
+		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
+			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+		} else {
+			return '';
+		}
 	}
-	elseif ($measuring_style == 'size')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("SizeUnitm");
-		$measuring_units[-1] = $langs->transnoentitiesnoconv("SizeUnitdm");
-		$measuring_units[-2] = $langs->transnoentitiesnoconv("SizeUnitcm");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("SizeUnitmm");
-        $measuring_units[98] = $langs->transnoentitiesnoconv("SizeUnitfoot");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("SizeUnitinch");
-	}
-	elseif ($measuring_style == 'surface')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("SurfaceUnitm2");
-		$measuring_units[-2] = $langs->transnoentitiesnoconv("SurfaceUnitdm2");
-		$measuring_units[-4] = $langs->transnoentitiesnoconv("SurfaceUnitcm2");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("SurfaceUnitmm2");
-        $measuring_units[98] = $langs->transnoentitiesnoconv("SurfaceUnitfoot2");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("SurfaceUnitinch2");
-	}
-	elseif ($measuring_style == 'volume')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("VolumeUnitm3");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("VolumeUnitdm3");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("VolumeUnitcm3");
-		$measuring_units[-9] = $langs->transnoentitiesnoconv("VolumeUnitmm3");
-        $measuring_units[88] = $langs->transnoentitiesnoconv("VolumeUnitfoot3");
-        $measuring_units[89] = $langs->transnoentitiesnoconv("VolumeUnitinch3");
-		$measuring_units[97] = $langs->transnoentitiesnoconv("VolumeUnitounce");
-		$measuring_units[98] = $langs->transnoentitiesnoconv("VolumeUnitlitre");
-        $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
-	}
-
-	return $measuring_units[$unit];
 }
 
 /**

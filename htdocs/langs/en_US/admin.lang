@@ -919,6 +919,7 @@ DictionaryAccountancysystem=Models for chart of accounts
 DictionaryAccountancyJournal=Accounting journals
 DictionaryEMailTemplates=Email Templates
 DictionaryUnits=Units
+DictionaryMeasuringUnits=Measuring Units
 DictionaryProspectStatus=Prospect status
 DictionaryHolidayTypes=Types of leave
 DictionaryOpportunityStatus=Lead status for project/lead
