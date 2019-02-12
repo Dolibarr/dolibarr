@@ -70,7 +70,7 @@ $arrayfields=array(
 );
 
 // Security check
-if (empty($conf->compta->enabled) && empty($conf->accounting->enabled)) {
+if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled)) {
     accessforbidden();
 }
 if ($user->societe_id > 0)
@@ -231,8 +231,8 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
  */
 //FIXME
 /*
-*ZIP creation
-*/
+ *ZIP creation
+ */
 
 if ($result && $action == "dl")
 {
@@ -247,8 +247,8 @@ if ($result && $action == "dl")
     {
         foreach ($filesarray as $key=> $file)
         {
-                if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
-                $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
+            if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
+            $log.=$file['date'].','.$file['item'].','.$file['ref'].','.$file['amount'].','.$file['paid'].','.$file["name"].','.$file['fk']."\n";
         }
         $zip->addFromString('transactions.csv', $log);
         $zip->close();
@@ -309,14 +309,14 @@ if (! empty($conf->multicompany->enabled) && is_object($mc))
     }
 
     /*$object = new stdClass();
-    // Other attributes
-    $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (empty($reshook))
-    {
-        print $object->showOptionals($extrafields, 'edit');
-    }*/
+     // Other attributes
+     $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
+     $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+     print $hookmanager->resPrint;
+     if (empty($reshook))
+     {
+     print $object->showOptionals($extrafields, 'edit');
+     }*/
 }
 print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
 
