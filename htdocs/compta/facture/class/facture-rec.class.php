@@ -225,7 +225,7 @@ class FactureRec extends CommonInvoice
 					$tva_tx = $facsrc->lines[$i]->tva_tx;
 					if (! empty($facsrc->lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
 
-					$result_insert = $this->addline(
+    $result_insert = $this->addline(
                         $facsrc->lines[$i]->desc,
                         $facsrc->lines[$i]->subprice,
                         $facsrc->lines[$i]->qty,
@@ -1858,7 +1858,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	}
     	$sql.= ", rang=".$this->rang;
     	$sql.= ", special_code=".$this->special_code;
-    	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
+    	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit)."'":"null");
     	$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
     	$sql.= " WHERE rowid = ".$this->id;
 

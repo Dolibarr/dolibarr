@@ -626,7 +626,7 @@ if (empty($reshook))
 				}
 			}
 
-			$result	= $object->updateline(
+$result	= $object->updateline(
 				$lineid,
 				$_POST['product_desc'],
 				$ht,
@@ -841,7 +841,7 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 	{
-		$result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+		$result = $object->commande($user, $_REQUEST["datecommande"], $_REQUEST["methode"], $_REQUEST['comment']);
 		if ($result > 0)
 		{
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1927,11 +1927,11 @@ elseif (! empty($object->id))
 	print '</td><td>';
 	if ($action == 'editconditions')
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,  $object->cond_reglement_id, 'cond_reglement_id');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	}
 	else
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,  $object->cond_reglement_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 	}
 	print "</td>";
 	print '</tr>';

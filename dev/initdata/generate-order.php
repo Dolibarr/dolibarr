@@ -189,7 +189,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
             $prodid = mt_rand(1, $num_prods);
             $product=new Product($db);
             $result=$product->fetch($prodids[$prodid]);
-            $result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
+            $result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0, 0, 0, $product->price_base_type, $product->price_ttc, '', '', $product->type);
             if ($result <= 0)
             {
                 dol_print_error($db, $object->error);

@@ -67,7 +67,7 @@ class modProduct extends DolibarrModules
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array("modStock","modBarcode","modProductBatch");	// List of module ids to disable if this one is disabled
+		$this->requiredby = array("modStock","modBarcode","modProductBatch","modVariants");	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
@@ -438,7 +438,7 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
-			$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array(
+$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array(
 					'sp.price'=>"PriceQtyMinHT*",
 					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this field not required and calculate it from price and qty
 					'sp.remise_percent'=>'DiscountQtyMin'

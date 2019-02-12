@@ -136,7 +136,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	$interval = new DateInterval($deltastring);
 
 	if($sub) $date->sub($interval);
-	else $date->add( $interval );
+	else $date->add($interval);
 
 	return $date->getTimestamp();
 }
@@ -809,7 +809,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		    // Easter sunday
 
 		    // Monday after easter
-		    $date_eastermonday = mktime(
+    $date_eastermonday = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),
@@ -823,7 +823,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		    // Easter monday
 
 		    // Christi Himmelfahrt (39 days after easter sunday)
-		    $date_ch = mktime(
+    $date_ch = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),
@@ -837,7 +837,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		    // Christi Himmelfahrt
 
 		    // Pfingsten (50 days after easter sunday)
-		    $date_pentecote = mktime(
+    $date_pentecote = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),
@@ -851,7 +851,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		    // Pfingsten
 
 		    // Fronleichnam (60 days after easter sunday)
-		    $date_fronleichnam = mktime(
+    $date_fronleichnam = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),

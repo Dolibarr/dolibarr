@@ -226,7 +226,7 @@ elseif ($event->type == 'payout.paid') {
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-		$mailfile = new CMailFile(
+$mailfile = new CMailFile(
 			$subject,
 			$sendto,
 			$replyto,

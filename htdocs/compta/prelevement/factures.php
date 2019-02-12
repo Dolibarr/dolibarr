@@ -205,8 +205,8 @@ if ($result)
   	print '<tr class="liste_titre">';
   	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
   	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-  	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
-  	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+  	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+  	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
   	print_liste_field_titre("StatusDebitCredit", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
@@ -235,10 +235,10 @@ if ($result)
       	print "</td>\n";
 
       	// Amount of invoice
-      	print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+      	print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 
       	// Amount requested
-      	print '<td align="right">'.price($obj->amount_requested)."</td>\n";
+      	print '<td class="right">'.price($obj->amount_requested)."</td>\n";
 
       	// Status of requests
       	print '<td align="center">';
@@ -273,11 +273,11 @@ if ($result)
       	print '<tr class="liste_total">';
      	print '<td>'.$langs->trans("Total").'</td>';
       	print '<td>&nbsp;</td>';
-      	print '<td align="right">';
+      	print '<td class="right">';
 		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
       	if ($totalamount_requested != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
 		print "</td>\n";
-      	print '<td align="right">';
+      	print '<td class="right">';
 		print price($totalamount_requested);
       	print "</td>\n";
       	print '<td>&nbsp;</td>';

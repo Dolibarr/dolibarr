@@ -424,7 +424,7 @@ class PaymentSalary extends CommonObject
 
 					// Insert payment into llx_bank
 					// Add link 'payment_salary' in bank_url between payment and bank transaction
-					$bank_line_id = $acc->addline(
+    $bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
@@ -467,7 +467,7 @@ class PaymentSalary extends CommonObject
 					$fuser->fetch($this->fk_user);
 
 					// Add link 'user' in bank_url between operation and bank transaction
-					$result=$acc->add_url_line(
+    $result=$acc->add_url_line(
 						$bank_line_id,
 						$this->fk_user,
 						DOL_URL_ROOT.'/user/card.php?id=',

@@ -357,7 +357,7 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline(
+        $result = $object->addline(
 										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
 										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
 										$lines[$i]->fk_product, $lines[$i]->remise_percent,
@@ -648,7 +648,7 @@ if (empty($reshook))
 					$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-					$result=$object->addline(
+    $result=$object->addline(
 						$desc,
 						$pu_ht,
 						$qty,

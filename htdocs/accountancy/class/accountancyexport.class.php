@@ -475,7 +475,7 @@ class AccountancyExport
 			// elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
 			if (! empty($data->date_echeance))
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance,  '%d%m%y' );	 // elarifr:  format must be ddmmyy
+				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y');	 // elarifr:  format must be ddmmyy
 			else
 				$Tab['date_echeance'] = '000000';
 

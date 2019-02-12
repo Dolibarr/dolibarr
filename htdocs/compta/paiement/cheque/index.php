@@ -72,7 +72,7 @@ if ($resql) {
     }
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-    print '<td align="right">';
+    print '<td class="right">';
     print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
     print '</td></tr>';
     print "</table>\n";
@@ -106,9 +106,9 @@ if ($resql)
 	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";
 	print '<th>'.$langs->trans("Account").'</th>';
-	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
-	print '<th align="right">'.$langs->trans("Amount").'</th>';
-	print '<th align="right">'.$langs->trans("Status").'</th>';
+	print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
+	print '<th class="right">'.$langs->trans("Amount").'</th>';
+	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
 	while ( $objp = $db->fetch_object($resql) )
@@ -131,9 +131,9 @@ if ($resql)
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$objp->nbcheque.'</td>';
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
+		print '<td class="right">'.$objp->nbcheque.'</td>';
+		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
 
 		print '</tr>';
 	}

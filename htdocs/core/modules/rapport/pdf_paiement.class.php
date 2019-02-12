@@ -326,6 +326,11 @@ class pdf_paiement
 		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0)
+		{
+		    $this->error = $hookmanager->error;
+		    $this->errors = $hookmanager->errors;
+		}
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -446,7 +451,7 @@ class pdf_paiement
 				if ($yp > $this->tab_height -15)
 				{
 					$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height,  $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
 					$page++;
 					$pdf->AddPage();
 					$this->_pagehead($pdf, $page, 0, $outputlangs);

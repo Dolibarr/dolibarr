@@ -344,7 +344,7 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'align="right"');
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"');
 		print_liste_field_titre('');
 		print "</tr>\n";
 
@@ -372,7 +372,7 @@ if ($id > 0 || $ref)
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right">'.price($obj->amount)."</td>\n";
 
 			print '<td>';
 
@@ -397,7 +397,7 @@ if ($id > 0 || $ref)
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
 			print price($total);
 			print "</td>\n";

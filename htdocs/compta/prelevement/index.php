@@ -75,14 +75,14 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
-print '<td align="right">';
+print '<td class="right">';
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
-print '<td align="right">';
+print '<td class="right">';
 print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
 print '</td></tr></table><br>';
 
@@ -137,15 +137,15 @@ if ($resql)
             print $thirdpartystatic->getNomUrl(1, 'customer');
             print '</td>';
 
-            print '<td align="right">';
+            print '<td class="right">';
             print price($obj->amount);
             print '</td>';
 
-            print '<td align="right">';
+            print '<td class="right">';
             print dol_print_date($db->jdate($obj->date_demande), 'day');
             print '</td>';
 
-            print '<td align="right">';
+            print '<td class="right">';
             print $invoicestatic->getLibStatut(3, $alreadypayed);
             print '</td>';
             print '</tr>';
@@ -186,8 +186,8 @@ if ($result)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
-    print '<th align="right">'.$langs->trans("Amount").'</th>';
-    print '<th align="right">'.$langs->trans("Status").'</th>';
+    print '<th class="right">'.$langs->trans("Amount").'</th>';
+    print '<th class="right">'.$langs->trans("Status").'</th>';
     print '</tr>';
 
     while ($i < min($num, $limit))
@@ -204,8 +204,8 @@ if ($result)
         print $bprev->getNomUrl(1);
         print "</td>\n";
         print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-        print '<td align="right">'.price($obj->amount)."</td>\n";
-        print '<td align="right">'.$bprev->getLibStatut(3)."</td>\n";
+        print '<td class="right">'.price($obj->amount)."</td>\n";
+        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
         print "</tr>\n";
         $i++;

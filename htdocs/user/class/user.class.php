@@ -1977,7 +1977,7 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
-		$mailfile = new CMailFile(
+$mailfile = new CMailFile(
 			$subject,
 			$this->email,
 			$conf->global->MAIN_MAIL_EMAIL_FROM,

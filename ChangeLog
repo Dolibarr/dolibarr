@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
+NEW: Module ticket is available as a stable module
 NEW: Experimental module "Vendor receptions"
 
 For Developers:
@@ -12,7 +13,7 @@ For Developers:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus.
+* Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
 
 

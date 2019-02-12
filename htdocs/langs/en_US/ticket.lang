@@ -28,7 +28,7 @@ Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 
 TicketDictType=Tickets type
-TicketDictCategory=Tickets categories
+TicketDictCategory=Tickets analytic code
 TicketDictSeverity=Tickets severity
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
@@ -67,7 +67,7 @@ Deleted=Deleted
 
 # Dict
 Type=Type
-Category=Category
+Category=Analytic code
 Severity=Severity
 
 # Email templates
@@ -80,7 +80,7 @@ TicketSetup=Ticket module setup
 TicketSettings=Settings
 TicketSetupPage=
 TicketPublicAccess=A public interface requiring no identification is available at the following url
-TicketSetupDictionaries=The type of application categories and severity level are configurable from dictionaries
+TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
 TicketEmailNotificationFrom=Notification email from
@@ -147,7 +147,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Category
+TicketCategory=Analytic code
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
@@ -158,7 +158,7 @@ TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
 TicketChangeType=Change type
-TicketChangeCategory=Change category
+TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
 TicketAddMessage=Add a message
 AddMessage=Add a message

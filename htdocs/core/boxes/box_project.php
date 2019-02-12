@@ -174,11 +174,11 @@ class box_project extends ModeleBoxes
              'text' => "&nbsp;",
         );
         $this->info_box_contents[$i][] = array(
-            'td' => 'align="right" ',
+            'td' => 'class="right" ',
             'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
         );
         $this->info_box_contents[$i][] = array(
-            'td' => 'align="right" ',
+            'td' => 'class="right" ',
             'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
         );
         $this->info_box_contents[$i][] = array(

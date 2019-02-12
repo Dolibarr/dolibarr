@@ -33,10 +33,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
-	print "Error: this template page cannot be called directly as an URL";
-	exit;
+if (empty($object) || ! is_object($object)) {
+    print "Error: this template page cannot be called directly as an URL";
+    exit;
 }
 
 
@@ -450,8 +449,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		//There will be an edit and a delete button
 		$colspan += 2;
 
-		// With this, there is a column move button ONLY if lines > 1
-		if (in_array($object->element, array(
+        // With this, there is a column move button ONLY if lines > 1
+        if (in_array($object->element, array(
 			'propal',
 			'supplier_proposal',
 			'facture',
@@ -461,8 +460,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 			'order',
 			'order_supplier',
 			'invoice_supplier'
-		))) {
-			$colspan++;
+        ))) {
+            $colspan++;
 		}
 	}
 

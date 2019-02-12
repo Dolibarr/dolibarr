@@ -318,7 +318,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->reception->dir_temp,

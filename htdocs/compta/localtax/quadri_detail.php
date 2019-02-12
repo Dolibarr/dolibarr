@@ -320,10 +320,10 @@ else
 		print '<tr class="liste_titre">';
 		print '<td class="left">'.$elementcust.'</td>';
 		print '<td class="left">'.$productcust.'</td>';
-		if ($modetax != 2) print '<td align="right">'.$amountcust.'</td>';
-		if ($modetax != 1) print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
-		print '<td align="right">'.$langs->trans("BI").'</td>';
-		print '<td align="right">'.$vatcust.'</td>';
+		if ($modetax != 2) print '<td class="right">'.$amountcust.'</td>';
+		if ($modetax != 1) print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+		print '<td class="right">'.$langs->trans("BI").'</td>';
+		print '<td class="right">'.$vatcust.'</td>';
 		print '</tr>';
 
 
@@ -357,7 +357,7 @@ else
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+						print '<td class="nowrap left">'.$fields['link'].'</td>';
 
 						// Description
 						print '<td class="left">';
@@ -389,7 +389,7 @@ else
 						// Total HT
 						if ($modetax != 2)
 						{
-							print '<td class="nowrap" align="right">';
+							print '<td class="nowrap right">';
 							print price($fields['totalht']);
 							if (price2num($fields['ftotal_ttc']))
 							{
@@ -403,7 +403,7 @@ else
 						if ($modetax != 1)
 						{
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-							print '<td class="nowrap" align="right">';
+							print '<td class="nowrap right">';
 							if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 							{
 								$payment_static->id=$fields['payment_id'];
@@ -421,14 +421,14 @@ else
 						}
 
 						// Total collected
-						print '<td class="nowrap" align="right">';
+						print '<td class="nowrap right">';
 						$temp_ht=$fields['totalht'];
 						if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 						print price(price2num($temp_ht, 'MT'));
 						print '</td>';
 
 						// Localtax
-						print '<td class="nowrap" align="right">';
+						print '<td class="nowrap right">';
 						$temp_vat= $local==1?$fields['localtax1']:$fields['localtax2'];
 						print price(price2num($temp_vat, 'MT'));
 						//print price($fields['vat']);
@@ -445,14 +445,14 @@ else
 		    // Total customers for this vat rate
 		    print '<tr class="liste_total">';
 		    print '<td></td>';
-		    print '<td align="right">'.$langs->trans("Total").':</td>';
+		    print '<td class="right">'.$langs->trans("Total").':</td>';
 		    if ($modetax != 1)
 		    {
-		        print '<td class="nowrap" align="right">&nbsp;</td>';
-		        print '<td align="right">&nbsp;</td>';
+		        print '<td class="nowrap right">&nbsp;</td>';
+		        print '<td class="right">&nbsp;</td>';
 		    }
-		    print '<td align="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-		    print '<td class="nowrap" align="right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+		    print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
+		    print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
 		    print '</tr>';
 		}
 
@@ -460,14 +460,14 @@ else
 	    {
 	        print '<tr class="liste_total">';
 	        print '<td>&nbsp;</td>';
-	        print '<td align="right">'.$langs->trans("Total").':</td>';
+	        print '<td class="right">'.$langs->trans("Total").':</td>';
 	        if ($modetax == 0)
 	        {
-	            print '<td class="nowrap" align="right">&nbsp;</td>';
-	            print '<td align="right">&nbsp;</td>';
+	            print '<td class="nowrap right">&nbsp;</td>';
+	            print '<td class="right">&nbsp;</td>';
 	        }
-	        print '<td align="right">'.price(price2num(0, 'MT')).'</td>';
-	        print '<td class="nowrap" align="right">'.price(price2num(0, 'MT')).'</td>';
+	        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+	        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
 	        print '</tr>';
 	    }
 
@@ -485,11 +485,11 @@ else
 		print '<td class="left">'.$productsup.'</td>';
 		if ($modetax != 1)
 		{
-			print '<td align="right">'.$amountsup.'</td>';
-			print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+			print '<td class="right">'.$amountsup.'</td>';
+			print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 		}
-		print '<td align="right">'.$langs->trans("BI").'</td>';
-		print '<td align="right">'.$vatsup.'</td>';
+		print '<td class="right">'.$langs->trans("BI").'</td>';
+		print '<td class="right">'.$vatsup.'</td>';
 		print '</tr>'."\n";
 
 		foreach(array_keys($x_paye) as $rate)
@@ -519,7 +519,7 @@ else
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+						print '<td class="nowrap left">'.$fields['link'].'</td>';
 
 						// Description
 						print '<td class="left">';
@@ -545,7 +545,7 @@ else
 						// Total HT
 						if ($modetax != 2)
 						{
-							print '<td class="nowrap" align="right">';
+							print '<td class="nowrap right">';
 							print price($fields['totalht']);
 							if (price2num($fields['ftotal_ttc']))
 							{
@@ -560,7 +560,7 @@ else
 						$ratiopaymentinvoice=1;
 						if ($modetax != 1)
 						{
-							print '<td class="nowrap" align="right">';
+							print '<td class="nowrap right">';
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 							if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 							{
@@ -582,13 +582,13 @@ else
 						}
 
 						// VAT paid
-						print '<td class="nowrap" align="right">';
+						print '<td class="nowrap right">';
 						$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 						print price(price2num($temp_ht, 'MT'), 1);
 						print '</td>';
 
 						// Localtax
-						print '<td class="nowrap" align="right">';
+						print '<td class="nowrap right">';
 						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;
 						print price(price2num($temp_vat, 'MT'), 1);
 						//print price($fields['vat']);
@@ -605,27 +605,27 @@ else
 		    // Total suppliers for this vat rate
 		    print '<tr class="liste_total">';
 		    print '<td>&nbsp;</td>';
-		    print '<td align="right">'.$langs->trans("Total").':</td>';
+		    print '<td class="right">'.$langs->trans("Total").':</td>';
 		    if ($modetax != 1)
 		    {
-		        print '<td class="nowrap" align="right">&nbsp;</td>';
-		        print '<td align="right">&nbsp;</td>';
+		        print '<td class="nowrap right">&nbsp;</td>';
+		        print '<td class="right">&nbsp;</td>';
 		    }
-		    print '<td align="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-		    print '<td class="nowrap" align="right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+		    print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
+		    print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
 		    print '</tr>';
 		}
 
 		if (count($x_paye) == 0) {  // Show a total line if nothing shown
 			print '<tr class="liste_total">';
 			print '<td>&nbsp;</td>';
-			print '<td align="right">'.$langs->trans("Total").':</td>';
+			print '<td class="right">'.$langs->trans("Total").':</td>';
 			if ($modetax != 1) {
-				print '<td class="nowrap" align="right">&nbsp;</td>';
-				print '<td align="right">&nbsp;</td>';
+				print '<td class="nowrap right">&nbsp;</td>';
+				print '<td class="right">&nbsp;</td>';
 			}
-			print '<td align="right">'.price(price2num(0, 'MT')).'</td>';
-			print '<td class="nowrap" align="right">'.price(price2num(0, 'MT')).'</td>';
+			print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
 			print '</tr>';
 		}
 
@@ -638,7 +638,7 @@ else
     $diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
-	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
+	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 
 	$i++;

@@ -40,7 +40,7 @@ class box_fournisseurs extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
     var $info_box_head = array();
@@ -124,7 +124,7 @@ class box_fournisseurs extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
@@ -132,7 +132,7 @@ class box_fournisseurs extends ModeleBoxes
                 }
 
                 if ($num==0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'align="center"',
+                    'td' => 'class="center"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 
@@ -146,7 +146,7 @@ class box_fournisseurs extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

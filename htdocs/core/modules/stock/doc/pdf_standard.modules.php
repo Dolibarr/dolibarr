@@ -404,7 +404,7 @@ class pdf_standard extends ModelePDFStock
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref = $objp->ref;
@@ -804,6 +804,11 @@ class pdf_standard extends ModelePDFStock
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -909,7 +914,7 @@ class pdf_standard extends ModelePDFStock
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '',
+$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '',
 				'C');
 		}
 

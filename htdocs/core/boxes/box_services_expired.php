@@ -132,22 +132,28 @@ class box_services_expired extends ModeleBoxes
 					$dateline=$db->jdate($objp->date_line);
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
-    				$this->info_box_contents[$i][] = array('td' => '',
-    				'text' => $contract->getNomUrl(1),
-    				'asis' => 1
+    				$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $contract->getNomUrl(1),
+                        'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" align="left"',
-    				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
-    				'asis' => 1
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone left"',
+                        'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
+                        'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][] = array('td' => 'align="center"',
-    				'text' => dol_print_date($dateline, 'day'),
-    				'text2'=> $late);
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="center"',
+                        'text' => dol_print_date($dateline, 'day'),
+                        'text2'=> $late,
+                    );
 
-    				$this->info_box_contents[$i][] = array('td' => 'class="right"',
-    				'text' => $objp->nb_services);
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right"',
+                        'text' => $objp->nb_services,
+                    );
 
 
     				$i++;
@@ -156,22 +162,27 @@ class box_services_expired extends ModeleBoxes
     			if ($num==0)
     			{
     			    $langs->load("contracts");
-    			    $this->info_box_contents[$i][] = array('td' => 'align="center" class="nohover opacitymedium"','text'=>$langs->trans("NoExpiredServices"));
+    			    $this->info_box_contents[$i][] = array(
+                        'td' => 'class="nohover opacitymedium center"',
+                        'text' => $langs->trans("NoExpiredServices"),
+                    );
     			}
 
 				$db->free($resql);
     		}
     		else
     		{
-    			$this->info_box_contents[0][] = array(  'td' => '',
-                                                        'maxlength'=>500,
-                                                        'text' => ($db->error().' sql='.$sql));
+    			$this->info_box_contents[0][] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
     		}
     	}
     	else
     	{
     		$this->info_box_contents[0][0] = array(
-    		    'td' => 'align="left" class="nohover opacitymedium"',
+    		    'td' => 'class="nohover opacitymedium left"',
     		    'text' => $langs->trans("ReadPermissionNotAllowed")
     		);
     	}

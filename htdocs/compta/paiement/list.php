@@ -225,7 +225,7 @@ if ($resql)
 
     // Lines for filters fields
     print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -248,16 +248,16 @@ if ($resql)
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
-        print '<td class="liste_titre" align="right">';
+        print '<td class="liste_titre right">';
         print '</td>';
     }
     print "</tr>\n";
@@ -272,8 +272,8 @@ if ($resql)
     {
         print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
     }
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-    //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+    //print_liste_field_titre("Invoices"),"","","",$param,'class="left"',$sortfield,$sortorder);
 
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
@@ -342,11 +342,11 @@ if ($resql)
 	        print '</td>';
 	    }
 	    // Amount
-        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td class="right">'.price($objp->amount).'</td>';
 
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
         {
-            print '<td align="right">';
+            print '<td class="right">';
             if ($objp->statut == 0) print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">';
             print $paymentstatic->LibStatut($objp->statut, 5);
             if ($objp->statut == 0) print '</a>';

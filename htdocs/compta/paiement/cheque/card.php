@@ -476,7 +476,7 @@ if ($action == 'new')
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
-		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
+		print '<td class="right" width="100px">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
@@ -500,7 +500,7 @@ if ($action == 'new')
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";
-				print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
 				// Link to payment
 				print '<td align="center">';
@@ -576,7 +576,7 @@ else
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
     print '</td>';
-    if ($action != 'editdate') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+    if ($action != 'editdate') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editdate')
@@ -603,7 +603,7 @@ else
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('RefExt');
     print '</td>';
-    if ($action != 'editrefext') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+    if ($action != 'editrefext') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editrefext')
@@ -674,7 +674,7 @@ else
 		print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "b.num_chq", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("CheckTransmitter", $_SERVER["PHP_SELF"], "b.emetteur", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Bank", $_SERVER["PHP_SELF"], "b.banque", "", $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "b.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "b.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("Payment", $_SERVER["PHP_SELF"], "p.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("LineRecord", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre('');
@@ -698,7 +698,7 @@ else
     			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
     			print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
     			print '<td>'.dol_trunc($objp->banque, 24).'</td>';
-    			print '<td align="right">'.price($objp->amount).'</td>';
+    			print '<td class="right">'.price($objp->amount).'</td>';
     			// Link to payment
     			print '<td align="center">';
     			$paymentstatic->id=$objp->pid;
@@ -725,7 +725,7 @@ else
     			}
     			print '</td>';
     			// Action button
-    			print '<td align="right">';
+    			print '<td class="right">';
     			if ($object->statut == 0)
     			{
     				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';

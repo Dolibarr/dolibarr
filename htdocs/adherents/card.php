@@ -1297,7 +1297,7 @@ else
 		print "</td></tr>\n";
 
 		// Categories
-		if (! empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
+		if (! empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
 		{
 			print '<tr><td>' . $form->editfieldkey("Categories", 'memcats', '', $object, 0) . '</td>';
 			print '<td>';

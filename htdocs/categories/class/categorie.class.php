@@ -701,10 +701,10 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if ($type == 'societe') {
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
+			dol_syslog(get_class($this) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
 		} elseif ($type == 'fournisseur') {
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
+			dol_syslog(get_class($this) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();
@@ -758,7 +758,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT c.fk_" . $this->MAP_CAT_FK[$type];
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
 		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
-		$sql .= " WHERE o.entity IN (" . getEntity( $obj->element).")";
+		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 
@@ -775,7 +775,7 @@ class Categorie extends CommonObject
 			    else
 			    {
 				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
-				    $obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
+				    $obj->fetch($rec['fk_' . $this->MAP_CAT_FK[$type]]);
 				    $objs[] = $obj;
 			    }
 			}
@@ -1008,7 +1008,7 @@ class Categorie extends CommonObject
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
-		$sql .= " WHERE c.entity IN (" . getEntity( 'category') . ")";
+		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 		$sql .= " AND c.type = " . $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
@@ -1418,7 +1418,7 @@ class Categorie extends CommonObject
     		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
     		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
-    		$sql .= " AND c.entity IN (" . getEntity( 'category') . ")";
+    		$sql .= " AND c.entity IN (" . getEntity('category') . ")";
 
     		$res = $this->db->query($sql);
     		if ($res)
@@ -1470,16 +1470,16 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if (is_numeric($type)) {
 			// We want to reverse lookup
-			$map_type = array_flip( $this->MAP_ID );
+			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-			dol_syslog( get_class( $this ) . "::rechercher(): numeric types are deprecated, please use string instead",
+dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead",
 				LOG_WARNING );
 		}
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "categorie";
 		$sql .= " WHERE type = " . $this->MAP_ID[$type];
-		$sql .= " AND entity IN (" . getEntity( 'category') . ")";
+		$sql .= " AND entity IN (" . getEntity('category') . ")";
 		if ($nom)
 		{
 			if (! $exact)

@@ -337,7 +337,7 @@ class Invoices extends DolibarrApi
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
     	$request_data = (object) $request_data;
-    	$updateRes = $this->invoice->updateline(
+    $updateRes = $this->invoice->updateline(
     		$lineid,
     		$request_data->desc,
     		$request_data->subprice,

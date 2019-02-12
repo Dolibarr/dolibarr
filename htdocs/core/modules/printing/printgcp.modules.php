@@ -95,7 +95,7 @@ class printing_printgcp extends PrintingDriver
         	$storage = new DoliStorage($this->db, $this->conf);
         	//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
         	// Setup the credentials for the requests
-        	$credentials = new Credentials(
+        $credentials = new Credentials(
             	$this->google_id,
             	$this->google_secret,
             	$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'

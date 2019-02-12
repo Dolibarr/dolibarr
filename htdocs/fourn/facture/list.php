@@ -330,8 +330,8 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
-$sql.= dolSqlDateFilter( "f.datef", $day, $month, $year);
-$sql.= dolSqlDateFilter( "f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
+$sql.= dolSqlDateFilter("f.datef", $day, $month, $year);
+$sql.= dolSqlDateFilter("f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 if ($search_label) $sql .= natural_search('f.libelle', $search_label);
 if ($search_status != '' && $search_status >= 0)

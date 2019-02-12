@@ -300,7 +300,7 @@ class Don extends CommonObject
         $len=dol_strlen($this->amount);
         for ($i = 0; $i < $len; $i++)
         {
-            if (!isset($map[substr($this->amount, $i, 1)] ))
+            if (!isset($map[substr($this->amount, $i, 1)]))
             {
                 $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Amount'));
                 $err++;
