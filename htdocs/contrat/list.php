@@ -52,6 +52,7 @@ $search_zip=GETPOST('search_zip', 'alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
+$search_type_contact=GETPOST('search_type_contact', 'int');
 $search_contract=GETPOST('search_contract');
 $search_ref_customer=GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier', 'alpha');
