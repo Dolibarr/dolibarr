@@ -44,7 +44,7 @@ class box_produits_alerte_stock extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -187,18 +187,19 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="center"',
-                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
+					    'td' => 'class="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+                    );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right" width="18"',
+					    'td' => 'class="right" width="18"',
                         'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
 					);
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
                         'asis' => 1
                     );
@@ -207,7 +208,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
@@ -224,7 +225,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}

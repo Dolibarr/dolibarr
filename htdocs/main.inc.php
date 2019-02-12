@@ -1561,14 +1561,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$logouthtmltext.=$langs->trans("Logout").'<br>';
 
 				$logouttext .='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
-				//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
-				$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
+				$logouttext .=img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .='</a>';
 			}
 			else
 			{
 				$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
-				$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin opacitymedium');
 			}
 		}
 
@@ -1607,7 +1606,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		{
 			$text ='<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-bug atoplogin"></span>';
+			$text.='<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
@@ -1626,7 +1625,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 			$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-print atoplogin"></span>';
+			$text.='<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('', $langs->trans("PrintContentArea"), 2, 1, $text, 'login_block_elem', 2);
 		}
@@ -1664,7 +1663,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				else $text.=sprintf($helpbaseurl, $helppage);
 				$text.='">';
 				//$text.=img_picto('', 'helpdoc_top').' ';
-				$text.='<span class="fa fa-question-circle atoplogin"></span>';
+				$text.='<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
 				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
 				//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 				$text.='</a>';

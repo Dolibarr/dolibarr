@@ -41,7 +41,7 @@ class box_actions extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -141,7 +141,7 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" class="nowrap"',
+                        'td' => 'class="nowrap left"',
                         'text' => dol_print_date($datelimite, "dayhour"),
                     );
 
@@ -151,7 +151,7 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => $actionstatic->LibStatut($objp->percentage, 3),
                     );
 
@@ -160,7 +160,7 @@ class box_actions extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoActionsToDo"),
                     );
 
@@ -174,7 +174,7 @@ class box_actions extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -183,7 +183,7 @@ class box_actions extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
@@ -220,13 +220,13 @@ class box_actions extends ModeleBoxes
 						$dateligne=$contents[$line][4]['text'];
 						$percentage=$contents[$line][5]['text'];
 						$out.= '<tr class="oddeven">';
-						$out.= '<td align=center>';
+						$out.= '<td class="center">';
 						$out.= img_object("", $logo);
 						$out.= '</td>';
-						$out.= '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
-						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
-						$out.= '<td align=center>'.$dateligne.'</td>';
-						$out.= '<td align=center>'.$percentage.'</td>';
+						$out.= '<td class="center"><a href="'.$urlevent.'">'.$label.'</a></td>';
+						$out.= '<td class="center"><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
+						$out.= '<td class="center">'.$dateligne.'</td>';
+						$out.= '<td class="center">'.$percentage.'</td>';
 						$out.= '</tr>';
 					}
 				}

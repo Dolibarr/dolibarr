@@ -42,7 +42,7 @@ class box_goodcustomers extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -136,26 +136,28 @@ class box_goodcustomers extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right" width="18"',
+					    'td' => 'class="right" width="18"',
 					    'text' => $thirdpartystatic->LibStatut($objp->status, 3)
 					);
 
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedCustomers"));
 
 				$db->free($result);
 			}
 			else {
-				$this->info_box_contents[0][0] = array(	'td' => '',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
 				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}

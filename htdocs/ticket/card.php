@@ -149,8 +149,8 @@ if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') &
 	$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
 	$object->type_code = GETPOST('update_value_type', 'az09');
-	$object->category_code = GETPOST('update_value_category', 'az09');
 	$object->severity_code = GETPOST('update_value_severity', 'az09');
+	$object->category_code = GETPOST('update_value_category', 'az09');
 
 	$ret = $object->update($user);
 	if ($ret > 0) {
@@ -542,16 +542,16 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '</tr>';
             print '<tr>';
             print '<td>';
-            print $langs->trans('TicketChangeCategory');
+            print $langs->trans('TicketChangeSeverity');
             print '</td><td>';
-            print $formticket->selectCategoriesTickets($object->category_code, 'update_value_category', '', 2);
+            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
             print '</td>';
             print '</tr>';
             print '<tr>';
             print '<td>';
-            print $langs->trans('TicketChangeSeverity');
+            print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
+            print $formticket->selectAnalyticCodesTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
         } else {
@@ -563,20 +563,20 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             }*/
             print '</td></tr>';
 
-            // Category
-            print '<tr><td>' . $langs->trans("Category") . '</td><td>';
-            print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
-            /*if ($user->admin && !$noadmininfo) {
-                print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }*/
-            print '</td></tr>';
-
             // Severity
             print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
+            print '</td></tr>';
+
+            // Category
+            print '<tr><td>' . $langs->trans("AnalyticCode") . '</td><td>';
+            print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+            /*if ($user->admin && !$noadmininfo) {
+             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+             }*/
             print '</td></tr>';
         }
         print '</table>'; // End table actions
@@ -824,8 +824,9 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$formticket->substit['__TICKETSUP_REF__'] = $object->ref;
 			$formticket->substit['__TICKETSUP_SUBJECT__'] = $object->subject;
 			$formticket->substit['__TICKETSUP_TYPE__'] = $object->type_code;
-			$formticket->substit['__TICKETSUP_CATEGORY__'] = $object->category_code;
 			$formticket->substit['__TICKETSUP_SEVERITY__'] = $object->severity_code;
+			$formticket->substit['__TICKETSUP_CATEGORY__'] = $object->category_code;         // For backward compatibility
+			$formticket->substit['__TICKETSUP_ANALYTIC_CODE__'] = $object->category_code;
 			$formticket->substit['__TICKETSUP_MESSAGE__'] = $object->message;
 			$formticket->substit['__TICKETSUP_PROGRESSION__'] = $object->progress;
 			if ($object->fk_user_assign > 0) {

@@ -321,7 +321,8 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 foreach($search as $key => $val)
 {
-	$param.= '&search_'.$key.'='.urlencode($search[$key]);
+    if (is_array($search[$key]) && count($search[$key])) foreach($search[$key] as $skey) $param.='&search_'.$key.'[]='.urlencode($skey);
+    else $param.= '&search_'.$key.'='.urlencode($search[$key]);
 }
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields

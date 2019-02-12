@@ -149,7 +149,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         echo __METHOD__.' Request POST url='.$url."\n";
 
 
-        // Send to non existant directory
+        // Send to non existent directory
 
         dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
 
@@ -171,7 +171,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('401', $object['error']['code']);
 
 
-        // Send to existant directory
+        // Send to existent directory
 
         dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 
