@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key=$array_key, $outputlangs);
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key= $array_key, $outputlangs);
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
