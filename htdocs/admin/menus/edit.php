@@ -144,22 +144,6 @@ if ($action == 'add')
     }
 
     $leftmenu=''; $mainmenu='';
-    if (! empty($_POST['menuId']) && ! is_numeric($_POST['menuId']))
-    {
-        $tmp=explode('&',$_POST['menuId']);
-        foreach($tmp as $s)
-        {
-            if (preg_match('/fk_mainmenu=/',$s))
-            {
-                $mainmenu=preg_replace('/fk_mainmenu=/','',$s);
-            }
-            if (preg_match('/fk_leftmenu=/',$s))
-            {
-                $leftmenu=preg_replace('/fk_leftmenu=/','',$s);
-            }
-        }
-    }
-
     if (GETPOST('menuId', 'alpha') && ! is_numeric(GETPOST('menuId', 'alpha')))
     {
 	    $tmp=explode('&', GETPOST('menuId', 'alpha'));
