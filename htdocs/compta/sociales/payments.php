@@ -122,8 +122,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("LabelContrib", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
-	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
@@ -187,9 +187,9 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			if (empty($date)) $date=$obj->date_ech;
 			print '<td>'.dol_print_date($date, 'day').'</td>';
 			// Expected to pay
-			print '<td align="right">'.price($obj->total).'</td>';
+			print '<td class="right">'.price($obj->total).'</td>';
 			// Paid
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->totalpaye) print price($obj->totalpaye);
 			print '</td>';
 			print '</tr>';
@@ -200,11 +200,11 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$i++;
 		}
 	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-	    print '<td align="right" class="liste_total"></td>';     // A total here has no sense
+	    print '<td class="liste_total right"></td>';     // A total here has no sense
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
-	    print '<td align="right" class="liste_total">'.price($totalpaye)."</td>";
+	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
 	else
@@ -246,10 +246,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		    print '<tr class="liste_titre">';
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 			print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
 			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		    print "</tr>\n";
 
 		    while ($i < $num)
@@ -263,7 +263,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		        print "<td>".$obj->label."</td>\n";
 
-		        print '<td align="right">'.price($obj->amount)."</td>";
+		        print '<td class="right">'.price($obj->amount)."</td>";
 
 		        // Ref payment
 				$tva_static->id=$obj->rowid;
@@ -271,16 +271,16 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
-		        print '<td align="right">'.price($obj->amount)."</td>";
+		        print '<td class="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
 
 		        $i++;
 		    }
 		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-		    print '<td align="right">'.price($total).'</td>';
+		    print '<td class="right">'.price($total).'</td>';
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="center">&nbsp;</td>';
-		    print '<td align="right">'.price($total)."</td>";
+		    print '<td class="right">'.price($total)."</td>";
 		    print "</tr>";
 
 		    print "</table>";
@@ -347,10 +347,10 @@ while($j<$numlt)
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder);
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 			print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
 			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 			print "</tr>\n";
 
 			while ($i < $num)
@@ -364,7 +364,7 @@ while($j<$numlt)
 
 				print "<td>".$obj->label."</td>\n";
 
-				print '<td align="right">'.price($obj->amount)."</td>";
+				print '<td class="right">'.price($obj->amount)."</td>";
 
 				// Ref payment
 				$tva_static->id=$obj->rowid;
@@ -372,16 +372,16 @@ while($j<$numlt)
 				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
 				print '<td align="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
-				print '<td align="right">'.price($obj->amount)."</td>";
+				print '<td class="right">'.price($obj->amount)."</td>";
 				print "</tr>\n";
 
 				$i++;
 			}
-			print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
-			print '<td align="right">'.price($total)."</td>";
+			print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("Total").'</td>';
+			print '<td class="right">'.price($total)."</td>";
 			print '<td align="center">&nbsp;</td>';
 			print '<td align="center">&nbsp;</td>';
-			print '<td align="right">'.price($total)."</td>";
+			print '<td class="right">'.price($total)."</td>";
 			print "</tr>";
 
 			print "</table>";
@@ -428,10 +428,10 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
             print '<tr class="liste_titre">';
             print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "s.dateep", "", $param, 'width="140px"', $sortfield, $sortorder);
             print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, '', $sortfield, $sortorder);
-            print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+            print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
             print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "s.rowid", "", $param, '', $sortfield, $sortorder);
             print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-            print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+            print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
             print "</tr>\n";
 
             while ($i < $num)
@@ -446,7 +446,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
                 print "<td>".$obj->label."</td>\n";
 
-                print '<td align="right">'.($obj->salary?price($obj->salary):'')."</td>";
+                print '<td class="right">'.($obj->salary?price($obj->salary):'')."</td>";
 
                 // Ref payment
                 $sal_static->id=$obj->rowid;
@@ -454,16 +454,16 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
                 print '<td class="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
                 print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-                print '<td align="right">'.price($obj->amount)."</td>";
+                print '<td class="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";
 
                 $i++;
             }
             print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-            print '<td align="right"></td>';      // A total here has no sense
+            print '<td class="right"></td>';      // A total here has no sense
             print '<td align="center">&nbsp;</td>';
             print '<td align="center">&nbsp;</td>';
-            print '<td align="right">'.price($total)."</td>";
+            print '<td class="right">'.price($total)."</td>";
             print "</tr>";
 
             print "</table>";

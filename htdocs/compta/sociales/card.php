@@ -537,7 +537,7 @@ if ($id > 0)
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode')
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
@@ -555,7 +555,7 @@ if ($id > 0)
 			print $langs->trans('BankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer)
-				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccount') {
@@ -608,9 +608,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
 		    if (! empty($conf->banque->enabled)) {
-        		print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
+        		print '<td class="liste_titre right">' . $langs->trans('BankAccount') . '</td>';
     		}
-			print '<td align="right">'.$langs->trans("Amount").'</td>';
+			print '<td class="right">'.$langs->trans("Amount").'</td>';
 			print '</tr>';
 
 			if ($num > 0)
@@ -639,12 +639,12 @@ if ($id > 0)
 							$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 						}
 
-						print '<td align="right">';
+						print '<td class="right">';
 						if ($bankaccountstatic->id)
 							print $bankaccountstatic->getNomUrl(1, 'transactions');
 						print '</td>';
 					}
-					print '<td align="right">'.price($objp->amount)."</td>\n";
+					print '<td class="right">'.price($objp->amount)."</td>\n";
 					print "</tr>";
 					$totalpaye += $objp->amount;
 					$i++;
@@ -658,14 +658,14 @@ if ($id > 0)
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";
-			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
 
 			$resteapayer = $object->amount - $totalpaye;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
-			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td align="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
+			print '<td class="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
 			$db->free($resql);
