@@ -444,7 +444,7 @@ class Reception extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 
