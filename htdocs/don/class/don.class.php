@@ -92,6 +92,11 @@ class Don extends CommonObject
 	public $labelstatut;
 	public $labelstatutshort;
 
+	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
 
     /**
      *  Constructor
