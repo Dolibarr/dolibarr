@@ -228,18 +228,18 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 print '<th class="liste_titre">'.$langs->trans("AccountingCategory").'</th>';
 print '<th class="liste_titre"></th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("PreviousPeriod").'</th>';
-print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'</th>';
+print '<th class="liste_titre right">'.$langs->trans("PreviousPeriod").'</th>';
+print '<th class="liste_titre right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach($months as $k => $v){
 	if (($k+1) >= $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
+		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
 	}
 }
 foreach($months as $k => $v){
 	if (($k+1) < $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
+		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k+1))).'</th>';
 	}
 }
 print	'</tr>';
@@ -493,15 +493,15 @@ elseif ($modecompta=="BOOKKEEPING")
 			}
 			print '</td>';
 
-			print '<td align="right">' . price($totCat['NP'])  . '</td>';
-			print '<td align="right">' . price($totCat['N']) . '</td>';
+			print '<td class="right">' . price($totCat['NP'])  . '</td>';
+			print '<td class="right">' . price($totCat['N']) . '</td>';
 
 			// Each month
 			foreach($totCat['M'] as $k => $v){
-				if (($k+1) >= $date_startmonth) print '<td align="right">' . price($v) . '</td>';
+				if (($k+1) >= $date_startmonth) print '<td class="right">' . price($v) . '</td>';
 			}
 			foreach($totCat['M'] as $k => $v){
-				if (($k+1) < $date_startmonth) print '<td align="right">' . price($v) . '</td>';
+				if (($k+1) < $date_startmonth) print '<td class="right">' . price($v) . '</td>';
 			}
 
 			print "</tr>\n";
@@ -523,8 +523,8 @@ elseif ($modecompta=="BOOKKEEPING")
 						print ' - ';
 						print $cpt['account_label'];
 						print '</td>';
-						print '<td align="right">' . price($resultNP)  . '</td>';
-						print '<td align="right">' . price($resultN) . '</td>';
+						print '<td class="right">' . price($resultNP)  . '</td>';
+						print '<td class="right">' . price($resultN) . '</td>';
 
 						// Make one call for each month
 						foreach($months as $k => $v)
@@ -532,7 +532,7 @@ elseif ($modecompta=="BOOKKEEPING")
 							if (($k+1) >= $date_startmonth)
 							{
 								$resultM=$totPerAccount[$cpt['account_number']]['M'][$k];
-								print '<td align="right">' . price($resultM) . '</td>';
+								print '<td class="right">' . price($resultM) . '</td>';
 							}
 						}
 						foreach($months as $k => $v)
@@ -540,7 +540,7 @@ elseif ($modecompta=="BOOKKEEPING")
 							if (($k+1) < $date_startmonth)
 							{
 								$resultM=$totPerAccount[$cpt['account_number']]['M'][$k];
-								print '<td align="right">' . price($resultM) . '</td>';
+								print '<td class="right">' . price($resultM) . '</td>';
 							}
 						}
 						print "</tr>\n";

@@ -279,7 +279,7 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.statut", "", $param, 'align="right"', $sortfield, $sortorder);
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.statut", "", $param, 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 

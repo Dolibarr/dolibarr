@@ -351,15 +351,15 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
 	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') print '<td class="left">'.$langs->trans("DatePayment").'</td>';
 	else print '<td></td>';
-	print '<td align="right">'.$namerate.'</td>';
+	print '<td class="right">'.$namerate.'</td>';
 	print '<td class="left">'.$productcust.'</td>';
 	if ($modetax != 1)
 	{
-		print '<td align="right">'.$amountcust.'</td>';
-		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+		print '<td class="right">'.$amountcust.'</td>';
+		print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 	}
-	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
-	print '<td align="right">'.$vatcust.'</td>';
+	print '<td class="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
+	print '<td class="right">'.$vatcust.'</td>';
 	print '</tr>';
 
 	$action = "tvadetail";
@@ -414,7 +414,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				print '<tr class="oddeven">';
 
 				// Ref
-				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+				print '<td class="nowrap left">'.$fields['link'].'</td>';
 
 				// Invoice date
 				print '<td class="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
@@ -424,7 +424,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				else print '<td></td>';
 
 				// Rate
-				print '<td align="right">' . $fields['drate'] . '</td>';
+				print '<td class="right">' . $fields['drate'] . '</td>';
 
 				// Description
 				print '<td class="left">';
@@ -464,7 +464,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				// Total HT
 				if ($modetax != 1)
 				{
-					print '<td class="nowrap" align="right">';
+					print '<td class="nowrap right">';
 					print price($fields['totalht']);
 					if (price2num($fields['ftotal_ttc']))
 					{
@@ -479,7 +479,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				$ratiopaymentinvoice=1;
 				if ($modetax != 1)
 				{
-					print '<td class="nowrap" align="right">';
+					print '<td class="nowrap right">';
 					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
@@ -503,13 +503,13 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				}
 
 				// Total collected
-				print '<td class="nowrap" align="right">';
+				print '<td class="nowrap right">';
 				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht, 'MT'), 1);
 				print '</td>';
 
 				// VAT
-				print '<td class="nowrap" align="right">';
+				print '<td class="nowrap right">';
 				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
 				print price(price2num($temp_vat, 'MT'), 1);
 				//print price($fields['vat']);
@@ -524,13 +524,13 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		// Total customers for this vat rate
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
 		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td align="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
 		print '</tr>';
 	}
 
@@ -538,13 +538,13 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	{
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
 		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td align="right">'.price(price2num(0, 'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
 		print '</tr>';
 	}
 
@@ -560,11 +560,11 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	print '<td class="left">'.$namesup.'</td>';
 	print '<td class="left">'.$productsup.'</td>';
 	if ($modetax != 1) {
-		print '<td align="right">'.$amountsup.'</td>';
-		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+		print '<td class="right">'.$amountsup.'</td>';
+		print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 	}
-	print '<td align="right">'.$langs->trans("AmountHTVATRealPaid").'</td>';
-	print '<td align="right">'.$vatsup.'</td>';
+	print '<td class="right">'.$langs->trans("AmountHTVATRealPaid").'</td>';
+	print '<td class="right">'.$vatsup.'</td>';
 	print '</tr>'."\n";
 
 	foreach (array_keys($x_paye) as $thirdparty_id)
@@ -607,7 +607,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				print '<tr class="oddeven">';
 
 				// Ref
-				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+				print '<td class="nowrap left">'.$fields['link'].'</td>';
 
 				// Invoice date
 				print '<td class="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
@@ -657,7 +657,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				// Total HT
 				if ($modetax != 1)
 				{
-					print '<td class="nowrap" align="right">';
+					print '<td class="nowrap right">';
 					print price($fields['totalht']);
 					if (price2num($fields['ftotal_ttc']))
 					{
@@ -672,7 +672,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				$ratiopaymentinvoice=1;
 				if ($modetax != 1)
 				{
-					print '<td class="nowrap" align="right">';
+					print '<td class="nowrap right">';
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
 						$paymentfourn_static->id=$fields['payment_id'];
@@ -698,13 +698,13 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				}
 
 				// VAT paid
-				print '<td class="nowrap" align="right">';
+				print '<td class="nowrap right">';
 				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht, 'MT'), 1);
 				print '</td>';
 
 				// VAT
-				print '<td class="nowrap" align="right">';
+				print '<td class="nowrap right">';
 				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
 				print price(price2num($temp_vat, 'MT'), 1);
 				//print price($fields['vat']);
@@ -719,26 +719,26 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		// Total suppliers for this vat rate
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
 		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td align="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
 		print '</tr>';
 	}
 
 	if (count($x_paye) == 0) {  // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
 		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td align="right">'.price(price2num(0, 'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
 		print '</tr>';
 	}
 
@@ -750,7 +750,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
-	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
+	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 
 	$i++;
