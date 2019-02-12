@@ -665,7 +665,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
@@ -1877,7 +1877,7 @@ if (preg_match('/^dopayment/',$action))
 }
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 
