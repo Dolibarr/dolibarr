@@ -1250,7 +1250,7 @@ elseif ($object->id > 0)
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
 				}
 			}
-		 }
+		}
 	}
 
 	print "</div>";

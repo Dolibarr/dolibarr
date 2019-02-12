@@ -419,7 +419,7 @@ class MultiCurrency extends CommonObject
 			$this->rate = null;
 			return -1;
 		}
-	 }
+	}
 
 	/**
 	 * Try get label of code in llx_currency then add rate.
@@ -466,8 +466,8 @@ class MultiCurrency extends CommonObject
 	 */
 	public function updateRate($rate)
 	{
-	 	return $this->addRate($rate);
-	 }
+        return $this->addRate($rate);
+    }
 
 	/**
 	 * Fetch CurrencyRate object in $this->rate
@@ -487,7 +487,7 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
-	 }
+    }
 
 	 /**
 	 * Get id of currency from code
@@ -507,7 +507,7 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
-	 }
+    }
 
 	 /**
 	 * Get id and rate of currency from code
@@ -545,30 +545,30 @@ class MultiCurrency extends CommonObject
 
 			return array(0, 1);
 		}
-	 }
+    }
 
-	 /**
-	  * Get the conversion of amount with invoice rate
-	  *
-	  * @param	int		$fk_facture		id of facture
-	  * @param	double	$amount			amount to convert
-	  * @param	string	$way			dolibarr mean the amount is in dolibarr currency
-	  * @param	string	$table			facture or facture_fourn
-	  * @return	double					amount converted
-	  */
-	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
-	  {
-		 global $db;
+    /**
+     * Get the conversion of amount with invoice rate
+     *
+     * @param	int		$fk_facture		id of facture
+     * @param	double	$amount			amount to convert
+     * @param	string	$way			dolibarr mean the amount is in dolibarr currency
+     * @param	string	$table			facture or facture_fourn
+     * @return	double					amount converted
+     */
+    public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
+    {
+        global $db;
 
-		 $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+        $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
-		 if ($multicurrency_tx)
-		 {
-		 	if ($way == 'dolibarr') return $amount * $multicurrency_tx;
-			else return $amount / $multicurrency_tx;
-		 }
-		 else return $amount;
-	  }
+        if ($multicurrency_tx)
+        {
+            if ($way == 'dolibarr') return $amount * $multicurrency_tx;
+            else return $amount / $multicurrency_tx;
+        }
+        else return $amount;
+    }
 
 	/**
 	 *  Get current invoite rate
@@ -633,14 +633,13 @@ class MultiCurrency extends CommonObject
 	{
 		global $db,$conf;
 
-		$ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($ch);
-                curl_close($ch);
-                $response = json_decode($response);
+        $ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $response = json_decode($response);
 
-                if ($response->success)
-                {
+        if ($response->success) {
 
 			$TRate = $response->quotes;
 			$timestamp = $response->timestamp;

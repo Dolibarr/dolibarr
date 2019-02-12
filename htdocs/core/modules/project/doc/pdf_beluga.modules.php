@@ -425,19 +425,19 @@ class pdf_beluga extends ModelePDFProjects
                             $total_ttc = 0;
                             $num = count($elementarray);
 
-				// Loop on each lines
-				for ($i = 0; $i < $num; $i ++)
-				{
-					$curY = $nexY;
-					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
-					$pdf->SetTextColor(0, 0, 0);
+				            // Loop on each lines
+				            for ($i = 0; $i < $num; $i ++)
+				            {
+					            $curY = $nexY;
+					            $pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+					            $pdf->SetTextColor(0, 0, 0);
 
-					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
-					$pageposbefore=$pdf->getPage();
+					            $pdf->setTopMargin($tab_top_newpage);
+					            $pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					            $pageposbefore=$pdf->getPage();
 
-					// Description of line
-					$idofelement=$elementarray[$i];
+					            // Description of line
+					            $idofelement=$elementarray[$i];
                              	if ($classname == 'ExpenseReport')
                                	{
                                		// We get id of expense report
@@ -457,114 +457,114 @@ class pdf_beluga extends ModelePDFProjects
                                         $qualifiedfortotal = false; // Replacement invoice
                                 }
 
-					$showpricebeforepagebreak=1;
+					            $showpricebeforepagebreak=1;
 
-					$pdf->startTransaction();
-					// Label
-					$pdf->SetXY($this->posxref, $curY);
-					$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
-					$pageposafter=$pdf->getPage();
-					if ($pageposafter > $pageposbefore)	// There is a pagebreak
-					{
-						$pdf->rollbackTransaction(true);
-						$pageposafter=$pageposbefore;
-						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						// Label
-						$pdf->SetXY($this->posxref, $curY);
-						$posybefore=$pdf->GetY();
-						$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
-						$pageposafter=$pdf->getPage();
-						$posyafter=$pdf->GetY();
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
-						{
-							if ($i == ($num-1))	// No more lines, and no space left to show total, so we create a new page
-							{
-								$pdf->AddPage('', '', true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
-							}
-						}
-						else
-						{
-							// We found a page break
-							$showpricebeforepagebreak=0;
-							$forcedesconsamepage=1;
-							if ($forcedesconsamepage)
-							{
-								$pdf->rollbackTransaction(true);
-								$pageposafter=$pageposbefore;
-								$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+					            $pdf->startTransaction();
+					            // Label
+					            $pdf->SetXY($this->posxref, $curY);
+					            $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+					            $pageposafter=$pdf->getPage();
+					            if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					            {
+						            $pdf->rollbackTransaction(true);
+						            $pageposafter=$pageposbefore;
+						            //print $pageposafter.'-'.$pageposbefore;exit;
+						            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						            // Label
+						            $pdf->SetXY($this->posxref, $curY);
+						            $posybefore=$pdf->GetY();
+						            $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+						            $pageposafter=$pdf->getPage();
+						            $posyafter=$pdf->GetY();
+						            if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						            {
+							            if ($i == ($num-1))	// No more lines, and no space left to show total, so we create a new page
+							            {
+								            $pdf->AddPage('', '', true);
+								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								            $pdf->setPage($pageposafter+1);
+							            }
+						            }
+						            else
+						            {
+							            // We found a page break
+							            $showpricebeforepagebreak=0;
+							            $forcedesconsamepage=1;
+							            if ($forcedesconsamepage)
+							            {
+								            $pdf->rollbackTransaction(true);
+								            $pageposafter=$pageposbefore;
+								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 
-								$pdf->AddPage('', '', true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
-								$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
-								$pdf->MultiCell(0, 3, '');		// Set interline to 3
-								$pdf->SetTextColor(0, 0, 0);
+								            $pdf->AddPage('', '', true);
+								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								            $pdf->setPage($pageposafter+1);
+								            $pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+								            $pdf->MultiCell(0, 3, '');		// Set interline to 3
+								            $pdf->SetTextColor(0, 0, 0);
 
-								$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-								$curY = $tab_top_newpage + $heightoftitleline + 1;
+								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+								            $curY = $tab_top_newpage + $heightoftitleline + 1;
 
-								// Label
-								$pdf->SetXY($this->posxref, $curY);
-								$posybefore=$pdf->GetY();
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
-								$pageposafter=$pdf->getPage();
-								$posyafter=$pdf->GetY();
-							}
-						}
-						//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
-					}
-					else	// No pagebreak
-					{
-						$pdf->commitTransaction();
-					}
-					$posYAfterDescription=$pdf->GetY();
+								            // Label
+								            $pdf->SetXY($this->posxref, $curY);
+								            $posybefore=$pdf->GetY();
+								            $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								            $pageposafter=$pdf->getPage();
+								            $posyafter=$pdf->GetY();
+							            }
+						            }
+						            //var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
+					            }
+					            else	// No pagebreak
+					            {
+						            $pdf->commitTransaction();
+					            }
+					            $posYAfterDescription=$pdf->GetY();
 
-					$nexY = $pdf->GetY();
-					$pageposafter=$pdf->getPage();
-					$pdf->setPage($pageposbefore);
-					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					            $nexY = $pdf->GetY();
+					            $pageposafter=$pdf->getPage();
+					            $pdf->setPage($pageposbefore);
+					            $pdf->setTopMargin($this->marge_haute);
+					            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-					// We suppose that a too long description is moved completely on next page
-					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						//var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
-					}
+					            // We suppose that a too long description is moved completely on next page
+					            if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
+						            //var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
+						            $pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
+					            }
 
-					$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+					            $pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
 
-					// Date
-					if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
-						$date = $element->date_commande;
-					else {
-						$date = $element->date;
-						if (empty($date))
-							$date = $element->datep;
-						if (empty($date))
-							$date = $element->date_contrat;
-						if (empty($date))
-							$date = $element->datev; // Fiche inter
-					}
+					            // Date
+					            if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
+						            $date = $element->date_commande;
+					            else {
+						            $date = $element->date;
+						            if (empty($date))
+							            $date = $element->datep;
+						            if (empty($date))
+							            $date = $element->date_contrat;
+						            if (empty($date))
+							            $date = $element->datev; // Fiche inter
+					            }
 
-					$pdf->SetXY($this->posxdate, $curY);
-					$pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
+					            $pdf->SetXY($this->posxdate, $curY);
+					            $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
 
-					$pdf->SetXY($this->posxsociety, $curY);
-					if ($classname == 'ExpenseReport')
-					{
-						$fuser=new User($this->db);
-						$fuser->fetch($element->fk_user_author);
-						$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $fuser->getFullName($outputlangs), 1, 'L');
-					}
-					else
-					{
-						$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty)?$element->thirdparty->name:''), 1, 'L');
-					}
+					            $pdf->SetXY($this->posxsociety, $curY);
+					            if ($classname == 'ExpenseReport')
+					            {
+						            $fuser=new User($this->db);
+						            $fuser->fetch($element->fk_user_author);
+						            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $fuser->getFullName($outputlangs), 1, 'L');
+					            }
+					            else
+					            {
+						            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty)?$element->thirdparty->name:''), 1, 'L');
+					            }
 
                                 // Amount without tax
                                 if (empty($value['disableamount'])) {
@@ -646,6 +646,11 @@ class pdf_beluga extends ModelePDFProjects
 				$parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

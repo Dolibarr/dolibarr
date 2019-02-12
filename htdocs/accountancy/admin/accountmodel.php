@@ -541,8 +541,8 @@ if ($id)
                     print $valuetoshow;
                 }
 				print '</td>';
-			 }
-			 if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+			}
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
 		}
 
 		print '<td>';

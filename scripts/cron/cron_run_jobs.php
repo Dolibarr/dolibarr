@@ -65,9 +65,12 @@ $version=DOL_VERSION;
 $error=0;
 
 
+
 /*
  * Main
  */
+
+$langs->loadLangs(array('main', 'dict'));
 
 // current date
 $now=dol_now();

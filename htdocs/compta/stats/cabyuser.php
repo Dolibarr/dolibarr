@@ -59,9 +59,9 @@ $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year))
 {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
-	$year_start = $year_current;
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year_current;
 } else {
 	$year_current = $year;
 	$month_current = strftime("%m", dol_now());
@@ -211,7 +211,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	    $sql.= " AND f.type IN (0,1,2,5)";
-	    } else {
+    } else {
 	    $sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
@@ -243,12 +243,12 @@ if ($result) {
     $i=0;
     while ($i < $num) {
          $obj = $db->fetch_object($result);
-	 $amount_ht[$obj->rowid] = $obj->amount;
-	 $amount[$obj->rowid] = $obj->amount_ttc;
-	 $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
-	 $catotal_ht+=$obj->amount;
-	 $catotal+=$obj->amount_ttc;
-	 $i++;
+        $amount_ht[$obj->rowid] = $obj->amount;
+        $amount[$obj->rowid] = $obj->amount_ttc;
+        $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
+        $catotal_ht+=$obj->amount;
+        $catotal+=$obj->amount_ttc;
+        $i++;
     }
 } else {
     dol_print_error($db);
@@ -302,7 +302,7 @@ print_liste_field_titre(
 	"",
 	$sortfield,
 	$sortorder
-	);
+);
 if ($modecompta == 'CREANCES-DETTES') {
     print_liste_field_titre(
            $langs->trans('AmountHT'),
@@ -313,8 +313,8 @@ if ($modecompta == 'CREANCES-DETTES') {
            'align="right"',
            $sortfield,
            $sortorder
-	   );
-    } else {
+	);
+} else {
 	print_liste_field_titre('');
 }
 print_liste_field_titre(
@@ -326,7 +326,7 @@ print_liste_field_titre(
 	'align="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("Percentage"),
 	$_SERVER["PHP_SELF"], "amount_ttc",
@@ -335,7 +335,7 @@ print_liste_field_titre(
 	'align="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("OtherStatistics"),
 	$_SERVER["PHP_SELF"],
@@ -343,7 +343,7 @@ print_liste_field_titre(
 	"",
 	"",
 	'align="center" width="20%"'
-	);
+);
 print "</tr>\n";
 
 if (count($amount)) {
@@ -390,22 +390,22 @@ if (count($amount)) {
         }
         print "<td>".$linkname."</td>\n";
 
-	// Amount w/o VAT
+        // Amount w/o VAT
         print '<td align="right">';
         if ($modecompta != 'CREANCES-DETTES')
         {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
-		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
-		}
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+            }
         } else {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
-	    } else {
-		print '<a href="#">';
-	    }
-	    print price($amount_ht[$key]);
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="#">';
+            }
+            print price($amount_ht[$key]);
         }
         print '</td>';
 
@@ -413,16 +413,16 @@ if (count($amount)) {
         print '<td align="right">';
         if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
-		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
-		}
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+            }
         } else {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
-	    } else {
-		print '<a href="#">';
-	    }
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="#">';
+            }
         }
         print price($amount[$key]);
         print '</td>';
@@ -433,14 +433,14 @@ if (count($amount)) {
         // Other stats
         print '<td align="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
+        }
         if (! empty($conf->commande->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
+        }
         if (! empty($conf->facture->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
+        }
         print '</td>';
         print "</tr>\n";
         $i++;
@@ -450,9 +450,9 @@ if (count($amount)) {
     print '<tr class="liste_total">';
     print '<td>'.$langs->trans("Total").'</td>';
     if ($modecompta != 'CREANCES-DETTES') {
-	print '<td colspan="1"></td>';
+        print '<td colspan="1"></td>';
     } else {
-	    print '<td align="right">'.price($catotal_ht).'</td>';
+        print '<td align="right">'.price($catotal_ht).'</td>';
     }
     print '<td align="right">'.price($catotal).'</td>';
     print '<td>&nbsp;</td>';

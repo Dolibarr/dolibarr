@@ -41,30 +41,6 @@ define('QR_FIND_FROM_RANDOM', false);
 
 * Removed useless directories ("examples", "tools")
 
-* Fix
- 	// initialize subsetchars
-	$subsetchars = array();
-into
-	// initialize subsetchars
-	$subsetchars = array_fill(0, 256, true);
-
-* Replace the continue into switch with a break:
-
-case 're': {
-	// justify block
-	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
-		$this->lispacer = '';
-		continue;
-	}
-
-into 
-case 're': {
-	// justify block
-	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
-		$this->lispacer = '';
-		break;
-	}
-
 * Optionnaly, removed all fonts except 
     dejavusans* (used by greek, arab, persan, romanian, turkish), 
     freemono* (russian), 
@@ -72,7 +48,7 @@ case 're': {
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font because we removed courier
+* Optionnaly, made freemono the default monotype font if we removed courier
 In htdocs/includes/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
@@ -149,7 +125,7 @@ to get
         if ($className == 'Luracast\Restler\mixed') return;
 		...
 
-Change also file Luracast/Restler/explorer/index.html
+Change also content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
 
 +With swagger 2:
 

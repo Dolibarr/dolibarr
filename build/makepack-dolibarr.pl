@@ -387,6 +387,15 @@ if ($nboftargetok) {
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
+		$ret=`git ls-files . --exclude-standard --others`;
+		if ($ret)
+		{
+				print "Some files exists in source directory and are not indexed neither excluded in .gitignore.\n";
+				print $ret;
+				print "Canceled.\n";
+				exit;
+		}
+		
 	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
 	  	print $ret."\n";

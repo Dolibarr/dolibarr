@@ -116,7 +116,10 @@ if ($this->control->tpl['fournisseur']) {
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-<?php } }?>
+<?php
+    }
+}
+?>
 
 <?php if (! empty($conf->barcode->enabled)) { ?>
 <tr>

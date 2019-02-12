@@ -2011,10 +2011,9 @@ class Societe extends CommonObject
 		$name=$this->name?$this->name:$this->nom;
 
 		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
-
-             if(empty($option) && $this->client > 0) $option = 'customer';
-             if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
-         }
+            if(empty($option) && $this->client > 0) $option = 'customer';
+            if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+        }
 
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
@@ -3439,6 +3438,7 @@ class Societe extends CommonObject
 		$this->capital=empty($conf->global->MAIN_INFO_CAPITAL)?'':$conf->global->MAIN_INFO_CAPITAL;
 		$this->forme_juridique_code=empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)?'':$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 		$this->email=empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?'':$conf->global->MAIN_INFO_SOCIETE_MAIL;
+		$this->default_lang = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
 		$this->logo=empty($conf->global->MAIN_INFO_SOCIETE_LOGO)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO;
 		$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 		$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;

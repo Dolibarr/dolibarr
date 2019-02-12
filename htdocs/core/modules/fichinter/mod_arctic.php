@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @public string
      */
@@ -130,7 +130,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// On d�fini critere recherche compteur
+		// On défini critere recherche compteur
 		$mask=$conf->global->FICHINTER_ARTIC_MASK;
 
 		if (! $mask)
@@ -142,14 +142,14 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$numFinal=get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $object->datec);
 
 		return  $numFinal;
-  }
+    }
 
 
 	/**
-	 * 	Return next free value
+	 *  Return next free value
 	 *
      *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Object		$objforref	Object for number to search
+	 *  @param	Object		$objforref	Object for number to search
      *  @return string      			Next free value
      */
     function getNumRef($objsoc, $objforref)

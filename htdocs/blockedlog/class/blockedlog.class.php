@@ -921,8 +921,8 @@ class BlockedLog
 	 *	@param int	$beforeid		ID of a record
 	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
-	 public function getPreviousHash($withlock = 0, $beforeid = 0)
-	 {
+	public function getPreviousHash($withlock = 0, $beforeid = 0)
+	{
 		global $conf;
 
 		$previoussignature='';

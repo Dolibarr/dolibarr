@@ -120,14 +120,15 @@ if ($id > 0 || ! empty($ref))
 {
     $result=$object->fetch($id, $ref);
     $search_account = $object->id;     // Force the search field on id of account
+
+    if (! ($object->id > 0) )
+    {
+    	$langs->load("errors");
+    	print($langs->trans('ErrorRecordNotFound'));
+    	exit;
+    }
 }
 
-if (! ($object->id > 0) )
-{
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -666,10 +667,10 @@ if ($resql)
 		print '<td>'.$langs->trans("Numero").'</td>';
 		//if (! $search_account > 0)
 		//{
-			print '<td align=right>'.$langs->trans("BankAccount").'</td>';
+			print '<td class=right>'.$langs->trans("BankAccount").'</td>';
 		//}
-		print '<td align=right>'.$langs->trans("Debit").'</td>';
-		print '<td align=right>'.$langs->trans("Credit").'</td>';
+		print '<td class=right>'.$langs->trans("Debit").'</td>';
+		print '<td class=right>'.$langs->trans("Credit").'</td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
@@ -700,7 +701,7 @@ if ($resql)
 		print '</td>';
 		//if (! $search_account > 0)
 		//{
-			print '<td align=right>';
+			print '<td class=right>';
 			$form->select_comptes(GETPOST('add_account', 'int')?GETPOST('add_account', 'int'):$search_account, 'add_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
 			print '</td>';
 		//}
@@ -955,11 +956,11 @@ if ($resql)
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, 'align="center"', $sortfield, $sortorder);
 	// Extra fields
@@ -968,7 +969,7 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -1355,7 +1356,7 @@ if ($resql)
     	// Debit
     	if (! empty($arrayfields['b.debit']['checked']))
     	{
-    	    print '<td align="right">';
+    	    print '<td class="right">';
     	    if ($objp->amount < 0)
     	    {
     	    	print price($objp->amount * -1);
@@ -1396,7 +1397,7 @@ if ($resql)
     		}
     		else
     		{
-    			print '<td align="right">-</td>';
+    			print '<td class="right">-</td>';
     		}
     		if (! $i) $totalarray['nbfield']++;
     	}
@@ -1411,12 +1412,12 @@ if ($resql)
     			}
     			else
     			{
-    				print '<td align="right" class="error nowrap">&nbsp;'.price($balance).'</td>';
+    				print '<td class="error nowrap right">&nbsp;'.price($balance).'</td>';
     			}
     		}
     		else
     		{
-    			print '<td align="right">-</td>';
+    			print '<td class="right">-</td>';
     		}
     		if (! $i) $totalarray['nbfield']++;
     	}

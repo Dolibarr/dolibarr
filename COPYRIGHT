@@ -28,7 +28,7 @@ php-iban               1.4.7         LGPL-3+                     Yes            
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
-TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
+TCPDF                  6.2.25        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
@@ -53,8 +53,12 @@ JsTimezoneDetect       1.0.6         MIT License                 Yes            
 SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
 Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
 
-Image libraries
+Image libraries:
 Octicons               8.1           MIT                         Yes
+
+Font libraries:
+Fontawesome            4.7           ?                           Yes
+Fontawesome            5.0           ?                           Yes
 
 
 For licenses compatibility informations:

@@ -446,7 +446,7 @@ if ($num > 0)
 		print '<tr class="oddeven">';
 
 		// Ref
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		print $object->getNomUrl(1);
 		print '</td>';
 

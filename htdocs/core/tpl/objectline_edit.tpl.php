@@ -73,9 +73,13 @@ $coldisplay=-1; // We remove first td
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
+	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
 
+		<?php
+		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+		?>
 		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 		<?php
 		if ($line->product_type==1) echo img_object($langs->trans('ShowService'), 'service');
@@ -193,16 +197,19 @@ $coldisplay=-1; // We remove first td
 		&nbsp;
 	<?php } ?>
 	</td>
-	<?php
+<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nowrap right"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
-	?>
-		<?php if (!empty($user->rights->margins->creer)) { ?>
-		<td class="margininfos right"><?php $coldisplay++; ?>
+        if (!empty($user->rights->margins->creer)) {
+?>
+        <td class="margininfos right">
+<?php
+            $coldisplay++;
+?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
@@ -211,30 +218,31 @@ $coldisplay=-1; // We remove first td
 			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
 		</td>
 		<?php } ?>
-	    <?php if ($user->rights->margins->creer) {
-				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				  {
-				    $margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate", "alpha", 2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
-				    // if credit note, dont allow to modify margin
-					if ($line->subprice < 0)
-						echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
-					else
-						echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
-					$coldisplay++;
-				  }
-				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
-				  {
-				    $mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):price($line->marque_tx));
-				    // if credit note, dont allow to modify margin
-					if ($line->subprice < 0)
-						echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
-					else
-						echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
-					$coldisplay++;
-				  }
-			  }
+<?php
+        if ($user->rights->margins->creer) {
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			{
+				$margin_rate = (isset($_POST["np_marginRate"])?GETPOST("np_marginRate", "alpha", 2):(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				// if credit note, dont allow to modify margin
+				if ($line->subprice < 0)
+					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
+				else
+					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+				$coldisplay++;
+			}
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES))
+			{
+				$mark_rate = (isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):price($line->marque_tx));
+				// if credit note, dont allow to modify margin
+				if ($line->subprice < 0)
+					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
+				else
+					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+				$coldisplay++;
+			}
+		}
 	}
-	?>
+?>
 
 	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay+=4; ?>

@@ -552,8 +552,8 @@ if ($showweather)
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-	
+    $boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+
     foreach($valid_dashboardlines as $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
@@ -567,9 +567,9 @@ if (! empty($valid_dashboardlines))
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
         if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))
-	{
-		$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
-	}
+        {
+            $boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
+        }
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
@@ -593,7 +593,7 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
-    
+
     $boxwork .='</div>';
     $boxwork .='</td></tr>';
 }

@@ -739,7 +739,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Affiche zone versements
 				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs, $heightforfooter);
 				}
 
 				// Pied de page
@@ -755,6 +755,11 @@ class pdf_crabe extends ModelePDFFactures
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -785,9 +790,10 @@ class pdf_crabe extends ModelePDFFactures
      *  @param  Object		$object         Object invoice
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
+     *  @param  int			$heightforfooter height for footer
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -795,6 +801,7 @@ class pdf_crabe extends ModelePDFFactures
         $sign=1;
         if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
+		$current_page = $pdf->getPage();
         $tab3_posx = 120;
 		$tab3_top = $posy + 8;
 		$tab3_width = 80;
@@ -806,26 +813,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$title=$outputlangs->transnoentities("PaymentsAlreadyDone");
-		if ($object->type == 2) $title=$outputlangs->transnoentities("PaymentsBackAlreadyDone");
-
-		$pdf->SetFont('', '', $default_font_size - 3);
-		$pdf->SetXY($tab3_posx, $tab3_top - 4);
-		$pdf->MultiCell(60, 3, $title, 0, 'L', 0);
-
-		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
-
-		$pdf->SetFont('', '', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
-
-		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+		$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height);
 
 		$y=0;
 
@@ -847,6 +835,17 @@ class pdf_crabe extends ModelePDFFactures
 			while ($i < $num)
 			{
 				$y+=3;
+				if ($tab3_top+$y >= ($this->page_hauteur - $heightforfooter))
+				{
+					$y=0;
+					$current_page++;
+					$pdf->AddPage('', '', true);
+					if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+					$pdf->setPage($current_page);
+					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top+$y-3, $tab3_width, $tab3_height);
+				}
+
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj->type == 2) $text=$outputlangs->transnoentities("CreditNote");
@@ -893,6 +892,17 @@ class pdf_crabe extends ModelePDFFactures
 			$i=0;
 			while ($i < $num) {
 				$y+=3;
+				if ($tab3_top+$y >= ($this->page_hauteur - $heightforfooter))
+				{
+					$y=0;
+					$current_page++;
+					$pdf->AddPage('', '', true);
+					if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+					$pdf->setPage($current_page);
+					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top+$y-3, $tab3_width, $tab3_height);
+				}
+
 				$row = $this->db->fetch_object($resql);
 
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
@@ -918,6 +928,44 @@ class pdf_crabe extends ModelePDFFactures
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 * Function _tableau_versements_header
+	 *
+	 * @param TCPDF 		$pdf				Object PDF
+	 * @param Facture		$object				Object invoice
+	 * @param Translate		$outputlangs		Object langs for output
+	 * @param int			$default_font_size	Font size
+	 * @param int			$tab3_posx			pos x
+	 * @param int 			$tab3_top			pos y
+	 * @param int 			$tab3_width			width
+	 * @param int 			$tab3_height		height
+	 * @return void
+	 */
+	function _tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top, $tab3_width, $tab3_height)
+	{
+	    // phpcs:enable
+	    $title=$outputlangs->transnoentities("PaymentsAlreadyDone");
+		if ($object->type == 2) $title=$outputlangs->transnoentities("PaymentsBackAlreadyDone");
+
+		$pdf->SetFont('', '', $default_font_size - 3);
+		$pdf->SetXY($tab3_posx, $tab3_top - 4);
+		$pdf->MultiCell(60, 3, $title, 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
+
+		$pdf->SetFont('', '', $default_font_size - 4);
+		$pdf->SetXY($tab3_posx, $tab3_top);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
+		$pdf->SetXY($tab3_posx+21, $tab3_top);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
+		$pdf->SetXY($tab3_posx+40, $tab3_top);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->SetXY($tab3_posx+58, $tab3_top);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
@@ -1292,31 +1340,27 @@ class pdf_crabe extends ModelePDFFactures
 
 						foreach($localtax_rate as $tvakey => $tvaval)
 						{
-						    // retrieve global local tax
-							if ($tvakey != 0)    // On affiche pas taux 0
+							//$this->atleastoneratenotnull++;
+
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+							$tvacompl='';
+							if (preg_match('/\*/', $tvakey))
 							{
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/', $tvakey))
-								{
-									$tvakey=str_replace('*', '', $tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-
-								$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+								$tvakey=str_replace('*', '', $tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+
+							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 						}
-					//}
-				}
+					}
+				//}
 
 				// Revenue stamp
 				if (price2num($object->revenuestamp) != 0)

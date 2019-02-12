@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
  *
  *  @param		array		$versionarray		Tableau de version (vermajeur,vermineur,autre)
  *  @return     string        			      	Chaine version
+ *  @see versioncompare
  */
 function versiontostring($versionarray)
 {
@@ -54,6 +55,7 @@ function versiontostring($versionarray)
  *	@return     int          			       	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
  * 												0 if same
  * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
+ *  @see versiontostring
  */
 function versioncompare($versionarray1, $versionarray2)
 {

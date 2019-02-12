@@ -88,8 +88,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
     if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
     {
-    	$page = 0;
-    	$offset = 0;
+        $page = 0;
+        $offset = 0;
     }
 }
 
@@ -98,89 +98,89 @@ $sql.= $db->plimit($limit + 1, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+    $num = $db->num_rows($result);
+    $i = 0;
 
-  $urladd= "&amp;statut=".$statut;
+    $urladd= "&amp;statut=".$statut;
 
-  $selectedfields='';
+    $selectedfields='';
 
-  $newcardbutton='';
-  if ($user->rights->prelevement->bons->creer)
-  {
-  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
-  	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-  	$newcardbutton.= '</a>';
-  }
-
-  // Lines of title fields
-  print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-  if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-  print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-  print '<input type="hidden" name="action" value="list">';
-  print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-  print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-  print '<input type="hidden" name="page" value="'.$page.'">';
-  print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-
-  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
-
-  $moreforfilter='';
-
-  print '<div class="div-table-responsive">';
-  print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. dol_escape_htmltag($search_ref).'"></td>';
-  print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
-  print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="right">';
-  $searchpicto=$form->showFilterButtons();
-  print $searchpicto;
-  print '</td>';
-  print '</tr>';
-
-  print '<tr class="liste_titre">';
-  print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
-  print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
-  print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'align="right"', $sortfield, $sortorder);
-  print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-  print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
-  print "</tr>\n";
-
-  while ($i < min($num, $limit))
-  {
-      $obj = $db->fetch_object($result);
-
-      print '<tr class="oddeven"><td>';
-
-      print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-
-      print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
-
-      print '<td align="right">'.price($obj->amount)."</td>\n";
-
-      print '<td align="right">';
-      print $bon->LibStatut($obj->statut, 3);
-      print '</td>';
-
-      print '<td align="right"></td>'."\n";
-
-      print "</tr>\n";
-      $i++;
+    $newcardbutton='';
+    if ($user->rights->prelevement->bons->creer)
+    {
+        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
     }
-  print "</table>";
-  print '</div>';
 
-  print '</form>';
+    // Lines of title fields
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-  $db->free($result);
+    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
+
+    $moreforfilter='';
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'. dol_escape_htmltag($search_ref).'"></td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
+
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
+    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+    print "</tr>\n";
+
+    while ($i < min($num, $limit))
+    {
+        $obj = $db->fetch_object($result);
+
+        print '<tr class="oddeven"><td>';
+
+        print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+
+        print '<td align="right">'.price($obj->amount)."</td>\n";
+
+        print '<td align="right">';
+        print $bon->LibStatut($obj->statut, 3);
+        print '</td>';
+
+        print '<td align="right"></td>'."\n";
+
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
+    print '</div>';
+
+    print '</form>';
+
+    $db->free($result);
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page

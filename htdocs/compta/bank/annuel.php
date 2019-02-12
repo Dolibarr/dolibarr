@@ -209,7 +209,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 	{
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
-		print '<td align="right" width="10%">&nbsp;';
+		print '<td class="right" width="10%">&nbsp;';
 		if ($decaiss[$case]>0)
 		{
 			print price($decaiss[$case]);
@@ -217,7 +217,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" class="borderrightlight" width="10%">&nbsp;';
+		print '<td class="right" class="borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -266,7 +266,7 @@ else {
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
-print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
+print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';
 print "</tr>\n";
 
 print "</table>";

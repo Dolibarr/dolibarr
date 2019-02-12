@@ -483,7 +483,7 @@ elseif ($id)
                 print '</td>';
                 if ($action != 'classify' && $user->rights->deplacement->creer)
                 {
-                    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
+                    print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
                     print img_edit($langs->trans('SetProject'), 1);
                     print '</a></td>';
                 }

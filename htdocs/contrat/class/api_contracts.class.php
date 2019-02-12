@@ -186,9 +186,9 @@ class Contracts extends DolibarrApi
      */
     function post($request_data = null)
     {
-      if(! DolibarrApiAccess::$user->rights->contrat->creer) {
-			  throw new RestException(401, "Insuffisant rights");
-		  }
+        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -220,9 +220,9 @@ class Contracts extends DolibarrApi
      */
     function getLines($id)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->lire) {
+        if (! DolibarrApiAccess::$user->rights->contrat->lire) {
             throw new RestException(401);
-		}
+        }
 
         $result = $this->contract->fetch($id);
         if( ! $result ) {

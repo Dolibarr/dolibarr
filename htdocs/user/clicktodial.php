@@ -110,24 +110,24 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-	   print '<table class="border" width="100%">';
+       print '<table class="border" width="100%">';
 
         if ($user->admin)
         {
-        	print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
-        	print '<td class="valeur">';
-        	print '<input name="url" value="'.(! empty($object->clicktodial_url)?$object->clicktodial_url:'').'" size="92">';
-        	if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
+            print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
+            print '<td class="valeur">';
+            print '<input name="url" value="'.(! empty($object->clicktodial_url)?$object->clicktodial_url:'').'" size="92">';
+            if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
                 print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
             }
             else
-           {
-            	print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
-           }
+            {
+                print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+            }
             print '</td>';
-        	print '</tr>';
+            print '</tr>';
         }
 
         print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
@@ -138,7 +138,7 @@ if ($id > 0)
         print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
         print '<input name="login" value="'.(! empty($object->clicktodial_login)?$object->clicktodial_login:'').'"></td>';
-		print '</tr>';
+        print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
