@@ -65,7 +65,6 @@ AddBankRecord=Añadir entrada
 AddBankRecordLong=Agregar entrada manualmente
 DateConciliating=Fecha de conciliación
 BankLineConciliated=Entrada reconciliada
-CustomerInvoicePayment=Pago del Cliente
 SupplierInvoicePayment=Pago del proveedor
 WithdrawalPayment=Pago de retiros
 SocialContributionPayment=Pago de impuestos sociales/fiscales

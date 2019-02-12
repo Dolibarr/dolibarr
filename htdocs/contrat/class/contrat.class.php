@@ -2388,8 +2388,6 @@ class Contrat extends CommonObject
 
 		dol_include_once('/projet/class/project.class.php');
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$error = 0;
 
 		$this->fetch($this->id);
@@ -2440,6 +2438,7 @@ class Contrat extends CommonObject
 		}
 
 		// Create clone
+		$clonedObj->context['createfromclone'] = 'createfromclone';
 		$result = $clonedObj->create($user);
 		if ($result < 0) {
 			$error ++;
@@ -2479,7 +2478,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($clonedObj->context['createfromclone']);
 
 		// End
 		if (! $error) {

@@ -66,6 +66,7 @@ INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
+--VPGSQL8.2 ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq;
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';

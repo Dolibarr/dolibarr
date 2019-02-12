@@ -84,7 +84,7 @@ require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action=GETPOST('action','alpha');
-$original_file=GETPOST('file','alpha');		// Do not use urldecode here ($_GET are already decoded by PHP).
+$original_file=GETPOST('file','alphanohtml');		// Do not use urldecode here ($_GET are already decoded by PHP).
 $hashp=GETPOST('hashp','aZ09');
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');

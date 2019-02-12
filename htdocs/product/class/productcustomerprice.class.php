@@ -907,8 +907,6 @@ class Productcustomerprice extends CommonObject
 
 		$object = new Productcustomerprice($this->db);
 
-		$object->context['createfromclone']='createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -920,15 +918,18 @@ class Productcustomerprice extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
-			$error ++;
+			$this->errors=array_merge($this->errors, $object->errors);
+			$error++;
 		}
 
 		if (! $error) {
+
 		}
 
 		unset($object->context['createfromclone']);

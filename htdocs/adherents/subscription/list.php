@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load(array("members","companies"));
+$langs->loadLangs(array("members","companies"));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');

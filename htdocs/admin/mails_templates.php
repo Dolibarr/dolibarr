@@ -544,7 +544,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 		print '<strong>' . $form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '</strong> ';
 	}
 	if ($tmpfieldlist == 'content')
-		print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist);
+		print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 	if ($tmpfieldlist == 'content_lines')
 		print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '<br>';
 	// Input field
@@ -606,10 +606,16 @@ if ($resql)
     $i = 0;
 
     $param = '&id='.$id;
+    if ($search_label)             $param.= '&search_label='.urlencode($search_label);
+    if ($search_lang > 0)          $param.= '&search_lang='.urlencode($search_lang);
+    if ($search_type_template > 0) $param.= '&search_type_template='.urlencode($search_type_template);
+    if ($search_fk_user > 0)       $param.= '&search_fk_user='.urlencode($search_fk_user);
+    if ($search_topic)             $param.= '&search_topic='.urlencode($search_topic);
+
     $paramwithsearch = $param;
-    if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-    if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-    if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+    if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
+    if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
+    if (GETPOST('from','alpha')) $paramwithsearch.= '&from='.urlencode(GETPOST('from','alpha'));
 
     // There is several pages
     if ($num > $listlimit)

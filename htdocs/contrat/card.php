@@ -1318,6 +1318,8 @@ else
 	{
 		$object->fetch_thirdparty();
 
+		$soc = $object->thirdparty;       // $soc is used later
+
 		$result=$object->fetch_lines(); // This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
 		if ($result < 0) {
             dol_print_error($db,$object->error);

@@ -20,7 +20,7 @@
 
 /**
  * \file       cashcontrol/class/cashcontrol.class.php
- * \ingroup    bank
+ * \ingroup    cashdesk|takepos
  * \brief      This file is CRUD class file (Create/Read/Update/Delete) for cash fence table
  */
 

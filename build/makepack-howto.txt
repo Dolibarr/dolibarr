@@ -43,9 +43,9 @@ To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dol
 - Run makepack-dolibarr.pl to generate all packages.
 
 - Check content of built packages.
-- Move build files into www.dolibarr.org web site
-  (/home/dolibarr/wwwroot/files/stable).
 
+- Run makepack-dolibarr.pl again with option to publish files on 
+  dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
 - Run makepack-dolibarr.pl again with option to publish files on 
   sourceforge. This will also add official tag.
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files/stable/xxx"

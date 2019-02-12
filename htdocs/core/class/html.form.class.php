@@ -516,7 +516,7 @@ class Form
 	 *	@param	string	$text				Text to show
 	 *	@param  string	$htmltext	     	Content of tooltip
 	 *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-	 * 	@param	string	$type				Type of picto ('info', 'help', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath
+	 * 	@param	string	$type				Type of picto ('info', 'help', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
@@ -557,12 +557,13 @@ class Form
 			if ($type == 'info' || $type == 'help') return $text;
 		}
 
+		$img='';
 		if ($type == 'info') $img = img_help(0, $alt);
 		elseif ($type == 'help') $img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
 		elseif ($type == 'admin') $img = img_picto($alt, 'star');
 		elseif ($type == 'warning') $img = img_warning($alt);
-		else $img = img_picto($alt, $type);
+		elseif ($type != 'none') $img = img_picto($alt, $type);   // $type can be an image path
 
 		return $this->textwithtooltip($text, $htmltext, (($tooltiptrigger && ! $img)?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
@@ -1141,8 +1142,8 @@ class Form
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 
 		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
-			$sql .= " ,s.address, s.zip, s.town";
-		 	$sql .= " , dictp.code as country_code";
+			$sql .= ", s.address, s.zip, s.town";
+		 	$sql .= ", dictp.code as country_code";
 		}
 
 		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
@@ -1981,7 +1982,7 @@ class Form
 		}
 		else
 		{
-			print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel, $warehouseStatus);
+			print $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 	}
 
@@ -2173,6 +2174,10 @@ class Form
 			{
 				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 				else $textifempty.=$langs->trans("All");
+			}
+			else
+			{
+			    if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 			}
 			if ($showempty) $out.='<option value="0" selected>'.$textifempty.'</option>';
 
@@ -5675,7 +5680,7 @@ class Form
 	 *  @param  int             $disablebademail	Check if an email is found into value and if not disable and colorize entry
 	 *  @param  int             $nohtmlescape		No html escaping.
 	 * 	@return	string								HTML select string.
-	 *  @see multiselectarray
+	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
 	 */
 	static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
 	{
@@ -6005,14 +6010,18 @@ class Form
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray
+	 *  @see selectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=1)
+	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=-1)
 	{
 		global $conf, $langs;
 
 		$out = '';
 
+		if ($addjscombo < 0) {
+		    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $addjscombo = 1;
+		    else $addjscombo = 0;
+		}
 
 		// Add code for jquery to use multiselect
 		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
@@ -6459,7 +6468,7 @@ class Form
 
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
-				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+				print '<div id="'.$key.'list"'.(empty($conf->use_javascript_ajax)?'':' style="display:none"').'>';
 				$sql = $possiblelink['sql'];
 
 				$resqllist = $this->db->query($sql);
@@ -6521,8 +6530,9 @@ class Form
 		{
 			$linktoelem='
     		<dl class="dropdown" id="linktoobjectname">
-    		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
-    		<dd>
+    		';
+			if (! empty($conf->use_javascript_ajax)) $linktoelem.='<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>';
+			$linktoelem.='<dd>
     		<div class="multiselectlinkto">
     		<ul class="ulselectedfields">'.$linktoelemlist.'
     		</ul>
@@ -6535,7 +6545,9 @@ class Form
 			$linktoelem='';
 		}
 
-		print '<!-- Add js to show linkto box -->
+		if (! empty($conf->use_javascript_ajax))
+		{
+		  print '<!-- Add js to show linkto box -->
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
@@ -6545,7 +6557,8 @@ class Form
 					});
 				});
 				</script>
-		';
+		  ';
+		}
 
 		return $linktoelem;
 	}

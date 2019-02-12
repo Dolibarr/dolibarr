@@ -639,6 +639,8 @@ if (empty($reshook))
 
 					$ref_supplier = $productsupplier->ref_supplier;
 
+                    $fk_unit = $productsupplier->fk_unit;
+
 					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					if (empty($tva_tx)) $tva_npr=0;
@@ -1801,7 +1803,7 @@ if ($action == 'create')
 				}
 
 				// Create an order
-				if (! empty($conf->commande->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (! empty($conf->fournisseur->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($user->rights->fournisseur->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}

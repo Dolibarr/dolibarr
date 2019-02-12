@@ -194,7 +194,7 @@ class WebsitePage extends CommonObject
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
 			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
-			    if ($aliasalt)	$sql .= " AND t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%'";
+			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
 			}
 		}
         $sql .= $this->db->plimit(1);
@@ -410,6 +410,8 @@ class WebsitePage extends CommonObject
 	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
 	{
 		global $hookmanager, $langs;
+
+		$now = dol_now();
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -428,6 +430,7 @@ class WebsitePage extends CommonObject
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
+		$object->date_creation = $now;
 		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
@@ -443,6 +446,8 @@ class WebsitePage extends CommonObject
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {

@@ -3,6 +3,26 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 9.0.1 compared to 9.0.0 *****
+FIX: #10381
+FIX: #10460 compatibility with MariaDB 10.4
+FIX: #10485
+FIX: add fk_unit on addline action
+FIX: better test on fetch
+FIX: Default language of company is not set
+FIX: error report not returned
+FIX: expedition: reset status on rollback + replace hardcoded status with const
+FIX: line edit template: keep fk_parent_line
+FIX: Missing province in export of invoice
+FIX: must fetch member in current entity
+FIX: Price in combo list of service does not use the correct price level
+FIX: supplier invoice payment total doesnt care about deposit or credit
+FIX: supplier invoice product stats total ht is line total not invoice total
+FIX: Translation not loaded by scheduled jobs
+FIX: wrong merged conflict
+FIX: wrong tests on fetch
+NEW: Add protection to avoid packaging if files non indexed exists into
+
 ***** ChangeLog for 9.0.0 compared to 8.0.0 *****
 For Users:
 NEW: Stable module: DAV (WebDAV only for the moment)
@@ -79,6 +99,7 @@ NEW: The binding step in accountancy has a country filter with autocompletion
 NEW: Top menu is always on screen with MD theme.
 NEW: Withdraw request massaction can include already partially paid invoices
 NEW: Option "Simplify interface for blind persons"
+NEW: Generic cash fence feature (compatible with several POS modules)
 
 For developers:
 NEW: Add lib for multiselect with checkboxes
@@ -523,6 +544,38 @@ Following changes may create regressions for some external modules, but were nec
   where {TYPE} is contact type code (BILLING, SHIPPING, CUSTOMER, ... see contact type dictionnary). 
 
 
+***** ChangeLog for 7.0.5 compared to 7.0.4 *****
+FIX: #3234
+FIX: #6580
+FIX: #8741
+FIX: #9934
+FIX: avoid Class 'AdherentType' not found
+FIX: Can't create a thirdparty from member if customer code is mandatory.
+FIX: Can't generate invoice pdf
+FIX: contact/adress tab: when changing company ajax combo, the first contact change is not taken into account
+FIX: Error generating ODT when option to use contact on doc on
+FIX: Error reported when creation of thirdparty from member fails
+FIX: filter on product category doesn't work
+FIX: form actions: select_type_actions could be too small + bad  init
+FIX: fourn payment modes musn't be available on customer docs
+FIX: Function updatePrice with wrong parameters
+FIX: If we change customer/supplier rule we can't edit old thirdparty.
+FIX: Interface regression for bind people. Fix option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: Lines are not inserted correctly if VAT have code
+FIX: OppStatusShort doesn't exists
+FIX: pdf typhon: order reference duplicate
+FIX: propal pdf: missing parenthesis for customs code
+FIX: Same on customer card
+FIX: same on lines
+FIX: Select first mail model by default
+FIX: sql query performance on list_qualified_avoir_supplier_invoices.
+FIX: task time screen: last fix was overkill
+FIX: task time screen: prevent users with access to all project from assigning to tasks they're not allowed to do
+FIX: use discount with multicurrency
+FIX: Variable name
+FIX: We want to be able to send PDF of paid invoices
+FIX: When delete a product, llx_product_association rows are not deleted
+FIX: wrong occurence number of contract on contact card, we must only count externals
 
 ***** ChangeLog for 7.0.4 compared to 7.0.3 *****
 FIX: #8984 button create expense report

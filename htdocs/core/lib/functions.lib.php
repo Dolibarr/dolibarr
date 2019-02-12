@@ -616,7 +616,7 @@ if (! function_exists('dol_getprefix'))
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
      *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with one root dir or two instances in virtual servers.
+     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
      *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
@@ -634,16 +634,16 @@ if (! function_exists('dol_getprefix'))
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
-			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
-			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-			// Use this for a "readable" cookie name
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
+			// Use this for a "readable" key
 			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
 
@@ -3015,8 +3015,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
-				'skype','twitter','facebook'
+				'note', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
+				'jabber','skype','twitter','facebook'
 			)
 		)) {
 			$fakey = $pictowithoutext;
@@ -3103,16 +3103,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-play';
 				$facolor = '#444';
 			}
+			elseif ($pictowithoutext == 'jabber') {
+				$fakey = 'fa-comment-o';
+			}
+			elseif ($pictowithoutext == 'split') {
+			    $fakey = 'fa-code-fork';
+			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
 
+            $reg=array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
 				$morecss.= ($morecss?' ':'').$reg[1];
 			}
-			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
+			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:'').'>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3128,11 +3135,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
 		}
 		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
-			$path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+			$path = $theme.'/theme/'.$theme;     // If the theme have the same name as the module
 		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) {
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $picto, $regs)) {
 			$picto = $regs[1];
 			$path = $regs[2];	// $path is $mymodule
 		}
@@ -4343,7 +4350,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
- *		@see	price2num					Revert function of price
+ *		@see	price2num()					Revert function of price
  */
 function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
@@ -4406,7 +4413,11 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
 		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
-		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		$listoflanguagesbefore=array('nl_NL');
+		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
+		{
+		    $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		}
 		else
 		{
 			$tmpcur=$outlangs->getCurrencySymbol($currency_code);
@@ -4512,37 +4523,49 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * Output a dimension with best unit
  *
  * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit of dimension (0, -3, ...)
+ * @param   int         $unit           Unit of dimension (Example: 0=kg, -3=g, 98=ounce, 99=pound, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
- * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
+ * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit (In most case, this value is value defined into $conf->global->MAIN_WEIGHT_DEFAULT_UNIT)
  * @return  string                      String to show dimensions
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-	if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6))
+	if (($forceunitoutput == 'no' && $dimension < 1/10000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -6))
 	{
 		$dimension = $dimension * 1000000;
 		$unit = $unit - 6;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
+	elseif (($forceunitoutput == 'no' && $dimension < 1/10 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
 	{
 		$dimension = $dimension * 1000;
 		$unit = $unit - 3;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
+	elseif (($forceunitoutput == 'no' && $dimension > 100000000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
 	{
 		$dimension = $dimension / 1000000;
 		$unit = $unit + 6;
 	}
-	elseif (($forceunitoutput == 'no' && $dimension > 100000) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
+	elseif (($forceunitoutput == 'no' && $dimension > 100000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
 	{
 		$dimension = $dimension / 1000;
 		$unit = $unit + 3;
 	}
+	// Special case when we want output unit into pound or ounce
+	/* TODO
+	if ($unit < 90 && $type == 'weight' && is_numeric($forceunitoutput) && (($forceunitoutput == 98) || ($forceunitoutput == 99))
+	{
+	    $dimension = // convert dimension from standard unit into ounce or pound
+	    $unit = $forceunitoutput;
+	}
+	if ($unit > 90 && $type == 'weight' && is_numeric($forceunitoutput) && $forceunitoutput < 90)
+	{
+	    $dimension = // convert dimension from standard unit into ounce or pound
+	    $unit = $forceunitoutput;
+	}*/
 
 	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
 
@@ -5835,8 +5858,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		{
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
-			$substitutionarray['__REFCLIENT__'] = '__REFCLIENT__';
-			$substitutionarray['__REFSUPPLIER__'] = '__REFSUPPLIER__';
+			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
+			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
@@ -5844,7 +5867,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'member')
+			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
@@ -5872,9 +5895,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (! empty($conf->expedition->enabled))
 			{
-				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
+			    $substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__']='Shipping tracking url';
 			}
 		}
@@ -5882,6 +5905,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		{
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
+			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
+			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 

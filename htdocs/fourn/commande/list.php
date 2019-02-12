@@ -59,18 +59,18 @@ $search_deliveryday=GETPOST("search_deliveryday","int");
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 $search_product_category=GETPOST('search_product_category','int');
-$search_ref=GETPOST('search_ref');
-$search_refsupp=GETPOST('search_refsupp');
+$search_ref=GETPOST('search_ref','alpha');
+$search_refsupp=GETPOST('search_refsupp','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
-$search_state=trim(GETPOST("search_state"));
+$search_state=trim(GETPOST("search_state",'alpha'));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user=GETPOST('search_user','int');
 $search_request_author=GETPOST('search_request_author','alpha');
-$search_ht=GETPOST('search_ht');
-$search_ttc=GETPOST('search_ttc');
+$search_ht=GETPOST('search_ht','alpha');
+$search_ttc=GETPOST('search_ttc','alpha');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss','alpha');
 $socid = GETPOST('socid','int');

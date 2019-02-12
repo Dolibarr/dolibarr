@@ -279,8 +279,6 @@ class Mailing extends CommonObject
 
 		$object=new Mailing($this->db);
 
-		$object->context['createfromclone']='createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -314,12 +312,14 @@ class Mailing extends CommonObject
 		}
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
@@ -345,7 +345,6 @@ class Mailing extends CommonObject
 				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
 				$sql.= " WHERE fk_mailing = ".$fromid;
 
-				dol_syslog(get_class($this)."::createFromClone", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{

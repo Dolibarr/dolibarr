@@ -324,6 +324,8 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray=array(
+		    '__ID__'=>$this->id,
+		    '__MEMBER_ID__'=>$this->id,
 			'__CIVILITY__'=>$this->getCivilityLabel(),
 			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
 			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
@@ -685,7 +687,7 @@ class Adherent extends CommonObject
 					$lthirdparty=new Societe($this->db);
 					$result=$lthirdparty->fetch($this->fk_soc);
 
-					if ($result >= 0)
+					if ($result > 0)
 					{
 						$lthirdparty->address=$this->address;
 						$lthirdparty->zip=$this->zip;
@@ -709,7 +711,7 @@ class Adherent extends CommonObject
 							$error++;
 						}
 					}
-					else
+					elseif ($result < 0)
 					{
 						$this->error=$lthirdparty->error;
 						$error++;
@@ -2758,7 +2760,7 @@ class Adherent extends CommonObject
 						$outputlangs = new Translate('', $conf);
 						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
 						$outputlangs->loadLangs(array("main", "members"));
-						dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
+						dol_syslog("sendReminderForExpiredSubscription Language for member id ".$adherent->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
 
 						$arraydefaultmessage=null;
 						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
