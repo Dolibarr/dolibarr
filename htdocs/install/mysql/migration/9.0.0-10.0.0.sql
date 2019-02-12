@@ -88,10 +88,14 @@ ALTER TABLE llx_subscription ADD fk_type integer(11);
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
 
-
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
-
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
+
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_soc integer(11);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
