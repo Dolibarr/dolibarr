@@ -118,9 +118,6 @@
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
-		<severity>0</severity>
-	</rule>
 
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
@@ -347,12 +344,6 @@
 	    <severity>0</severity>
 	</rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket">
-        <severity>0</severity>
-    </rule>
-	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">

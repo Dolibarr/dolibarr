@@ -202,7 +202,7 @@ if ($action == 'edit') { ?>
 	if ($action == 'delete') {
 		$form = new Form($db);
 
-		print $form->formconfirm(
+print $form->formconfirm(
 			"card.php?id=".$object->id,
 			$langs->trans('Delete'),
 			$langs->trans('ProductAttributeDeleteDialog'),
@@ -217,7 +217,7 @@ if ($action == 'edit') { ?>
 
 			$form = new Form($db);
 
-			print $form->formconfirm(
+print $form->formconfirm(
 				"card.php?id=".$object->id."&valueid=".$objectval->id,
 				$langs->trans('Delete'),
 				$langs->trans('ProductAttributeValueDeleteDialog', dol_htmlentities($objectval->value), dol_htmlentities($objectval->ref)),

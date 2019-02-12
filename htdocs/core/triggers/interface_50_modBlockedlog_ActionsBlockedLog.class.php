@@ -86,7 +86,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		{
 			$qualified++;
 
-			if (in_array($action, array(
+if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
 			elseif ($action == 'CASHCONTROL_VALIDATE')

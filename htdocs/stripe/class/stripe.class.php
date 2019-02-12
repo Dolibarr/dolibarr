@@ -426,7 +426,7 @@ class Stripe extends CommonObject
 			{
 				if (preg_match('/acct_/i', $source))
 				{
-					$charge = \Stripe\Charge::create(array(
+    $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt

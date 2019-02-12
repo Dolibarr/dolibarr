@@ -170,7 +170,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none');	// No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
-	$doubleapproval = price2num($doubleapproval );
+	$doubleapproval = price2num($doubleapproval);
 
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
     $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);

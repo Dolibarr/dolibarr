@@ -124,7 +124,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$invoicefieldref='ref';
     }
 
-    if ( strpos( $type, 'localtax' ) === 0 ) {
+    if ( strpos($type, 'localtax') === 0 ) {
     	$f_rate = $type . '_tx';
     } else {
     	$f_rate = 'tva_tx';
@@ -593,7 +593,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $invoicefieldref='ref';
     }
 
-	if ( strpos( $type, 'localtax' ) === 0 ) {
+	if ( strpos($type, 'localtax') === 0 ) {
 		$f_rate = $type . '_tx';
 	} else {
 		$f_rate = 'tva_tx';

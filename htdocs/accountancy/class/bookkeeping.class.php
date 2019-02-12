@@ -226,7 +226,7 @@ class BookKeeping extends CommonObject
 			$langs->loadLangs(array("errors"));
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
 			{
-				$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet,  $this->doc_type);
+				$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			}
 			else
 			{

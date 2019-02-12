@@ -1127,7 +1127,7 @@ if ($action == 'updatemeta')
 	$objectpage->fk_website = $object->id;
 
 	// Check parameters
-	if (! preg_match('/^[a-z0-9\-\_]+$/i',  GETPOST('WEBSITE_PAGENAME', 'alpha')))
+	if (! preg_match('/^[a-z0-9\-\_]+$/i', GETPOST('WEBSITE_PAGENAME', 'alpha')))
 	{
 		$error++;
 		$langs->load("errors");

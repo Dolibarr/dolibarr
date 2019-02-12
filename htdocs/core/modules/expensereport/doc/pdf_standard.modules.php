@@ -606,7 +606,7 @@ class pdf_standard extends ModeleExpenseReport
         $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
 
         // Comments
-        $pdf->SetXY($this->posxcomment, $curY );
+        $pdf->SetXY($this->posxcomment, $curY);
         $comment = $outputlangs->trans("Date").':'. dol_print_date($object->lines[$linenumber]->date, "day", false, $outputlangs).' ';
         $comment .= $outputlangs->trans("Type").':'. $expensereporttypecodetoshow.'<br>';
         if (! empty($object->lines[$linenumber]->projet_ref)) {

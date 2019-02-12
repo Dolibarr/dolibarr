@@ -77,7 +77,7 @@ if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sen
             {
                 if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
                 {
-                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles' ) );
+                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
                     unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
                 }
             }

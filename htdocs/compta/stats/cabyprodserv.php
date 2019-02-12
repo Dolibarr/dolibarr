@@ -321,7 +321,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -331,7 +331,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -341,7 +341,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -351,7 +351,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
@@ -361,7 +361,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -371,7 +371,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",

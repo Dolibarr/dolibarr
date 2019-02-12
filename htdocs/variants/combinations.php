@@ -641,7 +641,7 @@ if (! empty($id) || ! empty($ref))
 			}
 		} elseif ($action === 'copy') {
 
-			print $form->formconfirm(
+print $form->formconfirm(
 				'combinations.php?id='.$id,
 				$langs->trans('CloneCombinationsProduct'),
 				$langs->trans('ConfirmCloneProductCombinations'),

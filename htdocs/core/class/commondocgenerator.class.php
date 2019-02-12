@@ -882,7 +882,7 @@ abstract class CommonDocGenerator
 
 
         // Sorting
-        uasort ( $this->cols, array( $this, 'columnSort' ) );
+        uasort ($this->cols, array( $this, 'columnSort' ));
 
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
@@ -899,7 +899,7 @@ abstract class CommonDocGenerator
 
             if(!empty($colDef['scale'])){
                 // In case of column widht is defined by percentage
-                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
+                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
             }
 
             if(empty($colDef['width'])){
@@ -1049,7 +1049,7 @@ abstract class CommonDocGenerator
             if(empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
+            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
     }
 

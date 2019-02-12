@@ -273,7 +273,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
             	if ($val['default'] != '')
             	{
             		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
-            		elseif (preg_match('/varchar/', $type )) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		elseif (preg_match('/varchar/', $type)) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
             		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
             	}
             }

@@ -1614,7 +1614,7 @@ class Account extends CommonObject
 				//Replace the old AccountNumber key with the new BankAccountNumber key
 				$fieldlists = explode(
 					' ',
-					preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
+    preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
 						$conf->global->BANK_SHOW_ORDER_OPTION)
 				);
 			}

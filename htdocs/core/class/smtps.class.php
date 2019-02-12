@@ -377,14 +377,13 @@ class SMTPs
 		else
 		{
 			//See if we can connect to the SMTP server
-			if ($this->socket = @fsockopen(
+            if ($this->socket = @fsockopen(
     			preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
     			$this->getPort(),       // which Port number to use
     			$this->errno,           // actual system level error
     			$this->errstr,          // and any text that goes with the error
-    			$this->_smtpTimeout
-			))  // timeout for reading/writing data over the socket
-			{
+    			$this->_smtpTimeout     // timeout for reading/writing data over the socket
+			)) {
 				// Fix from PHP SMTP class by 'Chris Ryan'
 				// Sometimes the SMTP server takes a little longer to respond
 				// so we will give it a longer timeout for the first read
@@ -990,7 +989,7 @@ class SMTPs
 		$aryHost = $this->_msgRecipients;
 
 		// Only run this if we have something
-		if ( !empty ($_addrList ))
+		if ( !empty ($_addrList))
 		{
 			// $_addrList can be a STRING or an array
 			if ( is_string($_addrList) )

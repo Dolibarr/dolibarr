@@ -493,7 +493,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="siret" id="profid2" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
+			print '<input name="siret" id="profid2" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '') . '">';
 		}
 		else
 		{

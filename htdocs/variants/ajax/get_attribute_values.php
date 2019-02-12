@@ -31,7 +31,7 @@ header('Content-Type: application/json');
 $id = GETPOST('id');
 
 if (!$id) {
-	print json_encode(array(
+print json_encode(array(
 		'error' => 'ID not set'
 	));
 	exit();
@@ -40,7 +40,7 @@ if (!$id) {
 $prodattr = new ProductAttribute($db);
 
 if ($prodattr->fetch($id) < 0) {
-	print json_encode(array(
+print json_encode(array(
 		'error' => 'Attribute not found'
 	));
 	exit();
@@ -51,7 +51,7 @@ $prodattrval = new ProductAttributeValue($db);
 $res = $prodattrval->fetchAllByProductAttribute($id);
 
 if ($res == -1) {
-	print json_encode(array(
+print json_encode(array(
 		'error' => 'Internal error'
 	));
 	exit();

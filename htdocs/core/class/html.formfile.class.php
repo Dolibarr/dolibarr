@@ -1722,7 +1722,7 @@ class FormFile
 
 		print '<table width="100%" class="liste">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre(
+print_liste_field_titre(
 			$langs->trans("Links"),
 			$_SERVER['PHP_SELF'],
 			"name",
@@ -1732,7 +1732,7 @@ class FormFile
 			$sortfield,
 			$sortorder
 		);
-		print_liste_field_titre(
+print_liste_field_titre(
 			"",
 			"",
 			"",
@@ -1740,7 +1740,7 @@ class FormFile
 			"",
 			'class="right"'
 		);
-		print_liste_field_titre(
+print_liste_field_titre(
 			$langs->trans("Date"),
 			$_SERVER['PHP_SELF'],
 			"date",
@@ -1750,7 +1750,7 @@ class FormFile
 			$sortfield,
 			$sortorder
 		);
-		print_liste_field_titre(
+print_liste_field_titre(
 			'',
 			$_SERVER['PHP_SELF'],
 			"",

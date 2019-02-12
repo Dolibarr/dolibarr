@@ -997,7 +997,7 @@ class SupplierProposal extends CommonObject
                             $fk_parent_line = 0;
                         }
 
-						$result = $this->addline(
+    $result = $this->addline(
 							$this->lines[$i]->desc,
 							$this->lines[$i]->subprice,
 							$this->lines[$i]->qty,

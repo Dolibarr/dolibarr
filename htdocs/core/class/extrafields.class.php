@@ -1346,11 +1346,11 @@ class ExtraFields
 							// Init des compteurs
 							$nbPregRepl = $nbPregSel = 0;
 							// On retire toutes les parenthèses sans = avant
-							$InfoFieldList[4]=preg_replace( '#([^=])(\([^)^(]*(' . $word .   ')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
+							$InfoFieldList[4]=preg_replace('#([^=])(\([^)^(]*(' . $word .   ')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
 							// On retire les espaces autour des = et parenthèses
 							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 							// On retire toutes les parenthèses avec = avant
-							$InfoFieldList[4]=preg_replace(  '#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*(' . $word .   ')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
+							$InfoFieldList[4]=preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*(' . $word .   ')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
 							// On retire les espaces autour des = et parenthèses
 							$InfoFieldList[4]=preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 

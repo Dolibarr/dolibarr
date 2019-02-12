@@ -675,7 +675,7 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-						$result = $this->addline(
+    $result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
@@ -749,7 +749,7 @@ class Facture extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
-					$result_insert = $this->addline(
+    $result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
 						$_facrec->lines[$i]->subprice,
 						$_facrec->lines[$i]->qty,

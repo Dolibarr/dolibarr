@@ -103,7 +103,7 @@ if ($object->id)
 
 	$head=donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), -1, 'generic');
+	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'generic');
 
 
 	// Build file list

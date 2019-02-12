@@ -251,7 +251,7 @@ if (empty($reshook))
 				// External modules should update their ones too
 				if (! $error)
 				{
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+    $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
 					), $soc_dest, $action);
@@ -687,7 +687,7 @@ if (empty($reshook))
 				if (! $error && !empty($user->rights->categorie->lire))
 				{
 					// Customer categories association
-					$categories = GETPOST( 'custcats', 'array' );
+					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
 					if ($result < 0)
 					{

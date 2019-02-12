@@ -88,7 +88,7 @@ if ($object->id)
 
 	$head=trip_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
+	dol_fiche_head($head, 'documents', $langs->trans("TripCard"), 0, 'trip');
 
 
 	// Build file list

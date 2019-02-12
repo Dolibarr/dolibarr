@@ -290,7 +290,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 											$array_options = $lines[$i]->array_options;
 										}
 
-										$result = $object->addline(
+        $result = $object->addline(
 												$desc,
 												$lines[$i]->subprice,
 												$lines[$i]->qty,
