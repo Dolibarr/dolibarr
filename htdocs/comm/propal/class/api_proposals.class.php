@@ -57,12 +57,13 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with commercial proposal informations
 	 *
-	 * @param       int         $id         ID of commercial proposal
+	 * @param       int         $id           ID of commercial proposal
+	 * @param       int         $contact_list 0:Return array contains all properties, 1:Return array contains just id
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id)
+	function get($id, $contact_list = 1)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
@@ -77,9 +78,8 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids
-		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', 1);
-
+		// Add external contacts ids.
+		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', $contact_list);
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
 	}
@@ -408,6 +408,86 @@ class Proposals extends DolibarrApi
 			throw new RestException(405, $this->propal->error);
 		}
 	}
+
+    /**
+	 * Add a contact type of given commercial proposal
+	 *
+	 * @param int    $id             Id of commercial proposal to update
+	 * @param int    $contactid      Id of contact to add
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 *
+	 * @url	POST {id}/contact/{contactid}/{type}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+	 */
+    function postContact($id, $contactid, $type)
+    {
+        if(!DolibarrApiAccess::$user->rights->propal->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->propal->fetch($id);
+
+		if(!$result) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+        if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
+            throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+        }
+
+        if(!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->propal->add_contact($contactid, $type, 'external');
+
+        if (!$result) {
+            throw new RestException(500, 'Error when added the contact');
+        }
+
+        return $this->propal;
+    }
+
+    /**
+	 * Delete a contact type of given commercial proposal
+	 *
+	 * @param int    $id             Id of commercial proposal to update
+	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 *
+	 * @url	DELETE {id}/contact/{lineid}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+     * @throws 500
+	 */
+    function deleteContact($id, $rowid)
+    {
+        if(!DolibarrApiAccess::$user->rights->propal->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->propal->fetch($id);
+
+		if(!$result) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+        if(!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->propal->delete_contact($rowid);
+
+        if (!$result) {
+            throw new RestException(500, 'Error when deleted the contact');
+        }
+
+        return $this->propal;
+    }
 
 	/**
 	 * Update commercial proposal general fields (won't touch lines of commercial proposal)

@@ -56,12 +56,13 @@ class Orders extends DolibarrApi
      *
      * Return an array with order informations
      *
-     * @param       int         $id         ID of order
+     * @param       int         $id            ID of order
+     * @param       int         $contact_list  0:Return array contains all properties, 1:Return array contains just id
      * @return 	array|mixed data without useless information
 	 *
      * @throws 	RestException
      */
-    function get($id)
+    function get($id, $contact_list = 1)
     {
 		if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
@@ -77,7 +78,7 @@ class Orders extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', 1);
+		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
 		$this->commande->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->commande);
 	}
