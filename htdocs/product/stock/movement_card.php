@@ -52,23 +52,23 @@ $result=restrictedArea($user, 'stock');
 $id=GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $msid=GETPOST('msid', 'int');
-$product_id=GETPOST("product_id");
+$product_id=GETPOST("product_id", 'int');
 $action=GETPOST('action', 'aZ09');
 $cancel=GETPOST('cancel', 'alpha');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'movementlist';
 
 $idproduct = GETPOST('idproduct', 'int');
-$year = GETPOST("year");
-$month = GETPOST("month");
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_movement = GETPOST("search_movement");
-$search_product_ref = trim(GETPOST("search_product_ref"));
-$search_product = trim(GETPOST("search_product"));
-$search_warehouse = trim(GETPOST("search_warehouse"));
-$search_inventorycode = trim(GETPOST("search_inventorycode"));
-$search_user = trim(GETPOST("search_user"));
-$search_batch = trim(GETPOST("search_batch"));
-$search_qty = trim(GETPOST("search_qty"));
+$search_movement = GETPOST("search_movement", 'alpha');
+$search_product_ref = trim(GETPOST("search_product_ref", 'alpha'));
+$search_product = trim(GETPOST("search_product", 'alpha'));
+$search_warehouse = trim(GETPOST("search_warehouse", 'alpha'));
+$search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
+$search_user = trim(GETPOST("search_user", 'alpha'));
+$search_batch = trim(GETPOST("search_batch", 'alpha'));
+$search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement=GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -108,7 +108,7 @@ $arrayfields=array(
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
 	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
-		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
@@ -185,22 +185,24 @@ if ($action == "correct_stock")
 
         if ($product->hasbatch())
         {
-        	$batch=GETPOST('batch_number');
+        	$batch=GETPOST('batch_number', 'alpha');
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 
 	        $result=$product->correct_stock_batch(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
-	            GETPOST("mouvement"),
+	            GETPOST("mouvement", 'int'),
 	            GETPOST("label", 'san_alpha'),
-	            GETPOST('unitprice'),
-	        	$eatby, $sellby, $batch,
-	        	GETPOST('inventorycode'),
+	            GETPOST('unitprice', 'alpha'),
+	        	$eatby,
+	            $sellby,
+	            $batch,
+	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
 	        );		// We do not change value of stock for a correction
@@ -211,10 +213,10 @@ if ($action == "correct_stock")
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
-	            GETPOST("mouvement"),
+	            GETPOST("mouvement", 'alpha'),
 	            GETPOST("label", 'san_alpha'),
-	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode'),
+	            GETPOST('unitprice', 'alpha'),
+	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
 	        );		// We do not change value of stock for a correction
@@ -272,7 +274,7 @@ if ($action == "transfert_stock" && ! $cancel)
         $product = new Product($db);
         $result=$product->fetch($product_id);
 
-        if ($product->hasbatch() && ! GETPOST("batch_number"))
+        if ($product->hasbatch() && ! GETPOST("batch_number", 'alpha'))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
             $error++;
@@ -319,7 +321,7 @@ if ($action == "transfert_stock" && ! $cancel)
                 else
                 {
                     $srcwarehouseid=$id;
-                    $batch=GETPOST('batch_number');
+                    $batch=GETPOST('batch_number', 'alpha');
                     $eatby=$d_eatby;
                     $sellby=$d_sellby;
                 }
@@ -334,9 +336,11 @@ if ($action == "transfert_stock" && ! $cancel)
                         1,
                         GETPOST("label", 'san_alpha'),
                         $pricesrc,
-                        $eatby, $sellby, $batch,
-                        GETPOST('inventorycode')
-                        );
+                        $eatby,
+                        $sellby,
+                        $batch,
+                        GETPOST('inventorycode', 'alpha')
+                    );
                     // Add stock
                     $result2=$product->correct_stock_batch(
                         $user,
@@ -345,9 +349,11 @@ if ($action == "transfert_stock" && ! $cancel)
                         0,
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
-                        $eatby, $sellby, $batch,
-                        GETPOST('inventorycode')
-                        );
+                        $eatby,
+                        $sellby,
+                        $batch,
+                        GETPOST('inventorycode', 'alpha')
+                    );
                 }
             }
             else
@@ -356,23 +362,23 @@ if ($action == "transfert_stock" && ! $cancel)
                 $result1=$product->correct_stock(
                     $user,
                     $id,
-                    GETPOST("nbpiece"),
+                    GETPOST("nbpiece", 'int'),
                     1,
-                    GETPOST("label"),
+                    GETPOST("label", 'alpha'),
                     $pricesrc,
-                    GETPOST('inventorycode')
-                    );
+                    GETPOST('inventorycode', 'alpha')
+                );
 
                 // Add stock
                 $result2=$product->correct_stock(
                     $user,
                     GETPOST("id_entrepot_destination"),
-                    GETPOST("nbpiece"),
+                    GETPOST("nbpiece", 'int'),
                     0,
-                    GETPOST("label"),
+                    GETPOST("label", 'alpha'),
                     $pricedest,
-                    GETPOST('inventorycode')
-                    );
+                    GETPOST('inventorycode', 'alpha')
+                );
             }
             if (! $error && $result1 >= 0 && $result2 >= 0)
             {
@@ -615,7 +621,7 @@ if ($resql)
         // Last movement
         $sql = "SELECT MAX(m.datem) as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-        $sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+        $sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
@@ -693,9 +699,9 @@ if ($resql)
     }
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($id > 0)                 $param.='&id='.$id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    if ($id > 0)                 $param.='&id='.urlencode($id);
     if ($search_movement)        $param.='&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_type_mouvement)	 $param.='&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -706,7 +712,7 @@ if ($resql)
     if (!empty($sref))           $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
     if (!empty($snom))           $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)            $param.='&search_user='.urlencode($search_user);
-    if ($idproduct > 0)          $param.='&idproduct='.$idproduct;
+    if ($idproduct > 0)          $param.='&idproduct='.urlencode($idproduct);
     // Add $param from extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -905,21 +911,21 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'], $_SERVER["PHP_SELF"], 'm.batch', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'], $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param, 'align="center"', $sortfield, $sortorder);
-    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],   $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],   $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'],     $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'],   $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],   $_SERVER["PHP_SELF"], 'm.batch', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],  $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param,'align="center"', $sortfield, $sortorder);
+    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'],     $_SERVER["PHP_SELF"], "e.ref", '', $param, "", $sortfield, $sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'], $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'], $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],  $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],          $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
     if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, 'align="center"', $sortfield, $sortorder);
-    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'], $_SERVER["PHP_SELF"], "m.value", "", $param, 'align="right"', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, 'align="right"', $sortfield, $sortorder);
+    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],    $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],   $_SERVER["PHP_SELF"], "m.value", "", $param, 'align="right"', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],   $_SERVER["PHP_SELF"], "m.price", "", $param, 'align="right"', $sortfield, $sortorder);
 
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -932,7 +938,6 @@ if ($resql)
 	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
-
 
     $arrayofuniqueproduct=array();
 

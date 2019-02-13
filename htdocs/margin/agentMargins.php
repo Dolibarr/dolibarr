@@ -213,7 +213,7 @@ if ($result)
         print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
     print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, ' align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);
     print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
     if (! empty($conf->global->DISPLAY_MARGIN_RATES))
         print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
@@ -225,8 +225,6 @@ if ($result)
 
     if ($num > 0)
     {
-        $var=true;
-
         $group_list = array();
         while ($objp = $db->fetch_object($result)) {
             if ($agentid > 0) {

@@ -85,7 +85,7 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter= '');
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter);
 
     	if ($outputmode != 2)
     	{
