@@ -47,7 +47,7 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
-$result=restrictedArea($user,'stock');
+$result=restrictedArea($user, 'stock');
 
 $id=GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -69,7 +69,7 @@ $search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
 $search_user = trim(GETPOST("search_user", 'alpha'));
 $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
-$search_type_mouvement=GETPOST('search_type_mouvement','int');
+$search_type_mouvement=GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $page = GETPOST("page", 'int');
@@ -122,8 +122,8 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 $usercancreate = (($user->rights->stock->mouvement->creer));
 $usercandelete = (($user->rights->stock->mouvement->supprimer));
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -214,7 +214,7 @@ if ($action == "correct_stock")
 	            $id,
 	            GETPOST("nbpiece", 'int'),
 	            GETPOST("mouvement", 'alpha'),
-	            GETPOST("label",'san_alpha'),
+	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice', 'alpha'),
 	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
@@ -253,7 +253,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='transfert';
 	}
-    if (! GETPOST("nbpiece",'int'))
+    if (! GETPOST("nbpiece", 'int'))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
         $error++;
@@ -492,7 +492,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -633,7 +633,7 @@ if ($resql)
         print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
         if ($lastmovementdate)
         {
-            print dol_print_date($lastmovementdate,'dayhour');
+            print dol_print_date($lastmovementdate, 'dayhour');
         }
         else
         {
@@ -734,8 +734,8 @@ if ($resql)
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,$massactionbutton, 	$num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,$massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 	$num, $nbtotalofrecords, '', 0, '', '', $limit);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
 	if ($sall)
     {
@@ -886,7 +886,7 @@ if ($resql)
 
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['m.datec']['checked']))
@@ -961,7 +961,7 @@ if ($resql)
 
     $arrayofuniqueproduct=array();
 
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
 
@@ -1072,21 +1072,21 @@ if ($resql)
         }
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
-            // Type of movement
-        		switch($objp->type_mouvement){
-                case "0":
-                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
-                    break;
-                case "1":
-                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
-                    break;
-                case "2":
-                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
-                    break;
-                case "3":
-                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
-                    break;
-            }
+			// Type of movement
+			switch ($objp->type_mouvement) {
+				case "0" :
+					print '<td align="center">' . $langs->trans('StockIncreaseAfterCorrectTransfer') . '</td>';
+					break;
+				case "1" :
+					print '<td align="center">' . $langs->trans('StockDecreaseAfterCorrectTransfer') . '</td>';
+					break;
+				case "2" :
+					print '<td align="center">' . $langs->trans('StockDecrease') . '</td>';
+					break;
+				case "3" :
+					print '<td align="center">' . $langs->trans('StockIncrease') . '</td>';
+					break;
+			}
         }
         if (! empty($arrayfields['origin']['checked']))
         {
