@@ -257,10 +257,10 @@ while($i < 12)
 {
 	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 	if ($j > 12) $j -= 12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	$i++;
 }
-print '<td width="60" align="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
 $sql = "SELECT fd.tva_tx AS vatrate,";
 $sql .= " fd.product_type AS product_type,";
@@ -301,10 +301,10 @@ if ($resql) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td align="right" width="6%">' . price($obj->$monthj) . '</td>';
+			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
 			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
 		}
-		print '<td align="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
 		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
 		print '</tr>';
 	}
@@ -318,9 +318,9 @@ if ($resql) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) $j -= 12;
 		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td align="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
+		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 	}
-	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
+	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
 } else {
 	print $db->lasterror(); // Show last sql error
@@ -335,10 +335,10 @@ while($i < 12)
 {
 	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 	if ($j > 12) $j -= 12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	$i++;
 }
-print '<td width="60" align="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
 $sql2 = "SELECT ffd.tva_tx AS vatrate,";
 $sql2 .= " ffd.product_type AS product_type,";
@@ -380,10 +380,10 @@ if ($resql2) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td align="right" width="6%">' . price($obj->$monthj) . '</td>';
+			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
 			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
 		}
-		print '<td align="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
 		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
 		print '</tr>';
 	}
@@ -397,9 +397,9 @@ if ($resql2) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) $j -= 12;
 		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td align="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
+		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 	}
-	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
+	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
 } else {
 	print $db->lasterror(); // Show last sql error

@@ -310,7 +310,7 @@ if ($modecompta == 'CREANCES-DETTES') {
            "amount_ht",
            "",
            $paramslink,
-           'align="right"',
+           'class="right"',
            $sortfield,
            $sortorder
 	);
@@ -323,7 +323,7 @@ print_liste_field_titre(
 	"amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
 );
@@ -332,7 +332,7 @@ print_liste_field_titre(
 	$_SERVER["PHP_SELF"], "amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
 );
@@ -391,7 +391,7 @@ if (count($amount)) {
         print "<td>".$linkname."</td>\n";
 
         // Amount w/o VAT
-        print '<td align="right">';
+        print '<td class="right">';
         if ($modecompta != 'CREANCES-DETTES')
         {
             if ($key > 0) {
@@ -410,7 +410,7 @@ if (count($amount)) {
         print '</td>';
 
         // Amount with VAT
-        print '<td align="right">';
+        print '<td class="right">';
         if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
@@ -428,7 +428,7 @@ if (count($amount)) {
         print '</td>';
 
         // Percent
-        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+        print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
         print '<td align="center">';
@@ -452,9 +452,9 @@ if (count($amount)) {
     if ($modecompta != 'CREANCES-DETTES') {
         print '<td colspan="1"></td>';
     } else {
-        print '<td align="right">'.price($catotal_ht).'</td>';
+        print '<td class="right">'.price($catotal_ht).'</td>';
     }
-    print '<td align="right">'.price($catotal).'</td>';
+    print '<td class="right">'.price($catotal).'</td>';
     print '<td>&nbsp;</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';

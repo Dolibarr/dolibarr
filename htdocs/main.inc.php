@@ -2137,6 +2137,5 @@ if (! function_exists("llxFooter"))
             });
         </script>
         <?php
-
     }
 }

@@ -50,8 +50,8 @@ $label=GETPOST("label", "alpha");
 $sens=GETPOST("sens", "int");
 $amount=GETPOST("amount", "alpha");
 $paymenttype=GETPOST("paymenttype", "int");
-$accountancy_code=GETPOST("accountancy_code", "int");
-$subledger_account=GETPOST("subledger_account", "int");
+$accountancy_code=GETPOST("accountancy_code", "alpha");
+$subledger_account=GETPOST("subledger_account", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Security check
@@ -114,8 +114,8 @@ if (empty($reshook))
 		$object->num_payment=GETPOST("num_payment", 'alpha');
 		$object->fk_user_author=$user->id;
 
-		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "int") : "";
-        $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "int") : "";
+		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
+        $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
 
 		$object->sens=GETPOST('sens');
 		$object->fk_project= GETPOST('fk_project', 'int');

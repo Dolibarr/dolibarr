@@ -285,9 +285,9 @@ print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
-	print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
+	if ($modecompta == 'CREANCES-DETTES') print '<td class="liste_titre right">'.$langs->trans("AmountHT").'</td>';
+	print '<td class="liste_titre right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre right borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -322,7 +322,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		{
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Valeur CA du mois w/o VAT
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($cum_ht[$case])
 				{
 					$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
@@ -337,7 +337,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			}
 
 			// Valeur CA du mois
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($cum[$case])
 			{
 				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
@@ -359,29 +359,29 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				{
 					$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev], 4)*100);
 					//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
-					print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
+					print '<td class="borderrightlight right">'.($percent>=0?"+$percent":"$percent").'%</td>';
 				}
 				if ($cum[$caseprev] && ! $cum[$case])
 				{
-					print '<td align="right" class="borderrightlight">-100%</td>';
+					print '<td class="borderrightlight right">-100%</td>';
 				}
 				if (! $cum[$caseprev] && $cum[$case])
 				{
-					//print '<td align="right">+Inf%</td>';
-					print '<td align="right" class="borderrightlight">-</td>';
+					//print '<td class="right">+Inf%</td>';
+					print '<td class="borderrightlight right">-</td>';
 				}
 				if (isset($cum[$caseprev]) && ! $cum[$caseprev] && ! $cum[$case])
 				{
-					print '<td align="right" class="borderrightlight">+0%</td>';
+					print '<td class="borderrightlight right">+0%</td>';
 				}
 				if (! isset($cum[$caseprev]) && ! $cum[$case])
 				{
-					print '<td align="right" class="borderrightlight">-</td>';
+					print '<td class="borderrightlight right">-</td>';
 				}
 			}
 			else
 			{
-				print '<td align="right" class="borderrightlight">';
+				print '<td class="borderrightlight right">';
 				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
 				else { print '&nbsp;'; }
 				print '</td>';
@@ -410,7 +410,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
  $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
  // Valeur CA du mois
- print '<td align="right">';
+ print '<td class="right">';
  if ($cum[$case])
  {
  $now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
@@ -429,25 +429,25 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
  {
  $percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
  //print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
- print '<td align="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
+ print '<td class="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
 
  }
  if ($cum[$caseprev] && ! $cum[$case])
  {
- print '<td align="right">-100%</td>';
+ print '<td class="right">-100%</td>';
  }
  if (! $cum[$caseprev] && $cum[$case])
  {
- print '<td align="right">+Inf%</td>';
+ print '<td class="right">+Inf%</td>';
  }
  if (! $cum[$caseprev] && ! $cum[$case])
  {
- print '<td align="right">+0%</td>';
+ print '<td class="right">+0%</td>';
  }
  }
  else
  {
- print '<td align="right">';
+ print '<td class="right">';
  if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
  else { print '&nbsp;'; }
  print '</td>';
@@ -469,7 +469,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 		// Montant total HT
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 		{
-			print '<td align="right" class="nowrap">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
+			print '<td class="nowrap right">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
 		}
 		else
 		{
@@ -480,7 +480,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 	{
-		print '<td align="right" class="nowrap">'.($total[$annee]?price($total[$annee]):"0")."</td>";
+		print '<td class="nowrap right">'.($total[$annee]?price($total[$annee]):"0")."</td>";
 	}
 	else
 	{
@@ -492,24 +492,24 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		if ($total[$annee-1] && $total[$annee]) {
 			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1], 4)*100);
-			print '<td align="right" class="nowrap borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
+			print '<td class="nowrap borderrightlight right">'.($percent>=0?"+$percent":"$percent").'%</td>';
 		}
 		if ($total[$annee-1] && ! $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">-100%</td>';
+			print '<td class="borderrightlight right">-100%</td>';
 		}
 		if (! $total[$annee-1] && $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">+'.$langs->trans('Inf').'%</td>';
+			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
 		if (! $total[$annee-1] && ! $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">+0%</td>';
+			print '<td class="borderrightlight right">+0%</td>';
 		}
 	}
 	else
 	{
-		print '<td align="right" class="borderrightlight">';
+		print '<td class="borderrightlight right">';
 		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; }
 		else { print '&nbsp;'; }
 		print '</td>';
@@ -567,7 +567,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
  }
  $db->free($resql);
  }
@@ -616,7 +616,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  }
  $db->free($resql);
  }
@@ -624,7 +624,7 @@ print '</div>';
  {
  dol_print_error($db);
  }
- print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
  }
  print "</table>";
 
