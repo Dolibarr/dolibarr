@@ -212,13 +212,13 @@ if ($result)
     else
         print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
-    print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"], "buying_price", "", $param,' align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Margin",$_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param,' align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
     if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-        print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+        print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
     if (! empty($conf->global->DISPLAY_MARK_RATES))
-        print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+        print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);

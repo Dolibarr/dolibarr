@@ -49,38 +49,38 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$id=GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$msid=GETPOST('msid','int');
-$product_id=GETPOST("product_id");
-$action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel','alpha');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
+$id=GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$msid=GETPOST('msid', 'int');
+$product_id=GETPOST("product_id", 'int');
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'movementlist';
 
-$idproduct = GETPOST('idproduct','int');
-$year = GETPOST("year");
-$month = GETPOST("month");
+$idproduct = GETPOST('idproduct', 'int');
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_movement = GETPOST("search_movement");
-$search_product_ref = trim(GETPOST("search_product_ref"));
-$search_product = trim(GETPOST("search_product"));
-$search_warehouse = trim(GETPOST("search_warehouse"));
-$search_inventorycode = trim(GETPOST("search_inventorycode"));
-$search_user = trim(GETPOST("search_user"));
-$search_batch = trim(GETPOST("search_batch"));
-$search_qty = trim(GETPOST("search_qty"));
+$search_movement = GETPOST("search_movement", 'alpha');
+$search_product_ref = trim(GETPOST("search_product_ref", 'alpha'));
+$search_product = trim(GETPOST("search_product", 'alpha'));
+$search_warehouse = trim(GETPOST("search_warehouse", 'alpha'));
+$search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
+$search_user = trim(GETPOST("search_user", 'alpha'));
+$search_batch = trim(GETPOST("search_batch", 'alpha'));
+$search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement=GETPOST('search_type_mouvement','int');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$page = GETPOST("page", 'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-$pdluoid=GETPOST('pdluoid','int');
+$pdluoid=GETPOST('pdluoid', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new MouvementStock($db);
@@ -90,7 +90,7 @@ $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('movement');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields=array(
     'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
@@ -132,7 +132,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
@@ -185,22 +185,22 @@ if ($action == "correct_stock")
 
         if ($product->hasbatch())
         {
-        	$batch=GETPOST('batch_number');
+        	$batch=GETPOST('batch_number', 'alpha');
 
         	//$eatby=GETPOST('eatby');
         	//$sellby=GETPOST('sellby');
-        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+        	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+        	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 
 	        $result=$product->correct_stock_batch(
 	            $user,
 	            $id,
-	            GETPOST("nbpiece",'int'),
-	            GETPOST("mouvement"),
-	            GETPOST("label",'san_alpha'),
-	            GETPOST('unitprice'),
+	            GETPOST("nbpiece", 'int'),
+	            GETPOST("mouvement", 'int'),
+	            GETPOST("label", 'san_alpha'),
+	            GETPOST('unitprice', 'alpha'),
 	        	$eatby,$sellby,$batch,
-	        	GETPOST('inventorycode'),
+	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
 	        );		// We do not change value of stock for a correction
@@ -210,11 +210,11 @@ if ($action == "correct_stock")
 	        $result=$product->correct_stock(
 	            $user,
 	            $id,
-	            GETPOST("nbpiece",'int'),
-	            GETPOST("mouvement"),
+	            GETPOST("nbpiece", 'int'),
+	            GETPOST("mouvement", 'alpha'),
 	            GETPOST("label",'san_alpha'),
-	            GETPOST('unitprice'),
-	        	GETPOST('inventorycode'),
+	            GETPOST('unitprice', 'alpha'),
+	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
 	        );		// We do not change value of stock for a correction
@@ -242,7 +242,7 @@ if ($action == "transfert_stock" && ! $cancel)
 	$product = new Product($db);
 	if (! empty($product_id)) $result=$product->fetch($product_id);
 
-    if (! (GETPOST("id_entrepot_destination",'int') > 0))
+    if (! (GETPOST("id_entrepot_destination", 'int') > 0))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
         $error++;
@@ -272,7 +272,7 @@ if ($action == "transfert_stock" && ! $cancel)
         $product = new Product($db);
         $result=$product->fetch($product_id);
 
-        if ($product->hasbatch() && ! GETPOST("batch_number"))
+        if ($product->hasbatch() && ! GETPOST("batch_number", 'alpha'))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
             $error++;
@@ -319,7 +319,7 @@ if ($action == "transfert_stock" && ! $cancel)
                 else
                 {
                     $srcwarehouseid=$id;
-                    $batch=GETPOST('batch_number');
+                    $batch=GETPOST('batch_number', 'alpha');
                     $eatby=$d_eatby;
                     $sellby=$d_sellby;
                 }
@@ -330,23 +330,23 @@ if ($action == "transfert_stock" && ! $cancel)
                     $result1=$product->correct_stock_batch(
                         $user,
                         $srcwarehouseid,
-                        GETPOST("nbpiece",'int'),
+                        GETPOST("nbpiece", 'int'),
                         1,
-                        GETPOST("label",'san_alpha'),
+                        GETPOST("label", 'san_alpha'),
                         $pricesrc,
                         $eatby,$sellby,$batch,
-                        GETPOST('inventorycode')
+                        GETPOST('inventorycode', 'alpha')
                         );
                     // Add stock
                     $result2=$product->correct_stock_batch(
                         $user,
-                        GETPOST("id_entrepot_destination",'int'),
-                        GETPOST("nbpiece",'int'),
+                        GETPOST("id_entrepot_destination", 'int'),
+                        GETPOST("nbpiece", 'int'),
                         0,
-                        GETPOST("label",'san_alpha'),
+                        GETPOST("label", 'san_alpha'),
                         $pricedest,
                         $eatby,$sellby,$batch,
-                        GETPOST('inventorycode')
+                        GETPOST('inventorycode', 'alpha')
                         );
                 }
             }
@@ -356,22 +356,22 @@ if ($action == "transfert_stock" && ! $cancel)
                 $result1=$product->correct_stock(
                     $user,
                     $id,
-                    GETPOST("nbpiece"),
+                    GETPOST("nbpiece", 'int'),
                     1,
-                    GETPOST("label"),
+                    GETPOST("label", 'alpha'),
                     $pricesrc,
-                    GETPOST('inventorycode')
+                    GETPOST('inventorycode', 'alpha')
                     );
 
                 // Add stock
                 $result2=$product->correct_stock(
                     $user,
                     GETPOST("id_entrepot_destination"),
-                    GETPOST("nbpiece"),
+                    GETPOST("nbpiece", 'int'),
                     0,
-                    GETPOST("label"),
+                    GETPOST("label", 'alpha'),
                     $pricedest,
-                    GETPOST('inventorycode')
+                    GETPOST('inventorycode', 'alpha')
                     );
             }
             if (! $error && $result1 >= 0 && $result2 >= 0)
@@ -568,7 +568,7 @@ if ($resql)
         $morehtmlref.='</div>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -693,9 +693,9 @@ if ($resql)
     }
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($id > 0)                 $param.='&id='.$id;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    if ($id > 0)                 $param.='&id='.urlencode($id);
     if ($search_movement)        $param.='&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_type_mouvement)	 $param.='&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -706,7 +706,7 @@ if ($resql)
     if (!empty($sref))           $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
     if (!empty($snom))           $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)            $param.='&search_user='.urlencode($search_user);
-    if ($idproduct > 0)          $param.='&idproduct='.$idproduct;
+    if ($idproduct > 0)          $param.='&idproduct='.urlencode($idproduct);
     // Add $param from extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -737,7 +737,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';
@@ -928,9 +928,9 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'] ,$_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
 
@@ -978,7 +978,7 @@ if ($resql)
         if (! empty($arrayfields['m.datem']['checked']))
         {
 	        // Date
-	        print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+	        print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
         }
         if (! empty($arrayfields['p.ref']['checked']))
         {
@@ -1007,11 +1007,11 @@ if ($resql)
         }
         if (! empty($arrayfields['pl.eatby']['checked']))
         {
-        	print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
+        	print '<td align="center">'. dol_print_date($objp->eatby, 'day') .'</td>';
         }
         if (! empty($arrayfields['pl.sellby']['checked']))
         {
-        	print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
+        	print '<td align="center">'. dol_print_date($objp->sellby, 'day') .'</td>';
 		}
         // Warehouse
         if (! empty($arrayfields['e.ref']['checked']))
@@ -1120,14 +1120,14 @@ if ($resql)
     	$balanceafter=$movement->calculateBalanceForProductBefore($productidselected, $dateafter);
 
     	//print '<tr class="total"><td class="liste_total">';
-    	print $langs->trans("NbOfProductBeforePeriod", $productlabelselected, dol_print_date($datebefore,'day','gmt'));
+    	print $langs->trans("NbOfProductBeforePeriod", $productlabelselected, dol_print_date($datebefore, 'day', 'gmt'));
     	//print '</td>';
     	//print '<td class="liste_total" colspan="6" align="right">';
     	print ': '.$balancebefore;
     	print "<br>\n";
     	//print '</td></tr>';
     	//print '<tr class="total"><td class="liste_total">';
-    	print $langs->trans("NbOfProductAfterPeriod", $productlabelselected, dol_print_date($dateafter,'day','gmt'));
+    	print $langs->trans("NbOfProductAfterPeriod", $productlabelselected, dol_print_date($dateafter, 'day', 'gmt'));
     	//print '</td>';
     	//print '<td class="liste_total" colspan="6" align="right">';
     	print ': '.$balanceafter;
@@ -1169,7 +1169,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 	$genallowed=$user->rights->stock->lire;
     $delallowed=$user->rights->stock->creer;
 
-    print $formfile->showdocuments($modulepart,$objectref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+    print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
