@@ -108,7 +108,7 @@ $arrayfields=array(
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
 	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
-		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
@@ -126,7 +126,7 @@ if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
@@ -228,11 +228,11 @@ if ($action == "correct_stock")
             exit;
         }
         else
-       {
-       		$error++;
-        	setEventMessages($product->error, $product->errors, 'errors');
-        	$action='correction';
-       }
+        {
+            $error++;
+            setEventMessages($product->error, $product->errors, 'errors');
+            $action='correction';
+        }
     }
 
     if (! $error) $action='';
@@ -256,13 +256,13 @@ if ($action == "transfert_stock" && ! $cancel)
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='transfert';
 	}
-    if (! GETPOST("nbpiece",'int'))
+    if (! GETPOST("nbpiece", 'int'))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
         $error++;
         $action='transfert';
     }
-    if ($id == GETPOST("id_entrepot_destination",'int'))
+    if ($id == GETPOST("id_entrepot_destination", 'int'))
     {
         setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
         $error++;
@@ -340,7 +340,7 @@ if ($action == "transfert_stock" && ! $cancel)
                         $sellby,
                         $batch,
                         GETPOST('inventorycode', 'alpha')
-                        );
+                    );
                     // Add stock
                     $result2=$product->correct_stock_batch(
                         $user,
@@ -353,7 +353,7 @@ if ($action == "transfert_stock" && ! $cancel)
                         $sellby,
                         $batch,
                         GETPOST('inventorycode', 'alpha')
-                        );
+                    );
                 }
             }
             else
@@ -367,7 +367,7 @@ if ($action == "transfert_stock" && ! $cancel)
                     GETPOST("label", 'alpha'),
                     $pricesrc,
                     GETPOST('inventorycode', 'alpha')
-                    );
+                );
 
                 // Add stock
                 $result2=$product->correct_stock(
@@ -378,7 +378,7 @@ if ($action == "transfert_stock" && ! $cancel)
                     GETPOST("label", 'alpha'),
                     $pricedest,
                     GETPOST('inventorycode', 'alpha')
-                    );
+                );
             }
             if (! $error && $result1 >= 0 && $result2 >= 0)
             {
@@ -453,7 +453,7 @@ $sql.= " u.login, u.photo, u.lastname, u.firstname";
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
@@ -493,9 +493,9 @@ if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql.= natur
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -555,7 +555,7 @@ if ($resql)
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
 	}
-    llxHeader("",$texte,$help_url);
+    llxHeader("", $texte, $help_url);
 
     /*
      * Show tab only if we ask a particular warehouse
@@ -615,7 +615,7 @@ if ($resql)
 
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-        print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+        print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
         print "</td></tr>";
 
         // Last movement
@@ -737,8 +737,8 @@ if ($resql)
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,$massactionbutton,$num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,$massactionbutton,$num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
 	if ($sall)
     {
@@ -749,7 +749,7 @@ if ($resql)
     $moreforfilter='';
 
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
 
@@ -932,7 +932,7 @@ if ($resql)
 
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
@@ -941,7 +941,7 @@ if ($resql)
 
     $arrayofuniqueproduct=array();
 
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
 
@@ -1053,7 +1053,7 @@ if ($resql)
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
             // Type of movement
-        		switch($objp->type_mouvement){
+            switch($objp->type_mouvement) {
                 case "0":
                     print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
                     break;
@@ -1119,8 +1119,8 @@ if ($resql)
     		$productidselected=$key;
     		$productlabelselected=$val;
     	}
-		$datebefore=dol_get_first_day($year?$year:strftime("%Y",time()), $month?$month:1, true);
-		$dateafter=dol_get_last_day($year?$year:strftime("%Y",time()), $month?$month:12, true);
+		$datebefore=dol_get_first_day($year?$year:strftime("%Y", time()), $month?$month:1, true);
+		$dateafter=dol_get_last_day($year?$year:strftime("%Y", time()), $month?$month:12, true);
     	$balancebefore=$movement->calculateBalanceForProductBefore($productidselected, $datebefore);
     	$balanceafter=$movement->calculateBalanceForProductBefore($productidselected, $dateafter);
 
