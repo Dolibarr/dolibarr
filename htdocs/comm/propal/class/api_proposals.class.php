@@ -455,7 +455,7 @@ class Proposals extends DolibarrApi
 	 * Delete a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param int    $lineid          Row key of the contact in the array contact_ids.
 	 *
 	 * @url	DELETE {id}/contact/{lineid}
 	 *
@@ -464,7 +464,7 @@ class Proposals extends DolibarrApi
      * @throws 404
      * @throws 500
 	 */
-    function deleteContact($id, $rowid)
+    function deleteContact($id, $lineid)
     {
         if(!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
@@ -480,7 +480,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->propal->delete_contact($rowid);
+        $result = $this->propal->delete_contact($lineid);
 
         if (!$result) {
             throw new RestException(500, 'Error when deleted the contact');
