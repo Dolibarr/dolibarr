@@ -127,8 +127,7 @@ if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massa
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0)
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -200,7 +199,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement", 'int'),
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice', 'alpha'),
-	        	$eatby,$sellby,$batch,
+	        	$eatby,
+	            $sellby,
+	            $batch,
 	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
@@ -332,7 +333,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         1,
                         GETPOST("label", 'san_alpha'),
                         $pricesrc,
-                        $eatby,$sellby,$batch,
+                        $eatby,
+                        $sellby,
+                        $batch,
                         GETPOST('inventorycode', 'alpha')
                         );
                     // Add stock
@@ -343,7 +346,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         0,
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
-                        $eatby,$sellby,$batch,
+                        $eatby,
+                        $sellby,
+                        $batch,
                         GETPOST('inventorycode', 'alpha')
                         );
                 }
@@ -613,7 +618,7 @@ if ($resql)
         // Last movement
         $sql = "SELECT MAX(m.datem) as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-        $sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+        $sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
