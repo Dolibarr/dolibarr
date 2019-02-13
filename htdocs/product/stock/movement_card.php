@@ -84,7 +84,7 @@ if (! $sortfield)
 if (! $sortorder)
 	$sortorder = "DESC";
 
-$pdluoid=GETPOST('pdluoid','int');
+$pdluoid=GETPOST('pdluoid', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new MouvementStock($db);
@@ -94,7 +94,7 @@ $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('movement');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields=array(
     'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
@@ -129,14 +129,15 @@ $usercandelete = $user->rights->stock->mouvement->supprimer;
 if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0)
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
@@ -203,7 +204,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement"),
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice'),
-	        	$eatby,$sellby,$batch,
+	        	$eatby,
+	        	$sellby,
+	        	$batch,
 	        	GETPOST('inventorycode'),
 	        	$origin_element,
 	        	$origin_id
@@ -258,7 +261,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action='transfert';
 	}
-    if (! GETPOST("nbpiece",'int'))
+    if (! GETPOST("nbpiece", 'int'))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
         $error++;
@@ -909,21 +912,36 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],$_SERVER["PHP_SELF"],'m.rowid','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],$_SERVER["PHP_SELF"],'m.datem','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'],$_SERVER["PHP_SELF"],'p.label','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'],$_SERVER["PHP_SELF"], "e.ref","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
-    if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'],$_SERVER["PHP_SELF"], "m.type_mouvement","",$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],$_SERVER["PHP_SELF"], "m.price","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['m.rowid']['checked']))
+		print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.datem']['checked']))
+		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.ref']['checked']))
+		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['p.label']['checked']))
+		print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.batch']['checked']))
+		print_liste_field_titre($arrayfields['m.batch']['label'], $_SERVER["PHP_SELF"], 'm.batch', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.eatby']['checked']))
+		print_liste_field_titre($arrayfields['pl.eatby']['label'], $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.sellby']['checked']))
+		print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.ref']['checked']))
+		print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder); // We are on a specific warehouse card, no filter on other should be possible
+	if (! empty($arrayfields['m.fk_user_author']['checked']))
+		print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['m.inventorycode']['checked']))
+		print_liste_field_titre($arrayfields['m.inventorycode']['label'], $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['m.label']['checked']))
+		print_liste_field_titre($arrayfields['m.label']['label'], $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['m.type_mouvement']['checked']))
+		print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['origin']['checked']))
+		print_liste_field_titre($arrayfields['origin']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['m.value']['checked']))
+		print_liste_field_titre($arrayfields['m.value']['label'], $_SERVER["PHP_SELF"], "m.value", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.price']['checked']))
+		print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, 'align="right"', $sortfield, $sortorder);
 
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -942,7 +960,7 @@ if ($resql)
 
     $arrayofuniqueproduct=array();
 
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
 
@@ -1054,20 +1072,21 @@ if ($resql)
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
             // Type of movement
-        		switch($objp->type_mouvement){
-                case "0":
-                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
-                    break;
-                case "1":
-                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
-                    break;
-                case "2":
-                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
-                    break;
-                case "3":
-                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
-                    break;
-            }
+        		switch($objp->type_mouvement)
+        		{
+	                case "0":
+	                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
+	                    break;
+	                case "1":
+	                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
+	                    break;
+	                case "2":
+	                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
+	                    break;
+	                case "3":
+	                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
+	                    break;
+				}
         }
         if (! empty($arrayfields['origin']['checked']))
         {

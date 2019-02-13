@@ -311,34 +311,36 @@ class FormProduct
 	function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
-		global $langs,$conf,$mysoc, $db;
+		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
-		$return='';
+		$return = '';
 
-		$measuring_units=array();
+		$measuring_units = array();
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cmeasuringunits.class.php';
-		$measuringUnits= new CMeasuringUnits($db);
-		$result=$measuringUnits->fetchAll('','', 0, 0, array('t.unit_type'=>$measuring_style,'t.active'=>1));
-		if ($result<0) {
+		require_once DOL_DOCUMENT_ROOT . '/core/class/cmeasuringunits.class.php';
+		$measuringUnits = new CMeasuringUnits($db);
+		$result = $measuringUnits->fetchAll('', '', 0, 0, array(
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+		));
+		if ($result < 0) {
 			dol_print_error($db);
-			return -1;
+			return - 1;
 		} else {
-		$return.= '<select class="flat" name="'.$name.'">';
-		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
+			$return .= '<select class="flat" name="' . $name . '">';
+			if ($adddefault)
+				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-			foreach ($measuringUnits->records as $lines)
-		{
-				$return.= '<option value="'.$lines->code.'"';
-			if ($key == $default)
-			{
-				$return.= ' selected';
+			foreach ( $measuringUnits->records as $lines ) {
+				$return .= '<option value="' . $lines->code . '"';
+				if ($key == $default) {
+					$return .= ' selected';
+				}
+				// $return.= '>'.$value.'</option>';
+				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
 			}
-			//$return.= '>'.$value.'</option>';
-				$return.= '>'.$langs->transnoentitiesnoconv($lines->label).'</option>';
-		}
-		$return.= '</select>';
+			$return .= '</select>';
 		}
 
 		return $return;
