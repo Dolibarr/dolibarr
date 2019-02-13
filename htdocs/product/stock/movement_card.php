@@ -227,17 +227,14 @@ if ($action == "correct_stock")
 	        );		// We do not change value of stock for a correction
         }
 
-        if ($result > 0)
-        {
-            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-            exit;
-        }
-        else
-       {
-       		$error++;
-        	setEventMessages($product->error, $product->errors, 'errors');
-        	$action='correction';
-       }
+		if ($result > 0) {
+			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+			exit();
+		} else {
+			$error ++;
+			setEventMessages($product->error, $product->errors, 'errors');
+			$action = 'correction';
+		}
     }
 
     if (! $error) $action='';
@@ -341,9 +338,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         1,
                         GETPOST("label", 'san_alpha'),
                         $pricesrc,
-                        $eatby,$sellby,$batch,
+                        $eatby, $sellby, $batch,
                         GETPOST('inventorycode')
-                        );
+						);
                     // Add stock
                     $result2=$product->correct_stock_batch(
                         $user,
@@ -352,9 +349,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         0,
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
-                        $eatby,$sellby,$batch,
+                        $eatby, $sellby, $batch,
                         GETPOST('inventorycode')
-                        );
+						);
                 }
             }
             else
@@ -556,7 +553,7 @@ if ($resql)
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
 	}
-    llxHeader("",$texte,$help_url);
+    llxHeader("", $texte, $help_url);
 
     /*
      * Show tab only if we ask a particular warehouse
@@ -637,7 +634,7 @@ if ($resql)
         print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
         if ($lastmovementdate)
         {
-            print dol_print_date($lastmovementdate,'dayhour');
+            print dol_print_date($lastmovementdate, 'dayhour');
         }
         else
         {
@@ -744,7 +741,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';

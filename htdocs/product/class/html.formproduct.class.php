@@ -332,7 +332,8 @@ class FormProduct
 			if ($adddefault)
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-			foreach ( $measuringUnits->records as $lines ) {
+			foreach ($measuringUnits->records as $lines)
+			{
 				$return .= '<option value="' . $lines->code . '"';
 				if ($key == $default) {
 					$return .= ' selected';
