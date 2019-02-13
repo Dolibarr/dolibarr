@@ -337,6 +337,8 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 {
     global $db,$conf,$langs;
 
+    $nbmax = 10;
+
     dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
     $langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
@@ -417,7 +419,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
 	            	'dir' => $pdir,
-	            	'images' => $product->liste_photos($dir, $nbmax=10)
+	            	'images' => $product->liste_photos($dir, $nbmax)
             	);
 
                 //Retreive all extrafield for thirdsparty
@@ -1001,6 +1003,8 @@ function getProductsForCategory($authentication, $id, $lang = '')
 {
 	global $db,$conf,$langs;
 
+	$nbmax = 10;
+
 	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
 	$langs->setDefaultLang($langcode);
 
@@ -1086,7 +1090,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 						        'pmp' => $obj->pmp,
 		                		'import_key' => $obj->import_key,
 		                		'dir' => $pdir,
-		                		'images' => $obj->liste_photos($dir, $nbmax=10)
+		                		'images' => $obj->liste_photos($dir, $nbmax)
 							);
 
 							//Retreive all extrafield for thirdsparty

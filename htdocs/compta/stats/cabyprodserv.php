@@ -315,7 +315,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
     print '</td>';
 
-    print '<td colspan="5" align="right">';
+    print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
@@ -337,7 +337,7 @@ print_liste_field_titre(
 		"qty",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -347,7 +347,7 @@ print_liste_field_titre(
 		"qty",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -356,8 +356,8 @@ print_liste_field_titre(
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$paramslink,
-		'align="right"',
+		$classslink,
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -367,7 +367,7 @@ print_liste_field_titre(
 		"amount_ttc",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -377,7 +377,7 @@ print_liste_field_titre(
 		"amount_ttc",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -400,15 +400,15 @@ print_liste_field_titre(
 			print "</td>\n";
 
 			// Quantity
-			print '<td align="right">';
+			print '<td class="right">';
 			print $qty[$key];
 			print '</td>';
 
 			// Percent;
-			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
+			print '<td class="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
 
 			// Amount w/o VAT
-			print '<td align="right">';
+			print '<td class="right">';
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -419,7 +419,7 @@ print_liste_field_titre(
 			print '</td>';
 
 			// Amount with VAT
-			print '<td align="right">';
+			print '<td class="right">';
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -430,7 +430,7 @@ print_liste_field_titre(
 			print '</td>';
 
 			// Percent;
-			print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+			print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
 			// TODO: statistics?
 
@@ -441,11 +441,11 @@ print_liste_field_titre(
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
-		print '<td align="right">'.$qtytotal.'</td>';
-		print '<td align="right">100%</td>';
-		print '<td align="right">'.price($catotal_ht).'</td>';
-		print '<td align="right">'.price($catotal).'</td>';
-		print '<td align="right">100%</td>';
+		print '<td class="right">'.$qtytotal.'</td>';
+		print '<td class="right">100%</td>';
+		print '<td class="right">'.price($catotal_ht).'</td>';
+		print '<td class="right">'.price($catotal).'</td>';
+		print '<td class="right">100%</td>';
 		print '</tr>';
 
 		$db->free($result);

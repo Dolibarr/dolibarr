@@ -115,7 +115,10 @@
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterEquals">
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">	<!-- We don't want this rule, we want to be able to align params on several similare functions on different lines -->
 		<severity>0</severity>
 	</rule>
 

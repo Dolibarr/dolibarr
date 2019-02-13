@@ -190,6 +190,8 @@ function getCategory($authentication, $id)
 {
 	global $db,$conf,$langs;
 
+	$nbmax = 10;
+
 	dol_syslog("Function: getCategory login=".$authentication['login']." id=".$id);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -228,7 +230,7 @@ function getCategory($authentication, $id)
 						//'visible'=>$categorie->visible,
 						'type' => $categorie->type,
 						'dir' => $pdir,
-						'photos' => $categorie->liste_photos($dir, $nbmax=10)
+						'photos' => $categorie->liste_photos($dir, $nbmax)
 			    	);
 
 					$cats = $categorie->get_filles();
@@ -248,7 +250,7 @@ function getCategory($authentication, $id)
 								//'visible'=>$fille->visible,
 								'type'=>$fille->type,
 								'dir' => $pdir,
-								'photos' => $fille->liste_photos($dir, $nbmax=10)
+								'photos' => $fille->liste_photos($dir, $nbmax)
 							);
 						}
 					}
