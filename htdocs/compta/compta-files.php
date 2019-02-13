@@ -81,6 +81,8 @@ if ($user->societe_id > 0)
  * Actions
  */
 
+$entity = GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
+
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -91,21 +93,27 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
     $sql="SELECT rowid as id, ref as ref,paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, ref, paye as paid, total_ttc, fk_soc, datef as date, 'InvoiceSupplier' as item  FROM ".MAIN_DB_PREFIX."facture_fourn";
     $sql.=" WHERE datef between ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, ref, paid, total_ttc, fk_user_author as fk_soc, date_fin as date,'ExpenseReport' as item  FROM ".MAIN_DB_PREFIX."expensereport";
     $sql.=" WHERE date_fin between  ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, ref,paid,amount as total_ttc, '0' as fk_soc, datedon as date,'Donation' as item  FROM ".MAIN_DB_PREFIX."don";
     $sql.=" WHERE datedon between ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, label as ref, 1 as paid, amount as total_ttc, fk_user as fk_soc,datep as date,'SalaryPayment' as item  FROM ".MAIN_DB_PREFIX."payment_salary";
     $sql.=" WHERE datep between ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id, libelle as ref, paye as paid, amount as total_ttc, 0 as fk_soc, date_creation as date, 'SocialContributions' as item  FROM ".MAIN_DB_PREFIX."chargesociales";
     $sql.=" WHERE date_creation between ".$wheretail;
+    $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $resd = $db->query($sql);
     $files=array();
     $link='';
@@ -264,8 +272,37 @@ $form = new Form($db);
 $userstatic=new User($db);
 $title=$langs->trans("ComptaFiles").' - '.$langs->trans("List");
 print '<form name="searchfiles" action="?action=searchfiles'.$tail.'" method="POST" >'."\n";
-print $langs->trans("ReportPeriod").': '.$form->select_date($date_start, 'date_start', 0, 0, 0, "", 1, 1, 1);
-print ' - '.$form->select_date($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 1)."\n</a>";
+print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
+print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
+// Multicompany
+if (! empty($conf->multicompany->enabled) && is_object($mc))
+{
+    print '<br>';
+    // This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+    if (method_exists($mc, 'formObjectOptions'))
+    {
+        if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+        {
+            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+            print "<td>".$mc->select_entities($entity);
+            print "</td></tr>\n";
+        }
+        else
+        {
+            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+        }
+    }
+
+    /*$object = new stdClass();
+    // Other attributes
+    $parameters=array('objectsrc' => null, 'colspan' => ' colspan="3"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (empty($reshook))
+    {
+        print $object->showOptionals($extrafields, 'edit');
+    }*/
+}
 print '<input class="button" type="submit" value="'.$langs->trans("Refresh").'" /></form>'."\n";
 
 dol_fiche_end();
