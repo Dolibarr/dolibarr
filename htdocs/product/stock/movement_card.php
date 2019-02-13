@@ -108,7 +108,7 @@ $arrayfields=array(
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
 	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
-		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
@@ -221,16 +221,19 @@ if ($action == "correct_stock")
 	        	$origin_id
 	        );		// We do not change value of stock for a correction
         }
-		if ($result > 0)
-		{
-			header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
-			exit();
-		} else {
-			$error ++;
-			setEventMessages($product->error, $product->errors, 'errors');
-			$action = 'correction';
-		}
-	}
+
+        if ($result > 0)
+        {
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+            exit;
+        }
+        else
+        {
+            $error++;
+            setEventMessages($product->error, $product->errors, 'errors');
+            $action='correction';
+        }
+    }
 
     if (! $error) $action='';
 }
@@ -337,7 +340,7 @@ if ($action == "transfert_stock" && ! $cancel)
                         $sellby,
                         $batch,
                         GETPOST('inventorycode', 'alpha')
-                        );
+                    );
                     // Add stock
                     $result2=$product->correct_stock_batch(
                         $user,
@@ -350,7 +353,7 @@ if ($action == "transfert_stock" && ! $cancel)
                         $sellby,
                         $batch,
                         GETPOST('inventorycode', 'alpha')
-                        );
+                    );
                 }
             }
             else
@@ -364,7 +367,7 @@ if ($action == "transfert_stock" && ! $cancel)
                     GETPOST("label", 'alpha'),
                     $pricesrc,
                     GETPOST('inventorycode', 'alpha')
-                    );
+                );
 
                 // Add stock
                 $result2=$product->correct_stock(
@@ -375,7 +378,7 @@ if ($action == "transfert_stock" && ! $cancel)
                     GETPOST("label", 'alpha'),
                     $pricedest,
                     GETPOST('inventorycode', 'alpha')
-                    );
+                );
             }
             if (! $error && $result1 >= 0 && $result2 >= 0)
             {
@@ -734,7 +737,7 @@ if ($resql)
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 	$num, $nbtotalofrecords, '', 0, '', '', $limit);
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
 
 	if ($sall)
@@ -942,19 +945,12 @@ if ($resql)
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
-		// Hook fields
-	$parameters = array(
-			'arrayfields' => $arrayfields,
-			'param' => $param,
-			'sortfield' => $sortfield,
-			'sortorder' => $sortorder
-	);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked']))
-		print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['m.tms']['checked']))
-		print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	// Hook fields
+	$parameters=array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
@@ -1072,21 +1068,21 @@ if ($resql)
         }
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
-			// Type of movement
-			switch ($objp->type_mouvement) {
-				case "0" :
-					print '<td align="center">' . $langs->trans('StockIncreaseAfterCorrectTransfer') . '</td>';
-					break;
-				case "1" :
-					print '<td align="center">' . $langs->trans('StockDecreaseAfterCorrectTransfer') . '</td>';
-					break;
-				case "2" :
-					print '<td align="center">' . $langs->trans('StockDecrease') . '</td>';
-					break;
-				case "3" :
-					print '<td align="center">' . $langs->trans('StockIncrease') . '</td>';
-					break;
-			}
+            // Type of movement
+            switch($objp->type_mouvement) {
+                case "0":
+                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
+                    break;
+                case "1":
+                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
+                    break;
+                case "2":
+                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
+                    break;
+                case "3":
+                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
+                    break;
+            }
         }
         if (! empty($arrayfields['origin']['checked']))
         {
