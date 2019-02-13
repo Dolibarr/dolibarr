@@ -58,7 +58,7 @@ class Proposals extends DolibarrApi
 	 * Return an array with commercial proposal informations
 	 *
 	 * @param       int         $id           ID of commercial proposal
-	 * @param       int         $contact_list 0:Return array contains all properties, 1:Return array contains just id
+	 * @param       int         $contact_list 0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
