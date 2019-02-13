@@ -211,6 +211,7 @@ function getCategory($authentication, $id)
 	{
 		$fuser->getrights();
 
+		$nbmax = 10;
 		if ($fuser->rights->categorie->lire)
 		{
 			$categorie=new Categorie($db);

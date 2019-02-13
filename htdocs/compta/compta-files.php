@@ -90,7 +90,7 @@ $entity = GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 $filesarray=array();
 $result=false;
-if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
+if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
     $sql="SELECT rowid as id, ref as ref,paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
