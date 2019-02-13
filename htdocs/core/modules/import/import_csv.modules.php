@@ -471,6 +471,43 @@ class ImportCsv extends ModeleImports
                                 {
                                     if (empty($newval)) $newval='0';
                                 }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits')
+                                {
+                                	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
+                                	$class=$objimport->array_import_convertvalue[0][$val]['class'];
+                                	$method=$objimport->array_import_convertvalue[0][$val]['method'];
+                                	$units=$objimport->array_import_convertvalue[0][$val]['units'];
+                                	if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
+                                	{
+                                		$newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+                                	}
+                                	else
+                                	{
+                                		$resultload = dol_include_once($file);
+                                		if (empty($resultload))
+                                		{
+                                			dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
+                                			break;
+                                		}
+                                		$classinstance=new $class($this->db);
+                                		// Try the fetch from code or ref
+                                		call_user_func_array(array($classinstance, $method), array('', $units, $newval));
+                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
+                                		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
+                                		if ($classinstance->code != '')	// id may be 0, it is a found value
+                                		{
+                                			$newval=$classinstance->code;
+                                		}
+                                		else
+                                		{
+                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                			else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                			$this->errors[$error]['type']='FOREIGNKEY';
+                                			$errorforthistable++;
+                                			$error++;
+                                		}
+                                	}
+                                }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifauto')
                                 {
                                     if (strtolower($newval) == 'auto')

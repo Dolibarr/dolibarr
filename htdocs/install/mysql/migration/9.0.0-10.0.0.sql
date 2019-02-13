@@ -95,3 +95,45 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
+
+CREATE TABLE llx_c_measuring_units(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	code varchar(3),
+	label varchar(50),
+	short_label varchar(5),
+	unit_type varchar(10),
+	active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_measuring_units ADD UNIQUE uk_c_measuring_units_code(code,unit_type);
+
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('3','WeightUnitton','T', 'weight', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('0','WeightUnitkg','Kg', 'weight', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-3','WeightUnitg','g', 'weight', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-6','WeightUnitmg','g', 'weight', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('98','WeightUnitounce','Oz', 'weight', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('99','WeightUnitpound','lb', 'weight', 1);
+
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('0','SizeUnitm','m', 'size', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-1','SizeUnitdm','dm', 'size', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-2','SizeUnitcm','cm', 'size', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-3','SizeUnitmm','mm', 'size', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('98','SizeUnitfoot','ft', 'size', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('99','SizeUnitinch','in', 'size', 1);
+
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('0','SurfaceUnitm2','m2', 'surface', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-2','SurfaceUnitdm2','dm2', 'surface', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-4','SurfaceUnitcm2','cm2', 'surface', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-6','SurfaceUnitmm2','mm2', 'surface', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('98','SurfaceUnitfoot2','ft2', 'surface', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('99','SurfaceUnitinch2','in2', 'surface', 1);
+
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('0','VolumeUnitm3','m3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-3','VolumeUnitdm3','dm3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-6','VolumeUnitcm3','cm3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('-9','VolumeUnitmm3','mm3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('88','VolumeUnitfoot3','ft3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('89','VolumeUnitinch3','in3', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('97','VolumeUnitounce','Oz', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('98','VolumeUnitlitre','L', 'volume', 1);
+INSERT INTO llx_c_measuring_units (code, label, short_label, unit_type, active) VALUES ('99','VolumeUnitgallon','gal', 'volume', 1);
