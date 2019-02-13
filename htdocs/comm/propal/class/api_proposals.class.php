@@ -451,13 +451,13 @@ class Proposals extends DolibarrApi
         return $this->propal;
     }
 
-    /**
+      /**
 	 * Delete a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
 	 *
-	 * @url	DELETE {id}/contact/{lineid}
+	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return int
      * @throws 401
