@@ -123,7 +123,7 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -132,7 +132,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 		if (empty($this->date_creation)) {
             $this->date_creation = $now;
@@ -388,7 +388,7 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -397,7 +397,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 
 		// Check parameters
@@ -519,7 +519,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $hookmanager, $langs;
+        global $conf, $hookmanager, $langs;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
