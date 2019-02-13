@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-	        setEventMessages($object->error, $object->errors, 'errors');
+	        setEventMessages($object->error, null, 'errors');
             $action='create';
         }
     }
@@ -316,7 +316,7 @@ elseif ($action == 'edit')
         }
         else
         {
-            $object->id			=	$id;
+            $object->id			=	(int) $id;
             $object->socid		=	$socid;
             $object->label		=	$_POST["label"];
             $object->name		=	$_POST["name"];
