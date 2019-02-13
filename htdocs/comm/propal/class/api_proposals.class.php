@@ -451,7 +451,7 @@ class Proposals extends DolibarrApi
         return $this->propal;
     }
 
-      /**
+     /**
 	 * Delete a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
