@@ -445,7 +445,7 @@ class Orders extends DolibarrApi
    /**
 	 * Delete a contact type of given order
 	 *
-	 * @param int    $id             Id of  order to update
+	 * @param int    $id             Id of order to update
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
@@ -457,7 +457,7 @@ class Orders extends DolibarrApi
 	 */
     function deleteContact($id, $rowid)
     {
-        if(!DolibarrApiAccess::$user->rights->comande->creer) {
+        if(!DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
         }
 
