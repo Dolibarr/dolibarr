@@ -83,7 +83,7 @@ class CUnits // extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->id)) $this->id=trim($this->id);
+		if (isset($this->id)) $this->id = (int) $this->id;
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->libelle=trim($this->label);
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
@@ -108,7 +108,7 @@ class CUnits // extends CommonObject
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->active($this->short_label)."'");
+		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'");
 
 		$sql.= ")";
 
@@ -122,8 +122,8 @@ class CUnits // extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
 
-			if (! $notrigger)
-			{
+			//if (! $notrigger)
+			//{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
 
@@ -133,7 +133,7 @@ class CUnits // extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
-			}
+			//}
         }
 
         // Commit or rollback
@@ -238,10 +238,10 @@ class CUnits // extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
 
@@ -251,8 +251,8 @@ class CUnits // extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
-	    	}
-		}
+	    //	}
+		//}
 
         // Commit or rollback
 		if ($error)
@@ -294,10 +294,10 @@ class CUnits // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
 
@@ -307,8 +307,8 @@ class CUnits // extends CommonObject
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+		//	}
+		//}
 
         // Commit or rollback
 		if ($error)
