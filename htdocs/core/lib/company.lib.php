@@ -488,7 +488,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
  *    										'1'=Add region name/code/id as needed to output,
  *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
+ *    @return   string|array       			String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
 function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlangs = '', $entconv = 1)
 {
@@ -715,7 +715,7 @@ function isInEEC($object)
  *      @param  string		$backtopage		Url to go once contact is created
  *      @param  int         $nocreatelink   1=Hide create project link
  *      @param	string		$morehtmlright	More html on right of title
- *      @return	void
+ *      @return	int
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
@@ -843,7 +843,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
- *      @return	void
+ *      @return	int
  */
 function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 {
@@ -856,8 +856,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page = GETPOST('page', 'int');
-    $search_status		= GETPOST("search_status", 'int');
-    if ($search_status=='') $search_status=1; // always display activ customer first
+    $search_status = GETPOST("search_status", 'int');
+    if ($search_status=='') $search_status=1; // always display active customer first
     $search_name = GETPOST("search_name", 'alpha');
     $search_addressphone = GETPOST("search_addressphone", 'alpha');
 
@@ -1174,7 +1174,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once address is created
- *      @return	void
+ *      @return	int
  */
 function show_addresses($conf, $langs, $db, $object, $backtopage = '')
 {
@@ -1261,14 +1261,14 @@ function show_addresses($conf, $langs, $db, $object, $backtopage = '')
 /**
  *    	Show html area with actions to do
  *
- * 		@param	Conf		$conf		       Object conf
- * 		@param	Translate	$langs		       Object langs
- * 		@param	DoliDB		$db			       Object db
- * 		@param	Adherent|Societe    $filterobj    Object third party or member
- * 		@param	Contact		$objcon	           Object contact
- *      @param  int			$noprint	       Return string but does not output it
- *      @param  int			$actioncode 	   Filter on actioncode
- *      @return	mixed						   Return html part or void if noprint is 1
+ * 		@param	Conf		$conf		        Object conf
+ * 		@param	Translate	$langs		        Object langs
+ * 		@param	DoliDB		$db			        Object db
+ * 		@param	Adherent|Societe    $filterobj  Object thirdparty or member
+ * 		@param	Contact		$objcon	            Object contact
+ *      @param  int			$noprint	        Return string but does not output it
+ *      @param  int			$actioncode 	    Filter on actioncode
+ *      @return	string|void					    Return html part or void if noprint is 1
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
 {
@@ -1294,7 +1294,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
- *      @return	mixed					           Return html part or void if noprint is 1
+ *      @return	string|void				           Return html part or void if noprint is 1
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
@@ -1761,7 +1761,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
- * 		@return	void
+ * 		@return	int
  */
 function show_subsidiaries($conf, $langs, $db, $object)
 {
