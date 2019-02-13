@@ -47,7 +47,7 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
-$result=restrictedArea($user,'stock');
+$result=restrictedArea($user, 'stock');
 
 $id=GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -69,7 +69,7 @@ $search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
 $search_user = trim(GETPOST("search_user", 'alpha'));
 $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
-$search_type_mouvement=GETPOST('search_type_mouvement','int');
+$search_type_mouvement=GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $page = GETPOST("page", 'int');
@@ -122,8 +122,8 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 $usercancreate = (($user->rights->stock->mouvement->creer));
 $usercandelete = (($user->rights->stock->mouvement->supprimer));
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -199,7 +199,9 @@ if ($action == "correct_stock")
 	            GETPOST("mouvement", 'int'),
 	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice', 'alpha'),
-	        	$eatby,$sellby,$batch,
+	        	$eatby,
+	            $sellby,
+	            $batch,
 	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
 	        	$origin_id
@@ -212,7 +214,7 @@ if ($action == "correct_stock")
 	            $id,
 	            GETPOST("nbpiece", 'int'),
 	            GETPOST("mouvement", 'alpha'),
-	            GETPOST("label",'san_alpha'),
+	            GETPOST("label", 'san_alpha'),
 	            GETPOST('unitprice', 'alpha'),
 	        	GETPOST('inventorycode', 'alpha'),
 	        	$origin_element,
@@ -334,7 +336,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         1,
                         GETPOST("label", 'san_alpha'),
                         $pricesrc,
-                        $eatby,$sellby,$batch,
+                        $eatby,
+                        $sellby,
+                        $batch,
                         GETPOST('inventorycode', 'alpha')
                         );
                     // Add stock
@@ -345,7 +349,9 @@ if ($action == "transfert_stock" && ! $cancel)
                         0,
                         GETPOST("label", 'san_alpha'),
                         $pricedest,
-                        $eatby,$sellby,$batch,
+                        $eatby,
+                        $sellby,
+                        $batch,
                         GETPOST('inventorycode', 'alpha')
                         );
                 }
@@ -464,13 +470,13 @@ if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
 if ($month > 0)
 {
     if ($year > 0)
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
     else
     $sql.= " AND date_format(m.datem, '%m') = '$month'";
 }
 elseif ($year > 0)
 {
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 }
 if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
 if (! empty($search_ref))			$sql.= natural_search('m.rowid', $search_ref, 1);
@@ -615,7 +621,7 @@ if ($resql)
         // Last movement
         $sql = "SELECT MAX(m.datem) as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-        $sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+        $sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
@@ -630,7 +636,7 @@ if ($resql)
         print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
         if ($lastmovementdate)
         {
-            print dol_print_date($lastmovementdate,'dayhour');
+            print dol_print_date($lastmovementdate, 'dayhour');
         }
         else
         {
@@ -883,7 +889,7 @@ if ($resql)
 
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['m.datec']['checked']))
@@ -905,21 +911,21 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],$_SERVER["PHP_SELF"],'m.rowid','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],$_SERVER["PHP_SELF"],'m.datem','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'],$_SERVER["PHP_SELF"],'p.label','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'],$_SERVER["PHP_SELF"], "e.ref","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
-    if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'],$_SERVER["PHP_SELF"], "m.type_mouvement","",$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],$_SERVER["PHP_SELF"], "m.price","",$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'],   $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'],   $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'],     $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'],   $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],   $_SERVER["PHP_SELF"], 'm.batch', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],  $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param,'align="center"', $sortfield, $sortorder);
+    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'],     $_SERVER["PHP_SELF"], "e.ref", '', $param, "", $sortfield, $sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],  $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],          $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, 'align="center"', $sortfield, $sortorder);
+    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],    $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],   $_SERVER["PHP_SELF"], "m.value", "", $param, 'align="right"', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],   $_SERVER["PHP_SELF"], "m.price", "", $param, 'align="right"', $sortfield, $sortorder);
 
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -928,11 +934,10 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'] ,$_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
-
 
     $arrayofuniqueproduct=array();
 
@@ -984,7 +989,7 @@ if ($resql)
         {
 	        // Product ref
 	        print '<td class="nowraponall">';
-	        print $productstatic->getNomUrl(1,'stock',16);
+	        print $productstatic->getNomUrl(1, 'stock', 16);
 	        print "</td>\n";
         }
         if (! empty($arrayfields['p.label']['checked']))
