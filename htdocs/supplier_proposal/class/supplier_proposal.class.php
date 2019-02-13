@@ -13,6 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1814,7 +1815,7 @@ class SupplierProposal extends CommonObject
      *	Upate ProductFournisseur
      *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		int 	$product				contain informations to update
+	 * 	@param		Product $product				contain informations to update
 	 *	@param      User	$user					Object user
      *	@return     int         					<0 if KO, >0 if OK
      */
