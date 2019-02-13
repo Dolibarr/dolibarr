@@ -1046,7 +1046,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			if (count($contactsofproject)>0)
 			{
 				if (in_array($user->id, $contactsofproject)) $userid = $user->id;
-				else $userid=$contactsofproject[0];
+				else $userid = $contactsofproject[0];
+
 				if ($projectstatic->public) $contactsofproject = array();
 				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}

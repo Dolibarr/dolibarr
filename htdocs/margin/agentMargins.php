@@ -225,8 +225,6 @@ if ($result)
 
     if ($num > 0)
     {
-        $var=true;
-
         $group_list = array();
         while ($objp = $db->fetch_object($result)) {
             if ($agentid > 0) {
