@@ -209,6 +209,9 @@ then
 	rm -f "$documentdir/doctemplates/"*/index.html
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
+	
+	chmod -R u+w "$documentdir/"
+	chown -R www-data "$documentdir/"
 else
 	echo Detection of documents directory from $mydir failed so demo files were not copied. 
 fi
