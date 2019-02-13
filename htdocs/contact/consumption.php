@@ -488,7 +488,7 @@ if ($sql_select)
 			$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
 		}
 
-		if (($objp->info_bits & 2) == 2) { 
+		if (($objp->info_bits & 2) == 2) {
 			print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'">';
 			$txt='';
 			print img_object($langs->trans("ShowReduc"), 'reduc').' ';

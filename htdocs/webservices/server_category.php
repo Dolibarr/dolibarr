@@ -209,6 +209,7 @@ function getCategory($authentication, $id)
 	{
 		$fuser->getrights();
 
+		$nbmax = 10;
 		if ($fuser->rights->categorie->lire)
 		{
 			$categorie=new Categorie($db);
@@ -228,7 +229,7 @@ function getCategory($authentication, $id)
 						//'visible'=>$categorie->visible,
 						'type' => $categorie->type,
 						'dir' => $pdir,
-						'photos' => $categorie->liste_photos($dir, $nbmax=10)
+						'photos' => $categorie->liste_photos($dir, $nbmax)
 			    	);
 
 					$cats = $categorie->get_filles();
@@ -248,7 +249,7 @@ function getCategory($authentication, $id)
 								//'visible'=>$fille->visible,
 								'type'=>$fille->type,
 								'dir' => $pdir,
-								'photos' => $fille->liste_photos($dir, $nbmax=10)
+								'photos' => $fille->liste_photos($dir, $nbmax)
 							);
 						}
 					}

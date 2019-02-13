@@ -164,9 +164,11 @@ class CMeasuringUnits // extends CommonObject
      *  Load object in memory from database
      *
      *  @param      int		$id    	Id object
+     *  @param		string	$unit_type	unit type
      *  @param		string	$code	Code
      *  @param		string	$label	Label
-     *  @return     int          	<0 if KO, >0 if OK
+     *  @param		string	$short_label	Short Label
+     *  @return     int		<0 if KO, >0 if OK
      */
     function fetch($id, $unit_type='', $code = '', $short_label = '')
     {

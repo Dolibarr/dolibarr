@@ -160,7 +160,7 @@ class CUnits // extends CommonObject
      *
      *  @param      int		$id    	Id object
      *  @param		string	$code	Code
-     *  @param		string	$label	Label
+     *  @param		string	$short_label	Label
      *  @return     int          	<0 if KO, >0 if OK
      */
     function fetch($id, $code = '', $short_label = '')
