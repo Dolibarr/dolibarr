@@ -354,7 +354,7 @@ class MailmanSpip
 	                if (! empty($tmp[2]))
 	                {
 	                    $list=$tmp[2];
-	                    if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type == $tmp[1])    // Filter on member type label
+	                    if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
 	                    {
 	                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
 	                        continue;
