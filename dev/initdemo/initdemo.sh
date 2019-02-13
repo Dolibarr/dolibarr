@@ -197,15 +197,15 @@ then
 	echo cp -pr $mydir/documents_demo/* "$documentdir/"
 	cp -pr $mydir/documents_demo/* "$documentdir/"
 	
-	mkdir "$documentdir/doctemplates/"
+	mkdir "$documentdir/doctemplates/" 2>/dev/null
 	echo cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	
 	echo cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
 	cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
 
-	mkdir -p "$documentdir/ecm/Administrative documents"
-	mkdir -p "$documentdir/ecm/Images"
+	mkdir -p "$documentdir/ecm/Administrative documents" 2>/dev/null
+	mkdir -p "$documentdir/ecm/Images" 2>/dev/null
 	rm -f "$documentdir/doctemplates/"*/index.html
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
