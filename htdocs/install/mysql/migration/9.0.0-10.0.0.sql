@@ -97,7 +97,6 @@ ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
 
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
-ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_soc integer(11);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
 
