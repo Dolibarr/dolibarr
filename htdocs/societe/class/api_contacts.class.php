@@ -74,6 +74,7 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
+        $this->contact->load_ref_elements();
 		if (!$result)
 		{
 			throw new RestException(404, 'Contact not found');
