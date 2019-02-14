@@ -223,7 +223,7 @@ class modCommande extends DolibarrModules
 			'c.date_commande'=>"Date",'c.date_livraison'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
 			'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','pj.ref'=>'Text',
 			'cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",
-			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
+			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref::product','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company',
