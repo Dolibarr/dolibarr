@@ -55,7 +55,8 @@ $cancel=GETPOST('cancel','alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
 
 // Security check
-$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
+//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
+$result=restrictedArea($user,'stock');
 
 $idproduct = GETPOST('idproduct','int');
 $year = GETPOST("year");
