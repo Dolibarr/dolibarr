@@ -2140,6 +2140,7 @@ if (! function_exists("llxFooter"))
 
         ?>
 
+		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
         <script type="text/javascript">
             //Prevent from multiple form sending
             $(function() {
@@ -2150,6 +2151,7 @@ if (! function_exists("llxFooter"))
                 });
             });
         </script>
+        -->
         <?php
     }
 }
