@@ -182,13 +182,13 @@ class Contacts extends DolibarrApi
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
-				{  
+				{
 		      if ($includecount)
 		      {
 		      $contact_static->load_ref_elements();
 		      }
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
-				} 
+				}
         
 				$i++;
 			}
