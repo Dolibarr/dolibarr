@@ -61,11 +61,11 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      */
 	function info()
     {
-    	global $conf, $langs;
+    	global $db, $conf, $langs;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -101,9 +101,9 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      */
     function getExample()
     {
-     	global $conf,$langs,$user;
+     	global $db, $conf,$langs,$user;
 
-     	$exp=new ExpenseReport($this->db);
+     	$exp=new ExpenseReport($db);
      	$exp->initAsSpecimen();
      	$exp->fk_user_author = $user->id;
 
