@@ -52,11 +52,11 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
     function info()
     {
-        global $conf, $langs;
+        global $db, $conf, $langs;
 
         $langs->load("bills");
 
-        $form = new Form($this->db);
+        $form = new Form($db);
 
         $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
         $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

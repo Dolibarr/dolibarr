@@ -84,8 +84,8 @@ $arrayfields=array(
 	'd.bank'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'enabled'=>(! empty($conf->banque->enabled))),
 	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
 	 'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
-	'd.datedebut'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
-	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
+	'c.dateadh'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
+	'c.datef'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
 	'd.amount'=>array('label'=>$langs->trans("Amount"), 'checked'=>1, 'position'=>102),
 	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -343,12 +343,12 @@ if (! empty($arrayfields['d.bank']['checked']))
 	print '</td>';
 }
 
-if (! empty($arrayfields['d.date_debut']['checked']))
+if (! empty($arrayfields['c.dateadh']['checked']))
 {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 
-if (! empty($arrayfields['d.date_fin']['checked']))
+if (! empty($arrayfields['c.datef']['checked']))
 {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -417,11 +417,11 @@ if (! empty($arrayfields['d.bank']['checked']))
 {
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $pram, "", "", $sortfield, $sortorder);
 }
-if (! empty($arrayfields['d.date_debut']['checked']))
+if (! empty($arrayfields['c.dateadh']['checked']))
 {
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", 'align="center"', $sortfield, $sortorder);
 }
-if (! empty($arrayfields['d.date_fin']['checked']))
+if (! empty($arrayfields['c.datef']['checked']))
 {
 	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", 'align="center"', $sortfield, $sortorder);
 }
@@ -527,13 +527,13 @@ while ($i < min($num, $limit))
 	}
 
 	// Date start
-	if (! empty($arrayfields['d.date_start']['checked']))
+	if (! empty($arrayfields['c.dateadh']['checked']))
 	{
 		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date end
-	if (! empty($arrayfields['d.date_end']['checked']))
+	if (! empty($arrayfields['c.datef']['checked']))
 	{
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;

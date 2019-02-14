@@ -399,6 +399,86 @@ class Orders extends DolibarrApi
             throw new RestException(405, $this->commande->error);
         }
     }
+  
+    /**
+	 * Add a contact type of given order
+	 *
+	 * @param int    $id             Id of order to update
+	 * @param int    $contactid      Id of contact to add
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 *
+	 * @url	POST {id}/contact/{contactid}/{type}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+	 */
+    function postContact($id, $contactid, $type)
+    {
+        if(!DolibarrApiAccess::$user->rights->commande->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->commande->fetch($id);
+
+		if(!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+        if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
+            throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+        }
+
+        if(!DolibarrApi::_checkAccessToResource('order', $this->commande->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->commande->add_contact($contactid, $type, 'external');
+
+        if (!$result) {
+            throw new RestException(500, 'Error when added the contact');
+        }
+
+        return $this->commande;
+    }
+
+   /**
+	 * Delete a contact type of given order
+	 *
+	 * @param int    $id             Id of order to update
+	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 *
+	 * @url	DELETE {id}/contact/{rowid}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+     * @throws 500
+	 */
+    function deleteContact($id, $rowid)
+    {
+        if(!DolibarrApiAccess::$user->rights->commande->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->commande->fetch($id);
+
+		if(!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+        if(!DolibarrApi::_checkAccessToResource('order', $this->commande->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->commande->delete_contact($rowid);
+
+        if (!$result) {
+            throw new RestException(500, 'Error when deleted the contact');
+        }
+
+        return $this->commande;
+    }
 
     /**
      * Update order general fields (won't touch lines of order)

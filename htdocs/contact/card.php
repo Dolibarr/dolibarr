@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -758,7 +758,7 @@ else
 
             print "</table>";
 
-            print dol_fiche_end();
+            dol_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -1093,7 +1093,7 @@ else
 
             print '</table>';
 
-            print dol_fiche_end();
+            dol_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1286,7 +1286,7 @@ else
         print '</div></div></div>';
         print '<div style="clear:both"></div>';
 
-        print dol_fiche_end();
+        dol_fiche_end();
 
         // Barre d'actions
         print '<div class="tabsAction">';

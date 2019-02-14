@@ -431,8 +431,8 @@ class modProduct extends DolibarrModules
             'p.recuperableonly' => '^[0|1]$',
             'p.finished' => '^[0|1]$'
         );
-		
-			// field order as per structure of table llx_product
+
+		// field order as per structure of table llx_product
 		$import_sample = array(
             'p.ref' => "PREF123456",
             'p.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
@@ -455,17 +455,17 @@ class modProduct extends DolibarrModules
             'p.accountancy_code_sell' => "",
             'p.accountancy_code_buy' => "",
             'p.weight' => "",
-			'p.weight_units' => 'use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short Label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.weight_units' => 'use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short Label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.length' => "",
-			'p.length_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.length_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.width' => "",
-			'p.width_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.width_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.height' => "",
-			'p.height_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.height_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.surface' => "",
-			'p.surface_units' => 'use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short Label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.surface_units' => 'use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short Label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.volume' => "",
-			'p.volume_units' => 'use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short Label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_measuring_units',
+			'p.volume_units' => 'use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short Label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.finished' => '0 (raw material) / 1 (finished goods)'
         );
         //clauses copied from import_fields_array

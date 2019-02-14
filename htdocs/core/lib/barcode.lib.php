@@ -106,7 +106,7 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
  *
  * @param	string	$code		Code
  * @param	string	$encoding	Encoding
- * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode($code, $encoding)
 {
@@ -236,7 +236,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
  *
  * @param	string	$code		Code
  * @param	string	$encoding	Encoding
- * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode_genbarcode($code, $encoding)
 {
