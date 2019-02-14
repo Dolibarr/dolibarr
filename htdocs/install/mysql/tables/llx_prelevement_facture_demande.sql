@@ -23,7 +23,6 @@ create table llx_prelevement_facture_demande
   entity              integer DEFAULT 1 NOT NULL,
   fk_facture          integer NOT NULL,
   sourcetype          varchar(32),
-  fk_soc              integer NULL,
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,
   traite              smallint DEFAULT 0,
