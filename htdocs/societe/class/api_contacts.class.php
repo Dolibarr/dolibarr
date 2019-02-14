@@ -61,12 +61,13 @@ class Contacts extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @param 	int 	$id ID of contact
+	 * @param 	int    $id                  ID of contact
+	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id)
+	function get($id, $includecount = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -74,7 +75,7 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
-        $this->contact->load_ref_elements();
+
 		if (!$result)
 		{
 			throw new RestException(404, 'Contact not found');
@@ -83,6 +84,11 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		if ($includecount)
+		{
+		    $this->contact->load_ref_elements();
 		}
 
 		return $this->_cleanObjectDatas($this->contact);
