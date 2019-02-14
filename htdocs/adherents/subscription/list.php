@@ -84,8 +84,8 @@ $arrayfields=array(
 	'c.dateadh'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
 	'c.datef'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
 	'd.amount'=>array('label'=>$langs->trans("Amount"), 'checked'=>1, 'position'=>102),
-	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 //	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
 
@@ -353,13 +353,13 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
-if (! empty($arrayfields['d.datec']['checked']))
+if (! empty($arrayfields['c.datec']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Date modification
-if (! empty($arrayfields['d.tms']['checked']))
+if (! empty($arrayfields['c.tms']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -418,8 +418,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -525,7 +525,7 @@ while ($i < min($num, $limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (! empty($arrayfields['d.datec']['checked']))
+	if (! empty($arrayfields['c.datec']['checked']))
 	{
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
@@ -533,7 +533,7 @@ while ($i < min($num, $limit))
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date modification
-	if (! empty($arrayfields['d.tms']['checked']))
+	if (! empty($arrayfields['c.tms']['checked']))
 	{
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
