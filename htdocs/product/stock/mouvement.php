@@ -46,9 +46,6 @@ if (! empty($conf->projet->enabled))
 $langs->loadLangs(array('products', 'stocks'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-// Security check
-$result=restrictedArea($user,'stock');
-
 $id=GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 $msid=GETPOST('msid','int');
@@ -56,6 +53,9 @@ $product_id=GETPOST("product_id");
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
+
+// Security check
+$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 
 $idproduct = GETPOST('idproduct','int');
 $year = GETPOST("year");
