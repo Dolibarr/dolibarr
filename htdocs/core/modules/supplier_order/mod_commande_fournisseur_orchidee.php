@@ -63,12 +63,12 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
 	function info()
     {
-    	global $conf, $langs;
+    	global $db, $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("bills","admin"));
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
