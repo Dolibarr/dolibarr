@@ -36,6 +36,7 @@ class Entrepot extends CommonObject
 	public $element='stock';
 	public $table_element='entrepot';
 	public $picto='stock';
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * Warehouse closed, inactive
@@ -716,7 +717,7 @@ class Entrepot extends CommonObject
 		return $TChildWarehouses;
 
 	}
-	
+
 	/**
 	 *	Create object on disk
 	 *
