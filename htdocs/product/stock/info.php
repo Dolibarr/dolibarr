@@ -33,6 +33,7 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 
 // Security check
+//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result=restrictedArea($user,'stock');
 
 

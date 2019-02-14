@@ -72,9 +72,9 @@ class modStock extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r] = array('STOCK_ALLOW_NEGATIVE_TRANSFER','chaine','1','',1);
-		
+
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -197,7 +197,7 @@ class modStock extends DolibarrModules
 			'p.tms'=>'DateModification','p.pmp'=>'PMPValue','p.cost_price'=>'CostPrice'
 		);
 		$this->export_TypeFields_array[$r]=array(
-			'e.rowid'=>'List:entrepot:ref','e.ref'=>'Text','e.lieu'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text','p.rowid'=>"List:product:label",
+			'e.rowid'=>'List:entrepot:ref::stock','e.ref'=>'Text','e.lieu'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text','p.rowid'=>"List:product:label::product",
 			'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",'p.price'=>"Numeric",'p.tva_tx'=>'Numeric',
 			'p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date','p.pmp'=>'Numeric','p.cost_price'=>'Numeric',
 			'ps.reel'=>'Numeric'
@@ -236,8 +236,8 @@ class modStock extends DolibarrModules
 				'p.tms'=>'DateModification','pb.rowid'=>'Id','pb.batch'=>'Batch','pb.qty'=>'Qty','pl.eatby'=>'EatByDate','pl.sellby'=>'SellByDate'
 			);
 			$this->export_TypeFields_array[$r]=array(
-				'e.rowid'=>'List:entrepot:ref','e.ref'=>'Text','e.lieu'=>'Text','e.description'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text',
-				'p.rowid'=>"List:product:label",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",
+				'e.rowid'=>'List:entrepot:ref::stock','e.ref'=>'Text','e.lieu'=>'Text','e.description'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text',
+				'p.rowid'=>"List:product:label::product",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",
 				'p.price'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date',
 				'pb.batch'=>'Text','pb.qty'=>'Numeric','pl.eatby'=>'Date','pl.sellby'=>'Date'
 			);
@@ -274,8 +274,8 @@ class modStock extends DolibarrModules
 			'sm.inventorycode'=>'InventoryCode'
 		);
 		$this->export_TypeFields_array[$r]=array(
-			'e.rowid'=>'List:entrepot:ref','e.ref'=>'Text','e.description'=>'Text','e.lieu'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text',
-			'p.rowid'=>"List:product:label",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",
+			'e.rowid'=>'List:entrepot:ref::stock','e.ref'=>'Text','e.description'=>'Text','e.lieu'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text',
+			'p.rowid'=>"List:product:label::product",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",
 			'p.price'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date',
 			'sm.rowid'=>'Numeric','sm.value'=>'Numeric','sm.datem'=>'Date','sm.batch'=>'Text','sm.label'=>'Text','sm.inventorycode'=>'Text'
 		);
@@ -347,8 +347,8 @@ class modStock extends DolibarrModules
 		);
 
 	}
-	
-	
+
+
 	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.

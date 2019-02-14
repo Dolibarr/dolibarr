@@ -336,7 +336,7 @@ class modSociete extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array(
 			'c.civility'=>"List:c_civility:label:code",'c.lastname'=>'Text','c.firstname'=>'Text','c.poste'=>'Text','c.datec'=>"Date",'c.priv'=>"Boolean",
 			'c.address'=>"Text",'c.zip'=>"Text",'c.town'=>"Text",'d.nom'=>'Text','co.label'=>"List:c_country:label:rowid",'co.code'=>"Text",'c.phone'=>"Text",
-			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
+			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
 			's.client'=>"Text",'s.fournisseur'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
