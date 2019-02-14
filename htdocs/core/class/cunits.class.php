@@ -41,6 +41,7 @@ class CUnits // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
+	public $records = array();
 
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
@@ -53,6 +54,8 @@ class CUnits // extends CommonObject
 	public $code;
 	public $label;
 	public $short_label;
+	public $unit_type;
+	public $scale;
 	public $active;
 
 
@@ -87,6 +90,7 @@ class CUnits // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->libelle=trim($this->label);
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
+		if (isset($this->unit_type)) $this->active=trim($this->unit_type);
 		if (isset($this->active)) $this->active=trim($this->active);
 
 
@@ -100,7 +104,8 @@ class CUnits // extends CommonObject
 		$sql.= "rowid,";
 		$sql.= "code,";
 		$sql.= "label,";
-		$sql.= "short_label";
+		$sql.= "short_label,";
+		$sql.= "unit_type";
 
 
         $sql.= ") VALUES (";
@@ -108,7 +113,8 @@ class CUnits // extends CommonObject
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'");
+		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'").",";
+		$sql.= " ".(! isset($this->unit_type)?'NULL':"'".$this->db->escape($this->unit_type)."'");
 
 		$sql.= ")";
 
@@ -160,22 +166,31 @@ class CUnits // extends CommonObject
      *
      *  @param      int		$id    	Id object
      *  @param		string	$code	Code
-     *  @param		string	$short_label	Label
-     *  @return     int          	<0 if KO, >0 if OK
+     *  @param		string	$short_label	Short Label
+     *  @param		string	$unit_type	unit type
+     *  @return     int		<0 if KO, >0 if OK
      */
-    function fetch($id, $code = '', $short_label = '')
+    function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
     	global $langs;
+
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.code,";
 		$sql.= " t.label,";
 		$sql.= " t.short_label,";
+		$sql.= " t.unit_type,";
 		$sql.= " t.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_units as t";
-        if ($id)   $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($short_label) $sql.= " WHERE t.short_label = '".$this->db->escape($short_label)."'";
+        $sql_where=array();
+        if ($id)   $sql_where[]= " t.id = ".$id;
+        if ($unit_type)   $sql_where[]= " t.unit_type = '".$this->db->escape($unit_type)."'";
+        if ($code) $sql_where[]= " t.code = '".$this->db->escape($code)."'";
+        if ($short_label) $sql_where[]= " t.short_label = '".$this->db->escape($short_label)."'";
+
+        if (count($sql_where)>0) {
+        	$sql.=' WHERE '. implode(' AND ', $sql_where);
+        }
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -188,6 +203,7 @@ class CUnits // extends CommonObject
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
+				$this->unit_type = $obj->unit_type;
 				$this->active = $obj->active;
             }
             $this->db->free($resql);
@@ -199,6 +215,91 @@ class CUnits // extends CommonObject
       	    $this->error="Error ".$this->db->lasterror();
             return -1;
         }
+    }
+
+
+    /**
+     * Load list of objects in memory from the database.
+     *
+     * @param  string      $sortorder    Sort Order
+     * @param  string      $sortfield    Sort field
+     * @param  int         $limit        limit
+     * @param  int         $offset       Offset
+     * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+     * @param  string      $filtermode   Filter mode (AND or OR)
+     * @return array|int                 int <0 if KO, array of pages if OK
+     */
+    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
+    	global $conf;
+
+    	dol_syslog(__METHOD__, LOG_DEBUG);
+
+    	$records=array();
+
+    	$sql = 'SELECT';
+    	$sql.= " t.rowid,";
+    	$sql.= " t.code,";
+    	$sql.= " t.label,";
+    	$sql.= " t.short_label,";
+    	$sql.= " t.unit_type,";
+    	$sql.= " t.active";
+    	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
+    	// Manage filter
+    	$sqlwhere = array();
+    	if (count($filter) > 0) {
+    		foreach ($filter as $key => $value) {
+    			if ($key=='t.rowid' || $key=='t.active') {
+    				$sqlwhere[] = $key . '='. $value;
+    			}
+    			elseif (strpos($key, 'date') !== false) {
+    				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+    			}
+    			elseif ($key=='t.unit_type' || $key=='t.code' || $key=='t.short_label') {
+    				$sqlwhere[] =  $key.' = \''.$this->db->escape($value).'\'';
+    			}
+    			else {
+    				$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+    			}
+    		}
+    	}
+    	if (count($sqlwhere) > 0) {
+    		$sql .= ' WHERE (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+    	}
+
+    	if (!empty($sortfield)) {
+    		$sql .= $this->db->order($sortfield, $sortorder);
+    	}
+    	if (!empty($limit)) {
+    		$sql .=  ' ' . $this->db->plimit($limit, $offset);
+    	}
+    	$resql = $this->db->query($sql);
+    	if ($resql) {
+    		$this->records=array();
+    		$num = $this->db->num_rows($resql);
+    		if ($num>0) {
+	    		while ($obj = $this->db->fetch_object($resql))
+	    		{
+	    			$record = new self($this->db);
+
+	    			$record->id    = $obj->rowid;
+	    			$record->code = $obj->code;
+	    			$record->label = $obj->label;
+	    			$record->short_label = $obj->short_label;
+	    			$record->unit_type = $obj->unit_type;
+	    			$record->active = $obj->active;
+	    			$this->records[$record->id] = $record;
+	    		}
+    		}
+    		$this->db->free($resql);
+
+    		return $this->records;
+    	} else {
+    		$this->errors[] = 'Error ' . $this->db->lasterror();
+    		dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+
+    		return -1;
+    	}
     }
 
 
@@ -218,6 +319,7 @@ class CUnits // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->libelle=trim($this->label);
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
+		if (isset($this->unit_type)) $this->libelle=trim($this->unit_type);
 		if (isset($this->active)) $this->active=trim($this->active);
 
 
@@ -229,6 +331,7 @@ class CUnits // extends CommonObject
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " short_label=".(isset($this->short_label)?"'".$this->db->escape($this->short_label)."'":"null").",";
+		$sql.= " unit_type=".(isset($this->unit_type)?"'".$this->db->escape($this->unit_type)."'":"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null");
         $sql.= " WHERE rowid=".$this->id;
 

@@ -391,7 +391,9 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 					if ($nature)
 					{
-						if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/', $leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, dol_trunc($objp->label, 25), 2, $user->rights->accounting->comptarapport->lire);
+                        $langs->load('accountancy');
+                        $journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
+                        if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/', $leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 					}
 					$i++;
 				}
