@@ -55,12 +55,13 @@ class Invoices extends DolibarrApi
      *
      * Return an array with invoice informations
      *
-     * @param 	int 	$id ID of invoice
+     * @param 	int 	$id           ID of invoice
+     * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
-	function get($id)
+	function get($id, $contact_list = 1)
 	{
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
@@ -82,7 +83,7 @@ class Invoices extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', 1);
+		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', $contact_list);
 
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
