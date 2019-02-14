@@ -46,12 +46,19 @@ $object->fetch($facid);
 <body>
 <center>
 <font size="4">
-<?php echo $mysoc->name; ?>
+<?php echo '<b>'.$mysoc->name.'</b>';?>
 </font>
 </center>
 <br>
 <p align="left">
-<?php print dol_nl2br(dol_format_address($mysoc)); ?>
+<?php
+$substitutionarray=getCommonSubstitutionArray($langs);
+if (! empty($conf->global->TAKEPOS_HEADER))
+{
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	echo $newfreetext;
+}
+?>
 </p>
 <p align="right">
 <?php
@@ -62,11 +69,12 @@ print $object->ref;
 </p>
 <br>
 
-<table width="100%">
+<table width="100%" style="border-top-style: double;">
     <thead>
 	<tr>
         <th align="center"><?php print $langs->trans("Label"); ?></th>
         <th align="right"><?php print $langs->trans("Qty"); ?></th>
+		<th align="right"><?php print $langs->trans("Price"); ?></th>
         <th align="right"><?php print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
@@ -78,6 +86,7 @@ print $object->ref;
     <tr>
         <td><?php echo $line->product_label;?></td>
         <td align="right"><?php echo $line->qty;?></td>
+		<td align="right"><?php echo $line->total_ttc/$line->qty;?></td>
         <td align="right"><?php echo price($line->total_ttc);?></td>
     </tr>
     <?php
@@ -98,6 +107,18 @@ print $object->ref;
     <th align="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td align="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
+<div style="border-top-style: double;">
+<br>
+<br>
+<br>
+<?php
+$substitutionarray=getCommonSubstitutionArray($langs);
+if (! empty($conf->global->TAKEPOS_FOOTER))
+{
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	echo $newfreetext;
+}
+?>
 
 <script type="text/javascript">
     window.print();
