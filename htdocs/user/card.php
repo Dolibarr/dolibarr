@@ -1110,8 +1110,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
-			null, '90%' );
+        print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
 		print "</td></tr>";
 	}
 
@@ -1630,9 +1629,9 @@ else
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
-				print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+				print '<tr><td>' . $langs->trans("Categories") . '</td>';
 				print '<td colspan="3">';
-				print $form->showCategories( $object->id, 'user', 1 );
+				print $form->showCategories($object->id, 'user', 1);
 				print '</td></tr>';
 			}
 
@@ -2397,21 +2396,21 @@ else
 			print '</tr>';
 
 			// Categories
-			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
+			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
 			{
 				print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td>';
 				print '<td>';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
-				$c = new Categorie( $db );
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, null, null, null, null, 1);
+				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
 				if ($caneditfield)
 				{
-					print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				}else{
-					print $form->showCategories( $object->id, 'user', 1 );
+					print $form->showCategories($object->id, 'user', 1);
 				}
 				print "</td></tr>";
 			}
