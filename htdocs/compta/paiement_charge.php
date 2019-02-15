@@ -282,7 +282,7 @@ if ($action == 'create')
 
 		if ($objp->date_ech > 0)
 		{
-			print <td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
+			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
 		}
 		else
 		{
