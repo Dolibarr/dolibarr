@@ -48,7 +48,6 @@ if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward 
 /*
  * Actions
  */
-print $action;
 if ($action=="SavePrinter1"){
 	$printedcategories=";";
 	if (is_array($printer1)) foreach ($printer1 as $cat){
