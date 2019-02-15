@@ -243,7 +243,7 @@ if ($result && $action == "dl")
     $log='date,type,ref,total,paid,filename,item_id'."\n";
     $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
 
-    dol_delete_file(name);
+    dol_delete_file($zipname);
 
     $zip = new ZipArchive;
     $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
