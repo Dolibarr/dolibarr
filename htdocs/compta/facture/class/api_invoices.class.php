@@ -338,7 +338,7 @@ class Invoices extends DolibarrApi
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
     	$request_data = (object) $request_data;
-    $updateRes = $this->invoice->updateline(
+        $updateRes = $this->invoice->updateline(
     		$lineid,
     		$request_data->desc,
     		$request_data->subprice,
@@ -362,7 +362,7 @@ class Invoices extends DolibarrApi
     		$request_data->situation_percent,
     		$request_data->fk_unit,
     		$request_data->multicurrency_subprice
-    		);
+    	);
 
     	if ($updateRes > 0) {
     		$result = $this->get($id);
@@ -392,7 +392,7 @@ class Invoices extends DolibarrApi
             throw new RestException(401);
         }
 
-        $result = $this->facture->fetch($id);
+        $result = $this->invoice->fetch($id);
 
 		if(!$result) {
 			throw new RestException(404, 'Invoice not found');
@@ -402,17 +402,17 @@ class Invoices extends DolibarrApi
             throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
         }
 
-        if(!DolibarrApi::_checkAccessToResource('invoice', $this->facture->id)) {
+        if(!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->facture->add_contact($contactid, $type, 'external');
+        $result = $this->invoice->add_contact($contactid, $type, 'external');
 
         if (!$result) {
             throw new RestException(500, 'Error when added the contact');
         }
 
-        return $this->facture;
+        return $this->_cleanObjectDatas($this->invoice);
     }
 
    /**
@@ -434,23 +434,23 @@ class Invoices extends DolibarrApi
             throw new RestException(401);
         }
 
-        $result = $this->facture->fetch($id);
+        $result = $this->invoice->fetch($id);
 
-		if(!$result) {
+		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
 		}
 
-        if(!DolibarrApi::_checkAccessToResource('invoice', $this->facture->id)) {
+        if (!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->facture->delete_contact($rowid);
+        $result = $this->invoice->delete_contact($rowid);
 
         if (!$result) {
             throw new RestException(500, 'Error when deleted the contact');
         }
 
-        return $this->facture;
+        return $this->_cleanObjectDatas($this->invoice);
     }
 
     /**
