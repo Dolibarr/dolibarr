@@ -624,11 +624,11 @@ elseif (empty($type_element) || $type_element == -1)
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
-    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, 'class="left"', $sortfield, $sortorder);
+    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'align="center" width="150"', $sortfield, $sortorder);
     print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_status', '', $param, 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, 'class="left"', $sortfield, $sortorder);
-    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, 'class="right"', $sortfield, $sortorder);
+    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
     print "</tr>\n";
 
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
