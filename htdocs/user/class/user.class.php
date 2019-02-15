@@ -173,6 +173,8 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
+	
+	public $fk_warehouse;
 
 	public $fields = array(
         'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
@@ -248,6 +250,7 @@ class User extends CommonObject
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment, u.dateemploymentend,";
+		$sql.= " u.fk_warehouse,";
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -368,6 +371,7 @@ class User extends CommonObject
 
 				$this->default_range		= $obj->default_range;
 				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
+				$this->fk_warehouse			= $obj->fk_warehouse;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -1482,6 +1486,7 @@ class User extends CommonObject
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
+		$this->fk_warehouse = trim(empty($this->fk_warehouse)?'':$this->fk_warehouse);
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1539,6 +1544,7 @@ class User extends CommonObject
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+		$sql.= ", fk_warehouse = ".($this->fk_warehouse?"'".$this->db->escape($this->fk_warehouse)."'":"null");
 
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1977,7 +1983,7 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
-$mailfile = new CMailFile(
+		$mailfile = new CMailFile(
 			$subject,
 			$this->email,
 			$conf->global->MAIN_MAIL_EMAIL_FROM,
