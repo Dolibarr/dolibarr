@@ -424,10 +424,10 @@ foreach ($AdherentType as $key => $adhtype)
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-print '<td class="liste_total" class="right">'.$SommeA.' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeA.' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
+print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
 print '</tr>';
 
 print "</table>\n";
