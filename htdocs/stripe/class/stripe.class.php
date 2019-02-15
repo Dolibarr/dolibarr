@@ -185,10 +185,12 @@ class Stripe extends CommonObject
 			}
 			elseif ($createifnotlinkedtostripe)
 			{
+			    $ipaddress = getUserRemoteIP();
+
 				$dataforcustomer = array(
 					"email" => $object->email,
 					"description" => $object->name,
-					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 				);
 
 				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
@@ -237,7 +239,7 @@ class Stripe extends CommonObject
 
 		return $customer;
 	}
-    
+
     /**
 	 * Get the Stripe payment intent
 	 *
@@ -305,14 +307,14 @@ class Stripe extends CommonObject
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
                 if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
                 else $stripeamount = $object->multicurrency_total_ttc;
-        
+
  				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
 				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
-        
+
                 $description=$object->element.$object->ref;
-             
+
 				$dataforintent = array(
 					"amount" => $stripeamount,
 					"currency" => $object->multicurrency_code,
@@ -321,7 +323,7 @@ class Stripe extends CommonObject
                     "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
-        
+
 				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
 				{
 					$dataforintent["application_fee"] = $fee;
@@ -364,7 +366,7 @@ class Stripe extends CommonObject
 
 		return $paymentintent;
 	}
- 
+
 	/**
 	 * Get the Stripe card of a company payment mode (with option to create it on Stripe if not linked yet)
 	 *
