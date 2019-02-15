@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+if (! empty($conf->stock->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
@@ -644,7 +644,7 @@ $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
-$formproduct = new FormProduct($db);
+if (! empty($conf->stock->enabled)) $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("UserCard"));
 
@@ -1172,9 +1172,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Default warehouse
-	print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-	print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-	print '</td>';
+    if (! empty($conf->stock->enabled))
+    {
+		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+		print '</td></tr>';
+	}
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1529,12 +1532,15 @@ else
 			print '</tr>'."\n";
 			
 			// Default warehouse
-			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
-			$warehousestatic=new Entrepot($db);
-			$warehousestatic->fetch($object->fk_warehouse);
-			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-			print $warehousestatic->getNomUrl();
-			print '</td>';
+            if (! empty($conf->stock->enabled))
+            {
+				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
+				$warehousestatic=new Entrepot($db);
+				$warehousestatic->fetch($object->fk_warehouse);
+				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $warehousestatic->getNomUrl();
+				print '</td></tr>';
+            }
 
 			//$childids = $user->getAllChildIds(1);
 
@@ -2543,7 +2549,7 @@ else
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
                 print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
-                print '</td>';
+                print '</td></tr>';
             }
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
