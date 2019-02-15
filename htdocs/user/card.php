@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
@@ -91,7 +92,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -236,6 +237,8 @@ if (empty($reshook)) {
 
 			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
 			$object->dateemploymentend = $dateemploymentend;
+
+			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -383,6 +386,8 @@ if (empty($reshook)) {
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
+				
+				$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -639,6 +644,7 @@ $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("UserCard"));
 
@@ -1104,7 +1110,8 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-        print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
+			null, '90%' );
 		print "</td></tr>";
 	}
 
@@ -1165,6 +1172,10 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
 	print '</td></tr>';
 
+	// Default warehouse
+	print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+	print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+	print '</td>';
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1517,6 +1528,14 @@ else
 			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>'.$object->job.'</td>';
 			print '</tr>'."\n";
+			
+			// Default warehouse
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
+			$warehousestatic=new Entrepot($db);
+			$warehousestatic->fetch($object->fk_warehouse);
+			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+			print $warehousestatic->getNomUrl();
+			print '</td>';
 
 			//$childids = $user->getAllChildIds(1);
 
@@ -1611,9 +1630,9 @@ else
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
-				print '<tr><td>' . $langs->trans("Categories") . '</td>';
+				print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
 				print '<td colspan="3">';
-				print $form->showCategories($object->id, 'user', 1);
+				print $form->showCategories( $object->id, 'user', 1 );
 				print '</td></tr>';
 			}
 
@@ -2378,21 +2397,21 @@ else
 			print '</tr>';
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
+			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
 			{
 				print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td>';
 				print '<td>';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, null, null, null, null, 1);
-				$c = new Categorie($db);
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
+				$c = new Categorie( $db );
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
 				if ($caneditfield)
 				{
-					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
 				}else{
-					print $form->showCategories($object->id, 'user', 1);
+					print $form->showCategories( $object->id, 'user', 1 );
 				}
 				print "</td></tr>";
 			}
@@ -2518,6 +2537,15 @@ else
 				print $object->job;
 			}
 			print '</td></tr>';
+			
+			// Default warehouse
+            if (! empty($conf->stock->enabled))
+            {
+                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+                print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">'.$langs->trans("AddWarehouse").'</a>';
+                print '</td>';
+            }
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
