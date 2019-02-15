@@ -221,7 +221,7 @@ if (empty($reshook))
 
                 // Replace prices for each lines by new supplier prices
                 foreach($object->lines as $l) {
-                    $sql = 'SELECT price, unitprice, tva_tx';
+                    $sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
                     $sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
                     $sql.= ' WHERE fk_product='.$l->fk_product;
                     $sql.= ' AND fk_soc='.$new_socid;
@@ -236,6 +236,7 @@ if (empty($reshook))
                             $l->total_ht = 0;
                             $l->total_tva = 0;
                             $l->total_ttc = 0;
+                            $l->ref_supplier = '';
                             $l->update();
                         }
                         else {
@@ -246,6 +247,7 @@ if (empty($reshook))
                             $l->tva_tx = $obj->tva_tx;
                             $l->total_tva = $l->total_ht * ($obj->tva_tx/100);
                             $l->total_ttc = $l->total_ht + $l->total_tva;
+                            $l->ref_supplier = $obj->ref_fourn;
                             $l->update();
                         }
                     }
