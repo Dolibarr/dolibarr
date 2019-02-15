@@ -38,7 +38,7 @@ We officially support versions N, N − 1 and N − 2 for N the latest version a
 Choose your base branch accordingly.
 
 ### General rules
-Please don't edit the ChangeLog file. File will be generated from your commit messages during release process by the project manager.
+Please don't edit the ChangeLog file. File will be generated from all commit messages during release process by the project manager.
 
 ### <a name="commits"></a>Commits
 Use clear commit messages with the following structure:
@@ -56,13 +56,15 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
+where 
+
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be ommitted if your commit does not fit in any of the following categories:
-- Fix: for a bug fix
-- Close: for closing a referenced feature request
-- New: for an unreferenced new feature (Opening a feature request and using close is prefered)
+- Fix/FIX: for a bug fix
+- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
+- Close/CLOSE: for closing a referenced feature request
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
