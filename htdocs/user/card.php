@@ -2542,7 +2542,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">'.$langs->trans("AddWarehouse").'</a>';
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans("AddWarehouse").'</a>';
                 print '</td>';
             }
 
