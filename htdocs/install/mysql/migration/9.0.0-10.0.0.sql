@@ -158,4 +158,4 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','12960000','day','d', 'time', 1);
 
 -- Default Warehouse id for a user
-ALTER TABLE `llx_user` ADD `fk_warehouse` INTEGER NULL AFTER `default_c_exp_tax_cat`;
+ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
