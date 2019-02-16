@@ -7,8 +7,9 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
+ * Copyright (C) 2015-2019  Frédéric France            <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -487,7 +488,7 @@ if ($object->id > 0)
 		$langs->load("categories");
 		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 		print '<td>';
-		print $form->showCategories( $object->id, 'customer', 1 );
+		print $form->showCategories($object->id, 'customer', 1);
 		print "</td></tr>";
 	}
 
@@ -1325,12 +1326,6 @@ if ($object->id > 0)
 	{
 		// List of contacts
 		show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-	}
-
-	// Addresses list
-	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
-	{
-		show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))

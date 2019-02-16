@@ -404,7 +404,7 @@ class pdf_standard extends ModelePDFStock
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref = $objp->ref;
@@ -914,7 +914,7 @@ class pdf_standard extends ModelePDFStock
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '',
+$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '',
 				'C');
 		}
 

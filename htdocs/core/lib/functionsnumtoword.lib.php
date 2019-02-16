@@ -27,11 +27,11 @@
  * Function to return number in text.
  *
  *
- * @param	float 	$num			Number to convert
- * @param	Lang	$langs			Language
- * @param	boolean	$currency		0=number to translate | 1=currency to translate
- * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
- * @return 	string  				Text of the number
+ * @param	float       $num			Number to convert
+ * @param	Translate   $langs			Language
+ * @param	boolean     $currency		0=number to translate | 1=currency to translate
+ * @param	boolean     $centimes		0=no centimes | 1=centimes to translate
+ * @return 	string|false			    Text of the number
  */
 function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 {

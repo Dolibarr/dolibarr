@@ -661,13 +661,13 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		return $newproduct->id;
 	}
 
-	/**
-	 * Copies all product combinations from the origin product to the destination product
-	 *
-	 * @param int $origProductId Origin product id
-	 * @param Product $destProduct Destination product
-	 * @return int >0 OK <0 KO
-	 */
+    /**
+     * Copies all product combinations from the origin product to the destination product
+     *
+     * @param   int     $origProductId  Origin product id
+     * @param   Product $destProduct    Destination product
+     * @return  int                     >0 OK <0 KO
+     */
 	public function copyAll($origProductId, Product $destProduct)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
@@ -690,7 +690,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
-			if ($this->createProductCombination(
+            if ($this->createProductCombination(
 				$destProduct,
 				$variations,
 				array(),
@@ -708,8 +708,8 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 	/**
 	 * Return label for combinations
-	 * @param 	int 	$prod_child		id of child
-	 * @return 	string					combination label
+	 * @param   int 	$prod_child		id of child
+	 * @return  string					combination label
 	 */
 	public function getCombinationLabel($prod_child)
 	{

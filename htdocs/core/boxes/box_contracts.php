@@ -161,7 +161,7 @@ class box_contracts extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center opacitymedium"',
+                        'td' => 'class="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
@@ -175,7 +175,7 @@ class box_contracts extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

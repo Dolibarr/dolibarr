@@ -108,7 +108,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		unset($data1);
 
 		if ($nocolor)
-			$px->SetDataColor(array (
+$px->SetDataColor(array (
 					array (
 							220,
 							220,
@@ -126,7 +126,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->SetShading(3);
 			$px->SetHorizTickIncrement(1);
 			$px->SetCssPrefix("cssboxes");
-			$px->SetType(array (
+$px->SetType(array (
 					'pie'
 			));
 			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));

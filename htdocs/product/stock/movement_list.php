@@ -51,10 +51,14 @@ $result=restrictedArea($user, 'stock');
 $id=GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $msid=GETPOST('msid', 'int');
-$product_id=GETPOST("product_id");
+$product_id=GETPOST("product_id", 'int');
 $action=GETPOST('action', 'aZ09');
 $cancel=GETPOST('cancel', 'alpha');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'movementlist';
+
+// Security check
+//$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
+$result=restrictedArea($user, 'stock');
 
 $idproduct = GETPOST('idproduct', 'int');
 $year = GETPOST("year");
@@ -191,7 +195,7 @@ if ($action == "correct_stock")
         	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
         	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 
-	        $result=$product->correct_stock_batch(
+        $result=$product->correct_stock_batch(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -206,7 +210,7 @@ if ($action == "correct_stock")
         }
         else
 		{
-	        $result=$product->correct_stock(
+        $result=$product->correct_stock(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),

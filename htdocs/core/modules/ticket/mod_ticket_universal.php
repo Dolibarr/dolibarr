@@ -17,7 +17,7 @@
  */
 
 /**
- *    \file       ticket/core/modules/ticket/mod_ticket_universal.php
+ *    \file       htdocs/core/modules/ticket/mod_ticket_universal.php
  *    \ingroup    ticket
  *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
@@ -59,12 +59,12 @@ class mod_ticket_universal extends ModeleNumRefTicket
      */
     public function info()
     {
-        global $conf, $langs;
+        global $db, $conf, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array("ticket","admin"));
 
-        $form = new Form($this->db);
+        $form = new Form($db);
 
         $texte = $langs->trans('GenericNumRefModelDesc') . "<br>\n";
         $texte .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';

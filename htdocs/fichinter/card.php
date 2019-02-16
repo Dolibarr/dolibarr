@@ -365,7 +365,7 @@ if (empty($reshook))
 								$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 								$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 
-			                    $result = $object->addline(
+                    $result = $object->addline(
 									$user,
 			                        $id,
 			                        $desc,
@@ -510,7 +510,7 @@ if (empty($reshook))
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 
-	        $result=$object->addline(
+        $result=$object->addline(
 				$user,
 	            $id,
 	            $desc,

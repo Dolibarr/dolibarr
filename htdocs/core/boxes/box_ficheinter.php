@@ -40,7 +40,7 @@ class box_ficheinter extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -114,45 +114,55 @@ class box_ficheinter extends ModeleBoxes
 					$ficheinterstatic->id=$objp->rowid;
 					$ficheinterstatic->ref=$objp->ref;
 
-					$this->info_box_contents[$i][] = array('td' => '',
-					'text' => $ficheinterstatic->getNomUrl(1),
-					'asis' => 1
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $ficheinterstatic->getNomUrl(1),
+                        'asis' => 1,
 					);
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
-					'logo' => 'company',
-					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="left" width="16"',
+                        'logo' => 'company',
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][] = array('td' => '',
-					'text' => dol_trunc($objp->name, 40),
-					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => dol_trunc($objp->name, 40),
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][] = array('td' => 'class="right"',
-					'text' => dol_print_date($datec, 'day'));
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right"',
+                        'text' => dol_print_date($datec, 'day'),
+                    );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap"',
-					'text' => $ficheinterstatic->getLibStatut(6),
-					'asis'=>1
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="nowrap right"',
+                        'text' => $ficheinterstatic->getLibStatut(6),
+                        'asis' => 1,
 					);
 
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
+				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedInterventions"));
 
 				$db->free($resql);
 			}
 			else
 			{
-				$this->info_box_contents[0][] = array(  'td' => '',
-				'maxlength'=>500,
-				'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else
 		{
 			$this->info_box_contents[0][] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
 			    'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}

@@ -885,7 +885,7 @@ class Commande extends CommonOrder
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-					$result = $this->addline(
+    $result = $this->addline(
 						$line->desc,
 						$line->subprice,
 						$line->qty,

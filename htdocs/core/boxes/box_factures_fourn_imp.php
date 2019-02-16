@@ -39,7 +39,7 @@ class box_factures_fourn_imp extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -164,7 +164,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
                     );
 
@@ -173,7 +173,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoUnpaidSupplierBills"),
                     );
 
@@ -187,7 +187,7 @@ class box_factures_fourn_imp extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
@@ -196,7 +196,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string

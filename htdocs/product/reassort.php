@@ -321,8 +321,8 @@ if ($resql)
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Sell").')', $_SERVER["PHP_SELF"], "p.tosell", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Buy").')', $_SERVER["PHP_SELF"], "p.tobuy", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", $param, "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 

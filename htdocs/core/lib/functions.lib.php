@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -622,7 +622,7 @@ function dol_include_once($relpath, $classname = '')
 	$fullpath = dol_buildpath($relpath);
 
 	if (!file_exists($fullpath)) {
-		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_ERR);
+		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_WARNING);
 		return false;
 	}
 
@@ -843,7 +843,7 @@ function dol_string_unaccent($str)
 	else
 	{
 		// See http://www.ascii-code.com/
-		$string = strtr(
+$string = strtr(
 			$str,
 			"\xC0\xC1\xC2\xC3\xC4\xC5\xC7
 			\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
@@ -2636,7 +2636,7 @@ function dol_print_ip($ip, $mode = 0)
  * Return the IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (not way to be modified by user but may be wrong if using proxy)
+ * Then REMOTE_ADDR (no way to be modified by user but may be wrong if user is using a proxy)
  *
  * @return	string		Ip of remote user.
  */
@@ -2969,18 +2969,19 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$picto .= '.png';
 		}
 		$fullpathpicto = $picto;
-	}
-	else {
+	} else {
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (empty($srconly) && in_array($pictowithoutext, array(
+        if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
+				'note', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
 				'jabber','skype','twitter','facebook'
 			)
 		)) {
-			$fakey = $pictowithoutext;
+		    $fa='fa';
+		    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
+		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
 			$marginleftonlyshort = 2;
 			if ($pictowithoutext == 'switch_off') {
@@ -3055,6 +3056,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-caret-down';
 				$marginleftonlyshort = 1;
 			}
+			elseif ($pictowithoutext == 'sign-out')     {
+                $fakey = 'fa-sign-out';
+			    $marginleftonlyshort=0;
+			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
+			}
 			elseif ($pictowithoutext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
 				$facolor = '#555';
@@ -3069,6 +3075,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'jabber') {
 				$fakey = 'fa-comment-o';
+			}
+			elseif ($pictowithoutext == 'skype') {
+			    $fakey = 'fa-'.$pictowithoutext;
+			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
 			}
 			elseif ($pictowithoutext == 'split') {
 			    $fakey = 'fa-code-fork';
@@ -3091,9 +3101,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             }
             $moreatt=trim($moreatt);
 
-			$fa='fa';
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
-            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ' ' . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? 'marginleftonlyshort' : 'marginleftonly') : '');
+            $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
             $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
@@ -3894,6 +3902,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 {
 	global $conf, $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
+
+	if ($moreattrib == 'class="right"') $prefix.='right '; // For backward compatibility
 
 	$sortorder=strtoupper($sortorder);
 	$out='';
@@ -5248,7 +5258,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
+        if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
 			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
@@ -5307,7 +5317,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 				umask(0);
 				$dirmaskdec=octdec($newmask);
 				if (empty($newmask)) {
-					$dirmaskdec = empty( $conf->global->MAIN_UMASK ) ? octdec( '0755' ) : octdec( $conf->global->MAIN_UMASK );
+					$dirmaskdec = empty($conf->global->MAIN_UMASK) ? octdec('0755') : octdec($conf->global->MAIN_UMASK);
 				}
 				$dirmaskdec |= octdec('0111');  // Set x bit required for directories
 				if (! @mkdir($ccdir_osencoded, $dirmaskdec))
@@ -5793,7 +5803,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
 		$signature = $user->signature;
-		$substitutionarray=array_merge($substitutionarray, array(
+$substitutionarray=array_merge($substitutionarray, array(
 		'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
 		)
 			);
@@ -5803,7 +5813,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
 		}
 
-		$substitutionarray=array_merge($substitutionarray, array(
+$substitutionarray=array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
 		'__USER_LOGIN__' => (string) $user->login,
 		'__USER_LASTNAME__' => (string) $user->lastname,
@@ -5816,7 +5826,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || ! in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
-		$substitutionarray=array_merge($substitutionarray, array(
+$substitutionarray=array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
@@ -6073,7 +6083,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 		$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
-		$substitutionarray=array_merge($substitutionarray, array(
+$substitutionarray=array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),					// Monday
 			'__DAY_TEXT_SHORT__' => $outputlangs->trans($tmp['weekday'].'Min'),			// Mon

@@ -1347,7 +1347,7 @@ if (empty($reshook))
 	        {
 	            $lineId = intval($lineId);
 	            $originLine = new $lineClassName($db);
-	            if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+	            if(intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
 	            {
 	                $originLine->fetch_optionals($lineId);
 	                $desc = $originLine->desc;

@@ -367,6 +367,7 @@ class FormAccounting extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 	    $sql .= " WHERE entity IN (" . getEntity('societe') . ")";
 		$sql .= " ORDER BY code_compta";
+
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -377,7 +378,7 @@ class FormAccounting extends Form
 			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_pcgsubtype ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 			return -1;
 		}
 		$this->db->free($resql);
@@ -397,10 +398,30 @@ class FormAccounting extends Form
 			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_pcgsubtype ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 			return -1;
 		}
 		$this->db->free($resql);
+
+        // Auxiliary user account
+        $sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."user";
+        $sql .= " WHERE entity IN (" . getEntity('user') . ")";
+        $sql .= " ORDER BY accountancy_code";
+        dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            while ($obj = $this->db->fetch_object($resql)) {
+                if (!empty($obj->accountancy_code)) {
+                    $aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+                }
+            }
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
+            dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+            return -1;
+        }
+        $this->db->free($resql);
 
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);

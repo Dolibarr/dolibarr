@@ -378,10 +378,10 @@ if (! $error && $massaction == 'confirm_presend')
 
                     $parameters=array('mode'=>'formemail');
 
-                    if ( ! empty( $listofobjectthirdparties ) ) {
+                    if ( ! empty($listofobjectthirdparties) ) {
                         $parameters['listofobjectthirdparties'] = $listofobjectthirdparties;
                     }
-                    if ( ! empty( $listofobjectref ) ) {
+                    if ( ! empty($listofobjectref) ) {
                         $parameters['listofobjectref'] = $listofobjectref;
                     }
 

@@ -173,11 +173,11 @@ if ($resql)
     $form->select_comptes($search_account, 'search_account', 0, '', 1);
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -187,9 +187,9 @@ if ($resql)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -219,13 +219,13 @@ if ($resql)
     		print '</td>';
 
     		// Number of cheques
-    		print '<td align="right">'.$objp->nbcheque.'</td>';
+    		print '<td class="right">'.$objp->nbcheque.'</td>';
 
     		// Amount
-    		print '<td align="right">'.price($objp->amount).'</td>';
+    		print '<td class="right">'.price($objp->amount).'</td>';
 
     		// Statut
-    		print '<td align="right">';
+    		print '<td class="right">';
     		print $checkdepositstatic->LibStatut($objp->statut, 5);
     		print '</td>';
 

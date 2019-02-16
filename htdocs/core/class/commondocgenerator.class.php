@@ -488,10 +488,10 @@ abstract class CommonDocGenerator
 				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
 				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
-				
+
 				$totalUp += $line->subprice * $line->qty;
 			}
-		
+
 			// @GS: Calculate total up and total discount percentage
 			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
 			$resarray['object_total_up'] = $totalUp;
@@ -501,7 +501,7 @@ abstract class CommonDocGenerator
 				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
 			}
 		}
-		
+
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
@@ -514,7 +514,7 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
 		}
-		
+
 		return $resarray;
 	}
 
@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key=$array_key, $outputlangs);
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
@@ -882,7 +882,7 @@ abstract class CommonDocGenerator
 
 
         // Sorting
-        uasort ( $this->cols, array( $this, 'columnSort' ) );
+        uasort ($this->cols, array( $this, 'columnSort' ));
 
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
@@ -899,7 +899,7 @@ abstract class CommonDocGenerator
 
             if(!empty($colDef['scale'])){
                 // In case of column widht is defined by percentage
-                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
+                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
             }
 
             if(empty($colDef['width'])){
@@ -1049,7 +1049,7 @@ abstract class CommonDocGenerator
             if(empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
+            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
     }
 

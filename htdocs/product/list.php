@@ -484,7 +484,7 @@ if ($resql)
 	}
 
 	//Show/hide child products. Hidden by default
-	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD )) {
+	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"':'').'>';
 		$moreforfilter.= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';

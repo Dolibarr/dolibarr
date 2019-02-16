@@ -50,8 +50,8 @@ class RssParser
     private $_rssarray=array();
 
     // For parsing with xmlparser
-    var $stack               = array(); // parser stack
-    var $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
+    public $stack               = array(); // parser stack
+    private $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
 
 
     /**
@@ -246,7 +246,7 @@ class RssParser
                 $str = file_get_contents($this->_urlRSS, false, $context);
             }
             catch (Exception $e) {
-                print 'Error retrieving URL '.$this->urlRSS.' - '.$e->getMessage();
+                print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
             }
         }
 

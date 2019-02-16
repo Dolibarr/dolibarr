@@ -60,7 +60,6 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: nightly
-  - php: '7.3'
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
   - php: '5.5'
@@ -71,6 +70,8 @@ matrix:
     env: DB=mariadb
   - php: '7.1'
     env: DB=mariadb
+  - php: '7.2'
+    env: DB=mariadb
   - php: '5.5'
     env: DB=postgresql
   - php: '5.6'
@@ -79,7 +80,7 @@ matrix:
     env: DB=postgresql
   - php: '7.1'
     env: DB=postgresql
-  - php: '7.3'
+  - php: '7.2'
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
@@ -298,7 +299,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 

@@ -757,6 +757,9 @@ class FormCompany
 			}
 			print "</select>";
 			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+			print ajax_combobox($htmlname);
+
 			print "\n";
 		}
 	}

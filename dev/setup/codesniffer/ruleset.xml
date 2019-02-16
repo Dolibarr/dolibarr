@@ -115,10 +115,10 @@
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterEquals">
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">	<!-- We don't want this rule, we want to be able to align params on several similare functions on different lines -->
 		<severity>0</severity>
 	</rule>
 
@@ -166,7 +166,7 @@
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
-	<!-- Check indent are done with spaces and wiht correct number -->
+	<!-- Check indent are done with spaces and with correct number -->
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
@@ -347,12 +347,6 @@
 	    <severity>0</severity>
 	</rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket">
-        <severity>0</severity>
-    </rule>
-	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
         <severity>0</severity>
     </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">

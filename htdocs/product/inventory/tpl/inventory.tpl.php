@@ -130,8 +130,8 @@ if (empty($conf) || ! is_object($conf))
 				<?php } ?>
 				<?php if ($can_validate == 1) { ?>
 					<td align="center" style="background-color: #e8e8ff;"><?php echo $row['qty_stock']; ?></td>
-					<td align="right" style="background-color: #e8e8ff;"><?php echo price( $row['pmp_stock']); ?></td>
-					<td align="right" style="background-color: #e8e8ff;"><?php echo price( $row['pa_stock']); ?></td>
+					<td align="right" style="background-color: #e8e8ff;"><?php echo price($row['pmp_stock']); ?></td>
+					<td align="right" style="background-color: #e8e8ff;"><?php echo price($row['pa_stock']); ?></td>
 	               <?php
 	                 if(!empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)){
 	                 	echo '<td align="right" style="background-color: #e8e8ff;">'.price($row['current_pa_stock']).'</td>';

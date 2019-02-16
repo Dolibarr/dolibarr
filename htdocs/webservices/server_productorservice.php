@@ -364,6 +364,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
         $fuser->getrights();
 
+        $nbmax = 10;
         if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
         {
             $product=new Product($db);
@@ -417,7 +418,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
 	            	'dir' => $pdir,
-	            	'images' => $product->liste_photos($dir, $nbmax=10)
+            		'images' => $product->liste_photos($dir, $nbmax)
             	);
 
                 //Retreive all extrafield for thirdsparty
@@ -1029,6 +1030,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 		$fuser->getrights();
 
+		$nbmax = 10;
 		if ($fuser->rights->produit->lire)
 		{
 			$categorie=new Categorie($db);
@@ -1086,7 +1088,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 						        'pmp' => $obj->pmp,
 		                		'import_key' => $obj->import_key,
 		                		'dir' => $pdir,
-		                		'images' => $obj->liste_photos($dir, $nbmax=10)
+								'images' => $obj->liste_photos($dir, $nbmax)
 							);
 
 							//Retreive all extrafield for thirdsparty

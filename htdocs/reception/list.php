@@ -306,7 +306,7 @@ if (empty($reshook))
 	    					{
 	    						$fk_parent_line = 0;
 	    					}
-	    					$result = $object->addline(
+        $result = $object->addline(
 	    							$desc,
 	    							$lines[$i]->subprice,
 	    							$lines[$i]->tva_tx,

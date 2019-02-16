@@ -85,7 +85,7 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter);
 
     	if ($outputmode != 2)
     	{
@@ -107,13 +107,14 @@ class FormResource
     		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
 
-    		$num = count($resourcestat->lines);
+    		$num = 0;
+    		if (is_array($resourcestat->lines)) $num = count($resourcestat->lines);
 
     		//var_dump($resourcestat->lines);
     		$i = 0;
     		if ($num)
     		{
-    			while ( $i < $num)
+    			while ($i < $num)
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
 

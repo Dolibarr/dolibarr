@@ -1292,21 +1292,20 @@ class CMailFile
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
-			if ($socket = @fsockopen(
+            if ($socket = @fsockopen(
 					$host,       // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 					$port,       // which Port number to use
 					$errno,      // actual system level error
 					$errstr,     // and any text that goes with the error
-					$timeout
-			))  // timeout for reading/writing data over the socket
-			{
+					$timeout     // timeout for reading/writing data over the socket
+			)) {
 				// Windows still does not have support for this timeout function
 				if (function_exists('stream_set_timeout')) stream_set_timeout($socket, $timeout, 0);
 
 				dol_syslog("Now we wait for answer 220");
 
 				// Check response from Server
-				if ( $_retVal = $this->server_parse($socket, "220") ) $_retVal = $socket;
+				if ($_retVal = $this->server_parse($socket, "220")) $_retVal = $socket;
 			}
 			else
 			{

@@ -3,6 +3,7 @@
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ class ICal
      * Translate Calendar
      *
      * @param	string 	$uri	Url
-     * @return	array
+     * @return	array|string
      */
     function parse($uri)
     {
@@ -109,7 +110,7 @@ class ICal
 
         $this->file_text = preg_split("[\n]", $this->file_text);
 
-        // is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
+        // is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
         if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
@@ -363,9 +364,9 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return sorted eventlist as array or false if calenar is empty
+     * Return sorted eventlist as array or false if calendar is empty
      *
-     * @return array
+     * @return array|false
      */
     function get_sort_event_list()
     {
@@ -398,7 +399,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return eventlist array (not sort eventlist array)
+     * Return eventlist array (not sorted eventlist array)
      *
      * @return array
      */
@@ -422,7 +423,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return to do array (not sort to do array)
+     * Return to do array (not sorted todo array)
      *
      * @return array
      */

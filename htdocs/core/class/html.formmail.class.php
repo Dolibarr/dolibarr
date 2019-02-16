@@ -426,12 +426,11 @@ class FormMail extends Form
 				$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out.= ' &nbsp; ';
 				$out.= '</div>';
-			}
-			elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
+			} elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send','order_send','facture_send',
 					'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
 					'invoice_supplier_send','thirdparty','contract','user','all'
-		   		)))
+                )))
 			{
 				// If list of template is empty
 				$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";

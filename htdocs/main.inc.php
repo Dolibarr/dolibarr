@@ -97,24 +97,24 @@ function testSqlAndScriptInject($val, $type)
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/delete\s+from/i',	 $val);
-		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select\s+from/i', 	 $val);
-		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
-		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
+		$inj += preg_match('/delete\s+from/i', $val);
+		$inj += preg_match('/create\s+table/i', $val);
+		$inj += preg_match('/insert\s+into/i', $val);
+		$inj += preg_match('/select\s+from/i', $val);
+		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
+		$inj += preg_match('/user\s*\(/i', $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i', $val);				// avoid to use request that read information_schema database
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
-		$inj += preg_match('/updatexml\(/i', 	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
-		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
+		$inj += preg_match('/updatexml\(/i', $val);
+		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/union.+select/i', $val);
+		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
@@ -417,6 +417,20 @@ if (! empty($_SESSION["disablemodules"]))
 				$conf->supplier_order->enabled=0;
 				$conf->supplier_invoice->enabled=0;
 			}
+		}
+	}
+}
+
+// Set current modulepart
+$modulepart = explode("/", $_SERVER["PHP_SELF"]);
+if(is_array($modulepart) && count($modulepart)>0)
+{
+	foreach($conf->modules as $module)
+	{
+		if(in_array($module, $modulepart))
+		{
+			$conf->modulepart = $module;
+                        break;
 		}
 	}
 }
@@ -1321,7 +1335,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile, 1);
+			    if (preg_match('/^http/i', $cssfile))
+			    {
+			        $urltofile=$cssfile;
+			    }
+			    else
+			    {
+			        $urltofile=dol_buildpath($cssfile, 1);
+			    }
+				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.$urltofile;
 				// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
 				if (!preg_match('/\.css$/i', $cssfile)) print $themeparam;
 				print '">'."\n";
@@ -1561,14 +1583,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$logouthtmltext.=$langs->trans("Logout").'<br>';
 
 				$logouttext .='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
-				//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
-				$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
+				$logouttext .=img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .='</a>';
 			}
 			else
 			{
 				$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
-				$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin opacitymedium');
 			}
 		}
 
@@ -1607,7 +1628,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		{
 			$text ='<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="_modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-bug atoplogin"></span>';
+			$text.='<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
@@ -1626,7 +1647,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 			$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-print atoplogin"></span>';
+			$text.='<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('', $langs->trans("PrintContentArea"), 2, 1, $text, 'login_block_elem', 2);
 		}
@@ -1664,7 +1685,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				else $text.=sprintf($helpbaseurl, $helppage);
 				$text.='">';
 				//$text.=img_picto('', 'helpdoc_top').' ';
-				$text.='<span class="fa fa-question-circle atoplogin"></span>';
+				$text.='<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
 				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
 				//if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 				$text.='</a>';
@@ -2124,5 +2145,21 @@ if (! function_exists("llxFooter"))
 
 		print "</body>\n";
 		print "</html>\n";
-	}
+
+        ?>
+
+		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
+        <script type="text/javascript">
+            //Prevent from multiple form sending
+            $(function() {
+                $('input[type=submit]').click(function(e) {
+                    e.preventDefault();
+                    $(this).prop('disabled', true);
+                    $(this).closest('form').submit();
+                });
+            });
+        </script>
+        -->
+        <?php
+    }
 }

@@ -123,7 +123,7 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -132,7 +132,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 		if (empty($this->date_creation)) {
             $this->date_creation = $now;
@@ -388,7 +388,7 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -397,7 +397,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 
 		// Check parameters
@@ -519,7 +519,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $hookmanager, $langs;
+        global $conf, $hookmanager, $langs;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -661,7 +661,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -1001,7 +1001,7 @@ class Website extends CommonObject
 		}
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 

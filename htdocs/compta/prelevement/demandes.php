@@ -110,8 +110,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"');
-	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'class="right"');
+	print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'class="center"');
 	print_liste_field_titre('');
 	print '</tr>';
 
@@ -121,7 +121,7 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	// Action column
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre" class="middle">';
 	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
@@ -148,11 +148,11 @@ if ($resql)
 		print $thirdpartystatic->getNomUrl(1, 'customer');
 		print '</td>';
 
-        print '<td align="right">'.price($obj->total_ttc).'</td>';
+        print '<td class="right">'.price($obj->total_ttc).'</td>';
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
+        print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
-        print '<td align="right"></td>';
+        print '<td class="right"></td>';
 
 		print '</tr>';
 		$i++;

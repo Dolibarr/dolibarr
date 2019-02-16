@@ -188,7 +188,7 @@ if ($action == 'update') {
 
 $form = new FormAccounting($db);
 
-// Defaut AccountingAccount RowId Product / Service
+// Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
 // so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);

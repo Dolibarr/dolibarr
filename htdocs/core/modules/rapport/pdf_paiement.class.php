@@ -451,7 +451,7 @@ class pdf_paiement
 				if ($yp > $this->tab_height -15)
 				{
 					$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height,  $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
 					$page++;
 					$pdf->AddPage();
 					$this->_pagehead($pdf, $page, 0, $outputlangs);

@@ -93,7 +93,7 @@ if (! $confirmed)
     $input = trim(fgets(STDIN));
 }
 
-// Open input and ouput files
+// Open input and output files
 $fhandle = fopen($filepath, 'r');
 if (! $fhandle)
 {
