@@ -63,7 +63,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<table class="noborder centpercent notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -71,7 +71,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Search User
 print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
 print '<tr><td>';
 print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
@@ -123,7 +123,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 	print '</tr>';
@@ -194,8 +194,8 @@ if ($resql)
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-        print '<td align="right">';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+        print '<td class="right">';
         print $fuserstatic->getLibStatut(3);
         print '</td>';
 
@@ -238,7 +238,7 @@ if ($canreadperms)
 		$colspan=1;
 		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
 		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 		print '</tr>';
@@ -269,7 +269,7 @@ if ($canreadperms)
 	        	print $mc->label;
 	        	print '</td>';
 			}
-			print '<td class="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 			print "</tr>";
 			$i++;
 		}
