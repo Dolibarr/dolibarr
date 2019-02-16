@@ -104,7 +104,7 @@ function dol_getImageSize($file, $url = false)
  *    	@param  int		$newHeight     	Hauteur maximum que dois faire l'image destination (0=keep ratio)
  * 		@param	int		$src_x			Position of croping image in source image (not use if mode=0)
  * 		@param	int		$src_y			Position of croping image in source image (not use if mode=0)
- *		@return	int						File name if OK, error message if KO
+ *		@return	string                  File name if OK, error message if KO
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0)
 {

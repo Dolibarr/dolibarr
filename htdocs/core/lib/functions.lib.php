@@ -2636,7 +2636,7 @@ function dol_print_ip($ip, $mode = 0)
  * Return the IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (not way to be modified by user but may be wrong if using proxy)
+ * Then REMOTE_ADDR (no way to be modified by user but may be wrong if user is using a proxy)
  *
  * @return	string		Ip of remote user.
  */
@@ -2979,7 +2979,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber','skype','twitter','facebook'
 			)
 		)) {
-			$fakey = $pictowithoutext;
+		    $fa='fa';
+		    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
+		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
 			$marginleftonlyshort = 2;
 			if ($pictowithoutext == 'switch_off') {
@@ -3074,6 +3076,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
+			elseif ($pictowithoutext == 'skype') {
+			    $fakey = 'fa-'.$pictowithoutext;
+			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
+			}
 			elseif ($pictowithoutext == 'split') {
 			    $fakey = 'fa-code-fork';
 			}
@@ -3095,8 +3101,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             }
             $moreatt=trim($moreatt);
 
-			$fa='fa';
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
             $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
             $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {

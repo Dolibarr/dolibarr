@@ -55,12 +55,13 @@ class Invoices extends DolibarrApi
      *
      * Return an array with invoice informations
      *
-     * @param 	int 	$id ID of invoice
+     * @param 	int 	$id           ID of invoice
+     * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
-	function get($id)
+	function get($id, $contact_list = 1)
 	{
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
@@ -82,7 +83,7 @@ class Invoices extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', 1);
+		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', $contact_list);
 
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
@@ -337,7 +338,7 @@ class Invoices extends DolibarrApi
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
     	$request_data = (object) $request_data;
-    $updateRes = $this->invoice->updateline(
+        $updateRes = $this->invoice->updateline(
     		$lineid,
     		$request_data->desc,
     		$request_data->subprice,
@@ -361,7 +362,7 @@ class Invoices extends DolibarrApi
     		$request_data->situation_percent,
     		$request_data->fk_unit,
     		$request_data->multicurrency_subprice
-    		);
+    	);
 
     	if ($updateRes > 0) {
     		$result = $this->get($id);
@@ -370,6 +371,86 @@ class Invoices extends DolibarrApi
 	    } else {
 	    	throw new RestException(304, $this->invoice->error);
     	}
+    }
+  
+    /**
+	 * Add a contact type of given invoice
+	 *
+	 * @param int    $id             Id of invoice to update
+	 * @param int    $contactid      Id of contact to add
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 *
+	 * @url	POST {id}/contact/{contactid}/{type}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+	 */
+    function postContact($id, $contactid, $type)
+    {
+        if(!DolibarrApiAccess::$user->rights->facture->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->invoice->fetch($id);
+
+		if(!$result) {
+			throw new RestException(404, 'Invoice not found');
+		}
+
+        if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
+            throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+        }
+
+        if(!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->invoice->add_contact($contactid, $type, 'external');
+
+        if (!$result) {
+            throw new RestException(500, 'Error when added the contact');
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
+   /**
+	 * Delete a contact type of given invoice
+	 *
+	 * @param int    $id             Id of invoice to update
+	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 *
+	 * @url	DELETE {id}/contact/{rowid}
+	 *
+	 * @return int
+     * @throws 401
+     * @throws 404
+     * @throws 500
+	 */
+    function deleteContact($id, $rowid)
+    {
+        if(!DolibarrApiAccess::$user->rights->facture->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->invoice->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'Invoice not found');
+		}
+
+        if (!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        $result = $this->invoice->delete_contact($rowid);
+
+        if (!$result) {
+            throw new RestException(500, 'Error when deleted the contact');
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
     }
 
     /**

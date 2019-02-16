@@ -862,12 +862,6 @@ if ($object->id > 0)
     	show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
-	// Addresses list
-	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
-	{
-		$result=show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-	}
-
 	if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
 	{
     	print load_fiche_titre($langs->trans("ActionsOnCompany"), '', '');

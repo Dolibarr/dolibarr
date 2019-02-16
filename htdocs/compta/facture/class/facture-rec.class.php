@@ -960,7 +960,7 @@ class FactureRec extends CommonInvoice
 	/**
 	 * Return the next date of
 	 *
-	 * @return	timestamp	false if KO, timestamp if OK
+	 * @return  int|false   false if KO, timestamp if OK
 	 */
 	function getNextDate()
 	{

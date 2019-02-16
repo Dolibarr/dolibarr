@@ -147,7 +147,7 @@ function LoadProducts(position, issubcat=false){
 
 	idata=0; //product data counter
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		while (idata < 30) {
+		while (idata < 30 && ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","");
@@ -186,7 +186,7 @@ function MoreProducts(moreorless){
 		}
 		idata=30*pageproducts; //product data counter
 		ishow=0; //product to show counter
-		while (idata < 30) {
+		while (idata < (30*pageproducts)+30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","");
@@ -268,7 +268,7 @@ function Search2(){
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
 			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
-			$("#prodiv"+ishow).data("iscat",0);
+			$("#prodiv"+i).data("iscat",0);
 		}
 	});
 }
