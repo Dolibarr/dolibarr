@@ -263,7 +263,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Other attributes
 		$cols = 3;
-		$parameyers=array('socid'=>$socid);
+		$parameters=array('socid'=>$socid);
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
