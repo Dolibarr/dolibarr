@@ -4761,6 +4761,13 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source != '')
+			{
+                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
+			}
+
 			// Classify paid
 			if ($object->statut == 1 && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
