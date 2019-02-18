@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +17,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/admin/defaultaccounts.php
+ * \file		htdocs/accountancy/admin/closure.php
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure accounting expert module
  */
@@ -35,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","admin","accountancy","salaries","loan"));
+$langs->loadLangs(array("compta","admin","accountancy"));
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount))
@@ -47,54 +41,26 @@ $action = GETPOST('action', 'aZ09');
 
 
 $list_account_main = array (
-    'ACCOUNTING_ACCOUNT_CUSTOMER',
-    'ACCOUNTING_ACCOUNT_SUPPLIER',
-    'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
+    'ACCOUNTING_RESULT_PROFIT',
+    'ACCOUNTING_RESULT_LOSS'
 );
-
-$list_account = array (
-    'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT',
-    'ACCOUNTING_SERVICE_BUY_ACCOUNT',
-    'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_BUY_ACCOUNT',
-    'ACCOUNTING_VAT_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_PAY_ACCOUNT',
-    'ACCOUNTING_ACCOUNT_SUSPENSE',
-    'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
-    'DONATION_ACCOUNTINGACCOUNT',
-    'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT',
-    'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
-    'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
-    'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
-);
-
 
 /*
  * Actions
  */
 
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
+if ($action == 'update') {
+    $error = 0;
 
+    $defaultjournal = GETPOST('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', 'alpha');
 
-if (GETPOST('change_chart', 'alpha'))
-{
-    $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
-    if (! empty($chartofaccounts)) {
-
-        if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+    if (! empty($defaultjournal)) {
+        if (! dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', $defaultjournal, 'chaine', 0, '', $conf->entity)) {
             $error ++;
         }
     } else {
         $error ++;
     }
-}
-
-if ($action == 'update') {
-	$error = 0;
 
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
@@ -102,14 +68,6 @@ if ($action == 'update') {
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
-	}
-
-	foreach ($list_account as $constname) {
-	    $constvalue = GETPOST($constname, 'alpha');
-
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
-	    }
 	}
 
 	if (! $error) {
@@ -130,18 +88,16 @@ $formaccounting = new FormAccounting($db);
 llxHeader();
 
 $linkback = '';
-print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
+print load_fiche_titre($langs->trans('MenuClosureAccounts'), $linkback, 'title_accountancy');
 
-print $langs->trans("DefaultBindingDesc").'<br>';
+print $langs->trans("DefaultClosureDesc").'<br>';
 print '<br>';
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-
-// Define main accounts for thirdparty
-
+// Define main accounts for closure
 print '<table class="noborder" width="100%">';
 
 foreach ($list_account_main as $key) {
@@ -162,32 +118,15 @@ foreach ($list_account_main as $key) {
     print '</tr>';
 }
 
+// Journal
+print '<tr class="oddeven">';
+print '<td width="50%">' . $langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL") . '</td>';
+print '<td>';
+$defaultjournal=$conf->global->ACCOUNTING_CLOSURE_DEFAULT_JOURNAL;
+print $formaccounting->select_journal($defaultjournal, "ACCOUNTING_CLOSURE_DEFAULT_JOURNAL", 9, 1, 0, 0);
+print '</td></tr>';
 
 print "</table>\n";
-
-
-print '<br>';
-
-// Define default accounts
-
-print '<table class="noborder" width="100%">';
-
-foreach ($list_account as $key) {
-
-	print '<tr class="oddeven value">';
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%">' . $label . '</td>';
-	// Value
-	print '<td>';  // Do not force align=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	print '</td>';
-	print '</tr>';
-}
-
-
-print "</table>\n";
-
 
 print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
