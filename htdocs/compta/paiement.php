@@ -250,11 +250,14 @@ if (empty($reshook))
 	    $paiement->amounts      = $amounts;   // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
 	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',1);
-	    $paiement->num_paiement = GETPOST('num_paiement');
-	    $paiement->note         = GETPOST('comment');
+	    $paiement->num_paiement = GETPOST('num_paiement', 'alpha');
+	    $paiement->note         = GETPOST('comment', 'alpha');
+
 
 	    if (! $error)
 	    {
+	        // Create payment and update this->multicurrency_amounts if this->amounts filled or
+	        // this->amounts if this->multicurrency_amounts filled.
 	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices and regenerating documents
 	    	if ($paiement_id < 0)
 	        {
@@ -279,7 +282,7 @@ if (empty($reshook))
 	    {
 	        $db->commit();
 
-	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise jump on invoice card
+	        // If payment dispatching on more than one invoice, we stay on summary page, otherwise jump on invoice card
 	        $invoiceid=0;
 	        foreach ($paiement->amounts as $key => $amount)
 	        {
@@ -649,12 +652,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						}
 		                print '</td>';
 
-    					// Multicurrency Price
+    					// Multicurrency remain to pay
     				    print '<td align="right">';
     				    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) print price($sign * $multicurrency_remaintopay);
     				    print '</td>';
 
-    				    print '<td align="right">';
+    				    print '<td class="right nowraponall">';
 
     				    // Add remind multicurrency amount
     				    $namef = 'multicurrency_amount_'.$objp->facid;
@@ -666,12 +669,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     				    	{
     				    		if (!empty($conf->use_javascript_ajax))
     				    			print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+    				    			print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
     				    			print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-    				    			print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
     				    	}
     				    	else
     				    	{
-    				    		print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
+    				    		print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
     				    		print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
     				    	}
     				    }
@@ -692,7 +695,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     //$test= price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits));
 
                     // Amount
-                    print '<td align="right">';
+                    print '<td class="right nowraponall">';
 
                     // Add remind amount
                     $namef = 'amount_'.$objp->facid;
@@ -702,12 +705,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     {
                         if (!empty($conf->use_javascript_ajax))
 							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+                        print '<input type="text" class="maxwidth75 amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                         print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-                        print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
                     else
                     {
-                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
+                        print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
                         print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
                     print "</td>";
