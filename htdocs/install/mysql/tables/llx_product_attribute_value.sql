@@ -23,5 +23,7 @@ CREATE TABLE llx_product_attribute_value
   fk_product_attribute INT NOT NULL,
   ref VARCHAR(180) DEFAULT NULL,
   value VARCHAR(255) DEFAULT NULL,
+  date_start date DEFAULT NULL,
+  date_end date DEFAULT NULL,
   entity INT DEFAULT 1 NOT NULL
 )ENGINE=innodb;
