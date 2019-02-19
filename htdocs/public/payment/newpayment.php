@@ -1352,14 +1352,12 @@ if ($source == 'membersubscription')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
@@ -1367,7 +1365,6 @@ if ($source == 'membersubscription')
 	print '</b>';
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
@@ -1385,13 +1382,11 @@ if ($source == 'membersubscription')
 	if ($member->last_subscription_date || $member->last_subscription_amount)
 	{
 		// Last subscription date
-
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date, 'day');
 		print '</td></tr>'."\n";
 
 		// Last subscription amount
-
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
@@ -1400,7 +1395,6 @@ if ($source == 'membersubscription')
 	}
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentAmount");
 	if (empty($amount))
 	{
@@ -1448,7 +1442,6 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1520,14 +1513,12 @@ if ($source == 'donation')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
@@ -1535,17 +1526,14 @@ if ($source == 'donation')
 	print '</b>';
 
 	// Object
-
-	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$langs->trans("PaymentDonation").'</b>';
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($don->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1593,12 +1581,34 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
+    
+    if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+  
+    $service = 'StripeTest';
+	$servicestatus = 0;
+
+	if (! empty($conf->global->STRIPE_LIVE))
+	{
+	$service = 'StripeLive';
+	$servicestatus = 1;
+	}
+  
+$stripe = new Stripe($db);
+$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+	//  for dev only
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    print '<b>'.$paymentintent->id.'</b>';
+	print '</td></tr>'."\n";
+}  
 
 	// Shipping address
 	$shipToName=$don->getFullName($langs);
