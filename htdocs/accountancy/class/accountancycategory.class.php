@@ -865,16 +865,18 @@ class AccountancyCategory // extends CommonObject
 
 		if (! empty($cat_id))
 		{
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.sens";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON cat.rowid = t.fk_accounting_category";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
 			$sql .= " AND t.entity = " . $conf->entity;
 			$sql .= " ORDER BY t.account_number";
 		}
 		else
 		{
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.sens";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON cat.rowid = t.fk_accounting_category";
 			$sql .= " WHERE ".$predefinedgroupwhere;
 			$sql .= " AND t.entity = " . $conf->entity;
 			$sql .= " ORDER BY t.account_number";
@@ -894,6 +896,7 @@ class AccountancyCategory // extends CommonObject
 							'id' => $obj->rowid,
 							'account_number' => $obj->account_number,
 							'account_label' => $obj->account_label,
+                    		'dc' => $obj->sens
 					);
 					$i++;
 				}
