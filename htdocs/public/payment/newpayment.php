@@ -914,7 +914,7 @@ $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	/
 		print '</td><td class="CTableRow'.($var?'1':'2').'">';
 		print $object->getDirectExternalLink(1);
 		print '</td></tr>'."\n";
-	}  
+	}
 
 	// Shipping address
 	$shipToName=$order->thirdparty->name;
@@ -1054,8 +1054,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 	{
 	$service = 'StripeLive';
     $servicestatus = 1;
-
-	}
+    }
 
 $stripe = new Stripe($db);
 $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
@@ -1593,8 +1592,7 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
     
     if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
-  
+        require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     $service = 'StripeTest';
 	$servicestatus = 0;
 
@@ -1603,7 +1601,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 	$service = 'StripeLive';
 	$servicestatus = 1;
 	}
-  
+
 $stripe = new Stripe($db);
 $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
 $stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
@@ -1613,7 +1611,7 @@ $stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);	
     $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
-}  
+    }
 
 	// Shipping address
 	$shipToName=$don->getFullName($langs);
