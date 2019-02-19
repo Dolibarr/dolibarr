@@ -168,7 +168,7 @@ print $langs->trans("StripeLiveEnabled").'</td><td>';
   } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
-}
+  }
 print '</td></tr>';
 
 if (empty($conf->stripeconnect->enabled))
@@ -282,8 +282,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
     print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
   } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
-}
+    print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API):
+  }
 	print '</td></tr>';
 }
 
@@ -297,7 +297,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
   } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
-}
+  }
 	print '</td></tr>';
 }
 
