@@ -165,7 +165,7 @@ print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_LIVE');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
 }
@@ -193,7 +193,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
-	print '<br />'.$out;  
+	print '<br />'.$out;
 	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
@@ -228,7 +228,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php', 2);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
-	print '<br />'.$out;  
+	print '<br />'.$out;
 	print '</td></tr>';
 }
 else
@@ -280,7 +280,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
 }
@@ -294,7 +294,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 }
