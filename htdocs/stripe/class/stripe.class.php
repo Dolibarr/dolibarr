@@ -319,9 +319,12 @@ class Stripe extends CommonObject
 
                 $description=$object->element.$object->ref;
 
+                if ( isset($object->multicurrency_code) && ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) ) { $currency = $object->multicurrency_code;}
+                else $currency = $conf->currency;
+
 				$dataforintent = array(
 					"amount" => $stripeamount,
-					"currency" => isset($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency,
+					"currency" => $currency,
                     "customer"  => $customer,
                     "payment_method_types" => ["card"],
                     "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // dynamic staement with 10 chars that appears on bank receipt  https://stripe.com/docs/charges#dynamic-statement-descriptor
