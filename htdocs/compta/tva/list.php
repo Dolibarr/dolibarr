@@ -188,8 +188,8 @@ if ($result)
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -200,9 +200,9 @@ if ($result)
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "t.label", "", $param, 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "t.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "t.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -265,7 +265,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print '<td align="right">'.price($total).'</td>';
+    print '<td class="right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
@@ -280,7 +280,6 @@ else
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
