@@ -1606,7 +1606,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
   
 $stripe = new Stripe($db);
 $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
