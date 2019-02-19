@@ -51,6 +51,18 @@ class ProductAttributeValue
 	 * @var string
 	 */
 	public $value;
+	
+	/**
+	 * Start date Attribute
+	 * @var date
+	 */
+	public $start_date;
+	
+	/**
+	 * End Date Attribute
+	 * @var date
+	 */
+	public $end_date;
 
     /**
      * Constructor
@@ -73,7 +85,7 @@ class ProductAttributeValue
 	 */
 	public function fetch($valueid)
 	{
-		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $valueid." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value, date_start, date_end FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $valueid." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -91,6 +103,8 @@ class ProductAttributeValue
 		$this->fk_product_attribute = $result->fk_product_attribute;
 		$this->ref = $result->ref;
 		$this->value = $result->value;
+		$this->start_date = $result->date_start;
+		$this->end_date = $result->date_end;
 
 		return 1;
 	}
@@ -112,7 +126,7 @@ class ProductAttributeValue
 			$sql .= 'DISTINCT ';
 		}
 
-		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
+		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value, v.date_start, v.date_end FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
 
 		if ($only_used) {
 			$sql .= 'LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val c2v ON c2v.fk_prod_attr_val = v.rowid ';
@@ -135,6 +149,8 @@ class ProductAttributeValue
 			$tmp->id = $result->rowid;
 			$tmp->ref = $result->ref;
 			$tmp->value = $result->value;
+			$tmp->start_date = $this->db->jdate($result->date_start);
+			$tmp->end_date = $this->db->jdate($result->date_end);
 
 			$return[] = $tmp;
 		}
@@ -157,9 +173,10 @@ class ProductAttributeValue
 		// Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, date_start, date_end, entity)
 		VALUES ('".(int) $this->fk_product_attribute."', '".$this->db->escape($this->ref)."',
-		'".$this->db->escape($this->value)."', ".(int) $this->entity.")";
+		'".$this->db->escape($this->value)."', ".($this->start_date != '' ? "'".$this->db->idate($this->start_date)."'" : 'null').",
+		".($this->end_date != '' ? "'".$this->db->idate($this->end_date)."'" : 'null').", ".(int) $this->entity.")";
 
 		$query = $this->db->query($sql);
 
@@ -185,7 +202,8 @@ class ProductAttributeValue
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute_value
 		SET fk_product_attribute = '".(int) $this->fk_product_attribute."', ref = '".$this->db->escape($this->ref)."',
-		value = '".$this->db->escape($this->value)."' WHERE rowid = ".(int) $this->id;
+		value = '".$this->db->escape($this->value)."', date_start = ".($this->start_date != '' ? "'".$this->db->idate($this->start_date)."'" : 'null').",
+		date_end = ".($this->end_date != '' ? "'".$this->db->idate($this->end_date)."'" : 'null')." WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {
 			return 1;
