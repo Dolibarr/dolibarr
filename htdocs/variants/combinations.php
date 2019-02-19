@@ -502,9 +502,9 @@ if (! empty($id) || ! empty($ref))
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
-                if($valueid > 0) {
-                    print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
-                }
+        if($valueid > 0) {
+            print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+        }
 
 		print dol_fiche_head();
 
@@ -641,7 +641,7 @@ if (! empty($id) || ! empty($ref))
 			}
 		} elseif ($action === 'copy') {
 
-print $form->formconfirm(
+            print $form->formconfirm(
 				'combinations.php?id='.$id,
 				$langs->trans('CloneCombinationsProduct'),
 				$langs->trans('ConfirmCloneProductCombinations'),
@@ -795,8 +795,8 @@ print $form->formconfirm(
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
                     <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
-    				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
-    				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
     				<td class="right">
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
