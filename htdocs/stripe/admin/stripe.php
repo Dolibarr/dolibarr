@@ -193,7 +193,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
-	print '<br />'.$out;
+	print '<br>'.$out;
 	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
@@ -228,7 +228,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php', 2);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
-	print '<br />'.$out;
+	print '<br>'.$out;
 	print '</td></tr>';
 }
 else
