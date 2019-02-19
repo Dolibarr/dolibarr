@@ -1335,7 +1335,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile, 1);
+			    if (preg_match('/^http/i', $cssfile))
+			    {
+			        $urltofile=$cssfile;
+			    }
+			    else
+			    {
+			        $urltofile=dol_buildpath($cssfile, 1);
+			    }
+				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.$urltofile;
 				// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
 				if (!preg_match('/\.css$/i', $cssfile)) print $themeparam;
 				print '">'."\n";
@@ -2140,6 +2148,7 @@ if (! function_exists("llxFooter"))
 
         ?>
 
+		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
         <script type="text/javascript">
             //Prevent from multiple form sending
             $(function() {
@@ -2150,6 +2159,7 @@ if (! function_exists("llxFooter"))
                 });
             });
         </script>
+        -->
         <?php
     }
 }

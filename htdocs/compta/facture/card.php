@@ -696,6 +696,7 @@ if (empty($reshook))
 			$db->begin();
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
+			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
 			$i = 0;
@@ -709,7 +710,7 @@ if (empty($reshook))
 					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
 					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
 					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
-					$i ++;
+					$i++;
 				}
 			}
 
@@ -4669,6 +4670,13 @@ elseif ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
+			}
+
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source != '')
+			{
+                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
 			}
 
 			// Classify paid

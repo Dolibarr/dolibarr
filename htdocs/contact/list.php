@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ $search_town=GETPOST('search_town', 'alpha');
 $search_import_key=GETPOST("search_import_key", "alpha");
 $search_country=GETPOST("search_country", 'intcomma');
 
-if ($search_status=='') $search_status=1; // always display activ customer first
+if ($search_status=='') $search_status=1; // always display active customer first
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -400,15 +401,15 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 llxHeader('', $title, $help_url);
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-$param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-$param.='&type='.urlencode($type).'&view='.urlencode($view);
-if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
-if (!empty($search_categ_thirdparty)) $param.='&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
-if (!empty($search_categ_supplier)) $param.='&search_categ_supplier='.urlencode($search_categ_supplier);
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&amp;contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&amp;limit='.$limit;
+$param.='&amp;begin='.urlencode($begin).'&amp;userid='.urlencode($userid).'&amp;contactname='.urlencode($sall);
+$param.='&amp;type='.urlencode($type).'&amp;view='.urlencode($view);
+if (!empty($search_categ)) $param.='&amp;search_categ='.urlencode($search_categ);
+if (!empty($search_categ_thirdparty)) $param.='&amp;search_categ_thirdparty='.urlencode($search_categ_thirdparty);
+if (!empty($search_categ_supplier)) $param.='&amp;search_categ_supplier='.urlencode($search_categ_supplier);
 if ($sall != '') $param.='&amp;sall='.urlencode($sall);
-if ($search_id > 0) $param.= "&search_id=".urlencode($search_id);
+if ($search_id > 0) $param.= "&amp;search_id=".urlencode($search_id);
 if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
 if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
 if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
@@ -422,9 +423,9 @@ if ($search_phone_mobile != '') $param.='&amp;search_phone_mobile='.urlencode($s
 if ($search_fax != '') $param.='&amp;search_fax='.urlencode($search_fax);
 if ($search_email != '') $param.='&amp;search_email='.urlencode($search_email);
 if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
-if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
-if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_priv == '0' || $search_priv == '1') $param.="&amp;search_priv=".urlencode($search_priv);
+if ($search_import_key != '') $param.='&amp;search_import_key='.urlencode($search_import_key);
+if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -572,7 +573,7 @@ if (! empty($arrayfields['p.town']['checked']))
 // Country
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
 	print '</td>';
 }
@@ -632,7 +633,7 @@ if (! empty($arrayfields['p.thirdparty']['checked']))
 }
 if (! empty($arrayfields['p.priv']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
    $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
    print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
    print '</td>';
@@ -697,17 +698,17 @@ if (! empty($arrayfields['p.skype']['checked']))               print_liste_field
 if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['p.datec']['checked']))      print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.tms']['checked']))        print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.statut']['checked']))     print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.import_key']['checked'])) print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.datec']['checked']))      print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.tms']['checked']))        print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.statut']['checked']))     print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.import_key']['checked'])) print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
@@ -787,7 +788,7 @@ while ($i < min($num, $limit))
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		$tmparray=getCountry($obj->fk_pays, 'all');
 		print $tmparray['label'];
 		print '</td>';
@@ -867,7 +868,7 @@ while ($i < min($num, $limit))
 	// Private/Public
 	if (! empty($arrayfields['p.priv']['checked']))
 	{
-		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+		print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 
@@ -880,7 +881,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['p.datec']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -888,7 +889,7 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['p.tms']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -896,7 +897,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['p.statut']['checked']))
 	{
-		print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
+		print '<td class="center">'.$contactstatic->getLibStatut(3).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['p.import_key']['checked']))
@@ -908,7 +909,7 @@ while ($i < min($num, $limit))
 	}
 
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;

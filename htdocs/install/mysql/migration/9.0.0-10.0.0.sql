@@ -160,3 +160,5 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H',    '3600','hour','h', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','12960000','day','d', 'time', 1);
 
+-- Default Warehouse id for a user
+ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;

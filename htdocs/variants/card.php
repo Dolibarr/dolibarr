@@ -266,7 +266,7 @@ print $form->formconfirm(
 			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
-				<td style="text-align: right">
+				<td class="right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
 					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
@@ -274,7 +274,7 @@ print $form->formconfirm(
 			<?php else: ?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
-				<td style="text-align: right">
+				<td class="right">
 					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>

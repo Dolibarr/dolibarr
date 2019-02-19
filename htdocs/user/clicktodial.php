@@ -110,7 +110,7 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-       print '<table class="border" width="100%">';
+       print '<table class="border centpercent">';
 
         if ($user->admin)
         {
@@ -150,7 +150,7 @@ if ($id > 0)
     else	// View mode
     {
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         if (! empty($user->admin))
         {
@@ -190,7 +190,7 @@ if ($id > 0)
 
     if ($action == 'edit')
     {
-        print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+        print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
         print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
         print '</div>';

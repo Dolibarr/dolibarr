@@ -103,13 +103,14 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @return array                        Array of contact objects
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $includecount = 0)
     {
 		global $db, $conf;
 
@@ -182,8 +183,13 @@ class Contacts extends DolibarrApi
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
+		      if ($includecount)
+		      {
+		      $contact_static->load_ref_elements();
+		      }
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
+        
 				$i++;
 			}
 		}
