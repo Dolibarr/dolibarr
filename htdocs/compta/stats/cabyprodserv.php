@@ -34,11 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("products","categories","errors",'accountancy'));
 
 // Security pack (data & check)
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -70,20 +70,20 @@ $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
-$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q","int");
+	$q=GETPOST("q", "int");
 	if (empty($q))
 	{
 		// We define date_start and date_end
@@ -101,14 +101,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
 	else
 	{
-		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+		if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 	}
 } else {
 	// TODO We define q
@@ -204,7 +204,7 @@ $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$f
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -261,7 +261,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql.= $db->order($sortfield,$sortorder);
+	$sql.= $db->order($sortfield, $sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -312,16 +312,16 @@ if ($modecompta == 'CREANCES-DETTES')
     // type filter (produit/service)
     print ' ';
     print $langs->trans("Type"). ': ';
-    $form->select_type_of_lines(isset($selected_type)?$selected_type:-1,'search_type',1,1,1);
+    $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
     print '</td>';
 
-    print '<td colspan="5" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<td colspan="5" class="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -331,53 +331,53 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$paramslink,
-		'align="right"',
+		$classslink,
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
-	print_liste_field_titre(
+print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
 		"",
 		$paramslink,
-		'align="right"',
+		'class="right"',
 		$sortfield,
 		$sortorder
 	);
@@ -392,7 +392,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			print "<td>";
 			$fullname=$name[$key];
 			if ($key > 0) {
-				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),$type[$key]==0?'product':'service').' '.$fullname.'</a>';
+				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"), $type[$key]==0?'product':'service').' '.$fullname.'</a>';
 			} else {
 				$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 			}
@@ -400,15 +400,15 @@ if ($modecompta == 'CREANCES-DETTES')
 			print "</td>\n";
 
 			// Quantity
-			print '<td align="right">';
+			print '<td class="right">';
 			print $qty[$key];
 			print '</td>';
 
 			// Percent;
-			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
+			print '<td class="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
 
 			// Amount w/o VAT
-			print '<td align="right">';
+			print '<td class="right">';
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -419,7 +419,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			print '</td>';
 
 			// Amount with VAT
-			print '<td align="right">';
+			print '<td class="right">';
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -430,7 +430,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			print '</td>';
 
 			// Percent;
-			print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+			print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
 			// TODO: statistics?
 
@@ -441,11 +441,11 @@ if ($modecompta == 'CREANCES-DETTES')
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
-		print '<td align="right">'.$qtytotal.'</td>';
-		print '<td align="right">100%</td>';
-		print '<td align="right">'.price($catotal_ht).'</td>';
-		print '<td align="right">'.price($catotal).'</td>';
-		print '<td align="right">100%</td>';
+		print '<td class="right">'.$qtytotal.'</td>';
+		print '<td class="right">100%</td>';
+		print '<td class="right">'.price($catotal_ht).'</td>';
+		print '<td class="right">'.price($catotal).'</td>';
+		print '<td class="right">100%</td>';
 		print '</tr>';
 
 		$db->free($result);

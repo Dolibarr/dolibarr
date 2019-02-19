@@ -171,7 +171,7 @@ class Loan extends CommonObject
 		$now=dol_now();
 
 		// clean parameters
-		$newcapital=price2num($this->capital,'MT');
+		$newcapital=price2num($this->capital, 'MT');
 		if (empty($this->insurance_amount)) $this->insurance_amount = 0;
 		$newinsuranceamount=price2num($this->insurance_amount, 'MT');
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
@@ -264,7 +264,7 @@ class Loan extends CommonObject
 		// Get bank transaction lines for this loan
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account=new Account($this->db);
-		$lines_url=$account->get_url('',$this->id,'loan');
+		$lines_url=$account->get_url('', $this->id, 'loan');
 
 		// Delete bank urls
 		foreach ($lines_url as $line_url)
@@ -395,7 +395,7 @@ class Loan extends CommonObject
 	 */
 	function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paid,$mode,$alreadypaid);
+		return $this->LibStatut($this->paid, $mode, $alreadypaid);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -477,7 +477,7 @@ class Loan extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref, $maxlen):$this->ref);
 		$result .= $linkend;
 
 		return $result;

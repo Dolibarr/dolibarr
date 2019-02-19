@@ -39,7 +39,7 @@ class box_activity extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $param;
     var $enabled = 1;
 
@@ -153,32 +153,32 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data))
         		{
         			$this->info_box_contents[$line][0] = array(
-        			'td' => 'align="left" width="16"',
-        			'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
-        			'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
-        			'logo' => 'object_propal'
+                        'td' => 'class="left" width="16"',
+                        'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
+                        'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
+                        'logo' => 'object_propal'
         			);
 
         			$this->info_box_contents[$line][1] = array(
-        			'td' => '',
-        			'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
+                        'td' => '',
+                        'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right"',
-        			'text' => $data[$j]->nb,
-        			'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
-        			'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
+                        'td' => 'class="right"',
+                        'text' => $data[$j]->nb,
+                        'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
         			);
         			$totalnb += $data[$j]->nb;
 
         			$this->info_box_contents[$line][3] = array(
-        			'td' => 'class="right"',
-        			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
+                        'td' => 'class="right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(
-        			'td' => 'align="right" width="18"',
-        			'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $propalstatic->LibStatut($data[$j]->fk_statut, 3),
         			);
 
         			$line++;
@@ -236,32 +236,32 @@ class box_activity extends ModeleBoxes
                 $j=0;
                 while ($j < count($data)) {
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="left" width="16"',
+                        'td' => 'class="left" width="16"',
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
-                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
                         'logo' => 'object_order',
                     );
 
                     $this->info_box_contents[$line][1] = array(
                         'td' => '',
-                        'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+                        'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
                     );
 
                     $this->info_box_contents[$line][2] = array(
                         'td' => 'class="right"',
                         'text' => $data[$j]->nb,
-                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
                     );
                     $totalnb += $data[$j]->nb;
 
                     $this->info_box_contents[$line][3] = array(
                         'td' => 'class="right"',
-                        'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
                     );
                     $this->info_box_contents[$line][4] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $commandestatic->LibStatut($data[$j]->fk_statut,0,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $commandestatic->LibStatut($data[$j]->fk_statut, 0, 3),
                     );
 
                     $line++;
@@ -321,43 +321,43 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data)) {
         			$billurl="search_status=2&amp;paye=1&amp;year=".$data[$j]->annee;
         			$this->info_box_contents[$line][0] = array(
-        			'td' => 'align="left" width="16"',
-        			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1,$data[$j]->fk_statut,0),
-        			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
-        			'logo' => 'bill',
+                        'td' => 'class="left" width="16"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'logo' => 'bill',
         			);
 
         			$this->info_box_contents[$line][1] = array(
-        			'td' => '',
-        			'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1,$data[$j]->fk_statut,0)." ".$data[$j]->annee,
+                        'td' => '',
+                        'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0)." ".$data[$j]->annee,
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right"',
-        			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1,$data[$j]->fk_statut,0),
-        			'text' => $data[$j]->nb,
-        			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'td' => 'class="right"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
+                        'text' => $data[$j]->nb,
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
         			);
 
         			$this->info_box_contents[$line][3] = array(
-        			'td' => 'class="right"',
-        			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency)
+                        'td' => 'class="right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
         			);
 
         			// We add only for the current year
        				$totalnb += $data[$j]->nb;
 
         			$this->info_box_contents[$line][4] = array(
-        			'td' => 'align="right" width="18"',
-        			'text' => $facturestatic->LibStatut(1,$data[$j]->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut(1, $data[$j]->fk_statut, 3),
         			);
         			$line++;
         			$j++;
         		}
         		if (count($data)==0)
         			$this->info_box_contents[$line][0] = array(
-        			'td' => 'align="center"',
-        			'text'=>$langs->trans("NoRecordedInvoices"),
+                        'td' => 'class="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
         			);
         	}
 
@@ -403,49 +403,50 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
         			$this->info_box_contents[$line][0] = array(
-        			'td' => 'align="left" width="16"',
-        			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
-        			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
-        			'logo' => 'bill',
+                        'td' => 'class="left" width="16"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'logo' => 'bill',
         			);
 
         			$this->info_box_contents[$line][1] = array(
-        			'td' => '',
-        			'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
+                        'td' => '',
+                        'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right"',
-        			'text' => $data[$j]->nb,
-        			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
-        			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'td' => 'class="right"',
+                        'text' => $data[$j]->nb,
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
         			);
         			$totalnb += $data[$j]->nb;
         			$this->info_box_contents[$line][3] = array(
-        			'td' => 'class="right"',
-        			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
+                        'td' => 'class="right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(
-        			'td' => 'align="right" width="18"',
-        			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3, $alreadypaid),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut(0, $data[$j]->fk_statut, 3, $alreadypaid),
         			);
         			$line++;
         			$j++;
         		}
-        		if ($num==0)
+        		if ($num==0) {
         			$this->info_box_contents[$line][0] = array(
-        			'td' => 'align="center"',
-        			'text'=>$langs->trans("NoRecordedInvoices"),
-        			);
+                        'td' => 'class="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
+                    );
+                }
         	}
         }
 
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
-		$this->info_box_contents[$line][1] = array('td' => 'align="left" class="liste_total" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$line][2] = array('td' => 'align="right" class="liste_total" ', 'text' => $totalnb);
-		$this->info_box_contents[$line][3] = array('td' => 'align="right" class="liste_total" ', 'text' => '');
-		$this->info_box_contents[$line][4] = array('td' => 'align="right" class="liste_total" ', 'text' => "");
+		$this->info_box_contents[$line][1] = array('td' => 'class="liste_total left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$line][2] = array('td' => 'class="liste_total right" ', 'text' => $totalnb);
+		$this->info_box_contents[$line][3] = array('td' => 'class="liste_total right" ', 'text' => '');
+		$this->info_box_contents[$line][4] = array('td' => 'class="liste_total right" ', 'text' => "");
     }
 
 

@@ -33,14 +33,14 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -54,7 +54,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -75,11 +75,11 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 
 $help_url='';
 
-llxHeader('',$langs->trans("SocialNetworkSetup"),$help_url);
+llxHeader('', $langs->trans("SocialNetworkSetup"), $help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SocialNetworkSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SocialNetworkSetup"), $linkback, 'title_setup');
 
 //$head = socialnetworks_admin_prepare_head();
 $h=0;
@@ -98,17 +98,16 @@ print '<br>';
 
 $arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook');
 
-foreach($arrayofsocialnetworks as $snkey => $snlabel)
-{
-	$consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
-  if ($conf->use_javascript_ajax) {
-    $link = ajax_constantonoff($consttocheck);
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    $link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
-}
-  
-	print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
+foreach($arrayofsocialnetworks as $snkey => $snlabel) {
+    $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
+    if ($conf->use_javascript_ajax) {
+        $link = ajax_constantonoff($consttocheck);
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        $link = $form->selectarray($consttocheck, $arrval, $conf->global->$consttocheck);
+    }
+
+    print $langs->trans('EnableFeatureFor', $snlabel).' '.$link.'<br><br>';
 }
 
 

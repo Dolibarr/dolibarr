@@ -452,7 +452,7 @@ class PaymentLoan extends CommonObject
 			if ($mode == 'payment_loan') $total=-$total;
 
 			// Insert payment into llx_bank
-			$bank_line_id = $acc->addline(
+$bank_line_id = $acc->addline(
 				$this->datep,
 				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
 				$label,
@@ -491,7 +491,7 @@ class PaymentLoan extends CommonObject
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
-					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
 			}
@@ -559,9 +559,9 @@ class PaymentLoan extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 
-			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$linkend.' ');
+			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
 		}
 
 		return $result;

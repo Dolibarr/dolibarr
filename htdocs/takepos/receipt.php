@@ -29,8 +29,8 @@ $langs->loadLangs(array("main", "cashdesk"));
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid','int');
-$place=GETPOST('place','int');
+$facid=GETPOST('facid', 'int');
+$place=GETPOST('place', 'int');
 if ($place>0){
     $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
@@ -40,7 +40,7 @@ if ($place>0){
 $object=new Facture($db);
 $object->fetch($facid);
 
-// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolut path.
+// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
 <html>
 <body>
@@ -55,7 +55,7 @@ $object->fetch($facid);
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_HEADER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER,$substitutionarray);
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
 	echo $newfreetext;
 }
 ?>
@@ -115,7 +115,7 @@ print $object->ref;
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_FOOTER))
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER,$substitutionarray);
+	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
 	echo $newfreetext;
 }
 ?>

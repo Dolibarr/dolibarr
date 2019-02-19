@@ -144,7 +144,7 @@ class CMailFile
 		{
 			$this->eol="\n";
 			$this->eol2="\n";
-			$moreinheader = str_replace("\r\n","\n",$moreinheader);
+			$moreinheader = str_replace("\r\n", "\n", $moreinheader);
 		}
 
 		// On defini mixed_boundary
@@ -185,12 +185,12 @@ class CMailFile
 		global $dolibarr_main_url_root;
 
 		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 		// Replace relative /viewimage to absolute path
-		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT,'/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
+		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
 
 		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
@@ -279,7 +279,7 @@ class CMailFile
 			// Add attachments to text_encoded
 			if ($this->atleastonefile)
 			{
-				$files_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
+				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list);
 			}
 
 			// We now define $this->headers and $this->message
@@ -287,7 +287,7 @@ class CMailFile
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
 			// comme des injections mail par les serveurs de messagerie.
-			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
+			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
 			//$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;
 			$this->message = 'This is a message with multiple parts in MIME format.'.$this->eol;
@@ -304,10 +304,10 @@ class CMailFile
 			$smtps->setCharSet($conf->file->character_set_client);
 
 			$smtps->setSubject($this->encodetorfc2822($subject));
-			$smtps->setTO($this->getValidAddress($to,0,1));
-			$smtps->setFrom($this->getValidAddress($from,0,1));
+			$smtps->setTO($this->getValidAddress($to, 0, 1));
+			$smtps->setFrom($this->getValidAddress($from, 0, 1));
 			$smtps->setTrackId($trackid);
-			$smtps->setReplyTo($this->getValidAddress($replyto,0,1));
+			$smtps->setReplyTo($this->getValidAddress($replyto, 0, 1));
 
 			if (! empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
 
@@ -322,14 +322,14 @@ class CMailFile
 				$msg = $this->checkIfHTML($msg);
 			}
 
-			if ($this->msgishtml) $smtps->setBodyContent($msg,'html');
-			else $smtps->setBodyContent($msg,'plain');
+			if ($this->msgishtml) $smtps->setBodyContent($msg, 'html');
+			else $smtps->setBodyContent($msg, 'plain');
 
 			if ($this->atleastoneimage)
 			{
 				foreach ($this->images_encoded as $img)
 				{
-					$smtps->setImageInline($img['image_encoded'],$img['name'],$img['content_type'],$img['cid']);
+					$smtps->setImageInline($img['image_encoded'], $img['name'], $img['content_type'], $img['cid']);
 				}
 			}
 
@@ -338,7 +338,7 @@ class CMailFile
 				foreach ($filename_list as $i => $val)
 				{
 					$content=file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content,$mimefilename_list[$i],$mimetype_list[$i]);
+					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i]);
 				}
 			}
 
@@ -455,11 +455,11 @@ class CMailFile
 			}
 
 			if ($this->msgishtml) {
-				$this->message->setBody($msg,'text/html');
+				$this->message->setBody($msg, 'text/html');
 				// And optionally an alternative body
 				$this->message->addPart(html_entity_decode(strip_tags($msg)), 'text/plain');
 			} else {
-				$this->message->setBody($msg,'text/plain');
+				$this->message->setBody($msg, 'text/plain');
 				// And optionally an alternative body
 				$this->message->addPart($msg, 'text/html');
 			}
@@ -469,7 +469,7 @@ class CMailFile
 				foreach ($filename_list as $i => $val)
 				{
 					//$this->message->attach(Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]));
-					$attachment = Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]);
+					$attachment = Swift_Attachment::fromPath($filename_list[$i], $mimetype_list[$i]);
 					$this->message->attach($attachment);
 				}
 			}
@@ -591,12 +591,12 @@ class CMailFile
 				if (isset($_SERVER["WINDIR"]))
 				{
 					if (empty($this->addr_from)) $this->addr_from = 'robot@example.com';
-					@ini_set('sendmail_from',$this->getValidAddress($this->addr_from,2));
+					@ini_set('sendmail_from', $this->getValidAddress($this->addr_from, 2));
 				}
 
 				// Force parameters
-				if (! empty($conf->global->$keyforsmtpserver)) ini_set('SMTP',$conf->global->$keyforsmtpserver);
-				if (! empty($conf->global->$keyforsmtpport))   ini_set('smtp_port',$conf->global->$keyforsmtpport);
+				if (! empty($conf->global->$keyforsmtpserver)) ini_set('SMTP', $conf->global->$keyforsmtpserver);
+				if (! empty($conf->global->$keyforsmtpport))   ini_set('smtp_port', $conf->global->$keyforsmtpport);
 
 				$res=true;
 				if ($res && ! $this->subject)
@@ -605,7 +605,7 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
-				$dest=$this->getValidAddress($this->addr_to,2);
+				$dest=$this->getValidAddress($this->addr_to, 2);
 				if ($res && ! $dest)
 				{
 					$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
@@ -622,7 +622,7 @@ class CMailFile
 						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
-						$additionnalparam .= ($additionnalparam?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
+						$additionnalparam .= ($additionnalparam?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from, 2) : '') );
 					}
 					if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
 					{
@@ -645,8 +645,8 @@ class CMailFile
 						$langs->load("errors");
 						$this->error="Failed to send mail with php mail";
 						$linuxlike=1;
-						if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
-						if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
+						if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
+						if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
 						if (! $linuxlike)
 						{
 							$this->error.=" to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port');	// This values are value used only for non linuxlike systems
@@ -893,7 +893,7 @@ class CMailFile
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
 			$outputfile=$dolibarr_main_data_root."/dolibarr_mail.log";
-			$fp = fopen($outputfile,"w");
+			$fp = fopen($outputfile, "w");
 
 			if ($this->sendmode == 'mail')
 			{
@@ -925,7 +925,7 @@ class CMailFile
 	 */
 	function checkIfHTML($msg)
 	{
-		if (!preg_match('/^[\s\t]*<html/i',$msg))
+		if (!preg_match('/^[\s\t]*<html/i', $msg))
 		{
 			$out = "<html><head><title></title>";
 			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
@@ -988,22 +988,22 @@ class CMailFile
 
 		// Sender
 		//$out.= "Sender: ".getValidAddress($this->addr_from,2)).$this->eol2;
-		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol2;
+		$out.= "From: ".$this->getValidAddress($this->addr_from, 3, 1).$this->eol2;
 		if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))
 		{
-			$out.= "To: ".$this->getValidAddress($this->addr_to,0,1).$this->eol2;
+			$out.= "To: ".$this->getValidAddress($this->addr_to, 0, 1).$this->eol2;
 		}
 		// Return-Path is important because it is used by SPF. Some MTA does not read Return-Path from header but from command line. See option MAIN_MAIL_ALLOW_SENDMAIL_F for that.
-		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
-		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
-		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
+		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from, 0, 1).$this->eol2;
+		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to, 2).$this->eol2;
+		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to, 2).$this->eol2;
 
 		// Receiver
-		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc,2).$this->eol2;
-		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc,2).$this->eol2;    // TODO Question: bcc must not be into header, only into SMTP command "RCPT TO". Does php mail support this ?
+		if (isset($this->addr_cc)   && $this->addr_cc)   $out.= "Cc: ".$this->getValidAddress($this->addr_cc, 2).$this->eol2;
+		if (isset($this->addr_bcc)  && $this->addr_bcc)  $out.= "Bcc: ".$this->getValidAddress($this->addr_bcc, 2).$this->eol2;    // TODO Question: bcc must not be into header, only into SMTP command "RCPT TO". Does php mail support this ?
 
 		// Delivery receipt
-		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from,2).$this->eol2;
+		if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out.= "Disposition-Notification-To: ".$this->getValidAddress($this->addr_from, 2).$this->eol2;
 
 		//$out.= "X-Priority: 3".$this->eol2;
 
@@ -1101,7 +1101,7 @@ class CMailFile
 		if ($this->msgishtml)
 		{
 			// Similar code to forge a text from html is also in CMailFile.class.php
-			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
 			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
 
@@ -1292,21 +1292,20 @@ class CMailFile
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
-			if ($socket = @fsockopen(
+            if ($socket = @fsockopen(
 					$host,       // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 					$port,       // which Port number to use
 					$errno,      // actual system level error
 					$errstr,     // and any text that goes with the error
-					$timeout
-			))  // timeout for reading/writing data over the socket
-			{
+					$timeout     // timeout for reading/writing data over the socket
+			)) {
 				// Windows still does not have support for this timeout function
 				if (function_exists('stream_set_timeout')) stream_set_timeout($socket, $timeout, 0);
 
 				dol_syslog("Now we wait for answer 220");
 
 				// Check response from Server
-				if ( $_retVal = $this->server_parse($socket, "220") ) $_retVal = $socket;
+				if ($_retVal = $this->server_parse($socket, "220")) $_retVal = $socket;
 			}
 			else
 			{
@@ -1331,7 +1330,7 @@ class CMailFile
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
-		while (substr($server_response,3,1) != ' ')
+		while (substr($server_response, 3, 1) != ' ')
 		{
 			if (! ($server_response = fgets($socket, 256)) )
 			{
@@ -1369,14 +1368,14 @@ class CMailFile
 			foreach ($matches[1] as $full)
 			{
 
-				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i',$full,$regs))   // If xxx is 'file=aaa'
+				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs))   // If xxx is 'file=aaa'
 				{
 					$img = $regs[1];
 
 					if (file_exists($images_dir.'/'.$img))
 					{
 						// Image path in src
-						$src = preg_quote($full,'/');
+						$src = preg_quote($full, '/');
 
 						// Image full path
 						$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
@@ -1410,13 +1409,13 @@ class CMailFile
 					$fullpath = $images_dir.'/'.$img["name"];
 
 					// If duplicate images are embedded, they may show up as attachments, so remove them.
-					if (!in_array($fullpath,$inline))
+					if (!in_array($fullpath, $inline))
 					{
 						// Read image file
 						if ($image = file_get_contents($fullpath))
 						{
 							// On garde que le nom de l'image
-							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i',$img["name"],$regs);
+							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];
 
 							$this->images_encoded[$i]['name'] = $imgName;
@@ -1463,13 +1462,13 @@ class CMailFile
 
 		$ret='';
 
-		$arrayaddress=explode(',',$address);
+		$arrayaddress=explode(',', $address);
 
 		// Boucle sur chaque composant de l'adresse
 		$i=0;
 		foreach($arrayaddress as $val)
 		{
-			if (preg_match('/^(.*)<(.*)>$/i',trim($val),$regs))
+			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs))
 			{
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
@@ -1530,12 +1529,12 @@ class CMailFile
 
 		$ret=array();
 
-		$arrayaddress=explode(',',$address);
+		$arrayaddress=explode(',', $address);
 
 		// Boucle sur chaque composant de l'adresse
 		foreach($arrayaddress as $val)
 		{
-			if (preg_match('/^(.*)<(.*)>$/i',trim($val),$regs))
+			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs))
 			{
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);

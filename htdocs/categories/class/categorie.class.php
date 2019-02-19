@@ -388,7 +388,7 @@ class Categorie extends CommonObject
 				if (! $error)
 				{
 	                // Call trigger
-    	            $result=$this->call_trigger('CATEGORY_CREATE',$user);
+    	            $result=$this->call_trigger('CATEGORY_CREATE', $user);
         	        if ($result < 0) { $error++; }
             	    // End call triggers
 				}
@@ -477,7 +477,7 @@ class Categorie extends CommonObject
 			if (! $error)
 			{
 	            // Call trigger
-    	        $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+    	        $result=$this->call_trigger('CATEGORY_MODIFY', $user);
         	    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             	// End call triggers
 			}
@@ -517,7 +517,7 @@ class Categorie extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('CATEGORY_DELETE',$user);
+		    $result=$this->call_trigger('CATEGORY_DELETE', $user);
 		    if ($result < 0) $error++;
 		    // End call triggers
 		}
@@ -651,7 +651,7 @@ class Categorie extends CommonObject
 
             // Call trigger
 			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
-			$result=$this->call_trigger('CATEGORY_LINK',$user);
+			$result=$this->call_trigger('CATEGORY_LINK', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -701,10 +701,10 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if ($type == 'societe') {
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
+			dol_syslog(get_class($this) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
 		} elseif ($type == 'fournisseur') {
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
+			dol_syslog(get_class($this) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();
@@ -718,7 +718,7 @@ class Categorie extends CommonObject
 		{
             // Call trigger
 			$this->context=array('unlinkoff'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
-			$result=$this->call_trigger('CATEGORY_UNLINK',$user);
+			$result=$this->call_trigger('CATEGORY_UNLINK', $user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -758,7 +758,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT c.fk_" . $this->MAP_CAT_FK[$type];
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
 		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
-		$sql .= " WHERE o.entity IN (" . getEntity( $obj->element).")";
+		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 
@@ -775,7 +775,7 @@ class Categorie extends CommonObject
 			    else
 			    {
 				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
-				    $obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
+				    $obj->fetch($rec['fk_' . $this->MAP_CAT_FK[$type]]);
 				    $objs[] = $obj;
 			    }
 			}
@@ -1008,7 +1008,7 @@ class Categorie extends CommonObject
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
-		$sql .= " WHERE c.entity IN (" . getEntity( 'category') . ")";
+		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 		$sql .= " AND c.type = " . $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
@@ -1039,7 +1039,7 @@ class Categorie extends CommonObject
 		foreach($this->cats as $key => $val)
 		{
 			//print 'key='.$key.'<br>'."\n";
-			$this->build_path_from_id_categ($key,0);	// Process a branch from the root category key (this category has no parent)
+			$this->build_path_from_id_categ($key, 0);	// Process a branch from the root category key (this category has no parent)
 		}
 
         // Exclude leaf including $markafterid from tree
@@ -1052,8 +1052,8 @@ class Categorie extends CommonObject
             $keyfilter4='_'.$markafterid.'_';
             foreach($this->cats as $key => $val)
             {
-                if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
-                || preg_match('/'.$keyfilter3.'/',$val['fullpath']) || preg_match('/'.$keyfilter4.'/',$val['fullpath']))
+                if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
+                || preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']))
                 {
                     unset($this->cats[$key]);
                 }
@@ -1107,7 +1107,7 @@ class Categorie extends CommonObject
 		//print 'Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].'<br>'."\n";
 
 		// We count number of _ to have level
-		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->cats[$id_categ]['fullpath']));
+		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/[^_]/i', '', $this->cats[$id_categ]['fullpath']));
 
 		return;
 	}
@@ -1418,7 +1418,7 @@ class Categorie extends CommonObject
     		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
     		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
-    		$sql .= " AND c.entity IN (" . getEntity( 'category') . ")";
+    		$sql .= " AND c.entity IN (" . getEntity('category') . ")";
 
     		$res = $this->db->query($sql);
     		if ($res)
@@ -1470,16 +1470,16 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if (is_numeric($type)) {
 			// We want to reverse lookup
-			$map_type = array_flip( $this->MAP_ID );
+			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-			dol_syslog( get_class( $this ) . "::rechercher(): numeric types are deprecated, please use string instead",
+dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead",
 				LOG_WARNING );
 		}
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "categorie";
 		$sql .= " WHERE type = " . $this->MAP_ID[$type];
-		$sql .= " AND entity IN (" . getEntity( 'category') . ")";
+		$sql .= " AND entity IN (" . getEntity('category') . ")";
 		if ($nom)
 		{
 			if (! $exact)
@@ -1544,7 +1544,7 @@ class Categorie extends CommonObject
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$linkend;
+		if ($withpicto != 2) $result.=$link.dol_trunc(($this->ref?$this->ref:$this->label), $maxlength).$linkend;
 		return $result;
 	}
 
@@ -1562,7 +1562,7 @@ class Categorie extends CommonObject
         // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
+		$dir = $sdir .'/'. get_exdir($this->id, 2, 0, 0, $this, 'category') . $this->id ."/";
 		$dir .= "photos/";
 
 		if (! file_exists($dir))
@@ -1625,16 +1625,16 @@ class Categorie extends CommonObject
             {
     			while (($file = readdir($handle)) !== false)
     			{
-    				if (dol_is_file($dir.$file) && preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
+    				if (dol_is_file($dir.$file) && preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $dir.$file))
     				{
     					$nbphoto++;
     					$photo = $file;
 
     					// On determine nom du fichier vignette
     					$photo_vignette='';
-    					if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
+    					if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs))
     					{
-    						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
+    						$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
     					}
 
     					// Objet
@@ -1671,18 +1671,18 @@ class Categorie extends CommonObject
 
 	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
-		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier
+		$filename = preg_replace('/'.preg_quote($dir, '/').'/i', '', $file); // Nom du fichier
 
 		// On efface l'image d'origine
-		dol_delete_file($file,1);
+		dol_delete_file($file, 1);
 
 		// Si elle existe, on efface la vignette
-		if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
+		if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $filename, $regs))
 		{
-			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_small'.$regs[0];
+			$photo_vignette=preg_replace('/'.$regs[0].'/i', '', $filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
 			{
-				dol_delete_file($dirthumb.$photo_vignette,1);
+				dol_delete_file($dirthumb.$photo_vignette, 1);
 			}
 		}
 	}
@@ -1775,7 +1775,7 @@ class Categorie extends CommonObject
 	    }
 
 			// Call trigger
-			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS',$user);
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
 			if ($result < 0) {
 				$this->error = $this->db->lasterror();
 				return -1;

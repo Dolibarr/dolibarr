@@ -40,34 +40,34 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'produit|service');
+$result=restrictedArea($user, 'produit|service');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$type = GETPOST('type','int');
+$type = GETPOST('type', 'int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
-$mode = GETPOST('mode','alpha');
-$draftorder = GETPOST('draftorder','alpha');
+$mode = GETPOST('mode', 'alpha');
+$draftorder = GETPOST('draftorder', 'alpha');
 
 
-$fourn_id = GETPOST('fourn_id','int');
-$fk_supplier = GETPOST('fk_supplier','int');
-$fk_entrepot = GETPOST('fk_entrepot','int');
+$fourn_id = GETPOST('fourn_id', 'int');
+$fk_supplier = GETPOST('fk_supplier', 'int');
+$fk_entrepot = GETPOST('fk_entrepot', 'int');
 $texte = '';
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -92,14 +92,14 @@ $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';
@@ -392,7 +392,7 @@ if ($usevirtualstock)
 	}
 }
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
@@ -468,7 +468,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-	print_barre_liste(
+print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -487,7 +487,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-	print_barre_liste(
+print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -597,12 +597,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
 		if(isset($draftchecked)){
-			$result=$prod->load_stats_commande_fournisseur(0,'0,1,2,3,4');
+			$result=$prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		}else {
-			$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+			$result=$prod->load_stats_commande_fournisseur(0, '1,2,3,4');
 		}
 
-		$result=$prod->load_stats_reception(0,'4');
+		$result=$prod->load_stats_reception(0, '4');
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
 		//print $prod->stats_reception['qty'];
@@ -688,7 +688,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 }
 
 $parameters=array('sql'=>$sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print '</table>';

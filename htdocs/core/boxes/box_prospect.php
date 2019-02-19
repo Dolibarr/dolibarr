@@ -43,7 +43,7 @@ class box_prospect extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -82,7 +82,7 @@ class box_prospect extends ModeleBoxes
 
 		$thirdpartystatic=new Client($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
 		if ($user->rights->societe->lire)
 		{
@@ -134,35 +134,36 @@ class box_prospect extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspCommStatut($objp->fk_stcomm,3)),
+                        'td' => 'class="right" width="18"',
+                        'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num==0) {
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProspects"),
-                );
+                    );
+                }
 
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
-                    'maxlength'=>500,
+                    'maxlength' => 500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}

@@ -33,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 $langs->loadLangs(array("companies","members"));
 
 // Security check
-$result=restrictedArea($user,'adherent');
+$result=restrictedArea($user, 'adherent');
 
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans("Members"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("Members"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
@@ -174,7 +174,7 @@ if ($conf->use_javascript_ajax)
     $i=0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
+        $datalabels[]=array($i,$adhtype->getNomUrl(0, dol_size(16)));
         $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
         $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0);
         $dataval['uptodate'][]=array($i,isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0);
@@ -234,7 +234,7 @@ if ($result)
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
-        $year=dol_print_date($db->jdate($objp->dateh),"%Y");
+        $year=dol_print_date($db->jdate($objp->dateh), "%Y");
         $Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->subscription;
         $Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
         $tot+=$objp->subscription;
@@ -259,7 +259,7 @@ foreach ($Total as $key=>$value)
     print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
     print "<td class=\"right\">".$Number[$key]."</td>";
     print "<td class=\"right\">".price($value)."</td>";
-    print "<td class=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
+    print "<td class=\"right\">".price(price2num($value/$Number[$key], 'MT'))."</td>";
     print "</tr>\n";
 }
 
@@ -268,7 +268,7 @@ print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print "<td class=\"right\">".$numb."</td>";
 print '<td class="right">'.price($tot)."</td>";
-print "<td class=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
+print "<td class=\"right\">".price(price2num($numb>0?($tot/$numb):0, 'MT'))."</td>";
 print "</tr>\n";
 print "</table></div>";
 print "<br>\n";
@@ -287,7 +287,7 @@ $sql.= " ta.rowid as typeid, ta.libelle as label, ta.subscription";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql.= " AND a.fk_adherent_type = ta.rowid";
-$sql.= $db->order("a.tms","DESC");
+$sql.= $db->order("a.tms", "DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
@@ -296,7 +296,7 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastMembersModified",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastMembersModified", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -322,10 +322,10 @@ if ($resql)
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
 			$statictype->label=$obj->label;
-			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
-			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
-			print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
+			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -350,7 +350,7 @@ $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_sta
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql.= " AND c.fk_adherent = a.rowid";
-$sql.= $db->order("c.tms","DESC");
+$sql.= $db->order("c.tms", "DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
@@ -359,7 +359,7 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</th></tr>';
+	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -383,11 +383,11 @@ if ($resql)
 			}
 			$staticmember->ref=$staticmember->getFullName($langs);
 			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
-			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
+			print '<td>'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
+			print '<td>'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
 			print '<td class="right">'.price($obj->subscription).'</td>';
 			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '<td class="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec),'dayhour').'</td>';
+			print '<td class="right">'.dol_print_date($db->jdate($obj->datem?$obj->datem:$obj->datec), 'dayhour').'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -416,18 +416,18 @@ foreach ($AdherentType as $key => $adhtype)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
-	print '<td class="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->subscription,0,3).'</td>';
-	print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->subscription,0,3).'</td>';
-	print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->subscription,$now,3).'</td>';
-	print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->subscription,0,3).'</td>';
+	print '<td class="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
+	print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
+	print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
+	print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
 	print "</tr>\n";
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-print '<td class="liste_total" class="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->subscription,0,3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->subscription,0,3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->subscription,$now,3).'</td>';
-print '<td class="liste_total" class="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->subscription,0,3).'</td>';
+print '<td class="liste_total right">'.$SommeA.' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
+print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
 print '</tr>';
 
 print "</table>\n";

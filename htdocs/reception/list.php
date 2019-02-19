@@ -39,14 +39,14 @@ $langs->load("deliveries");
 $langs->load('companies');
 $langs->load('bills');
 
-$socid=GETPOST('socid','int');
-$massaction=GETPOST('massaction','alpha');
+$socid=GETPOST('socid', 'int');
+$massaction=GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 // Security check
-$receptionid = GETPOST('id','int');
+$receptionid = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'reception',$receptionid,'');
+$result = restrictedArea($user, 'reception', $receptionid, '');
 
 $diroutputmassaction=$conf->reception->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -54,19 +54,19 @@ $search_ref_rcp = GETPOST("search_ref_rcp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_ref_supplier = GETPOST('search_ref_supplier');
 $search_company = GETPOST("search_company");
-$search_town=GETPOST('search_town','alpha');
-$search_zip=GETPOST('search_zip','alpha');
+$search_town=GETPOST('search_town', 'alpha');
+$search_zip=GETPOST('search_zip', 'alpha');
 $search_state=trim(GETPOST("search_state"));
-$search_country=GETPOST("search_country",'int');
-$search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$search_billed=GETPOST("search_billed",'int');
+$search_country=GETPOST("search_country", 'int');
+$search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
+$search_billed=GETPOST("search_billed", 'int');
 $sall = GETPOST('sall', 'alphanohtml');
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -85,7 +85,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('reception');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -130,13 +130,13 @@ if (GETPOST('cancel')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction') && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_ref_supplier='';
     $search_ref_rcp='';
@@ -157,7 +157,7 @@ if (empty($reshook))
 {
 	if ($massaction == 'confirm_createbills') {
 
-    	$receptions = GETPOST('toselect','array');
+    	$receptions = GETPOST('toselect', 'array');
     	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
     	$validate_invoices = GETPOST('valdate_invoices', 'int');
 
@@ -173,7 +173,7 @@ if (empty($reshook))
     		$rcp = new Reception($db);
 			 // On ne facture que les réceptions validées
     		if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != 1){
-				$errors[]=$langs->trans('StatusMustBeValidate',$rcp->ref);
+				$errors[]=$langs->trans('StatusMustBeValidate', $rcp->ref);
 				$error++;
 				continue;
 			}
@@ -206,7 +206,7 @@ if (empty($reshook))
     			$object->fk_project			= $rcp->fk_project;
     			$object->ref_supplier		= $rcp->ref_supplier;
 
-    			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth'),GETPOST('reday'), GETPOST('reyear'));
+    			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
     			if (empty($datefacture))
     			{
     				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
@@ -239,7 +239,7 @@ if (empty($reshook))
     		if ($object->id > 0)
     		{
 				if(!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])){ //cause function create already add object linked for facturefournisseur
-					$res = $object->add_object_linked($object->origin,$id_reception);
+					$res = $object->add_object_linked($object->origin, $id_reception);
 
 					if ($res==0)
 					{
@@ -306,7 +306,7 @@ if (empty($reshook))
 	    					{
 	    						$fk_parent_line = 0;
 	    					}
-	    					$result = $object->addline(
+        $result = $object->addline(
 	    							$desc,
 	    							$lines[$i]->subprice,
 	    							$lines[$i]->tva_tx,
@@ -331,7 +331,7 @@ if (empty($reshook))
 
 	    					);
 
-							$rcp->add_object_linked('facture_fourn_det',$result);
+							$rcp->add_object_linked('facture_fourn_det', $result);
 
 	    					if ($result > 0)
 	    					{
@@ -419,7 +419,7 @@ $formfile = new FormFile($db);
 
 
 $helpurl='EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('',$langs->trans('ListOfReceptions'),$helpurl);
+llxHeader('', $langs->trans('ListOfReceptions'), $helpurl);
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
@@ -430,7 +430,7 @@ $sql.= ' e.date_creation as date_creation, e.tms as date_update';
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields as ef on (e.rowid = ef.fk_object)";
@@ -459,8 +459,8 @@ if ($viewstatut <> '' && $viewstatut >= 0) {
 }
 if ($search_billed != '' && $search_billed >= 0) $sql.=' AND e.billed = '.$search_billed;
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
-if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
-if ($search_state) $sql.= natural_search("state.nom",$search_state);
+if ($search_zip)   $sql.= natural_search("s.zip", $search_zip);
+if ($search_state) $sql.= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_ref_rcp) $sql .= natural_search('e.ref', $search_ref_rcp);
@@ -473,7 +473,7 @@ if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 foreach ($search_array_options as $key => $val)
 {
     $crit=$val;
-    $tmpkey=preg_replace('/search_options_/','',$key);
+    $tmpkey=preg_replace('/search_options_/', '', $key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
@@ -485,7 +485,7 @@ foreach ($search_array_options as $key => $val)
 }
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $nbtotalofrecords = '';
@@ -495,8 +495,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1,$offset);
+$sql.= $db->order($sortfield, $sortorder);
+$sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 $resql=$db->query($sql);
@@ -528,7 +528,7 @@ if ($resql)
 	foreach ($search_array_options as $key => $val)
 	{
 	    $crit=$val;
-	    $tmpkey=preg_replace('/search_options_/','',$key);
+	    $tmpkey=preg_replace('/search_options_/', '', $key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 
@@ -552,7 +552,7 @@ if ($resql)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 
 	if ($massaction == 'createbills')
@@ -606,7 +606,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall);
     }
 
     $moreforfilter='';
@@ -615,7 +615,7 @@ if ($resql)
         print '<div class="liste_titre liste_titre_bydiv centpercent">';
         print $moreforfilter;
         $parameters=array('type'=>$type);
-        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         print '</div>';
     }
@@ -666,7 +666,7 @@ if ($resql)
     if (! empty($arrayfields['country.code_iso']['checked']))
     {
         print '<td class="liste_titre" align="center">';
-    	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
+    	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
     	print '</td>';
     }
 	// Company type
@@ -706,7 +706,7 @@ if ($resql)
 	            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
 	            {
 	                $crit=$val;
-	                $tmpkey=preg_replace('/search_options_/','',$key);
+	                $tmpkey=preg_replace('/search_options_/', '', $key);
 	                $searchclass='';
 	                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
 	                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
@@ -718,7 +718,7 @@ if ($resql)
 	}
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['e.datec']['checked']))
@@ -736,7 +736,7 @@ if ($resql)
 	if (! empty($arrayfields['e.fk_statut']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-	    print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusReceptionDraftShort'),'1'=>$langs->trans('StatusReceptionValidatedShort'),'2'=>$langs->trans('StatusReceptionProcessedShort')),$viewstatut,1);
+	    print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusReceptionDraftShort'),'1'=>$langs->trans('StatusReceptionValidatedShort'),'2'=>$langs->trans('StatusReceptionProcessedShort')), $viewstatut, 1);
 	    print '</td>';
 	}
 	// Status billed
@@ -754,17 +754,17 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['e.ref']['checked']))            print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['e.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['e.ref_supplier']['label'], $_SERVER["PHP_SELF"],"e.ref_supplier","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"],"l.ref","",$param, '',$sortfield,$sortorder);
-	if (! empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"],"l.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['e.ref']['checked']))            print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['e.ref_supplier']['label'], $_SERVER["PHP_SELF"], "e.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, 'align="left"', $sortfield, $sortorder);
+	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, 'align="center"', $sortfield, $sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -775,24 +775,24 @@ if ($resql)
 	            $align=$extrafields->getAlignFlag($key);
     			$sortonfield = "ef.".$key;
     			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+    			print_liste_field_titre($extralabels[$key], $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder);
 	        }
 	    }
 	}
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['e.tms']['checked']))    print_liste_field_titre($arrayfields['e.tms']['label'],$_SERVER["PHP_SELF"],"e.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['e.fk_statut']['checked'])) print_liste_field_titre($arrayfields['e.fk_statut']['label'],$_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['e.billed']['checked'])) print_liste_field_titre($arrayfields['e.billed']['label'],$_SERVER["PHP_SELF"],"e.billed","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'], $_SERVER["PHP_SELF"], "e.date_creation", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.tms']['checked']))    print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.fk_statut']['checked'])) print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['e.billed']['checked'])) print_liste_field_titre($arrayfields['e.billed']['label'], $_SERVER["PHP_SELF"], "e.billed", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 	$i=0;
 	$totalarray=array();
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -863,7 +863,7 @@ if ($resql)
 		if (! empty($arrayfields['country.code_iso']['checked']))
 		{
 		    print '<td align="center">';
-		    $tmparray=getCountry($obj->fk_pays,'all');
+		    $tmparray=getCountry($obj->fk_pays, 'all');
 		    print $tmparray['label'];
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
@@ -882,7 +882,7 @@ if ($resql)
 		if (! empty($arrayfields['e.date_delivery']['checked']))
 		{
     		print '<td align="center">';
-    		print dol_print_date($db->jdate($obj->date_livraison),"day");
+    		print dol_print_date($db->jdate($obj->date_livraison), "day");
     		/*$now = time();
     		if ( ($now - $db->jdate($obj->date_reception)) > $conf->warnings->lim && $obj->statutid == 1 )
     		{
@@ -892,7 +892,7 @@ if ($resql)
 
 		if (! empty($arrayfields['l.ref']['checked']) || ! empty($arrayfields['l.date_delivery']['checked']))
         {
-		    $reception->fetchObjectLinked($reception->id,$reception->element);
+		    $reception->fetchObjectLinked($reception->id, $reception->element);
             $receiving='';
             if (count($reception->linkedObjects['delivery']) > 0) $receiving=reset($reception->linkedObjects['delivery']);
 
@@ -908,7 +908,7 @@ if ($resql)
             {
                 // Date received
             	print '<td align="center">';
-    			print dol_print_date($db->jdate($obj->date_reception),"day");
+    			print dol_print_date($db->jdate($obj->date_reception), "day");
     			print '</td>'."\n";
             }
 		}
@@ -933,7 +933,7 @@ if ($resql)
 		}
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
 		if (! empty($arrayfields['e.datec']['checked']))
@@ -954,7 +954,7 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['e.fk_statut']['checked']))
 		{
-		    print '<td align="right" class="nowrap">'.$reception->LibStatut($obj->fk_statut,5).'</td>';
+		    print '<td align="right" class="nowrap">'.$reception->LibStatut($obj->fk_statut, 5).'</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
 		// Billed

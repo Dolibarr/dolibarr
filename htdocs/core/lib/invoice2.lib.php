@@ -54,11 +54,11 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sqlwhere='';
 	$sqlorder='';
-	if (in_array('all',$filter))
+	if (in_array('all', $filter))
 	{
 		$sqlorder = " ORDER BY f.ref ASC";
 	}
-	if (in_array('date',$filter))
+	if (in_array('date', $filter))
 	{
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 		else $sqlwhere.=" AND";
@@ -67,7 +67,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		$sqlwhere.= " AND f.datef <= '".$db->idate($datebeforedate)."'";
 		$sqlorder = " ORDER BY f.datef ASC";
 	}
-	if (in_array('nopayment',$filter))
+	if (in_array('nopayment', $filter))
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
@@ -75,56 +75,56 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		$sqlwhere.= " f.fk_statut > 0";
 		$sqlwhere.= " AND pf.fk_paiement IS NULL";
 	}
-	if (in_array('payments',$filter) || in_array('bank',$filter))
+	if (in_array('payments', $filter) || in_array('bank', $filter))
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-		if (in_array('bank',$filter)) $sql.= ", ".MAIN_DB_PREFIX."bank as b";
+		if (in_array('bank', $filter)) $sql.= ", ".MAIN_DB_PREFIX."bank as b";
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 		else $sqlwhere.=" AND";
 		$sqlwhere.= " f.fk_statut > 0";
 		$sqlwhere.= " AND f.rowid = pf.fk_facture";
 		$sqlwhere.= " AND pf.fk_paiement = p.rowid";
-		if (in_array('payments',$filter))
+		if (in_array('payments', $filter))
 		{
 			$sqlwhere.= " AND p.datep >= '".$db->idate($paymentdateafter)."'";
 			$sqlwhere.= " AND p.datep <= '".$db->idate($paymentdatebefore)."'";
 		}
-		if (in_array('bank',$filter))
+		if (in_array('bank', $filter))
 		{
 			$sqlwhere.= " AND p.fk_bank = b.rowid";
 			$sqlwhere.= " AND b.fk_account = ".$paymentbankid;
 		}
 		$sqlorder = " ORDER BY p.datep ASC";
 	}
-	if (in_array('nodeposit',$filter))
+	if (in_array('nodeposit', $filter))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 3';
 	}
-	if (in_array('noreplacement',$filter))
+	if (in_array('noreplacement', $filter))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 1';
 	}
-	if (in_array('nocreditnote',$filter))
+	if (in_array('nocreditnote', $filter))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 2';
 	}
-	if (in_array('excludethirdparties',$filter) && is_array($thirdpartiesid))
+	if (in_array('excludethirdparties', $filter) && is_array($thirdpartiesid))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',',$thirdpartiesid).')';
+	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
 	}
-	if (in_array('onlythirdparties',$filter) && is_array($thirdpartiesid))
+	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc IN ('.join(',',$thirdpartiesid).')';
+	    $sqlwhere.=' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
@@ -168,7 +168,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					{
 						if ($outputlangs->defaultlang != $newlangid)
 						{
-							$outputlangs = new Translate("",$conf);
+							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlangid);
 						}
 					}
@@ -203,8 +203,8 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	        $page_hauteur = $formatarray['height'];
 	        $format = array($page_largeur,$page_hauteur);
 
-	        if ($usestdout) print "Using output PDF format ".join('x',$format)."\n";
-	        else dol_syslog("Using output PDF format ".join('x',$format), LOG_ERR);
+	        if ($usestdout) print "Using output PDF format ".join('x', $format)."\n";
+	        else dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
 
 
 	        // Now, build a merged files with all files in $files array
@@ -250,7 +250,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			if (! $error && $pagecount)
 			{
-				$pdf->Output($file,'F');
+				$pdf->Output($file, 'F');
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 			}

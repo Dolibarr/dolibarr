@@ -41,7 +41,7 @@ class box_commandes extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
     var $info_box_head = array();
@@ -82,7 +82,7 @@ class box_commandes extends ModeleBoxes
         $societestatic = new Societe($db);
         $userstatic = new User($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
         if ($user->rights->commande->lire)
         {
@@ -161,18 +161,18 @@ class box_commandes extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $commandestatic->LibStatut($objp->fk_statut, $objp->facture, 3),
                     );
 
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
 
                 $db->free($result);
             } else {
@@ -184,7 +184,7 @@ class box_commandes extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

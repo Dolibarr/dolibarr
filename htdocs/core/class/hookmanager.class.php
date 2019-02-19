@@ -89,7 +89,7 @@ class HookManager
         // For backward compatibility
 		if (! is_array($arraycontext)) $arraycontext=array($arraycontext);
 
-		$this->contextarray=array_unique(array_merge($arraycontext,$this->contextarray));    // All contexts are concatenated
+		$this->contextarray=array_unique(array_merge($arraycontext, $this->contextarray));    // All contexts are concatenated
 
 		foreach($conf->modules_parts['hooks'] as $module => $hooks)	// Loop on each module that brings hooks
 		{
@@ -99,7 +99,7 @@ class HookManager
 			foreach($arraycontext as $context)
 			{
 				if (is_array($hooks)) $arrayhooks=$hooks;    // New system
-				else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
+				else $arrayhooks=explode(':', $hooks);        // Old system (for backward compatibility)
 
 				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks))    // We instantiate action class only if initialized hook is handled by module
 				{
@@ -140,12 +140,12 @@ class HookManager
 	{
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
-        $parameters['context']=join(':',$this->contextarray);
+        $parameters['context']=join(':', $this->contextarray);
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
-		if (in_array(
+if (in_array(
 			$method,
 			array(
 				'addCalendarChoice',
@@ -225,10 +225,10 @@ class HookManager
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
                     // test to avoid running twice a hook, when a module implements several active contexts
-                    if (in_array($module,$modulealreadyexecuted)) continue;
+                    if (in_array($module, $modulealreadyexecuted)) continue;
 
                 	// jump to next module/class if method does not exist
-                    if (! method_exists($actionclassinstance,$method)) continue;
+                    if (! method_exists($actionclassinstance, $method)) continue;
 
                     $this->resNbOfHooks++;
 
@@ -250,7 +250,7 @@ class HookManager
                     	{
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-                    		dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",",$this->errors)), LOG_ERR);
+                    		dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",", $this->errors)), LOG_ERR);
                     	}
 
                     	if (isset($actionclassinstance->results) && is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
@@ -265,8 +265,14 @@ class HookManager
                     	//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
                     	$resaction = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 
-                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray=array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
+                    	if (is_numeric($resaction) && $resaction < 0)
+                    	{
+                    	    $error++;
+                    	    $this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
+                    	    dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",", $this->errors)), LOG_ERR);
+                    	}
                     	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
                     	if (! is_array($resaction) && ! is_numeric($resaction))
                     	{

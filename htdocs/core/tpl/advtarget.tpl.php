@@ -69,7 +69,7 @@ print '<script type="text/javascript" language="javascript">
 		} else {
 			$default_template = $advTarget->id;
 		}
-		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template,0,$advTarget->type_element);
+		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template, 0, $advTarget->type_element);
 		print '<input type="button" name="loadfilter" id="loadfilter" value="' . $langs->trans('AdvTgtLoadFilter') . '" class="butAction"/>';
 		print '<input type="button" name="deletefilter" id="deletefilter" value="' . $langs->trans('AdvTgtDeleteFilter') . '" class="butAction"/>';
 		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';
@@ -146,7 +146,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('cust_status', array (
+print $formadvtargetemaling->advMultiselectarray('cust_status', array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
 		), $array_query['cust_status']);
@@ -262,7 +262,7 @@ print '<script type="text/javascript" language="javascript">
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label('societe');
-			foreach ( $extralabels as $key => $val ) {
+			foreach ($extralabels as $key => $val) {
 				if ($key != 'ts_nameextra' && $key != 'ts_payeur') {
 					print '<tr><td>' . $extrafields->attribute_label[$key];
 					if (! empty($array_query['options_' . $key]) || (is_array($array_query['options_' . $key]) && count($array_query['options_' . $key]) > 0)) {
@@ -289,7 +289,7 @@ print '<script type="text/javascript" language="javascript">
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-						print $form->selectarray('options_' . $key, array (
+    print $form->selectarray('options_' . $key, array (
 								'' => '',
 								'1' => $langs->trans('Yes'),
 								'0' => $langs->trans('No')
@@ -341,7 +341,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('contact_status', array (
+print $formadvtargetemaling->advMultiselectarray('contact_status', array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
 		), $array_query['contact_status']);
@@ -390,7 +390,7 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $form->selectarray('contact_no_email', array (
+print $form->selectarray('contact_no_email', array (
 				'' => '',
 				'1' => $langs->trans('Yes'),
 				'0' => $langs->trans('No')
@@ -451,7 +451,7 @@ print '<script type="text/javascript" language="javascript">
             }
 
 
-			foreach ( $extralabels as $key => $val ) {
+			foreach ($extralabels as $key => $val) {
 
 				print '<tr><td>' . $extrafields->attribute_label[$key];
 				if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
@@ -478,7 +478,7 @@ print '<script type="text/javascript" language="javascript">
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-					print $form->selectarray('options_' . $key . '_cnct', array (
+    print $form->selectarray('options_' . $key . '_cnct', array (
 							'' => '',
 							'1' => $langs->trans('Yes'),
 							'0' => $langs->trans('No')

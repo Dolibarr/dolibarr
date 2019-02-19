@@ -64,17 +64,17 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
-		dol_syslog ( get_class( $this ) . '::multiselectProspectionStatus sql=' . $sql, LOG_DEBUG );
-		$resql = $this->db->query( $sql );
+		dol_syslog (get_class($this) . '::multiselectProspectionStatus sql=' . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $this->db->num_rows( $resql );
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ( $i < $num ) {
-				$obj = $this->db->fetch_object( $resql );
+				$obj = $this->db->fetch_object($resql);
 
-				$level = $langs->trans( $obj->code );
+				$level = $langs->trans($obj->code);
 				if ($level == $obj->code)
-					$level = $langs->trans( $obj->label );
+					$level = $langs->trans($obj->label);
 				$options_array[$obj->code] = $level;
 
 				$i ++;
@@ -120,10 +120,10 @@ class FormAdvTargetEmailing extends Form
 				$foundselected = false;
 
 				while ($i < $num) {
-					$obj = $this->db->fetch_object ( $resql );
+					$obj = $this->db->fetch_object ($resql);
 					$countryArray [$i] ['rowid'] = $obj->rowid;
 					$countryArray [$i] ['code_iso'] = $obj->code_iso;
-					$countryArray [$i] ['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country" . $obj->code_iso ) != "Country" . $obj->code_iso ? $langs->transnoentitiesnoconv ( "Country" . $obj->code_iso ) : ($obj->label != '-' ? $obj->label : ''));
+					$countryArray [$i] ['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country" . $obj->code_iso) != "Country" . $obj->code_iso ? $langs->transnoentitiesnoconv ("Country" . $obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
 					$label[$i] = $countryArray[$i]['label'];
 					$i ++;
 				}
@@ -166,25 +166,25 @@ class FormAdvTargetEmailing extends Form
 		$sql_usr .= " WHERE u2.entity IN (0," . $conf->entity . ")";
 		$sql_usr .= " AND u2.rowid = sc.fk_user ";
 
-		if (! empty ( $conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX ))
+		if (! empty ($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX))
 			$sql_usr .= " AND u2.statut<>0 ";
 		$sql_usr .= " ORDER BY name ASC";
 		// print $sql_usr;exit;
 
-		$resql_usr = $this->db->query ( $sql_usr );
+		$resql_usr = $this->db->query ($sql_usr);
 		if ($resql_usr) {
-			while ( $obj_usr = $this->db->fetch_object ( $resql_usr ) ) {
+			while ( $obj_usr = $this->db->fetch_object ($resql_usr) ) {
 
 				$label = $obj_usr->firstname . " " . $obj_usr->name . " (" . $obj_usr->login . ')';
 
 				$options_array [$obj_usr->rowid] = $label;
 			}
-			$this->db->free ( $resql_usr );
+			$this->db->free ($resql_usr);
 		} else {
-			dol_print_error ( $this->db );
+			dol_print_error ($this->db);
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray ($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -201,7 +201,7 @@ class FormAdvTargetEmailing extends Form
 
 		$options_array = array ();
 
-		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
 		foreach ($langs_available as $key => $value)
 		{
@@ -227,8 +227,8 @@ class FormAdvTargetEmailing extends Form
 
 		if (is_array($sqlqueryparam))
 		{
-			$param_list = array_keys ( $sqlqueryparam );
-			$InfoFieldList = explode ( ":", $param_list [0] );
+			$param_list = array_keys ($sqlqueryparam);
+			$InfoFieldList = explode (":", $param_list [0]);
 
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
@@ -237,8 +237,8 @@ class FormAdvTargetEmailing extends Form
 
 			$keyList = 'rowid';
 
-			if (count ( $InfoFieldList ) >= 3) {
-				if (strpos ( $InfoFieldList [3], 'extra.' ) !== false) {
+			if (count ($InfoFieldList) >= 3) {
+				if (strpos ($InfoFieldList [3], 'extra.') !== false) {
 					$keyList = 'main.' . $InfoFieldList [2] . ' as rowid';
 				} else {
 					$keyList = $InfoFieldList [2] . ' as rowid';
@@ -247,10 +247,10 @@ class FormAdvTargetEmailing extends Form
 
 			$sql = 'SELECT ' . $keyList . ', ' . $InfoFieldList [1];
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList [0];
-			if (! empty ( $InfoFieldList [3] )) {
+			if (! empty ($InfoFieldList [3])) {
 
 				// We have to join on extrafield table
-				if (strpos ( $InfoFieldList [3], 'extra' ) !== false) {
+				if (strpos ($InfoFieldList [3], 'extra') !== false) {
 					$sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList [0] . '_extrafields as extra';
 					$sql .= ' WHERE  extra.fk_object=main.' . $InfoFieldList [2] . ' AND ' . $InfoFieldList [3];
 				} else {
@@ -262,7 +262,7 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this) . "::".__METHOD__,LOG_DEBUG);
+			dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 
@@ -270,13 +270,13 @@ class FormAdvTargetEmailing extends Form
 				$i = 0;
 				if ($num) {
 					while ( $i < $num ) {
-						$obj = $this->db->fetch_object ( $resql );
-						$labeltoshow = dol_trunc ( $obj->$InfoFieldList [1], 90 );
+						$obj = $this->db->fetch_object ($resql);
+						$labeltoshow = dol_trunc ($obj->$InfoFieldList [1], 90);
 						$options_array[$obj->rowid]=$labeltoshow;
 						$i ++;
 					}
 				}
-				$this->db->free ( $resql );
+				$this->db->free ($resql);
 			}
 		}
 
@@ -301,7 +301,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -328,7 +328,7 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray ($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -345,7 +345,7 @@ class FormAdvTargetEmailing extends Form
 		global $conf, $langs;
 
 		$form=new Form($this->db);
-		$return = $form->multiselectarray($htmlname, $options_array, $selected_array,0,0,'',0,295);
+		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
 	}
 
@@ -358,7 +358,7 @@ class FormAdvTargetEmailing extends Form
 	 */
 	function multiselectCustomerCategories($htmlname = 'cust_cat', $selected_array = array())
 	{
-		return $this->multiselectCategories($htmlname,$selected_array,2);
+		return $this->multiselectCategories($htmlname, $selected_array, 2);
 	}
 
 	/**
@@ -370,7 +370,7 @@ class FormAdvTargetEmailing extends Form
 	 */
 	function multiselectContactCategories($htmlname = 'contact_cat', $selected_array = array())
 	{
-		return $this->multiselectCategories($htmlname,$selected_array,4);
+		return $this->multiselectCategories($htmlname, $selected_array, 4);
 	}
 
 	/**
@@ -391,7 +391,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE type=".$type;
 
-		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -415,7 +415,7 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 
-		return $this->advMultiselectarray( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -438,19 +438,19 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " WHERE type_element='$type_element'";
 		$sql .= " ORDER BY c.name";
 
-		dol_syslog ( get_class ( $this ) . "::".__METHOD__, LOG_DEBUG );
-		$resql = $this->db->query ( $sql );
+		dol_syslog (get_class ($this) . "::".__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query ($sql);
 		if ($resql) {
 
 
 			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
 			if ($showempty)
 				$out .= '<option value=""></option>';
-			$num = $this->db->num_rows ( $resql );
+			$num = $this->db->num_rows ($resql);
 			$i = 0;
 			if ($num) {
 				while ( $i < $num ) {
-					$obj = $this->db->fetch_object ( $resql );
+					$obj = $this->db->fetch_object ($resql);
 					$label = $obj->name;
 					if (empty($label)) {
 						$label=$obj->fk_element;
@@ -466,9 +466,9 @@ class FormAdvTargetEmailing extends Form
 			}
 			$out .= '</select>';
 		} else {
-			dol_print_error ( $this->db );
+			dol_print_error ($this->db);
 		}
-		$this->db->free ( $resql );
+		$this->db->free ($resql);
 		return $out;
 	}
 }

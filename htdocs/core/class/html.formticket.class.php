@@ -157,12 +157,12 @@ class FormTicket
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
-        print '<table class="border">';
+        print '<table class="border centpercent">';
 
         if ($this->withref) {
             // Ref
             $defaultref = $ticketstat->getDefaultRef();
-            print '<tr><td class="titlefield"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
+            print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
         }
 
         // FK_USER_CREATE
@@ -249,6 +249,7 @@ class FormTicket
                 // If no socid, set to -1 to avoid full contacts list
                 $selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
                 $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+                print ' ';
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {
@@ -277,7 +278,7 @@ class FormTicket
             dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
             $classname = ucfirst($subelement);
             $objectsrc = new $classname($this->db);
-            $objectsrc->fetch(GETPOST('originid','int'));
+            $objectsrc->fetch(GETPOST('originid', 'int'));
 
             if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
                 $objectsrc->fetch_lines();
@@ -293,14 +294,14 @@ class FormTicket
         print $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
         print '</td></tr>';
 
-        // Category
-        print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketCategory") . '</span></label></td><td>';
-        print $this->selectCategoriesTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
-        print '</td></tr>';
-
         // Severity
         print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">' . $langs->trans("TicketSeverity") . '</span></label></td><td>';
         print $this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
+        print '</td></tr>';
+
+        // Category
+        print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketCategory") . '</span></label></td><td>';
+        print $this->selectAnalyticCodesTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
         print '</td></tr>';
 
         // Notify thirdparty at creation
@@ -338,7 +339,7 @@ class FormTicket
         }
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
         $uselocalbrowser = true;
-        $doleditor = new DolEditor('message', GETPOST('message', 'alpha'), '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser);
+        $doleditor = new DolEditor('message', GETPOST('message', 'alpha'), '100%', 230, 'dolibarr_details', 'In', true, $uselocalbrowser);
         $doleditor->Create();
         print '</td></tr>';
 
@@ -519,7 +520,7 @@ class FormTicket
     }
 
     /**
-     *      Return html list of ticket categories
+     *      Return html list of ticket anaytic codes
      *
      *      @param  string $selected    Id categorie pre-selectionnée
      *      @param  string $htmlname    Nom de la zone select
@@ -531,7 +532,7 @@ class FormTicket
      *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
+    public function selectAnalyticCodesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
     {
         global $langs, $user;
 

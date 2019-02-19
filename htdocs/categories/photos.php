@@ -36,17 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 if ($id == "")
 {
-    dol_print_error('','Missing parameter id');
+    dol_print_error('', 'Missing parameter id');
     exit();
 }
 
@@ -77,8 +77,8 @@ if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sen
             {
                 if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
                 {
-                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles' ) );
-                    unset($file['name'][$i],$file['type'][$i],$file['tmp_name'][$i],$file['error'][$i],$file['size'][$i]);
+                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+                    unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
                 }
             }
         }
@@ -104,7 +104,7 @@ if ($action == 'addthumb' && $_GET["file"])
  * View
  */
 
-llxHeader("","",$langs->trans("Categories"));
+llxHeader("", "", $langs->trans("Categories"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -121,7 +121,7 @@ if ($object->id)
 	elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
 	else                                        $title=$langs->trans("Category");
 
-	$head = categories_prepare_head($object,$type);
+	$head = categories_prepare_head($object, $type);
 
 
 	dol_fiche_head($head, 'photos', $title, -1, 'category');
@@ -215,7 +215,7 @@ if ($object->id)
 		$maxWidth = 160;
 		$maxHeight = 120;
 
-		$pdir = get_exdir($object->id,2,0,0,$object,'category') . $object->id ."/photos/";
+		$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';
@@ -256,9 +256,9 @@ if ($object->id)
 			print '<br>';
 
 			// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
+			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 			}
 			if ($user->rights->categorie->creer)
 			{

@@ -124,9 +124,9 @@ class BlockedLogAuthority
 
 		if(strlen($block)!=64) return false;
 
-		$blocks = str_split($this->blockchain,64);
+		$blocks = str_split($this->blockchain, 64);
 
-		if(!in_array($block,$blocks)) {
+		if(!in_array($block, $blocks)) {
 			return true;
 		}
 		else{
@@ -161,7 +161,7 @@ class BlockedLogAuthority
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
 		if ($id) $sql.= " WHERE b.rowid = ". $id;
-		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape( $signature ) ."'" ;
+		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape($signature) ."'" ;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -321,7 +321,7 @@ class BlockedLogAuthority
 			}
 			else {
 
-				$this->error = $langs->trans('ImpossibleToContactAuthority ',$url);
+				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
 				return -1;
 			}
 		}

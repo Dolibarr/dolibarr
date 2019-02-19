@@ -36,11 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$cancel=GETPOST('cancel','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
 $key=GETPOST('key');
 $parent=GETPOST('parent');
 
@@ -48,13 +48,13 @@ $parent=GETPOST('parent');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $object = new Product($db);
 $objectid=0;
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id,$ref);
+	$result = $object->fetch($id, $ref);
 	$objectid=$object->id;
 	$id=$object->id;
 }
@@ -119,7 +119,7 @@ elseif($action==='save_composed_product')
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
-			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
+			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
 			else $object->del_sousproduit($id, $id_product);
 		}
 		setEventMessages('RecordSaved', null);
@@ -175,7 +175,7 @@ if ($action == 'search')
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
-$shortlabel = dol_trunc($object->label,16);
+$shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
@@ -205,7 +205,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
@@ -264,7 +264,7 @@ if ($id > 0 || ! empty($ref))
 		$prods_arbo=$object->get_arbo_each_prod();
 
 		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
-		$prodschild = $object->getChildsArbo($id,1);
+		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts=count($prodschild);		// This include only first level of childs
 
 
@@ -273,7 +273,7 @@ if ($id > 0 || ! empty($ref))
 
 		//if (count($prodsfather) > 0)
 		//{
-			print load_fiche_titre($langs->trans("ProductParentList"),'','');
+			print load_fiche_titre($langs->trans("ProductParentList"), '', '');
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ParentProducts').'</td>';
@@ -296,7 +296,7 @@ if ($id > 0 || ! empty($ref))
 					$class=($class=='impair')?'pair':'impair';
 					print '<tr class="'.$class.'">';
 
-					print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 					print '<td>'.$productstatic->label.'</td>';
 					print '<td>'.$value['qty'].'</td>';
 					print '</tr>';
@@ -322,7 +322,7 @@ if ($id > 0 || ! empty($ref))
 		//if (count($prods_arbo) > 0)
 		//{
 			$atleastonenotdefined=0;
-			print load_fiche_titre($langs->trans("ProductAssociationList"),'','');
+			print load_fiche_titre($langs->trans("ProductAssociationList"), '', '');
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
@@ -357,7 +357,7 @@ if ($id > 0 || ! empty($ref))
 						$notdefined=0;
 						$nb_of_subproduct = $value['nb'];
 
-						print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+						print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 						print '<td>'.$productstatic->label.'</td>';
 
 						// Best buying price
@@ -365,7 +365,7 @@ if ($id > 0 || ! empty($ref))
 						if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 						{
 							print $langs->trans("BuyingPriceMinShort").': ';
-					    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
+					    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0, 0);
 					    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
 						}
 						print '</td>';
@@ -379,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 						$total+=$totalline;
 
 						print '<td align="right">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
 						print '</td>';
 
 						// Best selling price
@@ -395,7 +395,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '<td align="right" colspan="2">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : ''));
-						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency);
+						if (is_numeric($pricesell)) print price($pricesell, '', '', 0, 0, -1, $conf->currency);
 						else print $langs->trans($pricesell);
 						print '</td>';
 
@@ -427,7 +427,7 @@ if ($id > 0 || ! empty($ref))
 						$productstatic->ref=$value['ref'];
 						print '<td>';
 						for ($i=0; $i < $value['level']; $i++)	print ' &nbsp; &nbsp; ';	// Add indentation
-						print $productstatic->getNomUrl(1,'composition').'</td>';
+						print $productstatic->getNomUrl(1, 'composition').'</td>';
 						print '<td>'.$productstatic->label.'</td>';
 
 						// Best buying price
@@ -456,7 +456,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td class="liste_total" align="right">';
 				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
-				print ($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency));
+				print ($atleastonenotdefined?'':price($total, '', '', 0, 0, -1, $conf->currency));
 				print '</td>';
 
 				// Minimum selling price
@@ -466,7 +466,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td class="liste_total" align="right">';
 				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
-				print ($atleastonenotdefined?'':price($totalsell,'','',0,0,-1,$conf->currency));
+				print ($atleastonenotdefined?'':price($totalsell, '', '', 0, 0, -1, $conf->currency));
 				print '</td>';
 
 				// Stock
@@ -507,7 +507,7 @@ if ($id > 0 || ! empty($ref))
 			$rowspan=1;
 			if (! empty($conf->categorie->enabled)) $rowspan++;
 
-	        print load_fiche_titre($langs->trans("ProductToAddSearch"),'','');
+	        print load_fiche_titre($langs->trans("ProductToAddSearch"), '', '');
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -593,7 +593,7 @@ if ($id > 0 || ! empty($ref))
 						$productstatic->type=$objp->type;
 						$productstatic->entity=$objp->entity;
 
-						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
+						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow=$objp->label;
 						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) $labeltoshow=$objp->labelm;
 

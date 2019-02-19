@@ -27,11 +27,11 @@
  * Function to return number in text.
  *
  *
- * @param	float 	$num			Number to convert
- * @param	Lang	$langs			Language
- * @param	boolean	$currency		0=number to translate | 1=currency to translate
- * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
- * @return 	string  				Text of the number
+ * @param	float       $num			Number to convert
+ * @param	Translate   $langs			Language
+ * @param	boolean     $currency		0=number to translate | 1=currency to translate
+ * @param	boolean     $centimes		0=no centimes | 1=centimes to translate
+ * @return 	string|false			    Text of the number
  */
 function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 {
@@ -44,7 +44,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 	if($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
-	$TNum = explode('.',$num);
+	$TNum = explode('.', $num);
     $num = (int) $TNum[0];
     $words = array();
     $list1 = array(
@@ -151,7 +151,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	if ($numero >= 1000000000001)
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
-	$strnumber = number_format ($numero,10);
+	$strnumber = number_format ($numero, 10);
 	$len=strlen($strnumber);
 	for ($i=0; $i<$len; $i++)
 	{

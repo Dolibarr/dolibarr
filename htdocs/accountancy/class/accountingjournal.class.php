@@ -153,7 +153,7 @@ class AccountingJournal extends CommonObject
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
-			foreach ( $filter as $key => $value ) {
+			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
 					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
 				} elseif ($key == 't.rowid' || $key == 't.active') {
@@ -227,7 +227,7 @@ class AccountingJournal extends CommonObject
 		if (! empty($this->code))
 			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
 		if (! empty($this->label))
-			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+			$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $langs->transnoentities($this->label);
 		if ($moretitle) $label.=' - '.$moretitle;
 
 		$linkclose='';
@@ -254,7 +254,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel) $label_link .= ' - ' . $this->label;
+		if ($withlabel) $label_link .= ' - ' . $langs->transnoentities($this->label);
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -272,7 +272,7 @@ class AccountingJournal extends CommonObject
 	 */
 	function getLibType($mode = 0)
 	{
-		return $this->LibType($this->nature,$mode);
+		return $this->LibType($this->nature, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

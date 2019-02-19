@@ -47,7 +47,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee on which to create the refund.
+     * @param string|null $id The ID of the application fee on which to create the refund.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -59,7 +59,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param string|null $id The ID of the application fee to which the refund belongs.
      * @param array|null $refundId The ID of the refund to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
@@ -72,7 +72,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param string|null $id The ID of the application fee to which the refund belongs.
      * @param array|null $refundId The ID of the refund to update.
      * @param array|null $params
      * @param array|string|null $opts
@@ -85,7 +85,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee on which to retrieve the refunds.
+     * @param string|null $id The ID of the application fee on which to retrieve the refunds.
      * @param array|null $params
      * @param array|string|null $opts
      *

@@ -61,7 +61,7 @@ class Transfer extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the transfer on which to create the reversal.
+     * @param string|null $id The ID of the transfer on which to create the reversal.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -73,7 +73,7 @@ class Transfer extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param string|null $id The ID of the transfer to which the reversal belongs.
      * @param array|null $reversalId The ID of the reversal to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
@@ -86,7 +86,7 @@ class Transfer extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param string|null $id The ID of the transfer to which the reversal belongs.
      * @param array|null $reversalId The ID of the reversal to update.
      * @param array|null $params
      * @param array|string|null $opts
@@ -99,7 +99,7 @@ class Transfer extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the transfer on which to retrieve the reversals.
+     * @param string|null $id The ID of the transfer on which to retrieve the reversals.
      * @param array|null $params
      * @param array|string|null $opts
      *

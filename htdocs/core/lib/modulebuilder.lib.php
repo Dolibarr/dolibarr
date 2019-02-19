@@ -273,7 +273,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
             	if ($val['default'] != '')
             	{
             		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
-            		elseif (preg_match('/varchar/', $type )) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		elseif (preg_match('/varchar/', $type)) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
             		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
             	}
             }
@@ -316,7 +316,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
             }
             if (! empty($val['foreignkey']))
             {
-            	$tmp=explode('.',$val['foreignkey']);
+            	$tmp=explode('.', $val['foreignkey']);
             	if (! empty($tmp[0]) && ! empty($tmp[1]))
             	{
             		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";

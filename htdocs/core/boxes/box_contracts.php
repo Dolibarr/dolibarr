@@ -76,7 +76,7 @@ class box_contracts extends ModeleBoxes
 
     	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
     	if ($user->rights->contrat->lire)
     	{
@@ -147,7 +147,7 @@ class box_contracts extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datec,'day'),
+                        'text' => dol_print_date($datec, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -161,7 +161,7 @@ class box_contracts extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center opacitymedium"',
+                        'td' => 'class="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
@@ -175,7 +175,7 @@ class box_contracts extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

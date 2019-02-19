@@ -65,7 +65,7 @@ if (!empty($object->comments))
 		$userstatic->fetch($fk_user);
 
 		if(empty($TColors[$fk_user])) {
-			$bgcolor = random_color(180,240);
+			$bgcolor = random_color(180, 240);
 			if(!empty($userstatic->color)) {
 				$bgcolor = $userstatic->color;
 			}
@@ -84,7 +84,7 @@ if (!empty($object->comments))
 			print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
 		}
 		print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
-		print $langs->trans('Date').' : '.dol_print_date($comment->datec,'dayhoursec');
+		print $langs->trans('Date').' : '.dol_print_date($comment->datec, 'dayhoursec');
 		print '</div>'; // End comment-info
 
 		print '<div class="comment-cell comment-right">';

@@ -39,7 +39,7 @@ class box_factures extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -81,10 +81,10 @@ class box_factures extends ModeleBoxes
 
         $langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills",$max);
+		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text)
+			'text' => $text,
+			'limit'=> dol_strlen($text)
 		);
 
         if ($user->rights->facture->lire) {
@@ -145,7 +145,7 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $this->info_box_contents[$line][] = array(
@@ -168,12 +168,12 @@ class box_factures extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
                     );
 
                     $line++;
@@ -181,7 +181,7 @@ class box_factures extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedInvoices"),
                     );
 
@@ -195,7 +195,7 @@ class box_factures extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

@@ -25,7 +25,6 @@ namespace Stripe\Issuing;
  * @property int $pending_held_amount
  * @property mixed $request_history
  * @property string $status
- * @property mixed $request_history
  * @property \Stripe\Collection $transactions
  * @property mixed $verification_data
  *

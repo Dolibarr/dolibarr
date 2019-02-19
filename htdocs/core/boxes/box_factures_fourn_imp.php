@@ -39,7 +39,7 @@ class box_factures_fourn_imp extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -78,7 +78,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $max));
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
@@ -132,7 +132,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
-                        $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+                        $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
@@ -157,15 +157,15 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datelimite,'day'),
+                        'text' => dol_print_date($datelimite, 'day'),
                     );
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $alreadypaid, $objp->type),
                     );
 
                     $line++;
@@ -173,7 +173,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoUnpaidSupplierBills"),
                     );
 
@@ -187,7 +187,7 @@ class box_factures_fourn_imp extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
@@ -196,7 +196,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string

@@ -48,7 +48,7 @@ $donation_static=new Don($db);
 $donstatic=new Don($db);
 
 $help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
-llxHeader('',$langs->trans("Donations"),$help_url);
+llxHeader('', $langs->trans("Donations"), $help_url);
 
 $nb=array();
 $somme=array();
@@ -121,7 +121,7 @@ print "</tr>\n";
 $listofstatus=array(0,1,-1,2);
 foreach ($listofstatus as $status)
 {
-    $dataseries[]=array($donstatic->LibStatut($status,1), (isset($nb[$status])?(int) $nb[$status]:0));
+    $dataseries[]=array($donstatic->LibStatut($status, 1), (isset($nb[$status])?(int) $nb[$status]:0));
 }
 
 if ($conf->use_javascript_ajax)
@@ -154,10 +154,10 @@ foreach ($listofstatus as $status)
 {
 
     print '<tr class="oddeven">';
-    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
+    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
-    print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
-    print '<td align="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
+    print '<td align="right">'.(! empty($nb[$status])?price($somme[$status], 'MT'):'&nbsp;').'</td>';
+    print '<td align="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status], 'MT')):'&nbsp;').'</td>';
     $totalnb += (! empty($nb[$status])?$nb[$status]:0);
     $total += (! empty($somme[$status])?$somme[$status]:0);
     print "</tr>";
@@ -166,8 +166,8 @@ foreach ($listofstatus as $status)
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$totalnb.'</td>';
-print '<td align="right">'.price($total,'MT').'</td>';
-print '<td align="right">'.($totalnb?price(price2num($total/$totalnb,'MT')):'&nbsp;').'</td>';
+print '<td align="right">'.price($total, 'MT').'</td>';
+print '<td align="right">'.($totalnb?price(price2num($total/$totalnb, 'MT')):'&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
@@ -193,7 +193,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th colspan="5">'.$langs->trans("LastModifiedDonations",$max).'</th></tr>';
+    print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)
@@ -215,17 +215,17 @@ if ($resql)
             print '<td class="nobordernopadding">';
             print $obj->societe;
             print ($obj->societe && ($obj->lastname || $obj->firstname)?' / ':'');
-            print dolGetFirstLastname($obj->lastname,$obj->firstname);
+            print dolGetFirstLastname($obj->lastname, $obj->firstname);
             print '</td>';
 
             print '<td align="right" class="nobordernopadding">';
-            print price($obj->amount,1);
+            print price($obj->amount, 1);
             print '</td>';
 
             // Date
-            print '<td align="center">'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
+            print '<td align="center">'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 
-            print '<td align="right">'.$donation_static->LibStatut($obj->fk_statut,5).'</td>';
+            print '<td align="right">'.$donation_static->LibStatut($obj->fk_statut, 5).'</td>';
 
             print '</tr>';
             $i++;

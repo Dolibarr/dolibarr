@@ -194,17 +194,17 @@ class FormMail extends Form
 		if (empty($type)) $type=dol_mimetype($file);
 
 		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
-		if (! in_array($file,$listofnames))
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+		if (! in_array($file, $listofnames))
 		{
 			$listofpaths[]=$path;
 			$listofnames[]=$file;
 			$listofmimes[]=$type;
-			$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-			$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-			$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+			$_SESSION["listofpaths".$keytoavoidconflict]=join(';', $listofpaths);
+			$_SESSION["listofnames".$keytoavoidconflict]=join(';', $listofnames);
+			$_SESSION["listofmimes".$keytoavoidconflict]=join(';', $listofmimes);
 		}
 	}
 
@@ -223,17 +223,17 @@ class FormMail extends Form
 		$listofmimes=array();
 
 		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		if ($keytodelete >= 0)
 		{
 			unset ($listofpaths[$keytodelete]);
 			unset ($listofnames[$keytodelete]);
 			unset ($listofmimes[$keytodelete]);
-			$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
-			$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
-			$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
+			$_SESSION["listofpaths".$keytoavoidconflict]=join(';', $listofpaths);
+			$_SESSION["listofnames".$keytoavoidconflict]=join(';', $listofnames);
+			$_SESSION["listofmimes".$keytoavoidconflict]=join(';', $listofmimes);
 			//var_dump($_SESSION['listofpaths']);
 		}
 	}
@@ -252,9 +252,9 @@ class FormMail extends Form
 		$listofmimes=array();
 
 		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
-		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
 	}
 
@@ -271,7 +271,7 @@ class FormMail extends Form
 	function show_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
         // phpcs:enable
-		print $this->get_form($addfileaction,$removefileaction);
+		print $this->get_form($addfileaction, $removefileaction);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -296,7 +296,7 @@ class FormMail extends Form
         $langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
 		{
 			$this->clear_attached_files();
 		}
@@ -337,7 +337,7 @@ class FormMail extends Form
 			if ($this->param['models'] != 'none')
 			{
 				$model_id=0;
-				if (array_key_exists('models_id',$this->param))
+				if (array_key_exists('models_id', $this->param))
 				{
 					$model_id=$this->param["models_id"];
 				}
@@ -351,7 +351,7 @@ class FormMail extends Form
 			$listofmimes=array();
 			$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
 
-			if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
+			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
 			{
 				if (! empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
 				{
@@ -362,9 +362,9 @@ class FormMail extends Form
 				}
 			}
 
-	   		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
-	   		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
-	   		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
+	   		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+	   		if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+	   		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 
 
 			$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
@@ -421,22 +421,21 @@ class FormMail extends Form
 				// If list of template is filled
 				$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
 				$out.= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
-				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
+				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				$out.= ' &nbsp; ';
 				$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out.= ' &nbsp; ';
 				$out.= '</div>';
-			}
-			elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
+			} elseif (! empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send','order_send','facture_send',
 					'shipping_send','fichinter_send','supplier_proposal_send','order_supplier_send',
 					'invoice_supplier_send','thirdparty','contract','user','all'
-		   		)))
+                )))
 			{
 				// If list of template is empty
 				$out.= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
 				$out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
-				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')),1);
+				if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				$out.= ' &nbsp; ';
 				$out.= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out.= ' &nbsp; ';
@@ -599,7 +598,7 @@ class FormMail extends Form
 			if (! empty($this->withto) || is_array($this->withto))
 			{
 				$out.= '<tr><td class="fieldrequired">';
-				if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 				else $out.= $langs->trans("MailTo");
 				$out.= '</td><td>';
 				if ($this->withtoreadonly)
@@ -651,8 +650,8 @@ class FormMail extends Form
 						{
 							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
-						$withtoselected=GETPOST("receiver",'none');     // Array of selected value
-						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+						$withtoselected=GETPOST("receiver", 'none');     // Array of selected value
+						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 						{
 							$withtoselected = array_keys($tmparray);
 						}
@@ -675,8 +674,8 @@ class FormMail extends Form
 				{
 					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected=GETPOST("receiveruser",'none');     // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				$withtoselected=GETPOST("receiveruser", 'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
 				}
@@ -703,7 +702,7 @@ class FormMail extends Form
 			if (! empty($this->withtocc) || is_array($this->withtocc))
 			{
 				$out.= '<tr><td>';
-				$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				$out.= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 				$out.= '</td><td>';
 				if ($this->withtoccreadonly)
 				{
@@ -722,7 +721,7 @@ class FormMail extends Form
 							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
 						$withtoccselected=GETPOST("receivercc");     // Array of selected value
-						$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
+						$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
 					}
 				}
 				$out.= "</td></tr>\n";
@@ -741,8 +740,8 @@ class FormMail extends Form
 				{
 					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected=GETPOST("receiverccuser",'none');     // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				$withtoselected=GETPOST("receiverccuser", 'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
 				}
@@ -864,8 +863,8 @@ class FormMail extends Form
 			// Message
 			if (! empty($this->withbody))
 			{
-				$defaultmessage=GETPOST('message','none');
-				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
+				$defaultmessage=GETPOST('message', 'none');
+				if (! GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1')
 				{
 					if ($arraydefaultmessage && $arraydefaultmessage->content) {
 						$defaultmessage = $arraydefaultmessage->content;
@@ -914,12 +913,12 @@ class FormMail extends Form
 				{
 					foreach ($this->substit_lines as $substit_line)
 					{
-						$lines .= make_substitutions($defaultlines,$substit_line)."\n";
+						$lines .= make_substitutions($defaultlines, $substit_line)."\n";
 					}
 				}
 				$this->substit['__LINES__']=$lines;
 
-				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
+				$defaultmessage=str_replace('\n', "\n", $defaultmessage);
 
 				// Deal with format differences between message and signature (text / HTML)
 				if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
@@ -931,10 +930,10 @@ class FormMail extends Form
 				if (isset($_POST["message"]) && ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
-					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+					$defaultmessage=make_substitutions($defaultmessage, $this->substit);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
-					$defaultmessage=preg_replace("/^(<br>)+/","",$defaultmessage);
-					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
+					$defaultmessage=preg_replace("/^(<br>)+/", "", $defaultmessage);
+					$defaultmessage=preg_replace("/^\n+/", "", $defaultmessage);
 				}
 
 				$out.= '<tr>';
@@ -959,7 +958,7 @@ class FormMail extends Form
 						else $this->withfckeditor=0;
 					}
 
-					$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,'95%');
+					$doleditor=new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, true, $this->withfckeditor, 8, '95%');
 					$out.= $doleditor->Create(1);
 				}
 				$out.= "</td></tr>\n";
@@ -1018,7 +1017,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs, $form;
 		$out = '<tr><td>';
-		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out.= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out.= '</td><td>';
 		if (! empty($this->withtocccreadonly)) {
 			$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
@@ -1032,7 +1031,7 @@ class FormMail extends Form
 					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtocccselected=GETPOST("receiverccc");     // Array of selected value
-				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
+				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null, null, "90%");
 			}
 		}
 
@@ -1104,8 +1103,8 @@ class FormMail extends Form
 	{
 		global $conf, $langs, $form;
 
-		$defaulttopic = GETPOST('subject','none');
-		if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1') {
+		$defaulttopic = GETPOST('subject', 'none');
+		if (! GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;
 			} elseif (! is_numeric($this->withtopic)) {
@@ -1113,7 +1112,7 @@ class FormMail extends Form
 			}
 		}
 
-		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
+		$defaulttopic=make_substitutions($defaulttopic, $this->substit);
 
 		$out = '<tr>';
 		$out.= '<td class="fieldrequired">';
@@ -1163,8 +1162,8 @@ class FormMail extends Form
 		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
-		else $sql.= $db->order("position,lang,label","ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
+		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label", "ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		else $sql.= $db->order("position,lang,label", "ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
 		$sql.= $db->plimit(1);
 		//print $sql;
 
@@ -1240,7 +1239,7 @@ class FormMail extends Form
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-		$sql.= $this->db->order("lang,label","ASC");
+		$sql.= $this->db->order("lang,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -1278,7 +1277,7 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages
-		$sql.= $this->db->order("position,lang,label","ASC");
+		$sql.= $this->db->order("position,lang,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);

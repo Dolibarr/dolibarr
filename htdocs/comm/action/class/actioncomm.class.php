@@ -244,8 +244,8 @@ class ActionComm extends CommonObject
         }
 
         // Clean parameters
-        $this->label=dol_trunc(trim($this->label),128);
-        $this->location=dol_trunc(trim($this->location),128);
+        $this->label=dol_trunc(trim($this->label), 128);
+        $this->location=dol_trunc(trim($this->location), 128);
         $this->note=dol_htmlcleanlastbr(trim($this->note));
         if (empty($this->percentage))   $this->percentage = 0;
         if (empty($this->priority) || ! is_numeric($this->priority)) $this->priority = 0;
@@ -379,7 +379,7 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
             // Now insert assignedusers
 			if (! $error)
@@ -441,7 +441,7 @@ class ActionComm extends CommonObject
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('ACTION_CREATE',$user);
+                $result=$this->call_trigger('ACTION_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -533,7 +533,7 @@ class ActionComm extends CommonObject
             {
                 $parameters=array('objFrom'=>$objFrom);
                 $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
 
@@ -806,7 +806,7 @@ class ActionComm extends CommonObject
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('ACTION_DELETE',$user);
+                $result=$this->call_trigger('ACTION_DELETE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -960,7 +960,7 @@ class ActionComm extends CommonObject
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('ACTION_MODIFY',$user);
+                $result=$this->call_trigger('ACTION_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -973,7 +973,7 @@ class ActionComm extends CommonObject
             else
             {
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::update ".join(',',$this->errors),LOG_ERR);
+                dol_syslog(get_class($this)."::update ".join(',', $this->errors), LOG_ERR);
                 return -2;
             }
         }
@@ -1061,8 +1061,7 @@ class ActionComm extends CommonObject
     		$this->nb=array();
     		$sql = "SELECT count(a.id) as nb";
     	}
-    	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
-    	$sql.= ")";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
     	$sql.= " WHERE 1 = 1";
@@ -1082,7 +1081,7 @@ class ActionComm extends CommonObject
 	    		$response->label = $langs->trans("ActionsToDo");
 	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
-	    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
+	    		$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
     		}
     		// This assignment in condition is not a bug. It allows walking the results.
     		while ($obj=$this->db->fetch_object($resql))
@@ -1166,7 +1165,7 @@ class ActionComm extends CommonObject
      */
     function getLibStatut($mode, $hidenastatus = 0)
     {
-        return $this->LibStatut($this->percentage,$mode,$hidenastatus,$this->datep);
+        return $this->LibStatut($this->percentage, $mode, $hidenastatus, $this->datep);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1200,45 +1199,45 @@ class ActionComm extends CommonObject
         }
         elseif ($mode == 2)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '. $percent.'%';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone');
+        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
+        	elseif ($percent==0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo');
+        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '. $percent.'%';
+        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone');
         }
         elseif ($mode == 3)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans("Status").': '.$langs->trans('StatusNotApplicable'),'statut9');
-        	elseif ($percent==0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo').' (0%)','statut1');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)','statut3');
-        	elseif ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone').' (100%)','statut6');
+        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans("Status").': '.$langs->trans('StatusNotApplicable'), 'statut9');
+        	elseif ($percent==0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo').' (0%)', 'statut1');
+        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)', 'statut3');
+        	elseif ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone').' (100%)', 'statut6');
         }
         elseif ($mode == 4)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent==0) return img_picto($langs->trans('StatusActionToDo'),'statut1').' '.$langs->trans('StatusActionToDo').' (0%)';
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'),'statut3').' '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6').' '.$langs->trans('StatusActionDone').' (100%)';
+        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
+        	elseif ($percent==0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo').' (0%)';
+        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone').' (100%)';
         }
         elseif ($mode == 5)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
-        	elseif ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'),'statut6');
+        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
+        	elseif ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
+        	elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
+        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'), 'statut6');
         }
         elseif ($mode == 6)
         {
-        	if ($percent==-1 && ! $hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
-        	elseif ($percent==0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'),'statut6');
+        	if ($percent==-1 && ! $hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
+        	elseif ($percent==0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
+        	elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
+        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'), 'statut6');
         }
         elseif ($mode == 7)
         {
-            if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
-            elseif ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-            elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
-            elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+            if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
+            elseif ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
+            elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
+            elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6');
         }
 
         return '';
@@ -1292,7 +1291,7 @@ class ActionComm extends CommonObject
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
 		if (! empty($this->note))
-			$tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . (dol_textishtml($this->note) ? str_replace(array("\r","\n"), "", $this->note) : $this->note);
+		    $tooltip .= '<br><b>' . $langs->trans('Note') . ':</b> ' . (dol_textishtml($this->note) ? str_replace(array("\r","\n"), "", $this->note) : str_replace(array("\r","\n"), '<br>', $this->note));
 		$linkclose='';
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1325,7 +1324,7 @@ class ActionComm extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -1350,7 +1349,7 @@ class ActionComm extends CommonObject
             $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=$labeltype;
             if ($maxlength < 0) $libelleshort=$this->ref;
-            else $libelleshort=dol_trunc($libelle,$maxlength);
+            else $libelleshort=dol_trunc($libelle, $maxlength);
         }
 
         if ($withpicto)
@@ -1359,7 +1358,7 @@ class ActionComm extends CommonObject
             {
             	if ($labeltype)
             	{
-                	$libelle.=(preg_match('/'.preg_quote($labeltype,'/').'/', $libelle)?'':' ('.$langs->transnoentities("Action".$this->type_code).')');
+                	$libelle.=(preg_match('/'.preg_quote($labeltype, '/').'/', $libelle)?'':' ('.$langs->transnoentities("Action".$this->type_code).')');
             	}
             }
         }
@@ -1372,7 +1371,7 @@ class ActionComm extends CommonObject
         global $action;
         $hookmanager->initHooks(array('actiondao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
         if ($reshook > 0) $result = $hookmanager->resPrint;
         else $result .= $hookmanager->resPrint;
 
@@ -1465,7 +1464,7 @@ class ActionComm extends CommonObject
             foreach ($filters as $key => $value)
             {
                 if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";
-                if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value,1))."' AND '".$this->db->idate(dol_get_last_day($value,12))."'";
+                if ($key == 'year')         $sql.=" AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($value, 1))."' AND '".$this->db->idate(dol_get_last_day($value, 12))."'";
                 if ($key == 'id')           $sql.=" AND a.id=".(is_numeric($value)?$value:0);
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
@@ -1478,13 +1477,13 @@ class ActionComm extends CommonObject
                 {
                     $logina=$value;
                     $condition='=';
-                    if (preg_match('/^!/',$logina))
+                    if (preg_match('/^!/', $logina))
                     {
-                        $logina=preg_replace('/^!/','',$logina);
+                        $logina=preg_replace('/^!/', '', $logina);
                         $condition='<>';
                     }
                     $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$logina);
+                    $result=$userforfilter->fetch('', $logina);
                     if ($result > 0) $sql.= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
                     elseif ($result < 0 || $condition == '=') $sql.= " AND a.fk_user_author = 0";
                 }
@@ -1492,13 +1491,13 @@ class ActionComm extends CommonObject
                 {
                     $logint=$value;
                     $condition='=';
-                    if (preg_match('/^!/',$logint))
+                    if (preg_match('/^!/', $logint))
                     {
-                        $logint=preg_replace('/^!/','',$logint);
+                        $logint=preg_replace('/^!/', '', $logint);
                         $condition='<>';
                     }
                     $userforfilter=new User($this->db);
-                    $result=$userforfilter->fetch('',$logint);
+                    $result=$userforfilter->fetch('', $logint);
                     if ($result > 0) $sql.= " AND ar.fk_element = ".$userforfilter->id;
                     elseif ($result < 0 || $condition == '=') $sql.= " AND ar.fk_element = 0";
                 }
@@ -1538,7 +1537,7 @@ class ActionComm extends CommonObject
                     $event['punctual']=$obj->punctual;
                     $event['category']=$obj->libelle;	// libelle type action
 					// Define $urlwithroot
-					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
                     $url=$urlwithroot.'/comm/action/card.php?id='.$obj->id;
@@ -1581,31 +1580,31 @@ class ActionComm extends CommonObject
             }
 
             // Create temp file
-            $outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');  // Temporary file (allow call of function by different threads
+            $outputfiletmp=tempnam($conf->agenda->dir_temp, 'tmp');  // Temporary file (allow call of function by different threads
             @chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
             // Write file
-            if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
-            elseif ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
-            elseif ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfiletmp);
+            if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 
             if ($result >= 0)
             {
-                if (dol_move($outputfiletmp,$outputfile,0,1)) $result=1;
+                if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result=1;
                 else
                 {
                 	$this->error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
                     dol_syslog(get_class($this)."::build_exportfile ".$this->error, LOG_ERR);
-                    dol_delete_file($outputfiletmp,0,1);
+                    dol_delete_file($outputfiletmp, 0, 1);
                     $result=-1;
                 }
             }
             else
             {
                 dol_syslog(get_class($this)."::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
-                dol_delete_file($outputfiletmp,0,1);
+                dol_delete_file($outputfiletmp, 0, 1);
                 $langs->load("errors");
-                $this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
+                $this->error=$langs->trans("ErrorFailToCreateFile", $outputfile);
             }
         }
 

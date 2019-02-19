@@ -24,12 +24,12 @@
  */
 
 
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 require '../main.inc.php';
@@ -76,7 +76,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$ret=array(); $i=0;
 			while ( $tab = $db->fetch_array($result) )
 			{
-				foreach ( $tab as $cle => $valeur )
+				foreach ($tab as $cle => $valeur)
 				{
 					$ret[$i][$cle] = $valeur;
 				}

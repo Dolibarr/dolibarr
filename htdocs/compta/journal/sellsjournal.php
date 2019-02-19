@@ -48,8 +48,8 @@ $date_endyear=GETPOST('date_endyear');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 /*
  * Actions
@@ -67,11 +67,11 @@ $form=new Form($db);
 
 $morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
 
-llxHeader('',$langs->trans("SellsJournal"),'','',0,0,'','',$morequery);
+llxHeader('', $langs->trans("SellsJournal"), '', '', 0, 0, '', '', $morequery);
 
 
-$year_current = strftime("%Y",dol_now());
-$pastmonth = strftime("%m",dol_now()) - 1;
+$year_current = strftime("%Y", dol_now());
+$pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0)
 {
@@ -84,7 +84,7 @@ $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$date_start=dol_get_first_day($pastmonthyear,$pastmonth,false); $date_end=dol_get_last_day($pastmonthyear,$pastmonth,false);
+	$date_start=dol_get_first_day($pastmonthyear, $pastmonth, false); $date_end=dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
 $nom=$langs->trans("SellsJournal");
@@ -95,7 +95,7 @@ $description=$langs->trans("DescSellsJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -211,7 +211,7 @@ print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
 print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
 print '<td>'.$langs->trans('Account').'</td>';
-print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
+print '<td>'.$langs->trans('Type').'</td><td class="right">'.$langs->trans('Debit').'</td><td class="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
 
@@ -266,13 +266,13 @@ foreach ($tabfac as $key => $val)
 
 				if (isset($line['inv']))
 				{
-					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+					print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
 				}
 				else
 				{
-					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
-	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td class="right">'.($mt<0?price(-$mt):'')."</td>";
+	    			print '<td class="right">'.($mt>=0?price($mt):'')."</td>";
 				}
 
 				print "</tr>";

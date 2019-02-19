@@ -77,13 +77,13 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
 		{
     		if ($atleastoneofthislevelafter)
     		{
-    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
-    			else print img_picto_common('','treemenu/line.gif');
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branch.gif');
+    			else print img_picto_common('', 'treemenu/line.gif');
     		}
     		else
     		{
-    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
-    			else print img_picto_common('','treemenu/linebottom.gif');
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branchbottom.gif');
+    			else print img_picto_common('', 'treemenu/linebottom.gif');
     		}
 		}
 		$pos++;
@@ -115,7 +115,7 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  */
 function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoresetalreadyloaded = 0, $showfk = 0)
 {
-    global $tree_recur_alreadyadded;
+    global $tree_recur_alreadyadded, $menu_handler_to_search;
 
     if ($rang == 0 && empty($donoresetalreadyloaded)) $tree_recur_alreadyadded=array();
 
@@ -203,7 +203,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			if ($showfk)
 			{
 			    print '<table class="nobordernopadding centpercent"><tr><td>';
-			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">';
+			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$tab[$x]['rowid'].'">';
 			    print $tab[$x]['title'];
 			    print '</a></strong>';
 			    print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';

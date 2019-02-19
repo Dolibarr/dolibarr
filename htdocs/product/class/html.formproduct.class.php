@@ -75,7 +75,7 @@ class FormProduct
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
-		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+		if (is_array($exclude))	$excludeGroups = implode("','", $exclude);
 
 		$warehouseStatus = array();
 
@@ -121,7 +121,7 @@ class FormProduct
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
+			$sql.= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 		}
 		else
 		{
@@ -142,7 +142,7 @@ class FormProduct
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				if ($sumStock) $obj->stock = price2num($obj->stock,5);
+				if ($sumStock) $obj->stock = price2num($obj->stock, 5);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
 				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
@@ -214,7 +214,7 @@ class FormProduct
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
@@ -311,31 +311,38 @@ class FormProduct
 	function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
-		$return='';
+		$return = '';
 
-		$measuring_units=array();
-		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,98=>1,99=>1);
-		elseif ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
-        elseif ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
-		elseif ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		$measuring_units = array();
 
-		$return.= '<select class="flat" name="'.$name.'">';
-		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/cmeasuringunits.class.php';
+		$measuringUnits = new CMeasuringUnits($db);
+		$result = $measuringUnits->fetchAll('', '', 0, 0, array(
+				't.unit_type' => $measuring_style,
+				't.active' => 1
+		));
+		if ($result < 0) {
+			dol_print_error($db);
+			return - 1;
+		} else {
+			$return .= '<select class="flat" name="' . $name . '">';
+			if ($adddefault)
+				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-		foreach ($measuring_units as $key => $value)
-		{
-			$return.= '<option value="'.$key.'"';
-			if ($key == $default)
+			foreach ($measuringUnits->records as $lines)
 			{
-				$return.= ' selected';
+				$return .= '<option value="' . $lines->code . '"';
+				if ($key == $default) {
+					$return .= ' selected';
+				}
+				// $return.= '>'.$value.'</option>';
+				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
 			}
-			//$return.= '>'.$value.'</option>';
-			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';
+			$return .= '</select>';
 		}
-		$return.= '</select>';
 
 		return $return;
 	}
@@ -362,7 +369,7 @@ class FormProduct
 	{
 		global $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		$productIdArray = array();

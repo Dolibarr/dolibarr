@@ -394,7 +394,7 @@ class BlockedLog
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol')
 		{
-		    $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+    $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
 		        'name','lastname','firstname','region','region_id','region_code','state','state_id','state_code','country','country_id','country_code',
 		        'total_ht','total_tva','total_ttc','total_localtax1','total_localtax2',
 		        'barcode_type','barcode_type_code','barcode_type_label','barcode_type_coder','mode_reglement_id','cond_reglement_id','mode_reglement','cond_reglement','shipping_method_id',
@@ -459,7 +459,7 @@ class BlockedLog
 						$lineid++;
 						foreach($tmpline as $keyline => $valueline)
 						{
-							if (! in_array($keyline, array(
+    if (! in_array($keyline, array(
 							'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
 							))) continue;									// Discard if not into a dedicated list
 
@@ -575,7 +575,7 @@ class BlockedLog
 					foreach($tmpobject->thirdparty as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-						if (! in_array($key, array(
+    if (! in_array($key, array(
 						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 						))) continue;									// Discard if not into a dedicated list
@@ -592,7 +592,7 @@ class BlockedLog
 					foreach($tmpobject as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-						if (! in_array($key, array(
+    if (! in_array($key, array(
 						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 						))) continue;									// Discard if not into a dedicated list
 						if (!is_object($value))
@@ -921,8 +921,8 @@ class BlockedLog
 	 *	@param int	$beforeid		ID of a record
 	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
-	 public function getPreviousHash($withlock = 0, $beforeid = 0)
-	 {
+	public function getPreviousHash($withlock = 0, $beforeid = 0)
+	{
 		global $conf;
 
 		$previoussignature='';
@@ -1053,9 +1053,9 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc,true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine',0,'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT=$fingerprint;
 		}

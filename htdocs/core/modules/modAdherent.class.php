@@ -52,7 +52,7 @@ class modAdherent extends DolibarrModules
         $this->family = "hr";
         $this->module_position = '55';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Management of members of a foundation or association";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
@@ -280,7 +280,7 @@ class modAdherent extends DolibarrModules
 			'a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.gender'=>'Text','a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",
 			'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",
 			'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date',
-			'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.subscription'=>'Numeric'
+			'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle::member_type','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.subscription'=>'Numeric'
 		);
         $this->export_entities_array[$r]=array(
 			'a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.gender'=>'member','a.morphy'=>'member',
@@ -344,7 +344,7 @@ class modAdherent extends DolibarrModules
 			'a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1',
 			'a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1',
 			'a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",
-			'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d')
+			'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now, '%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
 
         // Cronjobs
@@ -408,6 +408,6 @@ class modAdherent extends DolibarrModules
             "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
         );
 
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

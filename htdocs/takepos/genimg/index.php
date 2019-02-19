@@ -17,13 +17,13 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';	// Load $user and permissions
 
@@ -50,7 +50,7 @@ if ($query=="cat")
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 	$upload_dir = $conf->categorie->multidir_output[$object->entity];
-	$pdir = get_exdir($object->id,2,0,0,$object,'category') . $object->id ."/photos/";
+	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 	foreach ($object->liste_photos($dir) as $key => $obj)
 	{
@@ -78,7 +78,7 @@ if ($query=="cat")
 	$new_height = $h*0.3;
 	$icon_p = imagecreatetruecolor($new_width, $new_height);
 	imagecopyresampled($icon_p, $icon, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-	imagecopymerge($image_p, $icon_p,  0, 0, 0, 0, $new_width, $new_height, 100);
+	imagecopymerge($image_p, $icon_p, 0, 0, 0, 0, $new_width, $new_height, 100);
 
 	// Output
 	imagejpeg($image_p, null, 100);
@@ -90,8 +90,8 @@ elseif ($query=="pro")
 	$objProd = new Product($db);
 	$objProd->fetch($id);
 
-	$dir .= get_exdir(0,0,0,0,$objProd,'product').$objProd->ref.'/';
-	$pdir .= get_exdir(0,0,0,0,$objProd,'product').$objProd->ref.'/';
+	$dir .= get_exdir(0, 0, 0, 0, $objProd, 'product').$objProd->ref.'/';
+	$pdir .= get_exdir(0, 0, 0, 0, $objProd, 'product').$objProd->ref.'/';
 
 	foreach ($objProd->liste_photos($dir) as $key => $obj)
 	{

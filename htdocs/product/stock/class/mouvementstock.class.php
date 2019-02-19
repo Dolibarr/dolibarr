@@ -156,7 +156,7 @@ class MouvementStock extends CommonObject
 		$result=$product->fetch($fk_product);
 		if ($result < 0)
 		{
-			dol_print_error('',"Failed to fetch product");
+			dol_print_error('', "Failed to fetch product");
 			return -1;
 		}
 
@@ -521,7 +521,7 @@ class MouvementStock extends CommonObject
 		if ($movestock && ! $error)
 		{
             // Call trigger
-            $result=$this->call_trigger('STOCK_MOVEMENT',$user);
+            $result=$this->call_trigger('STOCK_MOVEMENT', $user);
             if ($result < 0) $error++;
             // End call triggers
 		}
@@ -829,7 +829,7 @@ class MouvementStock extends CommonObject
 				$vfk_product_stock=$dluo['fk_product_stock'];
 				$vbatchnumber = $dluo['batchnumber'];
 
-				$result = $pdluo->find($vfk_product_stock,'','',$vbatchnumber);  // Search on batch number only (eatby and sellby are deprecated here)
+				$result = $pdluo->find($vfk_product_stock, '', '', $vbatchnumber);  // Search on batch number only (eatby and sellby are deprecated here)
 			}
 			else
 			{
@@ -852,9 +852,9 @@ class MouvementStock extends CommonObject
 				$pdluo->qty += $qty;
 				if ($pdluo->qty == 0)
 				{
-					$result=$pdluo->delete($user,1);
+					$result=$pdluo->delete($user, 1);
 				} else {
-					$result=$pdluo->update($user,1);
+					$result=$pdluo->update($user, 1);
 				}
 			}
 			else					// product_batch record not found
@@ -865,7 +865,7 @@ class MouvementStock extends CommonObject
 				$pdluo->sellby = $vsellby;
 				$pdluo->batch = $vbatchnumber;
 
-				$result=$pdluo->create($user,1);
+				$result=$pdluo->create($user, 1);
 				if ($result < 0)
 				{
 					$this->error=$pdluo->error;
@@ -1050,19 +1050,19 @@ class MouvementStock extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
 		}
 		elseif ($mode == 3)
 		{
-			return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
 		elseif ($mode == 4)
 		{
-			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
 		}
 		elseif ($mode == 5)
 		{
-			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
 	}
 

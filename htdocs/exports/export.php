@@ -125,17 +125,17 @@ $entitytolang = array(
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $array_filtervalue=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
-$datatoexport=GETPOST("datatoexport","aZ09");
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$step=GETPOST("step","int")?GETPOST("step","int"):1;
-$export_name=GETPOST("export_name","alphanohtml");
-$hexa=GETPOST("hexa","alpha");
-$exportmodelid=GETPOST("exportmodelid","int");
-$field=GETPOST("field","alpa");
+$datatoexport=GETPOST("datatoexport", "aZ09");
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$step=GETPOST("step", "int")?GETPOST("step", "int"):1;
+$export_name=GETPOST("export_name", "alphanohtml");
+$hexa=GETPOST("hexa", "alpha");
+$exportmodelid=GETPOST("exportmodelid", "int");
+$field=GETPOST("field", "alpa");
 
 $objexport=new Export($db);
-$objexport->load_arrays($user,$datatoexport);
+$objexport->load_arrays($user, $datatoexport);
 
 $objmodelexport=new ModeleExports($db);
 $form = new Form($db);
@@ -201,7 +201,7 @@ if ($action=='selectfield')     // Selection of field at step 2
                 if (empty($array_selected[$fieldid]))
                 {
                     $array_selected[$fieldid]=count($array_selected)+1;    // We tag the key $fieldid as "selected"
-                    $warnings[]=$langs->trans("ExportFieldAutomaticallyAdded",$langs->transnoentitiesnoconv($fieldsarray[$fieldid]));
+                    $warnings[]=$langs->trans("ExportFieldAutomaticallyAdded", $langs->transnoentitiesnoconv($fieldsarray[$fieldid]));
                 }
             }
         }
@@ -277,7 +277,7 @@ if ($action == 'builddoc')
     }
 
     // Build export file
-	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result=$objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
@@ -344,7 +344,7 @@ if ($action == 'add_export_model')
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
-			setEventMessages($langs->trans("ExportModelSaved",$objexport->model_name), null, 'mesgs');
+			setEventMessages($langs->trans("ExportModelSaved", $objexport->model_name), null, 'mesgs');
 		}
 		else
 		{
@@ -373,7 +373,7 @@ if ($step == 2 && $action == 'select_model')
     $result = $objexport->fetch($exportmodelid);
     if ($result > 0)
     {
-		$fieldsarray=explode(',',$objexport->hexa);
+		$fieldsarray=explode(',', $objexport->hexa);
 		$i=1;
 		foreach($fieldsarray as $val)
 		{
@@ -382,11 +382,11 @@ if ($step == 2 && $action == 'select_model')
 		}
 		$_SESSION["export_selected_fields"]=$array_selected;
 
-		$fieldsarrayvalue=explode(',',$objexport->hexafiltervalue);
+		$fieldsarrayvalue=explode(',', $objexport->hexafiltervalue);
 		$i=1;
 		foreach($fieldsarrayvalue as $val)
 		{
-			$tmp=explode('=',$val);
+			$tmp=explode('=', $val);
 			$array_filtervalue[$tmp[0]]=$tmp[1];
 			$i++;
 		}
@@ -403,11 +403,11 @@ if ($step == 4 && $action == 'submitFormField')
 		$_SESSION["export_filtered_fields"]=array();
 		foreach($objexport->array_export_TypeFields[0] as $code => $type)	// $code: s.fieldname $value: Text|Boolean|List:ccc
 		{
-			$newcode=(string) preg_replace('/\./','_',$code);
+			$newcode=(string) preg_replace('/\./', '_', $code);
 			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
 			$filterqualified=1;
 			if (! isset($_POST[$newcode]) || $_POST[$newcode] == '') $filterqualified=0;
-			elseif (preg_match('/^List/',$type) && (is_numeric($_POST[$newcode]) && $_POST[$newcode] <= 0)) $filterqualified=0;
+			elseif (preg_match('/^List/', $type) && (is_numeric($_POST[$newcode]) && $_POST[$newcode] <= 0)) $filterqualified=0;
 			if ($filterqualified)
 			{
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
@@ -426,7 +426,7 @@ if ($step == 4 && $action == 'submitFormField')
 
 if ($step == 1 || ! $datatoexport)
 {
-    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets
@@ -468,7 +468,7 @@ if ($step == 1 || ! $datatoexport)
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
-			$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[$key]);
+			$icon=preg_replace('/:.*$/', '', $objexport->array_export_icon[$key]);
 			$label=$objexport->array_export_label[$key];
             //print $value.'-'.$icon.'-'.$label."<br>";
 			print img_object($objexport->array_export_module[$key]->getName(), $icon).' ';
@@ -476,7 +476,7 @@ if ($step == 1 || ! $datatoexport)
             print '</td><td align="right">';
             if ($objexport->array_export_perms[$key])
             {
-            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
             }
             else
             {
@@ -498,7 +498,7 @@ if ($step == 1 || ! $datatoexport)
 
 if ($step == 2 && $datatoexport)
 {
-    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 
     /*
@@ -531,7 +531,7 @@ if ($step == 2 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+	$icon=preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
     $label=$objexport->array_export_label[0];
     //print $value.'-'.$icon.'-'.$label."<br>";
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
@@ -553,8 +553,8 @@ if ($step == 2 && $datatoexport)
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectExportFields").' ';
-    if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1,$user->id);
-	else $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
+	else $htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
     print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
@@ -602,18 +602,18 @@ if ($step == 2 && $datatoexport)
         // If value of entityicon=entitylang='icon:Label'
         //print $code.'-'.$label.'-'.$entity;
 
-        $tmparray=explode(':',$entityicon);
+        $tmparray=explode(':', $entityicon);
         if (count($tmparray) >=2)
         {
             $entityicon=$tmparray[0];
             $entitylang=$tmparray[1];
         }
-        print img_object('',$entityicon).' '.$langs->trans($entitylang);
+        print img_object('', $entityicon).' '.$langs->trans($entitylang);
         print '</td>';
 
         $text=(empty($objexport->array_export_special[0][$code])?'':'<i>').$langs->trans($label).(empty($objexport->array_export_special[0][$code])?'':'</i>');
 
-        $tablename=getablenamefromfield($code,$sqlmaxforexport);
+        $tablename=getablenamefromfield($code, $sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         if (! empty($objexport->array_export_special[0][$code]))
         {
@@ -621,7 +621,7 @@ if ($step == 2 && $datatoexport)
         }
         else
         {
-            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
    		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
@@ -639,7 +639,7 @@ if ($step == 2 && $datatoexport)
             print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>';
             //print $text.'-'.$htmltext."<br>";
-            print $form->textwithpicto($text,$htmltext);
+            print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
             print '</td>';
         }
@@ -648,7 +648,7 @@ if ($step == 2 && $datatoexport)
         	// Fields not selected
             print '<td>';
 			//print $text.'-'.$htmltext."<br>";
-			print $form->textwithpicto($text,$htmltext);
+			print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
             print '</td>';
             print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
@@ -695,7 +695,7 @@ if ($step == 3 && $datatoexport)
         exit;
     }
 
-    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	/*
 	 * Affichage onglets
@@ -731,7 +731,7 @@ if ($step == 3 && $datatoexport)
 	// Lot de donnees a exporter
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
-	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+	$icon=preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
 	$label=$objexport->array_export_label[0];
 	//print $value.'-'.$icon.'-'.$label."<br>";
 	print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
@@ -790,13 +790,13 @@ if ($step == 3 && $datatoexport)
 
 		print '<td class="nowrap">';
 		// If value of entityicon=entitylang='icon:Label'
-		$tmparray=explode(':',$entityicon);
+		$tmparray=explode(':', $entityicon);
 		if (count($tmparray) >=2)
 		{
 			$entityicon=$tmparray[0];
 			$entitylang=$tmparray[1];
 		}
-		print img_object('',$entityicon).' '.$langs->trans($entitylang);
+		print img_object('', $entityicon).' '.$langs->trans($entitylang);
 		print '</td>';
 
 		// Field name
@@ -804,15 +804,15 @@ if ($step == 3 && $datatoexport)
 		$ValueFilter=(! empty($array_filtervalue[$code])?$array_filtervalue[$code]:'');
 		$text=(empty($objexport->array_export_special[0][$code])?'':'<i>').$langs->trans($labelName).(empty($objexport->array_export_special[0][$code])?'':'</i>');
 
-		$tablename=getablenamefromfield($code,$sqlmaxforexport);
+		$tablename=getablenamefromfield($code, $sqlmaxforexport);
 		$htmltext ='<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
-			if (! empty($objexport->array_export_special[0][$code]))
+        if (! empty($objexport->array_export_special[0][$code]))
 		{
 		    $htmltext.='<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
 		}
 		else
 		{
-		    $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		    $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
 		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
@@ -824,7 +824,7 @@ if ($step == 3 && $datatoexport)
 		}
 
 		print '<td>';
-		print $form->textwithpicto($text,$htmltext);
+		print $form->textwithpicto($text, $htmltext);
 		print '</td>';
 
 		// Filter value
@@ -871,7 +871,7 @@ if ($step == 4 && $datatoexport)
 
     asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets
@@ -917,7 +917,7 @@ if ($step == 4 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+	$icon=preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
@@ -945,7 +945,7 @@ if ($step == 4 && $datatoexport)
     			if (isset($objexport->array_export_fields[0][$code]))
     			{
     				$list.=($list?', ':'');
-    				if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/',$array_filtervalue[$code])) $list.=$langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'');
+    				if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) $list.=$langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'');
     				else $list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
     			}
     		}
@@ -983,20 +983,20 @@ if ($step == 4 && $datatoexport)
 
         print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
-        $tmparray=explode(':',$entityicon);
+        $tmparray=explode(':', $entityicon);
         if (count($tmparray) >=2)
         {
             $entityicon=$tmparray[0];
             $entitylang=$tmparray[1];
         }
-        print img_object('',$entityicon).' '.$langs->trans($entitylang);
+        print img_object('', $entityicon).' '.$langs->trans($entitylang);
         print '</td>';
 
         $labelName=$objexport->array_export_fields[0][$code];
 
 		$text=(empty($objexport->array_export_special[0][$code])?'':'<i>').$langs->trans($labelName).(empty($objexport->array_export_special[0][$code])?'':'</i>');
 
-        $tablename=getablenamefromfield($code,$sqlmaxforexport);
+        $tablename=getablenamefromfield($code, $sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").':</b> '.$text.'<br>';
         if (! empty($objexport->array_export_special[0][$code]))
         {
@@ -1004,7 +1004,7 @@ if ($step == 4 && $datatoexport)
         }
         else
         {
-            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+            $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
         if (! empty($objexport->array_export_examplevalues[0][$code]))
         {
@@ -1016,7 +1016,7 @@ if ($step == 4 && $datatoexport)
         }
 
         print '<td>';
-        print $form->textwithpicto($text,$htmltext);
+        print $form->textwithpicto($text, $htmltext);
 		//print ' ('.$code.')';
         print '</td>';
 
@@ -1119,7 +1119,7 @@ if ($step == 5 && $datatoexport)
 
 	asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets
@@ -1178,7 +1178,7 @@ if ($step == 5 && $datatoexport)
     // Lot de donnees a exporter
     print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
     print '<td>';
-	$icon=preg_replace('/:.*$/','',$objexport->array_export_icon[0]);
+	$icon=preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
     print img_object($objexport->array_export_module[0]->getName(), $icon).' ';
     print $objexport->array_export_label[0];
     print '</td></tr>';
@@ -1205,7 +1205,7 @@ if ($step == 5 && $datatoexport)
     			if (isset($objexport->array_export_fields[0][$code]))
     			{
     				$list.=($list?', ':'');
-    				if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/',$array_filtervalue[$code])) $list.=$langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'');
+    				if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) $list.=$langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'');
     				else $list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
     			}
     		}
@@ -1231,17 +1231,17 @@ if ($step == 5 && $datatoexport)
     $listeall=$liste;
     foreach($listeall as $key => $val)
     {
-    	if (preg_match('/__\(Disabled\)__/',$listeall[$key]))
+    	if (preg_match('/__\(Disabled\)__/', $listeall[$key]))
     	{
-    		$listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$listeall[$key]);
+    		$listeall[$key]=preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $listeall[$key]);
     		unset($liste[$key]);
     	}
 
     	$htmltabloflibs.= '<tr class="oddeven">';
-    	$htmltabloflibs.= '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
+    	$htmltabloflibs.= '<td width="16">'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    $htmltabloflibs.= $form->textwithpicto($label,$text).'</td>';
+	    $htmltabloflibs.= $form->textwithpicto($label, $text).'</td>';
 	    $htmltabloflibs.= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
 	    $htmltabloflibs.= '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 	    $htmltabloflibs.= '</tr>'."\n";
@@ -1272,7 +1272,7 @@ if ($step == 5 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    print $formfile->showdocuments('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1,0,0,0,'',$langs->trans('Files'), '', '', '');
+    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (! empty($_POST['model'])?$_POST['model']:'csv'), 1, 1, 0, 0, 0, '', $langs->trans('Files'), '', '', '');
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1295,14 +1295,14 @@ exit;	// don't know why but apache hangs with php 5.3.10-1ubuntu3.12 and apache 
  */
 function getablenamefromfield($code, $sqlmaxforexport)
 {
-	$alias=preg_replace('/\.(.*)$/i','',$code);         // Keep only 'Alias' and remove '.Fieldname'
+	$alias=preg_replace('/\.(.*)$/i', '', $code);         // Keep only 'Alias' and remove '.Fieldname'
 	$regexstring='/([a-zA-Z_]+) as '.preg_quote($alias).'[, \)]/i';
 
 	$newsql=$sqlmaxforexport;
-	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);  // Remove part before the FROM
-	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
+	$newsql=preg_replace('/^(.*) FROM /i', '', $newsql);  // Remove part before the FROM
+	$newsql=preg_replace('/WHERE (.*)$/i', '', $newsql);	// Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
 
-	if (preg_match($regexstring,$newsql,$reg))
+	if (preg_match($regexstring, $newsql, $reg))
 	{
 		return $reg[1];   // The tablename
 	}

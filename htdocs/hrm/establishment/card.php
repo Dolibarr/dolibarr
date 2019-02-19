@@ -33,10 +33,10 @@ if (! $user->admin) accessforbidden();
 
 $error=0;
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$confirm = GETPOST('confirm','alpha');
-$id = GETPOST('id','int');
+$confirm = GETPOST('confirm', 'alpha');
+$id = GETPOST('id', 'int');
 
 // List of status
 static $tmpstatus2label=array(
@@ -79,7 +79,7 @@ elseif ($action == 'add')
 		$object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
-	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), null, 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
             $error++;
         }
 
@@ -89,7 +89,7 @@ elseif ($action == 'add')
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
 			$object->country_id     = $_POST["country_id"];
-			$object->status     	= GETPOST('status','int');
+			$object->status     	= GETPOST('status', 'int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
 
@@ -140,7 +140,7 @@ elseif ($action == 'update')
 			$object->town			= GETPOST('town', 'alpha');
 			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
-			$object->status         = GETPOST('status','int');
+			$object->status         = GETPOST('status', 'int');
 
 			$result = $object->update($user);
 
@@ -194,7 +194,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	print '<td>';
-	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address','alpha') . '">';
+	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address', 'alpha') . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -202,7 +202,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(
+print $formcompany->select_ziptown(
 		GETPOST('zipcode', 'alpha'),
 		'zipcode',
 		array (
@@ -218,7 +218,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
+print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
 			'selectcountry_id'
 	));
@@ -229,8 +229,8 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOST('country_id','int')>0?GETPOST('country_id','int'):$mysoc->country_id,'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	print $form->select_country(GETPOST('country_id', 'int')>0?GETPOST('country_id', 'int'):$mysoc->country_id, 'country_id');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td>';
 	print '</tr>';
 
@@ -238,7 +238,7 @@ if ($action == 'create')
     print '<tr>';
     print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td>';
-	print $form->selectarray('status',$status2label,GETPOST('status','alpha'));
+	print $form->selectarray('status', $status2label, GETPOST('status', 'alpha'));
     print '</td></tr>';
 
     print '</table>';
@@ -292,12 +292,12 @@ if (($id || $ref) && $action == 'edit')
 
 			// Zipcode / Town
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
+print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
 					'selectcountry_id'
 			), 6) . '</tr>';
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-			print $formcompany->select_ziptown($object->town, 'town', array (
+print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
 					'selectcountry_id'
 			)) . '</td></tr>';
@@ -305,14 +305,14 @@ if (($id || $ref) && $action == 'edit')
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->fk_country,'country_id');
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			print $form->select_country($object->fk_country, 'country_id');
+				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td>';
 			print '</tr>';
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td><td>';
-			print $form->selectarray('status',$status2label,$object->status);
+			print $form->selectarray('status', $status2label, $object->status);
 			print '</td></tr>';
 
             print '</table>';
@@ -341,7 +341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Confirmation to delete
     if ($action == 'delete')
     {
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteEstablishment"), $langs->trans("ConfirmDeleteEstablishment"), "confirm_delete");
     }
 
 
@@ -393,7 +393,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$img=picto_from_langcode($object->country_code);
 		print $img?$img.' ':'';
-		print getCountry($object->getCountryCode(),0,$db);
+		print getCountry($object->getCountryCode(), 0, $db);
 	}
 	print '</td>';
 	print '</tr>';

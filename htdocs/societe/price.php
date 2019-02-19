@@ -41,8 +41,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 $langs->loadLangs(array("products", "companies", "bills"));
 
 $action = GETPOST('action', 'alpha');
-$search_prod = GETPOST('search_prod','alpha');
-$cancel = GETPOST('cancel','alpha');
+$search_prod = GETPOST('search_prod', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -62,12 +62,12 @@ $hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
     {
         $search_prod = '';
     }
@@ -90,7 +90,7 @@ if (empty($reshook))
     	$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
     	$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
     	$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
-    	// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+    	// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
     	if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
     	{
     	    // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -233,7 +233,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 	$page = GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
@@ -244,7 +244,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	if (! $sortfield)
 		$sortfield = "soc.nom";
 
-		// Build filter to diplay only concerned lines
+		// Build filter to display only concerned lines
 	$filter = array (
 		't.fk_soc' => $object->id
 	);
@@ -450,7 +450,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			foreach ( $prodcustprice->lines as $line ) {
+			foreach ($prodcustprice->lines as $line) {
 
 				print '<tr class="oddeven">';
 				$staticprod = new Product($db);

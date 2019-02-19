@@ -65,10 +65,10 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -85,15 +85,15 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
     $search_ref = '';
     $search_label = '';
@@ -134,7 +134,7 @@ if ($action == 'update') {
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid )
+			foreach ($chk_prod as $productid)
 			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 
@@ -188,7 +188,7 @@ if ($action == 'update') {
 
 $form = new FormAccounting($db);
 
-// Defaut AccountingAccount RowId Product / Service
+// Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
 // so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
@@ -223,11 +223,11 @@ else
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     if (strlen(trim($search_current_account))) {
-        $sql .= natural_search("p.accountancy_code_buy",$search_current_account);
+        $sql .= natural_search("p.accountancy_code_buy", $search_current_account);
     }
 } else {
     if (strlen(trim($search_current_account))) {
-        $sql .= natural_search("p.accountancy_code_sell",$search_current_account);
+        $sql .= natural_search("p.accountancy_code_sell", $search_current_account);
     }
 }
 if ($search_current_account_valid == 'withoutvalidaccount')
@@ -240,13 +240,13 @@ if ($search_current_account_valid == 'withvalidaccount')
 }
 // Add search filter like
 if (strlen(trim($search_ref))) {
-	$sql .= natural_search("p.ref",$search_ref);
+	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= natural_search("p.label",$search_label);
+	$sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= natural_search("p.description",$search_desc);
+	$sql .= natural_search("p.description", $search_desc);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -361,7 +361,7 @@ if ($result)
 	$product_static = new Product($db);
 
 	$i=0;
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
 		$obj = $db->fetch_object($result);
 

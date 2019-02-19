@@ -42,7 +42,7 @@ class box_goodcustomers extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -84,19 +84,19 @@ class box_goodcustomers extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
 
 		if ($user->rights->societe->lire)
 		{
 
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
-			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1','1','0').") as nbfactpaye";
+			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
 			$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 			$sql.= ' AND s.rowid = f.fk_soc';
 			$sql.= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
-			$sql.= $db->order("nbfact","DESC");
-			$sql.= $db->plimit($max,0);
+			$sql.= $db->order("nbfact", "DESC");
+			$sql.= $db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $db->query($sql);
@@ -136,26 +136,28 @@ class box_goodcustomers extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right" width="18"',
-					    'text' => $thirdpartystatic->LibStatut($objp->status,3)
+					    'td' => 'class="right" width="18"',
+					    'text' => $thirdpartystatic->LibStatut($objp->status, 3)
 					);
 
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedCustomers"));
 
 				$db->free($result);
 			}
 			else {
-				$this->info_box_contents[0][0] = array(	'td' => '',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
 				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}

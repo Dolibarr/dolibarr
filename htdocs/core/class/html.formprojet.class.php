@@ -90,7 +90,7 @@ class FormProjets
 				$selected_input_value=$project->ref;
 			}
 			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
-			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
+$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 //				'update' => array(
 //					'projectid' => 'id'
 //				)
@@ -159,7 +159,7 @@ class FormProjets
 		if (empty($user->rights->projet->all->lire))
 		{
 			$projectstatic=new Project($this->db);
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		}
 
 		// Search all projects
@@ -217,7 +217,7 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18);
+						$labeltoshow=dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						$labeltoshow.=', '.dol_trunc($obj->title, $maxlength);
@@ -341,7 +341,7 @@ class FormProjets
 			if (empty($usertofilter->rights->projet->all->lire))
 			{
 				$projectstatic=new Project($this->db);
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter,0,1);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter, 0, 1);
 			}
 		}
 
@@ -403,10 +403,10 @@ class FormProjets
 
 						if ($showproject == 'all')
 						{
-							$labeltoshow.=dol_trunc($obj->ref,18);     // Project ref
+							$labeltoshow.=dol_trunc($obj->ref, 18);     // Project ref
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
-							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+							$labeltoshow.=' '.dol_trunc($obj->title, $maxlength);
 
 							if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
 
@@ -430,7 +430,7 @@ class FormProjets
 						}
 
 						// Label for task
-						$labeltoshow.=$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
+						$labeltoshow.=$obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
 
 						if (!empty($selected) && $selected == $obj->rowid)
 						{

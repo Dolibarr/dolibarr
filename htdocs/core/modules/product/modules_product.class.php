@@ -56,7 +56,7 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 		return $liste;
 	}
 }
@@ -200,41 +200,41 @@ abstract class ModeleProductCode
         {
             $s.=$langs->trans("RequiredIfProduct").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         elseif ($type == 1)
         {
             $s.=$langs->trans("RequiredIfService").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         elseif ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         $s.=$langs->trans("CanBeModifiedIfOk").': ';
-        $s.=yn($this->code_modifiable,1,2);
+        $s.=yn($this->code_modifiable, 1, 2);
         $s.='<br>';
-        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
-        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
+        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
         $s.='<br>';
         if ($type == 0 || $type == -1)
         {
-            $nextval=$this->getNextValue($product,0);
+            $nextval=$this->getNextValue($product, 0);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Product").')':'').': <b>'.$nextval.'</b><br>';
         }
         if ($type == 1 || $type == -1)
         {
-            $nextval=$this->getNextValue($product,1);
+            $nextval=$this->getNextValue($product, 1);
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Service").')':'').': <b>'.$nextval.'</b>';
         }

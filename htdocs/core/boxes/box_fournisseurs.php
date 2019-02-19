@@ -40,7 +40,7 @@ class box_fournisseurs extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
     var $info_box_head = array();
@@ -80,7 +80,7 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
         if ($user->rights->societe->lire)
         {
@@ -124,15 +124,15 @@ class box_fournisseurs extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
                 }
 
                 if ($num==0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'align="center"',
+                    'td' => 'class="center"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 
@@ -146,7 +146,7 @@ class box_fournisseurs extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

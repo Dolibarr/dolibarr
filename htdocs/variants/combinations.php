@@ -35,17 +35,17 @@ $price_impact = (float) GETPOST('price_impact');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 
-$action=GETPOST('action','alpha');
-$massaction=GETPOST('massaction','alpha');
-$show_files=GETPOST('show_files','int');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$cancel = GETPOST('cancel','alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -79,7 +79,7 @@ if ($action == 'add')
 	unset($selectedvariant);
 	unset($_SESSION['addvariant_'.$object->id]);
 }
-if ($action == 'create' && GETPOST('selectvariant','alpha'))	// We click on select combination
+if ($action == 'create' && GETPOST('selectvariant', 'alpha'))	// We click on select combination
 {
     $action = 'add';
     if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
@@ -358,7 +358,7 @@ if (! empty($id) || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	if ($object->weight != '')
 	{
-		print $object->weight." ".measuring_units_string($object->weight_units,"weight");
+		print $object->weight." ".measuring_units_string($object->weight_units, "weight");
 	}
 	else
 	{
@@ -562,7 +562,7 @@ if (! empty($id) || ! empty($ref))
 			</tr>
 		</table>
 		<?php
-		}
+            }
 
 		if (is_array($productCombination2ValuePairs1)) {
 		?>
@@ -575,15 +575,15 @@ if (! empty($id) || ! empty($ref))
 					<?php
 					if (is_array($productCombination2ValuePairs1))
 					{
-                                            foreach ($productCombination2ValuePairs1 as $key => $val) {
-                                            $result1 = $prodattr->fetch($val->fk_prod_attr);
-                                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-                                                if ($result1 > 0 && $result2 > 0)
-                                                {
-                                                       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
-                                                       // TODO Add delete link
-                                                }
-                                            }
+                        foreach ($productCombination2ValuePairs1 as $key => $val) {
+                            $result1 = $prodattr->fetch($val->fk_prod_attr);
+                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+                            if ($result1 > 0 && $result2 > 0)
+                            {
+                                print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+                                // TODO Add delete link
+                            }
+                        }
 					}
 					?>
 					</div>
@@ -599,7 +599,8 @@ if (! empty($id) || ! empty($ref))
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
 			</tr>
-<?php   	if ($object->isProduct()) {
+<?php
+            if ($object->isProduct()) {
 				print '<tr>';
 				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
 				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
@@ -640,7 +641,7 @@ if (! empty($id) || ! empty($ref))
 			}
 		} elseif ($action === 'copy') {
 
-			print $form->formconfirm(
+print $form->formconfirm(
 				'combinations.php?id='.$id,
 				$langs->trans('CloneCombinationsProduct'),
 				$langs->trans('ConfirmCloneProductCombinations'),

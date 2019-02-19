@@ -43,7 +43,7 @@ class box_contacts extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -78,7 +78,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->max=$max;
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
@@ -147,7 +147,7 @@ class box_contacts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'align="right" class="nowrap" width="18"',
+						'td' => 'class="nowrap right" width="18"',
 						'text' => $contactstatic->getLibStatut(3),
 						'asis'=>1,
 					);
@@ -157,7 +157,7 @@ class box_contacts extends ModeleBoxes
 
 				if ($num==0)
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'align="center"',
+						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedContacts"),
 					);
 
@@ -171,7 +171,7 @@ class box_contacts extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'align="left" class="nohover opacitymedium"',
+				'td' => 'class="nohover opacitymedium left"',
 				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}

@@ -199,8 +199,8 @@ if (empty($reshook))
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
-				$newlang = GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09'))
+				$newlang = GETPOST('lang_id', 'aZ09');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
@@ -224,7 +224,7 @@ if (empty($reshook))
 	// Link to a project
 	elseif ($action == 'classin' && $user->rights->commande->creer)
 	{
-		$object->setProject(GETPOST('projectid','int'));
+		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	// Add order
@@ -252,11 +252,11 @@ if (empty($reshook))
 			$db->begin();
 
 			$object->date_commande = $datecommande;
-			$object->note_private = GETPOST('note_private','none');
-			$object->note_public = GETPOST('note_public','none');
+			$object->note_private = GETPOST('note_private', 'none');
+			$object->note_public = GETPOST('note_public', 'none');
 			$object->source = GETPOST('source_id');
-			$object->fk_project = GETPOST('projectid','int');
-			$object->ref_client = GETPOST('ref_client','alpha');
+			$object->fk_project = GETPOST('projectid', 'int');
+			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->modelpdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -784,7 +784,7 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
+						$pqp = GETPOST('pbq', 'int');
 
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
@@ -810,7 +810,7 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[$object->thirdparty->price_level])	// yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-						$pqp = GETPOST('pbq','int');
+						$pqp = GETPOST('pbq', 'int');
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
 						{
@@ -854,8 +854,8 @@ if (empty($reshook))
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id','aZ09'))
-						$newlang = GETPOST('lang_id','aZ09');
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
 					if (empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -877,8 +877,8 @@ if (empty($reshook))
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (empty($newlang) && GETPOST('lang_id','alpha'))
-							$newlang = GETPOST('lang_id','alpha');
+						if (empty($newlang) && GETPOST('lang_id', 'alpha'))
+							$newlang = GETPOST('lang_id', 'alpha');
 						if (empty($newlang))
 							$newlang = $object->thirdparty->default_lang;
 						if (! empty($newlang)) {
@@ -1005,7 +1005,7 @@ if (empty($reshook))
 		$date_end='';
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description=dol_htmlcleanlastbr(GETPOST('product_desc','none'));
+		$description=dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
 		$pu_ht=GETPOST('price_ht');
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
@@ -1082,15 +1082,15 @@ if (empty($reshook))
 					}
 				}
 			}
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'),$pu_ht_devise);
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
-						$newlang = GETPOST('lang_id','aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -1132,9 +1132,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	elseif ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel','alpha') == $langs->trans('Cancel')) {
+	} elseif ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1162,7 +1160,7 @@ if (empty($reshook))
 			if (! $idwarehouse || $idwarehouse == -1)
 			{
 				$error++;
-				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action='';
 			}
 		}
@@ -1176,7 +1174,7 @@ if (empty($reshook))
 				{
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1215,7 +1213,7 @@ if (empty($reshook))
 			if (! $idwarehouse || $idwarehouse == -1)
 			{
 				$error++;
-				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action='';
 			}
 		}
@@ -1229,7 +1227,7 @@ if (empty($reshook))
 				{
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1274,7 +1272,7 @@ if (empty($reshook))
 			if (! $idwarehouse || $idwarehouse == -1)
 			{
 				$error++;
-				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action='';
 			}
 		}
@@ -1294,7 +1292,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -1349,7 +1347,7 @@ if (empty($reshook))
 	        {
 	            $lineId = intval($lineId);
 	            $originLine = new $lineClassName($db);
-	            if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+	            if(intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
 	            {
 	                $originLine->fetch_optionals($lineId);
 	                $desc = $originLine->desc;
@@ -1382,7 +1380,7 @@ if (empty($reshook))
 	                $fk_unit = $originLine->fk_unit;
 	                $pu_ht_devise = $originLine->multicurrency_subprice;
 
-	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label,$array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
+	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
 
 	                if($res > 0){
 	                    $importCount++;
@@ -1397,7 +1395,7 @@ if (empty($reshook))
 
 	        if($error)
 	        {
-	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
+	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
 	        }
 	    }
 	}
@@ -1481,7 +1479,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 // Mode creation
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	print load_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'), '', 'title_commercial.png');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1951,7 +1949,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int')?GETPOST('idwarehouse','int'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int')?GETPOST('idwarehouse', 'int'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -1971,7 +1969,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
 			}
 
-			$text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
+			$text=$langs->trans('ConfirmUnvalidateOrder', $object->ref);
 			$formquestion=array();
 			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
@@ -2013,7 +2011,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
 			}
 
-			$text=$langs->trans('ConfirmCancelOrder',$object->ref);
+			$text=$langs->trans('ConfirmCancelOrder', $object->ref);
 			$formquestion=array();
 			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
@@ -2676,7 +2674,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 			    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
 			}
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 			// Show online payment link
 			$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));

@@ -33,15 +33,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
-	print "Error: this template page cannot be called directly as an URL";
-	exit;
+if (empty($object) || ! is_object($object)) {
+    print "Error: this template page cannot be called directly as an URL";
+    exit;
 }
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande')))
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande')))
 {
     $usemargins=1;
 }
@@ -59,7 +58,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Columns: total ht + col edit + col delete
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
@@ -216,7 +215,7 @@ else {
 			}
 		}
 
-		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
+		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type", 'alpha', 2):-1, 'type', 1, 1, $forceall);
 
 		echo '</span>';
 	}
@@ -284,8 +283,8 @@ else {
 
 	if (is_object($hookmanager) && empty($senderissupplier))
 	{
-        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
-		$reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+		$reshook=$hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 		if (!empty($hookmanager->resPrint)) {
 			print $hookmanager->resPrint;
 		}
@@ -293,7 +292,7 @@ else {
 	if (is_object($hookmanager) && ! empty($senderissupplier))
 	{
 		$parameters=array('htmlname'=>'addproduct');
-		$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
+		$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions', $parameters, $object, $action);
 		if (!empty($hookmanager->resPrint)) {
 			print $hookmanager->resPrint;
 		}
@@ -316,7 +315,7 @@ else {
 	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 	$toolbarname='dolibarr_details';
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
+	$doleditor=new DolEditor('dp_desc', GETPOST('dp_desc'), '', 100, $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 	$doleditor->Create();
 
 	// Show autofill date for recurring invoices
@@ -337,30 +336,30 @@ else {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
-	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx",'alpha',2):-1), $seller, $buyer, 0, 0, '', false, 1);
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
 	<td class="nobottom linecoluht right">
-	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
+	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht", 'alpha', 2):''); ?>">
 	</td>
 
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="nobottom linecoluht_currency right">
-	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
+	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht", 'alpha', 2):''); ?>">
 	</td>
 	<?php } ?>
 
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td class="nobottom linecoluttc right">
-	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc",'alpha',2):''); ?>">
+	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc", 'alpha', 2):''); ?>">
 	</td>
 	<?php } ?>
-	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty",'alpha',2):1); ?>">
+	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
@@ -374,7 +373,7 @@ else {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	?>
-	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
@@ -390,7 +389,7 @@ else {
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price",'alpha',2):''); ?>">
+			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
 		</td>
 		<?php
 		$coldisplay++;
@@ -400,12 +399,12 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate",'alpha',2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate",'alpha',2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?GETPOST("np_markRate", 'alpha', 2):'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -450,8 +449,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		//There will be an edit and a delete button
 		$colspan += 2;
 
-		// With this, there is a column move button ONLY if lines > 1
-		if (in_array($object->element, array(
+        // With this, there is a column move button ONLY if lines > 1
+        if (in_array($object->element, array(
 			'propal',
 			'supplier_proposal',
 			'facture',
@@ -461,8 +460,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 			'order',
 			'order_supplier',
 			'invoice_supplier'
-		))) {
-			$colspan++;
+        ))) {
+            $colspan++;
 		}
 	}
 
@@ -485,9 +484,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	if (! empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
-		print $form->selectDate($date_start,"date_start",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		print $form->selectDate($date_end,"date_end",$usehm,$usehm,1,"addproduct");
+		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
 	}
 	else
 	{

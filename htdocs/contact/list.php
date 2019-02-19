@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,62 +39,62 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
 
-$action=GETPOST('action','alpha');
-$massaction=GETPOST('massaction','alpha');
-$show_files=GETPOST('show_files','int');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contactlist';
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contactlist';
 
 // Security check
-$id = GETPOST('id','int');
-$contactid = GETPOST('id','int');
+$id = GETPOST('id', 'int');
+$contactid = GETPOST('id', 'int');
 $ref = '';  // There is no ref for contacts
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid,'');
+$result = restrictedArea($user, 'contact', $contactid, '');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
-$search_phone=GETPOST("search_phone",'alpha');
+$search_phone=GETPOST("search_phone", 'alpha');
 
-$search_id=trim(GETPOST("search_id","int"));
-$search_firstlast_only=GETPOST("search_firstlast_only",'alpha');
-$search_lastname=GETPOST("search_lastname",'alpha');
-$search_firstname=GETPOST("search_firstname",'alpha');
-$search_societe=GETPOST("search_societe",'alpha');
-$search_poste=GETPOST("search_poste",'alpha');
-$search_phone_perso=GETPOST("search_phone_perso",'alpha');
-$search_phone_pro=GETPOST("search_phone_pro",'alpha');
-$search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
-$search_fax=GETPOST("search_fax",'alpha');
-$search_email=GETPOST("search_email",'alpha');
-$search_skype=GETPOST("search_skype",'alpha');
-$search_twitter=GETPOST("search_twitter",'alpha');
-$search_facebook=GETPOST("search_facebook",'alpha');
-$search_priv=GETPOST("search_priv",'alpha');
-$search_categ=GETPOST("search_categ",'int');
-$search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
-$search_categ_supplier=GETPOST("search_categ_supplier",'int');
-$search_status=GETPOST("search_status",'int');
-$search_type=GETPOST('search_type','alpha');
-$search_zip=GETPOST('search_zip','alpha');
-$search_town=GETPOST('search_town','alpha');
-$search_import_key=GETPOST("search_import_key","alpha");
-$search_country=GETPOST("search_country",'intcomma');
+$search_id=trim(GETPOST("search_id", "int"));
+$search_firstlast_only=GETPOST("search_firstlast_only", 'alpha');
+$search_lastname=GETPOST("search_lastname", 'alpha');
+$search_firstname=GETPOST("search_firstname", 'alpha');
+$search_societe=GETPOST("search_societe", 'alpha');
+$search_poste=GETPOST("search_poste", 'alpha');
+$search_phone_perso=GETPOST("search_phone_perso", 'alpha');
+$search_phone_pro=GETPOST("search_phone_pro", 'alpha');
+$search_phone_mobile=GETPOST("search_phone_mobile", 'alpha');
+$search_fax=GETPOST("search_fax", 'alpha');
+$search_email=GETPOST("search_email", 'alpha');
+$search_skype=GETPOST("search_skype", 'alpha');
+$search_twitter=GETPOST("search_twitter", 'alpha');
+$search_facebook=GETPOST("search_facebook", 'alpha');
+$search_priv=GETPOST("search_priv", 'alpha');
+$search_categ=GETPOST("search_categ", 'int');
+$search_categ_thirdparty=GETPOST("search_categ_thirdparty", 'int');
+$search_categ_supplier=GETPOST("search_categ_supplier", 'int');
+$search_status=GETPOST("search_status", 'int');
+$search_type=GETPOST('search_type', 'alpha');
+$search_zip=GETPOST('search_zip', 'alpha');
+$search_town=GETPOST('search_town', 'alpha');
+$search_import_key=GETPOST("search_import_key", "alpha");
+$search_country=GETPOST("search_country", 'intcomma');
 
-if ($search_status=='') $search_status=1; // always display activ customer first
+if ($search_status=='') $search_status=1; // always display active customer first
 
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
-$type=GETPOST("type",'aZ');
-$view=GETPOST("view",'alpha');
+$type=GETPOST("type", 'aZ');
+$view=GETPOST("view", 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-$userid=GETPOST('userid','int');
+$userid=GETPOST('userid', 'int');
 $begin=GETPOST('begin');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
@@ -133,7 +134,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('contact');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -181,7 +182,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $object=new Contact($db);
 if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
-	$result=$object->fetch($id,$ref);
+	$result=$object->fetch($id, $ref);
 	if ($result < 0) dol_print_error($db);
 }
 
@@ -190,11 +191,11 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -264,7 +265,7 @@ $sql.= " co.code as country_code";
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -307,7 +308,7 @@ if (strlen($search_phone))          $sql.= natural_search(array('p.phone', 'p.ph
 if (strlen($search_cti))            $sql.= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
 if (strlen($search_firstlast_only)) $sql.= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 
-if ($search_id > 0)                 $sql.= natural_search("p.rowid",$search_id,1);
+if ($search_id > 0)                 $sql.= natural_search("p.rowid", $search_id, 1);
 if ($search_lastname)               $sql.= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql.= natural_search('p.firstname', $search_firstname);
 if ($search_societe)                $sql.= natural_search('s.nom', $search_societe);
@@ -321,11 +322,11 @@ if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_sky
 if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_twitter);
 if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
-if (strlen($search_zip))   			$sql.= natural_search("p.zip",$search_zip);
-if (strlen($search_town))   		$sql.= natural_search("p.town",$search_town);
+if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
+if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
 
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
-if ($search_import_key)             $sql.= natural_search("p.import_key",$search_import_key);
+if ($search_import_key)             $sql.= natural_search("p.import_key", $search_import_key);
 if ($type == "o")        // filtre sur type
 {
 	$sql .= " AND p.fk_soc IS NULL";
@@ -350,16 +351,16 @@ if (! empty($socid))
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 // Add order
 if ($view == "recent")
 {
-	$sql.= $db->order("p.datec","DESC");
+	$sql.= $db->order("p.datec", "DESC");
 }
 else
 {
-	$sql.= $db->order($sortfield,$sortorder);
+	$sql.= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
@@ -397,18 +398,18 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 }
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-$param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-$param.='&type='.urlencode($type).'&view='.urlencode($view);
-if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
-if (!empty($search_categ_thirdparty)) $param.='&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
-if (!empty($search_categ_supplier)) $param.='&search_categ_supplier='.urlencode($search_categ_supplier);
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&amp;contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&amp;limit='.$limit;
+$param.='&amp;begin='.urlencode($begin).'&amp;userid='.urlencode($userid).'&amp;contactname='.urlencode($sall);
+$param.='&amp;type='.urlencode($type).'&amp;view='.urlencode($view);
+if (!empty($search_categ)) $param.='&amp;search_categ='.urlencode($search_categ);
+if (!empty($search_categ_thirdparty)) $param.='&amp;search_categ_thirdparty='.urlencode($search_categ_thirdparty);
+if (!empty($search_categ_supplier)) $param.='&amp;search_categ_supplier='.urlencode($search_categ_supplier);
 if ($sall != '') $param.='&amp;sall='.urlencode($sall);
-if ($search_id > 0) $param.= "&search_id=".urlencode($search_id);
+if ($search_id > 0) $param.= "&amp;search_id=".urlencode($search_id);
 if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
 if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
 if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
@@ -422,9 +423,9 @@ if ($search_phone_mobile != '') $param.='&amp;search_phone_mobile='.urlencode($s
 if ($search_fax != '') $param.='&amp;search_fax='.urlencode($search_fax);
 if ($search_email != '') $param.='&amp;search_email='.urlencode($search_email);
 if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
-if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
-if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_priv == '0' || $search_priv == '1') $param.="&amp;search_priv=".urlencode($search_priv);
+if ($search_import_key != '') $param.='&amp;search_import_key='.urlencode($search_import_key);
+if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -468,7 +469,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only)
 {
@@ -481,7 +482,7 @@ if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('Categories'). ': ';
-	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
+	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT, $search_categ, 'search_categ', 1);
 	$moreforfilter.='</div>';
 	if (empty($type) || $type == 'c' || $type == 'p')
 	{
@@ -489,14 +490,14 @@ if (! empty($conf->categorie->enabled))
 		if ($type == 'c') $moreforfilter.=$langs->trans('CustomersCategoriesShort'). ': ';
 		elseif ($type == 'p') $moreforfilter.=$langs->trans('ProspectsCategoriesShort'). ': ';
 		else $moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort'). ': ';
-		$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ_thirdparty,'search_categ_thirdparty',1);
+		$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1);
 		$moreforfilter.='</div>';
 	}
 	if (empty($type) || $type == 'f')
 	{
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('SuppliersCategoriesShort'). ': ';
-		$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ_supplier,'search_categ_supplier',1);
+		$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
 		$moreforfilter.='</div>';
 	}
 }
@@ -505,7 +506,7 @@ if ($moreforfilter)
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters=array('type'=>$type);
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -572,8 +573,8 @@ if (! empty($arrayfields['p.town']['checked']))
 // Country
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
+	print '<td class="liste_titre center">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
@@ -632,9 +633,9 @@ if (! empty($arrayfields['p.thirdparty']['checked']))
 }
 if (! empty($arrayfields['p.priv']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
    $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-   print $form->selectarray('search_priv',$selectarray,$search_priv,1);
+   print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
    print '</td>';
 }
 // Extra fields
@@ -642,7 +643,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (! empty($arrayfields['p.datec']['checked']))
@@ -660,7 +661,7 @@ if (! empty($arrayfields['p.tms']['checked']))
 if (! empty($arrayfields['p.statut']['checked']))
 {
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $search_status);
 	print '</td>';
 }
 if (! empty($arrayfields['p.import_key']['checked']))
@@ -670,7 +671,7 @@ if (! empty($arrayfields['p.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -679,42 +680,42 @@ print '</tr>';
 
 // Ligne des titres
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['p.rowid']['checked']))               print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($arrayfields['p.lastname']['label'],$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.firstname']['checked']))           print_liste_field_titre($arrayfields['p.firstname']['label'],$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'],$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.zip']['checked']))                 print_liste_field_titre($arrayfields['p.zip']['label'],$_SERVER["PHP_SELF"],"p.zip", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.town']['checked']))                print_liste_field_titre($arrayfields['p.town']['label'],$_SERVER["PHP_SELF"],"p.town", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.rowid']['checked']))               print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($arrayfields['p.lastname']['label'], $_SERVER["PHP_SELF"], "p.lastname", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.firstname']['checked']))           print_liste_field_titre($arrayfields['p.firstname']['label'], $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'], $_SERVER["PHP_SELF"], "p.poste", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.zip']['checked']))                 print_liste_field_titre($arrayfields['p.zip']['label'], $_SERVER["PHP_SELF"], "p.zip", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.town']['checked']))                print_liste_field_titre($arrayfields['p.town']['label'], $_SERVER["PHP_SELF"], "p.town", $begin, $param, '', $sortfield, $sortorder);
 //if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 //if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['country.code_iso']['checked']))      print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"co.code_iso","",$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.phone']['checked']))               print_liste_field_titre($arrayfields['p.phone']['label'],$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_titre($arrayfields['p.phone_perso']['label'],$_SERVER["PHP_SELF"],"p.phone_perso", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'],$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'],$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'],$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'],$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'],$_SERVER["PHP_SELF"],"p.twitter", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'],$_SERVER["PHP_SELF"],"p.facebook", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'],$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'],$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
+if (! empty($arrayfields['country.code_iso']['checked']))      print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.phone']['checked']))               print_liste_field_titre($arrayfields['p.phone']['label'], $_SERVER["PHP_SELF"], "p.phone", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_titre($arrayfields['p.phone_perso']['label'], $_SERVER["PHP_SELF"], "p.phone_perso", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'], $_SERVER["PHP_SELF"], "p.phone_mobile", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'], $_SERVER["PHP_SELF"], "p.fax", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['p.datec']['checked']))      print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.tms']['checked']))        print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.statut']['checked']))     print_liste_field_titre($arrayfields['p.statut']['label'],$_SERVER["PHP_SELF"],"p.statut","",$param,'align="center"',$sortfield,$sortorder);
-if (! empty($arrayfields['p.import_key']['checked'])) print_liste_field_titre($arrayfields['p.import_key']['label'],$_SERVER["PHP_SELF"],"p.import_key","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+if (! empty($arrayfields['p.datec']['checked']))      print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.tms']['checked']))        print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.statut']['checked']))     print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.import_key']['checked'])) print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
 
 $i = 0;
 $totalarray=array();
-while ($i < min($num,$limit))
+while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
 
@@ -744,7 +745,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['p.lastname']['checked']))
 	{
 		print '<td valign="middle">';
-		print $contactstatic->getNomUrl(1,'',0);
+		print $contactstatic->getNomUrl(1, '', 0);
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -787,8 +788,8 @@ while ($i < min($num,$limit))
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td align="center">';
-		$tmparray=getCountry($obj->fk_pays,'all');
+		print '<td class="center">';
+		$tmparray=getCountry($obj->fk_pays, 'all');
 		print $tmparray['label'];
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -796,56 +797,56 @@ while ($i < min($num,$limit))
 	// Phone
 	if (! empty($arrayfields['p.phone']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_pro,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone perso
 	if (! empty($arrayfields['p.phone_perso']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_perso,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone mobile
 	if (! empty($arrayfields['p.phone_mobile']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Fax
 	if (! empty($arrayfields['p.fax']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->rowid,$obj->socid,'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// EMail
 	if (! empty($arrayfields['p.email']['checked']))
 	{
-		print '<td>'.dol_print_email($obj->email,$obj->rowid,$obj->socid,'AC_EMAIL',18).'</td>';
+		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Skype
 	if (! empty($arrayfields['p.skype']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->skype,$obj->rowid,$obj->socid,'skype').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->skype, $obj->rowid, $obj->socid, 'skype').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Jabber
 	if (! empty($arrayfields['p.jabberid']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->jabberid,$obj->rowid,$obj->socid,'jabberid').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->jabberid, $obj->rowid, $obj->socid, 'jabberid').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Twitter
 	if (! empty($arrayfields['p.twitter']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->twitter,$obj->rowid,$obj->socid,'twitter').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->twitter, $obj->rowid, $obj->socid, 'twitter').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Facebook
 	if (! empty($arrayfields['p.facebook']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook,$obj->rowid,$obj->socid,'facebook').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook, $obj->rowid, $obj->socid, 'facebook').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Company
@@ -867,7 +868,7 @@ while ($i < min($num,$limit))
 	// Private/Public
 	if (! empty($arrayfields['p.priv']['checked']))
 	{
-		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+		print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 
@@ -875,12 +876,12 @@ while ($i < min($num,$limit))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['p.datec']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -888,7 +889,7 @@ while ($i < min($num,$limit))
 	// Date modification
 	if (! empty($arrayfields['p.tms']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -896,7 +897,7 @@ while ($i < min($num,$limit))
 	// Status
 	if (! empty($arrayfields['p.statut']['checked']))
 	{
-		print '<td align="center">'.$contactstatic->getLibStatut(3).'</td>';
+		print '<td class="center">'.$contactstatic->getLibStatut(3).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['p.import_key']['checked']))
@@ -908,7 +909,7 @@ while ($i < min($num,$limit))
 	}
 
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
@@ -925,7 +926,7 @@ while ($i < min($num,$limit))
 $db->free($result);
 
 $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>";

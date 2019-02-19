@@ -59,7 +59,7 @@ class TicketStats extends Stats
 
         $object = new Ticket($this->db);
         $this->from = MAIN_DB_PREFIX . $object->table_element;
-        $this->field = 'km';
+        $this->field = 'timing';
 
         $this->where = " fk_statut > 0";
         $this->where .= " AND entity = " . $conf->entity;

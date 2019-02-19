@@ -96,7 +96,7 @@ if ($action == 'update') {
 		$error ++;
 	}
 
-	foreach ( $main_option as $constname ) {
+	foreach ($main_option as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -104,7 +104,7 @@ if ($action == 'update') {
 		}
 	}
 
-    foreach ($listparam[$modelcsv] as $key => $value ) {
+    foreach ($listparam[$modelcsv] as $key => $value) {
         $constante = $key;
 
         if (strpos($constante, 'ACCOUNTING')!==false) {
@@ -198,7 +198,7 @@ print "</tr>\n";
 
 $num = count($main_option);
 if ($num) {
-	foreach ( $main_option as $key ) {
+	foreach ($main_option as $key) {
 
 		print '<tr class="oddeven value">';
 
@@ -256,7 +256,7 @@ if ($num2) {
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 
-	foreach ( $model_option as $key) {
+	foreach ($model_option as $key) {
 		print '<tr class="oddeven value">';
 
         // Param

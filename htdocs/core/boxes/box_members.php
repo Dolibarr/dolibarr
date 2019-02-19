@@ -41,7 +41,7 @@ class box_members extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 	var $enabled = 1;
 
@@ -62,8 +62,8 @@ class box_members extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('adherent',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
 
 		$this->hidden=! ($user->rights->adherent->lire);
 	}
@@ -84,7 +84,7 @@ class box_members extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
         $memberstatic=new Adherent($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
 		if ($user->rights->adherent->lire)
 		{
@@ -141,8 +141,8 @@ class box_members extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $memberstatic->LibStatut($objp->status,$objp->subscription,$db->jdate($objp->date_end_subscription),3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $db->jdate($objp->date_end_subscription), 3),
                     );
 
                     $line++;
@@ -150,7 +150,7 @@ class box_members extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedCustomers"),
                     );
 
@@ -164,7 +164,7 @@ class box_members extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }

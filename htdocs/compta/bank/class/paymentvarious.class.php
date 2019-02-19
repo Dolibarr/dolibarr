@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,8 @@ class PaymentVarious extends CommonObject
 
 	public $accountancy_code;
 
+    public $subledger_account;
+
 	/**
      * @var int ID
      */
@@ -139,6 +141,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
+        $sql.= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
 		$sql.= " fk_user_author=".$this->fk_user_author.",";
@@ -156,7 +159,7 @@ class PaymentVarious extends CommonObject
 		if (! $notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('PAYMENT_VARIOUS_MODIFY',$user);
+			$result=$this->call_trigger('PAYMENT_VARIOUS_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -196,6 +199,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " v.label,";
 		$sql.= " v.note,";
 		$sql.= " v.accountancy_code,";
+		$sql.= " v.subledger_account,";
 		$sql.= " v.fk_projet as fk_project,";
 		$sql.= " v.fk_bank,";
 		$sql.= " v.fk_user_author,";
@@ -215,25 +219,26 @@ class PaymentVarious extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id				= $obj->rowid;
-				$this->ref				= $obj->rowid;
-				$this->tms				= $this->db->jdate($obj->tms);
-				$this->datep			= $this->db->jdate($obj->datep);
-				$this->datev			= $this->db->jdate($obj->datev);
-				$this->sens				= $obj->sens;
-				$this->amount			= $obj->amount;
-				$this->type_payment		= $obj->fk_typepayment;
-				$this->num_payment		= $obj->num_payment;
-				$this->label			= $obj->label;
-				$this->note				= $obj->note;
-				$this->accountancy_code	= $obj->accountancy_code;
-				$this->fk_project		= $obj->fk_project;
-				$this->fk_bank			= $obj->fk_bank;
-				$this->fk_user_author	= $obj->fk_user_author;
-				$this->fk_user_modif	= $obj->fk_user_modif;
-				$this->fk_account		= $obj->fk_account;
-				$this->fk_type			= $obj->fk_type;
-				$this->rappro			= $obj->rappro;
+				$this->id                   = $obj->rowid;
+				$this->ref                  = $obj->rowid;
+				$this->tms                  = $this->db->jdate($obj->tms);
+				$this->datep                = $this->db->jdate($obj->datep);
+				$this->datev                = $this->db->jdate($obj->datev);
+				$this->sens                 = $obj->sens;
+				$this->amount               = $obj->amount;
+				$this->type_payment         = $obj->fk_typepayment;
+				$this->num_payment          = $obj->num_payment;
+				$this->label                = $obj->label;
+				$this->note                 = $obj->note;
+				$this->subledger_account    = $obj->subledger_account;
+				$this->accountancy_code     = $obj->accountancy_code;
+				$this->fk_project           = $obj->fk_project;
+				$this->fk_bank              = $obj->fk_bank;
+				$this->fk_user_author       = $obj->fk_user_author;
+				$this->fk_user_modif        = $obj->fk_user_modif;
+				$this->fk_account           = $obj->fk_account;
+				$this->fk_type              = $obj->fk_type;
+				$this->rappro               = $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -260,7 +265,7 @@ class PaymentVarious extends CommonObject
 		$error=0;
 
 		// Call trigger
-		$result=$this->call_trigger('PAYMENT_VARIOUS_DELETE',$user);
+		$result=$this->call_trigger('PAYMENT_VARIOUS_DELETE', $user);
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -298,6 +303,7 @@ class PaymentVarious extends CommonObject
 		$this->amount='';
 		$this->label='';
 		$this->accountancy_code='';
+        $this->subledger_account='';
 		$this->note='';
 		$this->fk_bank='';
 		$this->fk_user_author='';
@@ -328,22 +334,22 @@ class PaymentVarious extends CommonObject
 		// Check parameters
 		if (! $this->label)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 			return -3;
 		}
 		if ($this->amount < 0 || $this->amount == '')
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
 		if (! empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -6;
 		}
 		if (! empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
 		{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
 
@@ -360,6 +366,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", note";
 		$sql.= ", label";
 		$sql.= ", accountancy_code";
+		$sql.= ", subledger_account";
 		$sql.= ", fk_projet";
 		$sql.= ", fk_user_author";
 		$sql.= ", datec";
@@ -376,6 +383,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", '".$this->db->escape($this->subledger_account)."'";
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
@@ -406,7 +414,7 @@ class PaymentVarious extends CommonObject
 					$sign=1;
 					if ($this->sens == '0') $sign=-1;
 
-					$bank_line_id = $acc->addline(
+    $bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
@@ -449,7 +457,7 @@ class PaymentVarious extends CommonObject
 				}
 
 				// Call trigger
-				$result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
+				$result=$this->call_trigger('PAYMENT_VARIOUS_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -507,7 +515,7 @@ class PaymentVarious extends CommonObject
 	 */
 	function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut,$mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -533,27 +541,27 @@ class PaymentVarious extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4');
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]), 'statut0');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]), 'statut4');
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]), 'statut6');
 		}
 	}
 
@@ -586,7 +594,7 @@ class PaymentVarious extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -623,7 +631,7 @@ class PaymentVarious extends CommonObject
 		global $action;
 		$hookmanager->initHooks(array('variouspayment'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 

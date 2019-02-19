@@ -31,7 +31,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 // Security check
 if (! $user->admin) accessforbidden();
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 
 // View
 llxHeader();

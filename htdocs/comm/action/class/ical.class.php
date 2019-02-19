@@ -3,6 +3,7 @@
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ class ICal
         if (is_array($tmparray))
         {
         	$file_text = join("", $tmparray); //load file
-        	$file_text = preg_replace("/[\r\n]{1,} /","",$file_text);
+        	$file_text = preg_replace("/[\r\n]{1,} /", "", $file_text);
         }
         return $file_text; // return all text
     }
@@ -96,7 +97,7 @@ class ICal
      * Translate Calendar
      *
      * @param	string 	$uri	Url
-     * @return	array
+     * @return	array|string
      */
     function parse($uri)
     {
@@ -109,8 +110,8 @@ class ICal
 
         $this->file_text = preg_split("[\n]", $this->file_text);
 
-        // is this text vcalendar standart text ? on line 1 is BEGIN:VCALENDAR
-        if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
+        // is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
+        if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
         $tmpkey='';$tmpvalue=''; $type='';
@@ -170,24 +171,24 @@ class ICal
                     	if ($tmpvalue)
 						{
 							$tmpvalue .= $text;
-							if (! preg_match('/=$/',$text))	// No more lines
+							if (! preg_match('/=$/', $text))	// No more lines
 							{
 								$key=$tmpkey;
-								$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i','',$tmpvalue));
+								$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
 								$tmpkey='';
 								$tmpvalue='';
 							}
 						}
-                    	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i',$value))
+                    	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
                     	{
-                    		if (preg_match('/=$/',$value))
+                    		if (preg_match('/=$/', $value))
                     		{
                     			$tmpkey=$key;
-                    			$tmpvalue=$tmpvalue.preg_replace('/=$/',"",$value);	// We must wait to have next line to have complete message
+                    			$tmpvalue=$tmpvalue.preg_replace('/=$/', "", $value);	// We must wait to have next line to have complete message
                     		}
                     		else
                     		{
-                    			$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i','',$tmpvalue.$value));
+                    			$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
                     		}
                     	}                    	//$value=quotedPrintDecode($tmpvalue.$value);
                     	if (! $insidealarm && ! $tmpkey) $this->add_to_array($type, $key, $value); // add to array
@@ -229,15 +230,15 @@ class ICal
         if (($key == "DTSTAMP") || ($key == "LAST-MODIFIED") || ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
         //if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-        if (stristr($key,"DTSTART") || stristr($key,"DTEND") || stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
+        if (stristr($key, "DTSTART") || stristr($key, "DTEND") || stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
         {
-        	if (stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
+        	if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
         	{
         		list($key,$value) = array($key,$value);
         	}
         	else
         	{
-        		list($key,$value) = $this->ical_dt_date($key,$value);
+        		list($key,$value) = $this->ical_dt_date($key, $value);
         	}
         }
 
@@ -284,7 +285,7 @@ class ICal
             $matches = array_splice($matches, 1, 2);
             return $matches;
         }*/
-        return explode(':',$text,2);
+        return explode(':', $text, 2);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -298,7 +299,7 @@ class ICal
     {
         // phpcs:enable
         $result = array();
-        $rrule = explode(';',$value);
+        $rrule = explode(';', $value);
         foreach ($rrule as $line)
         {
             $rcontent = explode('=', $line);
@@ -323,7 +324,7 @@ class ICal
         $ntime=0;
         // TIME LIMITED EVENT
         if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date))
-            $ntime=dol_mktime($date[4], $date[5], $date[6], $date[2],$date[3], $date[1], true);
+            $ntime=dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
 
         //if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
         //print dol_print_date($ntime,'dayhour');exit;
@@ -345,7 +346,7 @@ class ICal
         $value = $this->ical_date_to_unix($value);
 
         // Analyse TZID
-        $temp = explode(";",$key);
+        $temp = explode(";", $key);
 
         if (empty($temp[1])) // not TZID
         {
@@ -363,9 +364,9 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return sorted eventlist as array or false if calenar is empty
+     * Return sorted eventlist as array or false if calendar is empty
      *
-     * @return array
+     * @return array|false
      */
     function get_sort_event_list()
     {
@@ -398,7 +399,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return eventlist array (not sort eventlist array)
+     * Return eventlist array (not sorted eventlist array)
      *
      * @return array
      */
@@ -422,7 +423,7 @@ class ICal
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * Return to do array (not sort to do array)
+     * Return to do array (not sorted todo array)
      *
      * @return array
      */

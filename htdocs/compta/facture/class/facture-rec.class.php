@@ -225,7 +225,7 @@ class FactureRec extends CommonInvoice
 					$tva_tx = $facsrc->lines[$i]->tva_tx;
 					if (! empty($facsrc->lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
 
-					$result_insert = $this->addline(
+    $result_insert = $this->addline(
                         $facsrc->lines[$i]->desc,
                         $facsrc->lines[$i]->subprice,
                         $facsrc->lines[$i]->qty,
@@ -470,7 +470,7 @@ class FactureRec extends CommonInvoice
 		// fetch optionals attributes and labels
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline=new ExtraFields($this->db);
-		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec',true);
+		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec', true);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
@@ -960,7 +960,7 @@ class FactureRec extends CommonInvoice
 	/**
 	 * Return the next date of
 	 *
-	 * @return	timestamp	false if KO, timestamp if OK
+	 * @return  int|false   false if KO, timestamp if OK
 	 */
 	function getNextDate()
 	{
@@ -1014,7 +1014,7 @@ class FactureRec extends CommonInvoice
 
 		$now = dol_now();
 		$tmparray=dol_getdate($now);
-		$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
+		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);   // Today is last second of current day
 
 		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
 
@@ -1188,7 +1188,7 @@ class FactureRec extends CommonInvoice
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -1266,13 +1266,13 @@ class FactureRec extends CommonInvoice
 		{
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Active'), 'statut4').' '.$langs->trans('Active');
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
 			}
 		}
 		elseif ($mode == 3)
@@ -1280,13 +1280,13 @@ class FactureRec extends CommonInvoice
 			if ($recur)
 			{
 				$prefix='Short';
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
-				else return img_picto($langs->trans('Active'),'statut4');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6');
+				else return img_picto($langs->trans('Active'), 'statut4');
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
-				else return img_picto($langs->trans('Draft'),'statut0');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6');
+				else return img_picto($langs->trans('Draft'), 'statut0');
 			}
 		}
 		elseif ($mode == 4)
@@ -1294,13 +1294,13 @@ class FactureRec extends CommonInvoice
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Active'), 'statut4').' '.$langs->trans('Active');
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
-				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'), 'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
 			}
 		}
 		elseif ($mode == 5 || $mode == 6)
@@ -1309,13 +1309,13 @@ class FactureRec extends CommonInvoice
 			if ($mode == 5) $prefix='Short';
 			if ($recur)
 			{
-				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
-				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut6');
+				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'), 'statut4');
 			}
 			else
 			{
-				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
-				else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut6');
+				else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'), 'statut0');
 			}
 		}
 	}
@@ -1484,13 +1484,13 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
 		if (!empty($frequency) && empty($unit))
         {
-            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined", LOG_ERR);
             return -2;
         }
 
@@ -1527,7 +1527,7 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -1559,7 +1559,7 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -1592,7 +1592,7 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -1623,7 +1623,7 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -1654,7 +1654,7 @@ class FactureRec extends CommonInvoice
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined",LOG_ERR);
+            dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
@@ -1858,7 +1858,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	}
     	$sql.= ", rang=".$this->rang;
     	$sql.= ", special_code=".$this->special_code;
-    	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
+    	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit)."'":"null");
     	$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
     	$sql.= " WHERE rowid = ".$this->id;
 

@@ -18,8 +18,7 @@
  */
 
 /**
- *     \defgroup    ticket    Ticket module
- *     \brief       Ticket module descriptor.
+ *     \defgroup    ticket    Module Ticket
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -64,7 +63,7 @@ class modTicket extends DolibarrModules
         // (where XXX is value of numeric property 'numero' of module)
         $this->description = "Incident/support ticket management";
         // Possible values for version are: 'development', 'experimental' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -276,6 +275,19 @@ class modTicket extends DolibarrModules
             'url' => '/ticket/list.php?mode=my_assign&search_fk_status=non_closed',
             'langs' => 'ticket',
             'position' => 106,
+            'enabled' => '$conf->ticket->enabled',
+            'perms' => '$user->rights->ticket->read',
+            'target' => '',
+            'user' => 0);
+        $r++;
+
+        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
+            'type' => 'left',
+            'titre' => 'Statistics',
+            'mainmenu' => 'ticket',
+            'url' => '/ticket/stats/index.php',
+            'langs' => 'ticket',
+            'position' => 107,
             'enabled' => '$conf->ticket->enabled',
             'perms' => '$user->rights->ticket->read',
             'target' => '',

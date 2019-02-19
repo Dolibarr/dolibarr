@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 /**
  *  \file       htdocs/core/modules/fichinter/modules_fichinter.php
  *  \ingroup    ficheinter
- *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
- *   			et la classe mere de numerotation des fiches interventions
+ *  \brief      File that contains parent class for PDF interventions models
+ *   			and parent class for interventions numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -54,18 +54,18 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 		global $conf;
 
 		$type='ficheinter';
-		$liste=array();
+		$list=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
 
 /**
- *  Classe mere des modeles de numerotation des references de fiches d'intervention
+ *  Parent class numbering models of intervention sheet references
  */
 abstract class ModeleNumRefFicheinter
 {
@@ -85,9 +85,9 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Renvoi la description par defaut du modele de numerotation
+	 * 	Returns the default description of the numbering template
 	 *
-	 * 	@return     string      Texte descripif
+	 * 	@return     string      Descriptive text
 	 */
 	function info()
 	{
@@ -97,7 +97,7 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Renvoi un exemple de numerotation
+	 * 	Return a numbering example
 	 *
 	 * 	@return     string      Example
 	 */
@@ -109,8 +109,8 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 * 	de conflits qui empechera cette numerotation de fonctionner.
+	 * 	Tests if the numbers already in force in the database do not cause conflicts
+	 *  that would prevent this numbering from working.
 	 *
 	 * 	@return     boolean     false si conflit, true si ok
 	 */
@@ -120,9 +120,9 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Renvoi prochaine valeur attribuee
+	 * 	Return the next assigned value
 	 *
-	 * 	@return     string      Valeur
+	 * 	@return     string      Value
 	 */
 	function getNextValue()
 	{
@@ -131,9 +131,9 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Renvoi version du module numerotation
+	 * 	Return the version of the numbering module
 	 *
-	 * 	@return     string      Valeur
+	 * 	@return     string      Value
 	 */
 	function getVersion()
 	{
@@ -186,7 +186,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
+	$tmp=explode(':', $modele, 2);
     if (! empty($tmp[1]))
     {
         $modele=$tmp[0];
@@ -196,7 +196,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
     	foreach(array('doc','pdf') as $prefix)
@@ -204,7 +204,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
     		if (file_exists($file))
     		{
     			$filefound=1;
@@ -238,13 +238,13 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"fichinter_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "fichinter_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}
 }

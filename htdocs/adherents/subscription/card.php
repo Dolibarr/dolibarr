@@ -39,10 +39,10 @@ $adht = new AdherentType($db);
 $object = new Subscription($db);
 $errmsg='';
 
-$action=GETPOST("action",'alpha');
-$rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
-$typeid=GETPOST("typeid","int");
-$cancel=GETPOST('cancel','alpha');
+$action=GETPOST("action", 'alpha');
+$rowid=GETPOST("rowid", "int")?GETPOST("rowid", "int"):GETPOST("id", "int");
+$typeid=GETPOST("typeid", "int");
+$cancel=GETPOST('cancel', 'alpha');
 $confirm=GETPOST('confirm');
 
 if (! $user->rights->adherent->cotisation->lire)
@@ -167,7 +167,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 $form = new Form($db);
 
 
-llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 dol_htmloutput_errors($errmsg);
@@ -214,7 +214,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
     print '</tr>';
 
     // Date start subscription
@@ -247,7 +247,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 			{
 				$bankline=new AccountLine($db);
 				$result=$bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
+				print $bankline->getNomUrl(1, 0, 'showall');
 			}
 			else
 			{
@@ -293,7 +293,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -308,23 +308,23 @@ if ($rowid && $action != 'edit')
     print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border" width="100%">';
-    
+
     // Type
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
     print '<td class="valeur">';
-    if (  ! empty($object->fk_type) ) {
-      $adht->fetch($object->fk_type);
-    print $adht->getNomUrl(1);
-      } else {
-    print $langs->trans("NoType");
-      }
+    if (! empty($object->fk_type) ) {
+        $adht->fetch($object->fk_type);
+        print $adht->getNomUrl(1);
+    } else {
+        print $langs->trans("NoType");
+    }
     print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
     print '</tr>';
 
     // Date record
@@ -334,12 +334,12 @@ if ($rowid && $action != 'edit')
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->dateh,'day').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->dateh, 'day').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dol_print_date($object->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dol_print_date($object->datef, 'day').'</td>';
     print '</tr>';
 
     // Amount
@@ -358,7 +358,7 @@ if ($rowid && $action != 'edit')
 			{
 				$bankline=new AccountLine($db);
 				$result=$bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1,0,'showall');
+				print $bankline->getNomUrl(1, 0, 'showall');
 			}
 			else
 			{

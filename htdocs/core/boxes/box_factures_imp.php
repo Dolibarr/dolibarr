@@ -42,7 +42,7 @@ class box_factures_imp extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -82,7 +82,7 @@ class box_factures_imp extends ModeleBoxes
         $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
 
 		if ($user->rights->facture->lire)
 		{
@@ -144,7 +144,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
 					}
 
                     $this->info_box_contents[$line][] = array(
@@ -167,18 +167,18 @@ class box_factures_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datelimite,'day'),
+                        'text' => dol_print_date($datelimite, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
                     );
 
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
 
 				$db->free($result);
 			}
@@ -193,7 +193,7 @@ class box_factures_imp extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}

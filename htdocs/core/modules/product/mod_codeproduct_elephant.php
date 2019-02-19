@@ -105,14 +105,14 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte.= '<input type="hidden" name="param2" value="PRODUCT_ELEPHANT_MASK_SERVICE">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Product"),$langs->transnoentities("Product"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Product"), $langs->transnoentities("Product"));
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4c");
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
@@ -120,7 +120,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';
@@ -142,7 +142,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	{
 		if ($type == 0 || $type == -1)
 		{
-			$exampleproduct = $this->getNextValue($objproduct,0);
+			$exampleproduct = $this->getNextValue($objproduct, 0);
 			if (! $exampleproduct)
 			{
 				$exampleproduct = $langs->trans('NotConfigured');
@@ -155,7 +155,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		}
 		if ($type == 1 || $type == -1)
 		{
-			$exampleservice = $this->getNextValue($objproduct,1);
+			$exampleservice = $this->getNextValue($objproduct, 1);
 			if (! $exampleservice)
 			{
 				$exampleservice = $langs->trans('NotConfigured');
@@ -213,7 +213,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$now=dol_now();
 
-		$numFinal=get_next_value($db,$mask,'product',$field,$where,'',$now);
+		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
 
 		return  $numFinal;
 	}
@@ -231,10 +231,10 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		global $conf;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-		if (preg_match('/\{pre\}/i',$mask)) return 1;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
-		if (preg_match('/\{pre\}/i',$mask)) return 1;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		return 0;
 	}
@@ -283,7 +283,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 				return -5;
 			}
 
-			$result=check_value($mask,$code);
+			$result=check_value($mask, $code);
 			if (is_string($result))
 			{
 				$this->error = $result;

@@ -128,6 +128,8 @@ abstract class Util
             \Stripe\SourceTransaction::OBJECT_NAME => 'Stripe\\SourceTransaction',
             \Stripe\Subscription::OBJECT_NAME => 'Stripe\\Subscription',
             \Stripe\SubscriptionItem::OBJECT_NAME => 'Stripe\\SubscriptionItem',
+            \Stripe\SubscriptionSchedule::OBJECT_NAME => 'Stripe\\SubscriptionSchedule',
+            \Stripe\SubscriptionScheduleRevision::OBJECT_NAME => 'Stripe\\SubscriptionScheduleRevision',
             \Stripe\ThreeDSecure::OBJECT_NAME => 'Stripe\\ThreeDSecure',
             \Stripe\Terminal\ConnectionToken::OBJECT_NAME => 'Stripe\\Terminal\\ConnectionToken',
             \Stripe\Terminal\Location::OBJECT_NAME => 'Stripe\\Terminal\\Location',

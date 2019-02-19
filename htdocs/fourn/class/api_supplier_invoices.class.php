@@ -72,7 +72,7 @@ class SupplierInvoices extends DolibarrApi
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -193,7 +193,7 @@ class SupplierInvoices extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
-        if(! array_keys($request_data,'date')) {
+        if(! array_keys($request_data, 'date')) {
             $this->invoice->date = dol_now();
         }
         /* We keep lines as an array
@@ -229,7 +229,7 @@ class SupplierInvoices extends DolibarrApi
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -260,7 +260,7 @@ class SupplierInvoices extends DolibarrApi
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -306,7 +306,7 @@ class SupplierInvoices extends DolibarrApi
     		throw new RestException(404, 'Invoice not found');
     	}
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->invoice->id,'facture_fourn','facture')) {
+		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
     	}
 
