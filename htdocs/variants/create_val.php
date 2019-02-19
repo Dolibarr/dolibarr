@@ -23,6 +23,10 @@ require 'class/ProductAttributeValue.class.php';
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
+if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1) {
+	$start_date=dol_mktime(0, 0, 0, GETPOST('start_datemonth', 'int'), GETPOST('start_dateday', 'int'), GETPOST('start_dateyear', 'int'));
+	$end_date=dol_mktime(0, 0, 0, GETPOST('end_datemonth', 'int'), GETPOST('end_dateday', 'int'), GETPOST('end_dateyear', 'int'));
+}
 
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
@@ -65,6 +69,10 @@ if ($action == 'add')
 		$objectval->fk_product_attribute = $object->id;
 		$objectval->ref = $ref;
 		$objectval->value = $value;
+		if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1) {
+			$objectval->start_date = $start_date;
+			$objectval->end_date = $end_date;
+		}
 
 		if ($objectval->create($user) > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -102,6 +110,17 @@ print '<div class="underbanner clearboth"></div>';
 		<td class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
 		<td><?php echo dol_htmlentities($object->label) ?></td>
 	</tr>
+	<?php if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1): ?>
+	<tr>
+		<td class="fieldrequired"><?php echo $langs->trans('DateStart') ?></td>
+		<td><?php echo dol_htmlentities($object->start_date) ?></td>
+		
+	</tr>
+	<tr>
+		<td class="fieldrequired"><?php echo $langs->trans('DateEnd') ?></td>
+		<td><?php echo dol_htmlentities($object->end_date) ?></td>
+	</tr>
+	<?php endif; ?>
 </table>
 
 <?php
@@ -132,6 +151,16 @@ dol_fiche_head();
 			<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Label') ?></label></td>
 			<td><input id="value" type="text" name="value" value="<?php echo $value ?>"></td>
 		</tr>
+		<?php if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1): ?>
+		<tr>
+			<td class="fieldrequired"><label for="start_date"><?php echo $langs->trans('DateStart') ?></label></td>		
+			<td><?php echo $form->selectDate(($start_date?$start_date:''), 'start_date', 0, 0, 0, '', 1, 0)?></td>
+		</tr>
+		<tr>
+			<td class="fieldrequired"><label for="end_date"><?php echo $langs->trans('DateEnd') ?></label></td>
+			<td><?php echo $form->selectDate(($end_date?$end_date:''), 'end_date', 0, 0, 0, '', 1, 0)?></td>
+		</tr>
+		<?php endif; ?>
 	</table>
 <?php
 
