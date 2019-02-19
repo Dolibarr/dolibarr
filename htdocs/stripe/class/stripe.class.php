@@ -324,7 +324,7 @@ class Stripe extends CommonObject
 					"currency" => isset($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency,
                     "customer"  => $customer,
                     "payment_method_types" => ["card"],
-                    "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+                    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // dynamic staement with 10 chars that appears on bank receipt  https://stripe.com/docs/charges#dynamic-statement-descriptor
 					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
 
@@ -597,7 +597,7 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-					"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					"statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 10 chars that appears on bank receipt https://stripe.com/docs/charges#dynamic-statement-descriptor
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,
