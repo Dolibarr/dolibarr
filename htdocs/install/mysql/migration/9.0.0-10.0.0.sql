@@ -162,3 +162,7 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 
 -- Default Warehouse id for a user
 ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
+
+-- Periodic attribute
+ALTER TABLE llx_product_attribute_value ADD COLUMN date_start DATE NULL DEFAULT NULL AFTER value;
+ALTER TABLE llx_product_attribute_value ADD COLUMN date_end DATE NULL DEFAULT NULL AFTER date_start;
