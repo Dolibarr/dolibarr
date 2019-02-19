@@ -889,14 +889,10 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     $service = 'StripeTest';
 	$servicestatus = 0;
  
-	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;
- 
 	if (! empty($conf->global->STRIPE_LIVE))
 	{
 	$service = 'StripeLive';
 	$servicestatus = 1;
-
-  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY;
 	}
 
 $stripe = new Stripe($db);
@@ -1052,14 +1048,11 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     $service = 'StripeTest';
 	$servicestatus = 0;
 
-	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;
-
 	if (! empty($conf->global->STRIPE_LIVE))
 	{
 	$service = 'StripeLive';
-	$servicestatus = 1;
+    $servicestatus = 1;
 
-  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY;
 	}
 
 $stripe = new Stripe($db);
