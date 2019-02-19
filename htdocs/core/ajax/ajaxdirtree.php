@@ -425,7 +425,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						 print '</td>';*/
 
 						// Nb of docs
-						print '<td align="right">';
+						print '<td class="right">';
 						print (isset($val['cachenbofdoc']) && $val['cachenbofdoc']  >= 0)?$val['cachenbofdoc']:'&nbsp;';
 						print '</td>';
 						print '<td class="left">';
@@ -433,19 +433,19 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print '</td>';
 
 						// Edit link
-						print '<td align="right" width="18"><a href="';
+						print '<td class="right" width="18"><a href="';
 						print DOL_URL_ROOT.'/ecm/dir_card.php?module='.urlencode($modulepart).'&section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']);
 						print '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 						print '">'.img_edit($langs->trans("Edit").' - '.$langs->trans("View"), 0, 'class="valignmiddle opacitymedium"').'</a></td>';
 
 						// Add link
-						//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
-						//print '<td align="right" width="14">&nbsp;</td>';
+						//print '<td class="right"><a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
+						//print '<td class="right" width="14">&nbsp;</td>';
 
 						// Info
 						if ($modulepart == 'ecm')
 						{
-							print '<td align="right" width="18">';
+							print '<td class="right" width="18">';
 							$userstatic->id=isset($val['fk_user_c'])?$val['fk_user_c']:0;
 							$userstatic->lastname=isset($val['login_c'])?$val['login_c']:0;
 							$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';

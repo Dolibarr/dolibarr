@@ -455,7 +455,7 @@ class FormMail extends Form
 			}
 			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
 			{
-				$out.= '<tr><td colspan="2" align="right">';
+				$out.= '<tr><td colspan="2" class="right">';
 				//$out.='<div class="floatright">';
 				if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
 				else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
