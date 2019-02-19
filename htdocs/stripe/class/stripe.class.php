@@ -286,9 +286,9 @@ class Stripe extends CommonObject
 
 				dol_syslog(get_class($this) . "::customerStripe found stripe customer key_account = ".$tiers);
 
-				// Force to use the correct API key
-				global $stripearrayofkeysbyenv;
-				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+					// Force to use the correct API key
+					//global $stripearrayofkeysbyenv;
+					//\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -305,8 +305,8 @@ class Stripe extends CommonObject
 			else //if ($createifnotlinkedtostripe)
 			{
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
-                else $stripeamount = $object->multicurrency_total_ttc;
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount * 100;
+                else $stripeamount = isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
 
  				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
 				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
@@ -317,9 +317,9 @@ class Stripe extends CommonObject
 
 				$dataforintent = array(
 					"amount" => $stripeamount,
-					"currency" => $object->multicurrency_code,
+					"currency" => isset($object->multicurrency_code) ? $object->multicurrency_code : 'EUR',
                     "customer"  => $customer,
-                    "allowed_source_types" => ["card"],
+                    "payment_method_types" => ["card"],
                     "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
@@ -335,8 +335,8 @@ class Stripe extends CommonObject
 
 				try {
 					// Force to use the correct API key
-					global $stripearrayofkeysbyenv;
-					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+					//global $stripearrayofkeysbyenv;
+					//\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
