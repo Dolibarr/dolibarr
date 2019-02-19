@@ -36,11 +36,17 @@ if ($_POST) {
 		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 	}
 
-       if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-               setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-       } else {
-               setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
-       }
+	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+	}
+	
+	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_PERIODIC', GETPOST('PRODUIT_ATTRIBUTES_PERIODIC'), 'chaine', 0, '', $conf->entity)) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+	}
 }
 
 $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
@@ -52,22 +58,24 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 dol_fiche_head(array(), 'general', $tab, 0, 'product');
 
 print '<form method="post">';
-print '<table class="noborder centpercent">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Parameters").'</td>'."\n";
-print '<th class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<th width="80">&nbsp;</td></tr>'."\n";
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td width="80">&nbsp;</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", $conf->global->PRODUIT_ATTRIBUTES_HIDECHILD, 1).'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
-if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
     $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
 } else {
     $separator = "_";
 }
-print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
+print '<td align="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans('PeriodicProductCombinations').'</td><td>';
+print $form->selectyesno("PRODUIT_ATTRIBUTES_PERIODIC", $conf->global->PRODUIT_ATTRIBUTES_PERIODIC, 1).'</td></tr>';
 print '</table>';
-print '<br><div class="center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
+print '<br><div style="text-align: center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
 print '</form>';
 
 // End of page
