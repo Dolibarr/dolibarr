@@ -839,6 +839,7 @@ if ($source == 'order')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentOrderRef", $order->ref).'</b>';
@@ -991,6 +992,7 @@ if ($source == 'invoice')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentInvoiceRef", $invoice->ref).'</b>';
@@ -1200,6 +1202,7 @@ if ($source == 'contractline')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentRenewContractId", $contract->ref, $contractline->ref).'</b>';
@@ -1363,6 +1366,7 @@ if ($source == 'membersubscription')
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
 	else print $member->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
@@ -1524,6 +1528,7 @@ if ($source == 'donation')
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
