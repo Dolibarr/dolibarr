@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2019  Alexandre Spangaro       <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,9 @@ $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('accountancyindex'));
 
 /*
  * Actions
