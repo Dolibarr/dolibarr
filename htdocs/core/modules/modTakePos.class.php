@@ -86,7 +86,7 @@ class modTakePos extends DolibarrModules
 		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array('data'=>array('invoicecard'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 		                        );
 
 		// Data directories to create when module is enabled.

@@ -428,7 +428,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			'dol_version' => DOL_VERSION,
 			'dol_entity'  => $conf->entity,
 			'dol_company' => $mysoc->name,		// Usefull when using multicompany
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
+		    'ipaddress'=> getUserRemoteIP()
 		);
 
 		if (! empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
@@ -602,7 +602,7 @@ $charge = \Stripe\Charge::create(array(
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
-	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP();  // Payer ip
 	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
 	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
 
