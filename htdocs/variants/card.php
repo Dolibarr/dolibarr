@@ -282,7 +282,7 @@ if ($action == 'edit') { ?>
 				<td><?php echo $form->selectDate(($attrval->start_date?$attrval->start_date:''), 'start_date', 0, 0, 0, '', 1, 0)?></td>
 				<td><?php echo $form->selectDate(($attrval->end_date?$attrval->end_date:''), 'end_date', 0, 0, 0, '', 1, 0)?></td>
 				<?php endif; ?>
-				<td style="text-align: right">
+				<td class="right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
 					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
@@ -294,7 +294,7 @@ if ($action == 'edit') { ?>
 				<td><?php echo dol_print_date($attrval->start_date)?></td>
 				<td><?php echo dol_print_date($attrval->end_date) ?></td>
 				<?php endif; ?>
-				<td style="text-align: right">
+				<td class="right">
 					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
