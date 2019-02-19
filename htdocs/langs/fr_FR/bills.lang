@@ -533,3 +533,4 @@ AutoFillDateFrom=Définir la date de début de la ligne de service avec la date 
 AutoFillDateFromShort=Définir la date de début
 AutoFillDateTo=Définir la date de fin de la ligne de service avec la date de la prochaine facture
 AutoFillDateToShort=Définir la date de fin
+PaiementOnBillPaid=Vous venez de saisir un paiement sur la facture %s alors que celle-ci est au statut "Payée"

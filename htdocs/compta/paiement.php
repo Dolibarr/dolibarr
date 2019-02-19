@@ -240,8 +240,7 @@ if (empty($reshook))
         {
             $invoice = new Facture($db);
             $invoice->fetch($key);
-            if($invoice->paye) unset($amounts[$key]);
-
+            if($invoice->paye) setEventMessages($langs->trans('PaiementOnBillPaid', $invoice->ref),'' , 'warnings');
         }
 
 	    if (! empty($conf->banque->enabled))
