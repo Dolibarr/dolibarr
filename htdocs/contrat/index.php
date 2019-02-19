@@ -189,7 +189,7 @@ foreach($listofstatus as $status)
 
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
-        print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
+        print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
         print "</tr>\n";
     }
     if ($status==4 && ! $bool) $bool=true;
@@ -218,15 +218,15 @@ foreach($listofstatus as $status)
     {
     	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
-    	print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
+    	print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
     	if ($status==4 && ! $bool) $bool=true;
     	else $bool=false;
         print "</tr>\n";
     }
 }
 //if ($totalinprocess != $total)
-//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 print "</table><br>";
 
 
@@ -332,7 +332,7 @@ if ($result)
 
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
 	print '<th align="center">'.$langs->trans("DateModification").'</th>';
-	//print '<th align="left">'.$langs->trans("Status").'</th>';
+	//print '<th class="left">'.$langs->trans("Status").'</th>';
 	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
 	print "</tr>\n";
 
@@ -354,10 +354,10 @@ if ($result)
 		print '</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
-		print '<td align="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3):'').'</td>';
-		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0):'').'</td>';
-		print '<td align="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4, 3, 1):'').'</td>';
-		print '<td align="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5, 3):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4, 3, 1):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5, 3):'').'</td>';
 		print "</tr>\n";
 		$i++;
 	}
@@ -432,7 +432,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td class="nowrap right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		$dateend=$db->jdate($obj->date_fin_validite);
 		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
 		print '</a></td>';
@@ -511,7 +511,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3);
 		print '</a></td>';
 		print "</tr>\n";
@@ -590,7 +590,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3, 1);
 		print '</a></td>';
 		print "</tr>\n";
