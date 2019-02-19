@@ -1358,11 +1358,9 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
-	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
-	else print $member->getFullName($langs);
-	print '</b>';
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$object->thirdparty->name.'</b>';
+  print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
@@ -1875,7 +1873,11 @@ cardButton.addEventListener('click', function(event) {
       }
     }
   ).then(function(result) {
+	      jQuery('#buttontopay').hide();
+	      jQuery('#hourglasstopay').show();  
 			        if (result.error) {
+	      jQuery('#buttontopay').show();
+	      jQuery('#hourglasstopay').hide();              
 			          // Inform the user if there was an error
 			          var errorElement = document.getElementById('card-errors');
 			          errorElement.textContent = result.error.message;
