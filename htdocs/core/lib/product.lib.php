@@ -472,8 +472,8 @@ function show_stats_for_company($product, $socid)
 function measuring_units_string($unit, $measuring_style = '')
 {
 	global $langs, $db;
-	require_once DOL_DOCUMENT_ROOT.'/core/class/cmeasuringunits.class.php';
-	$measuringUnits= new CMeasuringUnits($db);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+	$measuringUnits= new CUnits($db);
 	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
 			't.code' => $unit,
 			't.unit_type' => $measuring_style,
