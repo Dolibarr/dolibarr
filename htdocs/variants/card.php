@@ -24,6 +24,10 @@ $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
 $action = GETPOST('action', 'alpha');
 $label = GETPOST('label', 'alpha');
+if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1) {
+	$start_date=dol_mktime(0, 0, 0, GETPOST('start_datemonth', 'int'), GETPOST('start_dateday', 'int'), GETPOST('start_dateyear', 'int'));
+	$end_date=dol_mktime(0, 0, 0, GETPOST('end_datemonth', 'int'), GETPOST('end_dateday', 'int'), GETPOST('end_dateyear', 'int'));
+}
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -63,6 +67,10 @@ if ($_POST) {
 
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
+			if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1) {
+				$objectval->start_date = empty($_POST["start_date"])?'':$start_date;
+				$objectval->end_date = empty($_POST["end_date"])?'':$end_date;
+			}
 
 			if (empty($objectval->ref))
 			{
@@ -202,7 +210,7 @@ if ($action == 'edit') { ?>
 	if ($action == 'delete') {
 		$form = new Form($db);
 
-print $form->formconfirm(
+		print $form->formconfirm(
 			"card.php?id=".$object->id,
 			$langs->trans('Delete'),
 			$langs->trans('ProductAttributeDeleteDialog'),
@@ -217,7 +225,7 @@ print $form->formconfirm(
 
 			$form = new Form($db);
 
-print $form->formconfirm(
+			print $form->formconfirm(
 				"card.php?id=".$object->id."&valueid=".$objectval->id,
 				$langs->trans('Delete'),
 				$langs->trans('ProductAttributeValueDeleteDialog', dol_htmlentities($objectval->value), dol_htmlentities($objectval->ref)),
@@ -256,6 +264,10 @@ print $form->formconfirm(
 		<tr class="liste_titre">
 			<th class="liste_titre titlefield"><?php echo $langs->trans('Ref') ?></th>
 			<th class="liste_titre"><?php echo $langs->trans('Value') ?></th>
+			<?php if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1): ?>
+			<th class="liste_titre"><?php echo $langs->trans('DateStart') ?></th>
+			<th class="liste_titre"><?php echo $langs->trans('DateEnd') ?></th>
+			<?php endif; ?>
 			<th class="liste_titre"></th>
 		</tr>
 
@@ -266,7 +278,11 @@ print $form->formconfirm(
 			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
-				<td class="right">
+				<?php if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1): ?>
+				<td><?php echo $form->selectDate(($attrval->start_date?$attrval->start_date:''), 'start_date', 0, 0, 0, '', 1, 0)?></td>
+				<td><?php echo $form->selectDate(($attrval->end_date?$attrval->end_date:''), 'end_date', 0, 0, 0, '', 1, 0)?></td>
+				<?php endif; ?>
+				<td style="text-align: right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
 					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
@@ -274,7 +290,11 @@ print $form->formconfirm(
 			<?php else: ?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
-				<td class="right">
+				<?php if(! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1): ?>
+				<td><?php echo dol_print_date($attrval->start_date)?></td>
+				<td><?php echo dol_print_date($attrval->end_date) ?></td>
+				<?php endif; ?>
+				<td style="text-align: right">
 					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
