@@ -669,7 +669,7 @@ class Form
 	 *
 	 *  @param	string	$selected       	Id or Code or Label of preselected country
 	 *  @param  string	$htmlname       	Name of html select object
-	 *  @param  string	$htmloption     	Options html on select object
+	 *  @param  string	$htmloption     	More html options on select object
 	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
 	 *  @param	string	$morecss			More css class
 	 *  @param	string	$usecodeaskey		''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
