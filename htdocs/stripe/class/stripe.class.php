@@ -304,9 +304,13 @@ class Stripe extends CommonObject
 			}
 			else //if ($createifnotlinkedtostripe)
 			{
+                if ( ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) && isset($object->multicurrency_total_ttc) && $object->multicurrency_code != $conf->currency ) { $montant = $object->multicurrency_total_ttc; }
+                elseif ( isset($object->total_ttc) ) { $montant = $object->total_ttc; }
+                else { $montant = $object->amount; }
+                $amount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount * 100;
-                else $stripeamount = isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount = $montant * 100;
+                else $stripeamount = $montant;
 
  				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
 				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
@@ -317,7 +321,7 @@ class Stripe extends CommonObject
 
 				$dataforintent = array(
 					"amount" => $stripeamount,
-					"currency" => isset($object->multicurrency_code) ? $object->multicurrency_code : 'EUR',
+					"currency" => isset($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency,
                     "customer"  => $customer,
                     "payment_method_types" => ["card"],
                     "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
