@@ -631,7 +631,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function syncRates($response)
 	{
-		global $db,$conf;
+		global $conf, $db, $langs;
 
 		$ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
