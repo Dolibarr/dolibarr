@@ -884,31 +884,30 @@ if ($source == 'order')
 	print '</td></tr>'."\n";
   
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
-  
-  $service = 'StripeTest';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+    $service = 'StripeTest';
 	$servicestatus = 0;
-  
-	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;  
-  
+ 
+	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;
+ 
 	if (! empty($conf->global->STRIPE_LIVE))
 	{
 	$service = 'StripeLive';
 	$servicestatus = 1;
-    
-  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY; 
+
+  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY;
 	}
-  
+
 $stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+$stripeacc = $stripe->getStripeAccount($service);							// Stripe OAuth connect account of dolibarr user (no network access here)
+$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
-  print $paymentintent->id;
-	print '</td></tr>'."\n"; 
-  
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    print '<b>'.$paymentintent->id.'</b>';
+	print '</td></tr>'."\n";
 }
 
 	// Add download link
@@ -1048,31 +1047,30 @@ if ($source == 'invoice')
 	print '</td></tr>'."\n";
   
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
-  
-  $service = 'StripeTest';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+    $service = 'StripeTest';
 	$servicestatus = 0;
-  
-	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;  
-  
+
+	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;
+
 	if (! empty($conf->global->STRIPE_LIVE))
 	{
 	$service = 'StripeLive';
 	$servicestatus = 1;
-    
-  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY; 
+
+  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY;
 	}
-  
+
 $stripe = new Stripe($db);
 $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
 $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
-  print $paymentintent->id;
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
-  
 }
 
 	// Add download link
