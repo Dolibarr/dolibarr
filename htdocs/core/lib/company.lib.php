@@ -1378,7 +1378,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     }
 
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-    if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
+    if (! empty($conf->mailing->enabled) && ! empty($objcon->email)
+        && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING'))
     {
         $langs->load("mails");
 
@@ -1528,7 +1529,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
             // Ref
             $out.='<td class="nowrap">';
-            $out.=$actionstatic->getNomUrl(1, -1);
+            if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+                $out.=$histo[$key]['id'];
+                $out.='</a>';
+            } else {
+                $out.=$actionstatic->getNomUrl(1, -1);
+            }
             $out.='</td>';
 
             // Author of event
