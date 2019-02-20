@@ -1820,7 +1820,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
 		// Version
-		if (empty($conf->global->MAIN_HIDE_VERSION))    // Version is already on help picto and on login page.
+		if (! empty($conf->global->MAIN_SHOW_VERSION))    // Version is already on help picto and on login page.
 		{
 			$doliurl='https://www.dolibarr.org';
 			//local communities

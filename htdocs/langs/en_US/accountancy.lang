@@ -98,6 +98,7 @@ MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
+Binding=Binding to accounts
 CustomersVentilation=Customer invoice binding
 SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Expense report binding
