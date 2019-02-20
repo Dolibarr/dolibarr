@@ -3204,6 +3204,13 @@ else
 	}
 }
 
+?>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#idprodfournprice').select2('focus');
+        });
+    </script>
+<?php
 // End of page
 llxFooter();
 $db->close();
