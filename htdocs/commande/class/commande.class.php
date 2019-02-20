@@ -203,7 +203,12 @@ class Commande extends CommonOrder
 	public $multicurrency_total_ttc;
 
 	public $oldcopy;
-
+    
+	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	public $module_source;
+	//! key of pos source ('0', '1', ...)
+	public $pos_source;
+    
 	/**
 	 * ERR Not enough stock
 	 */
@@ -820,7 +825,7 @@ class Commande extends CommonOrder
 		$sql.= ", fk_warehouse";
 		$sql.= ", remise_absolue, remise_percent";
 		$sql.= ", fk_incoterms, location_incoterms";
-		$sql.= ", entity";
+		$sql.= ", entity, module_source, pos_source";
 		$sql.= ", fk_multicurrency";
 		$sql.= ", multicurrency_code";
 		$sql.= ", multicurrency_tx";
@@ -849,6 +854,8 @@ class Commande extends CommonOrder
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql.= ", ".$conf->entity;
+        $sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
+		$sql.= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
@@ -1633,7 +1640,8 @@ class Commande extends CommonOrder
 		$sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
 		$sql.= ', c.fk_incoterms, c.location_incoterms';
 		$sql.= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
-		$sql.= ", i.libelle as libelle_incoterms";
+		$sql.= ", c.module_source, c.pos_source";
+        $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', ca.code as availability_code, ca.label as availability_label';
@@ -1680,7 +1688,7 @@ class Commande extends CommonOrder
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
 				$this->date_creation		= $this->db->jdate($obj->date_creation);
 				$this->date_validation		= $this->db->jdate($obj->date_valid);
-				$this->date_modification		= $this->db->jdate($obj->tms);
+				$this->date_modification	= $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -1707,13 +1715,15 @@ class Commande extends CommonOrder
 				$this->demand_reason_code	= $obj->demand_reason_code;
 				$this->date_livraison		= $this->db->jdate($obj->date_livraison);
 				$this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
-				$this->warehouse_id           = ($obj->fk_warehouse>0)?$obj->fk_warehouse:null;
+				$this->warehouse_id         = ($obj->fk_warehouse>0)?$obj->fk_warehouse:null;
 				$this->fk_delivery_address	= $obj->fk_delivery_address;
-
+				$this->module_source        = $obj->module_source;
+				$this->pos_source           = $obj->pos_source;
+                
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
