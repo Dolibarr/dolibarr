@@ -4059,7 +4059,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
 	{
-		$return.= '<td class="nobordernopadding center valignmiddle>'.$morehtmlcenter.'</td>';
+		$return.= '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
 	}
 	if (dol_strlen($morehtmlright))
 	{
