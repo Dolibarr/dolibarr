@@ -1401,7 +1401,7 @@ class Facture extends CommonInvoice
 				$this->location_incoterms   = $obj->location_incoterms;
 				$this->libelle_incoterms    = $obj->libelle_incoterms;
   				$this->module_source        = $obj->module_source;
-				$this->pos_source           = $obj->pos_source;              
+				$this->pos_source           = $obj->pos_source;      
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
