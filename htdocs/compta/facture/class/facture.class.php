@@ -1324,6 +1324,7 @@ class Facture extends CommonInvoice
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
+        $sql.= ', f.module_source, f.pos_source';        
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
@@ -1357,7 +1358,7 @@ class Facture extends CommonInvoice
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
-				$this->date_modification		= $this->db->jdate($obj->datem);
+				$this->date_modification	= $this->db->jdate($obj->datem);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -1396,9 +1397,12 @@ class Facture extends CommonInvoice
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
+                
+  				$this->module_source        = $obj->module_source;
+				$this->pos_source           = $obj->pos_source;              
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
