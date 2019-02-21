@@ -2588,7 +2588,6 @@ class Form
 			if (! empty($conf->barcode->enabled)){
                 $sql.= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
                 $sql.= " OR pfp.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
-
             }
 			$sql.=')';
 		}
