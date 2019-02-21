@@ -312,11 +312,6 @@ class Stripe extends CommonObject
                 if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount = $montant * 100;
                 else $stripeamount = $montant;
 
- 				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
-				}
-
                 $description=$object->element.$object->ref;
 
                 if ( isset($object->multicurrency_code) && ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) ) { $currency = $object->multicurrency_code;}
@@ -331,10 +326,18 @@ class Stripe extends CommonObject
 					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
 
-				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+                if (! empty($conf->stripeconnect->enabled))
 				{
-					$dataforintent["application_fee"] = $fee;
-				}
+ 				  $fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+				  if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100))
+                  {
+                      $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+                  }
+                  if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+                  {
+                      $paymentarray["application_fee"] = $fee;
+                  }
+                }
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{
 					$dataforintent["receipt_email"] = $societe->email;
