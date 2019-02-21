@@ -456,7 +456,7 @@ if ($result) {
         if ($objp->country_sell == '1') {
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
-        } elseif ($isinEEC == true) {
+        } elseif ($isinEEC === true) {
             $objp->code_sell_p = $objp->code_sell_intra;
             $objp->aarowid_suggest = $objp->aarowid_intra;
         } else {
