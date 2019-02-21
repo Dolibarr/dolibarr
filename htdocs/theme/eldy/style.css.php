@@ -24,226 +24,11 @@
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      File for CSS style sheet Eldy
  */
+ 
+ 
+require_once __DIR__ . '/theme_vars.php';
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
-//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
-
-// Colors
-$colorbackhmenu1='60,70,100';      // topmenu
-$colorbackvmenu1='248,248,248';      // vmenu
-$colortopbordertitle1='200,200,200';    // top border of title
-$colorbacktitle1='220,220,223';      // title of tables,list
-$colorbacktabcard1='255,255,255';  // card
-$colorbacktabactive='234,234,234';
-$colorbacklineimpair1='255,255,255';    // line impair
-$colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='250,250,250';    // line pair
-$colorbacklinepair2='250,250,250';    // line pair
-$colorbacklinepairhover='230,237,244';	// line hover
-$colorbacklinebreak='239,231,224';		// line break
-$colorbackbody='255,255,255';
-$colortexttitlenotab='100,60,20';
-$colortexttitle='0,0,0';
-$colortext='0,0,0';
-$colortextlink='0,0,100';
-$fontsize='0.86em';
-$fontsizesmaller='0.75em';
-
-if (defined('THEME_ONLY_CONSTANT')) return;
-
-session_cache_limiter('public');
-
-require_once '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-// Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
-// and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
-if (empty($user->id) && ! empty($_SESSION['dol_login']))
-{
-	$user->fetch('', $_SESSION['dol_login'], '', 1);
-	$user->getrights();
-}
-
-
-// Define css type
-top_httphead('text/css');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
-
-if (GETPOST('theme', 'alpha')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
-
-$langs->load("main", 0, 1);
-$right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
-$left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-
-$path='';    	// This value may be used in future for external module to overwrite theme
-$theme='eldy';	// Value of theme
-if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
-
-// Define image path files and other constants
-$fontlist='roboto,arial,tahoma,verdana,helvetica';    //$fontlist='helvetica, verdana, arial, sans-serif';
-//$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
-$img_head='';
-$img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
-$dol_hide_topmenu=$conf->dol_hide_topmenu;
-$dol_hide_leftmenu=$conf->dol_hide_leftmenu;
-$dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
-$dol_no_mouse_hover=$conf->dol_no_mouse_hover;
-
-//$conf->global->THEME_ELDY_ENABLE_PERSONALIZED=0;
-//$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
-//var_dump($user->conf->THEME_ELDY_RGB);
-
-$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:0);
-$borderwidth=1;
-
-// Case of option always editable
-if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
-if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
-if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
-if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
-if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
-if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
-if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
-
-// Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
-if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
-{
-	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
-	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-	$conf->global->THEME_ELDY_TEXT='0,0,0';
-	$conf->global->THEME_ELDY_FONT_SIZE1='0.86em';
-	$conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
-}
-
-// Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
-$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
-$colortopbordertitle1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPBORDER_TITLE1)?$colortopbordertitle1:$conf->global->THEME_ELDY_TOPBORDER_TITLE1)   :(empty($user->conf->THEME_ELDY_TOPBORDER_TITLE1)?$colortopbordertitle1:$user->conf->THEME_ELDY_TOPBORDER_TITLE1);
-$colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
-$colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
-$colorbacktabactive  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$conf->global->THEME_ELDY_BACKTABACTIVE):(empty($user->conf->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$user->conf->THEME_ELDY_BACKTABACTIVE);
-$colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR1)  ?$colorbacklineimpair1:$conf->global->THEME_ELDY_LINEIMPAIR1):(empty($user->conf->THEME_ELDY_LINEIMPAIR1)?$colorbacklineimpair1:$user->conf->THEME_ELDY_LINEIMPAIR1);
-$colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
-$colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
-$colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
-$colorbacklinebreak  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEBREAK)    ?$colorbacklinebreak:$conf->global->THEME_ELDY_LINEBREAK)    :(empty($user->conf->THEME_ELDY_LINEBREAK)?$colorbacklinebreak:$user->conf->THEME_ELDY_LINEBREAK);
-$colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
-$colortexttitlenotab =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$conf->global->THEME_ELDY_TEXTTITLENOTAB)             :(empty($user->conf->THEME_ELDY_TEXTTITLENOTAB)?$colortexttitlenotab:$user->conf->THEME_ELDY_TEXTTITLENOTAB);
-$colortexttitle      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTTITLE)    ?$colortexttitle:$conf->global->THEME_ELDY_TEXTTITLE)             :(empty($user->conf->THEME_ELDY_TEXTTITLE)?$colortexttitle:$user->conf->THEME_ELDY_TEXTTITLE);
-$colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
-$colortextlink       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTLINK)     ?$colortextlink:$conf->global->THEME_ELDY_TEXTLINK)              :(empty($user->conf->THEME_ELDY_TEXTLINK)?$colortextlink:$user->conf->THEME_ELDY_TEXTLINK);
-$fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
-$fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
-
-// Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
-if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
-{
-	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_HOVER));
-	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_CHECKED));
-}
-
-//$colortopbordertitle1=$colorbackhmenu1;
-
-// Set text color to black or white
-$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
-$tmppart=explode(',', $colorbackhmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
-else $colortextbackhmenu='000000';
-
-$colorbackvmenu1=join(',', colorStringToArray($colorbackvmenu1));    // Normalize value to 'x,y,z'
-$tmppart=explode(',', $colorbackvmenu1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
-else { $colortextbackvmenu='000000'; }
-
-$colorbacktitle1=join(',', colorStringToArray($colorbacktitle1));    // Normalize value to 'x,y,z'
-$tmppart=explode(',', $colorbacktitle1);
-if ($colortexttitle == '')
-{
-	$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
-	if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-	else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
-}
-else $colorshadowtitle='888888';
-
-$colorbacktabcard1=join(',', colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
-$tmppart=explode(',', $colorbacktabcard1);
-$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
-else { $colortextbacktab='000000'; }
-
-
-// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));
-$colorbackvmenu1=join(',', colorStringToArray($colorbackvmenu1));
-$colorbacktitle1=join(',', colorStringToArray($colorbacktitle1));
-$colorbacktabcard1=join(',', colorStringToArray($colorbacktabcard1));
-$colorbacktabactive=join(',', colorStringToArray($colorbacktabactive));
-$colorbacklineimpair1=join(',', colorStringToArray($colorbacklineimpair1));
-$colorbacklineimpair2=join(',', colorStringToArray($colorbacklineimpair2));
-$colorbacklinepair1=join(',', colorStringToArray($colorbacklinepair1));
-$colorbacklinepair2=join(',', colorStringToArray($colorbacklinepair2));
-if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',', colorStringToArray($colorbacklinepairhover));
-if ($colorbacklinepairchecked != '') $colorbacklinepairchecked=join(',', colorStringToArray($colorbacklinepairchecked));
-$colorbackbody=join(',', colorStringToArray($colorbackbody));
-$colortexttitlenotab=join(',', colorStringToArray($colortexttitlenotab));
-$colortexttitle=join(',', colorStringToArray($colortexttitle));
-$colortext=join(',', colorStringToArray($colortext));
-$colortextlink=join(',', colorStringToArray($colortextlink));
-
-$nbtopmenuentries=$menumanager->showmenu('topnb');
-
-
-$minwidthtmenu=66;		/* minimum width for one top menu entry */
-$heightmenu=48;			/* height of top menu, part with image */
-$heightmenu2=49;        /* height of top menu, part with login  */
-$disableimages = 0;
-$maxwidthloginblock = 130;
-if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
-
-
-print '/*'."\n";
-print 'colorbackbody='.$colorbackbody."\n";
-print 'colorbackvmenu1='.$colorbackvmenu1."\n";
-print 'colorbackhmenu1='.$colorbackhmenu1."\n";
-print 'colorbacktitle1='.$colorbacktitle1."\n";
-print 'colorbacklineimpair1='.$colorbacklineimpair1."\n";
-print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
-print 'colorbacklinepair1='.$colorbacklinepair1."\n";
-print 'colorbacklinepair2='.$colorbacklinepair2."\n";
-print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
-print 'colorbacklinepairchecked='.$colorbacklinepairchecked."\n";
-print '$colortexttitlenotab='.$colortexttitlenotab."\n";
-print '$colortexttitle='.$colortexttitle."\n";
-print '$colortext='.$colortext."\n";
-print '$colortextlink='.$colortextlink."\n";
-print '$colortextbackhmenu='.$colortextbackhmenu."\n";
-print '$colortextbackvmenu='.$colortextbackvmenu."\n";
-print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
-print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
-print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
-print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
-print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
-print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
-print 'fontsize='.$fontsize."\n";
-print 'nbtopmenuentries='.$nbtopmenuentries."\n";
-print '*/'."\n";
+define('LOADBYSTYLESHEET', '1');
 
 ?>
 
@@ -1640,13 +1425,33 @@ li.menuhider:hover {
 	background-image: none !important;
 }
 li.tmenusel, li.tmenu:hover {
-    background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
-    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%);
-    background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
-    background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
+    background: rgba(0, 0, 0, 0.1);
 	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
 }
+
+li.tmenusel::after, li.tmenu:hover::after{
+	content: "";
+	position:absolute;
+	bottom:0px;
+	left: 50%;
+	left: calc(50% - 6px);
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0px 6px 5px 6px;
+	border-color:  transparent transparent #ffffff transparent;
+}
+/*li.tmenusel::before, li.tmenu:hover::before{
+	content: "";
+	position:absolute;
+	top:0px;
+	left:0;
+	width: 100%;
+	height: 2px;
+	background: #fff;
+}*/
+
+
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
 div.tmenuleft
@@ -1714,11 +1519,18 @@ a.tmenuimage {
     display: block;
 }
 
+a.tmenuimage:hover{
+	text-decoration: none;
+}
+
+
+
+
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) { ?>
     <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css', 0); ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.css.php', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
