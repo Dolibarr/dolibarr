@@ -194,7 +194,7 @@ print '</tr>'."\n";
 
 
 // AGENDA REMINDER EMAIL
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
@@ -211,7 +211,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 }
 
 // AGENDA REMINDER BROWSER
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
