@@ -761,7 +761,7 @@ if (! empty($id) || ! empty($ref))
 		<table class="liste">
 			<tr class="liste_titre">
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
-				<?php 
+				<?php
 					//ToDo: get the max of attriute_value
 					$nbr_of_attr_v = 0;
 					$list_attr_values = $prodattr_val->fetchAllByProductAttribute($object->id);
@@ -781,7 +781,7 @@ if (! empty($id) || ! empty($ref))
 				<?php
 					foreach($list_attr_values as $lav)
 					{
-						echo '<td>'. dol_print_date($lav->start_date,'day') .'</td>';
+						echo '<td>'. dol_print_date($lav->start_date, 'day') .'</td>';
 					}
 				?>
 				<td></td>
@@ -791,7 +791,7 @@ if (! empty($id) || ! empty($ref))
 				<?php
 					foreach($list_attr_values as $lav)
 					{
-						echo '<td class="liste_titre">'. dol_print_date($lav->end_date,'day') .'</td>';
+						echo '<td class="liste_titre">'. dol_print_date($lav->end_date, 'day') .'</td>';
 					}
 				?>
 				<td class="liste_titre"></td>
@@ -823,7 +823,7 @@ if (! empty($id) || ! empty($ref))
 							if ($productCombination2ValuePairs[$i]->fk_prod_attr==$at->id && $productCombination2ValuePairs[$i]->fk_prod_attr_val==$lav->id)
 							{
 								$prodstatic->fetch($currcomb->fk_product_child);
-								echo $prodstatic->getNomUrl(1,'',1)."<br/>".price($object->price_ttc). ' ' . $langs->trans($object->price_base_type)."<br/>";
+								echo $prodstatic->getNomUrl(1, '', 1)."<br/>".price($object->price_ttc). ' ' . $langs->trans($object->price_base_type)."<br/>";
 								echo "<i><b>".($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '')."</b></i><br/>";
 								if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 								{
@@ -833,7 +833,7 @@ if (! empty($id) || ! empty($ref))
 								}
 								//if ($object->isProduct()) echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight')."<br/>";
 								echo $prodstatic->getLibStatut(3, 0);
-								//echo $prodstatic->getLibStatut(3, 1);								
+								//echo $prodstatic->getLibStatut(3, 1);
 								echo '<a href="'.dol_buildpath('/variants/combinations.php?id='.$id."&action=edit&valueid=".$currcomb->id, 2).'">'. img_edit() .'</a>';
 								echo '<a href="'.dol_buildpath('/variants/combinations.php?id='.$id."&action=delete&valueid=".$currcomb->id, 2).'">'. img_delete() .'</a>';
 								
