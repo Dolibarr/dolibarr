@@ -1,4 +1,4 @@
-<?php if (! defined('NOREQUIRESOC')) die('Must be call by steelsheet'); ?>
+<?php if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 
 .mainmenu::before{  
