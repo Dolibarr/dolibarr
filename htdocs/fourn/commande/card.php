@@ -2772,7 +2772,12 @@ elseif (! empty($object->id))
 ?>
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#idprodfournprice').select2('focus');
+            if ($('*:focus').length == 0) {
+                $(document).one('keydown',function(e) {
+                    $('#idprodfournprice').select2('open');
+                });
+            }
+
         });
     </script>
 <?php
