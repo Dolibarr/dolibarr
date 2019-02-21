@@ -187,7 +187,7 @@ if (empty($conf->stripeconnect->enabled))
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
+	print '<input class="minwidth500" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").'<br>';
   $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
@@ -222,7 +222,7 @@ if (empty($conf->stripeconnect->enabled))
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+	print '<input class="minwidth500" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
   $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForLiveWebhook").'<br>';
   $url = dol_buildpath('/public/stripe/ipn.php', 2);
