@@ -3236,10 +3236,12 @@ else
 
 ?>
     <script type="text/javascript">
+
         $(document).ready(function(){
             if ($('*:focus').length == 0) {
-                $(document).one('keydown',function(e) {
+                $(document).one('keypress',function(e) {
                     $('#idprodfournprice').select2('open');
+                    $('.select2-search__field').val(e.key);
                 });
             }
 
