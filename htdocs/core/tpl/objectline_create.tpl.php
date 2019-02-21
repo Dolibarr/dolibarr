@@ -279,11 +279,13 @@ else {
             <script type="text/javascript">
 
                 $(document).ready(function(){
-                    if ($('*:focus').length == 0) {
-                        $(document).one('keypress',function(e) {
-                            $('#idprodfournprice').select2('open');
+
+                        $(document).on('keypress',function(e) {
+                            if ($('input:focus').length == 0) {
+                                $('#idprodfournprice').select2('open');
+                            }
                         });
-                    }
+
 
                 });
             </script>
