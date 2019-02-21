@@ -1266,27 +1266,31 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
-        {
-            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (is_object($objcon) && $objcon->id) {
+            $sql.= " AND a.fk_contact = ".$objcon->id;
+        } else {
+            if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
+            {
+                $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
         }
 
         // Condition on actioncode
