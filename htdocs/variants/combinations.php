@@ -752,6 +752,102 @@ if (! empty($id) || ! empty($ref))
 		print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $aaa, 0);
 
 		print '<div class="div-table-responsive">';
+		
+		//View for periodic prices
+		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC) && $conf->global->PRODUIT_ATTRIBUTES_PERIODIC == 1)
+		{
+		?>
+		<style>.liste td{border-right:solid 1px #DDDDDD}</style> 
+		<table class="liste">
+			<tr class="liste_titre">
+				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
+				<?php 
+					//ToDo: get the max of attriute_value
+					$nbr_of_attr_v = 0;
+					$list_attr_values = $prodattr_val->fetchAllByProductAttribute($object->id);
+					
+					foreach($list_attr_values as $lav)
+					{
+						echo '<td class="liste_titre">'.$lav->value.'</td>';
+					}
+					echo '<td class="liste_titre" align="middle">';
+					$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
+					echo $searchpicto;
+					echo '</td>';
+                ?>
+			</tr>
+			<tr>
+				<td><?php echo $langs->trans('Du') ?></td>
+				<?php
+					foreach($list_attr_values as $lav)
+					{
+						echo '<td>'. dol_print_date($lav->start_date,'day') .'</td>';
+					}
+				?>
+				<td></td>
+			</tr>
+			<tr class="liste_titre">
+				<td class="liste_titre"><?php echo $langs->trans('Au') ?></td>
+				<?php
+					foreach($list_attr_values as $lav)
+					{
+						echo '<td class="liste_titre">'. dol_print_date($lav->end_date,'day') .'</td>';
+					}
+				?>
+				<td class="liste_titre"></td>
+			</tr>
+			<?php
+			
+			//Check combinations for each attriute/period
+			$prodattr_all = $prodattr->fetchAll();
+			
+			foreach($prodattr_all as $at)
+			{
+				echo "<tr><td>".$at->label."<br/><i><b>".$langs->trans('Ref')."</b> ".$at->ref."</i>"."</td>";
+				
+				//Periode 1, Periode 2,...
+				$list_attr_values = $prodattr_val->fetchAllByProductAttribute($at->id);
+				foreach($list_attr_values as $lav)
+				{
+					echo '<td class="left" valign="top">';
+					$isValue = false;
+					
+					foreach ($productCombinations as $currcomb)
+					{
+						$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
+						
+    					$iMax = count($productCombination2ValuePairs);
+
+    					for ($i = 0; $i < $iMax; $i++)
+						{
+							if ($productCombination2ValuePairs[$i]->fk_prod_attr==$at->id && $productCombination2ValuePairs[$i]->fk_prod_attr_val==$lav->id)
+							{
+								$prodstatic->fetch($currcomb->fk_product_child);
+								echo $prodstatic->getNomUrl(1,'',1)."<br/>".price($object->price_ttc). ' ' . $langs->trans($object->price_base_type)."<br/>";
+								echo "<i><b>".($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '')."</b></i><br/>";
+								if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+								{
+									$selected=0;
+									if (in_array($prodstatic->id, $arrayofselected)) $selected=1;
+									echo '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected?' checked="checked"':'').'>&nbsp;';
+								}
+								//if ($object->isProduct()) echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight')."<br/>";
+								echo $prodstatic->getLibStatut(3, 0);
+								//echo $prodstatic->getLibStatut(3, 1);								
+								echo '<a href="'.dol_buildpath('/variants/combinations.php?id='.$id."&action=edit&valueid=".$currcomb->id, 2).'">'. img_edit() .'</a>';
+								echo '<a href="'.dol_buildpath('/variants/combinations.php?id='.$id."&action=delete&valueid=".$currcomb->id, 2).'">'. img_delete() .'</a>';
+								
+								$isValue=true;
+							}
+    					}
+					}
+					echo '</td>';
+				}
+				echo '<td></td></tr>';
+			}
+		}
+		else
+		{
 		?>
 		<table class="liste">
 			<tr class="liste_titre">
@@ -770,7 +866,6 @@ if (! empty($id) || ! empty($ref))
                 ?>
 			</tr>
 			<?php
-
 			if (count($productCombinations))
 			{
     			foreach ($productCombinations as $currcomb)
@@ -819,7 +914,57 @@ if (! empty($id) || ! empty($ref))
 			{
 			     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
-			?>
+			
+			if (count($productCombinations))
+			{
+    			foreach ($productCombinations as $currcomb)
+    			{
+    				$prodstatic->fetch($currcomb->fk_product_child);
+    				?>
+    				<tr class="oddeven">
+    				<td><?php echo $prodstatic->getNomUrl(1) ?></td>
+    				<td>
+    					<?php
+
+    					$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
+    					$iMax = count($productCombination2ValuePairs);
+
+    					for ($i = 0; $i < $iMax; $i++) {
+    						echo dol_htmlentities($productCombination2ValuePairs[$i]);
+
+    						if ($i !== ($iMax - 1)) {
+    							echo ', ';
+    						}
+    					} ?>
+    				</td>
+    				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
+                    <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+    				<td class="right">
+    					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
+    					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
+    				</td>
+    				<?php
+    				print '<td class="nowrap" align="center">';
+    				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+    				{
+    				    $selected=0;
+    				    if (in_array($prodstatic->id, $arrayofselected)) $selected=1;
+    				    print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected?' checked="checked"':'').'>';
+    				}
+    				print '</td>';
+    				?>
+    			</tr>
+    			<?php
+			    }
+			}
+			else
+			{
+			     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			}
+		}
+		?>
 		</table>
 
 		<?php
