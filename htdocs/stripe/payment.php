@@ -85,7 +85,7 @@ if (! empty($conf->stripe->enabled))
 	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
 	{
 		$service = 'StripeLive';
-		$servicestatus = 0;
+		$servicestatus = 1;
 	}
 
 	$stripe=new Stripe($db);
