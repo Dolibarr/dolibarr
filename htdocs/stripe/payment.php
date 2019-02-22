@@ -78,19 +78,22 @@ if ($facid > 0)
 	$ret=$object->fetch($facid);
 }
 
-if (! empty($conf->stripe->enabled))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
 {
 	$service = 'StripeTest';
-	$servicestatus = 0;
-	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
-	{
-		$service = 'StripeLive';
-		$servicestatus = 1;
-	}
-
-	$stripe=new Stripe($db);
-	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+	$servicestatus = '0';
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
+else
+{
+	$service = 'StripeLive';
+	$servicestatus = '1';
+}
+$stripeacc = $stripe->getStripeAccount($service);
+/*if (empty($stripeaccount))
+{
+	print $langs->trans('ErrorStripeAccountNotDefined');
+}*/
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard','globalcard'));
