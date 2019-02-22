@@ -8,7 +8,7 @@
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Thibault FOUCART         <support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  Thibault FOUCART         <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,6 @@ $stripeacc = $stripe->getStripeAccount($service);
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard','globalcard'));
-
 
 /*
  * Actions
