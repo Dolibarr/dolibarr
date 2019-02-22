@@ -163,3 +163,4 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 -- Default Warehouse id for a user
 ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
 ALTER TABLE llx_user ADD COLUMN fk_establishment INTEGER NULL;
+ALTER TABLE llx_societe ADD COLUMN fk_establishment INTEGER NULL;
