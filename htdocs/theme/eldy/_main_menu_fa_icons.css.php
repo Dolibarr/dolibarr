@@ -1,5 +1,5 @@
 <?php if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-
+/* <style type="text/css" > */
 
 .mainmenu::before{  
     /* font part */
@@ -15,6 +15,7 @@
 	text-decoration:none;
 	color: #<?php echo $colortextbackhmenu; ?>;
 }
+
 
 
 
@@ -38,9 +39,35 @@
     content: "\f19c";
 }
 
+<?php if($conf->global->MAIN_FEATURES_LEVEL == 2){ ?>
+/* TESTING USAGE OF SVG WITHOUT FONT */
+.mainmenu.cashdesk{
+    line-height: 26px;
+}
+
+.mainmenu.cashdesk .tmenuimage{
+
+    line-height: 26px;
+    display: inline-block;
+    vertical-align: middle;
+    height: <?php echo $topMenuFontSize; ?>;
+	background-color: #<?php echo $colortextbackhmenu; ?>;
+    width: 100%;
+	
+    -webkit-mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%; /* for old webkit browser */
+    mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%;
+    
+}
+
+<?php }else{ ?>
+
 .mainmenu.cashdesk::before {
     content: "\f788";
 }
+
+<?php } ?>
+
+
 
 .mainmenu.takepos::before {
     content: "\f217";
