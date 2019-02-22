@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,19 +60,20 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
+if (! empty($conf->stripe->enabled))
 {
 	$service = 'StripeTest';
-	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
-	$service = 'StripeLive';
-	$servicestatus = '1';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	$stripe=new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
 }
 
-$stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
