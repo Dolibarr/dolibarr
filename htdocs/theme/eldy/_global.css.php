@@ -3557,16 +3557,24 @@ table.valid {
 div.ui-tooltip {
 	max-width: <?php print dol_size(600, 'width'); ?>px !important;
 }
-.mytooltip {
-	border-top: solid 1px #BBBBBB;
-	border-<?php print $left; ?>: solid 1px #BBBBBB;
-	border-<?php print $right; ?>: solid 1px #444444;
-	border-bottom: solid 1px #444444;
-	padding: 5px 20px;
+div.ui-tooltip.mytooltip {
+	border: none !important;
+	padding: 10px 15px;
 	border-radius: 0;
-	box-shadow: 0 0 4px grey;
+
 	margin: 2px;
 	font-stretch: condensed;
+
+	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
+
+	background: <?php print $toolTipBgColor; ?> !important;  
+	color : <?php print $toolTipFontColor; ?>;
+	
+
 }
 
 

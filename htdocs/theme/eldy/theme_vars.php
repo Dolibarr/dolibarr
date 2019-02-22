@@ -57,6 +57,8 @@ $colortextlink='0,0,100';
 $fontsize='0.86em';
 $fontsizesmaller='0.75em';
 $topMenuFontSize='1.1em';
+$toolTipBgColor='rgba(255, 255, 255, 0.96);';
+$toolTipFontColor='#333';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
