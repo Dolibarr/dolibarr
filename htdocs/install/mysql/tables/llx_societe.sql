@@ -116,6 +116,8 @@ create table llx_societe
   fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
   fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
 
+  fk_establishment		   integer,
+  
   fk_multicurrency		   integer,
   multicurrency_code	   varchar(255),
 
