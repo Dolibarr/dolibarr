@@ -133,7 +133,7 @@ foreach($fulltree as $key => $val)
 
 //Printer1
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><td class="right">';
 print '</td></tr>';
 $nbofentries=(count($data) - 1);
 print '<form action="orderprinters.php">';
@@ -163,7 +163,7 @@ print '<input type="submit" value="'.$langs->trans("Save").'"></form><br><br>';
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><td class="right">';
 print '</td></tr>';
 $nbofentries=(count($data) - 1);
 print '<form action="orderprinters.php">';
