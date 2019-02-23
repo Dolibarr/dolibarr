@@ -239,7 +239,7 @@ class Invoices extends DolibarrApi
      *
      * @param int   $orderid       Id of the order
      *
-     * @url     POST /createfromorder/{orderid}
+$this->db->begin();     * @url     POST /createfromorder/{orderid}
      *
      * @return int
      * @throws 400
@@ -393,7 +393,7 @@ class Invoices extends DolibarrApi
         }
 
         $result = $this->invoice->fetch($id);
-
+$this->db->begin();
 		if(!$result) {
 			throw new RestException(404, 'Invoice not found');
 		}
@@ -587,7 +587,7 @@ class Invoices extends DolibarrApi
      *
      * @param int   $id             Id of invoice
      * @param array $request_data   InvoiceLine data
-     *$this->db->begin();
+     *
      * @url     POST {id}/lines
      *
      * @return int
