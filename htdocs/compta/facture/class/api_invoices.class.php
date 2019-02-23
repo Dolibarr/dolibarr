@@ -587,7 +587,7 @@ class Invoices extends DolibarrApi
      *
      * @param int   $id             Id of invoice
      * @param array $request_data   InvoiceLine data
-     *
+     *$this->db->begin();
      * @url     POST {id}/lines
      *
      * @return int
@@ -940,8 +940,6 @@ class Invoices extends DolibarrApi
                 throw new RestException(401);
         }
 		
-	    $this->db->begin();
-		
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
                 throw new RestException(404, 'Invoice not found');
@@ -958,10 +956,14 @@ class Invoices extends DolibarrApi
 
 		if (! $this->invoice->paye)	// protection against multiple submit
 		{
+	        $this->db->begin();
 		   	$this->invoice->fetch_lines();
 				
 			// Loop on each vat rate
 			$i=0;
+            $amount_ht = array();
+            $amount_tva = array();
+            $amount_ttc = array();
 			foreach($this->invoice->lines as $line)
 			{
 				$amount_ht[$line->tva_tx]+=$line->total_ht;
@@ -1009,14 +1011,14 @@ class Invoices extends DolibarrApi
 				}
 				else
 				{
-					throw new RestException(500, 'Could not set paid');
 					$this->db->rollback();
+					throw new RestException(500, 'Could not set paid');
 				}
 			}
 			else
 			{
-				throw new RestException(500, 'Discount creation error');
 				$this->db->rollback();
+				throw new RestException(500, 'Discount creation error');
 			}
 		}
 
