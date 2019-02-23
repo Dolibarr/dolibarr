@@ -1008,6 +1008,7 @@ class FactureRec extends CommonInvoice
 
 		$error=0;
 		$nb_create=0;
+		$hookmanager->initHooks(array('creationOfRecurringInvoices'));
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main","bills"));
