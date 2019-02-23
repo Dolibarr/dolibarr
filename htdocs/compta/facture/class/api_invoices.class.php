@@ -921,10 +921,10 @@ class Invoices extends DolibarrApi
     }
 
    /**
-     * Make credt note from invoice
+     * Create credit note from invoice
      *
      * @param   int 	$id            Invoice ID
-     * @url POST    {id}/makecreditnote
+     * @url POST    {id}/createCreditNote
      *
      * @return  array 	An invoice object
      *
@@ -934,7 +934,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 500
      */
-    function makecreditnote($id)
+    function createCreditNote($id)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
@@ -960,7 +960,7 @@ class Invoices extends DolibarrApi
 		{
 		   	$this->invoice->fetch_lines();
 				
-			// Boucle sur chaque taux de tva
+			// Loop on each vat rate
 			$i=0;
 			foreach($this->invoice->lines as $line)
 			{
