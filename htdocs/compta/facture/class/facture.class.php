@@ -1120,6 +1120,9 @@ class Facture extends CommonInvoice
 		$this->note_private         = $object->note_private;
 		$this->note_public          = $object->note_public;
 
+        $this->module_source		= $object->module_source;
+		$this->pos_source			= $object->pos_source;
+        
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
 
