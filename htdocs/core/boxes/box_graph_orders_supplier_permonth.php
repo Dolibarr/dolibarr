@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_supplier_permonth extends ModeleBoxes
 {
-	var $boxcode="orderssupplierpermonth";
-	var $boximg="object_order";
-	var $boxlabel="BoxSuppliersOrdersPerMonth";
-	var $depends = array("fournisseur");
+    public $boxcode="orderssupplierpermonth";
+    public $boximg="object_order";
+    public $boxlabel="BoxSuppliersOrdersPerMonth";
+    public $depends = array("fournisseur");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
