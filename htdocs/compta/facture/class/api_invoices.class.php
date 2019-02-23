@@ -921,7 +921,7 @@ class Invoices extends DolibarrApi
     }
 
    /**
-     * Create credit note from invoice
+     * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID
      * @url POST    {id}/createCreditNote
@@ -934,7 +934,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 500
      */
-    function createCreditNote($id)
+    function markAsCreditAvailable($id)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
