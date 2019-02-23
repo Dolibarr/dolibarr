@@ -920,6 +920,118 @@ class Invoices extends DolibarrApi
         return $this->_cleanObjectDatas($this->invoice);
     }
 
+   /**
+     * Create a discount (credit available) for a credit note or a deposit.
+     *
+     * @param   int 	$id            Invoice ID
+     * @url POST    {id}/markAsCreditAvailable
+     *
+     * @return  array 	An invoice object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     */
+    function markAsCreditAvailable($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+		
+	    $this->db->begin();
+		
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+		$result = $this->invoice->fetch_thirdparty();
+        if( ! $result ) {
+                throw new RestException(404, 'Thirdparty not found');
+        }
+
+		if (! $this->invoice->paye)	// protection against multiple submit
+		{
+		   	$this->invoice->fetch_lines();
+				
+			// Loop on each vat rate
+			$i=0;
+			foreach($this->invoice->lines as $line)
+			{
+				$amount_ht[$line->tva_tx]+=$line->total_ht;
+				$amount_tva[$line->tva_tx]+=$line->total_tva;
+				$amount_ttc[$line->tva_tx]+=$line->total_ttc;
+				$i++;
+			}
+
+			// Insert one discount by VAT rate category
+			$discount = new DiscountAbsolute($this->db);
+			if ($this->invoice->type == 2)     $discount->description='(CREDIT_NOTE)';
+			elseif ($this->invoice->type == 3) $discount->description='(DEPOSIT)';
+			else {
+				$this->error="CantConvertToReducAnInvoiceOfThisType";
+				return -1;
+			}
+			$discount->tva_tx=abs($this->invoice->total_ttc);
+			$discount->fk_soc=$this->invoice->socid;
+			$discount->fk_facture_source=$this->invoice->id;
+
+			$error=0;
+			foreach($amount_ht as $tva_tx => $xxx)
+			{
+				$discount->amount_ht=abs($amount_ht[$tva_tx]);
+				$discount->amount_tva=abs($amount_tva[$tva_tx]);
+				$discount->amount_ttc=abs($amount_ttc[$tva_tx]);
+				$discount->tva_tx=abs($tva_tx);
+
+				$result=$discount->create(DolibarrApiAccess::$user);
+				if ($result < 0)
+				{
+					$error++;
+					break;
+				}
+			}
+
+			if (! $error)
+			{
+				// Classe facture
+				$result=$this->invoice->set_paid(DolibarrApiAccess::$user);
+				if ($result > 0)
+				{
+					//$mesg='OK'.$discount->id;
+					$this->db->commit();
+				}
+				else
+				{
+					throw new RestException(500, 'Could not set paid');
+					$this->db->rollback();
+				}
+			}
+			else
+			{
+				throw new RestException(500, 'Discount creation error');
+				$this->db->rollback();
+			}
+		}
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
      /**
      * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
      *
