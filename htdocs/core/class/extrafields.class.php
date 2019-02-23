@@ -1827,42 +1827,42 @@ class ExtraFields
 		if (! empty($extrafieldsobjectkey)) $type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
 		else $type=$this->attribute_type[$key];
 
-		$align='';
+		$class='';
 
         if ($type == 'date')
 		{
-			$align="center";
+			$class="center";
 		}
 		elseif ($type == 'datetime')
 		{
-			$align="center";
+			$class="center";
 		}
 		elseif ($type == 'int')
 		{
-			$align="right";
+			$class="right";
 		}
 		elseif ($type == 'double')
 		{
-			$align="right";
+			$class="right";
 		}
 		elseif ($type == 'boolean')
 		{
-			$align="center";
+			$class="center";
 		}
 		elseif ($type == 'radio')
 		{
-			$align="center";
+			$class="center";
 		}
 		elseif ($type == 'checkbox')
 		{
-			$align="center";
+			$class="center";
 		}
 		elseif ($type == 'price')
 		{
-			$align="right";
+			$class="right";
 		}
 
-		return $align;
+		return $class;
 	}
 
 	/**

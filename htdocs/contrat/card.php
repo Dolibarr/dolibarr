@@ -1638,7 +1638,7 @@ else
 					}
 
 					// Margin
-					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
+					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td class="nowrap right">'.price($objp->pa_ht).'</td>';
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td class="nowrap right">';
