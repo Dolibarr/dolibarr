@@ -956,7 +956,7 @@ class Invoices extends DolibarrApi
                 throw new RestException(404, 'Thirdparty not found');
         }
 
-		if (! $object->paye)	// protection against multiple submit
+		if (! $this->invoice->paye)	// protection against multiple submit
 		{
 		   	$this->invoice->fetch_lines();
 				
@@ -1015,7 +1015,7 @@ class Invoices extends DolibarrApi
 			}
 			else
 			{
-				throw new RestException(500, 'Discount error');
+				throw new RestException(500, 'Discount creation error');
 				$this->db->rollback();
 			}
 		}
