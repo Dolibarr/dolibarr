@@ -80,7 +80,7 @@ if ($facid > 0)
 
 if (! empty($conf->stripe->enabled))
 {
-    access_forbidden();    
+    access_forbidden();
 }
 
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
