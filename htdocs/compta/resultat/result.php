@@ -405,7 +405,7 @@ elseif ($modecompta=="BOOKKEEPING")
 			// N-1
 			if (! empty($arrayofaccountforfilter))
 			{
-				$return = $AccCat->getSumDebitCredit($arrayofaccountforfilter, $date_start_previous, $date_end_previous, $cpt['dc']?$cpt['dc']:0);
+				$return = $AccCat->getSumDebitCredit($arrayofaccountforfilter, $date_start_previous, $date_end_previous, $cat['dc']?$cat['dc']:0);
 
 				if ($return < 0) {
 					setEventMessages(null, $AccCat->errors, 'errors');
@@ -438,7 +438,7 @@ elseif ($modecompta=="BOOKKEEPING")
 					if (($k+1) < $start_month) $yeartoprocess++;
 
 					//var_dump($monthtoprocess.'_'.$yeartoprocess);
-					$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']?$cpt['dc']:0, 'nofilter', $monthtoprocess, $yeartoprocess);
+					$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cat['dc']?$cat['dc']:0, 'nofilter', $monthtoprocess, $yeartoprocess);
 					if ($return < 0) {
 						setEventMessages(null, $AccCat->errors, 'errors');
 						$resultM=0;

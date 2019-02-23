@@ -720,7 +720,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param int|array	$cpt 				Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
-	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
+	 * @param int 		$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
 	 * @param int       $month 				Specifig month - Can be empty
 	 * @param int       $year 				Specifig year - Can be empty
@@ -805,7 +805,7 @@ class AccountancyCategory // extends CommonObject
 			exit();
 		}
 
-		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
 		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = " . $conf->entity;
@@ -829,7 +829,8 @@ class AccountancyCategory // extends CommonObject
 							'label' => $obj->label,
 							'formula' => $obj->formula,
 							'position' => $obj->position,
-							'category_type' => $obj->category_type
+							'category_type' => $obj->category_type,
+					        'bc' => $obj->sens
 					);
 					$i++;
 				}
