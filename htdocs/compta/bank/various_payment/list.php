@@ -180,7 +180,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 
 	// Ref
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 
@@ -195,7 +195,7 @@ if ($result)
 	print '</td>';
 
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 
@@ -233,13 +233,13 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "v.rowid", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "v.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "v.datep", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "v.accountancy_code", "", $param, '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "v.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -300,7 +300,7 @@ if ($result)
 		}
 
 		// Debit
-		print "<td align=\"right\">";
+		print "<td class=\"right\">";
 		if ($obj->sens == 0)
 		{
 			print price($obj->amount);
@@ -309,7 +309,7 @@ if ($result)
 		print "</td>";
 
 		// Credit
-		print "<td align=\"right\">";
+		print "<td class=\"right\">";
 		if ($obj->sens == 1)
 		{
 			print price($obj->amount);
