@@ -227,7 +227,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_B
 
 // Categories
 if($conf->categorie->enabled) {
-    print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
     print $form->showCategories($object->id, 'project', 1);
     print "</td></tr>";
 }
@@ -563,10 +563,10 @@ print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
-print '<td align="right" width="100">'.$langs->trans("Number").'</td>';
-print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
-print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
+print '<td class="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
+print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
+print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
 foreach ($listofreferent as $key => $value)
@@ -676,14 +676,14 @@ foreach ($listofreferent as $key => $value)
 			// Module
 			print '<td class="left">'.$name.'</td>';
 			// Nb
-			print '<td align="right">'.$i.'</td>';
+			print '<td class="right">'.$i.'</td>';
 			// Amount HT
-			print '<td align="right">';
+			print '<td class="right">';
 			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			else print price($total_ht);
 			print '</td>';
 			// Amount TTC
-			print '<td align="right">';
+			print '<td class="right">';
 			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
 			else print price($total_ttc);
 			print '</td>';
@@ -693,9 +693,9 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td align="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
-print '<td align="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
+print '<td class="right" colspan=2 >'.$langs->trans("Profit").'</td>';
+print '<td class="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td class="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";
@@ -787,7 +787,7 @@ foreach ($listofreferent as $key => $value)
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
 		// Date
-		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' align="center">';
+		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' class="center">';
 		if (in_array($tablename, array('projet_task'))) print $langs->trans("TimeSpent");
 		if (! in_array($tablename, array('projet_task'))) print $langs->trans("Date");
 		print '</td>';
@@ -799,17 +799,17 @@ foreach ($listofreferent as $key => $value)
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		// Amount HT
-		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
-		//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="120">'.$langs->trans("Amount").'</td>';
-		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
+		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+		//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("Amount").'</td>';
+		if (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		else print '<td width="120"></td>';
 		// Amount TTC
-		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
-		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+		if (empty($value['disableamount'])) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		else print '<td width="120"></td>';
 		// Status
-		if (in_array($tablename, array('projet_task'))) print '<td align="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
-		else print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
+		if (in_array($tablename, array('projet_task'))) print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
+		else print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
@@ -888,7 +888,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Ref
-				print '<td align="left" class="nowrap">';
+				print '<td class="left nowrap">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);
@@ -950,7 +950,7 @@ foreach ($listofreferent as $key => $value)
     					if (empty($date)) $date=$element->datev;
     				}
 				}
-				print '<td align="center">';
+				print '<td class="center">';
 				if ($tablename == 'actioncomm')
 				{
 				    print dol_print_date($element->datep, 'dayhour');
@@ -1027,7 +1027,7 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ht_by_line=$element->total_ht;
 					}
-					print '<td align="right">';
+					print '<td class="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
 					{
@@ -1064,7 +1064,7 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ttc_by_line=$element->total_ttc;
 					}
-					print '<td align="right">';
+					print '<td class="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))
 					{
@@ -1078,7 +1078,7 @@ foreach ($listofreferent as $key => $value)
 				else print '<td></td>';
 
 				// Status
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getLibStatut(5);
@@ -1129,8 +1129,8 @@ foreach ($listofreferent as $key => $value)
 					$breakline.=$langs->trans('SubTotal').' : ';
 					if (is_object($element->thirdparty)) $breakline.=$element->thirdparty->getNomUrl(0, '', 48);
 					$breakline.='</td>';
-					$breakline.='<td align="right">'.price($total_ht_by_third).'</td>';
-					$breakline.='<td align="right">'.price($total_ttc_by_third).'</td>';
+					$breakline.='<td class="right">'.price($total_ht_by_third).'</td>';
+					$breakline.='<td class="right">'.price($total_ttc_by_third).'</td>';
 					$breakline.='<td></td>';
 					$breakline.='</tr>';
 				}
@@ -1146,23 +1146,23 @@ foreach ($listofreferent as $key => $value)
 			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 			if (in_array($tablename, array('projet_task')))
 			{
-    			print '<td align="center">';
+    			print '<td class="center">';
     			print convertSecondToTime($total_time, 'allhourmin');
     			print '</td>';
     			print '<td>';
     			print '</td>';
 			}
-			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
-			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
-			print '<td align="right">';
+			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_ht).'</td>';
+			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
+			print '<td class="right">';
 			if (empty($value['disableamount']))
 			{
 			    if ($tablename != 'projet_task' || ! empty($conf->salaries->enabled)) print ''.$langs->trans("TotalHT").' : '.price($total_ht);
 			}
 			print '</td>';
-			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
-			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td align="right" width="100"></td>';
-			print '<td align="right">';
+			//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_ttc).'</td>';
+			//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100"></td>';
+			print '<td class="right">';
 			if (empty($value['disableamount']))
 			{
 			    if ($tablename != 'projet_task' || ! empty($conf->salaries->enabled)) print $langs->trans("TotalTTC").' : '.price($total_ttc);
