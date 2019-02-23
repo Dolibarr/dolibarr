@@ -78,7 +78,12 @@ if ($facid > 0)
 	$ret=$object->fetch($facid);
 }
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
+if (! empty($conf->stripe->enabled))
+{
+    access_forbidden();    
+}
+
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 {
 	$service = 'StripeTest';
 	$servicestatus = '0';
