@@ -350,7 +350,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	else
 	{
 		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
-		print '<th align="right">';
+		print '<th class="right">';
 		$url='https://www.dolistore.com/lang-en/4-skins';
 		if (preg_match('/fr/i', $langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
 		//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
