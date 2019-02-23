@@ -924,7 +924,7 @@ class Invoices extends DolibarrApi
      * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID
-     * @url POST    {id}/createCreditNote
+     * @url POST    {id}/markAsCreditAvailable
      *
      * @return  array 	An invoice object
      *
