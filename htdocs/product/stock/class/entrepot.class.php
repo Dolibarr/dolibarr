@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +77,14 @@ class Entrepot extends CommonObject
 	 */
 	public $address;
 
-	//! Code Postal
+	/**
+	 * @var string Zipcode
+	 */
 	public $zip;
+
+    /**
+	 * @var string Town
+	 */
 	public $town;
 
 	/**
@@ -573,26 +580,26 @@ class Entrepot extends CommonObject
 		{
 			return $label;
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $label;
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return img_picto($label, $picto).' '.$label;
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut > 0) $picto = 'statut4';
 			return $label.' '.img_picto($label, $picto);
@@ -617,7 +624,6 @@ class Entrepot extends CommonObject
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result='';
-        $label = '';
 
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->ref)?(empty($this->label)?$this->libelle:$this->label):$this->ref);
@@ -724,9 +730,9 @@ class Entrepot extends CommonObject
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
-	 * @param	int		$id					id parent warehouse
-	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return	array	$TChildWarehouses	array which will contain all children
+	 * @param   int         $id					id parent warehouse
+	 * @param   integer[]	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return  integer[]   $TChildWarehouses	array which will contain all children
 	 */
     function get_children_warehouses($id, &$TChildWarehouses)
     {
