@@ -1468,7 +1468,7 @@ if ($action == 'create')
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions') {
@@ -1486,7 +1486,7 @@ if ($action == 'create')
 	print $langs->trans('DeliveryDate');
 	print '</td>';
 	if ($action != 'editdate_livraison' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editdate_livraison') {
@@ -1509,7 +1509,7 @@ if ($action == 'create')
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editmode') {
@@ -1529,7 +1529,7 @@ if ($action == 'create')
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencycode') {
@@ -1546,7 +1546,7 @@ if ($action == 'create')
 		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
@@ -1571,7 +1571,7 @@ if ($action == 'create')
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td align=right colspan="3">';
+		print '</td><td class=right colspan="3">';
 		print price($soc->get_OutstandingBill()) . ' / ';
 		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
 		print '</td>';
@@ -1586,7 +1586,7 @@ if ($action == 'create')
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $user->rights->supplier_proposal->creer)
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editbankaccount') {
@@ -1739,7 +1739,7 @@ if ($action == 'create')
 		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
-		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
+		$form_close .= '<tr><td width="150"  class="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
@@ -1747,10 +1747,10 @@ if ($action == 'create')
 		$form_close .= '<option value="3">' . $langs->trans('SupplierProposalStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td class="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
+		$form_close .= '<tr><td width="150" class="left">' . $langs->trans('Note') . '</td><td class="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td align="center" colspan="2">';
+		$form_close .= '<tr><td class="center" colspan="2">';
 		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
 		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
 		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';

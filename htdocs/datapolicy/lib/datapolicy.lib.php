@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI   <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    datapolicy/lib/datapolicy.lib.php
+ * \file    htdocs/datapolicy/lib/datapolicy.lib.php
  * \ingroup datapolicy
  * \brief   Library files with common functions for datapolicy
  */
@@ -28,27 +29,26 @@
  */
 function datapolicyAdminPrepareHead()
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$langs->load("datapolicy@datapolicy");
+    $langs->load("datapolicy@datapolicy");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = dol_buildpath("/datapolicy/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Deletion");
-	$head[$h][2] = 'settings';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setup.php";
+    $head[$h][1] = $langs->trans("Deletion");
+    $head[$h][2] = 'settings';
+    $h++;
 
-	if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
-	{
-		$head[$h][0] = dol_buildpath("/datapolicy/admin/setupmail.php", 1);
-		$head[$h][1] = $langs->trans("DATAPOLICIESMail");
-		$head[$h][2] = 'settings';
-		$h++;
-	}
+    if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
+        $head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setupmail.php";
+        $head[$h][1] = $langs->trans("DATAPOLICIESMail");
+        $head[$h][2] = 'settings';
+        $h++;
+    }
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicy');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicy');
 
-	return $head;
+    return $head;
 }

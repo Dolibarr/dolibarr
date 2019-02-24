@@ -38,23 +38,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
-	/**
-	 * Issuer
-	 * @var Company object that emits
-	 */
-	public $emetteur;
-
-	/**
-   * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
-   */
-	public $phpmin = array(5, 4);
-
-	/**
-     * Dolibarr version of the loaded document
-     * @public string
+    /**
+     * @var Company Issuer object that emits
      */
-	public $version = 'dolibarr';
+    public $emetteur;
+
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+    public $phpmin = array(5, 4);
+
+    /**
+     * @var string Dolibarr version of the loaded document
+     */
+    public $version = 'dolibarr';
 
 
 	/**
@@ -369,7 +367,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],

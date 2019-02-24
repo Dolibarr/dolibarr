@@ -48,7 +48,7 @@ class Donations extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-    $this->don = new Don($this->db);
+        $this->don = new Don($this->db);
     }
 
     /**

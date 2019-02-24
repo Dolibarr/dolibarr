@@ -58,14 +58,14 @@ class pdf_stdmovement extends ModelePDFMovement
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -105,8 +105,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	public $marge_basse;
 
     /**
-	 * Issuer
-	 * @var Societe
+	 * @var Societe Issuer
 	 */
 	public $emetteur;
 

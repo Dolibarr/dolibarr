@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 Nicolas ZABOURI   <info@inovea-conseil.com>
+/* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    datapolicy/class/datapolicycron.class.php
+ * \file    htdocs/datapolicy/class/datapolicycron.class.php
  * \ingroup datapolicy
  * \brief   Example hook overload.
  */
@@ -27,11 +27,11 @@
  */
 class DataPolicyCron
 {
-	/**
-	 * Function exec
-	 *
-	 * @return boolean
-	 */
+    /**
+     * Function exec
+     *
+     * @return boolean
+     */
     public function exec()
     {
         global $conf, $db, $langs, $user;
