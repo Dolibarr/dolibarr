@@ -387,6 +387,7 @@ if (! $search_all)
 	$sql.= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql.= " f.localtax1, f.localtax2,";
 	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+    $sql .= ' p.title,';
 	$sql.= " typent.code,";
 	$sql.= " state.code_departement, state.nom,";
 	$sql.= ' country.code,';
