@@ -1266,27 +1266,31 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
-        {
-            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (is_object($objcon) && $objcon->id) {
+            $sql.= " AND a.fk_contact = ".$objcon->id;
+        } else {
+            if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
+            {
+                $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
         }
 
         // Condition on actioncode
@@ -1378,7 +1382,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     }
 
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-    if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
+    if (! empty($conf->mailing->enabled) && ! empty($objcon->email)
+        && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING'))
     {
         $langs->load("mails");
 
@@ -1528,7 +1533,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
             // Ref
             $out.='<td class="nowrap">';
-            $out.=$actionstatic->getNomUrl(1, -1);
+            if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+                $out.=$histo[$key]['id'];
+                $out.='</a>';
+            } else {
+                $out.=$actionstatic->getNomUrl(1, -1);
+            }
             $out.='</td>';
 
             // Author of event

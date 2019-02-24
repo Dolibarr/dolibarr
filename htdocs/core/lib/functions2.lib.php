@@ -2017,30 +2017,30 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 /**
  *	Get an array with properties of an element
  *
- * @param 	string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
- * @return 	array					(module, classpath, element, subelement, classfile, classname)
+ * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
+ * @return  array					(module, classpath, element, subelement, classfile, classname)
  */
 function getElementProperties($element_type)
 {
     // Parse element/subelement (ex: project_task)
-    $module = $element = $subelement = $element_type;
+    $module = $element_type;
+    $element =  $element_type;
+    $subelement = $element_type;
 
     // If we ask an resource form external module (instead of default path)
-    if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs))
-    {
+    if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
         $element = $subelement = $regs[1];
-        $module 	= $regs[2];
+        $module = $regs[2];
     }
 
     //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-    {
+    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
         $module = $element = $regs[1];
         $subelement = $regs[2];
     }
 
     // For compat
-    if($element_type == "action") {
+    if ($element_type == "action") {
         $classpath = 'comm/action/class';
         $subelement = 'Actioncomm';
         $module = 'agenda';
@@ -2049,13 +2049,13 @@ function getElementProperties($element_type)
     // To work with non standard path
     if ($element_type == 'facture' || $element_type == 'invoice') {
         $classpath = 'compta/facture/class';
-        $module='facture';
-        $subelement='facture';
+        $module ='facture';
+        $subelement = 'facture';
     }
     if ($element_type == 'commande' || $element_type == 'order') {
         $classpath = 'commande/class';
-        $module='commande';
-        $subelement='commande';
+        $module = 'commande';
+        $subelement = 'commande';
     }
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
@@ -2142,8 +2142,7 @@ function getElementProperties($element_type)
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
-    global $conf;
-	global $db,$conf;
+    global $conf, $db;
 
     $element_prop = getElementProperties($element_type);
     if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
@@ -2260,6 +2259,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
         $moduledirforclass = 'adherents';
     }
+    elseif ($module == 'don' || $module == 'donations') {
+        $moduledirforclass = 'don';
+    }
     elseif ($module == 'banque' || $module == 'bankaccounts') {
         $moduledirforclass = 'compta/bank';
     }
@@ -2270,7 +2272,7 @@ function getModuleDirForApiClass($module)
         $moduledirforclass = 'commande';
     }
     elseif ($module == 'shipments') {
-    	$moduledirforclass = 'expedition';
+        $moduledirforclass = 'expedition';
     }
     elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
         $moduledirforclass = 'compta/facture';

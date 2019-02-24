@@ -77,8 +77,8 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
 $form = new Form($db);
@@ -87,9 +87,9 @@ $form = new Form($db);
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ECMAutoTree").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td class="center" width="20">&nbsp;</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');

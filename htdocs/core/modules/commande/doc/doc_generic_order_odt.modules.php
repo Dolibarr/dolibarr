@@ -53,8 +53,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	public $phpmin = array(5, 4);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @public string
+     * @var string Dolibarr version of the loaded document
      */
 	public $version = 'dolibarr';
 

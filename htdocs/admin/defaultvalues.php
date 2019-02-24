@@ -322,11 +322,11 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 }
 else
 {
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
 }
-print '<td align="center">';
+print '<td class="center">';
 $disabled='';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) $disabled=' disabled="disabled"';
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
@@ -385,7 +385,7 @@ if ($result)
 	    print '<td></td>';
 
 		// Actions
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
     		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';

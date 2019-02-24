@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +17,22 @@
  */
 
 /**
- * \file    datapolicy/mailing.php
+ * \file    htdocs/datapolicy/mailing.php
  * \ingroup datapolicy
  * \brief   datapolicy mailing page.
  */
 
 require '../../main.inc.php';
-dol_include_once('/contact/class/contact.class.php');
-dol_include_once('/datapolicy/class/datapolicy.class.php');
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 
 $idcontact = GETPOST('idc');
 
-if(!empty($idcontact)){
+if (!empty($idcontact)) {
     $contact = new Contact($db);
     $contact->fetch($idcontact);
     DataPolicy::sendMailDataPolicyContact($contact);
-}else{
+} else {
 
     $contacts = new DataPolicy($db);
     $contacts->getAllContactNotInformed();
