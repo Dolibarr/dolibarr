@@ -177,7 +177,7 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", $param, "", "", $sortfield, $sortorder);
     //multicompany
-    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+    if(! empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
     	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
     }
@@ -205,7 +205,7 @@ if ($resql)
         }
         print "</td>";
         //multicompany
-        if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
+        if (! empty($conf->multicompany->enabled) && is_object($mc) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
         {
             $mc->getInfo($obj->entity);
             print '<td class="center">'.$mc->label.'</td>';
