@@ -2260,6 +2260,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
         $moduledirforclass = 'adherents';
     }
+    elseif ($module == 'don' || $module == 'donations') {
+        $moduledirforclass = 'don';
+    }
     elseif ($module == 'banque' || $module == 'bankaccounts') {
         $moduledirforclass = 'compta/bank';
     }
