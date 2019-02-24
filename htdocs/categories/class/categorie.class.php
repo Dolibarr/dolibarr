@@ -580,7 +580,7 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Link an object to the category
 	 *
@@ -907,7 +907,7 @@ class Categorie extends CommonObject
 		return $categories;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return childs of a category
 	 *
@@ -1076,10 +1076,10 @@ class Categorie extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
-	public function build_path_from_id_categ($id_categ, $protection = 1000)
+    public function build_path_from_id_categ($id_categ, $protection = 1000)
     {
         // phpcs:enable
-		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+        dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		if (! empty($this->cats[$id_categ]['fullpath']))
 		{
@@ -1109,8 +1109,8 @@ class Categorie extends CommonObject
 		// We count number of _ to have level
 		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/[^_]/i', '', $this->cats[$id_categ]['fullpath']));
 
-		return;
-	}
+        return;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1548,7 +1548,7 @@ class Categorie extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
@@ -1599,7 +1599,7 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return tableau de toutes les photos de la categorie
 	 *
