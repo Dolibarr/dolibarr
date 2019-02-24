@@ -102,11 +102,11 @@ if (! $rowid) {
 	//print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"');
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right_');
 	print "</tr>\n";
 
 	print "</tr>\n";
@@ -161,7 +161,7 @@ if (! $rowid) {
 
 		// Ref
         if (!empty($stripeacc)) $connect=$stripeacc.'/';
-    
+
 		// Ref
         if (preg_match('/po_/i', $txn->source)){
             $origin="payouts";
@@ -207,20 +207,21 @@ if (! $rowid) {
 		//}
 		//print "</td>\n";
 		// Date payment
-		print '<td align="center">' . dol_print_date($txn->created, '%d/%m/%Y %H:%M') . "</td>\n";
+		print '<td class="center">' . dol_print_date($txn->created, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
 		print '<td>' . $txn->type . '</td>';
 		// Amount
-		print "<td align=\"right\">" . price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
-		print "<td align=\"right\">" . price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
+		print '<td class="right">' . price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
+		print '<td class="right">' . price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
 		// Status
-		print "<td align='right'>";
-		if ($txn->status=='available')
- 		{print img_picto($langs->trans("".$txn->status.""), 'statut4');}
-		elseif ($txn->status=='pending')
-		{print img_picto($langs->trans("".$txn->status.""), 'statut7');}
-		elseif ($txn->status=='failed')
-		{print img_picto($langs->trans("".$txn->status.""), 'statut8');}
+		print "<td class='right'>";
+        if ($txn->status=='available') {
+            print img_picto($langs->trans("".$txn->status.""), 'statut4');
+        } elseif ($txn->status=='pending') {
+            print img_picto($langs->trans("".$txn->status.""), 'statut7');
+        } elseif ($txn->status=='failed') {
+            print img_picto($langs->trans("".$txn->status.""), 'statut8');
+        }
 		print '</td>';
 		print "</tr>\n";
 	}

@@ -1467,15 +1467,15 @@ class Categorie extends CommonObject
 
 		$cats = array();
 
-		// For backward compatibility
+        // For backward compatibility
         if (is_numeric($type)) {
-			// We want to reverse lookup
-			$map_type = array_flip($this->MAP_ID);
-			$type = $map_type[$type];
+            // We want to reverse lookup
+            $map_type = array_flip($this->MAP_ID);
+            $type = $map_type[$type];
             dol_syslog(get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead", LOG_WARNING);
         }
 
-		// Generation requete recherche
+        // Generation requete recherche
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "categorie";
 		$sql .= " WHERE type = " . $this->MAP_ID[$type];
 		$sql .= " AND entity IN (" . getEntity('category') . ")";

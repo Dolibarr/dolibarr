@@ -228,9 +228,9 @@ class FormMail extends Form
 		if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		if ($keytodelete >= 0)
 		{
-			unset ($listofpaths[$keytodelete]);
-			unset ($listofnames[$keytodelete]);
-			unset ($listofmimes[$keytodelete]);
+			unset($listofpaths[$keytodelete]);
+			unset($listofnames[$keytodelete]);
+			unset($listofmimes[$keytodelete]);
 			$_SESSION["listofpaths".$keytoavoidconflict]=join(';', $listofpaths);
 			$_SESSION["listofnames".$keytoavoidconflict]=join(';', $listofnames);
 			$_SESSION["listofmimes".$keytoavoidconflict]=join(';', $listofmimes);

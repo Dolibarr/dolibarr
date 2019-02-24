@@ -175,11 +175,11 @@ if ($permission) {
 	?>
 
 	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
-		<div class="tagtd" align="left">
+		<div class="tagtd left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
 		</div>
-		<div class="tagtd" align="left">
+		<div class="tagtd left">
 			<?php
 			if ($tab[$i]['socid'] > 0)
 			{

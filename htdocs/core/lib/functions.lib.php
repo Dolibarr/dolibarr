@@ -6610,12 +6610,12 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			$temp = array();
 			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
 
-			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-			else
-			{
-				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp, true);
-			}
+            if (! $natsort) {
+                ($order=='asc') ? asort($temp) : arsort($temp);
+            } else {
+                ($case_sensitive) ? natsort($temp) : natcasesort($temp);
+                if($order!='asc') $temp=array_reverse($temp, true);
+            }
 
 			$sorted = array();
 
