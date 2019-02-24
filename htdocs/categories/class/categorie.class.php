@@ -10,7 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ class Categorie extends CommonObject
         'account'  => 'account',		// old for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
-	);
+    );
 
     /**
 	 * @var array Category tables mapping from type string
@@ -221,7 +221,7 @@ class Categorie extends CommonObject
 	 *
 	 *  @param		DoliDB		$db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -234,7 +234,7 @@ class Categorie extends CommonObject
 	 *  @param		string	$type	Type of category ('product', '...') or (0, 1, ...)
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function fetch($id, $label = '', $type = null)
+	public function fetch($id, $label = '', $type = null)
 	{
 		global $conf;
 
@@ -297,15 +297,15 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Add category into database
+	 *  Add category into database
 	 *
-	 * 	@param	User	$user		Object user
-	 * 	@return	int 				-1 : SQL error
+	 *  @param	User	$user		Object user
+	 *  @return	int 				-1 : SQL error
 	 *          					-2 : new ID unknown
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
@@ -426,7 +426,7 @@ class Categorie extends CommonObject
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	function update(User $user)
+	public function update(User $user)
 	{
 		global $conf, $langs,$hookmanager;
 
@@ -501,7 +501,7 @@ class Categorie extends CommonObject
      *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -588,7 +588,7 @@ class Categorie extends CommonObject
 	 * @param   string     		$type 	Type of category ('product', ...)
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
-	function add_type($obj, $type)
+	public function add_type($obj, $type)
 	{
         // phpcs:enable
 		global $user,$langs,$conf;
@@ -682,7 +682,7 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Delete object from category
 	 *
@@ -691,7 +691,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  int          1 if OK, -1 if KO
 	 */
-	function del_type($obj, $type)
+	public function del_type($obj, $type)
 	{
         // phpcs:enable
 		global $user,$langs,$conf;
@@ -749,7 +749,7 @@ class Categorie extends CommonObject
 	 * @return  array|int              -1 if KO, array of instance of object if OK
 	 * @see containsObject
 	 */
-	function getObjectsInCateg($type, $onlyids = 0)
+	public function getObjectsInCateg($type, $onlyids = 0)
 	{
 		$objs = array();
 
@@ -796,7 +796,7 @@ class Categorie extends CommonObject
 	 * @return  int                     Number of occurrences
 	 * @see getObjectsInCateg
 	 */
-	function containsObject($type, $object_id)
+	public function containsObject($type, $object_id)
 	{
 		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
 		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $this->MAP_CAT_FK[$type] . " = " . $object_id;
@@ -821,7 +821,7 @@ class Categorie extends CommonObject
 	 * @param	int		$page		Page number
 	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
 	 */
-	function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		global $conf;
 
@@ -913,7 +913,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
-	function get_filles()
+	public function get_filles()
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -974,7 +974,7 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
@@ -990,7 +990,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	function get_full_arbo($type, $markafterid = 0)
+	public function get_full_arbo($type, $markafterid = 0)
 	{
         // phpcs:enable
 	    global $conf, $langs;
@@ -1068,7 +1068,7 @@ class Categorie extends CommonObject
 		return $this->cats;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
 	 *
@@ -1076,8 +1076,8 @@ class Categorie extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
-	function build_path_from_id_categ($id_categ, $protection = 1000)
-	{
+	public function build_path_from_id_categ($id_categ, $protection = 1000)
+    {
         // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
@@ -1112,13 +1112,13 @@ class Categorie extends CommonObject
 		return;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Display content of $this->cats
 	 *
 	 *	@return	void
 	 */
-	function debug_cats()
+	public function debug_cats()
 	{
         // phpcs:enable
 		// Display $this->cats
@@ -1135,7 +1135,7 @@ class Categorie extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Returns all categories
 	 *
@@ -1143,7 +1143,7 @@ class Categorie extends CommonObject
 	 *	@param	boolean		$parent		Just parent categories if true
 	 *	@return	array|int				Table of Object Category, -1 on error
 	 */
-	function get_all_categories($type = null, $parent = false)
+	public function get_all_categories($type = null, $parent = false)
 	{
         // phpcs:enable
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
@@ -1174,13 +1174,13 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
 	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
-	function already_exists()
+	public function already_exists()
 	{
         // phpcs:enable
 		$type=$this->type;
@@ -1225,20 +1225,20 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns the top level categories (which are not girls)
 	 *
 	 *	@param		int		$type		Type of category (0, 1, ...)
 	 *	@return		array
 	 */
-	function get_main_categories($type = null)
+	public function get_main_categories($type = null)
 	{
         // phpcs:enable
 		return $this->get_all_categories($type, true);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
@@ -1248,7 +1248,7 @@ class Categorie extends CommonObject
 	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
-	function print_all_ways($sep = " &gt;&gt; ", $url = '', $nocolor = 0)
+	public function print_all_ways($sep = " &gt;&gt; ", $url = '', $nocolor = 0)
 	{
         // phpcs:enable
 		$ways = array();
@@ -1297,13 +1297,13 @@ class Categorie extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
 	 *	@return	int|array <0 KO, array OK
 	 */
-	function get_meres()
+	public function get_meres()
 	{
         // phpcs:enable
 		$parents = array();
@@ -1333,14 +1333,14 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Returns in a table all possible paths to get to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
 	 *	@return	array
 	 */
-	function get_all_ways()
+	public function get_all_ways()
 	{
         // phpcs:enable
 		$ways = array();
@@ -1376,7 +1376,7 @@ class Categorie extends CommonObject
 	 *                      	    labels, 'id'= Get array of category IDs
 	 * @return  array|int           Array of category objects or < 0 if KO
 	 */
-	function containing($id, $type, $mode = 'object')
+	public function containing($id, $type, $mode = 'object')
 	{
 		$cats = array();
 
@@ -1458,7 +1458,7 @@ class Categorie extends CommonObject
 	 * 	@param		boolean		$case		Case sensitive (true/false)
 	 * 	@return		array|int				Array of category id, -1 if error
 	 */
-	function rechercher($id, $nom, $type, $exact = false, $case = false)
+	public function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
 		// Deprecation warning
 		if (is_numeric($type)) {
@@ -1468,13 +1468,12 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		// For backward compatibility
-		if (is_numeric($type)) {
+        if (is_numeric($type)) {
 			// We want to reverse lookup
 			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead",
-				LOG_WARNING );
-		}
+            dol_syslog(get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead", LOG_WARNING);
+        }
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "categorie";
@@ -1522,7 +1521,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $maxlength = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0)
 	{
 		global $langs;
 
@@ -1557,7 +1556,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 *  @param      string	$file		Nom du fichier uploade
 	 *	@return		void
 	 */
-	function add_photo($sdir, $file)
+	public function add_photo($sdir, $file)
 	{
         // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1608,7 +1607,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
-	function liste_photos($dir, $nbmax = 0)
+	public function liste_photos($dir, $nbmax = 0)
 	{
         // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
@@ -1657,14 +1656,14 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 		return $tabobj;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Efface la photo de la categorie et sa vignette
 	 *
 	 *    @param	string		$file		Path to file
 	 *    @return	void
 	 */
-	function delete_photo($file)
+	public function delete_photo($file)
 	{
         // phpcs:enable
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1687,14 +1686,14 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load size of image file
 	 *
 	 *  @param    	string	$file        Path to file
 	 *  @return		void
 	 */
-	function get_image_size($file)
+	public function get_image_size($file)
 	{
         // phpcs:enable
 		$infoImg = getimagesize($file); // Recuperation des infos de l'image
@@ -1709,7 +1708,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function setMultiLangs($user)
+	public function setMultiLangs($user)
 	{
 	    global $langs;
 
@@ -1790,7 +1789,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function getMultiLangs()
+	public function getMultiLangs()
 	{
 	    global $langs;
 
@@ -1829,7 +1828,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
-	function getLibStatut($mode)
+	public function getLibStatut($mode)
 	{
 	    return '';
 	}
@@ -1842,7 +1841,7 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -1856,20 +1855,20 @@ dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, pl
         $this->type = self::TYPE_PRODUCT;
     }
 
-	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
-	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'categorie_societe'
-		);
+    /**
+     * Function used to replace a thirdparty id with another one.
+     *
+     * @param DoliDB $db Database handler
+     * @param int $origin_id Old thirdparty id
+     * @param int $dest_id New thirdparty id
+     * @return bool
+     */
+    public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+    {
+        $tables = array(
+            'categorie_societe'
+        );
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
-	}
+        return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
+    }
 }

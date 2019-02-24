@@ -46,7 +46,7 @@ class Shipments extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
@@ -60,10 +60,10 @@ class Shipments extends DolibarrApi
      *
      * @param       int         $id         ID of shipment
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
 		if(! DolibarrApiAccess::$user->rights->expedition->lire) {
 			throw new RestException(401);
@@ -99,7 +99,7 @@ class Shipments extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -182,7 +182,7 @@ class Shipments extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of shipment
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->expedition->creer) {
             throw new RestException(401, "Insuffisant rights");
@@ -218,7 +218,7 @@ class Shipments extends DolibarrApi
      * @return int
      */
     /*
-    function getLines($id)
+    public function getLines($id)
     {
         if(! DolibarrApiAccess::$user->rights->expedition->lire) {
             throw new RestException(401);
@@ -252,7 +252,7 @@ class Shipments extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = null)
+    public function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->expedition->creer) {
             throw new RestException(401);
@@ -315,7 +315,7 @@ class Shipments extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = null)
+    public function putLine($id, $lineid, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->expedition->creer) {
             throw new RestException(401);
@@ -376,7 +376,7 @@ class Shipments extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $lineid)
+    public function deleteLine($id, $lineid)
     {
     	if(! DolibarrApiAccess::$user->rights->expedition->creer) {
     		throw new RestException(401);
@@ -412,7 +412,7 @@ class Shipments extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->expedition->creer) {
             throw new RestException(401);
@@ -448,7 +448,7 @@ class Shipments extends DolibarrApi
      *
      * @return  array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->shipment->supprimer) {
 			throw new RestException(401);
@@ -493,7 +493,7 @@ class Shipments extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $notrigger = 0)
+    public function validate($id, $notrigger = 0)
     {
         if (! DolibarrApiAccess::$user->rights->expedition->creer) {
 			throw new RestException(401);
@@ -542,7 +542,8 @@ class Shipments extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-/*    function setinvoiced($id)
+     /*
+    public function setinvoiced($id)
     {
 
         if(! DolibarrApiAccess::$user->rights->expedition->creer) {
@@ -562,7 +563,7 @@ class Shipments extends DolibarrApi
         }
         return $result;
     }
-*/
+    */
 
 
      /**
@@ -579,7 +580,7 @@ class Shipments extends DolibarrApi
      * @throws 405
      */
     /*
-    function createShipmentFromOrder($orderid)
+    public function createShipmentFromOrder($orderid)
     {
 
         require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -615,7 +616,7 @@ class Shipments extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
         $object = parent::_cleanObjectDatas($object);
@@ -654,7 +655,7 @@ class Shipments extends DolibarrApi
      * @return  array
      * @throws  RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $shipment = array();
         foreach (Shipments::$FIELDS as $field) {
