@@ -74,7 +74,6 @@ $fieldstosearchall = array(
     'g.note'=>"Note"
 );
 
-
 /*
  * Actions
  */
