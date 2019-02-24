@@ -933,7 +933,7 @@ if ($resql)
     if (! empty($arrayfields['e.ref']['checked'])) {
         // We are on a specific warehouse card, no filter on other should be possible
         print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
-
+    }
     if (! empty($arrayfields['m.fk_user_author']['checked'])) {
         print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
     }
