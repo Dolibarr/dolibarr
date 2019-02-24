@@ -113,7 +113,7 @@ $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, COUNT(DISTINCT
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 {
 	$sql.= " WHERE g.entity IS NOT NULL";
 }
