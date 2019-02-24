@@ -80,7 +80,7 @@ if ($facid > 0)
 
 if (! empty($conf->stripe->enabled))
 {
-    access_forbidden();    
+    access_forbidden();
 }
 
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
@@ -230,9 +230,9 @@ if (empty($reshook))
             $action = 'create';
             if (!$source) {
 			    setEventMessages($langs->transnoentities('NoSource'), null, 'errors');
-	        }
-	        $error++;
-	    }
+            }
+            $error++;
+        }
 	    // Le reste propre a cette action s'affiche en bas de page.
 	}
 
@@ -995,7 +995,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+                    if (!empty($conf->multicurrency->enabled)) {
                         print '<td></td>';
 					    print '<td></td>';
 					    print '<td></td>';
@@ -1007,7 +1007,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '</b></td>';
                     print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
                     print '<td align="right" id="result" style="font-weight: bold;"></td>';
-					if (!empty($conf->multicurrency->enabled)) {
+                    if (!empty($conf->multicurrency->enabled)) {
                         print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     }
                     print "</tr>\n";
@@ -1018,7 +1018,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $db->free($resql);
         }
         else
-		{
+        {
             dol_print_error($db);
         }
 
@@ -1051,9 +1051,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if (!empty($totalpayment)) {
                 $text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->trans("Currency".$conf->currency));
             }
-			if (!empty($multicurrency_totalpayment)) {
-				$text.='<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->trans("paymentInInvoiceCurrency"));
-			}
+            if (!empty($multicurrency_totalpayment)) {
+                $text.='<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->trans("paymentInInvoiceCurrency"));
+            }
             if (GETPOST('closepaidinvoices'))
             {
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

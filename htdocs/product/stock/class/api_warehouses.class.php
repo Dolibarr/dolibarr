@@ -205,7 +205,7 @@ class Warehouses extends DolibarrApi
         }
 
         if($this->warehouse->update($id, DolibarrApiAccess::$user))
-            return $this->get ($id);
+            return $this->get($id);
 
         return false;
     }
