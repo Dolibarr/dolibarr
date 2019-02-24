@@ -173,17 +173,16 @@ while ($obj = $db->fetch_object($resql)) {
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog ("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql)
-{
+if (! $resql) {
 		dol_print_error($db);
 		exit;
 }
 
 $num = $db->num_rows($resql);
 
-dol_syslog ("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

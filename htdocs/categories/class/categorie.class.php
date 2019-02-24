@@ -1472,8 +1472,7 @@ class Categorie extends CommonObject
 			// We want to reverse lookup
 			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-dol_syslog( get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead",
-				LOG_WARNING );
+            dol_syslog(get_class($this) . "::rechercher(): numeric types are deprecated, please use string instead", LOG_WARNING);
 		}
 
 		// Generation requete recherche
