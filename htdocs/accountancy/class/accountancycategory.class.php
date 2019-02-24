@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -661,13 +661,11 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to know all category from accounting account
 	 *
-	 * @return array       Result in table
+	 * @return array|integer       Result in table (array), -1 if KO
 	 */
 	public function getCatsCpts()
 	{
-		global $mysoc,$conf;
-
-		$sql = "";
+		global $mysoc, $conf;
 
 		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
