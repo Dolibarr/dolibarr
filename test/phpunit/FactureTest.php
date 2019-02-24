@@ -58,7 +58,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      *
      * @return FactureTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

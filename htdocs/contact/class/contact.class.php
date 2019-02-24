@@ -143,19 +143,19 @@ class Contact extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 		global $user;
@@ -200,7 +200,7 @@ class Contact extends CommonObject
 	 *  @param      User	$user       Object user that create
 	 *  @return     int      			<0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -313,7 +313,7 @@ class Contact extends CommonObject
 	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
+	public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -491,7 +491,7 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -501,7 +501,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info, $mode = 0)
+	private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -513,13 +513,13 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+	private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -597,7 +597,7 @@ class Contact extends CommonObject
 	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user = null, $notrigger = 0)
+	public function update_perso($id, $user = null, $notrigger = 0)
 	{
         // phpcs:enable
 	    $error=0;
@@ -686,7 +686,7 @@ class Contact extends CommonObject
      *  @param		string	$email		Email
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user = null, $ref_ext = '', $email = '')
+	public function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
 
@@ -869,7 +869,7 @@ class Contact extends CommonObject
 	 *
 	 * @return void
 	 */
-	function setGenderFromCivility()
+	public function setGenderFromCivility()
 	{
 	    unset($this->gender);
     	if (in_array($this->civility_id, array('MR'))) {
@@ -879,7 +879,7 @@ class Contact extends CommonObject
     	}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -889,7 +889,7 @@ class Contact extends CommonObject
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
 	 */
-	function load_ref_elements()
+	public function load_ref_elements()
 	{
         // phpcs:enable
 		// Compte les elements pour lesquels il est contact
@@ -931,7 +931,7 @@ class Contact extends CommonObject
 	 *   	@param		int		$notrigger		Disable all trigger
 	 *		@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($notrigger = 0)
+	public function delete($notrigger = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1045,7 +1045,7 @@ class Contact extends CommonObject
 	 *  @param		int		$id      Id du contact a charger
 	 *  @return		void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
 		$sql.= " c.tms as tms, c.fk_user_modif";
@@ -1090,7 +1090,7 @@ class Contact extends CommonObject
 	 *
 	 *  @return       int     Number of EMailings
 	 */
-	function getNbOfEMailings()
+	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
@@ -1125,7 +1125,7 @@ class Contact extends CommonObject
 	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1203,7 +1203,7 @@ class Contact extends CommonObject
 	 *
 	 *    @return	string      			Translated name of civility
 	 */
-	function getCivilityLabel()
+	public function getCivilityLabel()
 	{
 		global $langs;
 		$langs->load("dict");
@@ -1219,12 +1219,12 @@ class Contact extends CommonObject
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
-	function getLibStatut($mode)
+	public function getLibStatut($mode)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -1232,7 +1232,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut, $mode)
+	public function LibStatut($statut, $mode)
 	{
         // phpcs:enable
 		global $langs;
@@ -1270,14 +1270,14 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return translated label of Public or Private
 	 *
 	 * 	@param      int			$statut		Type (0 = public, 1 = private)
 	 *  @return     string					Label translated
 	 */
-	function LibPubPriv($statut)
+	public function LibPubPriv($statut)
 	{
         // phpcs:enable
 		global $langs;
@@ -1293,14 +1293,13 @@ class Contact extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		// Get first id of existing company and save it into $socid
 		$socid = 0;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe ORDER BY rowid LIMIT 1";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) $socid=$obj->rowid;
 		}
@@ -1337,7 +1336,7 @@ class Contact extends CommonObject
 	 *	@param	int		$statut		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	function setstatus($statut)
+	public function setstatus($statut)
 	{
 		global $conf,$langs,$user;
 
