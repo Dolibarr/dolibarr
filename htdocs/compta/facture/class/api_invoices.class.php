@@ -372,7 +372,7 @@ class Invoices extends DolibarrApi
 	    	throw new RestException(304, $this->invoice->error);
     	}
     }
-  
+
     /**
 	 * Add a contact type of given invoice
 	 *
@@ -939,9 +939,8 @@ class Invoices extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
         }
-		
-	    $this->db->begin();
-		
+
+
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
                 throw new RestException(404, 'Invoice not found');
@@ -958,8 +957,12 @@ class Invoices extends DolibarrApi
 
 		if (! $this->invoice->paye)	// protection against multiple submit
 		{
+		    $this->db->begin();
+
 		   	$this->invoice->fetch_lines();
-				
+
+		   	$amount_ht = $amount_tva = $amount_ttc = array();
+
 			// Loop on each vat rate
 			$i=0;
 			foreach($this->invoice->lines as $line)
@@ -1009,14 +1012,14 @@ class Invoices extends DolibarrApi
 				}
 				else
 				{
-					throw new RestException(500, 'Could not set paid');
-					$this->db->rollback();
+				    $this->db->rollback();
+				    throw new RestException(500, 'Could not set paid');
 				}
 			}
 			else
 			{
-				throw new RestException(500, 'Discount creation error');
-				$this->db->rollback();
+			    $this->db->rollback();
+			    throw new RestException(500, 'Discount creation error');
 			}
 		}
 
