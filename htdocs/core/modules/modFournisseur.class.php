@@ -61,12 +61,13 @@ class modFournisseur extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fournisseur/temp",
-							"/fournisseur/commande",
-		                    "/fournisseur/commande/temp",
-		                    "/fournisseur/facture",
-		                    "/fournisseur/facture/temp"
-		                    );
+		$this->dirs = array(
+            "/fournisseur/temp",
+            "/fournisseur/commande",
+            "/fournisseur/commande/temp",
+            "/fournisseur/facture",
+            "/fournisseur/facture/temp"
+        );
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -622,7 +623,7 @@ class modFournisseur extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		global $conf;
 

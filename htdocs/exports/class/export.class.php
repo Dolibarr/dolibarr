@@ -206,7 +206,7 @@ class Export
 		}
 
 		return 1;
-	}
+    }
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -368,7 +368,7 @@ class Export
 		return $Condition;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Build an input field used to filter the query
 	 *

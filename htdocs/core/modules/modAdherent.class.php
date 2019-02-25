@@ -377,7 +377,7 @@ class modAdherent extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
      *      @return     int             	1 if OK, 0 if KO
      */
-    function init($options = '')
+    public function init($options = '')
     {
         global $conf,$langs;
 
